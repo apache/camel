@@ -1658,6 +1658,19 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Since: 2.10
          * Maven coordinates: org.apache.camel:camel-twitter
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default TwitterSearchHeaderNameBuilder twitterSearch() {
+            return TwitterSearchHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Twitter Search (camel-twitter)
+         * Access Twitter Search.
+         * 
+         * Category: cloud,api,search,social
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-twitter
+         * 
          * Syntax: <code>twitter-search:keywords</code>
          * 
          * Path parameter: keywords (required)
@@ -1693,6 +1706,110 @@ public interface TwitterSearchEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return TwitterSearchEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Twitter Search component.
+     */
+    public static class TwitterSearchHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final TwitterSearchHeaderNameBuilder INSTANCE = new TwitterSearchHeaderNameBuilder();
+
+        /**
+         * The keywords to search.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code TwitterKeywords}.
+         */
+        public String twitterKeywords() {
+            return "TwitterKeywords";
+        }
+
+        /**
+         * The lang string ISO_639-1 which will be used for searching.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code TwitterSearchLanguage}.
+         */
+        public String twitterSearchLanguage() {
+            return "TwitterSearchLanguage";
+        }
+
+        /**
+         * Limiting number of results per page.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code TwitterCount}.
+         */
+        public String twitterCount() {
+            return "TwitterCount";
+        }
+
+        /**
+         * The number of pages result which you want camel-twitter to consume.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code TwitterNumberOfPages}.
+         */
+        public String twitterNumberOfPages() {
+            return "TwitterNumberOfPages";
+        }
+
+        /**
+         * The last tweet id which will be used for pulling the tweets. It is
+         * useful when the camel route is restarted after a long-running.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code TwitterSinceId}.
+         */
+        public String twitterSinceId() {
+            return "TwitterSinceId";
+        }
+
+        /**
+         * If specified, returns tweets with status ids less than the given id.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code TwitterMaxId}.
+         */
+        public String twitterMaxId() {
+            return "TwitterMaxId";
+        }
+
+        /**
+         * The type of event. The supported values are the values of the enum
+         * org.apache.camel.component.twitter.consumer.TwitterEventType.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code TwitterEventType}.
+         */
+        public String twitterEventType() {
+            return "TwitterEventType";
         }
     }
     static TwitterSearchEndpointBuilder endpointBuilder(

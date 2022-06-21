@@ -114,6 +114,20 @@ public interface GrapeEndpointBuilderFactory {
          * Since: 2.16
          * Maven coordinates: org.apache.camel:camel-grape
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default GrapeHeaderNameBuilder grape() {
+            return GrapeHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Grape (camel-grape)
+         * Fetch, load and manage additional jars dynamically after Camel
+         * Context was started.
+         * 
+         * Category: management,deployment
+         * Since: 2.16
+         * Maven coordinates: org.apache.camel:camel-grape
+         * 
          * Syntax: <code>grape:defaultCoordinates</code>
          * 
          * Path parameter: defaultCoordinates (required)
@@ -148,6 +162,32 @@ public interface GrapeEndpointBuilderFactory {
          */
         default GrapeEndpointBuilder grape(String componentName, String path) {
             return GrapeEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Grape component.
+     */
+    public static class GrapeHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final GrapeHeaderNameBuilder INSTANCE = new GrapeHeaderNameBuilder();
+
+        /**
+         * The command to be performed by the Grape endpoint.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.grape.GrapeCommand} type.
+         * 
+         * Default: grab
+         * Group: producer
+         * 
+         * @return the name of the header {@code GrapeCommand}.
+         */
+        public String grapeCommand() {
+            return "GrapeCommand";
         }
     }
     static GrapeEndpointBuilder endpointBuilder(

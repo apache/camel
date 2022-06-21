@@ -453,6 +453,19 @@ public interface STS2EndpointBuilderFactory {
          * Since: 3.5
          * Maven coordinates: org.apache.camel:camel-aws2-sts
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default STS2HeaderNameBuilder aws2Sts() {
+            return STS2HeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * AWS Security Token Service (STS) (camel-aws2-sts)
+         * Manage AWS STS cluster instances using AWS SDK version 2.x.
+         * 
+         * Category: cloud,management
+         * Since: 3.5
+         * Maven coordinates: org.apache.camel:camel-aws2-sts
+         * 
          * Syntax: <code>aws2-sts:label</code>
          * 
          * Path parameter: label (required)
@@ -484,6 +497,70 @@ public interface STS2EndpointBuilderFactory {
          */
         default STS2EndpointBuilder aws2Sts(String componentName, String path) {
             return STS2EndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the AWS Security Token Service (STS)
+     * component.
+     */
+    public static class STS2HeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final STS2HeaderNameBuilder INSTANCE = new STS2HeaderNameBuilder();
+
+        /**
+         * The operation we want to perform.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsStsOperation}.
+         */
+        public String awsStsOperation() {
+            return "AwsStsOperation";
+        }
+
+        /**
+         * The Amazon Resource Name (ARN) of the role to assume.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsStsRoleArn}.
+         */
+        public String awsStsRoleArn() {
+            return "AwsStsRoleArn";
+        }
+
+        /**
+         * An identifier for the assumed role session.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsStsRoleSessionName}.
+         */
+        public String awsStsRoleSessionName() {
+            return "AwsStsRoleSessionName";
+        }
+
+        /**
+         * The name of the federated user.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsStsFederatedName}.
+         */
+        public String awsStsFederatedName() {
+            return "AwsStsFederatedName";
         }
     }
     static STS2EndpointBuilder endpointBuilder(String componentName, String path) {

@@ -304,6 +304,19 @@ public interface FreemarkerEndpointBuilderFactory {
          * Since: 2.10
          * Maven coordinates: org.apache.camel:camel-freemarker
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default FreemarkerHeaderNameBuilder freemarker() {
+            return FreemarkerHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Freemarker (camel-freemarker)
+         * Transform messages using FreeMarker templates.
+         * 
+         * Category: transformation
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-freemarker
+         * 
          * Syntax: <code>freemarker:resourceUri</code>
          * 
          * Path parameter: resourceUri (required)
@@ -347,6 +360,57 @@ public interface FreemarkerEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return FreemarkerEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Freemarker component.
+     */
+    public static class FreemarkerHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final FreemarkerHeaderNameBuilder INSTANCE = new FreemarkerHeaderNameBuilder();
+
+        /**
+         * A URI for the template resource to use instead of the endpoint
+         * configured.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code FreemarkerResourceUri}.
+         */
+        public String freemarkerResourceUri() {
+            return "FreemarkerResourceUri";
+        }
+
+        /**
+         * The template to use instead of the endpoint configured.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code FreemarkerTemplate}.
+         */
+        public String freemarkerTemplate() {
+            return "FreemarkerTemplate";
+        }
+
+        /**
+         * The data model.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code FreemarkerDataModel}.
+         */
+        public String freemarkerDataModel() {
+            return "FreemarkerDataModel";
         }
     }
     static FreemarkerEndpointBuilder endpointBuilder(

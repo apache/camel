@@ -145,6 +145,20 @@ public interface KuduEndpointBuilderFactory {
          * Since: 3.0
          * Maven coordinates: org.apache.camel:camel-kudu
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default KuduHeaderNameBuilder kudu() {
+            return KuduHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Kudu (camel-kudu)
+         * Interact with Apache Kudu, a free and open source column-oriented
+         * data store of the Apache Hadoop ecosystem.
+         * 
+         * Category: database,iot,cloud
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-kudu
+         * 
          * Syntax: <code>kudu:host:port/tableName</code>
          * 
          * Path parameter: host
@@ -189,6 +203,44 @@ public interface KuduEndpointBuilderFactory {
          */
         default KuduEndpointBuilder kudu(String componentName, String path) {
             return KuduEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Kudu component.
+     */
+    public static class KuduHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final KuduHeaderNameBuilder INSTANCE = new KuduHeaderNameBuilder();
+
+        /**
+         * The schema.
+         * 
+         * The option is a: {@code org.apache.kudu.Schema} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KuduSchema}.
+         */
+        public String kuduSchema() {
+            return "KuduSchema";
+        }
+
+        /**
+         * The create table options.
+         * 
+         * The option is a: {@code org.apache.kudu.client.CreateTableOptions}
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KuduTableOptions}.
+         */
+        public String kuduTableOptions() {
+            return "KuduTableOptions";
         }
     }
     static KuduEndpointBuilder endpointBuilder(String componentName, String path) {

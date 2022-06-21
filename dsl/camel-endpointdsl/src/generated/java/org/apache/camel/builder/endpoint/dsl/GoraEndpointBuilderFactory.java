@@ -877,6 +877,19 @@ public interface GoraEndpointBuilderFactory {
          * Since: 2.14
          * Maven coordinates: org.apache.camel:camel-gora
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default GoraHeaderNameBuilder gora() {
+            return GoraHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Gora (camel-gora)
+         * Access NoSQL databases using the Apache Gora framework.
+         * 
+         * Category: database,nosql,bigdata
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-gora
+         * 
          * Syntax: <code>gora:name</code>
          * 
          * Path parameter: name (required)
@@ -908,6 +921,43 @@ public interface GoraEndpointBuilderFactory {
          */
         default GoraEndpointBuilder gora(String componentName, String path) {
             return GoraEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Gora component.
+     */
+    public static class GoraHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final GoraHeaderNameBuilder INSTANCE = new GoraHeaderNameBuilder();
+
+        /**
+         * Used in order to define the datum key for the operations need it.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code goraKey}.
+         */
+        public String goraKey() {
+            return "goraKey";
+        }
+
+        /**
+         * Used in order to define the operation to execute.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code goraOperation}.
+         */
+        public String goraOperation() {
+            return "goraOperation";
         }
     }
     static GoraEndpointBuilder endpointBuilder(String componentName, String path) {

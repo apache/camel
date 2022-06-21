@@ -947,6 +947,19 @@ public interface EventHubsEndpointBuilderFactory {
          * Since: 3.5
          * Maven coordinates: org.apache.camel:camel-azure-eventhubs
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default EventHubsHeaderNameBuilder azureEventhubs() {
+            return EventHubsHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Azure Event Hubs (camel-azure-eventhubs)
+         * Send and receive events to/from Azure Event Hubs using AMQP protocol.
+         * 
+         * Category: cloud,messaging
+         * Since: 3.5
+         * Maven coordinates: org.apache.camel:camel-azure-eventhubs
+         * 
          * Syntax: <code>azure-eventhubs:namespace/eventHubName</code>
          * 
          * Path parameter: namespace
@@ -986,6 +999,123 @@ public interface EventHubsEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return EventHubsEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Azure Event Hubs component.
+     */
+    public static class EventHubsHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final EventHubsHeaderNameBuilder INSTANCE = new EventHubsHeaderNameBuilder();
+
+        /**
+         * (producer) Overrides the hashing key to be provided for the batch of
+         * events, which instructs the Event Hubs service to map this key to a
+         * specific partition. (consumer) It sets the partition hashing key if
+         * it was set when originally publishing the event. If it exists, this
+         * value was used to compute a hash to select a partition to send the
+         * message to. This is only present on a received EventData.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AzureEventHubsPartitionKey}.
+         */
+        public String azureEventHubsPartitionKey() {
+            return "AzureEventHubsPartitionKey";
+        }
+
+        /**
+         * (producer) Overrides the identifier of the Event Hub partition that
+         * the events will be sent to. (consumer) It sets the partition id of
+         * the Event Hub.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AzureEventHubsPartitionId}.
+         */
+        public String azureEventHubsPartitionId() {
+            return "AzureEventHubsPartitionId";
+        }
+
+        /**
+         * It sets the offset of the event when it was received from the
+         * associated Event Hub partition. This is only present on a received
+         * EventData.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureEventHubsOffset}.
+         */
+        public String azureEventHubsOffset() {
+            return "AzureEventHubsOffset";
+        }
+
+        /**
+         * It sets the instant, in UTC, of when the event was enqueued in the
+         * Event Hub partition. This is only present on a received EventData.
+         * 
+         * The option is a: {@code Instant} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureEventHubsEnqueuedTime}.
+         */
+        public String azureEventHubsEnqueuedTime() {
+            return "AzureEventHubsEnqueuedTime";
+        }
+
+        /**
+         * It sets the sequence number assigned to the event when it was
+         * enqueued in the associated Event Hub partition. This is unique for
+         * every message received in the Event Hub partition. This is only
+         * present on a received EventData.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureEventHubsSequenceNumber}.
+         */
+        public String azureEventHubsSequenceNumber() {
+            return "AzureEventHubsSequenceNumber";
+        }
+
+        /**
+         * The set of free-form event properties which may be used for passing
+         * metadata associated with the event with the event body during Event
+         * Hubs operations.
+         * 
+         * The option is a: {@code Map<String, Object>} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureEventHubsMetadata}.
+         */
+        public String azureEventHubsMetadata() {
+            return "AzureEventHubsMetadata";
+        }
+
+        /**
+         * The timestamp of the message.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code MessageTimestamp}.
+         */
+        public String messageTimestamp() {
+            return "MessageTimestamp";
         }
     }
     static EventHubsEndpointBuilder endpointBuilder(

@@ -325,6 +325,19 @@ public interface JoltEndpointBuilderFactory {
          * Since: 2.16
          * Maven coordinates: org.apache.camel:camel-jolt
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default JoltHeaderNameBuilder jolt() {
+            return JoltHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * JOLT (camel-jolt)
+         * JSON to JSON transformation using JOLT.
+         * 
+         * Category: transformation
+         * Since: 2.16
+         * Maven coordinates: org.apache.camel:camel-jolt
+         * 
          * Syntax: <code>jolt:resourceUri</code>
          * 
          * Path parameter: resourceUri (required)
@@ -366,6 +379,43 @@ public interface JoltEndpointBuilderFactory {
          */
         default JoltEndpointBuilder jolt(String componentName, String path) {
             return JoltEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the JOLT component.
+     */
+    public static class JoltHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final JoltHeaderNameBuilder INSTANCE = new JoltHeaderNameBuilder();
+
+        /**
+         * The resource URI.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JoltResourceUri}.
+         */
+        public String joltResourceUri() {
+            return "JoltResourceUri";
+        }
+
+        /**
+         * The context.
+         * 
+         * The option is a: {@code Map<String, Object>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JoltContext}.
+         */
+        public String joltContext() {
+            return "JoltContext";
         }
     }
     static JoltEndpointBuilder endpointBuilder(String componentName, String path) {

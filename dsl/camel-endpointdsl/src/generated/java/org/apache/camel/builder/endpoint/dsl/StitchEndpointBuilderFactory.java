@@ -316,6 +316,20 @@ public interface StitchEndpointBuilderFactory {
          * Since: 3.8
          * Maven coordinates: org.apache.camel:camel-stitch
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default StitchHeaderNameBuilder stitch() {
+            return StitchHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Stitch (camel-stitch)
+         * Stitch is a cloud ETL service that integrates various data sources
+         * into a central data warehouse through various integrations.
+         * 
+         * Category: cloud,api,compute,bigdata
+         * Since: 3.8
+         * Maven coordinates: org.apache.camel:camel-stitch
+         * 
          * Syntax: <code>stitch:tableName</code>
          * 
          * Path parameter: tableName
@@ -354,6 +368,102 @@ public interface StitchEndpointBuilderFactory {
          */
         default StitchEndpointBuilder stitch(String componentName, String path) {
             return StitchEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Stitch component.
+     */
+    public static class StitchHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final StitchHeaderNameBuilder INSTANCE = new StitchHeaderNameBuilder();
+
+        /**
+         * The name of the destination table the data is being pushed to. Table
+         * names must be unique in each destination schema, or loading issues
+         * will occur. Note: The number of characters in the table name should
+         * be within the destinations allowed limits or data will rejected.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code StitchTableName}.
+         */
+        public String stitchTableName() {
+            return "StitchTableName";
+        }
+
+        /**
+         * The schema that describes the Stitch message.
+         * 
+         * The option is a: {@code StitchSchema or Map} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code StitchSchema}.
+         */
+        public String stitchSchema() {
+            return "StitchSchema";
+        }
+
+        /**
+         * A collection of strings representing the Primary Key fields in the
+         * source table. Stitch use these Primary Keys to de-dupe data during
+         * loading If not provided, the table will be loaded in an append-only
+         * manner.
+         * 
+         * The option is a: {@code Collection<String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code StitchKeyNames}.
+         */
+        public String stitchKeyNames() {
+            return "StitchKeyNames";
+        }
+
+        /**
+         * HTTP Status code that is returned from Stitch Import HTTP API.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code StitchCode}.
+         */
+        public String stitchCode() {
+            return "StitchCode";
+        }
+
+        /**
+         * HTTP headers that are returned from Stitch Import HTTP API.
+         * 
+         * The option is a: {@code Map<String, Object>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code StitchHeaders}.
+         */
+        public String stitchHeaders() {
+            return "StitchHeaders";
+        }
+
+        /**
+         * The status message that Stitch returns after sending the data through
+         * Stitch Import API.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code StitchStatus}.
+         */
+        public String stitchStatus() {
+            return "StitchStatus";
         }
     }
     static StitchEndpointBuilder endpointBuilder(

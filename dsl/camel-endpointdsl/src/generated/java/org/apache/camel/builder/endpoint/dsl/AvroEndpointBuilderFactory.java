@@ -710,6 +710,19 @@ public interface AvroEndpointBuilderFactory {
          * Since: 2.10
          * Maven coordinates: org.apache.camel:camel-avro-rpc
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default AvroHeaderNameBuilder avro() {
+            return AvroHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Avro RPC (camel-avro-rpc)
+         * Produce or consume Apache Avro RPC services.
+         * 
+         * Category: rpc
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-avro-rpc
+         * 
          * Syntax: <code>avro:transport:host:port/messageName</code>
          * 
          * Path parameter: transport (required)
@@ -761,6 +774,31 @@ public interface AvroEndpointBuilderFactory {
          */
         default AvroEndpointBuilder avro(String componentName, String path) {
             return AvroEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Avro RPC component.
+     */
+    public static class AvroHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final AvroHeaderNameBuilder INSTANCE = new AvroHeaderNameBuilder();
+
+        /**
+         * The name of the message to send. In consumer overrides message name
+         * from URI (if any).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AvroMessageName}.
+         */
+        public String avroMessageName() {
+            return "AvroMessageName";
         }
     }
     static AvroEndpointBuilder endpointBuilder(String componentName, String path) {

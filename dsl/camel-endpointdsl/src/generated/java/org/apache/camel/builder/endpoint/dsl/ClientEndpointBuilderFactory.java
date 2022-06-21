@@ -1742,6 +1742,20 @@ public interface ClientEndpointBuilderFactory {
          * Since: 2.20
          * Maven coordinates: org.apache.camel:camel-iec60870
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default ClientHeaderNameBuilder iec60870Client() {
+            return ClientHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * IEC 60870 Client (camel-iec60870)
+         * IEC 60870 supervisory control and data acquisition (SCADA) client
+         * using NeoSCADA implementation.
+         * 
+         * Category: iot
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-iec60870
+         * 
          * Syntax: <code>iec60870-client:uriPath</code>
          * 
          * Path parameter: uriPath (required)
@@ -1776,6 +1790,71 @@ public interface ClientEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return ClientEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the IEC 60870 Client component.
+     */
+    public static class ClientHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final ClientHeaderNameBuilder INSTANCE = new ClientHeaderNameBuilder();
+
+        /**
+         * The value.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code Iec60870Value}.
+         */
+        public String iec60870Value() {
+            return "Iec60870Value";
+        }
+
+        /**
+         * The timestamp of the value.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code Iec60870Timestamp}.
+         */
+        public String iec60870Timestamp() {
+            return "Iec60870Timestamp";
+        }
+
+        /**
+         * The quality information of the value.
+         * 
+         * The option is a: {@code
+         * org.eclipse.neoscada.protocol.iec60870.asdu.types.QualityInformation}
+         * type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code Iec60870Quality}.
+         */
+        public String iec60870Quality() {
+            return "Iec60870Quality";
+        }
+
+        /**
+         * Is overflow.
+         * 
+         * The option is a: {@code boolean} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code Iec60870Overflow}.
+         */
+        public String iec60870Overflow() {
+            return "Iec60870Overflow";
         }
     }
     static ClientEndpointBuilder endpointBuilder(

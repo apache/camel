@@ -453,6 +453,19 @@ public interface MQ2EndpointBuilderFactory {
          * Since: 3.1
          * Maven coordinates: org.apache.camel:camel-aws2-mq
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default MQ2HeaderNameBuilder aws2Mq() {
+            return MQ2HeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * AWS MQ (camel-aws2-mq)
+         * Manage AWS MQ instances using AWS SDK version 2.x.
+         * 
+         * Category: cloud,messaging
+         * Since: 3.1
+         * Maven coordinates: org.apache.camel:camel-aws2-mq
+         * 
          * Syntax: <code>aws2-mq:label</code>
          * 
          * Path parameter: label (required)
@@ -484,6 +497,164 @@ public interface MQ2EndpointBuilderFactory {
          */
         default MQ2EndpointBuilder aws2Mq(String componentName, String path) {
             return MQ2EndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the AWS MQ component.
+     */
+    public static class MQ2HeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final MQ2HeaderNameBuilder INSTANCE = new MQ2HeaderNameBuilder();
+
+        /**
+         * The operation we want to perform.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsMQOperation}.
+         */
+        public String awsMQOperation() {
+            return "AwsMQOperation";
+        }
+
+        /**
+         * The number of results that must be retrieved from listBrokers
+         * operation.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsMQMaxResults}.
+         */
+        public String awsMQMaxResults() {
+            return "AwsMQMaxResults";
+        }
+
+        /**
+         * The broker name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsMQBrokerName}.
+         */
+        public String awsMQBrokerName() {
+            return "AwsMQBrokerName";
+        }
+
+        /**
+         * The Broker Engine for MQ.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsMQBrokerEngine}.
+         */
+        public String awsMQBrokerEngine() {
+            return "AwsMQBrokerEngine";
+        }
+
+        /**
+         * The Broker Engine Version for MQ. Currently you can choose between
+         * 5.15.6 and 5.15.0 of ACTIVEMQ.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsMQBrokerEngineVersion}.
+         */
+        public String awsMQBrokerEngineVersion() {
+            return "AwsMQBrokerEngineVersion";
+        }
+
+        /**
+         * The broker id.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsMQBrokerID}.
+         */
+        public String awsMQBrokerID() {
+            return "AwsMQBrokerID";
+        }
+
+        /**
+         * A list of information about the configuration.
+         * 
+         * The option is a: {@code
+         * software.amazon.awssdk.services.mq.model.ConfigurationId} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsMQConfigurationID}.
+         */
+        public String awsMQConfigurationID() {
+            return "AwsMQConfigurationID";
+        }
+
+        /**
+         * The deployment mode for the broker in the createBroker operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsMQBrokerDeploymentMode}.
+         */
+        public String awsMQBrokerDeploymentMode() {
+            return "AwsMQBrokerDeploymentMode";
+        }
+
+        /**
+         * The instance type for the MQ machine in the createBroker operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsMQBrokerInstanceType}.
+         */
+        public String awsMQBrokerInstanceType() {
+            return "AwsMQBrokerInstanceType";
+        }
+
+        /**
+         * The list of users for MQ.
+         * 
+         * The option is a: {@code List<User>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsMQBrokerUsers}.
+         */
+        public String awsMQBrokerUsers() {
+            return "AwsMQBrokerUsers";
+        }
+
+        /**
+         * If the MQ instance must be publicly available or not.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsMQBrokerPubliclyAccessible}.
+         */
+        public String awsMQBrokerPubliclyAccessible() {
+            return "AwsMQBrokerPubliclyAccessible";
         }
     }
     static MQ2EndpointBuilder endpointBuilder(String componentName, String path) {

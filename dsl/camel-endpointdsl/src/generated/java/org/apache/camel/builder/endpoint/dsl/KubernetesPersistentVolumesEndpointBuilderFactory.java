@@ -454,6 +454,20 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default KubernetesPersistentVolumesHeaderNameBuilder kubernetesPersistentVolumes() {
+            return KubernetesPersistentVolumesHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Kubernetes Persistent Volume (camel-kubernetes)
+         * Perform operations on Kubernetes Persistent Volumes and get notified
+         * on Persistent Volume changes.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
          * Syntax: <code>kubernetes-persistent-volumes:masterUrl</code>
          * 
          * Path parameter: masterUrl (required)
@@ -489,6 +503,59 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return KubernetesPersistentVolumesEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Kubernetes Persistent Volume
+     * component.
+     */
+    public static class KubernetesPersistentVolumesHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final KubernetesPersistentVolumesHeaderNameBuilder INSTANCE = new KubernetesPersistentVolumesHeaderNameBuilder();
+
+        /**
+         * The Producer operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesOperation}.
+         */
+        public String kubernetesOperation() {
+            return "KubernetesOperation";
+        }
+
+        /**
+         * The persistent volume labels.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * KubernetesPersistentVolumesLabels}.
+         */
+        public String kubernetesPersistentVolumesLabels() {
+            return "KubernetesPersistentVolumesLabels";
+        }
+
+        /**
+         * The persistent volume name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * KubernetesPersistentVolumeName}.
+         */
+        public String kubernetesPersistentVolumeName() {
+            return "KubernetesPersistentVolumeName";
         }
     }
     static KubernetesPersistentVolumesEndpointBuilder endpointBuilder(

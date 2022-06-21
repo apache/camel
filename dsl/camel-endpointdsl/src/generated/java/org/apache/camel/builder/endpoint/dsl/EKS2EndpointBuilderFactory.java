@@ -451,6 +451,19 @@ public interface EKS2EndpointBuilderFactory {
          * Since: 3.1
          * Maven coordinates: org.apache.camel:camel-aws2-eks
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default EKS2HeaderNameBuilder aws2Eks() {
+            return EKS2HeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * AWS Elastic Kubernetes Service (EKS) (camel-aws2-eks)
+         * Manage AWS EKS cluster instances using AWS SDK version 2.x.
+         * 
+         * Category: cloud,management
+         * Since: 3.1
+         * Maven coordinates: org.apache.camel:camel-aws2-eks
+         * 
          * Syntax: <code>aws2-eks:label</code>
          * 
          * Path parameter: label (required)
@@ -482,6 +495,97 @@ public interface EKS2EndpointBuilderFactory {
          */
         default EKS2EndpointBuilder aws2Eks(String componentName, String path) {
             return EKS2EndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the AWS Elastic Kubernetes Service (EKS)
+     * component.
+     */
+    public static class EKS2HeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final EKS2HeaderNameBuilder INSTANCE = new EKS2HeaderNameBuilder();
+
+        /**
+         * The operation we want to perform.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsEKSOperation}.
+         */
+        public String awsEKSOperation() {
+            return "AwsEKSOperation";
+        }
+
+        /**
+         * The limit number of results while listing clusters.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsEKSMaxResults}.
+         */
+        public String awsEKSMaxResults() {
+            return "AwsEKSMaxResults";
+        }
+
+        /**
+         * A key description to use while performing a createKey operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsEKSDescription}.
+         */
+        public String awsEKSDescription() {
+            return "AwsEKSDescription";
+        }
+
+        /**
+         * The cluster name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsEKSClusterName}.
+         */
+        public String awsEKSClusterName() {
+            return "AwsEKSClusterName";
+        }
+
+        /**
+         * The role ARN to use while creating the cluster.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsEKSRoleARN}.
+         */
+        public String awsEKSRoleARN() {
+            return "AwsEKSRoleARN";
+        }
+
+        /**
+         * The VPC config for the creations of an EKS cluster.
+         * 
+         * The option is a: {@code
+         * software.amazon.awssdk.services.eks.model.VpcConfigRequest} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsEKSVPCConfig}.
+         */
+        public String awsEKSVPCConfig() {
+            return "AwsEKSVPCConfig";
         }
     }
     static EKS2EndpointBuilder endpointBuilder(String componentName, String path) {

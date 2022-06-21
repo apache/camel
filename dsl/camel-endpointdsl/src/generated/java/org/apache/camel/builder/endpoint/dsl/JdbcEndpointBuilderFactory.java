@@ -568,6 +568,19 @@ public interface JdbcEndpointBuilderFactory {
          * Since: 1.2
          * Maven coordinates: org.apache.camel:camel-jdbc
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default JdbcHeaderNameBuilder jdbc() {
+            return JdbcHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * JDBC (camel-jdbc)
+         * Access databases through SQL and JDBC.
+         * 
+         * Category: database,sql
+         * Since: 1.2
+         * Maven coordinates: org.apache.camel:camel-jdbc
+         * 
          * Syntax: <code>jdbc:dataSourceName</code>
          * 
          * Path parameter: dataSourceName (required)
@@ -605,6 +618,125 @@ public interface JdbcEndpointBuilderFactory {
          */
         default JdbcEndpointBuilder jdbc(String componentName, String path) {
             return JdbcEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the JDBC component.
+     */
+    public static class JdbcHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final JdbcHeaderNameBuilder INSTANCE = new JdbcHeaderNameBuilder();
+
+        /**
+         * If the query is an UPDATE, query the update count is returned in this
+         * OUT header.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JdbcUpdateCount}.
+         */
+        public String jdbcUpdateCount() {
+            return "JdbcUpdateCount";
+        }
+
+        /**
+         * If the query is a SELECT, query the row count is returned in this OUT
+         * header.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JdbcRowCount}.
+         */
+        public String jdbcRowCount() {
+            return "JdbcRowCount";
+        }
+
+        /**
+         * The column names from the ResultSet as a java.util.Set type.
+         * 
+         * The option is a: {@code Set<String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JdbcColumnNames}.
+         */
+        public String jdbcColumnNames() {
+            return "JdbcColumnNames";
+        }
+
+        /**
+         * A java.util.Map which has the headers to be used if
+         * useHeadersAsParameters has been enabled.
+         * 
+         * The option is a: {@code Map} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JdbcParameters}.
+         */
+        public String jdbcParameters() {
+            return "JdbcParameters";
+        }
+
+        /**
+         * Set its value to true to retrieve generated keys.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @return the name of the header {@code RetrieveGeneratedKeys}.
+         */
+        public String retrieveGeneratedKeys() {
+            return "RetrieveGeneratedKeys";
+        }
+
+        /**
+         * Set it to specify the expected generated columns.
+         * 
+         * The option is a: {@code String[] or int[]} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GeneratedColumns}.
+         */
+        public String generatedColumns() {
+            return "GeneratedColumns";
+        }
+
+        /**
+         * The number of rows in the header that contains generated keys.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GeneratedKeysRowCount}.
+         */
+        public String generatedKeysRowCount() {
+            return "GeneratedKeysRowCount";
+        }
+
+        /**
+         * Rows that contains the generated keys.
+         * 
+         * The option is a: {@code List<Map<String, Object>>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GeneratedKeysRows}.
+         */
+        public String generatedKeysRows() {
+            return "GeneratedKeysRows";
         }
     }
     static JdbcEndpointBuilder endpointBuilder(String componentName, String path) {

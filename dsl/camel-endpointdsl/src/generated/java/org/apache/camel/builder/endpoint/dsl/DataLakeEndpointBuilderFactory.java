@@ -2941,6 +2941,19 @@ public interface DataLakeEndpointBuilderFactory {
          * Since: 3.8
          * Maven coordinates: org.apache.camel:camel-azure-storage-datalake
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default DataLakeHeaderNameBuilder azureStorageDatalake() {
+            return DataLakeHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Azure Storage Datalake Service (camel-azure-storage-datalake)
+         * Sends and receives files to/from Azure DataLake Storage.
+         * 
+         * Category: cloud,file,bigdata
+         * Since: 3.8
+         * Maven coordinates: org.apache.camel:camel-azure-storage-datalake
+         * 
          * Syntax:
          * <code>azure-storage-datalake:accountName/fileSystemName</code>
          * 
@@ -2982,6 +2995,889 @@ public interface DataLakeEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return DataLakeEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Azure Storage Datalake Service
+     * component.
+     */
+    public static class DataLakeHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final DataLakeHeaderNameBuilder INSTANCE = new DataLakeHeaderNameBuilder();
+
+        /**
+         * Defines options available to configure the behavior of a call to
+         * listFileSystemsSegment on a DataLakeServiceAsyncClient object. Null
+         * may be passed.
+         * 
+         * The option is a: {@code ListFileSystemsOptions} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeListFileSystemsOptions}.
+         */
+        public String azureStorageDataLakeListFileSystemsOptions() {
+            return "AzureStorageDataLakeListFileSystemsOptions";
+        }
+
+        /**
+         * An optional timeout value beyond which a RuntimeException will be
+         * raised.
+         * 
+         * The option is a: {@code Duration} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code AzureStorageDataLakeTimeout}.
+         */
+        public String azureStorageDataLakeTimeout() {
+            return "AzureStorageDataLakeTimeout";
+        }
+
+        /**
+         * Specify the producer operation to execute. Different operations
+         * allowed are shown below.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.azure.storage.datalake.DataLakeOperationsDefinition} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code AzureStorageDataLakeOperation}.
+         */
+        public String azureStorageDataLakeOperation() {
+            return "AzureStorageDataLakeOperation";
+        }
+
+        /**
+         * Name of the file system in azure datalake on which operation is to be
+         * performed. Please make sure that filesystem name is all lowercase.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeFileSystemName}.
+         */
+        public String azureStorageDataLakeFileSystemName() {
+            return "AzureStorageDataLakeFileSystemName";
+        }
+
+        /**
+         * Name of the directory in azure datalake on which operation is to be
+         * performed.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeDirectoryName}.
+         */
+        public String azureStorageDataLakeDirectoryName() {
+            return "AzureStorageDataLakeDirectoryName";
+        }
+
+        /**
+         * Name of the file in azure datalake on which operation is to be
+         * performed.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code AzureStorageDataLakeFileName}.
+         */
+        public String azureStorageDataLakeFileName() {
+            return "AzureStorageDataLakeFileName";
+        }
+
+        /**
+         * The metadata to associate with the file.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: from both
+         * 
+         * @return the name of the header {@code AzureStorageDataLakeMetadata}.
+         */
+        public String azureStorageDataLakeMetadata() {
+            return "AzureStorageDataLakeMetadata";
+        }
+
+        /**
+         * Defines options available to configure the behavior of a call to
+         * listFileSystemsSegment on a DataLakeServiceAsyncClient object.
+         * 
+         * The option is a: {@code PublicAccessType} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakePublicAccessType}.
+         */
+        public String azureStorageDataLakePublicAccessType() {
+            return "AzureStorageDataLakePublicAccessType";
+        }
+
+        /**
+         * Non parsed http headers that can be used by the user.
+         * 
+         * The option is a: {@code HttpHeaders} type.
+         * 
+         * Group: from component
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeRawHttpHeaders}.
+         */
+        public String azureStorageDataLakeRawHttpHeaders() {
+            return "AzureStorageDataLakeRawHttpHeaders";
+        }
+
+        /**
+         * This contains values which will restrict the successful operation of
+         * a variety of requests to the conditions present. These conditions are
+         * entirely optional.
+         * 
+         * The option is a: {@code DataLakeRequestConditions} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeRequestCondition}.
+         */
+        public String azureStorageDataLakeRequestCondition() {
+            return "AzureStorageDataLakeRequestCondition";
+        }
+
+        /**
+         * Defines options available to configure the behavior of a call to
+         * listContainersSegment on a DataLakeFileSystemClient object. Null may
+         * be passed.
+         * 
+         * The option is a: {@code ListPathOptions} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeListPathOptions}.
+         */
+        public String azureStorageDataLakeListPathOptions() {
+            return "AzureStorageDataLakeListPathOptions";
+        }
+
+        /**
+         * Path of the file to be used for upload operations.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code AzureStorageDataLakePath}.
+         */
+        public String azureStorageDataLakePath() {
+            return "AzureStorageDataLakePath";
+        }
+
+        /**
+         * Specifies if the call to listContainersSegment should recursively
+         * include all paths.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code AzureStorageDataLakeRecursive}.
+         */
+        public String azureStorageDataLakeRecursive() {
+            return "AzureStorageDataLakeRecursive";
+        }
+
+        /**
+         * Specifies the maximum number of blobs to return, including all
+         * BlobPrefix elements.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeMaxResults}.
+         */
+        public String azureStorageDataLakeMaxResults() {
+            return "AzureStorageDataLakeMaxResults";
+        }
+
+        /**
+         * Specifies if the name of the user principal should be returned.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeUserPrincipalNameReturned}.
+         */
+        public String azureStorageDataLakeUserPrincipalNameReturned() {
+            return "AzureStorageDataLakeUserPrincipalNameReturned";
+        }
+
+        /**
+         * Filter the results to return only those files with match the
+         * specified regular expression.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code AzureStorageDataLakeRegex}.
+         */
+        public String azureStorageDataLakeRegex() {
+            return "AzureStorageDataLakeRegex";
+        }
+
+        /**
+         * Directory in which the file is to be downloaded.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code AzureStorageDataLakeFileDir}.
+         */
+        public String azureStorageDataLakeFileDir() {
+            return "AzureStorageDataLakeFileDir";
+        }
+
+        /**
+         * Access tier of file.
+         * 
+         * The option is a: {@code AccessTier} type.
+         * 
+         * Group: from component
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeAccessTier}.
+         */
+        public String azureStorageDataLakeAccessTier() {
+            return "AzureStorageDataLakeAccessTier";
+        }
+
+        /**
+         * An MD5 hash of the content. The hash is used to verify the integrity
+         * of the file during transport.
+         * 
+         * The option is a: {@code byte[]} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeContentMD5}.
+         */
+        public String azureStorageDataLakeContentMD5() {
+            return "AzureStorageDataLakeContentMD5";
+        }
+
+        /**
+         * This is a representation of a range of bytes on a file, typically
+         * used during a download operation. Passing null as a FileRange value
+         * will default to the entire range of the file.
+         * 
+         * The option is a: {@code FileRange} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code AzureStorageDataLakeFileRange}.
+         */
+        public String azureStorageDataLakeFileRange() {
+            return "AzureStorageDataLakeFileRange";
+        }
+
+        /**
+         * The configuration used to parallelize data transfer operations.
+         * 
+         * The option is a: {@code ParallelTransferOptions} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeParallelTransferOptions}.
+         */
+        public String azureStorageDataLakeParallelTransferOptions() {
+            return "AzureStorageDataLakeParallelTransferOptions";
+        }
+
+        /**
+         * Set of OpenOption used to configure how to open or create a file.
+         * 
+         * The option is a: {@code Set<OpenOption>} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeOpenOptions}.
+         */
+        public String azureStorageDataLakeOpenOptions() {
+            return "AzureStorageDataLakeOpenOptions";
+        }
+
+        /**
+         * Datetime when the access tier of the blob last changed.
+         * 
+         * The option is a: {@code OffsetDateTime} type.
+         * 
+         * Group: from component
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeAccessTierChangeTime}.
+         */
+        public String azureStorageDataLakeAccessTierChangeTime() {
+            return "AzureStorageDataLakeAccessTierChangeTime";
+        }
+
+        /**
+         * Archive status of file.
+         * 
+         * The option is a: {@code ArchiveStatus} type.
+         * 
+         * Group: from component
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeArchiveStatus}.
+         */
+        public String azureStorageDataLakeArchiveStatus() {
+            return "AzureStorageDataLakeArchiveStatus";
+        }
+
+        /**
+         * Cache control specified for the file.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: from component
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeCacheControl}.
+         */
+        public String azureStorageDataLakeCacheControl() {
+            return "AzureStorageDataLakeCacheControl";
+        }
+
+        /**
+         * Content disposition specified for the file.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: from component
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeContentDisposition}.
+         */
+        public String azureStorageDataLakeContentDisposition() {
+            return "AzureStorageDataLakeContentDisposition";
+        }
+
+        /**
+         * Content encoding specified for the file.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: from component
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeContentEncoding}.
+         */
+        public String azureStorageDataLakeContentEncoding() {
+            return "AzureStorageDataLakeContentEncoding";
+        }
+
+        /**
+         * Content language specified for the file.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: from component
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeContentLanguage}.
+         */
+        public String azureStorageDataLakeContentLanguage() {
+            return "AzureStorageDataLakeContentLanguage";
+        }
+
+        /**
+         * Content type specified for the file.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: from component
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeContentType}.
+         */
+        public String azureStorageDataLakeContentType() {
+            return "AzureStorageDataLakeContentType";
+        }
+
+        /**
+         * Conclusion time of the last attempted Copy Blob operation where this
+         * file was the destination file.
+         * 
+         * The option is a: {@code OffsetDateTime} type.
+         * 
+         * Group: from component
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeCopyCompletionTime}.
+         */
+        public String azureStorageDataLakeCopyCompletionTime() {
+            return "AzureStorageDataLakeCopyCompletionTime";
+        }
+
+        /**
+         * String identifier for this copy operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: from component
+         * 
+         * @return the name of the header {@code AzureStorageDataLakeCopyId}.
+         */
+        public String azureStorageDataLakeCopyId() {
+            return "AzureStorageDataLakeCopyId";
+        }
+
+        /**
+         * Contains the number of bytes copied and the total bytes in the source
+         * in the last attempted Copy Blob operation where this file was the
+         * destination file.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: from component
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeCopyProgress}.
+         */
+        public String azureStorageDataLakeCopyProgress() {
+            return "AzureStorageDataLakeCopyProgress";
+        }
+
+        /**
+         * URL up to 2 KB in length that specifies the source file or file used
+         * in the last attempted Copy Blob operation where this file was the
+         * destination file.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: from component
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeCopySource}.
+         */
+        public String azureStorageDataLakeCopySource() {
+            return "AzureStorageDataLakeCopySource";
+        }
+
+        /**
+         * Status of the last copy operation performed on the file.
+         * 
+         * The option is a: {@code
+         * com.azure.storage.file.datalake.models.CopyStatusType} type.
+         * 
+         * Group: from component
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeCopyStatus}.
+         */
+        public String azureStorageDataLakeCopyStatus() {
+            return "AzureStorageDataLakeCopyStatus";
+        }
+
+        /**
+         * The description of the copy's status.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: from component
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeCopyStatusDescription}.
+         */
+        public String azureStorageDataLakeCopyStatusDescription() {
+            return "AzureStorageDataLakeCopyStatusDescription";
+        }
+
+        /**
+         * Creation time of the file.
+         * 
+         * The option is a: {@code OffsetDateTime} type.
+         * 
+         * Group: from component
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeCreationTime}.
+         */
+        public String azureStorageDataLakeCreationTime() {
+            return "AzureStorageDataLakeCreationTime";
+        }
+
+        /**
+         * The SHA-256 hash of the encryption key used to encrypt the file.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: from component
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeEncryptionKeySha256}.
+         */
+        public String azureStorageDataLakeEncryptionKeySha256() {
+            return "AzureStorageDataLakeEncryptionKeySha256";
+        }
+
+        /**
+         * The E Tag of the file.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: from component
+         * 
+         * @return the name of the header {@code AzureStorageDataLakeETag}.
+         */
+        public String azureStorageDataLakeETag() {
+            return "AzureStorageDataLakeETag";
+        }
+
+        /**
+         * Size of the file.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: from component
+         * 
+         * @return the name of the header {@code AzureStorageDataLakeFileSize}.
+         */
+        public String azureStorageDataLakeFileSize() {
+            return "AzureStorageDataLakeFileSize";
+        }
+
+        /**
+         * Datetime when the file was last modified.
+         * 
+         * The option is a: {@code OffsetDateTime} type.
+         * 
+         * Group: from component
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeLastModified}.
+         */
+        public String azureStorageDataLakeLastModified() {
+            return "AzureStorageDataLakeLastModified";
+        }
+
+        /**
+         * Type of lease on the file.
+         * 
+         * The option is a: {@code
+         * com.azure.storage.file.datalake.models.LeaseDurationType} type.
+         * 
+         * Group: from component
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeLeaseDuration}.
+         */
+        public String azureStorageDataLakeLeaseDuration() {
+            return "AzureStorageDataLakeLeaseDuration";
+        }
+
+        /**
+         * State of the lease on the file.
+         * 
+         * The option is a: {@code
+         * com.azure.storage.file.datalake.models.LeaseStateType} type.
+         * 
+         * Group: from component
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeLeaseState}.
+         */
+        public String azureStorageDataLakeLeaseState() {
+            return "AzureStorageDataLakeLeaseState";
+        }
+
+        /**
+         * Status of the lease on the file.
+         * 
+         * The option is a: {@code
+         * com.azure.storage.file.datalake.models.LeaseStatusType} type.
+         * 
+         * Group: from component
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeLeaseStatus}.
+         */
+        public String azureStorageDataLakeLeaseStatus() {
+            return "AzureStorageDataLakeLeaseStatus";
+        }
+
+        /**
+         * Flag indicating if the file was incrementally copied.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeIncrementalCopy}.
+         */
+        public String azureStorageDataLakeIncrementalCopy() {
+            return "AzureStorageDataLakeIncrementalCopy";
+        }
+
+        /**
+         * Flag indicating if the file's content is encrypted on the server.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: from component
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeServerEncrypted}.
+         */
+        public String azureStorageDataLakeServerEncrypted() {
+            return "AzureStorageDataLakeServerEncrypted";
+        }
+
+        /**
+         * Set the Expiration time of the download link.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeDownloadLinkExpiration}.
+         */
+        public String azureStorageDataLakeDownloadLinkExpiration() {
+            return "AzureStorageDataLakeDownloadLinkExpiration";
+        }
+
+        /**
+         * The link that can be used to download the file from datalake.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: from component
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeDownloadLink}.
+         */
+        public String azureStorageDataLakeDownloadLink() {
+            return "AzureStorageDataLakeDownloadLink";
+        }
+
+        /**
+         * The position where the data is to be appended.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeFileOffset}.
+         */
+        public String azureStorageDataLakeFileOffset() {
+            return "AzureStorageDataLakeFileOffset";
+        }
+
+        /**
+         * By setting lease id, requests will fail if the provided lease does
+         * not match the active lease on the file.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code AzureStorageDataLakeLeaseId}.
+         */
+        public String azureStorageDataLakeLeaseId() {
+            return "AzureStorageDataLakeLeaseId";
+        }
+
+        /**
+         * Additional parameters for a set of operations.
+         * 
+         * The option is a: {@code PathHttpHeaders} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakePathHttpHeaders}.
+         */
+        public String azureStorageDataLakePathHttpHeaders() {
+            return "AzureStorageDataLakePathHttpHeaders";
+        }
+
+        /**
+         * Determines Whether or not uncommitted data is to be retained after
+         * the operation.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeRetainCommitedData}.
+         */
+        public String azureStorageDataLakeRetainCommitedData() {
+            return "AzureStorageDataLakeRetainCommitedData";
+        }
+
+        /**
+         * Whether or not a file changed event raised indicates completion
+         * (true) or modification (false).
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code AzureStorageDataLakeClose}.
+         */
+        public String azureStorageDataLakeClose() {
+            return "AzureStorageDataLakeClose";
+        }
+
+        /**
+         * The length of the file after all data has been written.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code AzureStorageDataLakePosition}.
+         */
+        public String azureStorageDataLakePosition() {
+            return "AzureStorageDataLakePosition";
+        }
+
+        /**
+         * The query expression on the file.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeExpression}.
+         */
+        public String azureStorageDataLakeExpression() {
+            return "AzureStorageDataLakeExpression";
+        }
+
+        /**
+         * Defines the input serialization for a file query request. either
+         * FileQueryJsonSerialization or FileQueryDelimitedSerialization.
+         * 
+         * The option is a: {@code FileQuerySerialization} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeInputSerialization}.
+         */
+        public String azureStorageDataLakeInputSerialization() {
+            return "AzureStorageDataLakeInputSerialization";
+        }
+
+        /**
+         * Defines the output serialization for a file query request. either
+         * FileQueryJsonSerialization or FileQueryDelimitedSerialization.
+         * 
+         * The option is a: {@code FileQuerySerialization} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeOutputSerialization}.
+         */
+        public String azureStorageDataLakeOutputSerialization() {
+            return "AzureStorageDataLakeOutputSerialization";
+        }
+
+        /**
+         * Sets error consumer for file query.
+         * 
+         * The option is a: {@code Consumer<FileQueryError>} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeErrorConsumer}.
+         */
+        public String azureStorageDataLakeErrorConsumer() {
+            return "AzureStorageDataLakeErrorConsumer";
+        }
+
+        /**
+         * Sets progress consumer for file query.
+         * 
+         * The option is a: {@code Consumer<FileQueryProgress>} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeProgressConsumer}.
+         */
+        public String azureStorageDataLakeProgressConsumer() {
+            return "AzureStorageDataLakeProgressConsumer";
+        }
+
+        /**
+         * Optional parameters for File Query.
+         * 
+         * The option is a: {@code FileQueryOptions} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakeQueryOptions}.
+         */
+        public String azureStorageDataLakeQueryOptions() {
+            return "AzureStorageDataLakeQueryOptions";
+        }
+
+        /**
+         * Sets the permission for file.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code
+         * AzureStorageDataLakePermission}.
+         */
+        public String azureStorageDataLakePermission() {
+            return "AzureStorageDataLakePermission";
+        }
+
+        /**
+         * Sets the umask for file.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: from user
+         * 
+         * @return the name of the header {@code AzureStorageDataLakeUmask}.
+         */
+        public String azureStorageDataLakeUmask() {
+            return "AzureStorageDataLakeUmask";
         }
     }
     static DataLakeEndpointBuilder endpointBuilder(

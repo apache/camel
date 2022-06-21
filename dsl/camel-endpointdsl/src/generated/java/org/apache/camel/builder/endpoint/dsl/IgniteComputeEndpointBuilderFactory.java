@@ -316,6 +316,19 @@ public interface IgniteComputeEndpointBuilderFactory {
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-ignite
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default IgniteComputeHeaderNameBuilder igniteCompute() {
+            return IgniteComputeHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Ignite Compute (camel-ignite)
+         * Run compute operations on an Ignite cluster.
+         * 
+         * Category: compute
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-ignite
+         * 
          * Syntax: <code>ignite-compute:endpointId</code>
          * 
          * Path parameter: endpointId (required)
@@ -349,6 +362,86 @@ public interface IgniteComputeEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return IgniteComputeEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Ignite Compute component.
+     */
+    public static class IgniteComputeHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final IgniteComputeHeaderNameBuilder INSTANCE = new IgniteComputeHeaderNameBuilder();
+
+        /**
+         * Allows you to dynamically change the compute operation to perform.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.ignite.compute.IgniteComputeExecutionType}
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IgniteComputeExecutionType}.
+         */
+        public String igniteComputeExecutionType() {
+            return "IgniteComputeExecutionType";
+        }
+
+        /**
+         * Parameters for APPLY, BROADCAST and EXECUTE operations.
+         * 
+         * The option is a: {@code Any object or Collection of objects} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IgniteComputeParameters}.
+         */
+        public String igniteComputeParameters() {
+            return "IgniteComputeParameters";
+        }
+
+        /**
+         * Reducer for the APPLY and CALL operations.
+         * 
+         * The option is a: {@code org.apache.ignite.lang.IgniteReducer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IgniteComputeReducer}.
+         */
+        public String igniteComputeReducer() {
+            return "IgniteComputeReducer";
+        }
+
+        /**
+         * Affinity cache name for the AFFINITY_CALL and AFFINITY_RUN
+         * operations.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * IgniteComputeAffinityCacheName}.
+         */
+        public String igniteComputeAffinityCacheName() {
+            return "IgniteComputeAffinityCacheName";
+        }
+
+        /**
+         * Affinity key for the AFFINITY_CALL and AFFINITY_RUN operations.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IgniteComputeAffinityKey}.
+         */
+        public String igniteComputeAffinityKey() {
+            return "IgniteComputeAffinityKey";
         }
     }
     static IgniteComputeEndpointBuilder endpointBuilder(

@@ -443,6 +443,20 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default KubernetesConfigMapsHeaderNameBuilder kubernetesConfigMaps() {
+            return KubernetesConfigMapsHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Kubernetes ConfigMap (camel-kubernetes)
+         * Perform operations on Kubernetes ConfigMaps and get notified on
+         * ConfigMaps changes.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
          * Syntax: <code>kubernetes-config-maps:masterUrl</code>
          * 
          * Path parameter: masterUrl (required)
@@ -478,6 +492,109 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return KubernetesConfigMapsEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Kubernetes ConfigMap component.
+     */
+    public static class KubernetesConfigMapsHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final KubernetesConfigMapsHeaderNameBuilder INSTANCE = new KubernetesConfigMapsHeaderNameBuilder();
+
+        /**
+         * The Producer operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesOperation}.
+         */
+        public String kubernetesOperation() {
+            return "KubernetesOperation";
+        }
+
+        /**
+         * The namespace name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesNamespaceName}.
+         */
+        public String kubernetesNamespaceName() {
+            return "KubernetesNamespaceName";
+        }
+
+        /**
+         * The ConfigMap labels.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesConfigMapsLabels}.
+         */
+        public String kubernetesConfigMapsLabels() {
+            return "KubernetesConfigMapsLabels";
+        }
+
+        /**
+         * The ConfigMap name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesConfigMapName}.
+         */
+        public String kubernetesConfigMapName() {
+            return "KubernetesConfigMapName";
+        }
+
+        /**
+         * The ConfigMap Data.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesConfigData}.
+         */
+        public String kubernetesConfigData() {
+            return "KubernetesConfigData";
+        }
+
+        /**
+         * Action watched by the consumer.
+         * 
+         * The option is a: {@code io.fabric8.kubernetes.client.Watcher.Action}
+         * type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code KubernetesEventAction}.
+         */
+        public String kubernetesEventAction() {
+            return "KubernetesEventAction";
+        }
+
+        /**
+         * Timestamp of the action watched by the consumer.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code KubernetesEventTimestamp}.
+         */
+        public String kubernetesEventTimestamp() {
+            return "KubernetesEventTimestamp";
         }
     }
     static KubernetesConfigMapsEndpointBuilder endpointBuilder(

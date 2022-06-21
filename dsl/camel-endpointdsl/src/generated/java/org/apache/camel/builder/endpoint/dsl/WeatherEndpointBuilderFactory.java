@@ -2175,6 +2175,19 @@ public interface WeatherEndpointBuilderFactory {
          * Since: 2.12
          * Maven coordinates: org.apache.camel:camel-weather
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default WeatherHeaderNameBuilder weather() {
+            return WeatherHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Weather (camel-weather)
+         * Poll the weather information from Open Weather Map.
+         * 
+         * Category: api
+         * Since: 2.12
+         * Maven coordinates: org.apache.camel:camel-weather
+         * 
          * Syntax: <code>weather:name</code>
          * 
          * Path parameter: name (required)
@@ -2206,6 +2219,44 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointBuilder weather(String componentName, String path) {
             return WeatherEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Weather component.
+     */
+    public static class WeatherHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final WeatherHeaderNameBuilder INSTANCE = new WeatherHeaderNameBuilder();
+
+        /**
+         * Used by the producer to override the endpoint location and use the
+         * location from this header instead.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code WeatherLocation}.
+         */
+        public String weatherLocation() {
+            return "WeatherLocation";
+        }
+
+        /**
+         * The original query URL sent to the Open Weather Map site.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code WeatherQuery}.
+         */
+        public String weatherQuery() {
+            return "WeatherQuery";
         }
     }
     static WeatherEndpointBuilder endpointBuilder(

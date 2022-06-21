@@ -938,6 +938,19 @@ public interface DataSetEndpointBuilderFactory {
          * Since: 1.3
          * Maven coordinates: org.apache.camel:camel-dataset
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default DataSetHeaderNameBuilder dataset() {
+            return DataSetHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Dataset (camel-dataset)
+         * Provide data for load and soak testing of your Camel application.
+         * 
+         * Category: core,testing
+         * Since: 1.3
+         * Maven coordinates: org.apache.camel:camel-dataset
+         * 
          * Syntax: <code>dataset:name</code>
          * 
          * Path parameter: name (required)
@@ -969,6 +982,30 @@ public interface DataSetEndpointBuilderFactory {
          */
         default DataSetEndpointBuilder dataset(String componentName, String path) {
             return DataSetEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Dataset component.
+     */
+    public static class DataSetHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final DataSetHeaderNameBuilder INSTANCE = new DataSetHeaderNameBuilder();
+
+        /**
+         * The dataset index.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DataSetIndex}.
+         */
+        public String dataSetIndex() {
+            return "DataSetIndex";
         }
     }
     static DataSetEndpointBuilder endpointBuilder(

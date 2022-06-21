@@ -1726,6 +1726,20 @@ public interface CouchbaseEndpointBuilderFactory {
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-couchbase
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default CouchbaseHeaderNameBuilder couchbase() {
+            return CouchbaseHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Couchbase (camel-couchbase)
+         * Query Couchbase Views with a poll strategy and/or perform various
+         * operations against Couchbase databases.
+         * 
+         * Category: database,nosql
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-couchbase
+         * 
          * Syntax: <code>couchbase:protocol://hostname:port</code>
          * 
          * Path parameter: protocol (required)
@@ -1774,6 +1788,95 @@ public interface CouchbaseEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return CouchbaseEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Couchbase component.
+     */
+    public static class CouchbaseHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final CouchbaseHeaderNameBuilder INSTANCE = new CouchbaseHeaderNameBuilder();
+
+        /**
+         * The key.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code CCB_KEY}.
+         */
+        public String ccbKey() {
+            return "CCB_KEY";
+        }
+
+        /**
+         * The document id.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code CCB_ID}.
+         */
+        public String ccbId() {
+            return "CCB_ID";
+        }
+
+        /**
+         * The expiry for the document in seconds.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code CCB_TTL}.
+         */
+        public String ccbTtl() {
+            return "CCB_TTL";
+        }
+
+        /**
+         * The design document name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code CCB_DDN}.
+         */
+        public String ccbDdn() {
+            return "CCB_DDN";
+        }
+
+        /**
+         * The view name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code CCB_VN}.
+         */
+        public String ccbVn() {
+            return "CCB_VN";
+        }
+
+        /**
+         * The resume action to execute when resuming.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code CqlResumeQuery}.
+         */
+        public String cqlResumeQuery() {
+            return "CqlResumeQuery";
         }
     }
     static CouchbaseEndpointBuilder endpointBuilder(

@@ -1430,6 +1430,20 @@ public interface KubernetesCustomResourcesEndpointBuilderFactory {
          * Since: 3.7
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default KubernetesCustomResourcesHeaderNameBuilder kubernetesCustomResources() {
+            return KubernetesCustomResourcesHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Kubernetes Custom Resources (camel-kubernetes)
+         * Perform operations on Kubernetes Custom Resources and get notified on
+         * Deployment changes.
+         * 
+         * Category: container,cloud,paas
+         * Since: 3.7
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
          * Syntax: <code>kubernetes-custom-resources:masterUrl</code>
          * 
          * Path parameter: masterUrl (required)
@@ -1465,6 +1479,188 @@ public interface KubernetesCustomResourcesEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return KubernetesCustomResourcesEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Kubernetes Custom Resources
+     * component.
+     */
+    public static class KubernetesCustomResourcesHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final KubernetesCustomResourcesHeaderNameBuilder INSTANCE = new KubernetesCustomResourcesHeaderNameBuilder();
+
+        /**
+         * The Producer operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesOperation}.
+         */
+        public String kubernetesOperation() {
+            return "KubernetesOperation";
+        }
+
+        /**
+         * The namespace name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesNamespaceName}.
+         */
+        public String kubernetesNamespaceName() {
+            return "KubernetesNamespaceName";
+        }
+
+        /**
+         * The deployment name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesCRDInstanceName}.
+         */
+        public String kubernetesCRDInstanceName() {
+            return "KubernetesCRDInstanceName";
+        }
+
+        /**
+         * Timestamp of the action watched by the consumer.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code KubernetesCRDEventTimestamp}.
+         */
+        public String kubernetesCRDEventTimestamp() {
+            return "KubernetesCRDEventTimestamp";
+        }
+
+        /**
+         * Action watched by the consumer.
+         * 
+         * The option is a: {@code io.fabric8.kubernetes.client.Watcher.Action}
+         * type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code KubernetesCRDEventAction}.
+         */
+        public String kubernetesCRDEventAction() {
+            return "KubernetesCRDEventAction";
+        }
+
+        /**
+         * The Consumer CRD Resource name we would like to watch.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesCRDName}.
+         */
+        public String kubernetesCRDName() {
+            return "KubernetesCRDName";
+        }
+
+        /**
+         * The Consumer CRD Resource Group we would like to watch.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesCRDGroup}.
+         */
+        public String kubernetesCRDGroup() {
+            return "KubernetesCRDGroup";
+        }
+
+        /**
+         * The Consumer CRD Resource Scope we would like to watch.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesCRDScope}.
+         */
+        public String kubernetesCRDScope() {
+            return "KubernetesCRDScope";
+        }
+
+        /**
+         * The Consumer CRD Resource Version we would like to watch.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesCRDVersion}.
+         */
+        public String kubernetesCRDVersion() {
+            return "KubernetesCRDVersion";
+        }
+
+        /**
+         * The Consumer CRD Resource Plural we would like to watch.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesCRDPlural}.
+         */
+        public String kubernetesCRDPlural() {
+            return "KubernetesCRDPlural";
+        }
+
+        /**
+         * The CRD resource labels.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesCRDLabels}.
+         */
+        public String kubernetesCRDLabels() {
+            return "KubernetesCRDLabels";
+        }
+
+        /**
+         * The manifest of the CRD resource to create as JSON string.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesCRDInstance}.
+         */
+        public String kubernetesCRDInstance() {
+            return "KubernetesCRDInstance";
+        }
+
+        /**
+         * The result of the delete operation.
+         * 
+         * The option is a: {@code boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesDeleteResult}.
+         */
+        public String kubernetesDeleteResult() {
+            return "KubernetesDeleteResult";
         }
     }
     static KubernetesCustomResourcesEndpointBuilder endpointBuilder(

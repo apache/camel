@@ -562,6 +562,20 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Since: 2.3
          * Maven coordinates: org.apache.camel:camel-crypto
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default DigitalSignatureHeaderNameBuilder crypto() {
+            return DigitalSignatureHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Crypto (JCE) (camel-crypto)
+         * Sign and verify exchanges using the Signature Service of the Java
+         * Cryptographic Extension (JCE).
+         * 
+         * Category: security,transformation
+         * Since: 2.3
+         * Maven coordinates: org.apache.camel:camel-crypto
+         * 
          * Syntax: <code>crypto:cryptoOperation:name</code>
          * 
          * Path parameter: cryptoOperation (required)
@@ -606,6 +620,71 @@ public interface DigitalSignatureEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return DigitalSignatureEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Crypto (JCE) component.
+     */
+    public static class DigitalSignatureHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final DigitalSignatureHeaderNameBuilder INSTANCE = new DigitalSignatureHeaderNameBuilder();
+
+        /**
+         * The PrivateKey that should be used to sign the message.
+         * 
+         * The option is a: {@code java.security.PrivateKey} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SignaturePrivateKey}.
+         */
+        public String signaturePrivateKey() {
+            return "SignaturePrivateKey";
+        }
+
+        /**
+         * The Certificate or PublicKey that should be used to verify the
+         * signature.
+         * 
+         * The option is a: {@code Certificate or PublicKey} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SignaturePublicKeyOrCert}.
+         */
+        public String signaturePublicKeyOrCert() {
+            return "SignaturePublicKeyOrCert";
+        }
+
+        /**
+         * The alias used to query the KeyStore for keys and Certificates to be
+         * used in signing and verifying exchanges.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SignatureKeyStoreAlias}.
+         */
+        public String signatureKeyStoreAlias() {
+            return "SignatureKeyStoreAlias";
+        }
+
+        /**
+         * The password used to access an aliased PrivateKey in the KeyStore.
+         * 
+         * The option is a: {@code char[]} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SignatureKeyStorePassword}.
+         */
+        public String signatureKeyStorePassword() {
+            return "SignatureKeyStorePassword";
         }
     }
     static DigitalSignatureEndpointBuilder endpointBuilder(

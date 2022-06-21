@@ -1442,6 +1442,19 @@ public interface HttpEndpointBuilderFactory {
          * Since: 2.3
          * Maven coordinates: org.apache.camel:camel-http
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default HttpHeaderNameBuilder http() {
+            return HttpHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * HTTP (camel-http)
+         * Send requests to external HTTP servers using Apache HTTP Client 4.x.
+         * 
+         * Category: http
+         * Since: 2.3
+         * Maven coordinates: org.apache.camel:camel-http
+         * 
          * Syntax: <code>http://httpUri</code>
          * 
          * Path parameter: httpUri (required)
@@ -1492,6 +1505,208 @@ public interface HttpEndpointBuilderFactory {
          */
         default HttpEndpointBuilder https(String path) {
             return HttpEndpointBuilderFactory.endpointBuilder("https", path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the HTTP component.
+     */
+    public static class HttpHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final HttpHeaderNameBuilder INSTANCE = new HttpHeaderNameBuilder();
+
+        /**
+         * The HTTP content encoding. Is set on both the IN and OUT message to
+         * provide a content encoding, such as gzip.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code Content-Encoding}.
+         */
+        public String contentEncoding() {
+            return "Content-Encoding";
+        }
+
+        /**
+         * The HTTP response code from the external server. Is 200 for OK.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpResponseCode}.
+         */
+        public String httpResponseCode() {
+            return "HttpResponseCode";
+        }
+
+        /**
+         * The HTTP response text from the external server.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpResponseText}.
+         */
+        public String httpResponseText() {
+            return "HttpResponseText";
+        }
+
+        /**
+         * URI parameters. Will override existing URI parameters set directly on
+         * the endpoint.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpQuery}.
+         */
+        public String httpQuery() {
+            return "HttpQuery";
+        }
+
+        /**
+         * The version of the http protocol used.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpProtocolVersion}.
+         */
+        public String httpProtocolVersion() {
+            return "HttpProtocolVersion";
+        }
+
+        /**
+         * The target host.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code Host}.
+         */
+        public String host() {
+            return "Host";
+        }
+
+        /**
+         * The rest http URI.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code RestHttpUri}.
+         */
+        public String restHttpUri() {
+            return "RestHttpUri";
+        }
+
+        /**
+         * URI to call. Will override existing URI set directly on the endpoint.
+         * This uri is the uri of the http server to call. Its not the same as
+         * the Camel endpoint uri, where you can configure endpoint options such
+         * as security etc. This header does not support that, its only the uri
+         * of the http server.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpUri}.
+         */
+        public String httpUri() {
+            return "HttpUri";
+        }
+
+        /**
+         * Request URI's path, the header will be used to build the request URI
+         * with the HTTP_URI.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpPath}.
+         */
+        public String httpPath() {
+            return "HttpPath";
+        }
+
+        /**
+         * The rest http query.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code RestHttpQuery}.
+         */
+        public String restHttpQuery() {
+            return "RestHttpQuery";
+        }
+
+        /**
+         * The http raw query.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpRawQuery}.
+         */
+        public String httpRawQuery() {
+            return "HttpRawQuery";
+        }
+
+        /**
+         * The http method to use.
+         * 
+         * The option is a: {@code org.apache.camel.component.http.HttpMethods}
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpMethod}.
+         */
+        public String httpMethod() {
+            return "HttpMethod";
+        }
+
+        /**
+         * The character encoding.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpCharacterEncoding}.
+         */
+        public String httpCharacterEncoding() {
+            return "HttpCharacterEncoding";
+        }
+
+        /**
+         * The HTTP content type. Is set on both the IN and OUT message to
+         * provide a content type, such as text/html.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code Content-Type}.
+         */
+        public String contentType() {
+            return "Content-Type";
         }
     }
     static HttpEndpointBuilder endpointBuilder(String componentName, String path) {

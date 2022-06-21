@@ -460,6 +460,19 @@ public interface PgEventEndpointBuilderFactory {
          * Since: 2.15
          * Maven coordinates: org.apache.camel:camel-pgevent
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default PgEventHeaderNameBuilder pgevent() {
+            return PgEventHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * PostgresSQL Event (camel-pgevent)
+         * Send and receive PostgreSQL events via LISTEN and NOTIFY commands.
+         * 
+         * Category: database,sql
+         * Since: 2.15
+         * Maven coordinates: org.apache.camel:camel-pgevent
+         * 
          * Syntax: <code>pgevent:host:port/database/channel</code>
          * 
          * Path parameter: host
@@ -517,6 +530,30 @@ public interface PgEventEndpointBuilderFactory {
          */
         default PgEventEndpointBuilder pgevent(String componentName, String path) {
             return PgEventEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the PostgresSQL Event component.
+     */
+    public static class PgEventHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final PgEventHeaderNameBuilder INSTANCE = new PgEventHeaderNameBuilder();
+
+        /**
+         * The name of the channel.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code channel}.
+         */
+        public String channel() {
+            return "channel";
         }
     }
     static PgEventEndpointBuilder endpointBuilder(

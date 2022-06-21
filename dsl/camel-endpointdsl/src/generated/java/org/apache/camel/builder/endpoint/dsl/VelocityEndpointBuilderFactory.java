@@ -287,6 +287,19 @@ public interface VelocityEndpointBuilderFactory {
          * Since: 1.2
          * Maven coordinates: org.apache.camel:camel-velocity
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default VelocityHeaderNameBuilder velocity() {
+            return VelocityHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Velocity (camel-velocity)
+         * Transform messages using a Velocity template.
+         * 
+         * Category: transformation
+         * Since: 1.2
+         * Maven coordinates: org.apache.camel:camel-velocity
+         * 
          * Syntax: <code>velocity:resourceUri</code>
          * 
          * Path parameter: resourceUri (required)
@@ -330,6 +343,73 @@ public interface VelocityEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return VelocityEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Velocity component.
+     */
+    public static class VelocityHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final VelocityHeaderNameBuilder INSTANCE = new VelocityHeaderNameBuilder();
+
+        /**
+         * The name of the velocity template.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code VelocityResourceUri}.
+         */
+        public String velocityResourceUri() {
+            return "VelocityResourceUri";
+        }
+
+        /**
+         * The content of the velocity template.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code VelocityTemplate}.
+         */
+        public String velocityTemplate() {
+            return "VelocityTemplate";
+        }
+
+        /**
+         * The velocity context to use.
+         * 
+         * The option is a: {@code org.apache.velocity.context.Context} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code VelocityContext}.
+         */
+        public String velocityContext() {
+            return "VelocityContext";
+        }
+
+        /**
+         * To add additional information to the used VelocityContext. The value
+         * of this header should be a Map with key/values that will added
+         * (override any existing key with the same name). This can be used to
+         * pre setup some common key/values you want to reuse in your velocity
+         * endpoints.
+         * 
+         * The option is a: {@code Map<String, Object>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code VelocitySupplementalContext}.
+         */
+        public String velocitySupplementalContext() {
+            return "VelocitySupplementalContext";
         }
     }
     static VelocityEndpointBuilder endpointBuilder(

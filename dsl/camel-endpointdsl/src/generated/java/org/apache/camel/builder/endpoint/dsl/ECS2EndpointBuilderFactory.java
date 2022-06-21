@@ -451,6 +451,19 @@ public interface ECS2EndpointBuilderFactory {
          * Since: 3.1
          * Maven coordinates: org.apache.camel:camel-aws2-ecs
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default ECS2HeaderNameBuilder aws2Ecs() {
+            return ECS2HeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * AWS Elastic Container Service (ECS) (camel-aws2-ecs)
+         * Manage AWS ECS cluster instances using AWS SDK version 2.x.
+         * 
+         * Category: cloud,management
+         * Since: 3.1
+         * Maven coordinates: org.apache.camel:camel-aws2-ecs
+         * 
          * Syntax: <code>aws2-ecs:label</code>
          * 
          * Path parameter: label (required)
@@ -482,6 +495,57 @@ public interface ECS2EndpointBuilderFactory {
          */
         default ECS2EndpointBuilder aws2Ecs(String componentName, String path) {
             return ECS2EndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the AWS Elastic Container Service (ECS)
+     * component.
+     */
+    public static class ECS2HeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final ECS2HeaderNameBuilder INSTANCE = new ECS2HeaderNameBuilder();
+
+        /**
+         * The operation we want to perform.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsECSOperation}.
+         */
+        public String awsECSOperation() {
+            return "AwsECSOperation";
+        }
+
+        /**
+         * The limit number of results while listing clusters.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsECSMaxResults}.
+         */
+        public String awsECSMaxResults() {
+            return "AwsECSMaxResults";
+        }
+
+        /**
+         * The cluster name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsECSClusterName}.
+         */
+        public String awsECSClusterName() {
+            return "AwsECSClusterName";
         }
     }
     static ECS2EndpointBuilder endpointBuilder(String componentName, String path) {

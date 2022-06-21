@@ -1722,6 +1722,19 @@ public interface QueueEndpointBuilderFactory {
          * Since: 3.3
          * Maven coordinates: org.apache.camel:camel-azure-storage-queue
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default QueueHeaderNameBuilder azureStorageQueue() {
+            return QueueHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Azure Storage Queue Service (camel-azure-storage-queue)
+         * Stores and retrieves messages to/from Azure Storage Queue.
+         * 
+         * Category: cloud,messaging
+         * Since: 3.3
+         * Maven coordinates: org.apache.camel:camel-azure-storage-queue
+         * 
          * Syntax: <code>azure-storage-queue:accountName/queueName</code>
          * 
          * Path parameter: accountName
@@ -1763,6 +1776,246 @@ public interface QueueEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return QueueEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Azure Storage Queue Service
+     * component.
+     */
+    public static class QueueHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final QueueHeaderNameBuilder INSTANCE = new QueueHeaderNameBuilder();
+
+        /**
+         * Returns non-parsed httpHeaders that can be used by the user.
+         * 
+         * The option is a: {@code HttpHeaders} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * AzureStorageQueueRawHttpHeaders}.
+         */
+        public String azureStorageQueueRawHttpHeaders() {
+            return "AzureStorageQueueRawHttpHeaders";
+        }
+
+        /**
+         * (createQueue) Metadata to associate with the queue.
+         * 
+         * The option is a: {@code Map<String,String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureStorageQueueMetadata}.
+         */
+        public String azureStorageQueueMetadata() {
+            return "AzureStorageQueueMetadata";
+        }
+
+        /**
+         * The ID of the message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AzureStorageQueueMessageId}.
+         */
+        public String azureStorageQueueMessageId() {
+            return "AzureStorageQueueMessageId";
+        }
+
+        /**
+         * The time the Message was inserted into the Queue.
+         * 
+         * The option is a: {@code OffsetDateTime} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * AzureStorageQueueInsertionTime}.
+         */
+        public String azureStorageQueueInsertionTime() {
+            return "AzureStorageQueueInsertionTime";
+        }
+
+        /**
+         * The time that the Message will expire and be automatically deleted.
+         * 
+         * The option is a: {@code OffsetDateTime} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * AzureStorageQueueExpirationTime}.
+         */
+        public String azureStorageQueueExpirationTime() {
+            return "AzureStorageQueueExpirationTime";
+        }
+
+        /**
+         * (deleteMessage, updateMessage) Unique identifier that must match for
+         * the message to be deleted or updated. If deletion fails using this
+         * pop receipt then the message has been dequeued by another client.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureStorageQueuePopReceipt}.
+         */
+        public String azureStorageQueuePopReceipt() {
+            return "AzureStorageQueuePopReceipt";
+        }
+
+        /**
+         * The time that the message will again become visible in the Queue.
+         * 
+         * The option is a: {@code OffsetDateTime} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * AzureStorageQueueTimeNextVisible}.
+         */
+        public String azureStorageQueueTimeNextVisible() {
+            return "AzureStorageQueueTimeNextVisible";
+        }
+
+        /**
+         * The number of times the message has been dequeued.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AzureStorageQueueDequeueCount}.
+         */
+        public String azureStorageQueueDequeueCount() {
+            return "AzureStorageQueueDequeueCount";
+        }
+
+        /**
+         * (All) Specify the producer operation to execute, please see the doc
+         * on this page related to producer operation.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.azure.storage.queue.QueueOperationDefinition} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureStorageQueueOperation}.
+         */
+        public String azureStorageQueueOperation() {
+            return "AzureStorageQueueOperation";
+        }
+
+        /**
+         * (All) Override the queue name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureStorageQueueName}.
+         */
+        public String azureStorageQueueName() {
+            return "AzureStorageQueueName";
+        }
+
+        /**
+         * (listQueues) Options for listing queues.
+         * 
+         * The option is a: {@code QueuesSegmentOptions} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageQueueSegmentOptions}.
+         */
+        public String azureStorageQueueSegmentOptions() {
+            return "AzureStorageQueueSegmentOptions";
+        }
+
+        /**
+         * (All) An optional timeout value beyond which a RuntimeException will
+         * be raised.
+         * 
+         * The option is a: {@code Duration} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureStorageQueueTimeout}.
+         */
+        public String azureStorageQueueTimeout() {
+            return "AzureStorageQueueTimeout";
+        }
+
+        /**
+         * (receiveMessages, peekMessages) Maximum number of messages to get, if
+         * there are less messages exist in the queue than requested all the
+         * messages will be returned. If left empty only 1 message will be
+         * retrieved, the allowed range is 1 to 32 messages.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureStorageQueueMaxMessages}.
+         */
+        public String azureStorageQueueMaxMessages() {
+            return "AzureStorageQueueMaxMessages";
+        }
+
+        /**
+         * (sendMessage, receiveMessages, updateMessage) The timeout period for
+         * how long the message is invisible in the queue. If unset the value
+         * will default to 0 and the message will be instantly visible. The
+         * timeout must be between 0 seconds and 7 days.
+         * 
+         * The option is a: {@code Duration} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageQueueVisibilityTimeout}.
+         */
+        public String azureStorageQueueVisibilityTimeout() {
+            return "AzureStorageQueueVisibilityTimeout";
+        }
+
+        /**
+         * (sendMessage) How long the message will stay alive in the queue. If
+         * unset the value will default to 7 days, if -1 is passed the message
+         * will not expire. The time to live must be -1 or any positive number.
+         * 
+         * The option is a: {@code Duration} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureStorageQueueTimeToLive}.
+         */
+        public String azureStorageQueueTimeToLive() {
+            return "AzureStorageQueueTimeToLive";
+        }
+
+        /**
+         * (sendMessage) When is set to true, the queue will be automatically
+         * created when sending messages to the queue.
+         * 
+         * The option is a: {@code boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureStorageQueueCreateQueue}.
+         */
+        public String azureStorageQueueCreateQueue() {
+            return "AzureStorageQueueCreateQueue";
         }
     }
     static QueueEndpointBuilder endpointBuilder(

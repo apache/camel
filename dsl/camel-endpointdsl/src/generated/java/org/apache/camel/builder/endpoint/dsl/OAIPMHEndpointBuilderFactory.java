@@ -1324,6 +1324,19 @@ public interface OAIPMHEndpointBuilderFactory {
          * Since: 3.5
          * Maven coordinates: org.apache.camel:camel-oaipmh
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default OAIPMHHeaderNameBuilder oaipmh() {
+            return OAIPMHHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * OAI-PMH (camel-oaipmh)
+         * Harvest metadata using OAI-PMH protocol
+         * 
+         * Category: endpoint,webservice,batch
+         * Since: 3.5
+         * Maven coordinates: org.apache.camel:camel-oaipmh
+         * 
          * Syntax: <code>oaipmh:baseUrl</code>
          * 
          * Path parameter: baseUrl (required)
@@ -1357,6 +1370,31 @@ public interface OAIPMHEndpointBuilderFactory {
          */
         default OAIPMHEndpointBuilder oaipmh(String componentName, String path) {
             return OAIPMHEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the OAI-PMH component.
+     */
+    public static class OAIPMHHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final OAIPMHHeaderNameBuilder INSTANCE = new OAIPMHHeaderNameBuilder();
+
+        /**
+         * This header is obtained when onlyFirst option is enable. Return
+         * resumption token of the request when data is still available.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OaimphResumptionToken}.
+         */
+        public String oaimphResumptionToken() {
+            return "OaimphResumptionToken";
         }
     }
     static OAIPMHEndpointBuilder endpointBuilder(

@@ -1068,6 +1068,19 @@ public interface HBaseEndpointBuilderFactory {
          * Since: 2.10
          * Maven coordinates: org.apache.camel:camel-hbase
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default HBaseHeaderNameBuilder hbase() {
+            return HBaseHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * HBase (camel-hbase)
+         * Reading and write from/to an HBase store (Hadoop database).
+         * 
+         * Category: bigdata,database,hadoop
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-hbase
+         * 
          * Syntax: <code>hbase:tableName</code>
          * 
          * Path parameter: tableName (required)
@@ -1099,6 +1112,109 @@ public interface HBaseEndpointBuilderFactory {
          */
         default HBaseEndpointBuilder hbase(String componentName, String path) {
             return HBaseEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the HBase component.
+     */
+    public static class HBaseHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final HBaseHeaderNameBuilder INSTANCE = new HBaseHeaderNameBuilder();
+
+        /**
+         * The HBase operation to perform.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HBaseOperation}.
+         */
+        public String hBaseOperation() {
+            return "HBaseOperation";
+        }
+
+        /**
+         * The maximum number of rows to scan.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HBaseMaxScanResults}.
+         */
+        public String hBaseMaxScanResults() {
+            return "HBaseMaxScanResults";
+        }
+
+        /**
+         * The row to start scanner at or after.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HBaseStartRow}.
+         */
+        public String hBaseStartRow() {
+            return "HBaseStartRow";
+        }
+
+        /**
+         * The row to end at (exclusive).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HBaseStopRow}.
+         */
+        public String hBaseStopRow() {
+            return "HBaseStopRow";
+        }
+
+        /**
+         * The strategy to use for mapping Camel messages to HBase columns.
+         * Supported values: header body.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code MappingStrategy}.
+         */
+        public String mappingStrategy() {
+            return "MappingStrategy";
+        }
+
+        /**
+         * The class name of a custom mapping strategy implementation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code MappingStrategyClassName}.
+         */
+        public String mappingStrategyClassName() {
+            return "MappingStrategyClassName";
+        }
+
+        /**
+         * The marked row id.
+         * 
+         * The option is a: {@code byte[]} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code HBaseMarkedRowId}.
+         */
+        public String hBaseMarkedRowId() {
+            return "HBaseMarkedRowId";
         }
     }
     static HBaseEndpointBuilder endpointBuilder(

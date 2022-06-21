@@ -234,6 +234,19 @@ public interface WorkdayEndpointBuilderFactory {
          * Since: 3.1
          * Maven coordinates: org.apache.camel:camel-workday
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default WorkdayHeaderNameBuilder workday() {
+            return WorkdayHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Workday (camel-workday)
+         * Detect and parse documents using Workday.
+         * 
+         * Category: cloud,api,hcm
+         * Since: 3.1
+         * Maven coordinates: org.apache.camel:camel-workday
+         * 
          * Syntax: <code>workday:entity:path</code>
          * 
          * Path parameter: entity (required)
@@ -273,6 +286,30 @@ public interface WorkdayEndpointBuilderFactory {
          */
         default WorkdayEndpointBuilder workday(String componentName, String path) {
             return WorkdayEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Workday component.
+     */
+    public static class WorkdayHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final WorkdayHeaderNameBuilder INSTANCE = new WorkdayHeaderNameBuilder();
+
+        /**
+         * The workday URL.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code WorkdayURL}.
+         */
+        public String workdayURL() {
+            return "WorkdayURL";
         }
     }
     static WorkdayEndpointBuilder endpointBuilder(

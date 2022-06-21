@@ -1315,6 +1315,19 @@ public interface XmppEndpointBuilderFactory {
          * Since: 1.0
          * Maven coordinates: org.apache.camel:camel-xmpp
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default XmppHeaderNameBuilder xmpp() {
+            return XmppHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * XMPP (camel-xmpp)
+         * Send and receive messages to/from an XMPP chat server.
+         * 
+         * Category: chat,messaging
+         * Since: 1.0
+         * Maven coordinates: org.apache.camel:camel-xmpp
+         * 
          * Syntax: <code>xmpp:host:port/participant</code>
          * 
          * Path parameter: host (required)
@@ -1360,6 +1373,30 @@ public interface XmppEndpointBuilderFactory {
          */
         default XmppEndpointBuilder xmpp(String componentName, String path) {
             return XmppEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the XMPP component.
+     */
+    public static class XmppHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final XmppHeaderNameBuilder INSTANCE = new XmppHeaderNameBuilder();
+
+        /**
+         * The XMPP message.
+         * 
+         * The option is a: {@code org.jivesoftware.smack.packet.Message} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code XmppDoc}.
+         */
+        public String xmppDoc() {
+            return "XmppDoc";
         }
     }
     static XmppEndpointBuilder endpointBuilder(String componentName, String path) {

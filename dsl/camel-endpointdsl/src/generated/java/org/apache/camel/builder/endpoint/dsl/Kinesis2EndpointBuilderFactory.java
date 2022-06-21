@@ -1888,6 +1888,20 @@ public interface Kinesis2EndpointBuilderFactory {
          * Since: 3.2
          * Maven coordinates: org.apache.camel:camel-aws2-kinesis
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default Kinesis2HeaderNameBuilder aws2Kinesis() {
+            return Kinesis2HeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * AWS Kinesis (camel-aws2-kinesis)
+         * Consume and produce records from and to AWS Kinesis Streams using AWS
+         * SDK version 2.x.
+         * 
+         * Category: cloud,messaging
+         * Since: 3.2
+         * Maven coordinates: org.apache.camel:camel-aws2-kinesis
+         * 
          * Syntax: <code>aws2-kinesis:streamName</code>
          * 
          * Path parameter: streamName (required)
@@ -1922,6 +1936,84 @@ public interface Kinesis2EndpointBuilderFactory {
                 String componentName,
                 String path) {
             return Kinesis2EndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the AWS Kinesis component.
+     */
+    public static class Kinesis2HeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final Kinesis2HeaderNameBuilder INSTANCE = new Kinesis2HeaderNameBuilder();
+
+        /**
+         * The sequence number of the record, as defined in
+         * http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#API_PutRecord_ResponseSyntaxResponse Syntax.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AwsKinesisSequenceNumber}.
+         */
+        public String awsKinesisSequenceNumber() {
+            return "AwsKinesisSequenceNumber";
+        }
+
+        /**
+         * The time AWS assigned as the arrival time of the record.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * AwsKinesisApproximateArrivalTimestamp}.
+         */
+        public String awsKinesisApproximateArrivalTimestamp() {
+            return "AwsKinesisApproximateArrivalTimestamp";
+        }
+
+        /**
+         * Identifies which shard in the stream the data record is assigned to.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AwsKinesisPartitionKey}.
+         */
+        public String awsKinesisPartitionKey() {
+            return "AwsKinesisPartitionKey";
+        }
+
+        /**
+         * The timestamp of the message.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code MessageTimestamp}.
+         */
+        public String messageTimestamp() {
+            return "MessageTimestamp";
+        }
+
+        /**
+         * The shard ID of the shard where the data record was placed.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AwsKinesisShardId}.
+         */
+        public String awsKinesisShardId() {
+            return "AwsKinesisShardId";
         }
     }
     static Kinesis2EndpointBuilder endpointBuilder(

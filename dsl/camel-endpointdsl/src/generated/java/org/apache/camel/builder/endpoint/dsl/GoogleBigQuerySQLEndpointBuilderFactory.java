@@ -165,6 +165,19 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          * Since: 2.23
          * Maven coordinates: org.apache.camel:camel-google-bigquery
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default GoogleBigQuerySQLHeaderNameBuilder googleBigquerySql() {
+            return GoogleBigQuerySQLHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Google BigQuery Standard SQL (camel-google-bigquery)
+         * Access Google Cloud BigQuery service using SQL queries.
+         * 
+         * Category: cloud,messaging
+         * Since: 2.23
+         * Maven coordinates: org.apache.camel:camel-google-bigquery
+         * 
          * Syntax: <code>google-bigquery-sql:projectId:queryString</code>
          * 
          * Path parameter: projectId (required)
@@ -204,6 +217,44 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return GoogleBigQuerySQLEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Google BigQuery Standard SQL
+     * component.
+     */
+    public static class GoogleBigQuerySQLHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final GoogleBigQuerySQLHeaderNameBuilder INSTANCE = new GoogleBigQuerySQLHeaderNameBuilder();
+
+        /**
+         * Preprocessed query text.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GoogleBigQueryTranslatedQuery}.
+         */
+        public String googleBigQueryTranslatedQuery() {
+            return "GoogleBigQueryTranslatedQuery";
+        }
+
+        /**
+         * A custom JobId to use.
+         * 
+         * The option is a: {@code com.google.cloud.bigquery.JobId} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GoogleBigQueryJobId}.
+         */
+        public String googleBigQueryJobId() {
+            return "GoogleBigQueryJobId";
         }
     }
     static GoogleBigQuerySQLEndpointBuilder endpointBuilder(

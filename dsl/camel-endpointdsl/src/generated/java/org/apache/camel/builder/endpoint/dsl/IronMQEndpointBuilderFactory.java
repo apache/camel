@@ -1359,6 +1359,20 @@ public interface IronMQEndpointBuilderFactory {
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-ironmq
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default IronMQHeaderNameBuilder ironmq() {
+            return IronMQHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * IronMQ (camel-ironmq)
+         * Send and receive messages to/from IronMQ an elastic and durable
+         * hosted message queue as a service.
+         * 
+         * Category: cloud,messaging
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-ironmq
+         * 
          * Syntax: <code>ironmq:queueName</code>
          * 
          * Path parameter: queueName (required)
@@ -1391,6 +1405,72 @@ public interface IronMQEndpointBuilderFactory {
          */
         default IronMQEndpointBuilder ironmq(String componentName, String path) {
             return IronMQEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the IronMQ component.
+     */
+    public static class IronMQHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final IronMQHeaderNameBuilder INSTANCE = new IronMQHeaderNameBuilder();
+
+        /**
+         * (producer) The id of the IronMQ message as a String when sending a
+         * single message, or a Ids object when sending a array of strings.
+         * (consumer) The id of the message.
+         * 
+         * The option is a: {@code String or io.iron.ironmq.Ids} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code IronMQMessageId}.
+         */
+        public String ironMQMessageId() {
+            return "IronMQMessageId";
+        }
+
+        /**
+         * The reservation id of the message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code IronMQReservationId}.
+         */
+        public String ironMQReservationId() {
+            return "IronMQReservationId";
+        }
+
+        /**
+         * The number of times this message has been reserved.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code IronMQReservedCount}.
+         */
+        public String ironMQReservedCount() {
+            return "IronMQReservedCount";
+        }
+
+        /**
+         * If value set to 'CamelIronMQClearQueue' the queue is cleared of
+         * unconsumed messages.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IronMQOperation}.
+         */
+        public String ironMQOperation() {
+            return "IronMQOperation";
         }
     }
     static IronMQEndpointBuilder endpointBuilder(

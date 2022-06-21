@@ -1054,6 +1054,19 @@ public interface GitHubEndpointBuilderFactory {
          * Since: 2.15
          * Maven coordinates: org.apache.camel:camel-github
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default GitHubHeaderNameBuilder github() {
+            return GitHubHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * GitHub (camel-github)
+         * Interact with the GitHub API.
+         * 
+         * Category: file,cloud,api
+         * Since: 2.15
+         * Maven coordinates: org.apache.camel:camel-github
+         * 
          * Syntax: <code>github:type/branchName</code>
          * 
          * Path parameter: type (required)
@@ -1097,6 +1110,136 @@ public interface GitHubEndpointBuilderFactory {
          */
         default GitHubEndpointBuilder github(String componentName, String path) {
             return GitHubEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the GitHub component.
+     */
+    public static class GitHubHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final GitHubHeaderNameBuilder INSTANCE = new GitHubHeaderNameBuilder();
+
+        /**
+         * The pull request.
+         * 
+         * The option is a: {@code PullRequest or Integer} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code GitHubPullRequest}.
+         */
+        public String gitHubPullRequest() {
+            return "GitHubPullRequest";
+        }
+
+        /**
+         * The id of the comment to reply to.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GitHubInResponseTo}.
+         */
+        public String gitHubInResponseTo() {
+            return "GitHubInResponseTo";
+        }
+
+        /**
+         * The sha of the head of the pull request.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * GitHubPullRequestHeadCommitSHA}.
+         */
+        public String gitHubPullRequestHeadCommitSHA() {
+            return "GitHubPullRequestHeadCommitSHA";
+        }
+
+        /**
+         * The title of the issue.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GitHubIssueTitle}.
+         */
+        public String gitHubIssueTitle() {
+            return "GitHubIssueTitle";
+        }
+
+        /**
+         * The commit author.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GitHubCommitAuthor}.
+         */
+        public String gitHubCommitAuthor() {
+            return "GitHubCommitAuthor";
+        }
+
+        /**
+         * The committer name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GitHubCommitCommitter}.
+         */
+        public String gitHubCommitCommitter() {
+            return "GitHubCommitCommitter";
+        }
+
+        /**
+         * The commit sha.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GitHubCommitSha}.
+         */
+        public String gitHubCommitSha() {
+            return "GitHubCommitSha";
+        }
+
+        /**
+         * The commit URL.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GitHubCommitUrl}.
+         */
+        public String gitHubCommitUrl() {
+            return "GitHubCommitUrl";
+        }
+
+        /**
+         * The event payload.
+         * 
+         * The option is a: {@code
+         * org.eclipse.egit.github.core.event.EventPayload} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GitHubEventPayload}.
+         */
+        public String gitHubEventPayload() {
+            return "GitHubEventPayload";
         }
     }
     static GitHubEndpointBuilder endpointBuilder(

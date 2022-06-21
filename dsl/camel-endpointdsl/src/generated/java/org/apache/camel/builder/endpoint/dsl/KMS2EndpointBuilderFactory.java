@@ -450,6 +450,19 @@ public interface KMS2EndpointBuilderFactory {
          * Since: 3.1
          * Maven coordinates: org.apache.camel:camel-aws2-kms
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default KMS2HeaderNameBuilder aws2Kms() {
+            return KMS2HeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * AWS Key Management Service (KMS) (camel-aws2-kms)
+         * Manage keys stored in AWS KMS instances using AWS SDK version 2.x.
+         * 
+         * Category: cloud,management
+         * Since: 3.1
+         * Maven coordinates: org.apache.camel:camel-aws2-kms
+         * 
          * Syntax: <code>aws2-kms:label</code>
          * 
          * Path parameter: label (required)
@@ -481,6 +494,84 @@ public interface KMS2EndpointBuilderFactory {
          */
         default KMS2EndpointBuilder aws2Kms(String componentName, String path) {
             return KMS2EndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the AWS Key Management Service (KMS)
+     * component.
+     */
+    public static class KMS2HeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final KMS2HeaderNameBuilder INSTANCE = new KMS2HeaderNameBuilder();
+
+        /**
+         * The operation we want to perform.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsKMSOperation}.
+         */
+        public String awsKMSOperation() {
+            return "AwsKMSOperation";
+        }
+
+        /**
+         * The limit number of keys to return while performing a listKeys
+         * operation.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsKMSLimit}.
+         */
+        public String awsKMSLimit() {
+            return "AwsKMSLimit";
+        }
+
+        /**
+         * A key description to use while performing a createKey operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsKMSDescription}.
+         */
+        public String awsKMSDescription() {
+            return "AwsKMSDescription";
+        }
+
+        /**
+         * The key Id.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsKMSKeyId}.
+         */
+        public String awsKMSKeyId() {
+            return "AwsKMSKeyId";
+        }
+
+        /**
+         * The waiting period, specified in number of days.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsKMSPendingWindowInDays}.
+         */
+        public String awsKMSPendingWindowInDays() {
+            return "AwsKMSPendingWindowInDays";
         }
     }
     static KMS2EndpointBuilder endpointBuilder(String componentName, String path) {

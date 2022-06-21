@@ -601,6 +601,19 @@ public interface SolrEndpointBuilderFactory {
          * Since: 2.9
          * Maven coordinates: org.apache.camel:camel-solr
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default SolrHeaderNameBuilder solr() {
+            return SolrHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Solr (camel-solr)
+         * Perform operations against Apache Lucene Solr.
+         * 
+         * Category: monitoring,search
+         * Since: 2.9
+         * Maven coordinates: org.apache.camel:camel-solr
+         * 
          * Syntax: <code>solr:url</code>
          * 
          * Path parameter: url (required)
@@ -678,6 +691,83 @@ public interface SolrEndpointBuilderFactory {
          */
         default SolrEndpointBuilder solrCloud(String path) {
             return SolrEndpointBuilderFactory.endpointBuilder("solrCloud", path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Solr component.
+     */
+    public static class SolrHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final SolrHeaderNameBuilder INSTANCE = new SolrHeaderNameBuilder();
+
+        /**
+         * The client.
+         * 
+         * The option is a: {@code org.apache.solr.client.solrj.SolrClient}
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SolrClient}.
+         */
+        public String solrClient() {
+            return "SolrClient";
+        }
+
+        /**
+         * The collection to execute the request again.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SolrCollection}.
+         */
+        public String solrCollection() {
+            return "SolrCollection";
+        }
+
+        /**
+         * The operation to perform.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SolrOperation}.
+         */
+        public String solrOperation() {
+            return "SolrOperation";
+        }
+
+        /**
+         * The query to execute.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SolrQueryString}.
+         */
+        public String solrQueryString() {
+            return "SolrQueryString";
+        }
+
+        /**
+         * The content type.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code Content-Type}.
+         */
+        public String contentType() {
+            return "Content-Type";
         }
     }
     static SolrEndpointBuilder endpointBuilder(String componentName, String path) {

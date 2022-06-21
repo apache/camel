@@ -2192,6 +2192,19 @@ public interface JBPMEndpointBuilderFactory {
          * Since: 2.6
          * Maven coordinates: org.apache.camel:camel-jbpm
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default JBPMHeaderNameBuilder jbpm() {
+            return JBPMHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * JBPM (camel-jbpm)
+         * Interact with jBPM workflow engine over REST.
+         * 
+         * Category: api,workflow
+         * Since: 2.6
+         * Maven coordinates: org.apache.camel:camel-jbpm
+         * 
          * Syntax: <code>jbpm:connectionURL</code>
          * 
          * Path parameter: connectionURL (required)
@@ -2229,6 +2242,281 @@ public interface JBPMEndpointBuilderFactory {
          */
         default JBPMEndpointBuilder jbpm(String componentName, String path) {
             return JBPMEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the JBPM component.
+     */
+    public static class JBPMHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final JBPMHeaderNameBuilder INSTANCE = new JBPMHeaderNameBuilder();
+
+        /**
+         * The value to assign to the global identifier.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JBPMValue}.
+         */
+        public String jBPMValue() {
+            return "JBPMValue";
+        }
+
+        /**
+         * The operation to perform. The operation name must be prefixed with
+         * CamelJBPMOperation and the name of the operation. See the full list
+         * above. It is case-insensitive.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Default: PUT
+         * Group: producer
+         * 
+         * @return the name of the header {@code JBPMOperation}.
+         */
+        public String jBPMOperation() {
+            return "JBPMOperation";
+        }
+
+        /**
+         * The id of the process that should be acted upon.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JBPMProcessId}.
+         */
+        public String jBPMProcessId() {
+            return "JBPMProcessId";
+        }
+
+        /**
+         * The id of the process instance.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JBPMProcessInstanceId}.
+         */
+        public String jBPMProcessInstanceId() {
+            return "JBPMProcessInstanceId";
+        }
+
+        /**
+         * The variables that should be set for various operations.
+         * 
+         * The option is a: {@code Map<String, Object>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JBPMParameters}.
+         */
+        public String jBPMParameters() {
+            return "JBPMParameters";
+        }
+
+        /**
+         * The type of event to use when signalEvent operation is performed.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JBPMEventType}.
+         */
+        public String jBPMEventType() {
+            return "JBPMEventType";
+        }
+
+        /**
+         * The type of the received event. Possible values defined here
+         * org.infinispan.notifications.cachelistener.event.Event.Type.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JBPMEvent}.
+         */
+        public String jBPMEvent() {
+            return "JBPMEvent";
+        }
+
+        /**
+         * The maximum number of rules that should be fired.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JBPMMaxNumber}.
+         */
+        public String jBPMMaxNumber() {
+            return "JBPMMaxNumber";
+        }
+
+        /**
+         * The global identifier.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JBPMIdentifier}.
+         */
+        public String jBPMIdentifier() {
+            return "JBPMIdentifier";
+        }
+
+        /**
+         * The id of the work item.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JBPMWorkItemId}.
+         */
+        public String jBPMWorkItemId() {
+            return "JBPMWorkItemId";
+        }
+
+        /**
+         * The id of the task.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JBPMTaskId}.
+         */
+        public String jBPMTaskId() {
+            return "JBPMTaskId";
+        }
+
+        /**
+         * The task instance to use with task operations.
+         * 
+         * The option is a: {@code org.kie.api.task.model.Task} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JBPMTask}.
+         */
+        public String jBPMTask() {
+            return "JBPMTask";
+        }
+
+        /**
+         * The userId to use with task operations.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JBPMUserId}.
+         */
+        public String jBPMUserId() {
+            return "JBPMUserId";
+        }
+
+        /**
+         * The targetUserId used when delegating a task.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JBPMTargetUserId}.
+         */
+        public String jBPMTargetUserId() {
+            return "JBPMTargetUserId";
+        }
+
+        /**
+         * The attachId to use when retrieving attachments.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JBPMAttachmentId}.
+         */
+        public String jBPMAttachmentId() {
+            return "JBPMAttachmentId";
+        }
+
+        /**
+         * The contentId to use when retrieving attachments.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JBPMContentId}.
+         */
+        public String jBPMContentId() {
+            return "JBPMContentId";
+        }
+
+        /**
+         * The potentialOwners when nominateTask operation is performed.
+         * 
+         * The option is a: {@code List<String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JBPMEntityList}.
+         */
+        public String jBPMEntityList() {
+            return "JBPMEntityList";
+        }
+
+        /**
+         * The list of status to use when filtering tasks.
+         * 
+         * The option is a: {@code List<String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JBPMStatusList}.
+         */
+        public String jBPMStatusList() {
+            return "JBPMStatusList";
+        }
+
+        /**
+         * The page to use when retrieving user tasks.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JBPMResultPage}.
+         */
+        public String jBPMResultPage() {
+            return "JBPMResultPage";
+        }
+
+        /**
+         * The page size to use when retrieving user tasks.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JBPMResultPageSize}.
+         */
+        public String jBPMResultPageSize() {
+            return "JBPMResultPageSize";
         }
     }
     static JBPMEndpointBuilder endpointBuilder(String componentName, String path) {

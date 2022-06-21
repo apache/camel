@@ -3964,6 +3964,19 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * Since: 3.0
          * Maven coordinates: org.apache.camel:camel-robotframework
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default RobotFrameworkHeaderNameBuilder robotframework() {
+            return RobotFrameworkHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Robot Framework (camel-robotframework)
+         * Pass camel exchanges to acceptence test written in Robot DSL.
+         * 
+         * Category: testing
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-robotframework
+         * 
          * Syntax: <code>robotframework:resourceUri</code>
          * 
          * Path parameter: resourceUri (required)
@@ -4007,6 +4020,56 @@ public interface RobotFrameworkEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return RobotFrameworkEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Robot Framework component.
+     */
+    public static class RobotFrameworkHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final RobotFrameworkHeaderNameBuilder INSTANCE = new RobotFrameworkHeaderNameBuilder();
+
+        /**
+         * The robot variables.
+         * 
+         * The option is a: {@code List<String>} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code RobotVariables}.
+         */
+        public String robotVariables() {
+            return "RobotVariables";
+        }
+
+        /**
+         * The return code.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code RobotReturnCode}.
+         */
+        public String robotReturnCode() {
+            return "RobotReturnCode";
+        }
+
+        /**
+         * The new resource URI.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code RobotResourceUri}.
+         */
+        public String robotResourceUri() {
+            return "RobotResourceUri";
         }
     }
     static RobotFrameworkEndpointBuilder endpointBuilder(

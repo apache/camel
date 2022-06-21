@@ -629,6 +629,19 @@ public interface RestEndpointBuilderFactory {
          * Since: 2.14
          * Maven coordinates: org.apache.camel:camel-rest
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default RestHeaderNameBuilder restEndpoint() {
+            return RestHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * REST (camel-rest)
+         * Expose REST services or call external REST services.
+         * 
+         * Category: core,rest
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-rest
+         * 
          * Syntax: <code>rest:method:path:uriTemplate</code>
          * 
          * Path parameter: method (required)
@@ -678,6 +691,97 @@ public interface RestEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return RestEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the REST component.
+     */
+    public static class RestHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final RestHeaderNameBuilder INSTANCE = new RestHeaderNameBuilder();
+
+        /**
+         * The query parameters for the rest call to be used.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code RestHttpQuery}.
+         */
+        public String restHttpQuery() {
+            return "RestHttpQuery";
+        }
+
+        /**
+         * The http uri for the rest call to be used.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code RestHttpUri}.
+         */
+        public String restHttpUri() {
+            return "RestHttpUri";
+        }
+
+        /**
+         * The method should be in upper case.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpMethod}.
+         */
+        public String httpMethod() {
+            return "HttpMethod";
+        }
+
+        /**
+         * The media type such as: 'text/xml', or 'application/json' this REST
+         * service returns.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code Content-Type}.
+         */
+        public String contentType() {
+            return "Content-Type";
+        }
+
+        /**
+         * The media type such as: 'text/xml', or 'application/json' this REST
+         * service accepts.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code Accept}.
+         */
+        public String accept() {
+            return "Accept";
+        }
+
+        /**
+         * The http response code.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpResponseCode}.
+         */
+        public String httpResponseCode() {
+            return "HttpResponseCode";
         }
     }
     static RestEndpointBuilder endpointBuilder(String componentName, String path) {

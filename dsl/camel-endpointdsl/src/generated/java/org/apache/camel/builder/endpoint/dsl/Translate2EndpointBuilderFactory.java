@@ -516,6 +516,19 @@ public interface Translate2EndpointBuilderFactory {
          * Since: 3.1
          * Maven coordinates: org.apache.camel:camel-aws2-translate
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default Translate2HeaderNameBuilder aws2Translate() {
+            return Translate2HeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * AWS Translate (camel-aws2-translate)
+         * Translate texts using AWS Translate and AWS SDK version 2.x.
+         * 
+         * Category: cloud,management
+         * Since: 3.1
+         * Maven coordinates: org.apache.camel:camel-aws2-translate
+         * 
          * Syntax: <code>aws2-translate:label</code>
          * 
          * Path parameter: label (required)
@@ -549,6 +562,69 @@ public interface Translate2EndpointBuilderFactory {
                 String componentName,
                 String path) {
             return Translate2EndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the AWS Translate component.
+     */
+    public static class Translate2HeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final Translate2HeaderNameBuilder INSTANCE = new Translate2HeaderNameBuilder();
+
+        /**
+         * The text source language.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsTranslateSourceLanguage}.
+         */
+        public String awsTranslateSourceLanguage() {
+            return "AwsTranslateSourceLanguage";
+        }
+
+        /**
+         * The text target language.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsTranslateTargetLanguage}.
+         */
+        public String awsTranslateTargetLanguage() {
+            return "AwsTranslateTargetLanguage";
+        }
+
+        /**
+         * The terminologies to use.
+         * 
+         * The option is a: {@code Collection<String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsTranslateTerminologyNames}.
+         */
+        public String awsTranslateTerminologyNames() {
+            return "AwsTranslateTerminologyNames";
+        }
+
+        /**
+         * The operation we want to perform.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsTranslateOperation}.
+         */
+        public String awsTranslateOperation() {
+            return "AwsTranslateOperation";
         }
     }
     static Translate2EndpointBuilder endpointBuilder(

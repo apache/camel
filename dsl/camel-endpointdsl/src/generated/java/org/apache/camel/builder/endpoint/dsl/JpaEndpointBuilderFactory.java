@@ -2098,6 +2098,20 @@ public interface JpaEndpointBuilderFactory {
          * Since: 1.0
          * Maven coordinates: org.apache.camel:camel-jpa
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default JpaHeaderNameBuilder jpa() {
+            return JpaHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * JPA (camel-jpa)
+         * Store and retrieve Java objects from databases using Java Persistence
+         * API (JPA).
+         * 
+         * Category: database,sql
+         * Since: 1.0
+         * Maven coordinates: org.apache.camel:camel-jpa
+         * 
          * Syntax: <code>jpa:entityType</code>
          * 
          * Path parameter: entityType (required)
@@ -2130,6 +2144,43 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointBuilder jpa(String componentName, String path) {
             return JpaEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the JPA component.
+     */
+    public static class JpaHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final JpaHeaderNameBuilder INSTANCE = new JpaHeaderNameBuilder();
+
+        /**
+         * The JPA EntityManager object.
+         * 
+         * The option is a: {@code javax.persistence.EntityManager} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code EntityManager}.
+         */
+        public String entityManager() {
+            return "EntityManager";
+        }
+
+        /**
+         * Alternative way for passing query parameters as an Exchange header.
+         * 
+         * The option is a: {@code Map<String, Object>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JpaParameters}.
+         */
+        public String jpaParameters() {
+            return "JpaParameters";
         }
     }
     static JpaEndpointBuilder endpointBuilder(String componentName, String path) {

@@ -1704,6 +1704,20 @@ public interface OBSEndpointBuilderFactory {
          * Since: 3.12
          * Maven coordinates: org.apache.camel:camel-huaweicloud-obs
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default OBSHeaderNameBuilder hwcloudObs() {
+            return OBSHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Huawei Object Storage Service (OBS) (camel-huaweicloud-obs)
+         * To provide stable, secure, efficient, and easy-to-use cloud storage
+         * service on Huawei Cloud
+         * 
+         * Category: cloud
+         * Since: 3.12
+         * Maven coordinates: org.apache.camel:camel-huaweicloud-obs
+         * 
          * Syntax: <code>hwcloud-obs:operation</code>
          * 
          * Path parameter: operation (required)
@@ -1736,6 +1750,136 @@ public interface OBSEndpointBuilderFactory {
          */
         default OBSEndpointBuilder hwcloudObs(String componentName, String path) {
             return OBSEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Huawei Object Storage Service (OBS)
+     * component.
+     */
+    public static class OBSHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final OBSHeaderNameBuilder INSTANCE = new OBSHeaderNameBuilder();
+
+        /**
+         * Name of the bucket where object is contained.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code HwCloudObsBucketName}.
+         */
+        public String hwCloudObsBucketName() {
+            return "HwCloudObsBucketName";
+        }
+
+        /**
+         * The key that the object is stored under.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code HwCloudObsObjectKey}.
+         */
+        public String hwCloudObsObjectKey() {
+            return "HwCloudObsObjectKey";
+        }
+
+        /**
+         * The date and time that the object was last modified.
+         * 
+         * The option is a: {@code Date} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code HwCloudObsLastModified}.
+         */
+        public String hwCloudObsLastModified() {
+            return "HwCloudObsLastModified";
+        }
+
+        /**
+         * The 128-bit MD5 digest of the Base64 code of the object. This data is
+         * the unique identifier of the object content.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code HwCloudObsETag}.
+         */
+        public String hwCloudObsETag() {
+            return "HwCloudObsETag";
+        }
+
+        /**
+         * The 128-bit Base64-encoded digest used to decrypt the object.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code HwCloudObsContentMD5}.
+         */
+        public String hwCloudObsContentMD5() {
+            return "HwCloudObsContentMD5";
+        }
+
+        /**
+         * Shows whether the object is a file or a folder.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code HwCloudObsObjectType}.
+         */
+        public String hwCloudObsObjectType() {
+            return "HwCloudObsObjectType";
+        }
+
+        /**
+         * The size of the object body in bytes.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code Content-Length}.
+         */
+        public String contentLength() {
+            return "Content-Length";
+        }
+
+        /**
+         * The type of content stored in the object.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code Content-Type}.
+         */
+        public String contentType() {
+            return "Content-Type";
+        }
+
+        /**
+         * Name of the object with which the operation is to be performed.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code FileName}.
+         */
+        public String fileName() {
+            return "FileName";
         }
     }
     static OBSEndpointBuilder endpointBuilder(String componentName, String path) {

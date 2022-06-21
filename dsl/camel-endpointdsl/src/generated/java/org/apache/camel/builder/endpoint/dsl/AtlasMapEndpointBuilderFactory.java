@@ -301,6 +301,19 @@ public interface AtlasMapEndpointBuilderFactory {
          * Since: 3.7
          * Maven coordinates: org.apache.camel:camel-atlasmap
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default AtlasMapHeaderNameBuilder atlasmap() {
+            return AtlasMapHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * AtlasMap (camel-atlasmap)
+         * Transforms the message using an AtlasMap transformation.
+         * 
+         * Category: transformation
+         * Since: 3.7
+         * Maven coordinates: org.apache.camel:camel-atlasmap
+         * 
          * Syntax: <code>atlasmap:resourceUri</code>
          * 
          * Path parameter: resourceUri (required)
@@ -344,6 +357,57 @@ public interface AtlasMapEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return AtlasMapEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the AtlasMap component.
+     */
+    public static class AtlasMapHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final AtlasMapHeaderNameBuilder INSTANCE = new AtlasMapHeaderNameBuilder();
+
+        /**
+         * The new resource URI to use.
+         * 
+         * The option is a: {@code java.lang.String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AtlasResourceUri}.
+         */
+        public String atlasResourceUri() {
+            return "AtlasResourceUri";
+        }
+
+        /**
+         * The Atlas mapping to use.
+         * 
+         * The option is a: {@code java.lang.String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AtlasMapping}.
+         */
+        public String atlasMapping() {
+            return "AtlasMapping";
+        }
+
+        /**
+         * The content type that is set according to the datasource (json or
+         * xml).
+         * 
+         * The option is a: {@code java.lang.String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code Content-Type}.
+         */
+        public String contentType() {
+            return "Content-Type";
         }
     }
     static AtlasMapEndpointBuilder endpointBuilder(

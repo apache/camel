@@ -1610,6 +1610,19 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * Since: 2.14
          * Maven coordinates: org.apache.camel:camel-atmosphere-websocket
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default AtmosphereWebsocketHeaderNameBuilder atmosphereWebsocket() {
+            return AtmosphereWebsocketHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Atmosphere Websocket (camel-atmosphere-websocket)
+         * Expose WebSocket endpoints using the Atmosphere framework.
+         * 
+         * Category: websocket
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-atmosphere-websocket
+         * 
          * Syntax: <code>atmosphere-websocket:servicePath</code>
          * 
          * Path parameter: servicePath (required)
@@ -1644,6 +1657,71 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return AtmosphereWebsocketEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Atmosphere Websocket component.
+     */
+    public static class AtmosphereWebsocketHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final AtmosphereWebsocketHeaderNameBuilder INSTANCE = new AtmosphereWebsocketHeaderNameBuilder();
+
+        /**
+         * The connection key.
+         * 
+         * The option is a: {@code java.lang.String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code websocket.connectionKey}.
+         */
+        public String websocketConnectionkey() {
+            return "websocket.connectionKey";
+        }
+
+        /**
+         * The list of connection keys.
+         * 
+         * The option is a: {@code java.util.List} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code websocket.connectionKey.list}.
+         */
+        public String websocketConnectionkeyList() {
+            return "websocket.connectionKey.list";
+        }
+
+        /**
+         * The type of event received. It can be ONOPEN_EVENT_TYPE,
+         * ONERROR_EVENT_TYPE or ONCLOSE_EVENT_TYPE.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code websocket.eventType}.
+         */
+        public String websocketEventtype() {
+            return "websocket.eventType";
+        }
+
+        /**
+         * The type of error that occurred. It can be
+         * MESSAGE_NOT_SENT_ERROR_TYPE.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code websocket.errorType}.
+         */
+        public String websocketErrortype() {
+            return "websocket.errorType";
         }
     }
     static AtmosphereWebsocketEndpointBuilder endpointBuilder(

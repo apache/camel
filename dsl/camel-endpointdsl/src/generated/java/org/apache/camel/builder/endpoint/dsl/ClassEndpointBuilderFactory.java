@@ -253,6 +253,19 @@ public interface ClassEndpointBuilderFactory {
          * Since: 2.4
          * Maven coordinates: org.apache.camel:camel-bean
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default ClassHeaderNameBuilder clas() {
+            return ClassHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Class (camel-bean)
+         * Invoke methods of Java beans specified by class name.
+         * 
+         * Category: core,java
+         * Since: 2.4
+         * Maven coordinates: org.apache.camel:camel-bean
+         * 
          * Syntax: <code>class:beanName</code>
          * 
          * Path parameter: beanName (required)
@@ -284,6 +297,30 @@ public interface ClassEndpointBuilderFactory {
          */
         default ClassEndpointBuilder clas(String componentName, String path) {
             return ClassEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Class component.
+     */
+    public static class ClassHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final ClassHeaderNameBuilder INSTANCE = new ClassHeaderNameBuilder();
+
+        /**
+         * The name of the method to invoke.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code BeanMethodName}.
+         */
+        public String beanMethodName() {
+            return "BeanMethodName";
         }
     }
     static ClassEndpointBuilder endpointBuilder(

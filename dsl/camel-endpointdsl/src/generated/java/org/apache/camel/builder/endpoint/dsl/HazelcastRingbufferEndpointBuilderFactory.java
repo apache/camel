@@ -199,6 +199,19 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * Since: 2.16
          * Maven coordinates: org.apache.camel:camel-hazelcast
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default HazelcastRingbufferHeaderNameBuilder hazelcastRingbuffer() {
+            return HazelcastRingbufferHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Hazelcast Ringbuffer (camel-hazelcast)
+         * Perform operations on Hazelcast distributed ringbuffer.
+         * 
+         * Category: cache,datagrid
+         * Since: 2.16
+         * Maven coordinates: org.apache.camel:camel-hazelcast
+         * 
          * Syntax: <code>hazelcast-ringbuffer:cacheName</code>
          * 
          * Path parameter: cacheName (required)
@@ -233,6 +246,30 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return HazelcastRingbufferEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Hazelcast Ringbuffer component.
+     */
+    public static class HazelcastRingbufferHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final HazelcastRingbufferHeaderNameBuilder INSTANCE = new HazelcastRingbufferHeaderNameBuilder();
+
+        /**
+         * The operation to perform.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HazelcastOperationType}.
+         */
+        public String hazelcastOperationType() {
+            return "HazelcastOperationType";
         }
     }
     static HazelcastRingbufferEndpointBuilder endpointBuilder(

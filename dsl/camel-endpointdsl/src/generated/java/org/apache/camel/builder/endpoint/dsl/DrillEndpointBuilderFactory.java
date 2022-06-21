@@ -207,6 +207,19 @@ public interface DrillEndpointBuilderFactory {
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-drill
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default DrillHeaderNameBuilder drill() {
+            return DrillHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Drill (camel-drill)
+         * Perform queries against an Apache Drill cluster.
+         * 
+         * Category: database,sql
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-drill
+         * 
          * Syntax: <code>drill:host</code>
          * 
          * Path parameter: host (required)
@@ -238,6 +251,30 @@ public interface DrillEndpointBuilderFactory {
          */
         default DrillEndpointBuilder drill(String componentName, String path) {
             return DrillEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Drill component.
+     */
+    public static class DrillHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final DrillHeaderNameBuilder INSTANCE = new DrillHeaderNameBuilder();
+
+        /**
+         * The drill query.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DrillQuery}.
+         */
+        public String drillQuery() {
+            return "DrillQuery";
         }
     }
     static DrillEndpointBuilder endpointBuilder(

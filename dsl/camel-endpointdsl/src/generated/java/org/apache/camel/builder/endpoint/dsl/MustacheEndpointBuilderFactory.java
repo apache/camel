@@ -269,6 +269,19 @@ public interface MustacheEndpointBuilderFactory {
          * Since: 2.12
          * Maven coordinates: org.apache.camel:camel-mustache
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default MustacheHeaderNameBuilder mustache() {
+            return MustacheHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Mustache (camel-mustache)
+         * Transform messages using a Mustache template.
+         * 
+         * Category: transformation
+         * Since: 2.12
+         * Maven coordinates: org.apache.camel:camel-mustache
+         * 
          * Syntax: <code>mustache:resourceUri</code>
          * 
          * Path parameter: resourceUri (required)
@@ -312,6 +325,43 @@ public interface MustacheEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return MustacheEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Mustache component.
+     */
+    public static class MustacheHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final MustacheHeaderNameBuilder INSTANCE = new MustacheHeaderNameBuilder();
+
+        /**
+         * A URI for the template resource to use instead of the endpoint.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MustacheResourceUri}.
+         */
+        public String mustacheResourceUri() {
+            return "MustacheResourceUri";
+        }
+
+        /**
+         * The template to use instead of the endpoint configured.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MustacheTemplate}.
+         */
+        public String mustacheTemplate() {
+            return "MustacheTemplate";
         }
     }
     static MustacheEndpointBuilder endpointBuilder(

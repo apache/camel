@@ -2181,6 +2181,19 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * Since: 3.0
          * Maven coordinates: org.apache.camel:camel-debezium-sqlserver
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default DebeziumSqlserverHeaderNameBuilder debeziumSqlserver() {
+            return DebeziumSqlserverHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Debezium SQL Server Connector (camel-debezium-sqlserver)
+         * Capture changes from an SQL Server database.
+         * 
+         * Category: database,sql
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-debezium-sqlserver
+         * 
          * Syntax: <code>debezium-sqlserver:name</code>
          * 
          * Path parameter: name (required)
@@ -2216,6 +2229,115 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return DebeziumSqlserverEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Debezium SQL Server Connector
+     * component.
+     */
+    public static class DebeziumSqlserverHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final DebeziumSqlserverHeaderNameBuilder INSTANCE = new DebeziumSqlserverHeaderNameBuilder();
+
+        /**
+         * The metadata about the source event, for example table name, database
+         * name, log position, etc, please refer to the Debezium documentation
+         * for more info.
+         * 
+         * The option is a: {@code Map<String, Object>} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code DebeziumSourceMetadata}.
+         */
+        public String debeziumSourceMetadata() {
+            return "DebeziumSourceMetadata";
+        }
+
+        /**
+         * The identifier of the connector, normally is this format
+         * {server-name}.{database-name}.{table-name}.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code DebeziumIdentifier}.
+         */
+        public String debeziumIdentifier() {
+            return "DebeziumIdentifier";
+        }
+
+        /**
+         * The key of the event, normally is the table Primary Key.
+         * 
+         * The option is a: {@code Struct} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code DebeziumKey}.
+         */
+        public String debeziumKey() {
+            return "DebeziumKey";
+        }
+
+        /**
+         * If presents, the type of event operation. Values for the connector
+         * are c for create (or insert), u for update, d for delete or r for
+         * read (in the case of a initial sync) or in case of a snapshot event.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code DebeziumOperation}.
+         */
+        public String debeziumOperation() {
+            return "DebeziumOperation";
+        }
+
+        /**
+         * If presents, the time (using the system clock in the JVM) at which
+         * the connector processed the event.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code DebeziumTimestamp}.
+         */
+        public String debeziumTimestamp() {
+            return "DebeziumTimestamp";
+        }
+
+        /**
+         * If presents, contains the state of the row before the event occurred.
+         * 
+         * The option is a: {@code Struct} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code DebeziumBefore}.
+         */
+        public String debeziumBefore() {
+            return "DebeziumBefore";
+        }
+
+        /**
+         * If presents, the ddl sql text of the event.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code DebeziumDdlSQL}.
+         */
+        public String debeziumDdlSQL() {
+            return "DebeziumDdlSQL";
         }
     }
     static DebeziumSqlserverEndpointBuilder endpointBuilder(

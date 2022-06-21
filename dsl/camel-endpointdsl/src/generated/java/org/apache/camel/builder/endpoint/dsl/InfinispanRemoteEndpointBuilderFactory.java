@@ -1476,6 +1476,20 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * Since: 2.13
          * Maven coordinates: org.apache.camel:camel-infinispan
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default InfinispanRemoteHeaderNameBuilder infinispan() {
+            return InfinispanRemoteHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Infinispan (camel-infinispan)
+         * Read and write from/to Infinispan distributed key/value store and
+         * data grid.
+         * 
+         * Category: cache,datagrid,clustering
+         * Since: 2.13
+         * Maven coordinates: org.apache.camel:camel-infinispan
+         * 
          * Syntax: <code>infinispan:cacheName</code>
          * 
          * Path parameter: cacheName (required)
@@ -1514,6 +1528,258 @@ public interface InfinispanRemoteEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return InfinispanRemoteEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Infinispan component.
+     */
+    public static class InfinispanRemoteHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final InfinispanRemoteHeaderNameBuilder INSTANCE = new InfinispanRemoteHeaderNameBuilder();
+
+        /**
+         * The type of the received event.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code InfinispanEventType}.
+         */
+        public String infinispanEventType() {
+            return "InfinispanEventType";
+        }
+
+        /**
+         * The cache participating in the operation or event.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code InfinispanCacheName}.
+         */
+        public String infinispanCacheName() {
+            return "InfinispanCacheName";
+        }
+
+        /**
+         * The key to perform the operation to or the key generating the event.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code InfinispanKey}.
+         */
+        public String infinispanKey() {
+            return "InfinispanKey";
+        }
+
+        /**
+         * The value to use for the operation.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code InfinispanValue}.
+         */
+        public String infinispanValue() {
+            return "InfinispanValue";
+        }
+
+        /**
+         * The default value to use for a getOrDefault.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code InfinispanDefaultValue}.
+         */
+        public String infinispanDefaultValue() {
+            return "InfinispanDefaultValue";
+        }
+
+        /**
+         * The old value to use for a replace.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code InfinispanOldValue}.
+         */
+        public String infinispanOldValue() {
+            return "InfinispanOldValue";
+        }
+
+        /**
+         * A Map to use in case of CamelInfinispanOperationPutAll operation.
+         * 
+         * The option is a: {@code Map} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code InfinispanMap}.
+         */
+        public String infinispanMap() {
+            return "InfinispanMap";
+        }
+
+        /**
+         * The operation to perform.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.infinispan.InfinispanOperation} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code InfinispanOperation}.
+         */
+        public String infinispanOperation() {
+            return "InfinispanOperation";
+        }
+
+        /**
+         * The name of the header whose value is the result.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code InfinispanOperationResult}.
+         */
+        public String infinispanOperationResult() {
+            return "InfinispanOperationResult";
+        }
+
+        /**
+         * Store the operation result in a header instead of the message body.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * InfinispanOperationResultHeader}.
+         */
+        public String infinispanOperationResultHeader() {
+            return "InfinispanOperationResultHeader";
+        }
+
+        /**
+         * The Lifespan time of a value inside the cache. Negative values are
+         * interpreted as infinity.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code InfinispanLifespanTime}.
+         */
+        public String infinispanLifespanTime() {
+            return "InfinispanLifespanTime";
+        }
+
+        /**
+         * The Time Unit of an entry Lifespan Time.
+         * 
+         * The option is a: {@code java.util.concurrent.TimeUnit} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code InfinispanTimeUnit}.
+         */
+        public String infinispanTimeUnit() {
+            return "InfinispanTimeUnit";
+        }
+
+        /**
+         * The maximum amount of time an entry is allowed to be idle for before
+         * it is considered as expired.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code InfinispanMaxIdleTime}.
+         */
+        public String infinispanMaxIdleTime() {
+            return "InfinispanMaxIdleTime";
+        }
+
+        /**
+         * The Time Unit of an entry Max Idle Time.
+         * 
+         * The option is a: {@code java.util.concurrent.TimeUnit} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code InfinispanMaxIdleTimeUnit}.
+         */
+        public String infinispanMaxIdleTimeUnit() {
+            return "InfinispanMaxIdleTimeUnit";
+        }
+
+        /**
+         * The event data.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code InfinispanEventData}.
+         */
+        public String infinispanEventData() {
+            return "InfinispanEventData";
+        }
+
+        /**
+         * The QueryBuilder to use for QUERY command, if not present the command
+         * defaults to InifinispanConfiguration's one.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.infinispan.InfinispanQueryBuilder} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code InfinispanQueryBuilder}.
+         */
+        public String infinispanQueryBuilder() {
+            return "InfinispanQueryBuilder";
+        }
+
+        /**
+         * Provides access to the version of the created cache entry.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code InfinispanEntryVersion}.
+         */
+        public String infinispanEntryVersion() {
+            return "InfinispanEntryVersion";
+        }
+
+        /**
+         * This will be true if the write command that caused this had to be
+         * retried again due to a topology change.
+         * 
+         * The option is a: {@code boolean} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code InfinispanCommandRetried}.
+         */
+        public String infinispanCommandRetried() {
+            return "InfinispanCommandRetried";
         }
     }
     static InfinispanRemoteEndpointBuilder endpointBuilder(

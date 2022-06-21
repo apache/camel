@@ -1394,6 +1394,20 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * Since: 2.23
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default KubernetesHPAHeaderNameBuilder kubernetesHpa() {
+            return KubernetesHPAHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Kubernetes HPA (camel-kubernetes)
+         * Perform operations on Kubernetes Horizontal Pod Autoscalers (HPA) and
+         * get notified on HPA changes.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.23
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
          * Syntax: <code>kubernetes-hpa:masterUrl</code>
          * 
          * Path parameter: masterUrl (required)
@@ -1428,6 +1442,110 @@ public interface KubernetesHPAEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return KubernetesHPAEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Kubernetes HPA component.
+     */
+    public static class KubernetesHPAHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final KubernetesHPAHeaderNameBuilder INSTANCE = new KubernetesHPAHeaderNameBuilder();
+
+        /**
+         * The Producer operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesOperation}.
+         */
+        public String kubernetesOperation() {
+            return "KubernetesOperation";
+        }
+
+        /**
+         * The namespace name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesNamespaceName}.
+         */
+        public String kubernetesNamespaceName() {
+            return "KubernetesNamespaceName";
+        }
+
+        /**
+         * The HPA name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesHPAName}.
+         */
+        public String kubernetesHPAName() {
+            return "KubernetesHPAName";
+        }
+
+        /**
+         * The spec for a HPA.
+         * 
+         * The option is a: {@code
+         * io.fabric8.kubernetes.api.model.autoscaling.v1.HorizontalPodAutoscalerSpec} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesHPASpec}.
+         */
+        public String kubernetesHPASpec() {
+            return "KubernetesHPASpec";
+        }
+
+        /**
+         * The HPA labels.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesHPALabels}.
+         */
+        public String kubernetesHPALabels() {
+            return "KubernetesHPALabels";
+        }
+
+        /**
+         * Action watched by the consumer.
+         * 
+         * The option is a: {@code io.fabric8.kubernetes.client.Watcher.Action}
+         * type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code KubernetesEventAction}.
+         */
+        public String kubernetesEventAction() {
+            return "KubernetesEventAction";
+        }
+
+        /**
+         * Timestamp of the action watched by the consumer.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code KubernetesEventTimestamp}.
+         */
+        public String kubernetesEventTimestamp() {
+            return "KubernetesEventTimestamp";
         }
     }
     static KubernetesHPAEndpointBuilder endpointBuilder(

@@ -295,6 +295,19 @@ public interface ChunkEndpointBuilderFactory {
          * Since: 2.15
          * Maven coordinates: org.apache.camel:camel-chunk
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default ChunkHeaderNameBuilder chunk() {
+            return ChunkHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Chunk (camel-chunk)
+         * Transform messages using Chunk templating engine.
+         * 
+         * Category: transformation
+         * Since: 2.15
+         * Maven coordinates: org.apache.camel:camel-chunk
+         * 
          * Syntax: <code>chunk:resourceUri</code>
          * 
          * Path parameter: resourceUri (required)
@@ -336,6 +349,44 @@ public interface ChunkEndpointBuilderFactory {
          */
         default ChunkEndpointBuilder chunk(String componentName, String path) {
             return ChunkEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Chunk component.
+     */
+    public static class ChunkHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final ChunkHeaderNameBuilder INSTANCE = new ChunkHeaderNameBuilder();
+
+        /**
+         * A URI for the template resource to use instead of the endpoint
+         * configured.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ChunkResourceUri}.
+         */
+        public String chunkResourceUri() {
+            return "ChunkResourceUri";
+        }
+
+        /**
+         * The template to use instead of the endpoint configured.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ChunkTemplate}.
+         */
+        public String chunkTemplate() {
+            return "ChunkTemplate";
         }
     }
     static ChunkEndpointBuilder endpointBuilder(

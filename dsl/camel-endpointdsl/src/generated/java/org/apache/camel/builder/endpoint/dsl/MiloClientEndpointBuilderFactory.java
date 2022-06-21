@@ -2289,6 +2289,20 @@ public interface MiloClientEndpointBuilderFactory {
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-milo
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default MiloClientHeaderNameBuilder miloClient() {
+            return MiloClientHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * OPC UA Client (camel-milo)
+         * Connect to OPC UA servers using the binary protocol for acquiring
+         * telemetry data.
+         * 
+         * Category: iot
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-milo
+         * 
          * Syntax: <code>milo-client:endpointUri</code>
          * 
          * Path parameter: endpointUri (required)
@@ -2323,6 +2337,43 @@ public interface MiloClientEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return MiloClientEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the OPC UA Client component.
+     */
+    public static class MiloClientHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final MiloClientHeaderNameBuilder INSTANCE = new MiloClientHeaderNameBuilder();
+
+        /**
+         * The node ids.
+         * 
+         * The option is a: {@code List} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MiloNodeIds}.
+         */
+        public String miloNodeIds() {
+            return "MiloNodeIds";
+        }
+
+        /**
+         * The await setting for writes.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code await}.
+         */
+        public String await() {
+            return "await";
         }
     }
     static MiloClientEndpointBuilder endpointBuilder(

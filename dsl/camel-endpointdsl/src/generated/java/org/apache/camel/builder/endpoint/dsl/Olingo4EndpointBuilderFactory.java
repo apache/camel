@@ -1815,6 +1815,19 @@ public interface Olingo4EndpointBuilderFactory {
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-olingo4
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default Olingo4HeaderNameBuilder olingo4() {
+            return Olingo4HeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Olingo4 (camel-olingo4)
+         * Communicate with OData 4.0 services using Apache Olingo OData API.
+         * 
+         * Category: cloud
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-olingo4
+         * 
          * Syntax: <code>olingo4:apiName/methodName</code>
          * 
          * Path parameter: apiName (required)
@@ -1854,6 +1867,30 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointBuilder olingo4(String componentName, String path) {
             return Olingo4EndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Olingo4 component.
+     */
+    public static class Olingo4HeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final Olingo4HeaderNameBuilder INSTANCE = new Olingo4HeaderNameBuilder();
+
+        /**
+         * The response Http headers.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code Olingo4.responseHttpHeaders}.
+         */
+        public String olingo4Responsehttpheaders() {
+            return "Olingo4.responseHttpHeaders";
         }
     }
     static Olingo4EndpointBuilder endpointBuilder(

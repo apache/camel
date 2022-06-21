@@ -443,6 +443,19 @@ public interface AsteriskEndpointBuilderFactory {
          * Since: 2.18
          * Maven coordinates: org.apache.camel:camel-asterisk
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default AsteriskHeaderNameBuilder asterisk() {
+            return AsteriskHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Asterisk (camel-asterisk)
+         * Interact with Asterisk PBX Server.
+         * 
+         * Category: voip
+         * Since: 2.18
+         * Maven coordinates: org.apache.camel:camel-asterisk
+         * 
          * Syntax: <code>asterisk:name</code>
          * 
          * Path parameter: name (required)
@@ -476,6 +489,72 @@ public interface AsteriskEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return AsteriskEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Asterisk component.
+     */
+    public static class AsteriskHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final AsteriskHeaderNameBuilder INSTANCE = new AsteriskHeaderNameBuilder();
+
+        /**
+         * The name of the Asterisk event.
+         * 
+         * The option is a: {@code java.lang.String} type.
+         * 
+         * Default: Simple name of the event
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AsteriskEventName}.
+         */
+        public String asteriskEventName() {
+            return "AsteriskEventName";
+        }
+
+        /**
+         * The extension to query in case of an ExtensionStateAction.
+         * 
+         * The option is a: {@code java.lang.String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AsteriskExtension}.
+         */
+        public String asteriskExtension() {
+            return "AsteriskExtension";
+        }
+
+        /**
+         * The name of the context that contains the extension to query in case
+         * of an ExtensionStateAction.
+         * 
+         * The option is a: {@code java.lang.String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AsteriskContext}.
+         */
+        public String asteriskContext() {
+            return "AsteriskContext";
+        }
+
+        /**
+         * The Asterisk action to do.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.asterisk.AsteriskAction} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AsteriskAction}.
+         */
+        public String asteriskAction() {
+            return "AsteriskAction";
         }
     }
     static AsteriskEndpointBuilder endpointBuilder(

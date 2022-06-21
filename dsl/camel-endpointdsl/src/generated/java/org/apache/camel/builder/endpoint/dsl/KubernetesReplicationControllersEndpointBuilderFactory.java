@@ -1430,6 +1430,20 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default KubernetesReplicationControllersHeaderNameBuilder kubernetesReplicationControllers() {
+            return KubernetesReplicationControllersHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Kubernetes Replication Controller (camel-kubernetes)
+         * Perform operations on Kubernetes Replication Controllers and get
+         * notified on Replication Controllers changes.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
          * Syntax: <code>kubernetes-replication-controllers:masterUrl</code>
          * 
          * Path parameter: masterUrl (required)
@@ -1465,6 +1479,129 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return KubernetesReplicationControllersEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Kubernetes Replication Controller
+     * component.
+     */
+    public static class KubernetesReplicationControllersHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final KubernetesReplicationControllersHeaderNameBuilder INSTANCE = new KubernetesReplicationControllersHeaderNameBuilder();
+
+        /**
+         * The Producer operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesOperation}.
+         */
+        public String kubernetesOperation() {
+            return "KubernetesOperation";
+        }
+
+        /**
+         * The namespace name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesNamespaceName}.
+         */
+        public String kubernetesNamespaceName() {
+            return "KubernetesNamespaceName";
+        }
+
+        /**
+         * The replication controller labels.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * KubernetesReplicationControllersLabels}.
+         */
+        public String kubernetesReplicationControllersLabels() {
+            return "KubernetesReplicationControllersLabels";
+        }
+
+        /**
+         * The replication controller name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * KubernetesReplicationControllerName}.
+         */
+        public String kubernetesReplicationControllerName() {
+            return "KubernetesReplicationControllerName";
+        }
+
+        /**
+         * The spec for a replication controller.
+         * 
+         * The option is a: {@code
+         * io.fabric8.kubernetes.api.model.ReplicationControllerSpec} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * KubernetesReplicationControllerSpec}.
+         */
+        public String kubernetesReplicationControllerSpec() {
+            return "KubernetesReplicationControllerSpec";
+        }
+
+        /**
+         * The number of replicas for a replication controller during the Scale
+         * operation.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * KubernetesReplicationControllerReplicas}.
+         */
+        public String kubernetesReplicationControllerReplicas() {
+            return "KubernetesReplicationControllerReplicas";
+        }
+
+        /**
+         * Action watched by the consumer.
+         * 
+         * The option is a: {@code io.fabric8.kubernetes.client.Watcher.Action}
+         * type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code KubernetesEventAction}.
+         */
+        public String kubernetesEventAction() {
+            return "KubernetesEventAction";
+        }
+
+        /**
+         * Timestamp of the action watched by the consumer.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code KubernetesEventTimestamp}.
+         */
+        public String kubernetesEventTimestamp() {
+            return "KubernetesEventTimestamp";
         }
     }
     static KubernetesReplicationControllersEndpointBuilder endpointBuilder(

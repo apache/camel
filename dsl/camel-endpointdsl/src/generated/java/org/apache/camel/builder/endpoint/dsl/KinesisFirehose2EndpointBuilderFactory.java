@@ -463,6 +463,20 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * Since: 3.2
          * Maven coordinates: org.apache.camel:camel-aws2-kinesis
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default KinesisFirehose2HeaderNameBuilder aws2KinesisFirehose() {
+            return KinesisFirehose2HeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * AWS Kinesis Firehose (camel-aws2-kinesis)
+         * Produce data to AWS Kinesis Firehose streams using AWS SDK version
+         * 2.x.
+         * 
+         * Category: cloud,messaging
+         * Since: 3.2
+         * Maven coordinates: org.apache.camel:camel-aws2-kinesis
+         * 
          * Syntax: <code>aws2-kinesis-firehose:streamName</code>
          * 
          * Path parameter: streamName (required)
@@ -497,6 +511,58 @@ public interface KinesisFirehose2EndpointBuilderFactory {
                 String componentName,
                 String path) {
             return KinesisFirehose2EndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the AWS Kinesis Firehose component.
+     */
+    public static class KinesisFirehose2HeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final KinesisFirehose2HeaderNameBuilder INSTANCE = new KinesisFirehose2HeaderNameBuilder();
+
+        /**
+         * The record ID, as defined in
+         * http://docs.aws.amazon.com/firehose/latest/APIReference/API_PutRecord.html#API_PutRecord_ResponseSyntaxResponse Syntax.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsKinesisFirehoseRecordId}.
+         */
+        public String awsKinesisFirehoseRecordId() {
+            return "AwsKinesisFirehoseRecordId";
+        }
+
+        /**
+         * The operation we want to perform.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsKinesisFirehoseOperation}.
+         */
+        public String awsKinesisFirehoseOperation() {
+            return "AwsKinesisFirehoseOperation";
+        }
+
+        /**
+         * The name of the delivery stream.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsKinesisFirehoseDeliveryStreamName}.
+         */
+        public String awsKinesisFirehoseDeliveryStreamName() {
+            return "AwsKinesisFirehoseDeliveryStreamName";
         }
     }
     static KinesisFirehose2EndpointBuilder endpointBuilder(

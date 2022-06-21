@@ -2723,6 +2723,19 @@ public interface BlobEndpointBuilderFactory {
          * Since: 3.3
          * Maven coordinates: org.apache.camel:camel-azure-storage-blob
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default BlobHeaderNameBuilder azureStorageBlob() {
+            return BlobHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Azure Storage Blob Service (camel-azure-storage-blob)
+         * Store and retrieve blobs from Azure Storage Blob Service.
+         * 
+         * Category: cloud,file
+         * Since: 3.3
+         * Maven coordinates: org.apache.camel:camel-azure-storage-blob
+         * 
          * Syntax: <code>azure-storage-blob:accountName/containerName</code>
          * 
          * Path parameter: accountName
@@ -2764,6 +2777,919 @@ public interface BlobEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return BlobEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Azure Storage Blob Service
+     * component.
+     */
+    public static class BlobHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final BlobHeaderNameBuilder INSTANCE = new BlobHeaderNameBuilder();
+
+        /**
+         * (All) Specify the producer operation to execute, please see the doc
+         * on this page related to producer operation.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureStorageBlobOperation}.
+         */
+        public String azureStorageBlobOperation() {
+            return "AzureStorageBlobOperation";
+        }
+
+        /**
+         * (uploadBlockBlob, commitBlobBlockList, createAppendBlob,
+         * createPageBlob) Additional parameters for a set of operations.
+         * 
+         * The option is a: {@code BlobHttpHeaders} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureStorageBlobHttpHeaders}.
+         */
+        public String azureStorageBlobHttpHeaders() {
+            return "AzureStorageBlobHttpHeaders";
+        }
+
+        /**
+         * The E Tag of the blob.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureStorageBlobETag}.
+         */
+        public String azureStorageBlobETag() {
+            return "AzureStorageBlobETag";
+        }
+
+        /**
+         * Creation time of the blob.
+         * 
+         * The option is a: {@code OffsetDateTime} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureStorageBlobCreationTime}.
+         */
+        public String azureStorageBlobCreationTime() {
+            return "AzureStorageBlobCreationTime";
+        }
+
+        /**
+         * Datetime when the blob was last modified.
+         * 
+         * The option is a: {@code OffsetDateTime} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureStorageBlobLastModified}.
+         */
+        public String azureStorageBlobLastModified() {
+            return "AzureStorageBlobLastModified";
+        }
+
+        /**
+         * Content type specified for the blob.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureStorageBlobContentType}.
+         */
+        public String azureStorageBlobContentType() {
+            return "AzureStorageBlobContentType";
+        }
+
+        /**
+         * (producer) (Most operations related to upload blob) Most operations
+         * related to upload blobAn MD5 hash of the block content. This hash is
+         * used to verify the integrity of the block during transport. When this
+         * header is specified, the storage service compares the hash of the
+         * content that has arrived with this header value. Note that this MD5
+         * hash is not stored with the blob. If the two hashes do not match, the
+         * operation will fail. (consumer) Content MD5 specified for the blob.
+         * 
+         * The option is a: {@code byte[]} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AzureStorageBlobContentMD5}.
+         */
+        public String azureStorageBlobContentMD5() {
+            return "AzureStorageBlobContentMD5";
+        }
+
+        /**
+         * Content encoding specified for the blob.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobContentEncoding}.
+         */
+        public String azureStorageBlobContentEncoding() {
+            return "AzureStorageBlobContentEncoding";
+        }
+
+        /**
+         * Content disposition specified for the blob.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobContentDisposition}.
+         */
+        public String azureStorageBlobContentDisposition() {
+            return "AzureStorageBlobContentDisposition";
+        }
+
+        /**
+         * Content language specified for the blob.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobContentLanguage}.
+         */
+        public String azureStorageBlobContentLanguage() {
+            return "AzureStorageBlobContentLanguage";
+        }
+
+        /**
+         * Cache control specified for the blob.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureStorageBlobCacheControl}.
+         */
+        public String azureStorageBlobCacheControl() {
+            return "AzureStorageBlobCacheControl";
+        }
+
+        /**
+         * The size of the blob.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureStorageBlobBlobSize}.
+         */
+        public String azureStorageBlobBlobSize() {
+            return "AzureStorageBlobBlobSize";
+        }
+
+        /**
+         * (producer) (createPageBlob) A user-controlled value that you can use
+         * to track requests. The value of the sequence number must be between 0
+         * and 263 - 1. The default value is 0. (consumer) The current sequence
+         * number for a page blob.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobSequenceNumber}.
+         */
+        public String azureStorageBlobSequenceNumber() {
+            return "AzureStorageBlobSequenceNumber";
+        }
+
+        /**
+         * The type of the blob.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.azure.storage.blob.BlobType} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureStorageBlobBlobType}.
+         */
+        public String azureStorageBlobBlobType() {
+            return "AzureStorageBlobBlobType";
+        }
+
+        /**
+         * Status of the lease on the blob.
+         * 
+         * The option is a: {@code
+         * com.azure.storage.blob.models.LeaseStatusType} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureStorageBlobLeaseStatus}.
+         */
+        public String azureStorageBlobLeaseStatus() {
+            return "AzureStorageBlobLeaseStatus";
+        }
+
+        /**
+         * State of the lease on the blob.
+         * 
+         * The option is a: {@code com.azure.storage.blob.models.LeaseStateType}
+         * type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureStorageBlobLeaseState}.
+         */
+        public String azureStorageBlobLeaseState() {
+            return "AzureStorageBlobLeaseState";
+        }
+
+        /**
+         * Type of lease on the blob.
+         * 
+         * The option is a: {@code
+         * com.azure.storage.blob.models.LeaseDurationType} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureStorageBlobLeaseDuration}.
+         */
+        public String azureStorageBlobLeaseDuration() {
+            return "AzureStorageBlobLeaseDuration";
+        }
+
+        /**
+         * Identifier of the last copy operation performed on the blob.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureStorageBlobCopyId}.
+         */
+        public String azureStorageBlobCopyId() {
+            return "AzureStorageBlobCopyId";
+        }
+
+        /**
+         * Status of the last copy operation performed on the blob.
+         * 
+         * The option is a: {@code com.azure.storage.blob.models.CopyStatusType}
+         * type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureStorageBlobCopyStatus}.
+         */
+        public String azureStorageBlobCopyStatus() {
+            return "AzureStorageBlobCopyStatus";
+        }
+
+        /**
+         * Source of the last copy operation performed on the blob.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureStorageBlobCopySource}.
+         */
+        public String azureStorageBlobCopySource() {
+            return "AzureStorageBlobCopySource";
+        }
+
+        /**
+         * Progress of the last copy operation performed on the blob.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureStorageBlobCopyProgress}.
+         */
+        public String azureStorageBlobCopyProgress() {
+            return "AzureStorageBlobCopyProgress";
+        }
+
+        /**
+         * Datetime when the last copy operation on the blob completed.
+         * 
+         * The option is a: {@code OffsetDateTime} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobCopyCompletionTime}.
+         */
+        public String azureStorageBlobCopyCompletionTime() {
+            return "AzureStorageBlobCopyCompletionTime";
+        }
+
+        /**
+         * Description of the last copy operation on the blob.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobCopyStatusDescription}.
+         */
+        public String azureStorageBlobCopyStatusDescription() {
+            return "AzureStorageBlobCopyStatusDescription";
+        }
+
+        /**
+         * Snapshot identifier of the last incremental copy snapshot for the
+         * blob.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobCopyDestinationSnapshot}.
+         */
+        public String azureStorageBlobCopyDestinationSnapshot() {
+            return "AzureStorageBlobCopyDestinationSnapshot";
+        }
+
+        /**
+         * Flag indicating if the blob's content is encrypted on the server.
+         * 
+         * The option is a: {@code boolean} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobIsServerEncrypted}.
+         */
+        public String azureStorageBlobIsServerEncrypted() {
+            return "AzureStorageBlobIsServerEncrypted";
+        }
+
+        /**
+         * Flag indicating if the blob was incrementally copied.
+         * 
+         * The option is a: {@code boolean} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobIsIncrementalCopy}.
+         */
+        public String azureStorageBlobIsIncrementalCopy() {
+            return "AzureStorageBlobIsIncrementalCopy";
+        }
+
+        /**
+         * (producer) (uploadBlockBlob, commitBlobBlockList) Defines values for
+         * AccessTier. (consumer) Access tier of the blob.
+         * 
+         * The option is a: {@code AccessTier} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AzureStorageBlobAccessTier}.
+         */
+        public String azureStorageBlobAccessTier() {
+            return "AzureStorageBlobAccessTier";
+        }
+
+        /**
+         * Flag indicating if the access tier of the blob was inferred from
+         * properties of the blob.
+         * 
+         * The option is a: {@code boolean} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobIsAccessTierInferred}.
+         */
+        public String azureStorageBlobIsAccessTierInferred() {
+            return "AzureStorageBlobIsAccessTierInferred";
+        }
+
+        /**
+         * Archive status of the blob.
+         * 
+         * The option is a: {@code ArchiveStatus} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureStorageBlobArchiveStatus}.
+         */
+        public String azureStorageBlobArchiveStatus() {
+            return "AzureStorageBlobArchiveStatus";
+        }
+
+        /**
+         * Datetime when the access tier of the blob last changed.
+         * 
+         * The option is a: {@code OffsetDateTime} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobaccessTierChangeTime}.
+         */
+        public String azureStorageBlobaccessTierChangeTime() {
+            return "AzureStorageBlobaccessTierChangeTime";
+        }
+
+        /**
+         * (producer) (Operations related to container and blob) Operations
+         * related to container and blob Metadata to associate with the
+         * container or blob. (consumer) Additional metadata associated with the
+         * blob.
+         * 
+         * The option is a: {@code Map<String,String>} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AzureStorageBlobMetadata}.
+         */
+        public String azureStorageBlobMetadata() {
+            return "AzureStorageBlobMetadata";
+        }
+
+        /**
+         * Number of blocks committed to an append blob.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobCommittedBlockCount}.
+         */
+        public String azureStorageBlobCommittedBlockCount() {
+            return "AzureStorageBlobCommittedBlockCount";
+        }
+
+        /**
+         * The offset at which the block was committed to the block blob.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureStorageBlobAppendOffset}.
+         */
+        public String azureStorageBlobAppendOffset() {
+            return "AzureStorageBlobAppendOffset";
+        }
+
+        /**
+         * Returns non-parsed httpHeaders that can be used by the user.
+         * 
+         * The option is a: {@code HttpHeaders} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobRawHttpHeaders}.
+         */
+        public String azureStorageBlobRawHttpHeaders() {
+            return "AzureStorageBlobRawHttpHeaders";
+        }
+
+        /**
+         * The downloaded filename from the operation downloadBlobToFile.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureStorageBlobFileName}.
+         */
+        public String azureStorageBlobFileName() {
+            return "AzureStorageBlobFileName";
+        }
+
+        /**
+         * The download link generated by downloadLink operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AzureStorageBlobDownloadLink}.
+         */
+        public String azureStorageBlobDownloadLink() {
+            return "AzureStorageBlobDownloadLink";
+        }
+
+        /**
+         * (listBlobs) Defines options available to configure the behavior of a
+         * call to listBlobsFlatSegment on a BlobContainerClient object.
+         * 
+         * The option is a: {@code ListBlobsOptions} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobListBlobOptions}.
+         */
+        public String azureStorageBlobListBlobOptions() {
+            return "AzureStorageBlobListBlobOptions";
+        }
+
+        /**
+         * (listBlobs) The details for listing specific blobs.
+         * 
+         * The option is a: {@code BlobListDetails} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureStorageBlobListDetails}.
+         */
+        public String azureStorageBlobListDetails() {
+            return "AzureStorageBlobListDetails";
+        }
+
+        /**
+         * (listBlobs,getBlob) Filters the results to return only blobs whose
+         * names begin with the specified prefix. May be null to return all
+         * blobs.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureStorageBlobPrefix}.
+         */
+        public String azureStorageBlobPrefix() {
+            return "AzureStorageBlobPrefix";
+        }
+
+        /**
+         * (listBlobs,getBlob) Filters the results to return only blobs whose
+         * names match the specified regular expression. May be null to return
+         * all. If both prefix and regex are set, regex takes the priority and
+         * prefix is ignored.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureStorageBlobRegex}.
+         */
+        public String azureStorageBlobRegex() {
+            return "AzureStorageBlobRegex";
+        }
+
+        /**
+         * (listBlobs) Specifies the maximum number of blobs to return,
+         * including all BlobPrefix elements. If the request does not specify
+         * maxResultsPerPage or specifies a value greater than 5,000, the server
+         * will return up to 5,000 items.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobMaxResultsPerPage}.
+         */
+        public String azureStorageBlobMaxResultsPerPage() {
+            return "AzureStorageBlobMaxResultsPerPage";
+        }
+
+        /**
+         * (All) An optional timeout value beyond which a RuntimeException will
+         * be raised.
+         * 
+         * The option is a: {@code Duration} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureStorageBlobTimeout}.
+         */
+        public String azureStorageBlobTimeout() {
+            return "AzureStorageBlobTimeout";
+        }
+
+        /**
+         * (createContainer) Specifies how the data in this container is
+         * available to the public. Pass null for no public access.
+         * 
+         * The option is a: {@code PublicAccessType} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobPublicAccessType}.
+         */
+        public String azureStorageBlobPublicAccessType() {
+            return "AzureStorageBlobPublicAccessType";
+        }
+
+        /**
+         * (Operations related to container and blob) This contains values which
+         * will restrict the successful operation of a variety of requests to
+         * the conditions present. These conditions are entirely optional.
+         * 
+         * The option is a: {@code BlobRequestConditions} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobRequestCondition}.
+         */
+        public String azureStorageBlobRequestCondition() {
+            return "AzureStorageBlobRequestCondition";
+        }
+
+        /**
+         * (Operations related to container and blob) Override/set the container
+         * name on the exchange headers.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobBlobContainerName}.
+         */
+        public String azureStorageBlobBlobContainerName() {
+            return "AzureStorageBlobBlobContainerName";
+        }
+
+        /**
+         * (Operations related to blob) Override/set the blob name on the
+         * exchange headers.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureStorageBlobBlobName}.
+         */
+        public String azureStorageBlobBlobName() {
+            return "AzureStorageBlobBlobName";
+        }
+
+        /**
+         * (downloadBlobToFile) The file directory where the downloaded blobs
+         * will be saved to.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureStorageBlobFileDir}.
+         */
+        public String azureStorageBlobFileDir() {
+            return "AzureStorageBlobFileDir";
+        }
+
+        /**
+         * (Operations related to page blob) A PageRange object. Given that
+         * pages must be aligned with 512-byte boundaries, the start offset must
+         * be a modulus of 512 and the end offset must be a modulus of 512 - 1.
+         * Examples of valid byte ranges are 0-511, 512-1023, etc.
+         * 
+         * The option is a: {@code PageRange} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureStorageBlobPageBlobRange}.
+         */
+        public String azureStorageBlobPageBlobRange() {
+            return "AzureStorageBlobPageBlobRange";
+        }
+
+        /**
+         * (createPageBlob, resizePageBlob) Specifies the maximum size for the
+         * page blob, up to 8 TB. The page blob size must be aligned to a
+         * 512-byte boundary.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureStorageBlobPageBlobSize}.
+         */
+        public String azureStorageBlobPageBlobSize() {
+            return "AzureStorageBlobPageBlobSize";
+        }
+
+        /**
+         * (stageBlockBlobList) When is set to true, the staged blocks will not
+         * be committed directly.
+         * 
+         * The option is a: {@code boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobCommitBlobBlockListLater}.
+         */
+        public String azureStorageBlobCommitBlobBlockListLater() {
+            return "AzureStorageBlobCommitBlobBlockListLater";
+        }
+
+        /**
+         * (getBlobBlockList) Specifies which type of blocks to return.
+         * 
+         * The option is a: {@code com.azure.storage.blob.models.BlockListType}
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureStorageBlobBlockListType}.
+         */
+        public String azureStorageBlobBlockListType() {
+            return "AzureStorageBlobBlockListType";
+        }
+
+        /**
+         * (commitAppendBlob) When is set to true, the append blocks will be
+         * created when committing append blocks.
+         * 
+         * The option is a: {@code boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobCreateAppendBlob}.
+         */
+        public String azureStorageBlobCreateAppendBlob() {
+            return "AzureStorageBlobCreateAppendBlob";
+        }
+
+        /**
+         * (uploadPageBlob) When is set to true, the page blob will be created
+         * when uploading page blob.
+         * 
+         * The option is a: {@code boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobCreatePageBlob}.
+         */
+        public String azureStorageBlobCreatePageBlob() {
+            return "AzureStorageBlobCreatePageBlob";
+        }
+
+        /**
+         * (deleteBlob) Specifies the behavior for deleting the snapshots on
+         * this blob. Include will delete the base blob and all snapshots. Only
+         * will delete only the snapshots. If a snapshot is being deleted, you
+         * must pass null.
+         * 
+         * The option is a: {@code
+         * com.azure.storage.blob.models.DeleteSnapshotsOptionType} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobDeleteSnapshotsOptionType}.
+         */
+        public String azureStorageBlobDeleteSnapshotsOptionType() {
+            return "AzureStorageBlobDeleteSnapshotsOptionType";
+        }
+
+        /**
+         * (listBlobContainers) A ListBlobContainersOptions which specifies what
+         * data should be returned by the service.
+         * 
+         * The option is a: {@code ListBlobContainersOptions} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobListBlobContainersOptions}.
+         */
+        public String azureStorageBlobListBlobContainersOptions() {
+            return "AzureStorageBlobListBlobContainersOptions";
+        }
+
+        /**
+         * (downloadBlobToFile) ParallelTransferOptions to use to download to
+         * file. Number of parallel transfers parameter is ignored.
+         * 
+         * The option is a: {@code ParallelTransferOptions} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobParallelTransferOptions}.
+         */
+        public String azureStorageBlobParallelTransferOptions() {
+            return "AzureStorageBlobParallelTransferOptions";
+        }
+
+        /**
+         * (downloadLink) Override the default expiration (millis) of URL
+         * download link.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobDownloadLinkExpiration}.
+         */
+        public String azureStorageBlobDownloadLinkExpiration() {
+            return "AzureStorageBlobDownloadLinkExpiration";
+        }
+
+        /**
+         * (copyBlob) The source blob account name to be used as source account
+         * name in a copy blob operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobSourceBlobAccountName}.
+         */
+        public String azureStorageBlobSourceBlobAccountName() {
+            return "AzureStorageBlobSourceBlobAccountName";
+        }
+
+        /**
+         * (copyBlob) The source blob container name to be used as source
+         * container name in a copy blob operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobSourceBlobContainerName}.
+         */
+        public String azureStorageBlobSourceBlobContainerName() {
+            return "AzureStorageBlobSourceBlobContainerName";
+        }
+
+        /**
+         * (getChangeFeed) It filters the results to return events approximately
+         * after the start time. Note: A few events belonging to the previous
+         * hour can also be returned. A few events belonging to this hour can be
+         * missing; to ensure all events from the hour are returned, round the
+         * start time down by an hour.
+         * 
+         * The option is a: {@code OffsetDateTime} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobChangeFeedStartTime}.
+         */
+        public String azureStorageBlobChangeFeedStartTime() {
+            return "AzureStorageBlobChangeFeedStartTime";
+        }
+
+        /**
+         * (getChangeFeed) It filters the results to return events approximately
+         * before the end time. Note: A few events belonging to the next hour
+         * can also be returned. A few events belonging to this hour can be
+         * missing; to ensure all events from the hour are returned, round the
+         * end time up by an hour.
+         * 
+         * The option is a: {@code OffsetDateTime} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobChangeFeedEndTime}.
+         */
+        public String azureStorageBlobChangeFeedEndTime() {
+            return "AzureStorageBlobChangeFeedEndTime";
+        }
+
+        /**
+         * (getChangeFeed) This gives additional context that is passed through
+         * the Http pipeline during the service call.
+         * 
+         * The option is a: {@code Context} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureStorageBlobContext}.
+         */
+        public String azureStorageBlobContext() {
+            return "AzureStorageBlobContext";
         }
     }
     static BlobEndpointBuilder endpointBuilder(String componentName, String path) {

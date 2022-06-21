@@ -645,6 +645,20 @@ public interface CordaEndpointBuilderFactory {
          * Since: 2.23
          * Maven coordinates: org.apache.camel:camel-corda
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default CordaHeaderNameBuilder corda() {
+            return CordaHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Corda (camel-corda)
+         * Perform operations against Corda blockchain platform using corda-rpc
+         * library.
+         * 
+         * Category: blockchain,rpc
+         * Since: 2.23
+         * Maven coordinates: org.apache.camel:camel-corda
+         * 
          * Syntax: <code>corda:node</code>
          * 
          * Path parameter: node (required)
@@ -677,6 +691,139 @@ public interface CordaEndpointBuilderFactory {
          */
         default CordaEndpointBuilder corda(String componentName, String path) {
             return CordaEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Corda component.
+     */
+    public static class CordaHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final CordaHeaderNameBuilder INSTANCE = new CordaHeaderNameBuilder();
+
+        /**
+         * The operation to perform.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OPERATION}.
+         */
+        public String oPERATION() {
+            return "OPERATION";
+        }
+
+        /**
+         * The attachment query criteria.
+         * 
+         * The option is a: {@code
+         * net.corda.core.node.services.vault.AttachmentQueryCriteria} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ATTACHMENT_QUERY_CRITERIA}.
+         */
+        public String attachmentQueryCriteria() {
+            return "ATTACHMENT_QUERY_CRITERIA";
+        }
+
+        /**
+         * The sort.
+         * 
+         * The option is a: {@code } type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SORT}.
+         */
+        public String sORT() {
+            return "SORT";
+        }
+
+        /**
+         * If true, a case sensitive match is done against each component of
+         * each X.500 name.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code EXACT_MATCH}.
+         */
+        public String exactMatch() {
+            return "EXACT_MATCH";
+        }
+
+        /**
+         * The arguments.
+         * 
+         * The option is a: {@code Object[]} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ARGUMENTS}.
+         */
+        public String aRGUMENTS() {
+            return "ARGUMENTS";
+        }
+
+        /**
+         * The value of the node's flows draining mode.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DRAINING_MODE}.
+         */
+        public String drainingMode() {
+            return "DRAINING_MODE";
+        }
+
+        /**
+         * Container for a cryptographically secure hash value.
+         * 
+         * The option is a: {@code net.corda.core.crypto.SecureHash} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SECURE_HASH}.
+         */
+        public String secureHash() {
+            return "SECURE_HASH";
+        }
+
+        /**
+         * The query criteria.
+         * 
+         * The option is a: {@code
+         * net.corda.core.node.services.vault.QueryCriteria} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code QUERY_CRITERIA}.
+         */
+        public String queryCriteria() {
+            return "QUERY_CRITERIA";
+        }
+
+        /**
+         * The PageSpecification allows specification of a page number and page
+         * size.
+         * 
+         * The option is a: {@code
+         * net.corda.core.node.services.vault.PageSpecification} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PAGE_SPECIFICATION}.
+         */
+        public String pageSpecification() {
+            return "PAGE_SPECIFICATION";
         }
     }
     static CordaEndpointBuilder endpointBuilder(

@@ -1084,6 +1084,19 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * Since: 2.23
          * Maven coordinates: org.apache.camel:camel-google-calendar
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default GoogleCalendarStreamHeaderNameBuilder googleCalendarStream() {
+            return GoogleCalendarStreamHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Google Calendar Stream (camel-google-calendar)
+         * Poll for changes in a Google Calendar.
+         * 
+         * Category: cloud
+         * Since: 2.23
+         * Maven coordinates: org.apache.camel:camel-google-calendar
+         * 
          * Syntax: <code>google-calendar-stream:index</code>
          * 
          * Path parameter: index (required)
@@ -1118,6 +1131,30 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return GoogleCalendarStreamEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Google Calendar Stream component.
+     */
+    public static class GoogleCalendarStreamHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final GoogleCalendarStreamHeaderNameBuilder INSTANCE = new GoogleCalendarStreamHeaderNameBuilder();
+
+        /**
+         * The calendar event id.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GoogleCalendarEventId}.
+         */
+        public String googleCalendarEventId() {
+            return "GoogleCalendarEventId";
         }
     }
     static GoogleCalendarStreamEndpointBuilder endpointBuilder(

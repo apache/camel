@@ -1024,6 +1024,19 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * Since: 2.23
          * Maven coordinates: org.apache.camel:camel-google-sheets
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default GoogleSheetsStreamHeaderNameBuilder googleSheetsStream() {
+            return GoogleSheetsStreamHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Google Sheets Stream (camel-google-sheets)
+         * Poll for changes in Google Sheets.
+         * 
+         * Category: cloud,sheets
+         * Since: 2.23
+         * Maven coordinates: org.apache.camel:camel-google-sheets
+         * 
          * Syntax: <code>google-sheets-stream:spreadsheetId</code>
          * 
          * Path parameter: spreadsheetId (required)
@@ -1059,6 +1072,96 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return GoogleSheetsStreamEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Google Sheets Stream component.
+     */
+    public static class GoogleSheetsStreamHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final GoogleSheetsStreamHeaderNameBuilder INSTANCE = new GoogleSheetsStreamHeaderNameBuilder();
+
+        /**
+         * Specifies the spreadsheet identifier that is used to identify the
+         * target to obtain.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GoogleSheetsSpreadsheetId}.
+         */
+        public String googleSheetsSpreadsheetId() {
+            return "GoogleSheetsSpreadsheetId";
+        }
+
+        /**
+         * The URL of the spreadsheet.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GoogleSheetsSpreadsheetUrl}.
+         */
+        public String googleSheetsSpreadsheetUrl() {
+            return "GoogleSheetsSpreadsheetUrl";
+        }
+
+        /**
+         * The major dimension of the values.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GoogleSheetsMajorDimension}.
+         */
+        public String googleSheetsMajorDimension() {
+            return "GoogleSheetsMajorDimension";
+        }
+
+        /**
+         * The range the values cover, in A1 notation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GoogleSheetsRange}.
+         */
+        public String googleSheetsRange() {
+            return "GoogleSheetsRange";
+        }
+
+        /**
+         * The index of the range.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GoogleSheetsRangeIndex}.
+         */
+        public String googleSheetsRangeIndex() {
+            return "GoogleSheetsRangeIndex";
+        }
+
+        /**
+         * The index of the value.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GoogleSheetsValueIndex}.
+         */
+        public String googleSheetsValueIndex() {
+            return "GoogleSheetsValueIndex";
         }
     }
     static GoogleSheetsStreamEndpointBuilder endpointBuilder(

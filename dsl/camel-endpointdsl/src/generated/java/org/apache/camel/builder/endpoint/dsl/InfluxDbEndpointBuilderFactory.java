@@ -270,6 +270,19 @@ public interface InfluxDbEndpointBuilderFactory {
          * Since: 2.18
          * Maven coordinates: org.apache.camel:camel-influxdb
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default InfluxDbHeaderNameBuilder influxdb() {
+            return InfluxDbHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * InfluxDB (camel-influxdb)
+         * Interact with InfluxDB, a time series database.
+         * 
+         * Category: database
+         * Since: 2.18
+         * Maven coordinates: org.apache.camel:camel-influxdb
+         * 
          * Syntax: <code>influxdb:connectionBean</code>
          * 
          * Path parameter: connectionBean (required)
@@ -303,6 +316,57 @@ public interface InfluxDbEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return InfluxDbEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the InfluxDB component.
+     */
+    public static class InfluxDbHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final InfluxDbHeaderNameBuilder INSTANCE = new InfluxDbHeaderNameBuilder();
+
+        /**
+         * The string that defines the retention policy to the data created by
+         * the endpoint.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code InfluxDB.RetentionPolicy}.
+         */
+        public String influxdbRetentionpolicy() {
+            return "InfluxDB.RetentionPolicy";
+        }
+
+        /**
+         * The name of the database where the time series will be stored.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code InfluxDB.databaseName}.
+         */
+        public String influxdbDatabasename() {
+            return "InfluxDB.databaseName";
+        }
+
+        /**
+         * Define the query in case of operation query.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code InfluxDB.query}.
+         */
+        public String influxdbQuery() {
+            return "InfluxDB.query";
         }
     }
     static InfluxDbEndpointBuilder endpointBuilder(

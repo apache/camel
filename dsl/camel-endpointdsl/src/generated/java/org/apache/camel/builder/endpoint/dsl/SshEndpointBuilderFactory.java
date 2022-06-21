@@ -1619,6 +1619,19 @@ public interface SshEndpointBuilderFactory {
          * Since: 2.10
          * Maven coordinates: org.apache.camel:camel-ssh
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default SshHeaderNameBuilder ssh() {
+            return SshHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * SSH (camel-ssh)
+         * Execute commands on remote hosts using SSH.
+         * 
+         * Category: file
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-ssh
+         * 
          * Syntax: <code>ssh:host:port</code>
          * 
          * Path parameter: host (required)
@@ -1658,6 +1671,72 @@ public interface SshEndpointBuilderFactory {
          */
         default SshEndpointBuilder ssh(String componentName, String path) {
             return SshEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the SSH component.
+     */
+    public static class SshHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final SshHeaderNameBuilder INSTANCE = new SshHeaderNameBuilder();
+
+        /**
+         * The user name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SshUsername}.
+         */
+        public String sshUsername() {
+            return "SshUsername";
+        }
+
+        /**
+         * The password.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SshPassword}.
+         */
+        public String sshPassword() {
+            return "SshPassword";
+        }
+
+        /**
+         * The value of this header is a InputStream with the standard error
+         * stream of the executable.
+         * 
+         * The option is a: {@code InputStream} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SshStderr}.
+         */
+        public String sshStderr() {
+            return "SshStderr";
+        }
+
+        /**
+         * The value of this header is the exit value that is returned, after
+         * the execution. By convention a non-zero status exit value indicates
+         * abnormal termination. Note that the exit value is OS dependent.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SshExitValue}.
+         */
+        public String sshExitValue() {
+            return "SshExitValue";
         }
     }
     static SshEndpointBuilder endpointBuilder(String componentName, String path) {

@@ -541,6 +541,20 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * Since: 3.5
          * Maven coordinates: org.apache.camel:camel-vertx-websocket
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default VertxWebsocketHeaderNameBuilder vertxWebsocket() {
+            return VertxWebsocketHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Vert.x WebSocket (camel-vertx-websocket)
+         * Expose WebSocket endpoints and connect to remote WebSocket servers
+         * using Vert.x
+         * 
+         * Category: websocket
+         * Since: 3.5
+         * Maven coordinates: org.apache.camel:camel-vertx-websocket
+         * 
          * Syntax: <code>vertx-websocket:host:port/path</code>
          * 
          * Path parameter: host
@@ -599,6 +613,60 @@ public interface VertxWebsocketEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return VertxWebsocketEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Vert.x WebSocket component.
+     */
+    public static class VertxWebsocketHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final VertxWebsocketHeaderNameBuilder INSTANCE = new VertxWebsocketHeaderNameBuilder();
+
+        /**
+         * Sends the message to the client with the given connection key. You
+         * can use a comma separated list of keys to send a message to multiple
+         * clients.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code VertxWebsocket.connectionKey}.
+         */
+        public String vertxwebsocketConnectionkey() {
+            return "VertxWebsocket.connectionKey";
+        }
+
+        /**
+         * Sends the message to all clients which are currently connected. You
+         * can use the sendToAll option on the endpoint instead of using this
+         * header.
+         * 
+         * The option is a: {@code boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code VertxWebsocket.sendToAll}.
+         */
+        public String vertxwebsocketSendtoall() {
+            return "VertxWebsocket.sendToAll";
+        }
+
+        /**
+         * The remote address.
+         * 
+         * The option is a: {@code io.vertx.core.net.SocketAddress} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code VertxWebsocket.remoteAddress}.
+         */
+        public String vertxwebsocketRemoteaddress() {
+            return "VertxWebsocket.remoteAddress";
         }
     }
     static VertxWebsocketEndpointBuilder endpointBuilder(
