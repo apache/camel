@@ -100,6 +100,11 @@ public interface Exchange {
     String COOKIE_HANDLER = "CamelCookieHandler";
     String CORRELATION_ID = "CamelCorrelationId";
 
+    // The schema of the message payload
+    String CONTENT_SCHEMA = "CamelContentSchema";
+    // The schema type of the message payload (json schema, avro, etc)
+    String CONTENT_SCHEMA_TYPE = "CamelContentSchemaType";
+
     String DATASET_INDEX = "CamelDataSetIndex";
     String DEFAULT_CHARSET_PROPERTY = "org.apache.camel.default.charset";
     String DESTINATION_OVERRIDE_URL = "CamelDestinationOverrideUrl";
@@ -398,7 +403,7 @@ public interface Exchange {
     /**
      * Removes the properties from this exchange that match the given <tt>pattern</tt>, except for the ones matching one
      * or more <tt>excludePatterns</tt>
-     * 
+     *
      * @param  pattern         pattern of names that should be removed
      * @param  excludePatterns one or more pattern of properties names that should be excluded (= preserved)
      * @return                 boolean whether any properties matched
@@ -632,11 +637,11 @@ public interface Exchange {
     /**
      * Returns the endpoint which originated this message exchange if a consumer on an endpoint created the message
      * exchange, otherwise his property will be <tt>null</tt>.
-     * 
+     *
      * Note: In case this message exchange has been cloned through another parent message exchange (which itself has
      * been created through the consumer of it's own endpoint), then if desired one could still retrieve the consumer
      * endpoint of such a parent message exchange as the following:
-     * 
+     *
      * <pre>
      * getContext().getRoute(getFromRouteId()).getEndpoint()
      * </pre>
@@ -646,7 +651,7 @@ public interface Exchange {
     /**
      * Returns the route id which originated this message exchange if a route consumer on an endpoint created the
      * message exchange, otherwise his property will be <tt>null</tt>.
-     * 
+     *
      * Note: In case this message exchange has been cloned through another parent message exchange then this method
      * would return the <tt>fromRouteId<tt> property of that exchange.
      */
