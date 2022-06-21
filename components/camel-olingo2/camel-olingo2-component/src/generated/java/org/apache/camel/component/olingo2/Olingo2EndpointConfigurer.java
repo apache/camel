@@ -32,9 +32,9 @@ public class Olingo2EndpointConfigurer extends PropertyConfigurerSupport impleme
         map.put("proxy", org.apache.http.HttpHost.class);
         map.put("serviceUri", java.lang.String.class);
         map.put("socketTimeout", int.class);
-        map.put("bridgeErrorHandler", boolean.class);
         map.put("sendEmptyMessageWhenIdle", boolean.class);
         map.put("splitResult", boolean.class);
+        map.put("bridgeErrorHandler", boolean.class);
         map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
