@@ -187,10 +187,6 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     protected String userAgent;
 
     public HttpComponent() {
-        this(HttpEndpoint.class);
-    }
-
-    public HttpComponent(Class<? extends HttpEndpoint> endpointClass) {
         registerExtension(HttpComponentVerifierExtension::new);
     }
 

@@ -160,7 +160,7 @@ public class HttpProducer extends DefaultProducer {
         }
 
         HttpRequestBase httpRequest = createMethod(exchange);
-        HttpHost httpHost = createHost(httpRequest, exchange);
+        HttpHost httpHost = createHost(httpRequest);
 
         Message in = exchange.getIn();
         String httpProtocolVersion = in.getHeader(HttpConstants.HTTP_PROTOCOL_VERSION, String.class);
@@ -278,7 +278,7 @@ public class HttpProducer extends DefaultProducer {
 
             if (!throwException) {
                 // if we do not use failed exception then populate response for all response codes
-                populateResponse(exchange, httpRequest, httpResponse, in, strategy, responseCode);
+                populateResponse(exchange, httpRequest, httpResponse, strategy, responseCode);
             } else {
                 boolean ok;
                 if (minOkRange > 0) {
@@ -288,7 +288,7 @@ public class HttpProducer extends DefaultProducer {
                 }
                 if (ok) {
                     // only populate response for OK response
-                    populateResponse(exchange, httpRequest, httpResponse, in, strategy, responseCode);
+                    populateResponse(exchange, httpRequest, httpResponse, strategy, responseCode);
                 } else {
                     // operation failed so populate exception to throw
                     throw populateHttpOperationFailedException(exchange, httpRequest, httpResponse, responseCode);
@@ -326,10 +326,10 @@ public class HttpProducer extends DefaultProducer {
 
     protected void populateResponse(
             Exchange exchange, HttpRequestBase httpRequest, HttpResponse httpResponse,
-            Message in, HeaderFilterStrategy strategy, int responseCode)
+            HeaderFilterStrategy strategy, int responseCode)
             throws IOException, ClassNotFoundException {
         // We just make the out message is not create when extractResponseBody throws exception
-        Object response = extractResponseBody(httpRequest, httpResponse, exchange, getEndpoint().isIgnoreResponseBody());
+        Object response = extractResponseBody(httpResponse, exchange, getEndpoint().isIgnoreResponseBody());
         Message answer = exchange.getOut();
 
         // optimize for 200 response code as the boxing is outside the cached integers
@@ -403,7 +403,7 @@ public class HttpProducer extends DefaultProducer {
             getEndpoint().getCookieHandler().storeCookies(exchange, httpRequest.getURI(), m);
         }
 
-        Object responseBody = extractResponseBody(httpRequest, httpResponse, exchange, getEndpoint().isIgnoreResponseBody());
+        Object responseBody = extractResponseBody(httpResponse, exchange, getEndpoint().isIgnoreResponseBody());
         if (transferException && responseBody instanceof Exception) {
             // if the response was a serialized exception then use that
             return (Exception) responseBody;
@@ -468,7 +468,7 @@ public class HttpProducer extends DefaultProducer {
      * Extracts the response from the method as a InputStream.
      */
     protected Object extractResponseBody(
-            HttpRequestBase httpRequest, HttpResponse httpResponse, Exchange exchange, boolean ignoreResponseBody)
+            HttpResponse httpResponse, Exchange exchange, boolean ignoreResponseBody)
             throws IOException, ClassNotFoundException {
         HttpEntity entity = httpResponse.getEntity();
         if (entity == null) {
@@ -562,7 +562,7 @@ public class HttpProducer extends DefaultProducer {
     /**
      * Creates the HttpHost to use to call the remote server
      */
-    protected HttpHost createHost(HttpRequestBase httpRequest, Exchange exchange) {
+    protected HttpHost createHost(HttpRequestBase httpRequest) {
         if (httpRequest.getURI() == defaultUri) {
             return defaultHttpHost;
         } else {
