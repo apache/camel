@@ -188,8 +188,9 @@ public interface JiraComponentBuilderFactory {
             return this;
         }
         /**
-         * (Basic authentication only) The password to authenticate to the Jira
-         * server. Use only if username basic authentication is used.
+         * (Basic authentication only) The password or the API Token to
+         * authenticate to the Jira server. Use only if username basic
+         * authentication is used.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
