@@ -89,10 +89,6 @@ public class DefaultHttpRegistry implements HttpRegistry {
         register(camelServlet);
     }
 
-    public void unregister(HttpRegistryProvider provider, Map<String, Object> properties) {
-        unregister(provider);
-    }
-
     @Override
     public void register(HttpRegistryProvider provider) {
         synchronized (lock) {
