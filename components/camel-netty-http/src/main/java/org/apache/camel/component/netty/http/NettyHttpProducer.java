@@ -91,7 +91,7 @@ public class NettyHttpProducer extends NettyProducer {
         // creating the url to use takes 2-steps
         final NettyHttpEndpoint endpoint = getEndpoint();
         final String uri = NettyHttpHelper.createURL(exchange, endpoint);
-        final URI u = NettyHttpHelper.createURI(exchange, uri, endpoint);
+        final URI u = NettyHttpHelper.createURI(exchange, uri);
 
         final NettyHttpBinding nettyHttpBinding = endpoint.getNettyHttpBinding();
         final HttpRequest request = nettyHttpBinding.toNettyRequest(exchange.getIn(), u.toString(), getConfiguration());

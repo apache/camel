@@ -236,10 +236,9 @@ public final class NettyHttpHelper {
      *
      * @param  exchange the exchange
      * @param  url      the url to invoke
-     * @param  endpoint the endpoint
      * @return          the URI to invoke
      */
-    public static URI createURI(Exchange exchange, String url, NettyHttpEndpoint endpoint) throws URISyntaxException {
+    public static URI createURI(Exchange exchange, String url) throws URISyntaxException {
         URI uri = new URI(url);
 
         // rest producer may provide an override query string to be used which we should discard if using (hence the remove)
