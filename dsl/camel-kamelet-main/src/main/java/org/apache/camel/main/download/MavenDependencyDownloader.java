@@ -89,6 +89,11 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
 
     @Override
     public void downloadDependency(String groupId, String artifactId, String version) {
+        downloadDependency(groupId, artifactId, version, true);
+    }
+
+    @Override
+    public void downloadDependency(String groupId, String artifactId, String version, boolean transitively) {
         // trigger listener
         if (downloadListener != null) {
             downloadListener.onDownloadDependency(groupId, artifactId, version);
@@ -132,7 +137,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
             }
 
             List<MavenArtifact> artifacts
-                    = MavenDependencyResolver.resolveDependenciesViaAether(deps, mavenRepos, false, fresh, true);
+                    = MavenDependencyResolver.resolveDependenciesViaAether(deps, mavenRepos, false, fresh, transitively);
             LOG.debug("Resolved {} -> [{}]", gav, artifacts);
 
             DependencyDownloaderClassLoader classLoader
@@ -147,6 +152,35 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                 }
             }
         }, gav);
+    }
+
+    @Override
+    public MavenArtifact downloadArtifact(String groupId, String artifactId, String version) {
+        String gav = groupId + ":" + artifactId + ":" + version;
+        LOG.debug("DownloadingArtifact: {}", gav);
+        List<String> deps = List.of(gav);
+        List<String> mavenRepos = new ArrayList<>();
+
+        // add maven central first
+        mavenRepos.add(MAVEN_CENTRAL_REPO);
+        // and custom repos
+        if (repos != null) {
+            mavenRepos.addAll(Arrays.stream(repos.split(",")).collect(Collectors.toList()));
+        }
+        // include Apache snapshot to make it easy to use upcoming releases
+        if ("org.apache.camel".equals(groupId) && version.contains("SNAPSHOT")) {
+            mavenRepos.add(APACHE_SNAPSHOT_REPO);
+        }
+
+        List<MavenArtifact> artifacts
+                = MavenDependencyResolver.resolveDependenciesViaAether(deps, mavenRepos, false, fresh, false);
+        LOG.debug("Resolved {} -> [{}]", gav, artifacts);
+
+        if (artifacts.size() == 1) {
+            return artifacts.get(0);
+        }
+
+        return null;
     }
 
     public boolean alreadyOnClasspath(String groupId, String artifactId, String version) {
