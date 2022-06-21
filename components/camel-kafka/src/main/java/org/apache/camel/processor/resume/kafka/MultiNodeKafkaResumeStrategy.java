@@ -66,9 +66,7 @@ public class MultiNodeKafkaResumeStrategy<K extends Resumable> extends SingleNod
                                         ExecutorService executorService) {
         super(resumeStrategyConfiguration);
 
-        // We need to keep refreshing the cache
         this.executorService = executorService;
-        executorService.submit(() -> refresh());
     }
 
     protected void poll() {
@@ -96,10 +94,17 @@ public class MultiNodeKafkaResumeStrategy<K extends Resumable> extends SingleNod
         } while (true);
     }
 
+    @Override
+    public void loadCache() throws Exception {
+        super.loadCache();
+
+        executorService.submit(() -> refresh());
+    }
+
     /**
      * Launch a thread to refresh the offsets periodically
      */
-    protected void refresh() {
+    private void refresh() {
         LOG.trace("Creating a offset cache refresher");
         try {
             Properties prop = (Properties) getResumeStrategyConfiguration().getConsumerProperties().clone();
