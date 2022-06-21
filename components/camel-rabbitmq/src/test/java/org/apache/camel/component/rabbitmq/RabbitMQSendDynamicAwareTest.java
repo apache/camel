@@ -39,7 +39,8 @@ public class RabbitMQSendDynamicAwareTest extends CamelTestSupport {
     public void testUriParsing() throws Exception {
         this.rabbitMQSendDynamicAware.setScheme("rabbitmq");
         Exchange exchange = createExchangeWithBody("The Body");
-        SendDynamicAware.DynamicAwareEntry entry = new SendDynamicAware.DynamicAwareEntry("rabbitmq:destination", "rabbitmq:${header.test}", null, null);
+        SendDynamicAware.DynamicAwareEntry entry
+                = new SendDynamicAware.DynamicAwareEntry("rabbitmq:destination", "rabbitmq:${header.test}", null, null);
         Processor processor = this.rabbitMQSendDynamicAware.createPreProcessor(createExchangeWithBody("Body"), entry);
         processor.process(exchange);
         assertEquals("destination", exchange.getMessage().getHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME));
@@ -49,7 +50,8 @@ public class RabbitMQSendDynamicAwareTest extends CamelTestSupport {
     public void testSlashedUriParsing() throws Exception {
         this.rabbitMQSendDynamicAware.setScheme("rabbitmq");
         Exchange exchange = createExchangeWithBody("The Body");
-        SendDynamicAware.DynamicAwareEntry entry = new SendDynamicAware.DynamicAwareEntry("rabbitmq://destination", "rabbitmq://${header.test}", null, null);
+        SendDynamicAware.DynamicAwareEntry entry
+                = new SendDynamicAware.DynamicAwareEntry("rabbitmq://destination", "rabbitmq://${header.test}", null, null);
         Processor processor = this.rabbitMQSendDynamicAware.createPreProcessor(createExchangeWithBody("Body"), entry);
         processor.process(exchange);
         assertEquals("destination", exchange.getMessage().getHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME));

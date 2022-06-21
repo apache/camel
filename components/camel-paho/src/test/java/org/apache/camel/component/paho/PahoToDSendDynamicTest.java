@@ -57,6 +57,7 @@ public class PahoToDSendDynamicTest extends CamelTestSupport {
         out = consumer.receiveBody("paho:beer", 2000, String.class);
         assertEquals("Hello beer", out);
     }
+
     @Test
     public void testToDSlashed() {
         template.sendBodyAndHeader("direct:startSlashed", "Hello bar", "where", "bar");

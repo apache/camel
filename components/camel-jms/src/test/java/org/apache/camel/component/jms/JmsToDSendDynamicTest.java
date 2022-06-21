@@ -43,6 +43,7 @@ public class JmsToDSendDynamicTest extends CamelTestSupport {
         out = consumer.receiveBody("activemq:queue:beer", 2000, String.class);
         assertEquals("Hello beer", out);
     }
+
     @Test
     public void testToDSlashed() {
         template.sendBodyAndHeader("direct:startSlashed", "Hello bar", "where", "bar");
