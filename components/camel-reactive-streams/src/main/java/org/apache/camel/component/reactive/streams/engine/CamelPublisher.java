@@ -31,6 +31,7 @@ import org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureSt
 import org.apache.camel.component.reactive.streams.ReactiveStreamsComponent;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsEndpoint;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsHelper;
+import org.apache.camel.component.reactive.streams.ReactiveStreamsNoActiveSubscriptionsException;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsProducer;
 import org.apache.camel.component.reactive.streams.api.DispatchCallback;
 import org.reactivestreams.Publisher;
@@ -107,7 +108,8 @@ public class CamelPublisher implements Publisher<Exchange>, AutoCloseable {
                 sub.publish(data);
             }
         } else if (callback != null) {
-            callback.processed(data, new IllegalStateException("The stream has no active subscriptions"));
+            callback.processed(data,
+                    new ReactiveStreamsNoActiveSubscriptionsException("The stream has no active subscriptions", name));
         }
     }
 
