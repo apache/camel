@@ -212,7 +212,7 @@
         <google-cloud-functions-gax-grpc-version>1.62.0</google-cloud-functions-gax-grpc-version>
         <google-cloud-guava-version>30.1-jre</google-cloud-guava-version>
         <google-cloud-secretmanager-bom-version>2.1.1</google-cloud-secretmanager-bom-version>
-        <graaljs-version>21.3.0</graaljs-version>
+        <graaljs-version>22.1.0</graaljs-version>
         <graphql-java-version>14.0</graphql-java-version>
         <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
         <grpc-version>1.45.0</grpc-version>
