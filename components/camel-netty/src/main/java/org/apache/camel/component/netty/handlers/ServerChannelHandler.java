@@ -185,10 +185,10 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
             // we got a body to write
             ChannelFutureListener listener = createResponseFutureListener(consumer, exchange, ctx.channel().remoteAddress());
             if (consumer.getConfiguration().isTcp()) {
-                NettyHelper.writeBodyAsync(LOG, ctx.channel(), null, body, exchange, listener);
+                NettyHelper.writeBodyAsync(LOG, ctx.channel(), null, body, listener);
             } else {
                 NettyHelper.writeBodyAsync(LOG, ctx.channel(),
-                        exchange.getProperty(NettyConstants.NETTY_REMOTE_ADDRESS, SocketAddress.class), body, exchange,
+                        exchange.getProperty(NettyConstants.NETTY_REMOTE_ADDRESS, SocketAddress.class), body,
                         listener);
             }
         }
