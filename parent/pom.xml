@@ -94,7 +94,7 @@
         <azure-storage-blob-changefeed-version>12.0.0-beta.17</azure-storage-blob-changefeed-version>
         <azure-storage-datalake-version>12.9.1</azure-storage-datalake-version>
         <azure-storage-queue-version>12.12.2</azure-storage-queue-version>
-        <bouncycastle-version>1.70</bouncycastle-version>
+        <bouncycastle-version>1.71</bouncycastle-version>
         <box-java-sdk-version>2.58.0</box-java-sdk-version>
         <braintree-gateway-version>3.16.1</braintree-gateway-version>
         <brave-zipkin-version>5.13.3</brave-zipkin-version>
