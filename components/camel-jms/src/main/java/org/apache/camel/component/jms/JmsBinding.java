@@ -164,7 +164,7 @@ public class JmsBinding {
             } else if (message instanceof StreamMessage) {
                 LOG.trace("Extracting body as a StreamMessage from JMS message: {}", message);
                 StreamMessage streamMessage = (StreamMessage) message;
-                return createInputStreamFromStreamMessage(exchange, streamMessage);
+                return createInputStreamFromStreamMessage(streamMessage);
             } else {
                 return null;
             }
@@ -275,7 +275,7 @@ public class JmsBinding {
         return result;
     }
 
-    protected Object createInputStreamFromStreamMessage(Exchange exchange, StreamMessage message) {
+    protected Object createInputStreamFromStreamMessage(StreamMessage message) {
         return new StreamMessageInputStream(message);
     }
 
@@ -371,12 +371,12 @@ public class JmsBinding {
         for (Map.Entry<String, Object> entry : entries) {
             String headerName = entry.getKey();
             Object headerValue = entry.getValue();
-            appendJmsProperty(jmsMessage, exchange, in, headerName, headerValue);
+            appendJmsProperty(jmsMessage, exchange, headerName, headerValue);
         }
     }
 
     public void appendJmsProperty(
-            Message jmsMessage, Exchange exchange, org.apache.camel.Message in,
+            Message jmsMessage, Exchange exchange,
             String headerName, Object headerValue)
             throws JMSException {
         if (isStandardJMSHeader(headerName)) {
@@ -407,7 +407,7 @@ public class JmsBinding {
                 // log at trace level to not spam log
                 LOG.trace("Ignoring JMS header: {} with value: {}", headerName, headerValue);
             }
-        } else if (shouldOutputHeader(in, headerName, headerValue, exchange)) {
+        } else if (shouldOutputHeader(headerName, headerValue, exchange)) {
             // only primitive headers and strings is allowed as properties
             // see message properties: http://java.sun.com/j2ee/1.4/docs/api/javax/jms/Message.html
             Object value = getValidJMSHeaderValue(headerName, headerValue);
@@ -556,7 +556,7 @@ public class JmsBinding {
             // force a specific type from the endpoint configuration
             type = endpoint.getConfiguration().getJmsMessageType();
         } else {
-            type = getJMSMessageTypeForBody(exchange, body, headers, session, context);
+            type = getJMSMessageTypeForBody(exchange, body);
         }
 
         // create the JmsMessage based on the type
@@ -565,7 +565,7 @@ public class JmsBinding {
                 throw new JMSException("Cannot send message as message body is null, and option allowNullBody is false.");
             }
             LOG.trace("Using JmsMessageType: {}", type);
-            Message answer = createJmsMessageForType(exchange, body, headers, session, context, type);
+            Message answer = createJmsMessageForType(exchange, body, session, context, type);
             // ensure default delivery mode is used by default
             answer.setJMSDeliveryMode(Message.DEFAULT_DELIVERY_MODE);
             return answer;
@@ -599,7 +599,7 @@ public class JmsBinding {
      * @return type or null if no mapping was possible
      */
     protected JmsMessageType getJMSMessageTypeForBody(
-            Exchange exchange, Object body, Map<String, Object> headers, Session session, CamelContext context) {
+            Exchange exchange, Object body) {
         boolean streamingEnabled = endpoint.getConfiguration().isStreamMessageTypeEnabled();
 
         JmsMessageType type = null;
@@ -639,7 +639,7 @@ public class JmsBinding {
      * @return jmsMessage or null if the mapping was not successfully
      */
     protected Message createJmsMessageForType(
-            Exchange exchange, Object body, Map<String, Object> headers, Session session, CamelContext context,
+            Exchange exchange, Object body, Session session, CamelContext context,
             JmsMessageType type)
             throws JMSException {
         switch (type) {
@@ -770,7 +770,7 @@ public class JmsBinding {
      * <b>Note</b>: Currently only supports sending java identifiers as keys
      */
     protected boolean shouldOutputHeader(
-            org.apache.camel.Message camelMessage, String headerName,
+            String headerName,
             Object headerValue, Exchange exchange) {
         return headerFilterStrategy == null
                 || !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue, exchange);
