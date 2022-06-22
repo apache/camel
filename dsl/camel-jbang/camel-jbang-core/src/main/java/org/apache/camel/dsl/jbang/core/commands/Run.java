@@ -54,10 +54,10 @@ import org.apache.camel.impl.lw.LightweightCamelContext;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.main.download.DownloadListener;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.StringHelper;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
@@ -247,8 +247,8 @@ class Run extends CamelCommand {
         return 0;
     }
 
-    private OrderedProperties loadProfileProperties(File source) throws Exception {
-        OrderedProperties prop = new OrderedProperties();
+    private Properties loadProfileProperties(File source) throws Exception {
+        Properties prop = new CamelCaseOrderedProperties();
         prop.load(new FileInputStream(source));
 
         // special for routes include pattern that we need to "fix" after reading from properties
@@ -280,7 +280,7 @@ class Run extends CamelCommand {
             generateOpenApi();
         }
 
-        OrderedProperties profileProperties = null;
+        Properties profileProperties = null;
         File profilePropertiesFile = new File(getProfile() + ".properties");
         if (profilePropertiesFile.exists()) {
             profileProperties = loadProfileProperties(profilePropertiesFile);
