@@ -27,7 +27,7 @@ configuration:
 camel.main.dev-console-enabled = true
 ----
 
-=== Using Dev Console in Camel Spring Boot
+=== Dev Console and Camel Spring Boot
 
 The Camel developer console is available in Spring Boot as an _actuator_. To enable the console
 you need to add dependency:
@@ -70,7 +70,6 @@ This will list the available consoles, and you can then call a console by its id
 ----
 http://localhost:8080/actuator/camel/routes
 ----
-
 
 === Dev Console and Camel JBang
 
