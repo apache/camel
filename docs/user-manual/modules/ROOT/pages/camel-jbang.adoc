@@ -155,6 +155,9 @@ And you can also configure Camel components such as camel-kafka to declare the U
 camel.component.kafka.brokers=broker1:9092,broker2:9092,broker3:9092
 ----
 
+NOTE: Keys starting with `camel.jbang` are reserved keys that are used by Camel JBang internally,
+and as well allow for pre-configuring arguments for Camel JBang commands.
+
 === Downloading JARs over the internet
 
 By default, Camel JBang will automatically resolve dependencies needed to run Camel, which is done
