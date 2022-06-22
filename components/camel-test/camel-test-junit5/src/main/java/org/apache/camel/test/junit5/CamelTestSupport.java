@@ -84,6 +84,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.apache.camel.test.junit5.TestSupport.isCamelDebugPresent;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
@@ -415,10 +416,9 @@ public abstract class CamelTestSupport
 
     protected void doSetUp() throws Exception {
         LOG.debug("setUp test");
-        // jmx is enabled if we have configured to use it, or if dump route
-        // coverage is enabled (it requires JMX)
-        boolean jmx = useJmx() || isRouteCoverageEnabled();
-        if (jmx) {
+        // jmx is enabled if we have configured to use it, if dump route coverage is enabled (it requires JMX) or if
+        // the component camel-debug is in the classpath
+        if (useJmx() || isRouteCoverageEnabled() || isCamelDebugPresent()) {
             enableJMX();
         } else {
             disableJMX();

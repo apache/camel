@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.test.junit5.CamelTestSupport.ROUTE_COVERAGE_ENABLED;
+import static org.apache.camel.test.junit5.TestSupport.isCamelDebugPresent;
 import static org.junit.jupiter.api.extension.ExtensionContext.Namespace.create;
 
 /**
@@ -72,7 +73,7 @@ final class CamelMainExtension
     private final CamelRouteCoverageDumper routeCoverageDumper = new CamelRouteCoverageDumper();
 
     @Override
-    public void beforeEach(ExtensionContext context) throws Exception {
+    public void beforeEach(ExtensionContext context) {
         getContextStore(context).getOrComputeIfAbsent(CONTEXT, k -> createCamelMainContextAndStart(context));
     }
 
@@ -109,7 +110,7 @@ final class CamelMainExtension
     private CamelMainContext createCamelMainContextAndStart(ExtensionContext context) {
         try {
             final CamelMainContext camelMainContext = CamelMainContext.builder(context)
-                    .useJmx(useJmx(context) || isRouteCoverageEnabled(context))
+                    .useJmx(useJmx(context) || isRouteCoverageEnabled(context) || isCamelDebugPresent())
                     .build();
             camelMainContext.start();
             return camelMainContext;
