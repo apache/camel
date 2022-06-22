@@ -44,6 +44,8 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 
+import static org.apache.camel.test.junit5.TestSupport.isCamelDebugPresent;
+
 public final class CamelAnnotationsHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CamelAnnotationsHandler.class);
@@ -93,7 +95,10 @@ public final class CamelAnnotationsHandler {
      * @param testClass the test class being executed
      */
     public static void handleDisableJmx(ConfigurableApplicationContext context, Class<?> testClass) {
-        if (testClass.isAnnotationPresent(DisableJmx.class)) {
+        if (isCamelDebugPresent()) {
+            LOGGER.info("Enabling Camel JMX as camel-debug has been found in the classpath.");
+            DefaultCamelContext.setDisableJmx(false);
+        } else if (testClass.isAnnotationPresent(DisableJmx.class)) {
             if (testClass.getAnnotation(DisableJmx.class).value()) {
                 LOGGER.info("Disabling Camel JMX globally as DisableJmx annotation was found and disableJmx is set to true.");
                 DefaultCamelContext.setDisableJmx(true);
