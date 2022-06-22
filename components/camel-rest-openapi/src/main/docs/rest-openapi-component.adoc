@@ -22,6 +22,7 @@ interface. Currently known working components are:
 * xref:http-component.adoc[http]
 * xref:netty-http-component.adoc[netty-http]
 * xref:undertow-component.adoc[undertow]
+* xref:vertx-http-component.adoc[vertx-http]
 
 Maven users will need to add the following dependency to their
 `pom.xml` for this component:
