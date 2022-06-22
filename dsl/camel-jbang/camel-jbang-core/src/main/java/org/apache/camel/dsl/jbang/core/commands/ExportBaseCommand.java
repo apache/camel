@@ -78,7 +78,15 @@ abstract class ExportBaseCommand extends CamelCommand {
                         defaultValue = "2.7.0")
     protected String springBootVersion;
 
-    @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus version",
+    @CommandLine.Option(names = { "--quarkus-group-id" }, description = "Quarkus Platform Maven groupId",
+                        defaultValue = "io.quarkus.platform")
+    protected String quarkusGroupId;
+
+    @CommandLine.Option(names = { "--quarkus-artifact-id" }, description = "Quarkus Platform Maven artifactId",
+                        defaultValue = "quarkus-bom")
+    protected String quarkusArtifactId;
+
+    @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
                         defaultValue = "2.9.2.Final")
     protected String quarkusVersion;
 

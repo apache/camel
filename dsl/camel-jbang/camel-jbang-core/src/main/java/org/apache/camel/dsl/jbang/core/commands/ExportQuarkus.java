@@ -158,6 +158,8 @@ class ExportQuarkus extends Export {
         context = context.replaceFirst("\\{\\{ \\.GroupId }}", ids[0]);
         context = context.replaceFirst("\\{\\{ \\.ArtifactId }}", ids[1]);
         context = context.replaceFirst("\\{\\{ \\.Version }}", ids[2]);
+        context = context.replaceFirst("\\{\\{ \\.QuarkusGroupId }}", quarkusGroupId);
+        context = context.replaceFirst("\\{\\{ \\.QuarkusArtifactId }}", quarkusArtifactId);
         context = context.replaceAll("\\{\\{ \\.QuarkusVersion }}", quarkusVersion);
         context = context.replaceFirst("\\{\\{ \\.JavaVersion }}", javaVersion);
         context = context.replaceFirst("\\{\\{ \\.CamelVersion }}", camelVersion);
