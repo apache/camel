@@ -53,8 +53,8 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
         Class<?> testClass = testContext.getTestClass();
 
         // need to prepare this before we load spring application context
-        CamelAnnotationsHandler.handleDisableJmx(null, testClass);
-        CamelAnnotationsHandler.handleExcludeRoutes(null, testClass);
+        CamelAnnotationsHandler.handleDisableJmx(testClass);
+        CamelAnnotationsHandler.handleExcludeRoutes(testClass);
 
         // prevent the Camel context to be started to be able to extend it.
         preventContextStart();
