@@ -72,10 +72,10 @@ public final class SObjectNode implements Serializable {
     private final ReferenceGenerator referenceGenerator;
 
     SObjectNode(final SObjectTree tree, final AbstractSObjectBase object) {
-        this(tree.referenceGenerator, typeOf(object), object);
+        this(tree.referenceGenerator, object);
     }
 
-    private SObjectNode(final ReferenceGenerator referenceGenerator, final String type, final AbstractSObjectBase object) {
+    private SObjectNode(final ReferenceGenerator referenceGenerator, final AbstractSObjectBase object) {
         this.referenceGenerator = requireNonNull(referenceGenerator, "ReferenceGenerator cannot be null");
         this.object = requireNonNull(object, "Root SObject cannot be null");
         object.getAttributes().setReferenceId(referenceGenerator.nextReferenceFor(object));
@@ -121,7 +121,7 @@ public final class SObjectNode implements Serializable {
         ObjectHelper.notNull(labelPlural, "labelPlural");
         ObjectHelper.notNull(child, CHILD_PARAM);
 
-        final SObjectNode node = new SObjectNode(referenceGenerator, typeOf(child), child);
+        final SObjectNode node = new SObjectNode(referenceGenerator, child);
 
         return addChild(labelPlural, node);
     }
