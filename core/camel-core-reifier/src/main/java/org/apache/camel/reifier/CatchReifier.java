@@ -58,7 +58,7 @@ public class CatchReifier extends ProcessorReifier<CatchDefinition> {
             when = createPredicate(definition.getOnWhen().getExpression());
         }
 
-        return new CatchProcessor(definition.getExceptionClasses(), childProcessor, when, null);
+        return new CatchProcessor(definition.getExceptionClasses(), childProcessor, when);
     }
 
     protected List<Class<? extends Throwable>> createExceptionClasses() throws ClassNotFoundException {
