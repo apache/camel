@@ -46,7 +46,6 @@ import org.apache.camel.component.salesforce.api.SalesforceMultipleChoicesExcept
 import org.apache.camel.component.salesforce.api.TypeReferences;
 import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
-import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.commons.io.IOUtils;
@@ -281,12 +280,6 @@ public abstract class AbstractClientBase extends ServiceSupport
     @Override
     public HttpClient getHttpClient() {
         return httpClient;
-    }
-
-    final List<RestError> readErrorsFrom(
-            final InputStream responseContent, final PayloadFormat format, final ObjectMapper objectMapper)
-            throws IOException {
-        return readErrorsFrom(responseContent, objectMapper);
     }
 
     final List<RestError> readErrorsFrom(
