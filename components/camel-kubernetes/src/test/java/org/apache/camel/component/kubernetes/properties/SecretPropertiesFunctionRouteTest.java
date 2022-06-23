@@ -57,7 +57,7 @@ public class SecretPropertiesFunctionRouteTest extends KubernetesTestSupport {
                 = Map.of("myuser", Base64.getEncoder().encodeToString("scott".getBytes(StandardCharsets.UTF_8)),
                         "mypass", Base64.getEncoder().encodeToString("tiger".getBytes(StandardCharsets.UTF_8)));
         Secret sec = new SecretBuilder().editOrNewMetadata().withName("mysecret").endMetadata().withData(data).build();
-        client.secrets().createOrReplace(sec);
+        this.sec = client.secrets().createOrReplace(sec);
 
         return context;
     }
