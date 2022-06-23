@@ -468,6 +468,118 @@ And we can use default values if the service has not been defined, for example t
 </camelContext>
 ----
 
+=== Using Kubernetes property placeholder functions
+
+The `camel-kubernetes` component include the following functions:
+
+* `configmap` - A function to lookup the property from Kubernetes ConfigMaps.
+* `secert` - A function to lookup the property from Kubernetes Secrets.
+
+The syntax for both functions are:
+
+[source]
+----
+configmap:name/key[:defaultValue]
+----
+
+Where the default value is optional, for example
+
+[source]
+----
+configmap:mymap/mykey
+configmap:mymap/mykey:123
+----
+
+Given a configmap named `myconfig` in Kubernetes that has two entries:
+
+[source,properties]
+----
+drink = beer
+first = Carlsberg
+----
+
+Then these values can be used in your Camel routes such as:
+
+[source,xml]
+----
+<camelContext>
+  <route>
+    <from uri="direct:start"/>
+    <log message="What {{configmap:myconfig/drink}} do you want?"/>
+    <log message="I want {{configmap:myconfig/first}}"/>
+  </route>
+</camelContext>
+----
+
+You can also provide a default value in case a key does not exists:
+
+[source,xml]
+----
+    <log message="I want {{configmap:myconfig/second:Heineken}}"/>
+----
+
+==== Using secrets with Kubernetes
+
+Camel reads ConfigMaps from the Kubernetes API Server. And when RBAC is enabled on the cluster,
+the ServiceAccount that is used to run the application needs to have the proper permissions for such access.
+
+A secret named `mydb` could contain username and passwords to connect to a database such as:
+
+[source,properties]
+----
+myhost = killroy
+myport = 5555
+myuser = scott
+mypass = tiger
+----
+
+This can be used in Camel with for example the Postrgres Sink Kamelet:
+
+[source,xml]
+----
+<camelContext>
+  <route>
+    <from uri="direct:rome"/>
+    <setBody>
+      <constant>{ "username":"oscerd", "city":"Rome"}</constant>
+    </setBody>
+    <to uri="kamelet:postgresql-sink?serverName={{secret:mydb/myhost}}
+             &amp;serverPort={{secret:mydb/myport}}
+             &amp;username={{secret:mydb/myuser}}
+             &amp;password={{secret:mydb/mypass}}
+             &amp;databaseName=cities
+             &amp;query=INSERT INTO accounts (username,city) VALUES (:#username,:#city)"/>
+  </route>
+</camelContext>
+----
+
+The postgres-sink Kamelet can also be configured in `application.properties` which reduces the configuration
+in the route above:
+
+[source,properties]
+----
+camel.component.kamelet.postgresql-sink.databaseName={{secret:mydb/myhost}}
+camel.component.kamelet.postgresql-sink.serverPort={{secret:mydb/myport}}
+camel.component.kamelet.postgresql-sink.username={{secret:mydb/myuser}}
+camel.component.kamelet.postgresql-sink.password={{secret:mydb/mypass}}
+----
+
+Which reduces the route to:
+
+[source,xml]
+----
+<camelContext>
+  <route>
+    <from uri="direct:rome"/>
+    <setBody>
+      <constant>{ "username":"oscerd", "city":"Rome"}</constant>
+    </setBody>
+    <to uri="kamelet:postgresql-sink?databaseName=cities
+             &amp;query=INSERT INTO accounts (username,city) VALUES (:#username,:#city)"/>
+  </route>
+</camelContext>
+----
+
 === Using custom property placeholder functions
 
 The xref:components::properties-component.adoc[Properties] component allow to plugin 3rd party functions which can be used during parsing of the property placeholders.
