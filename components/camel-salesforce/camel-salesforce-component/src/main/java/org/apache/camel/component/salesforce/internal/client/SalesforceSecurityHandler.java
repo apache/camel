@@ -176,8 +176,7 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
                     LOG.warn("Unable to deserialize errors from response body.");
                 }
                 if (errors.stream().anyMatch(error -> EXPIRED_PASSWORD_CODE.equals(error.getErrorCode()))) {
-                    SalesforceException salesforceException = createSalesforceException(client, status,
-                            reason);
+                    SalesforceException salesforceException = createSalesforceException(client, status);
                     forwardFailureComplete(request, null, response, salesforceException);
                     return;
                 }
@@ -211,7 +210,7 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
             }
         }
 
-        private SalesforceException createSalesforceException(AbstractClientBase client, int statusCode, String reason) {
+        private SalesforceException createSalesforceException(AbstractClientBase client, int statusCode) {
             List<RestError> restErrors = Collections.emptyList();
             try {
                 restErrors = client.readErrorsFrom(getContentAsInputStream(), new ObjectMapper());
