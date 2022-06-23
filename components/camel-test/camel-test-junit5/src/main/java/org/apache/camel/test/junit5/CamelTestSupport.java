@@ -378,6 +378,7 @@ public abstract class CamelTestSupport
         } else {
             // test is per test so always setup
             doSpringBootCheck();
+            doQuarkusCheck();
             setupResources();
             doPreSetup();
             doSetUp();
@@ -411,6 +412,19 @@ public abstract class CamelTestSupport
         if (springBoot) {
             throw new RuntimeException(
                     "Spring Boot detected: The CamelTestSupport/CamelSpringTestSupport class is not intended for Camel testing with Spring Boot.");
+        }
+    }
+
+    /**
+     * Detects if this is a Camel-quarkus test and throw an exception, as these base classes is not intended for testing
+     * Camel onQuarkus.
+     */
+    protected void doQuarkusCheck() {
+        boolean quarkus = hasClassAnnotation("io.quarkus.test.junit.QuarkusTest") ||
+                hasClassAnnotation("org.apache.camel.quarkus.test.CamelQuarkusTest");
+        if (quarkus) {
+            throw new RuntimeException(
+                    "Quarkus detected: The CamelTestSupport/CamelSpringTestSupport class is not intended for Camel testing with Quarkus.");
         }
     }
 
