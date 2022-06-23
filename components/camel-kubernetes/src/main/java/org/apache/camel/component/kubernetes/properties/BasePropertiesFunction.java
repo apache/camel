@@ -36,8 +36,12 @@ import org.apache.camel.util.StringHelper;
  */
 abstract class BasePropertiesFunction extends ServiceSupport implements PropertiesFunction, CamelContextAware {
 
-    public static String MOUNT_PATH_CONFIGMAPS = "camel.k.mount-path.configmaps";
-    public static String MOUNT_PATH_SECRETS = "camel.k.mount-path.secrets";
+    public static String MOUNT_PATH_CONFIGMAPS = "org.apache.camel.component.kubernetes.properties.mount-path-configmaps";
+    public static String MOUNT_PATH_SECRETS = "org.apache.camel.component.kubernetes.properties.mount-path-secrets";
+
+    // use camel-k env for mount paths
+    public static String ENV_MOUNT_PATH_CONFIGMAPS = "camel.k.mount-path.configmaps";
+    public static String ENV_MOUNT_PATH_SECRETS = "camel.k.mount-path.secrets";
 
     private CamelContext camelContext;
     private KubernetesClient client;
@@ -46,16 +50,21 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
 
     @Override
     protected void doInit() throws Exception {
+        ObjectHelper.notNull(camelContext, "CamelContext");
+        if (mountPathConfigMaps == null) {
+            mountPathConfigMaps = camelContext.getPropertiesComponent().resolveProperty(MOUNT_PATH_CONFIGMAPS)
+                    .orElseGet(() -> System.getProperty(ENV_MOUNT_PATH_CONFIGMAPS, System.getenv(ENV_MOUNT_PATH_CONFIGMAPS)));
+        }
+        if (mountPathSecrets == null) {
+            mountPathSecrets = camelContext.getPropertiesComponent().resolveProperty(MOUNT_PATH_SECRETS)
+                    .orElseGet(() -> System.getProperty(ENV_MOUNT_PATH_SECRETS, System.getenv(ENV_MOUNT_PATH_SECRETS)));
+        }
         if (client == null) {
             client = CamelContextHelper.findSingleByType(camelContext, KubernetesClient.class);
         }
-        if (mountPathConfigMaps == null) {
-            mountPathConfigMaps = System.getProperty(MOUNT_PATH_CONFIGMAPS, System.getenv(MOUNT_PATH_CONFIGMAPS));
+        if (client == null && getMountPath() == null) {
+            throw new IllegalArgumentException("Either a mount path or the Kubernetes Client must be configured");
         }
-        if (mountPathSecrets == null) {
-            mountPathSecrets = System.getProperty(MOUNT_PATH_SECRETS, System.getenv(MOUNT_PATH_SECRETS));
-        }
-        ObjectHelper.notNull(client, "KubernetesClient must be configured");
     }
 
     @Override
@@ -113,7 +122,7 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
         String answer = null;
         Path root = getMountPath();
         if (root != null) {
-            Path file = root.resolve(name.toLowerCase(Locale.US)).resolve(name);
+            Path file = root.resolve(name.toLowerCase(Locale.US)).resolve(key);
             if (Files.exists(file) && !Files.isDirectory(file)) {
                 try {
                     answer = Files.readString(file, StandardCharsets.UTF_8);
@@ -123,8 +132,11 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
             }
         }
 
-        if (answer == null) {
+        if (answer == null && client != null) {
             answer = lookup(name, key, defaultValue);
+        }
+        if (answer == null) {
+            answer = defaultValue;
         }
 
         return answer;
