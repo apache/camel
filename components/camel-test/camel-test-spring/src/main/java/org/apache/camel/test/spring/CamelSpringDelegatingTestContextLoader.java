@@ -51,14 +51,14 @@ public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartConte
         }
 
         // Pre CamelContext(s) instantiation setup
-        CamelAnnotationsHandler.handleDisableJmx(null, testClass);
+        CamelAnnotationsHandler.handleDisableJmx(testClass);
 
         try {
             SpringCamelContext.setNoStart(true);
             ConfigurableApplicationContext context = (ConfigurableApplicationContext) super.loadContext(mergedConfig);
             return loadContext(context, testClass);
         } finally {
-            CamelAnnotationsHandler.cleanup(testClass);
+            CamelAnnotationsHandler.cleanup();
             SpringCamelContext.setNoStart(false);
         }
     }

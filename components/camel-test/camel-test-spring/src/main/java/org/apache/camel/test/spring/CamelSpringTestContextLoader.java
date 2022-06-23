@@ -71,7 +71,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
             loadBeanDefinitions(context, mergedConfig);
             return loadContext(context, testClass);
         } finally {
-            CamelAnnotationsHandler.cleanup(testClass);
+            CamelAnnotationsHandler.cleanup();
         }
     }
 
@@ -99,7 +99,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
             loadBeanDefinitions(context, locations);
             return loadContext(context, testClass);
         } finally {
-            CamelAnnotationsHandler.cleanup(testClass);
+            CamelAnnotationsHandler.cleanup();
         }
     }
 
@@ -126,8 +126,8 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
         AnnotationConfigUtils.registerAnnotationConfigProcessors(context);
 
         // Pre CamelContext(s) instantiation setup
-        CamelAnnotationsHandler.handleDisableJmx(context, testClass);
-        CamelAnnotationsHandler.handleExcludeRoutes(context, testClass);
+        CamelAnnotationsHandler.handleDisableJmx(testClass);
+        CamelAnnotationsHandler.handleExcludeRoutes(testClass);
         CamelAnnotationsHandler.handleUseOverridePropertiesWithPropertiesComponent(context, testClass);
 
         // Temporarily disable CamelContext start while the contexts are instantiated.
