@@ -52,13 +52,13 @@ public class TransactionErrorHandlerReifier extends ErrorHandlerReifier<SpringTr
     @Override
     public Processor createErrorHandler(Processor processor) throws Exception {
         // must have a transaction template
-        TransactionTemplate transactionTemplate = resolveTransactionTemplate(definition, camelContext);
+        TransactionTemplate transactionTemplate = resolveTransactionTemplate(definition);
         ObjectHelper.notNull(transactionTemplate, "transactionTemplate", this);
 
         // optimize to use shared default instance if using out of the box settings
         RedeliveryPolicy redeliveryPolicy = resolveRedeliveryPolicy(definition, camelContext);
-        CamelLogger logger = resolveLogger(definition, camelContext);
-        LoggingLevel rollbackLoggingLevel = resolveRollbackLoggingLevel(definition, camelContext);
+        CamelLogger logger = resolveLogger(definition);
+        LoggingLevel rollbackLoggingLevel = resolveRollbackLoggingLevel(definition);
 
         TransactionErrorHandler answer = new TransactionErrorHandler(
                 camelContext, processor, logger,
@@ -75,7 +75,7 @@ public class TransactionErrorHandlerReifier extends ErrorHandlerReifier<SpringTr
     }
 
     private TransactionTemplate resolveTransactionTemplate(
-            TransactionErrorHandlerDefinition definition, CamelContext camelContext) {
+            TransactionErrorHandlerDefinition definition) {
 
         TransactionTemplate answer = null;
 
@@ -137,7 +137,7 @@ public class TransactionErrorHandlerReifier extends ErrorHandlerReifier<SpringTr
         return answer;
     }
 
-    private CamelLogger resolveLogger(TransactionErrorHandlerDefinition definition, CamelContext camelContext) {
+    private CamelLogger resolveLogger(TransactionErrorHandlerDefinition definition) {
         CamelLogger answer = definition.getLoggerBean();
         if (answer == null && definition.getLoggerRef() != null) {
             answer = mandatoryLookup(definition.getLoggerRef(), CamelLogger.class);
@@ -151,7 +151,7 @@ public class TransactionErrorHandlerReifier extends ErrorHandlerReifier<SpringTr
         return answer;
     }
 
-    private LoggingLevel resolveRollbackLoggingLevel(TransactionErrorHandlerDefinition definition, CamelContext camelContext) {
+    private LoggingLevel resolveRollbackLoggingLevel(TransactionErrorHandlerDefinition definition) {
         LoggingLevel answer = LoggingLevel.WARN;
         if (definition.getRollbackLoggingLevel() != null) {
             answer = parse(LoggingLevel.class, definition.getRollbackLoggingLevel());
