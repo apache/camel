@@ -101,7 +101,7 @@ public final class ResourceHelper {
      * </ul>
      * If no prefix has been given, then the resource is loaded from the classpath
      * <p/>
-     * If possible recommended to use {@link #resolveMandatoryResourceAsUrl(org.apache.camel.spi.ClassResolver, String)}
+     * If possible recommended to use {@link #resolveMandatoryResourceAsUrl(CamelContext, String)}
      *
      * @param  camelContext        the Camel Context
      * @param  uri                 URI of the resource
@@ -121,7 +121,7 @@ public final class ResourceHelper {
     /**
      * Resolves the resource.
      * <p/>
-     * If possible recommended to use {@link #resolveMandatoryResourceAsUrl(org.apache.camel.spi.ClassResolver, String)}
+     * If possible recommended to use {@link #resolveMandatoryResourceAsUrl(CamelContext, String)}
      *
      * @param  camelContext        the camel context
      * @param  uri                 URI of the resource
@@ -130,10 +130,7 @@ public final class ResourceHelper {
      * @throws java.io.IOException is thrown if error loading the resource
      */
     public static InputStream resolveResourceAsInputStream(CamelContext camelContext, String uri) throws IOException {
-        final ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
-        final ResourceLoader loader = ecc.getResourceLoader();
-        final Resource resource = loader.resolveResource(uri);
-
+        final Resource resource = resolveResource(camelContext, uri);
         return resource.getInputStream();
     }
 
@@ -166,11 +163,38 @@ public final class ResourceHelper {
      * @throws java.net.MalformedURLException if the URI is malformed
      */
     public static URL resolveResourceAsUrl(CamelContext camelContext, String uri) throws MalformedURLException {
+        final Resource resource = resolveResource(camelContext, uri);
+        return resource.getURL();
+    }
+
+    /**
+     * Resolves a mandatory resource.
+     *
+     * @param  camelContext          the camel context
+     * @param  uri                   the uri of the resource
+     * @return                       the {@link Resource}
+     * @throws FileNotFoundException if the resource could not be found
+     */
+    public static Resource resolveMandatoryResource(CamelContext camelContext, String uri) throws FileNotFoundException {
+        final Resource resource = resolveResource(camelContext, uri);
+        if (resource == null) {
+            String resolvedName = resolveUriPath(uri);
+            throw new FileNotFoundException("Cannot find resource: " + resolvedName + " for URI: " + uri);
+        }
+        return resource;
+    }
+
+    /**
+     * Resolves a resource.
+     *
+     * @param  camelContext the camel context
+     * @param  uri          the uri of the resource
+     * @return              the {@link Resource}. Or <tt>null</tt> if not found
+     */
+    public static Resource resolveResource(CamelContext camelContext, String uri) {
         final ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
         final ResourceLoader loader = ecc.getResourceLoader();
-        final Resource resource = loader.resolveResource(uri);
-
-        return resource.getURL();
+        return loader.resolveResource(uri);
     }
 
     /**
