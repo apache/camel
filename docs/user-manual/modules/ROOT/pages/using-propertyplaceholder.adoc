@@ -490,6 +490,30 @@ configmap:mymap/mykey
 configmap:mymap/mykey:123
 ----
 
+Before the Kubernetes property placeholder functions can be used they need to be configured with either (or both)
+
+- path - A _mount path_ that must be mounted to the running pod, to load the configmaps or secrets from local disk.
+- kubernetes client - *Autowired* An `io.fabric8.kubernetes.client.KubernetesClient` instance to use for connecting to the Kubernetes API server.
+
+Camel will autowire the `KubernetesClient` if a single instance of the client exists in the running application (lookup via the xref:registry.adoc[Registry]).
+
+The configuration of the _month path_ are used by the given order:
+
+1. Reading configuration property with keys `org.apache.camel.component.kubernetes.properties.mount-path-configmaps`
+and `org.apache.camel.component.kubernetes.properties.mount-path-secrets`.
+2. Use JVM system property with key `camel.k.mount-path.configmaps` and `camel.k.mount-path.secrets` (Camel K compatible).
+3. Use OS ENV variable with key `camel.k.mount-path.configmaps` and `camel.k.mount-path.secrets` (Camel K compatible).
+
+For example to use `/etc/camel/resources/` as mount path, you can configure this in the `application.properties`:
+
+[source,properties]
+----
+org.apache.camel.component.kubernetes.properties.mount-path-configmaps = /etc/camel/myconfig/
+org.apache.camel.component.kubernetes.properties.mount-path-secrets = /etc/camel/mysecrets/
+----
+
+==== Using configmap with Kubernetes
+
 Given a configmap named `myconfig` in Kubernetes that has two entries:
 
 [source,properties]
