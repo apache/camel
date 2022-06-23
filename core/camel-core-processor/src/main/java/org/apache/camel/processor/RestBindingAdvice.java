@@ -146,7 +146,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
     @Override
     public void after(Exchange exchange, Map<String, Object> state) throws Exception {
         if (enableCORS) {
-            setCORSHeaders(exchange, state);
+            setCORSHeaders(exchange);
         }
         if (state.get(STATE_KEY_DO_MARSHAL) != null) {
             marshal(exchange, state);
@@ -515,7 +515,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
         }
     }
 
-    private void setCORSHeaders(Exchange exchange, Map<String, Object> state) {
+    private void setCORSHeaders(Exchange exchange) {
         // add the CORS headers after routing, but before the consumer writes the response
         Message msg = exchange.getMessage();
 

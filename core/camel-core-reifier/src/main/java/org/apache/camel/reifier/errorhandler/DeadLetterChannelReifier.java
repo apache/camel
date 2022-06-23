@@ -49,7 +49,7 @@ public class DeadLetterChannelReifier extends ErrorHandlerReifier<DeadLetterChan
 
         // optimize to use shared default instance if using out of the box settings
         RedeliveryPolicy redeliveryPolicy = resolveRedeliveryPolicy(definition, camelContext);
-        CamelLogger logger = resolveLogger(definition, camelContext);
+        CamelLogger logger = resolveLogger(definition);
 
         Processor deadLetterProcessor = createDeadLetterChannelProcessor(definition.getDeadLetterUri());
 
@@ -83,7 +83,7 @@ public class DeadLetterChannelReifier extends ErrorHandlerReifier<DeadLetterChan
         return answer;
     }
 
-    private CamelLogger resolveLogger(DeadLetterChannelDefinition definition, CamelContext camelContext) {
+    private CamelLogger resolveLogger(DeadLetterChannelDefinition definition) {
         CamelLogger answer = definition.getLoggerBean();
         if (answer == null && definition.getLoggerRef() != null) {
             answer = mandatoryLookup(definition.getLoggerRef(), CamelLogger.class);

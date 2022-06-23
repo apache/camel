@@ -48,7 +48,7 @@ public class DefaultErrorHandlerReifier extends ErrorHandlerReifier<DefaultError
         // optimize to use shared default instance if using out of the box settings
 
         RedeliveryPolicy redeliveryPolicy = resolveRedeliveryPolicy(definition, camelContext);
-        CamelLogger logger = resolveLogger(definition, camelContext);
+        CamelLogger logger = resolveLogger(definition);
 
         DefaultErrorHandler answer = new DefaultErrorHandler(
                 camelContext, processor, logger,
@@ -76,7 +76,7 @@ public class DefaultErrorHandlerReifier extends ErrorHandlerReifier<DefaultError
         return answer;
     }
 
-    private CamelLogger resolveLogger(DefaultErrorHandlerDefinition definition, CamelContext camelContext) {
+    private CamelLogger resolveLogger(DefaultErrorHandlerDefinition definition) {
         CamelLogger answer = definition.getLoggerBean();
         if (answer == null && definition.getLoggerRef() != null) {
             answer = mandatoryLookup(definition.getLoggerRef(), CamelLogger.class);

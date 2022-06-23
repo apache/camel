@@ -47,8 +47,7 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
     private final List<Class<? extends Throwable>> exceptions;
     private final Predicate onWhen;
 
-    public CatchProcessor(List<Class<? extends Throwable>> exceptions, Processor processor, Predicate onWhen,
-                          Predicate handled) {
+    public CatchProcessor(List<Class<? extends Throwable>> exceptions, Processor processor, Predicate onWhen) {
         super(processor);
         this.exceptions = exceptions;
         this.onWhen = onWhen;
