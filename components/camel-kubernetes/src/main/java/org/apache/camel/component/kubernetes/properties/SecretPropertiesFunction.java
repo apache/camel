@@ -18,19 +18,19 @@ package org.apache.camel.component.kubernetes.properties;
 
 import java.util.Base64;
 
-import io.fabric8.kubernetes.api.model.ConfigMap;
+import io.fabric8.kubernetes.api.model.Secret;
 import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.util.StringHelper;
 
 /**
- * A {@link PropertiesFunction} that can lookup from Kubernetes configmaps.
+ * A {@link PropertiesFunction} that can lookup from Kubernetes secret.
  */
-@org.apache.camel.spi.annotations.PropertiesFunction("configmap")
-public class ConfigMapPropertiesFunction extends BaseConfigMapPropertiesFunction {
+@org.apache.camel.spi.annotations.PropertiesFunction("secret")
+public class SecretPropertiesFunction extends BaseConfigMapPropertiesFunction {
 
     @Override
     public String getName() {
-        return "configmap";
+        return "secret";
     }
 
     @Override
@@ -45,14 +45,14 @@ public class ConfigMapPropertiesFunction extends BaseConfigMapPropertiesFunction
         }
 
         String answer = null;
-        ConfigMap cm = getClient().configMaps().withName(name).get();
-        if (cm != null) {
-            answer = cm.getData() != null ? cm.getData().get(key) : null;
+        Secret sec = getClient().secrets().withName(name).get();
+        if (sec != null) {
+            // string data can be used as-is
+            answer = sec.getStringData() != null ? sec.getStringData().get(key) : null;
             if (answer == null) {
-                // maybe a binary data
-                answer = cm.getBinaryData() != null ? cm.getBinaryData().get(key) : null;
+                // need to base64 decode from data
+                answer = sec.getData() != null ? sec.getData().get(key) : null;
                 if (answer != null) {
-                    // need to decode base64
                     byte[] data = Base64.getDecoder().decode(answer);
                     if (data != null) {
                         answer = new String(data);
