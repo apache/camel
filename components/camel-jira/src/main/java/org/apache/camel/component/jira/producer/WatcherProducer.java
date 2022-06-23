@@ -16,14 +16,13 @@
  */
 package org.apache.camel.component.jira.producer;
 
-import java.util.List;
-
 import com.atlassian.jira.rest.client.api.IssueRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jira.JiraEndpoint;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.component.jira.JiraConstants.ISSUE_KEY;
 import static org.apache.camel.component.jira.JiraConstants.ISSUE_WATCHERS_ADD;
@@ -38,26 +37,34 @@ public class WatcherProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) {
         String issueKey = exchange.getIn().getHeader(ISSUE_KEY, String.class);
-        List<String> watchersAdd = exchange.getIn().getHeader(ISSUE_WATCHERS_ADD, List.class);
-        List<String> watchersRemove = exchange.getIn().getHeader(ISSUE_WATCHERS_REMOVE, List.class);
+        String watchersAdd = exchange.getIn().getHeader(ISSUE_WATCHERS_ADD, String.class);
+        String watchersRemove = exchange.getIn().getHeader(ISSUE_WATCHERS_REMOVE, String.class);
         if (issueKey == null) {
             throw new IllegalArgumentException(
                     "Missing exchange input header named \'IssueKey\', it should specify the issue key to add/remove watchers to.");
         }
         JiraRestClient client = ((JiraEndpoint) getEndpoint()).getClient();
-        boolean hasWatchersToAdd = watchersAdd != null && !watchersAdd.isEmpty();
-        boolean hasWatchersToRemove = watchersRemove != null && !watchersRemove.isEmpty();
+        boolean hasWatchersToAdd = ObjectHelper.isNotEmpty(watchersAdd);
+        boolean hasWatchersToRemove = ObjectHelper.isNotEmpty(watchersRemove);
         if (hasWatchersToAdd || hasWatchersToRemove) {
             IssueRestClient issueClient = client.getIssueClient();
             Issue issue = issueClient.getIssue(issueKey).claim();
             if (hasWatchersToAdd) {
-                for (String watcher : watchersAdd) {
-                    issueClient.addWatcher(issue.getWatchers().getSelf(), watcher);
+                String[] watArr = watchersAdd.split(",");
+                for (String s : watArr) {
+                    String watcher = s.trim();
+                    if (watcher.length() > 0) {
+                        issueClient.addWatcher(issue.getWatchers().getSelf(), watcher);
+                    }
                 }
             }
             if (hasWatchersToRemove) {
-                for (String watcher : watchersRemove) {
-                    issueClient.removeWatcher(issue.getWatchers().getSelf(), watcher);
+                String[] watArr = watchersRemove.split(",");
+                for (String s : watArr) {
+                    String watcher = s.trim();
+                    if (watcher.length() > 0) {
+                        issueClient.removeWatcher(issue.getWatchers().getSelf(), watcher);
+                    }
                 }
             }
         }
