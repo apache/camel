@@ -24,9 +24,11 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.debugger.BacklogDebugger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
+import org.junitpioneer.jupiter.SetEnvironmentVariable;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -888,6 +890,51 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         Set<String> nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
         assertNotNull(nodes);
         assertEquals(0, nodes.size());
+    }
+
+    /**
+     * Ensure that the suspend mode works as expected.
+     */
+    @Test
+    @SetEnvironmentVariable(key = BacklogDebugger.SUSPEND_MODE_ENV_VAR_NAME, value = "true")
+    public void testSuspendMode() throws Exception {
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = new ObjectName(
+                "org.apache.camel:context=" + context.getManagementName() + ",type=tracer,name=BacklogDebugger");
+        assertNotNull(on);
+        mbeanServer.isRegistered(on);
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(0);
+        mock.setSleepForEmptyTest(100);
+
+        template.sendBody("seda:start", "Hello World");
+        assertMockEndpointsSatisfied();
+
+        resetMocks();
+
+        // Attach debugger
+        mbeanServer.invoke(on, "attach", null, null);
+
+        mock.expectedMessageCount(1);
+
+        resetMocks();
+
+        // Detach debugger
+        mbeanServer.invoke(on, "detach", null, null);
+
+        mock.expectedMessageCount(0);
+        mock.setSleepForEmptyTest(100);
+
+        template.sendBody("seda:start", "Hello World 2");
+        assertMockEndpointsSatisfied();
+
+        resetMocks();
+
+        // Attach debugger
+        mbeanServer.invoke(on, "attach", null, null);
+
+        mock.expectedMessageCount(1);
     }
 
     @Override

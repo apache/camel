@@ -441,6 +441,16 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
         return messageHistoryBuffer.toString();
     }
 
+    @Override
+    public void attach() {
+        backlogDebugger.attach();
+    }
+
+    @Override
+    public void detach() {
+        backlogDebugger.detach();
+    }
+
     private String dumpExchangePropertiesAsXml(String id) {
         StringBuilder sb = new StringBuilder();
         sb.append("  <exchangeProperties>\n");
