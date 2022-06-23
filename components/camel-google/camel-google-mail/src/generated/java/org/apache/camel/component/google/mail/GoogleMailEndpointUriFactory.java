@@ -42,7 +42,6 @@ public class GoogleMailEndpointUriFactory extends org.apache.camel.support.compo
         props.add("id");
         props.add("inBody");
         props.add("initialDelay");
-        props.add("keyResource");
         props.add("lazyStartProducer");
         props.add("mediaContent");
         props.add("messageId");
@@ -57,6 +56,7 @@ public class GoogleMailEndpointUriFactory extends org.apache.camel.support.compo
         props.add("schedulerProperties");
         props.add("scopes");
         props.add("sendEmptyMessageWhenIdle");
+        props.add("serviceAccountKey");
         props.add("startScheduler");
         props.add("timeUnit");
         props.add("useFixedDelay");

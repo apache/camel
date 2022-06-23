@@ -49,7 +49,7 @@ public class GoogleMailConfiguration {
     private String applicationName;
     /* Service account */
     @UriParam(label = "security")
-    private String keyResource;
+    private String serviceAccountKey;
     @UriParam
     private String delegate;
     @UriParam
@@ -133,17 +133,18 @@ public class GoogleMailConfiguration {
         this.applicationName = applicationName;
     }
 
-    public String getKeyResource() {
-        return keyResource;
+    public String getServiceAccountKey() {
+        return serviceAccountKey;
     }
 
     /**
-     * Sets "*.json" file with credentials for Service account
-     * 
-     * @param keyResource String file, classpath, or http url
+     * Service account key in json format to authenticate an application as a service account. Accept base64 adding the
+     * prefix "base64:"
+     *
+     * @param serviceAccountKey String file, classpath, base64, or http url
      */
-    public void setKeyResource(String keyResource) {
-        this.keyResource = keyResource;
+    public void setServiceAccountKey(String serviceAccountKey) {
+        this.serviceAccountKey = serviceAccountKey;
     }
 
     public String getDelegate() {

@@ -57,7 +57,7 @@ public class AbstractGoogleMailTestSupport extends CamelTestSupport {
         return !properties.getProperty("clientId", "").isEmpty()
                 && !properties.getProperty("clientSecret", "").isEmpty()
                 && !properties.getProperty("accessToken", "").isEmpty()
-                || !properties.getProperty("keyResource", "").isEmpty();
+                || !properties.getProperty("serviceAccountKey", "").isEmpty();
     }
 
     @Override

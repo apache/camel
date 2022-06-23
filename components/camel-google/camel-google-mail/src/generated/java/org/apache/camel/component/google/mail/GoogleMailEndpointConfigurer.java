@@ -49,8 +49,8 @@ public class GoogleMailEndpointConfigurer extends PropertyConfigurerSupport impl
         map.put("useFixedDelay", boolean.class);
         map.put("accessToken", java.lang.String.class);
         map.put("clientSecret", java.lang.String.class);
-        map.put("keyResource", java.lang.String.class);
         map.put("refreshToken", java.lang.String.class);
+        map.put("serviceAccountKey", java.lang.String.class);
         ALL_OPTIONS = map;
     }
 
@@ -85,8 +85,6 @@ public class GoogleMailEndpointConfigurer extends PropertyConfigurerSupport impl
         case "inBody": target.setInBody(property(camelContext, java.lang.String.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "keyresource":
-        case "keyResource": target.getConfiguration().setKeyResource(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "pollstrategy":
@@ -105,6 +103,8 @@ public class GoogleMailEndpointConfigurer extends PropertyConfigurerSupport impl
         case "scopes": target.getConfiguration().setScopes(property(camelContext, java.util.Collection.class, value)); return true;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
+        case "serviceaccountkey":
+        case "serviceAccountKey": target.getConfiguration().setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
@@ -150,8 +150,6 @@ public class GoogleMailEndpointConfigurer extends PropertyConfigurerSupport impl
         case "inBody": return java.lang.String.class;
         case "initialdelay":
         case "initialDelay": return long.class;
-        case "keyresource":
-        case "keyResource": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "pollstrategy":
@@ -170,6 +168,8 @@ public class GoogleMailEndpointConfigurer extends PropertyConfigurerSupport impl
         case "scopes": return java.util.Collection.class;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return boolean.class;
+        case "serviceaccountkey":
+        case "serviceAccountKey": return java.lang.String.class;
         case "startscheduler":
         case "startScheduler": return boolean.class;
         case "timeunit":
@@ -211,8 +211,6 @@ public class GoogleMailEndpointConfigurer extends PropertyConfigurerSupport impl
         case "inBody": return target.getInBody();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
-        case "keyresource":
-        case "keyResource": return target.getConfiguration().getKeyResource();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "pollstrategy":
@@ -231,6 +229,8 @@ public class GoogleMailEndpointConfigurer extends PropertyConfigurerSupport impl
         case "scopes": return target.getConfiguration().getScopes();
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
+        case "serviceaccountkey":
+        case "serviceAccountKey": return target.getConfiguration().getServiceAccountKey();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
         case "timeunit":
