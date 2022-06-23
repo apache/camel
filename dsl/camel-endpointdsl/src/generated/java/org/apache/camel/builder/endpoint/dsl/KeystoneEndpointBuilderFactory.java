@@ -234,6 +234,20 @@ public interface KeystoneEndpointBuilderFactory {
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-openstack
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default KeystoneHeaderNameBuilder openstackKeystone() {
+            return KeystoneHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * OpenStack Keystone (camel-openstack)
+         * Access OpenStack Keystone for API client authentication, service
+         * discovery and distributed multi-tenant authorization.
+         * 
+         * Category: cloud,paas
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-openstack
+         * 
          * Syntax: <code>openstack-keystone:host</code>
          * 
          * Path parameter: host (required)
@@ -268,6 +282,147 @@ public interface KeystoneEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return KeystoneEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the OpenStack Keystone component.
+     */
+    public static class KeystoneHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final KeystoneHeaderNameBuilder INSTANCE = new KeystoneHeaderNameBuilder();
+
+        /**
+         * The description.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code description}.
+         */
+        public String description() {
+            return "description";
+        }
+
+        /**
+         * ID of the domain.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: group project user
+         * 
+         * @return the name of the header {@code domainId}.
+         */
+        public String domainId() {
+            return "domainId";
+        }
+
+        /**
+         * The parent project ID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: project
+         * 
+         * @return the name of the header {@code parentId}.
+         */
+        public String parentId() {
+            return "parentId";
+        }
+
+        /**
+         * User's password.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: user
+         * 
+         * @return the name of the header {@code password}.
+         */
+        public String password() {
+            return "password";
+        }
+
+        /**
+         * User's email.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: user
+         * 
+         * @return the name of the header {@code email}.
+         */
+        public String email() {
+            return "email";
+        }
+
+        /**
+         * ID of the user.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: group
+         * 
+         * @return the name of the header {@code userId}.
+         */
+        public String userId() {
+            return "userId";
+        }
+
+        /**
+         * ID of the group.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: group
+         * 
+         * @return the name of the header {@code groupId}.
+         */
+        public String groupId() {
+            return "groupId";
+        }
+
+        /**
+         * The operation to perform.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code operation}.
+         */
+        public String operation() {
+            return "operation";
+        }
+
+        /**
+         * The ID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ID}.
+         */
+        public String iD() {
+            return "ID";
+        }
+
+        /**
+         * The name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code name}.
+         */
+        public String name() {
+            return "name";
         }
     }
     static KeystoneEndpointBuilder endpointBuilder(

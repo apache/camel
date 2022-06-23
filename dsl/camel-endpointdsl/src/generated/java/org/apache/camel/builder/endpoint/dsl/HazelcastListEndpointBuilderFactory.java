@@ -530,6 +530,19 @@ public interface HazelcastListEndpointBuilderFactory {
          * Since: 2.7
          * Maven coordinates: org.apache.camel:camel-hazelcast
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default HazelcastListHeaderNameBuilder hazelcastList() {
+            return HazelcastListHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Hazelcast List (camel-hazelcast)
+         * Perform operations on Hazelcast distributed list.
+         * 
+         * Category: cache,datagrid
+         * Since: 2.7
+         * Maven coordinates: org.apache.camel:camel-hazelcast
+         * 
          * Syntax: <code>hazelcast-list:cacheName</code>
          * 
          * Path parameter: cacheName (required)
@@ -563,6 +576,108 @@ public interface HazelcastListEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return HazelcastListEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Hazelcast List component.
+     */
+    public static class HazelcastListHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final HazelcastListHeaderNameBuilder INSTANCE = new HazelcastListHeaderNameBuilder();
+
+        /**
+         * the object id to store / find your object inside the cache.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code HazelcastObjectId}.
+         */
+        public String hazelcastObjectId() {
+            return "HazelcastObjectId";
+        }
+
+        /**
+         * The index of the object.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HazelcastObjectIndex}.
+         */
+        public String hazelcastObjectIndex() {
+            return "HazelcastObjectIndex";
+        }
+
+        /**
+         * The type of event - here added and removed.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code HazelcastListenerAction}.
+         */
+        public String hazelcastListenerAction() {
+            return "HazelcastListenerAction";
+        }
+
+        /**
+         * The map consumer.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code HazelcastListenerType}.
+         */
+        public String hazelcastListenerType() {
+            return "HazelcastListenerType";
+        }
+
+        /**
+         * The time of the event in millis.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code HazelcastListenerTime}.
+         */
+        public String hazelcastListenerTime() {
+            return "HazelcastListenerTime";
+        }
+
+        /**
+         * The name of the cache - e.g. foo.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code HazelcastCacheName}.
+         */
+        public String hazelcastCacheName() {
+            return "HazelcastCacheName";
+        }
+
+        /**
+         * The operation to perform.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HazelcastOperationType}.
+         */
+        public String hazelcastOperationType() {
+            return "HazelcastOperationType";
         }
     }
     static HazelcastListEndpointBuilder endpointBuilder(

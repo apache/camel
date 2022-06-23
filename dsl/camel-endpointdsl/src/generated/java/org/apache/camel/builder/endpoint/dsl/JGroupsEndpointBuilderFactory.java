@@ -360,6 +360,19 @@ public interface JGroupsEndpointBuilderFactory {
          * Since: 2.13
          * Maven coordinates: org.apache.camel:camel-jgroups
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default JGroupsHeaderNameBuilder jgroups() {
+            return JGroupsHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * JGroups (camel-jgroups)
+         * Exchange messages with JGroups clusters.
+         * 
+         * Category: clustering,messaging
+         * Since: 2.13
+         * Maven coordinates: org.apache.camel:camel-jgroups
+         * 
          * Syntax: <code>jgroups:clusterName</code>
          * 
          * Path parameter: clusterName (required)
@@ -391,6 +404,77 @@ public interface JGroupsEndpointBuilderFactory {
          */
         default JGroupsEndpointBuilder jgroups(String componentName, String path) {
             return JGroupsEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the JGroups component.
+     */
+    public static class JGroupsHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final JGroupsHeaderNameBuilder INSTANCE = new JGroupsHeaderNameBuilder();
+
+        /**
+         * Address (org.jgroups.Address) of the channel associated with the
+         * endpoint.
+         * 
+         * The option is a: {@code org.jgroups.Address} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code JGROUPS_CHANNEL_ADDRESS}.
+         */
+        public String jgroupsChannelAddress() {
+            return "JGROUPS_CHANNEL_ADDRESS";
+        }
+
+        /**
+         * Consumer: The org.jgroups.Address instance extracted by
+         * org.jgroups.Message.getDest() method of the consumed message.
+         * Producer: The custom destination org.jgroups.Address of the message
+         * to be sent.
+         * 
+         * The option is a: {@code org.jgroups.Address} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code JGROUPS_DEST}.
+         */
+        public String jgroupsDest() {
+            return "JGROUPS_DEST";
+        }
+
+        /**
+         * Consumer : The org.jgroups.Address instance extracted by
+         * org.jgroups.Message.getSrc() method of the consumed message.
+         * Producer: The custom source org.jgroups.Address of the message to be
+         * sent.
+         * 
+         * The option is a: {@code org.jgroups.Address} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code JGROUPS_SRC}.
+         */
+        public String jgroupsSrc() {
+            return "JGROUPS_SRC";
+        }
+
+        /**
+         * The original org.jgroups.Message instance from which the body of the
+         * consumed message has been extracted.
+         * 
+         * The option is a: {@code org.jgroups.Message} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code JGROUPS_ORIGINAL_MESSAGE}.
+         */
+        public String jgroupsOriginalMessage() {
+            return "JGROUPS_ORIGINAL_MESSAGE";
         }
     }
     static JGroupsEndpointBuilder endpointBuilder(

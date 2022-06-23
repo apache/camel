@@ -281,6 +281,19 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-ignite
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default IgniteIdGenHeaderNameBuilder igniteIdgen() {
+            return IgniteIdGenHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Ignite ID Generator (camel-ignite)
+         * Interact with Ignite Atomic Sequences and ID Generators .
+         * 
+         * Category: compute
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-ignite
+         * 
          * Syntax: <code>ignite-idgen:name</code>
          * 
          * Path parameter: name (required)
@@ -314,6 +327,31 @@ public interface IgniteIdGenEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return IgniteIdGenEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Ignite ID Generator component.
+     */
+    public static class IgniteIdGenHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final IgniteIdGenHeaderNameBuilder INSTANCE = new IgniteIdGenHeaderNameBuilder();
+
+        /**
+         * Allows you to dynamically change the ID Generator operation.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.ignite.idgen.IgniteIdGenOperation} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IgniteIdGenOperation}.
+         */
+        public String igniteIdGenOperation() {
+            return "IgniteIdGenOperation";
         }
     }
     static IgniteIdGenEndpointBuilder endpointBuilder(

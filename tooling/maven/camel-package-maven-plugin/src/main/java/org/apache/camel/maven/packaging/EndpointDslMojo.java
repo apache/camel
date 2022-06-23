@@ -34,14 +34,17 @@ import javax.annotation.Generated;
 import org.apache.camel.maven.packaging.dsl.DslHelper;
 import org.apache.camel.maven.packaging.generics.JavadocUtil;
 import org.apache.camel.tooling.model.BaseModel;
+import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.ComponentModel.EndpointOptionModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.util.JavadocHelper;
 import org.apache.camel.tooling.util.Strings;
+import org.apache.camel.tooling.util.srcgen.Field;
 import org.apache.camel.tooling.util.srcgen.GenericType;
 import org.apache.camel.tooling.util.srcgen.JavaClass;
 import org.apache.camel.tooling.util.srcgen.Method;
+import org.apache.commons.text.CaseUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -361,6 +364,11 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             method.addAnnotation(Deprecated.class);
         }
 
+        final JavaClass headerNameBuilderClass = addHeaderNameBuilderClass(javaClass, model);
+        if (headerNameBuilderClass != null) {
+            addHeaderNameBuilderMethod(dslClass, headerNameBuilderClass, model);
+        }
+
         if (aliases.size() == 1) {
             processAliases(model, staticBuilders, javaClass, builderClass, dslClass);
         } else {
@@ -369,6 +377,84 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
 
         return writeSourceIfChanged(javaClass, componentsFactoriesPackageName.replace('.', '/'), builderName + "Factory.java",
                 false);
+    }
+
+    /**
+     * Adds the static inner class allowing to have access to all the headers of the given component.
+     *
+     * @param  javaClass the main class into which the static inner class is added.
+     * @param  model     the model from which the information of the component are extracted.
+     * @return           the static inner class that has been added if any, {@code null} otherwise.
+     */
+    private JavaClass addHeaderNameBuilderClass(JavaClass javaClass, ComponentModel model) {
+        final List<ComponentModel.EndpointHeaderModel> endpointHeaders = model.getEndpointHeaders();
+        if (endpointHeaders.isEmpty()) {
+            return null;
+        }
+        final JavaClass builderClass = javaClass.addNestedType();
+        builderClass.setName(getComponentNameFromType(model.getJavaType()) + "HeaderNameBuilder")
+                .setPublic()
+                .setStatic(true);
+        builderClass.getJavaDoc().setText("The builder of headers' name for the " + model.getTitle() + " component.");
+        generateDummyClass(builderClass.getCanonicalName());
+        final Field singleton = builderClass.addField();
+        singleton.setPrivate().setStatic(true).setFinal(true).setName("INSTANCE")
+                .setType(loadClass(builderClass.getCanonicalName()))
+                .setLiteralInitializer(String.format("new %s()", builderClass.getName()));
+        singleton.getJavaDoc().setText(
+                "The internal instance of the builder used to access to all the methods representing the name of headers.");
+
+        for (ComponentModel.EndpointHeaderModel header : endpointHeaders) {
+            addHeaderNameMethod(builderClass, header);
+        }
+        return builderClass;
+    }
+
+    /**
+     * Adds the method allowing to retrieve the header name of the given header.
+     *
+     * @param builderClass the static inner class to which the method is added.
+     * @param header       the header whose name is returned by the method
+     */
+    private void addHeaderNameMethod(JavaClass builderClass, ComponentModel.EndpointHeaderModel header) {
+        String headerName = header.getName();
+        final String camelPrefix = "camel";
+        if (headerName.toLowerCase().startsWith(camelPrefix)) {
+            headerName = headerName.substring(camelPrefix.length());
+        }
+        final String name;
+        if (headerName.chars().anyMatch(c -> c == ':' || c == '-' || c == '.' || c == '_')) {
+            name = CaseUtils.toCamelCase(headerName, false, ':', '-', '.', '_');
+        } else {
+            name = headerName.substring(0, 1).toLowerCase() + headerName.substring(1);
+        }
+        final Method method = builderClass.addMethod().setPublic().setReturnType(String.class)
+                .setName(name);
+        String javaDoc = createBaseDescription(header, "header", true).replace("@@REPLACE_ME@@",
+                "\nThe option is a: {@code " + header.getJavaType() + "} type.");
+        javaDoc += String.format("%n%n@return the name of the header {@code %s}.%n", headerName);
+        method.getJavaDoc().setText(javaDoc);
+        method.setBodyF("return \"%s\";", headerName);
+        if (header.isDeprecated()) {
+            method.addAnnotation(Deprecated.class);
+        }
+    }
+
+    /**
+     * Adds the method to the DSL class allowing to have access to all the headers of the component.
+     *
+     * @param dslClass     the DSL class into which the method should be added.
+     * @param builderClass the builder class that gives access to all the headers of the component.
+     * @param model        the model from which the information of the component are extracted.
+     */
+    private void addHeaderNameBuilderMethod(JavaClass dslClass, JavaClass builderClass, ComponentModel model) {
+        final Method method = dslClass.addMethod();
+        method.setDefault().setReturnType(loadClass(builderClass.getCanonicalName()))
+                .setName(camelCaseLower(model.getScheme()))
+                .setBodyF("return %s.INSTANCE;", builderClass.getName());
+        String javaDoc = getMainDescription(model, false);
+        javaDoc += "\n\n@return the dsl builder for the headers' name.\n";
+        method.getJavaDoc().setText(javaDoc);
     }
 
     private void processMasterScheme(
@@ -616,7 +702,11 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         fluent.getJavaDoc().setText(sb.toString());
     }
 
-    private String createBaseDescription(EndpointOptionModel option) {
+    private String createBaseDescription(BaseOptionModel option) {
+        return createBaseDescription(option, "parameter", false);
+    }
+
+    private String createBaseDescription(BaseOptionModel option, String kind, boolean ignoreMultiValue) {
         String baseDesc = option.getDescription();
         if (Strings.isEmpty(baseDesc)) {
             return baseDesc;
@@ -641,7 +731,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         // context-path and not as individual options
         // so lets only mark query parameters that are required as
         // required
-        if ("parameter".equals(option.getKind()) && option.isRequired()) {
+        if (kind.equals(option.getKind()) && option.isRequired()) {
             baseDescBuilder.append("\nRequired: true");
         }
         // include default value (if any)

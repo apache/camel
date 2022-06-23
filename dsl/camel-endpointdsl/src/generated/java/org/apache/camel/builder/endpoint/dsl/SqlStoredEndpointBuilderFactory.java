@@ -333,6 +333,19 @@ public interface SqlStoredEndpointBuilderFactory {
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-sql
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default SqlStoredHeaderNameBuilder sqlStored() {
+            return SqlStoredHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * SQL Stored Procedure (camel-sql)
+         * Perform SQL queries as a JDBC Stored Procedures using Spring JDBC.
+         * 
+         * Category: database,sql
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-sql
+         * 
          * Syntax: <code>sql-stored:template</code>
          * 
          * Path parameter: template (required)
@@ -366,6 +379,56 @@ public interface SqlStoredEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return SqlStoredEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the SQL Stored Procedure component.
+     */
+    public static class SqlStoredHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final SqlStoredHeaderNameBuilder INSTANCE = new SqlStoredHeaderNameBuilder();
+
+        /**
+         * The template.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SqlStoredTemplate}.
+         */
+        public String sqlStoredTemplate() {
+            return "SqlStoredTemplate";
+        }
+
+        /**
+         * The parameters.
+         * 
+         * The option is a: {@code Iterator} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SqlStoredParameters}.
+         */
+        public String sqlStoredParameters() {
+            return "SqlStoredParameters";
+        }
+
+        /**
+         * The update count.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SqlStoredUpdateCount}.
+         */
+        public String sqlStoredUpdateCount() {
+            return "SqlStoredUpdateCount";
         }
     }
     static SqlStoredEndpointBuilder endpointBuilder(

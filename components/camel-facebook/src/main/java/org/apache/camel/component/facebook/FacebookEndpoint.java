@@ -66,7 +66,6 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
     @Metadata(required = true)
 
     private String method;
-    private FacebookMethodsType methodName;
     @UriParam
     private FacebookEndpointConfiguration configuration;
     @UriParam

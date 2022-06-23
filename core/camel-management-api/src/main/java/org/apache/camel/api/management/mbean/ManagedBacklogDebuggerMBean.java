@@ -175,4 +175,10 @@ public interface ManagedBacklogDebuggerMBean {
 
     @ManagedOperation(description = "Returns the message history at the given node id as XML")
     String messageHistoryOnBreakpointAsXml(String nodeId);
+
+    @ManagedOperation(description = "Attach the debugger")
+    void attach();
+
+    @ManagedOperation(description = "Detach the debugger")
+    void detach();
 }

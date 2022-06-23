@@ -290,6 +290,20 @@ public interface MetricsEndpointBuilderFactory {
          * Since: 2.14
          * Maven coordinates: org.apache.camel:camel-metrics
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default MetricsHeaderNameBuilder metrics() {
+            return MetricsHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Metrics (camel-metrics)
+         * Collect various metrics directly from Camel routes using the
+         * DropWizard metrics library.
+         * 
+         * Category: monitoring
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-metrics
+         * 
          * Syntax: <code>metrics:metricsType:metricsName</code>
          * 
          * Path parameter: metricsType (required)
@@ -332,6 +346,109 @@ public interface MetricsEndpointBuilderFactory {
          */
         default MetricsEndpointBuilder metrics(String componentName, String path) {
             return MetricsEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Metrics component.
+     */
+    public static class MetricsHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final MetricsHeaderNameBuilder INSTANCE = new MetricsHeaderNameBuilder();
+
+        /**
+         * Override timer action in URI.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.metrics.MetricsTimerAction} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MetricsTimerAction}.
+         */
+        public String metricsTimerAction() {
+            return "MetricsTimerAction";
+        }
+
+        /**
+         * Override mark value in URI.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MetricsMeterMark}.
+         */
+        public String metricsMeterMark() {
+            return "MetricsMeterMark";
+        }
+
+        /**
+         * Override histogram value in URI.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MetricsHistogramValue}.
+         */
+        public String metricsHistogramValue() {
+            return "MetricsHistogramValue";
+        }
+
+        /**
+         * Override decrement value in URI.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MetricsCounterDecrement}.
+         */
+        public String metricsCounterDecrement() {
+            return "MetricsCounterDecrement";
+        }
+
+        /**
+         * Override increment value in URI.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MetricsCounterIncrement}.
+         */
+        public String metricsCounterIncrement() {
+            return "MetricsCounterIncrement";
+        }
+
+        /**
+         * Override subject value in URI.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MetricsGaugeSubject}.
+         */
+        public String metricsGaugeSubject() {
+            return "MetricsGaugeSubject";
+        }
+
+        /**
+         * Override name value in URI.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MetricsName}.
+         */
+        public String metricsName() {
+            return "MetricsName";
         }
     }
     static MetricsEndpointBuilder endpointBuilder(

@@ -1423,6 +1423,20 @@ public interface KubernetesDeploymentsEndpointBuilderFactory {
          * Since: 2.20
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default KubernetesDeploymentsHeaderNameBuilder kubernetesDeployments() {
+            return KubernetesDeploymentsHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Kubernetes Deployments (camel-kubernetes)
+         * Perform operations on Kubernetes Deployments and get notified on
+         * Deployment changes.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
          * Syntax: <code>kubernetes-deployments:masterUrl</code>
          * 
          * Path parameter: masterUrl (required)
@@ -1458,6 +1472,123 @@ public interface KubernetesDeploymentsEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return KubernetesDeploymentsEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Kubernetes Deployments component.
+     */
+    public static class KubernetesDeploymentsHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final KubernetesDeploymentsHeaderNameBuilder INSTANCE = new KubernetesDeploymentsHeaderNameBuilder();
+
+        /**
+         * The Producer operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesOperation}.
+         */
+        public String kubernetesOperation() {
+            return "KubernetesOperation";
+        }
+
+        /**
+         * The namespace name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesNamespaceName}.
+         */
+        public String kubernetesNamespaceName() {
+            return "KubernetesNamespaceName";
+        }
+
+        /**
+         * The deployment labels.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesDeploymentsLabels}.
+         */
+        public String kubernetesDeploymentsLabels() {
+            return "KubernetesDeploymentsLabels";
+        }
+
+        /**
+         * The deployment name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesDeploymentName}.
+         */
+        public String kubernetesDeploymentName() {
+            return "KubernetesDeploymentName";
+        }
+
+        /**
+         * The spec for a deployment.
+         * 
+         * The option is a: {@code
+         * io.fabric8.kubernetes.api.model.apps.DeploymentSpec} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesDeploymentSpec}.
+         */
+        public String kubernetesDeploymentSpec() {
+            return "KubernetesDeploymentSpec";
+        }
+
+        /**
+         * The desired instance count.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesDeploymentReplicas}.
+         */
+        public String kubernetesDeploymentReplicas() {
+            return "KubernetesDeploymentReplicas";
+        }
+
+        /**
+         * Action watched by the consumer.
+         * 
+         * The option is a: {@code io.fabric8.kubernetes.client.Watcher.Action}
+         * type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code KubernetesEventAction}.
+         */
+        public String kubernetesEventAction() {
+            return "KubernetesEventAction";
+        }
+
+        /**
+         * Timestamp of the action watched by the consumer.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code KubernetesEventTimestamp}.
+         */
+        public String kubernetesEventTimestamp() {
+            return "KubernetesEventTimestamp";
         }
     }
     static KubernetesDeploymentsEndpointBuilder endpointBuilder(

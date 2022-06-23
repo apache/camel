@@ -1392,6 +1392,19 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Since: 2.23
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default KubernetesJobHeaderNameBuilder kubernetesJob() {
+            return KubernetesJobHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Kubernetes Job (camel-kubernetes)
+         * Perform operations on Kubernetes Jobs.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.23
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
          * Syntax: <code>kubernetes-job:masterUrl</code>
          * 
          * Path parameter: masterUrl (required)
@@ -1425,6 +1438,83 @@ public interface KubernetesJobEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return KubernetesJobEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Kubernetes Job component.
+     */
+    public static class KubernetesJobHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final KubernetesJobHeaderNameBuilder INSTANCE = new KubernetesJobHeaderNameBuilder();
+
+        /**
+         * The Producer operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesOperation}.
+         */
+        public String kubernetesOperation() {
+            return "KubernetesOperation";
+        }
+
+        /**
+         * The namespace name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesNamespaceName}.
+         */
+        public String kubernetesNamespaceName() {
+            return "KubernetesNamespaceName";
+        }
+
+        /**
+         * The Job name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesJobName}.
+         */
+        public String kubernetesJobName() {
+            return "KubernetesJobName";
+        }
+
+        /**
+         * The spec for a Job.
+         * 
+         * The option is a: {@code
+         * io.fabric8.kubernetes.api.model.batch.v1.JobSpec} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesJobSpec}.
+         */
+        public String kubernetesJobSpec() {
+            return "KubernetesJobSpec";
+        }
+
+        /**
+         * The Job labels.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesJobLabels}.
+         */
+        public String kubernetesJobLabels() {
+            return "KubernetesJobLabels";
         }
     }
     static KubernetesJobEndpointBuilder endpointBuilder(

@@ -48,7 +48,7 @@ public class HttpServletResolveConsumerStrategy implements ServletResolveConsume
         }
         HttpConsumer answer = consumers.get(path);
 
-        List<HttpConsumer> candidates = resolveCandidates(request, method, consumers);
+        List<HttpConsumer> candidates = resolveCandidates(request, consumers);
         // extra filter by restrict
         candidates = candidates.stream().filter(c -> matchRestMethod(method, c.getEndpoint().getHttpMethodRestrict()))
                 .collect(Collectors.toList());
@@ -60,7 +60,7 @@ public class HttpServletResolveConsumerStrategy implements ServletResolveConsume
     }
 
     private List<HttpConsumer> resolveCandidates(
-            HttpServletRequest request, String method, Map<String, HttpConsumer> consumers) {
+            HttpServletRequest request, Map<String, HttpConsumer> consumers) {
         String path = request.getPathInfo();
 
         List<HttpConsumer> candidates = new ArrayList<>();

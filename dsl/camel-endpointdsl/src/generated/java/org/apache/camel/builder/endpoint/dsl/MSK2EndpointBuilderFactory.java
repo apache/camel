@@ -451,6 +451,19 @@ public interface MSK2EndpointBuilderFactory {
          * Since: 3.1
          * Maven coordinates: org.apache.camel:camel-aws2-msk
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default MSK2HeaderNameBuilder aws2Msk() {
+            return MSK2HeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * AWS Managed Streaming for Apache Kafka (MSK) (camel-aws2-msk)
+         * Manage AWS MSK instances using AWS SDK version 2.x.
+         * 
+         * Category: cloud,management
+         * Since: 3.1
+         * Maven coordinates: org.apache.camel:camel-aws2-msk
+         * 
          * Syntax: <code>aws2-msk:label</code>
          * 
          * Path parameter: label (required)
@@ -482,6 +495,111 @@ public interface MSK2EndpointBuilderFactory {
          */
         default MSK2EndpointBuilder aws2Msk(String componentName, String path) {
             return MSK2EndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the AWS Managed Streaming for Apache
+     * Kafka (MSK) component.
+     */
+    public static class MSK2HeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final MSK2HeaderNameBuilder INSTANCE = new MSK2HeaderNameBuilder();
+
+        /**
+         * The operation we want to perform.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsMSKOperation}.
+         */
+        public String awsMSKOperation() {
+            return "AwsMSKOperation";
+        }
+
+        /**
+         * The cluster name filter for list operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsMSKClusterFilter}.
+         */
+        public String awsMSKClusterFilter() {
+            return "AwsMSKClusterFilter";
+        }
+
+        /**
+         * The cluster name for list and create operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsMSKClusterName}.
+         */
+        public String awsMSKClusterName() {
+            return "AwsMSKClusterName";
+        }
+
+        /**
+         * The cluster arn for delete operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsMSKClusterArn}.
+         */
+        public String awsMSKClusterArn() {
+            return "AwsMSKClusterArn";
+        }
+
+        /**
+         * The Kafka for the cluster during create operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsMSKClusterKafkaVersion}.
+         */
+        public String awsMSKClusterKafkaVersion() {
+            return "AwsMSKClusterKafkaVersion";
+        }
+
+        /**
+         * The number of nodes for the cluster during create operation.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsMSKBrokerNodesNumber}.
+         */
+        public String awsMSKBrokerNodesNumber() {
+            return "AwsMSKBrokerNodesNumber";
+        }
+
+        /**
+         * The Broker nodes group info to provide during the create operation.
+         * 
+         * The option is a: {@code
+         * software.amazon.awssdk.services.kafka.model.BrokerNodeGroupInfo}
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsMSKBrokerNodesGroupInfo}.
+         */
+        public String awsMSKBrokerNodesGroupInfo() {
+            return "AwsMSKBrokerNodesGroupInfo";
         }
     }
     static MSK2EndpointBuilder endpointBuilder(String componentName, String path) {

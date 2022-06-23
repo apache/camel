@@ -827,6 +827,20 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-ignite
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default IgniteCacheHeaderNameBuilder igniteCache() {
+            return IgniteCacheHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Ignite Cache (camel-ignite)
+         * Perform cache operations on an Ignite cache or consume changes from a
+         * continuous query.
+         * 
+         * Category: cache,datagrid
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-ignite
+         * 
          * Syntax: <code>ignite-cache:cacheName</code>
          * 
          * Path parameter: cacheName (required)
@@ -861,6 +875,115 @@ public interface IgniteCacheEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return IgniteCacheEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Ignite Cache component.
+     */
+    public static class IgniteCacheHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final IgniteCacheHeaderNameBuilder INSTANCE = new IgniteCacheHeaderNameBuilder();
+
+        /**
+         * The cache key for the entry value in the message body.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code IgniteCacheKey}.
+         */
+        public String igniteCacheKey() {
+            return "IgniteCacheKey";
+        }
+
+        /**
+         * The query to run when invoking the QUERY operation.
+         * 
+         * The option is a: {@code org.apache.ignite.cache.query.Query} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IgniteCacheQuery}.
+         */
+        public String igniteCacheQuery() {
+            return "IgniteCacheQuery";
+        }
+
+        /**
+         * Allows you to dynamically change the cache operation to execute.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.ignite.cache.IgniteCacheOperation} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IgniteCacheOperation}.
+         */
+        public String igniteCacheOperation() {
+            return "IgniteCacheOperation";
+        }
+
+        /**
+         * Allows you to dynamically change the cache peek mode when running the
+         * SIZE operation.
+         * 
+         * The option is a: {@code org.apache.ignite.cache.CachePeekMode} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IgniteCachePeekMode}.
+         */
+        public String igniteCachePeekMode() {
+            return "IgniteCachePeekMode";
+        }
+
+        /**
+         * This header carries the received event type when using the continuous
+         * query consumer.
+         * 
+         * The option is a: {@code javax.cache.event.EventType} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code IgniteCacheEventType}.
+         */
+        public String igniteCacheEventType() {
+            return "IgniteCacheEventType";
+        }
+
+        /**
+         * This header carries the cache name for which a continuous query event
+         * was received (consumer). It does not allow you to dynamically change
+         * the cache against which a producer operation is performed. Use EIPs
+         * for that (e.g. recipient list, dynamic router).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code IgniteCacheName}.
+         */
+        public String igniteCacheName() {
+            return "IgniteCacheName";
+        }
+
+        /**
+         * This header carries the old cache value when passed in the incoming
+         * cache event.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code IgniteCacheOldValue}.
+         */
+        public String igniteCacheOldValue() {
+            return "IgniteCacheOldValue";
         }
     }
     static IgniteCacheEndpointBuilder endpointBuilder(

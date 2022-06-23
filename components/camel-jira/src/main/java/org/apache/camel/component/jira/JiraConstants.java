@@ -28,7 +28,7 @@ public interface JiraConstants {
     String CONSUMER_KEY = "consumerKey";
     @Metadata(label = "producer", description = "The assignee's name of the issue", javaType = "String")
     String ISSUE_ASSIGNEE = "IssueAssignee";
-    @Metadata(label = "producer", description = "The comments of the issue", javaType = "List<String>")
+    @Metadata(label = "producer", description = "The comma separated list of the issue's components", javaType = "String")
     String ISSUE_COMPONENTS = "IssueComponents";
     String ISSUE_COMMENT = "IssueComment";
     @Metadata(label = "consumer", description = "The name of the updated field (i.e Status)", javaType = "String")
@@ -52,9 +52,9 @@ public interface JiraConstants {
     @Metadata(label = "consumer", description = "The list of all issue keys that are watched in the time of update",
               javaType = "String")
     String ISSUE_WATCHED_ISSUES = "IssueWatchedIssues";
-    @Metadata(label = "producer", description = "The watchers of the issue to add", javaType = "List<String>")
+    @Metadata(label = "producer", description = "The comma separated list of watchers to add to the issue", javaType = "String")
     String ISSUE_WATCHERS_ADD = "IssueWatchersAdd";
-    @Metadata(label = "producer", description = "The watchers of the issue to remove", javaType = "List<String>")
+    @Metadata(label = "producer", description = "The watchers of the issue to remove", javaType = "String")
     String ISSUE_WATCHERS_REMOVE = "IssueWatchersRemove";
     String JIRA_REST_CLIENT_FACTORY = "JiraRestClientFactory";
     @Metadata(label = "producer", description = "The id of the parent issue", javaType = "String")

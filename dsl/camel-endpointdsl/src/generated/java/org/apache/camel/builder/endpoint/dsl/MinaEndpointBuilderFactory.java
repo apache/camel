@@ -2303,6 +2303,19 @@ public interface MinaEndpointBuilderFactory {
          * Since: 2.10
          * Maven coordinates: org.apache.camel:camel-mina
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default MinaHeaderNameBuilder mina() {
+            return MinaHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Mina (camel-mina)
+         * Socket level networking using TCP or UDP with Apache Mina 2.x.
+         * 
+         * Category: networking,tcp,udp
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-mina
+         * 
          * Syntax: <code>mina:protocol:host:port</code>
          * 
          * Path parameter: protocol (required)
@@ -2350,6 +2363,69 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointBuilder mina(String componentName, String path) {
             return MinaEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Mina component.
+     */
+    public static class MinaHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final MinaHeaderNameBuilder INSTANCE = new MinaHeaderNameBuilder();
+
+        /**
+         * Indicates whether the session should be closed after complete.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code MinaCloseSessionWhenComplete}.
+         */
+        public String minaCloseSessionWhenComplete() {
+            return "MinaCloseSessionWhenComplete";
+        }
+
+        /**
+         * The key of the IoSession which is stored in the message header.
+         * 
+         * The option is a: {@code org.apache.mina.core.session.IoSession} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code MinaIoSession}.
+         */
+        public String minaIoSession() {
+            return "MinaIoSession";
+        }
+
+        /**
+         * The socket address of local machine that received the message.
+         * 
+         * The option is a: {@code java.net.SocketAddress} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code MinaLocalAddress}.
+         */
+        public String minaLocalAddress() {
+            return "MinaLocalAddress";
+        }
+
+        /**
+         * The socket address of the remote machine that send the message.
+         * 
+         * The option is a: {@code java.net.SocketAddress} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code MinaRemoteAddress}.
+         */
+        public String minaRemoteAddress() {
+            return "MinaRemoteAddress";
         }
     }
     static MinaEndpointBuilder endpointBuilder(String componentName, String path) {

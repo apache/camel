@@ -1211,6 +1211,19 @@ public interface ServiceNowEndpointBuilderFactory {
          * Since: 2.18
          * Maven coordinates: org.apache.camel:camel-servicenow
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default ServiceNowHeaderNameBuilder servicenow() {
+            return ServiceNowHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * ServiceNow (camel-servicenow)
+         * Interact with ServiceNow via its REST API.
+         * 
+         * Category: api,cloud,management
+         * Since: 2.18
+         * Maven coordinates: org.apache.camel:camel-servicenow
+         * 
          * Syntax: <code>servicenow:instanceName</code>
          * 
          * Path parameter: instanceName (required)
@@ -1244,6 +1257,872 @@ public interface ServiceNowEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return ServiceNowEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the ServiceNow component.
+     */
+    public static class ServiceNowHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final ServiceNowHeaderNameBuilder INSTANCE = new ServiceNowHeaderNameBuilder();
+
+        /**
+         * The resource to access.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowResource}.
+         */
+        public String serviceNowResource() {
+            return "ServiceNowResource";
+        }
+
+        /**
+         * The action to perform.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowAction}.
+         */
+        public String serviceNowAction() {
+            return "ServiceNowAction";
+        }
+
+        /**
+         * The action subject.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowActionSubject}.
+         */
+        public String serviceNowActionSubject() {
+            return "ServiceNowActionSubject";
+        }
+
+        /**
+         * The data model.
+         * 
+         * The option is a: {@code Class} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowModel}.
+         */
+        public String serviceNowModel() {
+            return "ServiceNowModel";
+        }
+
+        /**
+         * The request data model.
+         * 
+         * The option is a: {@code Class} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowRequestModel}.
+         */
+        public String serviceNowRequestModel() {
+            return "ServiceNowRequestModel";
+        }
+
+        /**
+         * The response data model.
+         * 
+         * The option is a: {@code Class} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowResponseModel}.
+         */
+        public String serviceNowResponseModel() {
+            return "ServiceNowResponseModel";
+        }
+
+        /**
+         * The content type.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowContentType}.
+         */
+        public String serviceNowContentType() {
+            return "ServiceNowContentType";
+        }
+
+        /**
+         * The content meta.
+         * 
+         * The option is a: {@code Map} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowContentMeta}.
+         */
+        public String serviceNowContentMeta() {
+            return "ServiceNowContentMeta";
+        }
+
+        /**
+         * The response meta.
+         * 
+         * The option is a: {@code Map} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowResponseMeta}.
+         */
+        public String serviceNowResponseMeta() {
+            return "ServiceNowResponseMeta";
+        }
+
+        /**
+         * The REST API version.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowApiVersion}.
+         */
+        public String serviceNowApiVersion() {
+            return "ServiceNowApiVersion";
+        }
+
+        /**
+         * The type of the response.
+         * 
+         * The option is a: {@code Class} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowResponseType}.
+         */
+        public String serviceNowResponseType() {
+            return "ServiceNowResponseType";
+        }
+
+        /**
+         * Set this parameter to true to retrieve the target record.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * ServiceNowRetrieveTargetRecord}.
+         */
+        public String serviceNowRetrieveTargetRecord() {
+            return "ServiceNowRetrieveTargetRecord";
+        }
+
+        /**
+         * The default table.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowTable}.
+         */
+        public String serviceNowTable() {
+            return "ServiceNowTable";
+        }
+
+        /**
+         * The sys id.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowSysId}.
+         */
+        public String serviceNowSysId() {
+            return "ServiceNowSysId";
+        }
+
+        /**
+         * The user sys id.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowUserSysId}.
+         */
+        public String serviceNowUserSysId() {
+            return "ServiceNowUserSysId";
+        }
+
+        /**
+         * The user id.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowUserId}.
+         */
+        public String serviceNowUserId() {
+            return "ServiceNowUserId";
+        }
+
+        /**
+         * The cart item id.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowCartItemId}.
+         */
+        public String serviceNowCartItemId() {
+            return "ServiceNowCartItemId";
+        }
+
+        /**
+         * The file name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowFileName}.
+         */
+        public String serviceNowFileName() {
+            return "ServiceNowFileName";
+        }
+
+        /**
+         * The table sys id.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowTableSysId}.
+         */
+        public String serviceNowTableSysId() {
+            return "ServiceNowTableSysId";
+        }
+
+        /**
+         * The encryption context.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowEncryptionContext}.
+         */
+        public String serviceNowEncryptionContext() {
+            return "ServiceNowEncryptionContext";
+        }
+
+        /**
+         * The sys param category.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowCategory}.
+         */
+        public String serviceNowCategory() {
+            return "ServiceNowCategory";
+        }
+
+        /**
+         * The sys param type.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowType}.
+         */
+        public String serviceNowType() {
+            return "ServiceNowType";
+        }
+
+        /**
+         * The sys param catalog.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowCatalog}.
+         */
+        public String serviceNowCatalog() {
+            return "ServiceNowCatalog";
+        }
+
+        /**
+         * The sys param query.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowQuery}.
+         */
+        public String serviceNowQuery() {
+            return "ServiceNowQuery";
+        }
+
+        /**
+         * Return the display value (true), actual value (false), or both (all)
+         * for reference fields.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowDisplayValue}.
+         */
+        public String serviceNowDisplayValue() {
+            return "ServiceNowDisplayValue";
+        }
+
+        /**
+         * True to set raw value of input fields.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowInputDisplayValue}.
+         */
+        public String serviceNowInputDisplayValue() {
+            return "ServiceNowInputDisplayValue";
+        }
+
+        /**
+         * True to exclude Table API links for reference fields.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * ServiceNowExcludeReferenceLink}.
+         */
+        public String serviceNowExcludeReferenceLink() {
+            return "ServiceNowExcludeReferenceLink";
+        }
+
+        /**
+         * The sys param fields.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowFields}.
+         */
+        public String serviceNowFields() {
+            return "ServiceNowFields";
+        }
+
+        /**
+         * The sys param limit.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowLimit}.
+         */
+        public String serviceNowLimit() {
+            return "ServiceNowLimit";
+        }
+
+        /**
+         * The sys param text.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowText}.
+         */
+        public String serviceNowText() {
+            return "ServiceNowText";
+        }
+
+        /**
+         * The sys param offset.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowOffset}.
+         */
+        public String serviceNowOffset() {
+            return "ServiceNowOffset";
+        }
+
+        /**
+         * The sys param view.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowView}.
+         */
+        public String serviceNowView() {
+            return "ServiceNowView";
+        }
+
+        /**
+         * True to suppress auto generation of system fields.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * ServiceNowSuppressAutoSysField}.
+         */
+        public String serviceNowSuppressAutoSysField() {
+            return "ServiceNowSuppressAutoSysField";
+        }
+
+        /**
+         * Set this value to true to remove the Link header from the response.
+         * The Link header allows you to request additional pages of data when
+         * the number of records matching your query exceeds the query limit.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * ServiceNowSuppressPaginationHeader}.
+         */
+        public String serviceNowSuppressPaginationHeader() {
+            return "ServiceNowSuppressPaginationHeader";
+        }
+
+        /**
+         * The sys param min fields.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowMinFields}.
+         */
+        public String serviceNowMinFields() {
+            return "ServiceNowMinFields";
+        }
+
+        /**
+         * The sys param max fields.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowMaxFields}.
+         */
+        public String serviceNowMaxFields() {
+            return "ServiceNowMaxFields";
+        }
+
+        /**
+         * The sys param sum fields.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowSumFields}.
+         */
+        public String serviceNowSumFields() {
+            return "ServiceNowSumFields";
+        }
+
+        /**
+         * The sys param avg fields.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowAvgFields}.
+         */
+        public String serviceNowAvgFields() {
+            return "ServiceNowAvgFields";
+        }
+
+        /**
+         * The sys param count.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowCount}.
+         */
+        public String serviceNowCount() {
+            return "ServiceNowCount";
+        }
+
+        /**
+         * The sys param group by.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowGroupBy}.
+         */
+        public String serviceNowGroupBy() {
+            return "ServiceNowGroupBy";
+        }
+
+        /**
+         * The sys param order by.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowOrderBy}.
+         */
+        public String serviceNowOrderBy() {
+            return "ServiceNowOrderBy";
+        }
+
+        /**
+         * The sys param having.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowHaving}.
+         */
+        public String serviceNowHaving() {
+            return "ServiceNowHaving";
+        }
+
+        /**
+         * The sys param UUID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowUUID}.
+         */
+        public String serviceNowUUID() {
+            return "ServiceNowUUID";
+        }
+
+        /**
+         * The sys param breakdown.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowBreakdown}.
+         */
+        public String serviceNowBreakdown() {
+            return "ServiceNowBreakdown";
+        }
+
+        /**
+         * Set this parameter to true to return all scores for a scorecard. If a
+         * value is not specified, this parameter defaults to false and returns
+         * only the most recent score value.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowIncludeScores}.
+         */
+        public String serviceNowIncludeScores() {
+            return "ServiceNowIncludeScores";
+        }
+
+        /**
+         * Set this parameter to true to return all notes associated with the
+         * score. The note element contains the note text as well as the author
+         * and timestamp when the note was added.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowIncludeScoreNotes}.
+         */
+        public String serviceNowIncludeScoreNotes() {
+            return "ServiceNowIncludeScoreNotes";
+        }
+
+        /**
+         * Set this parameter to true to always return all available aggregates
+         * for an indicator, including when an aggregate has already been
+         * applied. If a value is not specified, this parameter defaults to
+         * false and returns no aggregates.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowIncludeAggregates}.
+         */
+        public String serviceNowIncludeAggregates() {
+            return "ServiceNowIncludeAggregates";
+        }
+
+        /**
+         * Set this parameter to true to return all available breakdowns for an
+         * indicator. If a value is not specified, this parameter defaults to
+         * false and returns no breakdowns.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * ServiceNowIncludeAvailableBreakdowns}.
+         */
+        public String serviceNowIncludeAvailableBreakdowns() {
+            return "ServiceNowIncludeAvailableBreakdowns";
+        }
+
+        /**
+         * Set this parameter to true to return all available aggregates for an
+         * indicator when no aggregate has been applied. If a value is not
+         * specified, this parameter defaults to false and returns no
+         * aggregates.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * ServiceNowIncludeAvailableAggregates}.
+         */
+        public String serviceNowIncludeAvailableAggregates() {
+            return "ServiceNowIncludeAvailableAggregates";
+        }
+
+        /**
+         * Set this parameter to true to return only scorecards that are
+         * favorites of the querying user.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowFavorites}.
+         */
+        public String serviceNowFavorites() {
+            return "ServiceNowFavorites";
+        }
+
+        /**
+         * Set this parameter to true to return only scorecards for key
+         * indicators.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowKey}.
+         */
+        public String serviceNowKey() {
+            return "ServiceNowKey";
+        }
+
+        /**
+         * Set this parameter to true to return only scorecards that have a
+         * target.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowTarget}.
+         */
+        public String serviceNowTarget() {
+            return "ServiceNowTarget";
+        }
+
+        /**
+         * Set this parameter to true to return only scorecards where the
+         * indicator Display field is selected. Set this parameter to all to
+         * return scorecards with any Display field value.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowDisplay}.
+         */
+        public String serviceNowDisplay() {
+            return "ServiceNowDisplay";
+        }
+
+        /**
+         * Enter the maximum number of scorecards each query can return. By
+         * default this value is 10, and the maximum is 100.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Default: 10
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowPerPage}.
+         */
+        public String serviceNowPerPage() {
+            return "ServiceNowPerPage";
+        }
+
+        /**
+         * Specify the value to use when sorting results. By default, queries
+         * sort records by value.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowSortBy}.
+         */
+        public String serviceNowSortBy() {
+            return "ServiceNowSortBy";
+        }
+
+        /**
+         * Specify the sort direction, ascending or descending. By default,
+         * queries sort records in descending order. Use sysparm_sortdir=asc to
+         * sort in ascending order.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowSortDir}.
+         */
+        public String serviceNowSortDir() {
+            return "ServiceNowSortDir";
+        }
+
+        /**
+         * The sys param contains.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowContains}.
+         */
+        public String serviceNowContains() {
+            return "ServiceNowContains";
+        }
+
+        /**
+         * The sys param tags.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowTags}.
+         */
+        public String serviceNowTags() {
+            return "ServiceNowTags";
+        }
+
+        /**
+         * The sys param page.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowPage}.
+         */
+        public String serviceNowPage() {
+            return "ServiceNowPage";
+        }
+
+        /**
+         * The sys param elements filter.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowElementsFilter}.
+         */
+        public String serviceNowElementsFilter() {
+            return "ServiceNowElementsFilter";
+        }
+
+        /**
+         * The sys param breakdown relation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowBreakdownRelation}.
+         */
+        public String serviceNowBreakdownRelation() {
+            return "ServiceNowBreakdownRelation";
+        }
+
+        /**
+         * The sys param data source.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowDataSource}.
+         */
+        public String serviceNowDataSource() {
+            return "ServiceNowDataSource";
+        }
+
+        /**
+         * Gets only those categories whose parent is a catalog.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ServiceNowTopLevelOnly}.
+         */
+        public String serviceNowTopLevelOnly() {
+            return "ServiceNowTopLevelOnly";
         }
     }
     static ServiceNowEndpointBuilder endpointBuilder(

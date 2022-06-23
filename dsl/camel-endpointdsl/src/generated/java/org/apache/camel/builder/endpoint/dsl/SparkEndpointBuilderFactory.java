@@ -269,6 +269,19 @@ public interface SparkEndpointBuilderFactory {
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-spark
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default SparkHeaderNameBuilder spark() {
+            return SparkHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Spark (camel-spark)
+         * Send RDD or DataFrame jobs to Apache Spark clusters.
+         * 
+         * Category: bigdata,iot
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-spark
+         * 
          * Syntax: <code>spark:endpointType</code>
          * 
          * Path parameter: endpointType (required)
@@ -302,6 +315,71 @@ public interface SparkEndpointBuilderFactory {
          */
         default SparkEndpointBuilder spark(String componentName, String path) {
             return SparkEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Spark component.
+     */
+    public static class SparkHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final SparkHeaderNameBuilder INSTANCE = new SparkHeaderNameBuilder();
+
+        /**
+         * The RDD.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code _SPARK_RDD}.
+         */
+        public String sparkRdd() {
+            return "_SPARK_RDD";
+        }
+
+        /**
+         * The function performing action against an RDD.
+         * 
+         * The option is a: {@code org.apache.camel.component.spark.RddCallback}
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code _SPARK_RDD_CALLBACK}.
+         */
+        public String sparkRddCallback() {
+            return "_SPARK_RDD_CALLBACK";
+        }
+
+        /**
+         * The data frame to compute against.
+         * 
+         * The option is a: {@code Dataset<Row>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code _SPARK_DATAFRAME}.
+         */
+        public String sparkDataframe() {
+            return "_SPARK_DATAFRAME";
+        }
+
+        /**
+         * The function performing action against a data frame.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.spark.DataFrameCallback} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code _SPARK_DATAFRAME_CALLBACK}.
+         */
+        public String sparkDataframeCallback() {
+            return "_SPARK_DATAFRAME_CALLBACK";
         }
     }
     static SparkEndpointBuilder endpointBuilder(

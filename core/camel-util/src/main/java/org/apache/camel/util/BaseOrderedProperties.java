@@ -39,7 +39,11 @@ abstract class BaseOrderedProperties extends Properties {
 
     @Override
     public synchronized Object put(Object key, Object value) {
-        return map.put(key.toString(), value.toString());
+        return doPut(key.toString(), value.toString());
+    }
+
+    protected Object doPut(String key, String value) {
+        return map.put(key, value);
     }
 
     @Override

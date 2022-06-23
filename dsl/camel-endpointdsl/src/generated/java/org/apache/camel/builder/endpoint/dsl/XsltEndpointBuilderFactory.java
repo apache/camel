@@ -521,6 +521,19 @@ public interface XsltEndpointBuilderFactory {
          * Since: 1.3
          * Maven coordinates: org.apache.camel:camel-xslt
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default XsltHeaderNameBuilder xslt() {
+            return XsltHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * XSLT (camel-xslt)
+         * Transforms XML payload using an XSLT template.
+         * 
+         * Category: core,transformation
+         * Since: 1.3
+         * Maven coordinates: org.apache.camel:camel-xslt
+         * 
          * Syntax: <code>xslt:resourceUri</code>
          * 
          * Path parameter: resourceUri (required)
@@ -564,6 +577,30 @@ public interface XsltEndpointBuilderFactory {
          */
         default XsltEndpointBuilder xslt(String componentName, String path) {
             return XsltEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the XSLT component.
+     */
+    public static class XsltHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final XsltHeaderNameBuilder INSTANCE = new XsltHeaderNameBuilder();
+
+        /**
+         * The XSLT file name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code XsltFileName}.
+         */
+        public String xsltFileName() {
+            return "XsltFileName";
         }
     }
     static XsltEndpointBuilder endpointBuilder(String componentName, String path) {

@@ -928,6 +928,19 @@ public interface StreamEndpointBuilderFactory {
          * Since: 1.3
          * Maven coordinates: org.apache.camel:camel-stream
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default StreamHeaderNameBuilder stream() {
+            return StreamHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Stream (camel-stream)
+         * Read from system-in and write to system-out and system-err streams.
+         * 
+         * Category: file,system
+         * Since: 1.3
+         * Maven coordinates: org.apache.camel:camel-stream
+         * 
          * Syntax: <code>stream:kind</code>
          * 
          * Path parameter: kind (required)
@@ -963,6 +976,43 @@ public interface StreamEndpointBuilderFactory {
          */
         default StreamEndpointBuilder stream(String componentName, String path) {
             return StreamEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Stream component.
+     */
+    public static class StreamHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final StreamHeaderNameBuilder INSTANCE = new StreamHeaderNameBuilder();
+
+        /**
+         * The index.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code StreamIndex}.
+         */
+        public String streamIndex() {
+            return "StreamIndex";
+        }
+
+        /**
+         * Is complete.
+         * 
+         * The option is a: {@code boolean} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code StreamComplete}.
+         */
+        public String streamComplete() {
+            return "StreamComplete";
         }
     }
     static StreamEndpointBuilder endpointBuilder(

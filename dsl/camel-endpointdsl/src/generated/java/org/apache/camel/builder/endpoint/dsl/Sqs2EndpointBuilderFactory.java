@@ -3068,6 +3068,20 @@ public interface Sqs2EndpointBuilderFactory {
          * Since: 3.1
          * Maven coordinates: org.apache.camel:camel-aws2-sqs
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default Sqs2HeaderNameBuilder aws2Sqs() {
+            return Sqs2HeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * AWS Simple Queue Service (SQS) (camel-aws2-sqs)
+         * Send and receive messages to/from AWS SQS service using AWS SDK
+         * version 2.x.
+         * 
+         * Category: cloud,messaging
+         * Since: 3.1
+         * Maven coordinates: org.apache.camel:camel-aws2-sqs
+         * 
          * Syntax: <code>aws2-sqs:queueNameOrArn</code>
          * 
          * Path parameter: queueNameOrArn (required)
@@ -3100,6 +3114,124 @@ public interface Sqs2EndpointBuilderFactory {
          */
         default Sqs2EndpointBuilder aws2Sqs(String componentName, String path) {
             return Sqs2EndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the AWS Simple Queue Service (SQS)
+     * component.
+     */
+    public static class Sqs2HeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final Sqs2HeaderNameBuilder INSTANCE = new Sqs2HeaderNameBuilder();
+
+        /**
+         * A map of the attributes requested in ReceiveMessage to their
+         * respective values.
+         * 
+         * The option is a: {@code Map<MessageSystemAttributeName, String>}
+         * type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AwsSqsAttributes}.
+         */
+        public String awsSqsAttributes() {
+            return "AwsSqsAttributes";
+        }
+
+        /**
+         * The Amazon SQS message attributes.
+         * 
+         * The option is a: {@code Map<String, MessageAttributeValue>} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AwsSqsMessageAttributes}.
+         */
+        public String awsSqsMessageAttributes() {
+            return "AwsSqsMessageAttributes";
+        }
+
+        /**
+         * The MD5 checksum of the Amazon SQS message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AwsSqsMD5OfBody}.
+         */
+        public String awsSqsMD5OfBody() {
+            return "AwsSqsMD5OfBody";
+        }
+
+        /**
+         * The Amazon SQS message ID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AwsSqsMessageId}.
+         */
+        public String awsSqsMessageId() {
+            return "AwsSqsMessageId";
+        }
+
+        /**
+         * The Amazon SQS message receipt handle.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AwsSqsReceiptHandle}.
+         */
+        public String awsSqsReceiptHandle() {
+            return "AwsSqsReceiptHandle";
+        }
+
+        /**
+         * The delay seconds that the Amazon SQS message can be see by others.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsSqsDelaySeconds}.
+         */
+        public String awsSqsDelaySeconds() {
+            return "AwsSqsDelaySeconds";
+        }
+
+        /**
+         * A string to use for filtering the list results.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AwsSqsPrefix}.
+         */
+        public String awsSqsPrefix() {
+            return "AwsSqsPrefix";
+        }
+
+        /**
+         * The operation we want to perform.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AwsSqsOperation}.
+         */
+        public String awsSqsOperation() {
+            return "AwsSqsOperation";
         }
     }
     static Sqs2EndpointBuilder endpointBuilder(String componentName, String path) {

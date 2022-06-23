@@ -239,6 +239,19 @@ public interface NetWeaverEndpointBuilderFactory {
          * Since: 2.12
          * Maven coordinates: org.apache.camel:camel-sap-netweaver
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default NetWeaverHeaderNameBuilder sapNetweaver() {
+            return NetWeaverHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * SAP NetWeaver (camel-sap-netweaver)
+         * Send requests to SAP NetWeaver Gateway using HTTP.
+         * 
+         * Category: sap,cloud,api
+         * Since: 2.12
+         * Maven coordinates: org.apache.camel:camel-sap-netweaver
+         * 
          * Syntax: <code>sap-netweaver:url</code>
          * 
          * Path parameter: url (required)
@@ -272,6 +285,59 @@ public interface NetWeaverEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return NetWeaverEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the SAP NetWeaver component.
+     */
+    public static class NetWeaverHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final NetWeaverHeaderNameBuilder INSTANCE = new NetWeaverHeaderNameBuilder();
+
+        /**
+         * The command to execute in
+         * http://msdn.microsoft.com/en-us/library/cc956153.aspxMS ADO.Net Data
+         * Service format.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Required: true
+         * Group: producer
+         * 
+         * @return the name of the header {@code NetWeaverCommand}.
+         */
+        public String netWeaverCommand() {
+            return "NetWeaverCommand";
+        }
+
+        /**
+         * The http path.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpPath}.
+         */
+        public String httpPath() {
+            return "HttpPath";
+        }
+
+        /**
+         * The media type.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code Accept}.
+         */
+        public String accept() {
+            return "Accept";
         }
     }
     static NetWeaverEndpointBuilder endpointBuilder(

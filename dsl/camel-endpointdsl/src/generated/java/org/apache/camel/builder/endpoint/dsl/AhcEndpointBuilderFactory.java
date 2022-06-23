@@ -560,6 +560,19 @@ public interface AhcEndpointBuilderFactory {
          * Since: 2.8
          * Maven coordinates: org.apache.camel:camel-ahc
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default AhcHeaderNameBuilder ahc() {
+            return AhcHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Async HTTP Client (AHC) (camel-ahc)
+         * Call external HTTP services using Async Http Client.
+         * 
+         * Category: http
+         * Since: 2.8
+         * Maven coordinates: org.apache.camel:camel-ahc
+         * 
          * Syntax: <code>ahc:httpUri</code>
          * 
          * Path parameter: httpUri (required)
@@ -593,6 +606,166 @@ public interface AhcEndpointBuilderFactory {
         @Deprecated
         default AhcEndpointBuilder ahc(String componentName, String path) {
             return AhcEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Async HTTP Client (AHC) component.
+     */
+    public static class AhcHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final AhcHeaderNameBuilder INSTANCE = new AhcHeaderNameBuilder();
+
+        /**
+         * The HTTP response code from the external server. Is 200 for OK.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpResponseCode}.
+         */
+        public String httpResponseCode() {
+            return "HttpResponseCode";
+        }
+
+        /**
+         * The Http response status text.
+         * 
+         * The option is a: {@code java.lang.String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpResponseText}.
+         */
+        public String httpResponseText() {
+            return "HttpResponseText";
+        }
+
+        /**
+         * The content length of the response.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code Content-Length}.
+         */
+        public String contentLength() {
+            return "Content-Length";
+        }
+
+        /**
+         * The http method to execute.
+         * 
+         * The option is a: {@code java.lang.String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpMethod}.
+         */
+        public String httpMethod() {
+            return "HttpMethod";
+        }
+
+        /**
+         * The HTTP content encoding. Is set on both the IN and OUT message to
+         * provide a content encoding, such as gzip.
+         * 
+         * The option is a: {@code java.lang.String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code Content-Encoding}.
+         */
+        public String contentEncoding() {
+            return "Content-Encoding";
+        }
+
+        /**
+         * The HTTP content type. Is set on both the IN and OUT message to
+         * provide a content type, such as text/html.
+         * 
+         * The option is a: {@code java.lang.String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code Content-Type}.
+         */
+        public String contentType() {
+            return "Content-Type";
+        }
+
+        /**
+         * The redirect location.
+         * 
+         * The option is a: {@code java.lang.String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code Location}.
+         */
+        public String location() {
+            return "Location";
+        }
+
+        /**
+         * URI to call. Will override existing URI set directly on the endpoint.
+         * 
+         * The option is a: {@code java.lang.String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpUri}.
+         */
+        public String httpUri() {
+            return "HttpUri";
+        }
+
+        /**
+         * Request URI's path, the header will be used to build the request URI
+         * with the HTTP_URI. If the path is start with /, http producer will
+         * try to find the relative path based on the Exchange.HTTP_BASE_URI
+         * header or the exchange.getFromEndpoint().getEndpointUri().
+         * 
+         * The option is a: {@code java.lang.String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpPath}.
+         */
+        public String httpPath() {
+            return "HttpPath";
+        }
+
+        /**
+         * The base of the path to append to the URI.
+         * 
+         * The option is a: {@code java.lang.String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpBaseUri}.
+         */
+        public String httpBaseUri() {
+            return "HttpBaseUri";
+        }
+
+        /**
+         * Camel 2.11 onwards: URI parameters. Will override existing URI
+         * parameters set directly on the endpoint.
+         * 
+         * The option is a: {@code java.lang.String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpQuery}.
+         */
+        public String httpQuery() {
+            return "HttpQuery";
         }
     }
     @Deprecated

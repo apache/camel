@@ -232,6 +232,19 @@ public interface GlanceEndpointBuilderFactory {
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-openstack
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default GlanceHeaderNameBuilder openstackGlance() {
+            return GlanceHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * OpenStack Glance (camel-openstack)
+         * Manage VM images and metadata definitions in OpenStack Glance.
+         * 
+         * Category: cloud,paas
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-openstack
+         * 
          * Syntax: <code>openstack-glance:host</code>
          * 
          * Path parameter: host (required)
@@ -265,6 +278,174 @@ public interface GlanceEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return GlanceEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the OpenStack Glance component.
+     */
+    public static class GlanceHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final GlanceHeaderNameBuilder INSTANCE = new GlanceHeaderNameBuilder();
+
+        /**
+         * The number of flavor VCPU.
+         * 
+         * The option is a: {@code org.openstack4j.model.image.DiskFormat} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code diskFormat}.
+         */
+        public String diskFormat() {
+            return "diskFormat";
+        }
+
+        /**
+         * Size of RAM.
+         * 
+         * The option is a: {@code org.openstack4j.model.image.ContainerFormat}
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code containerFormat}.
+         */
+        public String containerFormat() {
+            return "containerFormat";
+        }
+
+        /**
+         * Image owner.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code owner}.
+         */
+        public String owner() {
+            return "owner";
+        }
+
+        /**
+         * Is public.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code isPublic}.
+         */
+        public String isPublic() {
+            return "isPublic";
+        }
+
+        /**
+         * Minimum ram.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code minRam}.
+         */
+        public String minRam() {
+            return "minRam";
+        }
+
+        /**
+         * Minimum disk.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code minDisk}.
+         */
+        public String minDisk() {
+            return "minDisk";
+        }
+
+        /**
+         * Size.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code size}.
+         */
+        public String size() {
+            return "size";
+        }
+
+        /**
+         * Checksum.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code checksum}.
+         */
+        public String checksum() {
+            return "checksum";
+        }
+
+        /**
+         * The operation to perform.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code operation}.
+         */
+        public String operation() {
+            return "operation";
+        }
+
+        /**
+         * The ID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ID}.
+         */
+        public String iD() {
+            return "ID";
+        }
+
+        /**
+         * The name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code name}.
+         */
+        public String name() {
+            return "name";
+        }
+
+        /**
+         * The image properties.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code properties}.
+         */
+        public String properties() {
+            return "properties";
         }
     }
     static GlanceEndpointBuilder endpointBuilder(

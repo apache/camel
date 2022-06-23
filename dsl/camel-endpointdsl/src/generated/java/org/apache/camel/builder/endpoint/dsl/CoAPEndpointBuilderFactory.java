@@ -1051,6 +1051,19 @@ public interface CoAPEndpointBuilderFactory {
          * Since: 2.16
          * Maven coordinates: org.apache.camel:camel-coap
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default CoAPHeaderNameBuilder coap() {
+            return CoAPHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * CoAP (camel-coap)
+         * Send and receive messages to/from COAP capable devices.
+         * 
+         * Category: iot
+         * Since: 2.16
+         * Maven coordinates: org.apache.camel:camel-coap
+         * 
          * Syntax: <code>coap:uri</code>
          * 
          * Path parameter: uri
@@ -1139,6 +1152,73 @@ public interface CoAPEndpointBuilderFactory {
          */
         default CoAPEndpointBuilder coapsTcp(String path) {
             return CoAPEndpointBuilderFactory.endpointBuilder("coaps+tcp", path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the CoAP component.
+     */
+    public static class CoAPHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final CoAPHeaderNameBuilder INSTANCE = new CoAPHeaderNameBuilder();
+
+        /**
+         * The request method that the CoAP producer should use when calling the
+         * target CoAP server URI. Valid options are DELETE, GET, PING, POST
+         * &amp; PUT.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code CoapMethod}.
+         */
+        public String coapMethod() {
+            return "CoapMethod";
+        }
+
+        /**
+         * The CoAP response code sent by the external server. See RFC 7252 for
+         * details of what each code means.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code CoapResponseCode}.
+         */
+        public String coapResponseCode() {
+            return "CoapResponseCode";
+        }
+
+        /**
+         * The URI of a CoAP server to call. Will override any existing URI
+         * configured directly on the endpoint.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code CoapUri}.
+         */
+        public String coapUri() {
+            return "CoapUri";
+        }
+
+        /**
+         * The content type.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Content-Type}.
+         */
+        public String contentType() {
+            return "Content-Type";
         }
     }
     static CoAPEndpointBuilder endpointBuilder(String componentName, String path) {

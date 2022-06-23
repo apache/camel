@@ -265,6 +265,19 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          * Since: 2.7
          * Maven coordinates: org.apache.camel:camel-hazelcast
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default HazelcastInstanceHeaderNameBuilder hazelcastInstance() {
+            return HazelcastInstanceHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Hazelcast Instance (camel-hazelcast)
+         * Consume join/leave events of a cache instance in a Hazelcast cluster.
+         * 
+         * Category: cache,datagrid
+         * Since: 2.7
+         * Maven coordinates: org.apache.camel:camel-hazelcast
+         * 
          * Syntax: <code>hazelcast-instance:cacheName</code>
          * 
          * Path parameter: cacheName (required)
@@ -298,6 +311,82 @@ public interface HazelcastInstanceEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return HazelcastInstanceEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Hazelcast Instance component.
+     */
+    public static class HazelcastInstanceHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final HazelcastInstanceHeaderNameBuilder INSTANCE = new HazelcastInstanceHeaderNameBuilder();
+
+        /**
+         * The type of event - here added and removed.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code HazelcastListenerAction}.
+         */
+        public String hazelcastListenerAction() {
+            return "HazelcastListenerAction";
+        }
+
+        /**
+         * The map consumer.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code HazelcastListenerType}.
+         */
+        public String hazelcastListenerType() {
+            return "HazelcastListenerType";
+        }
+
+        /**
+         * The time of the event in millis.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code HazelcastListenerTime}.
+         */
+        public String hazelcastListenerTime() {
+            return "HazelcastListenerTime";
+        }
+
+        /**
+         * The host name of the instance.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code HazelcastInstanceHost}.
+         */
+        public String hazelcastInstanceHost() {
+            return "HazelcastInstanceHost";
+        }
+
+        /**
+         * The port number of the instance.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code HazelcastInstancePort}.
+         */
+        public String hazelcastInstancePort() {
+            return "HazelcastInstancePort";
         }
     }
     static HazelcastInstanceEndpointBuilder endpointBuilder(

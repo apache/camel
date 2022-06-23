@@ -1441,6 +1441,19 @@ public interface TelegramEndpointBuilderFactory {
          * Since: 2.18
          * Maven coordinates: org.apache.camel:camel-telegram
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default TelegramHeaderNameBuilder telegram() {
+            return TelegramHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Telegram (camel-telegram)
+         * Send and receive messages acting as a Telegram Bot Telegram Bot API.
+         * 
+         * Category: cloud,api,chat
+         * Since: 2.18
+         * Maven coordinates: org.apache.camel:camel-telegram
+         * 
          * Syntax: <code>telegram:type</code>
          * 
          * Path parameter: type (required)
@@ -1476,6 +1489,107 @@ public interface TelegramEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return TelegramEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Telegram component.
+     */
+    public static class TelegramHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final TelegramHeaderNameBuilder INSTANCE = new TelegramHeaderNameBuilder();
+
+        /**
+         * This header is used by the producer endpoint in order to resolve the
+         * chat id that will receive the message. The recipient chat id can be
+         * placed (in order of priority) in message body, in the
+         * CamelTelegramChatId header or in the endpoint configuration (chatId
+         * option). This header is also present in all incoming messages.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code TelegramChatId}.
+         */
+        public String telegramChatId() {
+            return "TelegramChatId";
+        }
+
+        /**
+         * This header is used to identify the media type when the outgoing
+         * message is composed of pure binary data. Possible values are strings
+         * or enum values belonging to the
+         * org.apache.camel.component.telegram.TelegramMediaType enumeration.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.telegram.TelegramMediaType or String}
+         * type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code TelegramMediaType}.
+         */
+        public String telegramMediaType() {
+            return "TelegramMediaType";
+        }
+
+        /**
+         * This header is used to provide a caption or title for outgoing binary
+         * messages.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code TelegramMediaTitleCaption}.
+         */
+        public String telegramMediaTitleCaption() {
+            return "TelegramMediaTitleCaption";
+        }
+
+        /**
+         * The reply markup.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.telegram.model.ReplyMarkup} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code TelegramMediaMarkup}.
+         */
+        public String telegramMediaMarkup() {
+            return "TelegramMediaMarkup";
+        }
+
+        /**
+         * This header is used to format text messages using HTML or Markdown.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.telegram.TelegramParseMode} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code TelegramParseMode}.
+         */
+        public String telegramParseMode() {
+            return "TelegramParseMode";
+        }
+
+        /**
+         * The message timestamp.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code MessageTimestamp}.
+         */
+        public String messageTimestamp() {
+            return "MessageTimestamp";
         }
     }
     static TelegramEndpointBuilder endpointBuilder(

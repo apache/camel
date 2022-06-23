@@ -20,14 +20,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.main.download.MavenGav;
+import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.OrderedProperties;
 import org.apache.commons.io.FileUtils;
 
 class ExportCamelMain extends Export {
@@ -128,7 +129,7 @@ class ExportCamelMain extends Export {
         context = context.replaceAll("\\{\\{ \\.CamelVersion }}", camelVersion);
         context = context.replaceAll("\\{\\{ \\.MainClassname }}", packageName + "." + mainClassname);
 
-        OrderedProperties prop = new OrderedProperties();
+        Properties prop = new CamelCaseOrderedProperties();
         prop.load(new FileInputStream(settings));
         String repos = prop.getProperty("camel.jbang.repos");
         if (repos == null) {

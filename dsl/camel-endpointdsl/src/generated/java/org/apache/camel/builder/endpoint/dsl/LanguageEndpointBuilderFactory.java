@@ -299,6 +299,19 @@ public interface LanguageEndpointBuilderFactory {
          * Since: 2.5
          * Maven coordinates: org.apache.camel:camel-language
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default LanguageHeaderNameBuilder language() {
+            return LanguageHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Language (camel-language)
+         * Execute scripts in any of the languages supported by Camel.
+         * 
+         * Category: core,script
+         * Since: 2.5
+         * Maven coordinates: org.apache.camel:camel-language
+         * 
          * Syntax: <code>language:languageName:resourceUri</code>
          * 
          * Path parameter: languageName (required)
@@ -348,6 +361,31 @@ public interface LanguageEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return LanguageEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Language component.
+     */
+    public static class LanguageHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final LanguageHeaderNameBuilder INSTANCE = new LanguageHeaderNameBuilder();
+
+        /**
+         * The script to execute provided in the header. Takes precedence over
+         * script configured on the endpoint.
+         * 
+         * The option is a: {@code String or Expression} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code LanguageScript}.
+         */
+        public String languageScript() {
+            return "LanguageScript";
         }
     }
     static LanguageEndpointBuilder endpointBuilder(

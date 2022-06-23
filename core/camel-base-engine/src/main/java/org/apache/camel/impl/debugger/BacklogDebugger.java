@@ -24,6 +24,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -44,6 +45,7 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +63,11 @@ import org.slf4j.LoggerFactory;
  */
 public final class BacklogDebugger extends ServiceSupport {
 
+    /**
+     * The name of the environment variable that contains the value of the flag indicating whether the
+     * {@code BacklogDebugger} should suspend processing the messages and wait for a debugger to attach or not.
+     */
+    public static final String SUSPEND_MODE_ENV_VAR_NAME = "CAMEL_DEBUGGER_SUSPEND";
     private static final Logger LOG = LoggerFactory.getLogger(BacklogDebugger.class);
 
     private long fallbackTimeout = 300;
@@ -73,6 +80,15 @@ public final class BacklogDebugger extends ServiceSupport {
     private final ConcurrentMap<String, NodeBreakpoint> breakpoints = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, SuspendedExchange> suspendedBreakpoints = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, BacklogTracerEventMessage> suspendedBreakpointMessages = new ConcurrentHashMap<>();
+    /**
+     * Indicates whether the <i>suspend mode</i> is enabled or not.
+     */
+    private final boolean suspendMode;
+    /**
+     * The reference to the {@code CountDownLatch} used to suspend Camel from processing the incoming messages when the
+     * <i>suspend mode</i> is enabled.
+     */
+    private final AtomicReference<CountDownLatch> suspend = new AtomicReference<>();
     private volatile String singleStepExchangeId;
     private int bodyMaxChars = 128 * 1024;
     private boolean bodyIncludeStreams;
@@ -103,19 +119,31 @@ public final class BacklogDebugger extends ServiceSupport {
         }
     }
 
-    private BacklogDebugger(CamelContext camelContext) {
+    /**
+     * Constructs a {@code BacklogDebugger} with the given parameters.
+     *
+     * @param camelContext the camel context
+     * @param suspendMode  Indicates whether the <i>suspend mode</i> is enabled or not. If {@code true} the message
+     *                     processing is immediately suspended until the {@link #attach()} is called.
+     */
+    private BacklogDebugger(CamelContext camelContext, boolean suspendMode) {
         this.camelContext = camelContext;
         this.debugger = new DefaultDebugger(camelContext);
+        this.suspendMode = suspendMode;
+        detach();
     }
 
     /**
      * Creates a new backlog debugger.
+     * <p>
+     * In case the environment variable {@link #SUSPEND_MODE_ENV_VAR_NAME} has been set to {@code true}, the message
+     * processing is directly suspended.
      *
      * @param  context Camel context
      * @return         a new backlog debugger
      */
     public static BacklogDebugger createDebugger(CamelContext context) {
-        return new BacklogDebugger(context);
+        return new BacklogDebugger(context, Boolean.parseBoolean(System.getenv(SUSPEND_MODE_ENV_VAR_NAME)));
     }
 
     /**
@@ -167,6 +195,65 @@ public final class BacklogDebugger extends ServiceSupport {
 
     public boolean isSingleStepMode() {
         return singleStepExchangeId != null;
+    }
+
+    /**
+     * Attach the debugger which will resume the message processing in case the <i>suspend mode</i> is enabled. Do
+     * nothing otherwise.
+     */
+    public void attach() {
+        if (suspendMode) {
+            logger.log("A debugger has been attached");
+            resumeMessageProcessing();
+        }
+    }
+
+    /**
+     * Detach the debugger which will suspend the message processing in case the <i>suspend mode</i> is enabled. Do
+     * nothing otherwise.
+     */
+    public void detach() {
+        if (suspendMode) {
+            logger.log("Waiting for a debugger to attach");
+            suspendMessageProcessing();
+        }
+    }
+
+    /**
+     * Suspend the current thread if the <i>suspend mode</i> is enabled as long as the method {@link #attach()} is not
+     * called. Do nothing otherwise.
+     */
+    private void suspendIfNeeded() {
+        final CountDownLatch countDownLatch = suspend.get();
+        if (countDownLatch != null) {
+            logger.log("Incoming message suspended");
+            try {
+                countDownLatch.await();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
+    /**
+     * Make Camel suspend processing incoming messages.
+     */
+    private void suspendMessageProcessing() {
+        suspend.compareAndSet(null, new CountDownLatch(1));
+    }
+
+    /**
+     * Resume the processing of the incoming messages.
+     */
+    private void resumeMessageProcessing() {
+        for (;;) {
+            final CountDownLatch countDownLatch = suspend.get();
+            if (countDownLatch == null) {
+                break;
+            } else if (suspend.compareAndSet(countDownLatch, null)) {
+                countDownLatch.countDown();
+            }
+        }
     }
 
     public void addBreakpoint(String nodeId) {
@@ -454,13 +541,18 @@ public final class BacklogDebugger extends ServiceSupport {
         debugCounter.set(0);
     }
 
-    public boolean beforeProcess(Exchange exchange, Processor processor, NamedNode definition) {
-        return debugger.beforeProcess(exchange, processor, definition);
+    public StopWatch beforeProcess(Exchange exchange, Processor processor, NamedNode definition) {
+        suspendIfNeeded();
+        if (isEnabled() && (hasBreakpoint(definition.getId()) || isSingleStepMode())) {
+            StopWatch watch = new StopWatch();
+            debugger.beforeProcess(exchange, processor, definition);
+            return watch;
+        }
+        return null;
     }
 
-    public boolean afterProcess(Exchange exchange, Processor processor, NamedNode definition, long timeTaken) {
+    public void afterProcess(Exchange exchange, Processor processor, NamedNode definition, long timeTaken) {
         // noop
-        return false;
     }
 
     @Override

@@ -250,6 +250,19 @@ public interface HashicorpVaultEndpointBuilderFactory {
          * Since: 3.18
          * Maven coordinates: org.apache.camel:camel-hashicorp-vault
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default HashicorpVaultHeaderNameBuilder hashicorpVault() {
+            return HashicorpVaultHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Hashicorp Vault (camel-hashicorp-vault)
+         * Manage secrets in Hashicorp Vault Service
+         * 
+         * Category: cloud,cloud
+         * Since: 3.18
+         * Maven coordinates: org.apache.camel:camel-hashicorp-vault
+         * 
          * Syntax: <code>hashicorp-vault:secretsEngine</code>
          * 
          * Path parameter: secretsEngine
@@ -283,6 +296,44 @@ public interface HashicorpVaultEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return HashicorpVaultEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Hashicorp Vault component.
+     */
+    public static class HashicorpVaultHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final HashicorpVaultHeaderNameBuilder INSTANCE = new HashicorpVaultHeaderNameBuilder();
+
+        /**
+         * Overrides the desired operation to be used in the producer.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * HashicorpVaultProducerOperation}.
+         */
+        public String hashicorpVaultProducerOperation() {
+            return "HashicorpVaultProducerOperation";
+        }
+
+        /**
+         * Set the desired secret path as header.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HashicorpVaultSecretPath}.
+         */
+        public String hashicorpVaultSecretPath() {
+            return "HashicorpVaultSecretPath";
         }
     }
     static HashicorpVaultEndpointBuilder endpointBuilder(

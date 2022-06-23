@@ -414,6 +414,19 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * Since: 1.4
          * Maven coordinates: org.apache.camel:camel-spring-integration
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default SpringIntegrationHeaderNameBuilder springIntegration() {
+            return SpringIntegrationHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Spring Integration (camel-spring-integration)
+         * Bridge Camel with Spring Integration.
+         * 
+         * Category: spring,eventbus
+         * Since: 1.4
+         * Maven coordinates: org.apache.camel:camel-spring-integration
+         * 
          * Syntax: <code>spring-integration:defaultChannel</code>
          * 
          * Path parameter: defaultChannel (required)
@@ -453,6 +466,57 @@ public interface SpringIntegrationEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return SpringIntegrationEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Spring Integration component.
+     */
+    public static class SpringIntegrationHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final SpringIntegrationHeaderNameBuilder INSTANCE = new SpringIntegrationHeaderNameBuilder();
+
+        /**
+         * The message id.
+         * 
+         * The option is a: {@code java.util.UUID} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code id}.
+         */
+        public String id() {
+            return "id";
+        }
+
+        /**
+         * The reply channel.
+         * 
+         * The option is a: {@code
+         * org.springframework.integration.channel.DirectChannel} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code replyChannel}.
+         */
+        public String replyChannel() {
+            return "replyChannel";
+        }
+
+        /**
+         * The timestamp of the message.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code timestamp}.
+         */
+        public String timestamp() {
+            return "timestamp";
         }
     }
     static SpringIntegrationEndpointBuilder endpointBuilder(

@@ -742,6 +742,19 @@ public interface VertxHttpEndpointBuilderFactory {
          * Since: 3.5
          * Maven coordinates: org.apache.camel:camel-vertx-http
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default VertxHttpHeaderNameBuilder vertxHttp() {
+            return VertxHttpHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Vert.x HTTP Client (camel-vertx-http)
+         * Send requests to external HTTP servers using Vert.x
+         * 
+         * Category: http
+         * Since: 3.5
+         * Maven coordinates: org.apache.camel:camel-vertx-http
+         * 
          * Syntax: <code>vertx-http:httpUri</code>
          * 
          * Path parameter: httpUri (required)
@@ -775,6 +788,129 @@ public interface VertxHttpEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return VertxHttpEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Vert.x HTTP Client component.
+     */
+    public static class VertxHttpHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final VertxHttpHeaderNameBuilder INSTANCE = new VertxHttpHeaderNameBuilder();
+
+        /**
+         * The http method.
+         * 
+         * The option is a: {@code io.vertx.core.http.HttpMethod} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpMethod}.
+         */
+        public String httpMethod() {
+            return "HttpMethod";
+        }
+
+        /**
+         * The HTTP response code from the external server.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpResponseCode}.
+         */
+        public String httpResponseCode() {
+            return "HttpResponseCode";
+        }
+
+        /**
+         * The HTTP response text from the external server.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpResponseText}.
+         */
+        public String httpResponseText() {
+            return "HttpResponseText";
+        }
+
+        /**
+         * The HTTP content type. Is set on both the IN and OUT message to
+         * provide a content type, such as text/html.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code Content-Type}.
+         */
+        public String contentType() {
+            return "Content-Type";
+        }
+
+        /**
+         * URI parameters. Will override existing URI parameters set directly on
+         * the endpoint.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpQuery}.
+         */
+        public String httpQuery() {
+            return "HttpQuery";
+        }
+
+        /**
+         * URI to call. Will override the existing URI set directly on the
+         * endpoint. This URI is the URI of the http server to call. Its not the
+         * same as the Camel endpoint URI, where you can configure endpoint
+         * options such as security etc. This header does not support that, its
+         * only the URI of the http server.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpUri}.
+         */
+        public String httpUri() {
+            return "HttpUri";
+        }
+
+        /**
+         * Request URI's path, the header will be used to build the request URI
+         * with the HTTP_URI.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpPath}.
+         */
+        public String httpPath() {
+            return "HttpPath";
+        }
+
+        /**
+         * The HTTP content encoding. Is set to provide a content encoding, such
+         * as gzip.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code Content-Encoding}.
+         */
+        public String contentEncoding() {
+            return "Content-Encoding";
         }
     }
     static VertxHttpEndpointBuilder endpointBuilder(

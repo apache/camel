@@ -364,6 +364,20 @@ public interface GeoCoderEndpointBuilderFactory {
          * Since: 2.12
          * Maven coordinates: org.apache.camel:camel-geocoder
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default GeoCoderHeaderNameBuilder geocoder() {
+            return GeoCoderHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Geocoder (camel-geocoder)
+         * Find geocodes (latitude and longitude) for a given address or the
+         * other way round.
+         * 
+         * Category: api,location
+         * Since: 2.12
+         * Maven coordinates: org.apache.camel:camel-geocoder
+         * 
          * Syntax: <code>geocoder:address:latlng</code>
          * 
          * Path parameter: address
@@ -404,6 +418,163 @@ public interface GeoCoderEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return GeoCoderEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Geocoder component.
+     */
+    public static class GeoCoderHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final GeoCoderHeaderNameBuilder INSTANCE = new GeoCoderHeaderNameBuilder();
+
+        /**
+         * The formatted address.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GeoCoderAddress}.
+         */
+        public String geoCoderAddress() {
+            return "GeoCoderAddress";
+        }
+
+        /**
+         * The latitude and longitude of the location. Separated by comma.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GeoCoderLatlng}.
+         */
+        public String geoCoderLatlng() {
+            return "GeoCoderLatlng";
+        }
+
+        /**
+         * The latitude of the location.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GeoCoderLat}.
+         */
+        public String geoCoderLat() {
+            return "GeoCoderLat";
+        }
+
+        /**
+         * The longitude of the location.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GeoCoderLng}.
+         */
+        public String geoCoderLng() {
+            return "GeoCoderLng";
+        }
+
+        /**
+         * Status code from the geocoder library. If status is GeocoderStatus.OK
+         * then additional headers is enriched.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.geocoder.GeocoderStatus} type.
+         * 
+         * Required: true
+         * Group: producer
+         * 
+         * @return the name of the header {@code GeoCoderStatus}.
+         */
+        public String geoCoderStatus() {
+            return "GeoCoderStatus";
+        }
+
+        /**
+         * The region code.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GeoCoderRegionCode}.
+         */
+        public String geoCoderRegionCode() {
+            return "GeoCoderRegionCode";
+        }
+
+        /**
+         * The region name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GeoCoderRegionName}.
+         */
+        public String geoCoderRegionName() {
+            return "GeoCoderRegionName";
+        }
+
+        /**
+         * The city long name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GeoCoderCity}.
+         */
+        public String geoCoderCity() {
+            return "GeoCoderCity";
+        }
+
+        /**
+         * The country long name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GeoCoderCountryLong}.
+         */
+        public String geoCoderCountryLong() {
+            return "GeoCoderCountryLong";
+        }
+
+        /**
+         * The country short name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GeoCoderCountryShort}.
+         */
+        public String geoCoderCountryShort() {
+            return "GeoCoderCountryShort";
+        }
+
+        /**
+         * The postal code.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GeoCoderPostalCode}.
+         */
+        public String geoCoderPostalCode() {
+            return "GeoCoderPostalCode";
         }
     }
     static GeoCoderEndpointBuilder endpointBuilder(

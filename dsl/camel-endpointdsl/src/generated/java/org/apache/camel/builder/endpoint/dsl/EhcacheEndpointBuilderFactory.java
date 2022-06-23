@@ -1023,6 +1023,19 @@ public interface EhcacheEndpointBuilderFactory {
          * Since: 2.18
          * Maven coordinates: org.apache.camel:camel-ehcache
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default EhcacheHeaderNameBuilder ehcache() {
+            return EhcacheHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Ehcache (camel-ehcache)
+         * Perform caching operations using Ehcache.
+         * 
+         * Category: cache,datagrid,clustering
+         * Since: 2.18
+         * Maven coordinates: org.apache.camel:camel-ehcache
+         * 
          * Syntax: <code>ehcache:cacheName</code>
          * 
          * Path parameter: cacheName (required)
@@ -1054,6 +1067,123 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointBuilder ehcache(String componentName, String path) {
             return EhcacheEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Ehcache component.
+     */
+    public static class EhcacheHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final EhcacheHeaderNameBuilder INSTANCE = new EhcacheHeaderNameBuilder();
+
+        /**
+         * The operation to be performed on the cache, valid options are: CLEAR
+         * PUT PUT_ALL PUT_IF_ABSENT GET GET_ALL REMOVE REMOVE_ALL REPLACE.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code EhcacheAction}.
+         */
+        public String ehcacheAction() {
+            return "EhcacheAction";
+        }
+
+        /**
+         * Set to true if the action has a result.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code EhcacheActionHasResult}.
+         */
+        public String ehcacheActionHasResult() {
+            return "EhcacheActionHasResult";
+        }
+
+        /**
+         * Set to true if the action was successful.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code EhcacheActionSucceeded}.
+         */
+        public String ehcacheActionSucceeded() {
+            return "EhcacheActionSucceeded";
+        }
+
+        /**
+         * The cache key used for an action.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code EhcacheKey}.
+         */
+        public String ehcacheKey() {
+            return "EhcacheKey";
+        }
+
+        /**
+         * A list of keys, used in PUT_ALL GET_ALL REMOVE_ALL.
+         * 
+         * The option is a: {@code Set<Object>} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code EhcacheKeys}.
+         */
+        public String ehcacheKeys() {
+            return "EhcacheKeys";
+        }
+
+        /**
+         * The value to put in the cache or the result of an operation.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code EhcacheValue}.
+         */
+        public String ehcacheValue() {
+            return "EhcacheValue";
+        }
+
+        /**
+         * The old value associated to a key for actions like PUT_IF_ABSENT or
+         * the Object used for comparison for actions like REPLACE.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code EhcacheOldValue}.
+         */
+        public String ehcacheOldValue() {
+            return "EhcacheOldValue";
+        }
+
+        /**
+         * The type of event received.
+         * 
+         * The option is a: {@code EventType} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code EhcacheEventType}.
+         */
+        public String ehcacheEventType() {
+            return "EhcacheEventType";
         }
     }
     static EhcacheEndpointBuilder endpointBuilder(

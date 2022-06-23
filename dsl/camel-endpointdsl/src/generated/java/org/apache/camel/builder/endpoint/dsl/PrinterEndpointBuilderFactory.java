@@ -311,6 +311,19 @@ public interface PrinterEndpointBuilderFactory {
          * Since: 2.1
          * Maven coordinates: org.apache.camel:camel-printer
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default PrinterHeaderNameBuilder lpr() {
+            return PrinterHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Printer (camel-printer)
+         * Send print jobs to printers.
+         * 
+         * Category: printing
+         * Since: 2.1
+         * Maven coordinates: org.apache.camel:camel-printer
+         * 
          * Syntax: <code>lpr:hostname:port/printername</code>
          * 
          * Path parameter: hostname (required)
@@ -354,6 +367,30 @@ public interface PrinterEndpointBuilderFactory {
          */
         default PrinterEndpointBuilder lpr(String componentName, String path) {
             return PrinterEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Printer component.
+     */
+    public static class PrinterHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final PrinterHeaderNameBuilder INSTANCE = new PrinterHeaderNameBuilder();
+
+        /**
+         * The name of the job.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PrinterJobName}.
+         */
+        public String printerJobName() {
+            return "PrinterJobName";
         }
     }
     static PrinterEndpointBuilder endpointBuilder(

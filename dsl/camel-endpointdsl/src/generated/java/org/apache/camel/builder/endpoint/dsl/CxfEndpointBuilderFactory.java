@@ -2581,6 +2581,20 @@ public interface CxfEndpointBuilderFactory {
          * Since: 1.0
          * Maven coordinates: org.apache.camel:camel-cxf
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default CxfHeaderNameBuilder cxf() {
+            return CxfHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * CXF (camel-cxf)
+         * Expose SOAP WebServices using Apache CXF or connect to external
+         * WebServices using CXF WS client.
+         * 
+         * Category: soap,webservice
+         * Since: 1.0
+         * Maven coordinates: org.apache.camel:camel-cxf
+         * 
          * Syntax: <code>cxf:beanId:address</code>
          * 
          * Path parameter: beanId
@@ -2621,6 +2635,95 @@ public interface CxfEndpointBuilderFactory {
          */
         default CxfEndpointBuilder cxf(String componentName, String path) {
             return CxfEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the CXF component.
+     */
+    public static class CxfHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final CxfHeaderNameBuilder INSTANCE = new CxfHeaderNameBuilder();
+
+        /**
+         * The name of the operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code operationName}.
+         */
+        public String operationName() {
+            return "operationName";
+        }
+
+        /**
+         * The operation namespace.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code operationNamespace}.
+         */
+        public String operationNamespace() {
+            return "operationNamespace";
+        }
+
+        /**
+         * The destination override url.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DestinationOverrideUrl}.
+         */
+        public String destinationOverrideUrl() {
+            return "DestinationOverrideUrl";
+        }
+
+        /**
+         * The response context.
+         * 
+         * The option is a: {@code Map<String, Object>} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code ResponseContext}.
+         */
+        public String responseContext() {
+            return "ResponseContext";
+        }
+
+        /**
+         * The authentication.
+         * 
+         * The option is a: {@code javax.security.auth.Subject} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Authentication}.
+         */
+        public String authentication() {
+            return "Authentication";
+        }
+
+        /**
+         * The request context.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code RequestContext}.
+         */
+        public String requestContext() {
+            return "RequestContext";
         }
     }
     static CxfEndpointBuilder endpointBuilder(String componentName, String path) {

@@ -1486,6 +1486,20 @@ public interface CassandraEndpointBuilderFactory {
          * Since: 2.15
          * Maven coordinates: org.apache.camel:camel-cassandraql
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default CassandraHeaderNameBuilder cql() {
+            return CassandraHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Cassandra CQL (camel-cassandraql)
+         * Integrate with Cassandra 2.0 using the CQL3 API (not the Thrift API).
+         * Based on Cassandra Java Driver provided by DataStax.
+         * 
+         * Category: database,nosql
+         * Since: 2.15
+         * Maven coordinates: org.apache.camel:camel-cassandraql
+         * 
          * Syntax: <code>cql:beanRef:hosts:port/keyspace</code>
          * 
          * Path parameter: beanRef
@@ -1538,6 +1552,43 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointBuilder cql(String componentName, String path) {
             return CassandraEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Cassandra CQL component.
+     */
+    public static class CassandraHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final CassandraHeaderNameBuilder INSTANCE = new CassandraHeaderNameBuilder();
+
+        /**
+         * The CQL query to execute.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code CqlQuery}.
+         */
+        public String cqlQuery() {
+            return "CqlQuery";
+        }
+
+        /**
+         * The resume action to execute when resuming.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code CqlResumeAction}.
+         */
+        public String cqlResumeAction() {
+            return "CqlResumeAction";
         }
     }
     static CassandraEndpointBuilder endpointBuilder(

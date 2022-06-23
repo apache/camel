@@ -1414,6 +1414,19 @@ public interface FlatpackEndpointBuilderFactory {
          * Since: 1.4
          * Maven coordinates: org.apache.camel:camel-flatpack
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default FlatpackHeaderNameBuilder flatpack() {
+            return FlatpackHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Flatpack (camel-flatpack)
+         * Parse fixed width and delimited files using the FlatPack library.
+         * 
+         * Category: transformation
+         * Since: 1.4
+         * Maven coordinates: org.apache.camel:camel-flatpack
+         * 
          * Syntax: <code>flatpack:type:resourceUri</code>
          * 
          * Path parameter: type
@@ -1459,6 +1472,31 @@ public interface FlatpackEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return FlatpackEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Flatpack component.
+     */
+    public static class FlatpackHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final FlatpackHeaderNameBuilder INSTANCE = new FlatpackHeaderNameBuilder();
+
+        /**
+         * The current row index. For splitRows=false the counter is the total
+         * number of rows.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code FlatpackCounter}.
+         */
+        public String flatpackCounter() {
+            return "FlatpackCounter";
         }
     }
     static FlatpackEndpointBuilder endpointBuilder(

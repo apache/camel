@@ -1004,6 +1004,19 @@ public interface JcrEndpointBuilderFactory {
          * Since: 1.3
          * Maven coordinates: org.apache.camel:camel-jcr
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default JcrHeaderNameBuilder jcr() {
+            return JcrHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * JCR (camel-jcr)
+         * Read and write nodes to/from a JCR compliant content repository.
+         * 
+         * Category: database,cms
+         * Since: 1.3
+         * Maven coordinates: org.apache.camel:camel-jcr
+         * 
          * Syntax: <code>jcr:host/base</code>
          * 
          * Path parameter: host (required)
@@ -1043,6 +1056,59 @@ public interface JcrEndpointBuilderFactory {
          */
         default JcrEndpointBuilder jcr(String componentName, String path) {
             return JcrEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the JCR component.
+     */
+    public static class JcrHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final JcrHeaderNameBuilder INSTANCE = new JcrHeaderNameBuilder();
+
+        /**
+         * The name of the target node.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Default: The exchange id
+         * Group: producer
+         * 
+         * @return the name of the header {@code JcrNodeName}.
+         */
+        public String jcrNodeName() {
+            return "JcrNodeName";
+        }
+
+        /**
+         * The operation to perform. Possible values: CamelJcrInsert or
+         * CamelJcrGetById.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Default: CamelJcrInsert
+         * Group: producer
+         * 
+         * @return the name of the header {@code JcrOperation}.
+         */
+        public String jcrOperation() {
+            return "JcrOperation";
+        }
+
+        /**
+         * The node type of the target node.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JcrNodeType}.
+         */
+        public String jcrNodeType() {
+            return "JcrNodeType";
         }
     }
     static JcrEndpointBuilder endpointBuilder(String componentName, String path) {

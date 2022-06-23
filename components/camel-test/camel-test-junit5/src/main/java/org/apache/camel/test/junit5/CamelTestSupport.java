@@ -84,6 +84,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.apache.camel.test.junit5.TestSupport.isCamelDebugPresent;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
@@ -377,6 +378,7 @@ public abstract class CamelTestSupport
         } else {
             // test is per test so always setup
             doSpringBootCheck();
+            doQuarkusCheck();
             setupResources();
             doPreSetup();
             doSetUp();
@@ -413,12 +415,24 @@ public abstract class CamelTestSupport
         }
     }
 
+    /**
+     * Detects if this is a Camel-quarkus test and throw an exception, as these base classes is not intended for testing
+     * Camel onQuarkus.
+     */
+    protected void doQuarkusCheck() {
+        boolean quarkus = hasClassAnnotation("io.quarkus.test.junit.QuarkusTest") ||
+                hasClassAnnotation("org.apache.camel.quarkus.test.CamelQuarkusTest");
+        if (quarkus) {
+            throw new RuntimeException(
+                    "Quarkus detected: The CamelTestSupport/CamelSpringTestSupport class is not intended for Camel testing with Quarkus.");
+        }
+    }
+
     protected void doSetUp() throws Exception {
         LOG.debug("setUp test");
-        // jmx is enabled if we have configured to use it, or if dump route
-        // coverage is enabled (it requires JMX)
-        boolean jmx = useJmx() || isRouteCoverageEnabled();
-        if (jmx) {
+        // jmx is enabled if we have configured to use it, if dump route coverage is enabled (it requires JMX) or if
+        // the component camel-debug is in the classpath
+        if (useJmx() || isRouteCoverageEnabled() || isCamelDebugPresent()) {
             enableJMX();
         } else {
             disableJMX();

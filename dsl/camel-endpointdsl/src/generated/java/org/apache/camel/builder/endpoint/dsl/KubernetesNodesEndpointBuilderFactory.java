@@ -1403,6 +1403,20 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default KubernetesNodesHeaderNameBuilder kubernetesNodes() {
+            return KubernetesNodesHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Kubernetes Nodes (camel-kubernetes)
+         * Perform operations on Kubernetes Nodes and get notified on Node
+         * changes.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
          * Syntax: <code>kubernetes-nodes:masterUrl</code>
          * 
          * Path parameter: masterUrl (required)
@@ -1437,6 +1451,97 @@ public interface KubernetesNodesEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return KubernetesNodesEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Kubernetes Nodes component.
+     */
+    public static class KubernetesNodesHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final KubernetesNodesHeaderNameBuilder INSTANCE = new KubernetesNodesHeaderNameBuilder();
+
+        /**
+         * The Producer operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesOperation}.
+         */
+        public String kubernetesOperation() {
+            return "KubernetesOperation";
+        }
+
+        /**
+         * The node labels.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesNodesLabels}.
+         */
+        public String kubernetesNodesLabels() {
+            return "KubernetesNodesLabels";
+        }
+
+        /**
+         * The node name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesNodeName}.
+         */
+        public String kubernetesNodeName() {
+            return "KubernetesNodeName";
+        }
+
+        /**
+         * The spec for a node.
+         * 
+         * The option is a: {@code io.fabric8.kubernetes.api.model.NodeSpec}
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesNodeSpec}.
+         */
+        public String kubernetesNodeSpec() {
+            return "KubernetesNodeSpec";
+        }
+
+        /**
+         * Action watched by the consumer.
+         * 
+         * The option is a: {@code io.fabric8.kubernetes.client.Watcher.Action}
+         * type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code KubernetesEventAction}.
+         */
+        public String kubernetesEventAction() {
+            return "KubernetesEventAction";
+        }
+
+        /**
+         * Timestamp of the action watched by the consumer.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code KubernetesEventTimestamp}.
+         */
+        public String kubernetesEventTimestamp() {
+            return "KubernetesEventTimestamp";
         }
     }
     static KubernetesNodesEndpointBuilder endpointBuilder(

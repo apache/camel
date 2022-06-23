@@ -1545,6 +1545,19 @@ public interface DockerEndpointBuilderFactory {
          * Since: 2.15
          * Maven coordinates: org.apache.camel:camel-docker
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default DockerHeaderNameBuilder docker() {
+            return DockerHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Docker (camel-docker)
+         * Manage Docker containers.
+         * 
+         * Category: cloud,container,paas
+         * Since: 2.15
+         * Maven coordinates: org.apache.camel:camel-docker
+         * 
          * Syntax: <code>docker:operation</code>
          * 
          * Path parameter: operation (required)
@@ -1592,6 +1605,1075 @@ public interface DockerEndpointBuilderFactory {
          */
         default DockerEndpointBuilder docker(String componentName, String path) {
             return DockerEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Docker component.
+     */
+    public static class DockerHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final DockerHeaderNameBuilder INSTANCE = new DockerHeaderNameBuilder();
+
+        /**
+         * The request timeout for response (in seconds).
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerRequestTimeout}.
+         */
+        public String dockerRequestTimeout() {
+            return "DockerRequestTimeout";
+        }
+
+        /**
+         * The location containing the SSL certificate chain.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerCertPath}.
+         */
+        public String dockerCertPath() {
+            return "DockerCertPath";
+        }
+
+        /**
+         * The docker host.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerHost}.
+         */
+        public String dockerHost() {
+            return "DockerHost";
+        }
+
+        /**
+         * The docker port.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerPort}.
+         */
+        public String dockerPort() {
+            return "DockerPort";
+        }
+
+        /**
+         * The maximum route connections.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerMaxPerRouteConnections}.
+         */
+        public String dockerMaxPerRouteConnections() {
+            return "DockerMaxPerRouteConnections";
+        }
+
+        /**
+         * The maximum total connections.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerMaxTotalConnections}.
+         */
+        public String dockerMaxTotalConnections() {
+            return "DockerMaxTotalConnections";
+        }
+
+        /**
+         * Use HTTPS communication.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerSecure}.
+         */
+        public String dockerSecure() {
+            return "DockerSecure";
+        }
+
+        /**
+         * Check TLS.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerTlsVerify}.
+         */
+        public String dockerTlsVerify() {
+            return "DockerTlsVerify";
+        }
+
+        /**
+         * Socket connection mode.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerSocketEnabled}.
+         */
+        public String dockerSocketEnabled() {
+            return "DockerSocketEnabled";
+        }
+
+        /**
+         * The fully qualified class name of the DockerCmdExecFactory
+         * implementation to use.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerCmdExecFactory}.
+         */
+        public String dockerCmdExecFactory() {
+            return "DockerCmdExecFactory";
+        }
+
+        /**
+         * With label filter.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerFilter}.
+         */
+        public String dockerFilter() {
+            return "DockerFilter";
+        }
+
+        /**
+         * With show all flag.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerShowAll}.
+         */
+        public String dockerShowAll() {
+            return "DockerShowAll";
+        }
+
+        /**
+         * The id of the container.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerContainerId}.
+         */
+        public String dockerContainerId() {
+            return "DockerContainerId";
+        }
+
+        /**
+         * The Image ID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerImageId}.
+         */
+        public String dockerImageId() {
+            return "DockerImageId";
+        }
+
+        /**
+         * The email address associated with the user.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerEmail}.
+         */
+        public String dockerEmail() {
+            return "DockerEmail";
+        }
+
+        /**
+         * The password to authenticate with.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerPassword}.
+         */
+        public String dockerPassword() {
+            return "DockerPassword";
+        }
+
+        /**
+         * The server address for docker registry.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerServerAddress}.
+         */
+        public String dockerServerAddress() {
+            return "DockerServerAddress";
+        }
+
+        /**
+         * The user name to authenticate with.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerUsername}.
+         */
+        public String dockerUsername() {
+            return "DockerUsername";
+        }
+
+        /**
+         * The registry.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerRegistry}.
+         */
+        public String dockerRegistry() {
+            return "DockerRegistry";
+        }
+
+        /**
+         * The repository.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerRepository}.
+         */
+        public String dockerRepository() {
+            return "DockerRepository";
+        }
+
+        /**
+         * The tag.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerTag}.
+         */
+        public String dockerTag() {
+            return "DockerTag";
+        }
+
+        /**
+         * The image name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerName}.
+         */
+        public String dockerName() {
+            return "DockerName";
+        }
+
+        /**
+         * The term to search.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerTerm}.
+         */
+        public String dockerTerm() {
+            return "DockerTerm";
+        }
+
+        /**
+         * With force flag.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerForce}.
+         */
+        public String dockerForce() {
+            return "DockerForce";
+        }
+
+        /**
+         * With no prune flag.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerNoPrune}.
+         */
+        public String dockerNoPrune() {
+            return "DockerNoPrune";
+        }
+
+        /**
+         * The initial range.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerInitialRange}.
+         */
+        public String dockerInitialRange() {
+            return "DockerInitialRange";
+        }
+
+        /**
+         * With before.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerBefore}.
+         */
+        public String dockerBefore() {
+            return "DockerBefore";
+        }
+
+        /**
+         * With limit.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerLimit}.
+         */
+        public String dockerLimit() {
+            return "DockerLimit";
+        }
+
+        /**
+         * With show size flag.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerShowSize}.
+         */
+        public String dockerShowSize() {
+            return "DockerShowSize";
+        }
+
+        /**
+         * With since.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerSince}.
+         */
+        public String dockerSince() {
+            return "DockerSince";
+        }
+
+        /**
+         * With remove volumes flag.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerRemoveVolumes}.
+         */
+        public String dockerRemoveVolumes() {
+            return "DockerRemoveVolumes";
+        }
+
+        /**
+         * With follow stream flag.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerFollowStream}.
+         */
+        public String dockerFollowStream() {
+            return "DockerFollowStream";
+        }
+
+        /**
+         * With logs flag.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerLogs}.
+         */
+        public String dockerLogs() {
+            return "DockerLogs";
+        }
+
+        /**
+         * With stdErr flag.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerStdErr}.
+         */
+        public String dockerStdErr() {
+            return "DockerStdErr";
+        }
+
+        /**
+         * With stdOut flag.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerStdOut}.
+         */
+        public String dockerStdOut() {
+            return "DockerStdOut";
+        }
+
+        /**
+         * With timestamps flag.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerTimestamps}.
+         */
+        public String dockerTimestamps() {
+            return "DockerTimestamps";
+        }
+
+        /**
+         * With Tail.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerTail}.
+         */
+        public String dockerTail() {
+            return "DockerTail";
+        }
+
+        /**
+         * With tail all flag.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerTailAll}.
+         */
+        public String dockerTailAll() {
+            return "DockerTailAll";
+        }
+
+        /**
+         * The host path.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerHostPath}.
+         */
+        public String dockerHostPath() {
+            return "DockerHostPath";
+        }
+
+        /**
+         * The resource.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerResource}.
+         */
+        public String dockerResource() {
+            return "DockerResource";
+        }
+
+        /**
+         * With container id for diff container request.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerContainerIdDiff}.
+         */
+        public String dockerContainerIdDiff() {
+            return "DockerContainerIdDiff";
+        }
+
+        /**
+         * With timeout.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerTimeout}.
+         */
+        public String dockerTimeout() {
+            return "DockerTimeout";
+        }
+
+        /**
+         * With signal.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerSignal}.
+         */
+        public String dockerSignal() {
+            return "DockerSignal";
+        }
+
+        /**
+         * With ps args.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerPsArgs}.
+         */
+        public String dockerPsArgs() {
+            return "DockerPsArgs";
+        }
+
+        /**
+         * With no cache flag.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerNoCache}.
+         */
+        public String dockerNoCache() {
+            return "DockerNoCache";
+        }
+
+        /**
+         * With quiet flag.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerQuiet}.
+         */
+        public String dockerQuiet() {
+            return "DockerQuiet";
+        }
+
+        /**
+         * With remove flag.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerRemove}.
+         */
+        public String dockerRemove() {
+            return "DockerRemove";
+        }
+
+        /**
+         * With attach StdErr flag.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerAttachStdErr}.
+         */
+        public String dockerAttachStdErr() {
+            return "DockerAttachStdErr";
+        }
+
+        /**
+         * With attach StdIn flag.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerAttachStdIn}.
+         */
+        public String dockerAttachStdIn() {
+            return "DockerAttachStdIn";
+        }
+
+        /**
+         * With attach StdOut flag.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerAttachStdOut}.
+         */
+        public String dockerAttachStdOut() {
+            return "DockerAttachStdOut";
+        }
+
+        /**
+         * The author.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerAuthor}.
+         */
+        public String dockerAuthor() {
+            return "DockerAuthor";
+        }
+
+        /**
+         * With cmd.
+         * 
+         * The option is a: {@code String or String[]} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerCmd}.
+         */
+        public String dockerCmd() {
+            return "DockerCmd";
+        }
+
+        /**
+         * With disable network flag.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerDisableNetwork}.
+         */
+        public String dockerDisableNetwork() {
+            return "DockerDisableNetwork";
+        }
+
+        /**
+         * With env.
+         * 
+         * The option is a: {@code String or String[]} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerEnv}.
+         */
+        public String dockerEnv() {
+            return "DockerEnv";
+        }
+
+        /**
+         * The exposed ports.
+         * 
+         * The option is a: {@code ExposedPorts or ExposedPorts[]} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerExposedPorts}.
+         */
+        public String dockerExposedPorts() {
+            return "DockerExposedPorts";
+        }
+
+        /**
+         * The hostname.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerHostname}.
+         */
+        public String dockerHostname() {
+            return "DockerHostname";
+        }
+
+        /**
+         * The message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerMessage}.
+         */
+        public String dockerMessage() {
+            return "DockerMessage";
+        }
+
+        /**
+         * With memory.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerMemory}.
+         */
+        public String dockerMemory() {
+            return "DockerMemory";
+        }
+
+        /**
+         * With memory swap.
+         * 
+         * The option is a: {@code Long or Integer} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerMemorySwap}.
+         */
+        public String dockerMemorySwap() {
+            return "DockerMemorySwap";
+        }
+
+        /**
+         * With open StdIn flag.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerOpenStdIn}.
+         */
+        public String dockerOpenStdIn() {
+            return "DockerOpenStdIn";
+        }
+
+        /**
+         * With pause flag.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerPause}.
+         */
+        public String dockerPause() {
+            return "DockerPause";
+        }
+
+        /**
+         * With port specs.
+         * 
+         * The option is a: {@code String or String[]} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerPortSpecs}.
+         */
+        public String dockerPortSpecs() {
+            return "DockerPortSpecs";
+        }
+
+        /**
+         * With StdIn in once flag.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerStdInOnce}.
+         */
+        public String dockerStdInOnce() {
+            return "DockerStdInOnce";
+        }
+
+        /**
+         * With TTY flag.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerTty}.
+         */
+        public String dockerTty() {
+            return "DockerTty";
+        }
+
+        /**
+         * With user.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerUser}.
+         */
+        public String dockerUser() {
+            return "DockerUser";
+        }
+
+        /**
+         * With volumes.
+         * 
+         * The option is a: {@code Volume or Volume[]} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerVolumes}.
+         */
+        public String dockerVolumes() {
+            return "DockerVolumes";
+        }
+
+        /**
+         * With working directory.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerWorkingDir}.
+         */
+        public String dockerWorkingDir() {
+            return "DockerWorkingDir";
+        }
+
+        /**
+         * With CPU shares.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerCpuShares}.
+         */
+        public String dockerCpuShares() {
+            return "DockerCpuShares";
+        }
+
+        /**
+         * With dns.
+         * 
+         * The option is a: {@code String or String[]} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerDns}.
+         */
+        public String dockerDns() {
+            return "DockerDns";
+        }
+
+        /**
+         * With entrypoint.
+         * 
+         * The option is a: {@code String or String[]} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerEntryPoint}.
+         */
+        public String dockerEntryPoint() {
+            return "DockerEntryPoint";
+        }
+
+        /**
+         * With host config.
+         * 
+         * The option is a: {@code com.github.dockerjava.api.model.HostConfig}
+         * type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerHostConfig}.
+         */
+        public String dockerHostConfig() {
+            return "DockerHostConfig";
+        }
+
+        /**
+         * The docker image.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerImage}.
+         */
+        public String dockerImage() {
+            return "DockerImage";
+        }
+
+        /**
+         * With memory limit.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerMemoryLimit}.
+         */
+        public String dockerMemoryLimit() {
+            return "DockerMemoryLimit";
+        }
+
+        /**
+         * With StdIn in open flag.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerStdInOpen}.
+         */
+        public String dockerStdInOpen() {
+            return "DockerStdInOpen";
+        }
+
+        /**
+         * With volumes from.
+         * 
+         * The option is a: {@code VolumesFrom or VolumesFrom[]} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerVolumesFrom}.
+         */
+        public String dockerVolumesFrom() {
+            return "DockerVolumesFrom";
+        }
+
+        /**
+         * With domain name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerDomainName}.
+         */
+        public String dockerDomainName() {
+            return "DockerDomainName";
+        }
+
+        /**
+         * With cap add.
+         * 
+         * The option is a: {@code Capability or Capability[]} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerCapAdd}.
+         */
+        public String dockerCapAdd() {
+            return "DockerCapAdd";
+        }
+
+        /**
+         * With cap drop.
+         * 
+         * The option is a: {@code Capability or Capability[]} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerCapDrop}.
+         */
+        public String dockerCapDrop() {
+            return "DockerCapDrop";
+        }
+
+        /**
+         * The network name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerNetwork}.
+         */
+        public String dockerNetwork() {
+            return "DockerNetwork";
+        }
+
+        /**
+         * With detach flag.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerDetach}.
+         */
+        public String dockerDetach() {
+            return "DockerDetach";
+        }
+
+        /**
+         * The Exec ID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerExecId}.
+         */
+        public String dockerExecId() {
+            return "DockerExecId";
         }
     }
     static DockerEndpointBuilder endpointBuilder(

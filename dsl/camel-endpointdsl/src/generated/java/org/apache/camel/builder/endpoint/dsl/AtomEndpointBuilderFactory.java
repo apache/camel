@@ -881,6 +881,19 @@ public interface AtomEndpointBuilderFactory {
          * Since: 1.2
          * Maven coordinates: org.apache.camel:camel-atom
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default AtomHeaderNameBuilder atom() {
+            return AtomHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Atom (camel-atom)
+         * Poll Atom RSS feeds.
+         * 
+         * Category: rss
+         * Since: 1.2
+         * Maven coordinates: org.apache.camel:camel-atom
+         * 
          * Syntax: <code>atom:feedUri</code>
          * 
          * Path parameter: feedUri (required)
@@ -912,6 +925,31 @@ public interface AtomEndpointBuilderFactory {
          */
         default AtomEndpointBuilder atom(String componentName, String path) {
             return AtomEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Atom component.
+     */
+    public static class AtomHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final AtomHeaderNameBuilder INSTANCE = new AtomHeaderNameBuilder();
+
+        /**
+         * When consuming the org.apache.abdera.model.Feed object is set to this
+         * header.
+         * 
+         * The option is a: {@code org.apache.abdera.model.Feed} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AtomFeed}.
+         */
+        public String atomFeed() {
+            return "AtomFeed";
         }
     }
     static AtomEndpointBuilder endpointBuilder(String componentName, String path) {

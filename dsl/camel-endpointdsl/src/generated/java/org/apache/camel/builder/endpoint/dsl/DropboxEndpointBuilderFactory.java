@@ -848,6 +848,20 @@ public interface DropboxEndpointBuilderFactory {
          * Since: 2.14
          * Maven coordinates: org.apache.camel:camel-dropbox
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default DropboxHeaderNameBuilder dropbox() {
+            return DropboxHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Dropbox (camel-dropbox)
+         * Upload, download and manage files, folders, groups, collaborations,
+         * etc on Dropbox.
+         * 
+         * Category: cloud,file,api
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-dropbox
+         * 
          * Syntax: <code>dropbox:operation</code>
          * 
          * Path parameter: operation (required)
@@ -886,6 +900,188 @@ public interface DropboxEndpointBuilderFactory {
          */
         default DropboxEndpointBuilder dropbox(String componentName, String path) {
             return DropboxEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Dropbox component.
+     */
+    public static class DropboxHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final DropboxHeaderNameBuilder INSTANCE = new DropboxHeaderNameBuilder();
+
+        /**
+         * The remote path.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: all
+         * 
+         * @return the name of the header {@code DropboxRemotePath}.
+         */
+        public String dropboxRemotePath() {
+            return "DropboxRemotePath";
+        }
+
+        /**
+         * The new remote path.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: move
+         * 
+         * @return the name of the header {@code DropboxNewRemotePath}.
+         */
+        public String dropboxNewRemotePath() {
+            return "DropboxNewRemotePath";
+        }
+
+        /**
+         * The local path.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: put
+         * 
+         * @return the name of the header {@code DropboxLocalPath}.
+         */
+        public String dropboxLocalPath() {
+            return "DropboxLocalPath";
+        }
+
+        /**
+         * The upload mode.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: put
+         * 
+         * @return the name of the header {@code DropboxUploadMode}.
+         */
+        public String dropboxUploadMode() {
+            return "DropboxUploadMode";
+        }
+
+        /**
+         * The query.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: search
+         * 
+         * @return the name of the header {@code DropboxQuery}.
+         */
+        public String dropboxQuery() {
+            return "DropboxQuery";
+        }
+
+        /**
+         * The name of the file to upload.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: put
+         * 
+         * @return the name of the header {@code DropboxPutFileName}.
+         */
+        public String dropboxPutFileName() {
+            return "DropboxPutFileName";
+        }
+
+        /**
+         * In case of single file download, path of the remote file downloaded.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: get
+         * 
+         * @return the name of the header {@code DOWNLOADED_FILE}.
+         */
+        public String downloadedFile() {
+            return "DOWNLOADED_FILE";
+        }
+
+        /**
+         * In case of multiple files download, path of the remote files
+         * downloaded.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: get
+         * 
+         * @return the name of the header {@code DOWNLOADED_FILES}.
+         */
+        public String downloadedFiles() {
+            return "DOWNLOADED_FILES";
+        }
+
+        /**
+         * In case of single file upload, path of the remote path uploaded.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: put
+         * 
+         * @return the name of the header {@code UPLOADED_FILE}.
+         */
+        public String uploadedFile() {
+            return "UPLOADED_FILE";
+        }
+
+        /**
+         * In case of multiple files upload, string with the remote paths
+         * uploaded.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: put
+         * 
+         * @return the name of the header {@code UPLOADED_FILES}.
+         */
+        public String uploadedFiles() {
+            return "UPLOADED_FILES";
+        }
+
+        /**
+         * List of file path founded.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: search
+         * 
+         * @return the name of the header {@code FOUND_FILES}.
+         */
+        public String foundFiles() {
+            return "FOUND_FILES";
+        }
+
+        /**
+         * Name of the path deleted on dropbox.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: del
+         * 
+         * @return the name of the header {@code DELETED_PATH}.
+         */
+        public String deletedPath() {
+            return "DELETED_PATH";
+        }
+
+        /**
+         * Name of the path moved on dropbox.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: move
+         * 
+         * @return the name of the header {@code MOVED_PATH}.
+         */
+        public String movedPath() {
+            return "MOVED_PATH";
         }
     }
     static DropboxEndpointBuilder endpointBuilder(

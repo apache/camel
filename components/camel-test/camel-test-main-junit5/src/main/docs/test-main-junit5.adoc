@@ -519,6 +519,42 @@ The method `isUseDebugger()` can be overridden to return `true` indicating that 
 === Annotation ===
 The test class needs to implement the interface `org.apache.camel.test.main.junit5.DebuggerCallback` to enable the feature. The methods `debugBefore` and `debugAfter` can then be implemented to execute some specific code for debugging purpose.
 
+== Enable JMX
+
+JMX is disabled by default when launching the tests, however if needed, it is still possible to enable it.
+
+=== Legacy ===
+The method `useJmx()` can be overridden to return `true`. It returns `false` by default.
+
+=== Annotation ===
+The attribute `useJmx` can be set to `true`. It is set to `false` by default.
+
+In the next examples, JMX has been enabled for the test.
+
+=== Legacy ===
+[source,java]
+----
+class SomeTest extends CamelMainTestSupport {
+
+    @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    // Rest of the test class
+}
+----
+
+=== Annotation ===
+[source,java]
+----
+@CamelMainTest(useJmx = true)
+class SomeTest {
+
+    // Rest of the test class
+}
+----
+
 == Nested tests
 
 The annotation based approach supports natively https://junit.org/junit5/docs/current/user-guide/#writing-tests-nested[Nested tests]. It is even possible to annotate `@Nested` test class with `@CamelMainTest` to change the configuration inherited from the outer class however please note that not all attributes can be set at nested test class level. Indeed, for the sake of simplicity, the attributes `dumpRouteCoverage` and `shutdownTimeout` can only be set at outer class level.

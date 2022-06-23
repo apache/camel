@@ -4388,6 +4388,19 @@ public interface RabbitMQEndpointBuilderFactory {
          * Since: 2.12
          * Maven coordinates: org.apache.camel:camel-rabbitmq
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default RabbitMQHeaderNameBuilder rabbitmq() {
+            return RabbitMQHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * RabbitMQ (camel-rabbitmq)
+         * Send and receive messages from RabbitMQ instances.
+         * 
+         * Category: messaging
+         * Since: 2.12
+         * Maven coordinates: org.apache.camel:camel-rabbitmq
+         * 
          * Syntax: <code>rabbitmq:exchangeName</code>
          * 
          * Path parameter: exchangeName (required)
@@ -4425,6 +4438,329 @@ public interface RabbitMQEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return RabbitMQEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the RabbitMQ component.
+     */
+    public static class RabbitMQHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final RabbitMQHeaderNameBuilder INSTANCE = new RabbitMQHeaderNameBuilder();
+
+        /**
+         * Consumer: The routing key that was used to receive the message, or
+         * the routing key that will be used when producing a message Producer:
+         * The routing key that will be used when sending the message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code RabbitmqRoutingKey}.
+         */
+        public String rabbitmqRoutingKey() {
+            return "RabbitmqRoutingKey";
+        }
+
+        /**
+         * Used for force sending the message to this exchange instead of the
+         * endpoint configured name on the producer.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code RabbitmqExchangeOverrideName}.
+         */
+        public String rabbitmqExchangeOverrideName() {
+            return "RabbitmqExchangeOverrideName";
+        }
+
+        /**
+         * Consumer: The exchange the message was received from Producer: The
+         * exchange the message was received from.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code RabbitmqExchangeName}.
+         */
+        public String rabbitmqExchangeName() {
+            return "RabbitmqExchangeName";
+        }
+
+        /**
+         * The contentType to set on the RabbitMQ message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code RabbitmqContentType}.
+         */
+        public String rabbitmqContentType() {
+            return "RabbitmqContentType";
+        }
+
+        /**
+         * The priority header to set on the RabbitMQ message.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code RabbitmqPriority}.
+         */
+        public String rabbitmqPriority() {
+            return "RabbitmqPriority";
+        }
+
+        /**
+         * The rabbitmq delivery tag of the received message.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code RabbitmqDeliveryTag}.
+         */
+        public String rabbitmqDeliveryTag() {
+            return "RabbitmqDeliveryTag";
+        }
+
+        /**
+         * Whether the message is a redelivered.
+         * 
+         * The option is a: {@code boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code RabbitmqRedeliveryTag}.
+         */
+        public String rabbitmqRedeliveryTag() {
+            return "RabbitmqRedeliveryTag";
+        }
+
+        /**
+         * The correlationId to set on the RabbitMQ message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code RabbitmqCorrelationId}.
+         */
+        public String rabbitmqCorrelationId() {
+            return "RabbitmqCorrelationId";
+        }
+
+        /**
+         * The message id to set on the RabbitMQ message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code RabbitmqMessageId}.
+         */
+        public String rabbitmqMessageId() {
+            return "RabbitmqMessageId";
+        }
+
+        /**
+         * If the message should be persistent or not.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code RabbitmqDeliveryMode}.
+         */
+        public String rabbitmqDeliveryMode() {
+            return "RabbitmqDeliveryMode";
+        }
+
+        /**
+         * The userId to set on the RabbitMQ message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code RabbitmqUserId}.
+         */
+        public String rabbitmqUserId() {
+            return "RabbitmqUserId";
+        }
+
+        /**
+         * The clusterId to set on the RabbitMQ message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code RabbitmqClusterId}.
+         */
+        public String rabbitmqClusterId() {
+            return "RabbitmqClusterId";
+        }
+
+        /**
+         * The timeout for waiting for a reply when using the InOut Exchange
+         * Pattern (in milliseconds).
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code RabbitmqRequestTimeout}.
+         */
+        public String rabbitmqRequestTimeout() {
+            return "RabbitmqRequestTimeout";
+        }
+
+        /**
+         * The replyTo to set on the RabbitMQ message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code RabbitmqReplyTo}.
+         */
+        public String rabbitmqReplyTo() {
+            return "RabbitmqReplyTo";
+        }
+
+        /**
+         * The contentEncoding to set on the RabbitMQ message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code RabbitmqContentEncoding}.
+         */
+        public String rabbitmqContentEncoding() {
+            return "RabbitmqContentEncoding";
+        }
+
+        /**
+         * The type to set on the RabbitMQ message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code RabbitmqType}.
+         */
+        public String rabbitmqType() {
+            return "RabbitmqType";
+        }
+
+        /**
+         * The expiration to set on the RabbitMQ message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code RabbitmqExpiration}.
+         */
+        public String rabbitmqExpiration() {
+            return "RabbitmqExpiration";
+        }
+
+        /**
+         * The timestamp to set on the RabbitMQ message.
+         * 
+         * The option is a: {@code java.util.Date} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code RabbitmqTimestamp}.
+         */
+        public String rabbitmqTimestamp() {
+            return "RabbitmqTimestamp";
+        }
+
+        /**
+         * The appId to set on the RabbitMQ message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code RabbitmqAppId}.
+         */
+        public String rabbitmqAppId() {
+            return "RabbitmqAppId";
+        }
+
+        /**
+         * This is used by the consumer to control rejection of the message.
+         * When the consumer is complete processing the exchange, and if the
+         * exchange failed, then the consumer is going to reject the message
+         * from the RabbitMQ broker. The value of this header controls this
+         * behavior. If the value is false (by default) then the message is
+         * discarded/dead-lettered. If the value is true, then the message is
+         * re-queued.
+         * 
+         * The option is a: {@code boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code RabbitmqRequeue}.
+         */
+        public String rabbitmqRequeue() {
+            return "RabbitmqRequeue";
+        }
+
+        /**
+         * The flag telling the server how to react if the message cannot be
+         * routed to a queue.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code RabbitmqMandatory}.
+         */
+        public String rabbitmqMandatory() {
+            return "RabbitmqMandatory";
+        }
+
+        /**
+         * The flag telling the server how to react if the message cannot be
+         * routed to a queue consumer immediately.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code RabbitmqImmediate}.
+         */
+        public String rabbitmqImmediate() {
+            return "RabbitmqImmediate";
+        }
+
+        /**
+         * The timestamp of the RabbitMQ message.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code MessageTimestamp}.
+         */
+        public String messageTimestamp() {
+            return "MessageTimestamp";
         }
     }
     static RabbitMQEndpointBuilder endpointBuilder(

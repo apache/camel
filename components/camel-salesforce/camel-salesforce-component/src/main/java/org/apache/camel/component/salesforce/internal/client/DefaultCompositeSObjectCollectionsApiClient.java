@@ -211,7 +211,7 @@ public class DefaultCompositeSObjectCollectionsApiClient extends AbstractClientB
         return mapper.writerFor(type);
     }
 
-    private ContentProvider serialize(final Object body, final Class<?>... additionalTypes)
+    private ContentProvider serialize(final Object body)
             throws SalesforceException {
         return new InputStreamContentProvider(toJson(body));
     }

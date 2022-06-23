@@ -362,7 +362,7 @@ public final class RouteDefinitionHelper {
             List<OnCompletionDefinition> onCompletions) {
 
         // init the route inputs
-        initRouteInput(context, route.getInput());
+        initRouteInput();
 
         // abstracts is the cross cutting concerns
         List<ProcessorDefinition<?>> abstracts = new ArrayList<>();
@@ -377,7 +377,7 @@ public final class RouteDefinitionHelper {
         RouteDefinitionHelper.prepareRouteForInit(route, abstracts, lower);
 
         // parent and error handler builder should be initialized first
-        initParentAndErrorHandlerBuilder(context, route, errorHandler, abstracts, onExceptions);
+        initParentAndErrorHandlerBuilder(context, route, errorHandler, onExceptions);
         // validate top-level violations
         validateTopLevel(route.getOutputs());
         // then interceptors
@@ -442,13 +442,12 @@ public final class RouteDefinitionHelper {
         }
     }
 
-    private static void initRouteInput(CamelContext camelContext, FromDefinition input) {
+    private static void initRouteInput() {
         // noop
     }
 
     private static void initParentAndErrorHandlerBuilder(
             CamelContext context, RouteDefinition route, ErrorHandlerDefinition errorHandler,
-            List<ProcessorDefinition<?>> abstracts,
             List<OnExceptionDefinition> onExceptions) {
 
         if (errorHandler != null) {

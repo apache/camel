@@ -1125,6 +1125,20 @@ public interface MyBatisEndpointBuilderFactory {
          * Since: 2.7
          * Maven coordinates: org.apache.camel:camel-mybatis
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default MyBatisHeaderNameBuilder mybatis() {
+            return MyBatisHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * MyBatis (camel-mybatis)
+         * Performs a query, poll, insert, update or delete in a relational
+         * database using MyBatis.
+         * 
+         * Category: database,sql
+         * Since: 2.7
+         * Maven coordinates: org.apache.camel:camel-mybatis
+         * 
          * Syntax: <code>mybatis:statement</code>
          * 
          * Path parameter: statement (required)
@@ -1159,6 +1173,45 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default MyBatisEndpointBuilder mybatis(String componentName, String path) {
             return MyBatisEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the MyBatis component.
+     */
+    public static class MyBatisHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final MyBatisHeaderNameBuilder INSTANCE = new MyBatisHeaderNameBuilder();
+
+        /**
+         * The response returned from MtBatis in any of the operations. For
+         * instance an INSERT could return the auto-generated key, or number of
+         * rows etc.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MyBatisResult}.
+         */
+        public String myBatisResult() {
+            return "MyBatisResult";
+        }
+
+        /**
+         * The statementName used (for example: insertAccount).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code MyBatisStatementName}.
+         */
+        public String myBatisStatementName() {
+            return "MyBatisStatementName";
         }
     }
     static MyBatisEndpointBuilder endpointBuilder(

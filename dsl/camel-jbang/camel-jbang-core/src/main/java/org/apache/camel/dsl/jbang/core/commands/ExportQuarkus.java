@@ -20,15 +20,37 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.Properties;
 import java.util.Set;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.catalog.RuntimeProvider;
+import org.apache.camel.dsl.jbang.core.common.XmlHelper;
+import org.apache.camel.main.KameletMain;
+import org.apache.camel.main.download.MavenArtifact;
+import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.main.download.MavenGav;
+import org.apache.camel.tooling.model.ArtifactModel;
+import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.OrderedProperties;
 import org.apache.commons.io.FileUtils;
 
 class ExportQuarkus extends Export {
+
+    private static final String DEFAULT_CAMEL_CATALOG = "org.apache.camel.catalog.DefaultCamelCatalog";
+    private static final String QUARKUS_CATALOG_PROVIDER = "org.apache.camel.catalog.quarkus.QuarkusRuntimeProvider";
+
+    private String camelVersion;
+    private String camelQuarkusVersion;
 
     public ExportQuarkus(CamelJBangMain main) {
         super(main);
@@ -129,13 +151,21 @@ class ExportQuarkus extends Export {
         String context = IOHelper.loadText(is);
         IOHelper.close(is);
 
+        CamelCatalog catalog = loadQuarkusCatalog();
+        if (camelVersion == null) {
+            camelVersion = catalog.getCatalogVersion();
+        }
+
         context = context.replaceFirst("\\{\\{ \\.GroupId }}", ids[0]);
         context = context.replaceFirst("\\{\\{ \\.ArtifactId }}", ids[1]);
         context = context.replaceFirst("\\{\\{ \\.Version }}", ids[2]);
+        context = context.replaceFirst("\\{\\{ \\.QuarkusGroupId }}", quarkusGroupId);
+        context = context.replaceFirst("\\{\\{ \\.QuarkusArtifactId }}", quarkusArtifactId);
         context = context.replaceAll("\\{\\{ \\.QuarkusVersion }}", quarkusVersion);
         context = context.replaceFirst("\\{\\{ \\.JavaVersion }}", javaVersion);
+        context = context.replaceFirst("\\{\\{ \\.CamelVersion }}", camelVersion);
 
-        OrderedProperties prop = new OrderedProperties();
+        Properties prop = new CamelCaseOrderedProperties();
         prop.load(new FileInputStream(settings));
         String repos = prop.getProperty("camel.jbang.repos");
         if (repos == null) {
@@ -162,9 +192,17 @@ class ExportQuarkus extends Export {
             String v = gav.getVersion();
             // transform to camel-quarkus extension GAV
             if ("org.apache.camel".equals(gid)) {
-                gid = "org.apache.camel.quarkus";
-                aid = aid.replace("camel-", "camel-quarkus-");
-                v = null;
+                String qaid = aid.replace("camel-", "camel-quarkus-");
+                ArtifactModel<?> am = catalog.modelFromMavenGAV("org.apache.camel.quarkus", qaid, null);
+                if (am != null) {
+                    // use quarkus extension
+                    gid = am.getGroupId();
+                    aid = am.getArtifactId();
+                    v = null; // uses BOM so version should not be included
+                } else {
+                    // there is no quarkus extension so use plain camel
+                    v = camelVersion;
+                }
             }
             sb.append("        <dependency>\n");
             sb.append("            <groupId>").append(gid).append("</groupId>\n");
@@ -187,6 +225,75 @@ class ExportQuarkus extends Export {
         answer.removeIf(s -> s.contains("camel-platform-http"));
         answer.removeIf(s -> s.contains("camel-microprofile-health"));
         answer.removeIf(s -> s.contains("camel-dsl-modeline"));
+
+        return answer;
+    }
+
+    private CamelCatalog loadQuarkusCatalog() {
+        CamelCatalog answer = new DefaultCamelCatalog(true);
+
+        // use kamelet-main to dynamic download dependency via maven
+        KameletMain main = new KameletMain();
+        try {
+            main.start();
+
+            // shrinkwrap does not return POM file as result (they are hardcoded to be filtered out)
+            // so after this we download a JAR and then use its File location to compute the file for the downloaded POM
+            MavenDependencyDownloader downloader = main.getCamelContext().hasService(MavenDependencyDownloader.class);
+            downloader.downloadArtifact("io.quarkus.platform", "quarkus-camel-bom:pom", quarkusVersion);
+            MavenArtifact ma = downloader.downloadArtifact("io.quarkus", "quarkus-core", quarkusVersion);
+            if (ma != null && ma.getFile() != null) {
+                String name = ma.getFile().getAbsolutePath();
+                name = name.replace("io/quarkus/quarkus-core", "io/quarkus/platform/quarkus-camel-bom");
+                name = name.replace("quarkus-core", "quarkus-camel-bom");
+                name = name.replace(".jar", ".pom");
+                File file = new File(name);
+                if (file.exists()) {
+                    DocumentBuilderFactory dbf = XmlHelper.createDocumentBuilderFactory();
+                    DocumentBuilder db = dbf.newDocumentBuilder();
+                    Document dom = db.parse(file);
+
+                    // grab what exact camelVersion and camelQuarkusVersion we are using
+                    NodeList nl = dom.getElementsByTagName("dependency");
+                    for (int i = 0; i < nl.getLength(); i++) {
+                        Element node = (Element) nl.item(i);
+                        String g = node.getElementsByTagName("groupId").item(0).getTextContent();
+                        String a = node.getElementsByTagName("artifactId").item(0).getTextContent();
+                        if ("org.apache.camel".equals(g) && "camel-core-engine".equals(a)) {
+                            camelVersion = node.getElementsByTagName("version").item(0).getTextContent();
+                        } else if ("org.apache.camel.quarkus".equals(g) && "camel-quarkus-catalog".equals(a)) {
+                            camelQuarkusVersion = node.getElementsByTagName("version").item(0).getTextContent();
+                        }
+                    }
+                }
+            }
+
+            if (camelQuarkusVersion != null) {
+                // download camel-quarkus-catalog we use to know if we have an extension or not
+                downloader.downloadDependency("org.apache.camel.quarkus", "camel-quarkus-catalog", camelQuarkusVersion);
+
+                Class<RuntimeProvider> clazz = main.getCamelContext().getClassResolver().resolveClass(QUARKUS_CATALOG_PROVIDER,
+                        RuntimeProvider.class);
+                if (clazz != null) {
+                    RuntimeProvider provider = main.getCamelContext().getInjector().newInstance(clazz);
+                    if (provider != null) {
+                        // re-create answer with the classloader that loaded spring-boot to be able to load resources in this catalog
+                        Class<CamelCatalog> clazz2
+                                = main.getCamelContext().getClassResolver().resolveClass(DEFAULT_CAMEL_CATALOG,
+                                        CamelCatalog.class);
+                        answer = main.getCamelContext().getInjector().newInstance(clazz2);
+                        answer.setRuntimeProvider(provider);
+                        // use classloader that loaded spring-boot provider to ensure we can load its resources
+                        answer.getVersionManager().setClassLoader(main.getCamelContext().getApplicationContextClassLoader());
+                        answer.enableCache();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // ignore
+        } finally {
+            main.stop();
+        }
 
         return answer;
     }

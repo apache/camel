@@ -86,12 +86,11 @@ public final class NettyHelper {
      * @param channel       the Netty channel
      * @param remoteAddress the remote address when using UDP
      * @param body          the body to write (send)
-     * @param exchange      the exchange
      * @param listener      listener with work to be executed when the operation is complete
      */
     public static void writeBodyAsync(
             Logger log, Channel channel, SocketAddress remoteAddress, Object body,
-            Exchange exchange, ChannelFutureListener listener) {
+            ChannelFutureListener listener) {
         ChannelFuture future;
         if (remoteAddress != null) {
             if (log.isDebugEnabled()) {

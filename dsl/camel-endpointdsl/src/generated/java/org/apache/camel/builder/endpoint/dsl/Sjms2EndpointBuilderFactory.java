@@ -3137,6 +3137,20 @@ public interface Sjms2EndpointBuilderFactory {
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-sjms2
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default Sjms2HeaderNameBuilder sjms2() {
+            return Sjms2HeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Simple JMS2 (camel-sjms2)
+         * Send and receive messages to/from a JMS Queue or Topic using plain
+         * JMS 2.x API.
+         * 
+         * Category: messaging
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-sjms2
+         * 
          * Syntax: <code>sjms2:destinationType:destinationName</code>
          * 
          * Path parameter: destinationType
@@ -3181,6 +3195,72 @@ public interface Sjms2EndpointBuilderFactory {
          */
         default Sjms2EndpointBuilder sjms2(String componentName, String path) {
             return Sjms2EndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Simple JMS2 component.
+     */
+    public static class Sjms2HeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final Sjms2HeaderNameBuilder INSTANCE = new Sjms2HeaderNameBuilder();
+
+        /**
+         * DestinationName is a JMS queue or topic name. By default, the
+         * destinationName is interpreted as a queue name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JMSDestinationName}.
+         */
+        public String jMSDestinationName() {
+            return "JMSDestinationName";
+        }
+
+        /**
+         * The timeout for waiting for a reply when using the InOut Exchange
+         * Pattern (in milliseconds).
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JmsRequestTimeout}.
+         */
+        public String jmsRequestTimeout() {
+            return "JmsRequestTimeout";
+        }
+
+        /**
+         * The correlation ID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JMSCorrelationID}.
+         */
+        public String jMSCorrelationID() {
+            return "JMSCorrelationID";
+        }
+
+        /**
+         * Provides an explicit ReplyTo destination (overrides any incoming
+         * value of Message.getJMSReplyTo() in consumer).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JMSReplyTo}.
+         */
+        public String jMSReplyTo() {
+            return "JMSReplyTo";
         }
     }
     static Sjms2EndpointBuilder endpointBuilder(

@@ -452,6 +452,19 @@ public interface Lambda2EndpointBuilderFactory {
          * Since: 3.2
          * Maven coordinates: org.apache.camel:camel-aws2-lambda
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default Lambda2HeaderNameBuilder aws2Lambda() {
+            return Lambda2HeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * AWS Lambda (camel-aws2-lambda)
+         * Manage and invoke AWS Lambda functions using AWS SDK version 2.x.
+         * 
+         * Category: cloud,computing,serverless
+         * Since: 3.2
+         * Maven coordinates: org.apache.camel:camel-aws2-lambda
+         * 
          * Syntax: <code>aws2-lambda:function</code>
          * 
          * Path parameter: function (required)
@@ -485,6 +498,437 @@ public interface Lambda2EndpointBuilderFactory {
                 String componentName,
                 String path) {
             return Lambda2EndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the AWS Lambda component.
+     */
+    public static class Lambda2HeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final Lambda2HeaderNameBuilder INSTANCE = new Lambda2HeaderNameBuilder();
+
+        /**
+         * The operation we want to perform. Override operation passed as query
+         * parameter.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Required: true
+         * Group: all
+         * 
+         * @return the name of the header {@code AwsLambdaOperation}.
+         */
+        public String awsLambdaOperation() {
+            return "AwsLambdaOperation";
+        }
+
+        /**
+         * Amazon S3 bucket name where the .zip file containing your deployment
+         * package is stored. This bucket must reside in the same AWS region
+         * where you are creating the Lambda function.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: createFunction
+         * 
+         * @return the name of the header {@code AwsLambdaS3Bucket}.
+         */
+        public String awsLambdaS3Bucket() {
+            return "AwsLambdaS3Bucket";
+        }
+
+        /**
+         * The Amazon S3 object (the deployment package) key name you want to
+         * upload.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: createFunction
+         * 
+         * @return the name of the header {@code AwsLambdaS3Key}.
+         */
+        public String awsLambdaS3Key() {
+            return "AwsLambdaS3Key";
+        }
+
+        /**
+         * The Amazon S3 object (the deployment package) version you want to
+         * upload.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: createFunction
+         * 
+         * @return the name of the header {@code AwsLambdaS3ObjectVersion}.
+         */
+        public String awsLambdaS3ObjectVersion() {
+            return "AwsLambdaS3ObjectVersion";
+        }
+
+        /**
+         * The local path of the zip file (the deployment package). Content of
+         * zip file can also be put in Message body.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: createFunction
+         * 
+         * @return the name of the header {@code AwsLambdaZipFile}.
+         */
+        public String awsLambdaZipFile() {
+            return "AwsLambdaZipFile";
+        }
+
+        /**
+         * The user-provided description.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: createFunction
+         * 
+         * @return the name of the header {@code AwsLambdaDescription}.
+         */
+        public String awsLambdaDescription() {
+            return "AwsLambdaDescription";
+        }
+
+        /**
+         * The Amazon Resource Name (ARN) of the IAM role that Lambda assumes
+         * when it executes your function to access any other Amazon Web
+         * Services (AWS) resources.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Required: true
+         * Group: createFunction
+         * 
+         * @return the name of the header {@code AwsLambdaRole}.
+         */
+        public String awsLambdaRole() {
+            return "AwsLambdaRole";
+        }
+
+        /**
+         * The runtime environment for the Lambda function you are uploading.
+         * (nodejs, nodejs4.3, nodejs6.10, java8, python2.7, python3.6,
+         * dotnetcore1.0, odejs4.3-edge).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Required: true
+         * Group: createFunction
+         * 
+         * @return the name of the header {@code AwsLambdaRuntime}.
+         */
+        public String awsLambdaRuntime() {
+            return "AwsLambdaRuntime";
+        }
+
+        /**
+         * The function within your code that Lambda calls to begin execution.
+         * For Node.js, it is the module-name.export value in your function. For
+         * Java, it can be package.class-name::handler or package.class-name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Required: true
+         * Group: createFunction
+         * 
+         * @return the name of the header {@code AwsLambdaHandler}.
+         */
+        public String awsLambdaHandler() {
+            return "AwsLambdaHandler";
+        }
+
+        /**
+         * The parent object that contains the target ARN (Amazon Resource Name)
+         * of an Amazon SQS queue or Amazon SNS topic.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: createFunction
+         * 
+         * @return the name of the header {@code AwsLambdaTargetArn}.
+         */
+        public String awsLambdaTargetArn() {
+            return "AwsLambdaTargetArn";
+        }
+
+        /**
+         * The memory size, in MB, you configured for the function. Must be a
+         * multiple of 64 MB.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: createFunction
+         * 
+         * @return the name of the header {@code AwsLambdaMemorySize}.
+         */
+        public String awsLambdaMemorySize() {
+            return "AwsLambdaMemorySize";
+        }
+
+        /**
+         * The Amazon Resource Name (ARN) of the KMS key used to encrypt your
+         * function's environment variables. If not provided, AWS Lambda will
+         * use a default service key.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: createFunction
+         * 
+         * @return the name of the header {@code AwsLambdaKMSKeyArn}.
+         */
+        public String awsLambdaKMSKeyArn() {
+            return "AwsLambdaKMSKeyArn";
+        }
+
+        /**
+         * The key-value pairs that represent your environment's configuration
+         * settings.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: createFunction
+         * 
+         * @return the name of the header {@code AwsLambdaEnvironmentVariables}.
+         */
+        public String awsLambdaEnvironmentVariables() {
+            return "AwsLambdaEnvironmentVariables";
+        }
+
+        /**
+         * This boolean parameter can be used to request AWS Lambda to create
+         * the Lambda function and publish a version as an atomic operation.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: createFunction updateFunction
+         * 
+         * @return the name of the header {@code AwsLambdaPublish}.
+         */
+        public String awsLambdaPublish() {
+            return "AwsLambdaPublish";
+        }
+
+        /**
+         * The function execution time at which Lambda should terminate the
+         * function. The default is 3 seconds.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: createFunction
+         * 
+         * @return the name of the header {@code AwsLambdaTimeout}.
+         */
+        public String awsLambdaTimeout() {
+            return "AwsLambdaTimeout";
+        }
+
+        /**
+         * The list of tags (key-value pairs) assigned to the new function.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: createFunction
+         * 
+         * @return the name of the header {@code AwsLambdaTags}.
+         */
+        public String awsLambdaTags() {
+            return "AwsLambdaTags";
+        }
+
+        /**
+         * Your function's tracing settings (Active or PassThrough).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: createFunction
+         * 
+         * @return the name of the header {@code AwsLambdaTracingConfig}.
+         */
+        public String awsLambdaTracingConfig() {
+            return "AwsLambdaTracingConfig";
+        }
+
+        /**
+         * If your Lambda function accesses resources in a VPC, a list of one or
+         * more security groups IDs in your VPC.
+         * 
+         * The option is a: {@code List<String>} type.
+         * 
+         * Group: createFunction
+         * 
+         * @return the name of the header {@code AwsLambdaSecurityGroupIds}.
+         */
+        public String awsLambdaSecurityGroupIds() {
+            return "AwsLambdaSecurityGroupIds";
+        }
+
+        /**
+         * If your Lambda function accesses resources in a VPC, a list of one or
+         * more subnet IDs in your VPC.
+         * 
+         * The option is a: {@code List<String>} type.
+         * 
+         * Group: createFunction
+         * 
+         * @return the name of the header {@code AwsLambdaSubnetIds}.
+         */
+        public String awsLambdaSubnetIds() {
+            return "AwsLambdaSubnetIds";
+        }
+
+        /**
+         * The Amazon Resource Name (ARN) of the event source.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: createEventSourceMapping
+         * 
+         * @return the name of the header {@code AwsLambdaEventSourceArn}.
+         */
+        public String awsLambdaEventSourceArn() {
+            return "AwsLambdaEventSourceArn";
+        }
+
+        /**
+         * The maximum number of records in each batch that Lambda pulls from
+         * your stream or queue and sends to your function.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: createEventSourceMapping
+         * 
+         * @return the name of the header {@code AwsLambdaEventSourceBatchSize}.
+         */
+        public String awsLambdaEventSourceBatchSize() {
+            return "AwsLambdaEventSourceBatchSize";
+        }
+
+        /**
+         * The identifier of the event source mapping.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: deleteEventSourceMapping
+         * 
+         * @return the name of the header {@code AwsLambdaEventSourceUuid}.
+         */
+        public String awsLambdaEventSourceUuid() {
+            return "AwsLambdaEventSourceUuid";
+        }
+
+        /**
+         * The function's Amazon Resource Name (ARN).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: listTags tagResource untagResource
+         * 
+         * @return the name of the header {@code AwsLambdaResourceArn}.
+         */
+        public String awsLambdaResourceArn() {
+            return "AwsLambdaResourceArn";
+        }
+
+        /**
+         * A list of tags to apply to the function.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: tagResource
+         * 
+         * @return the name of the header {@code AwsLambdaResourceTags}.
+         */
+        public String awsLambdaResourceTags() {
+            return "AwsLambdaResourceTags";
+        }
+
+        /**
+         * A list of tag keys to remove from the function.
+         * 
+         * The option is a: {@code List<String>} type.
+         * 
+         * Group: untagResource
+         * 
+         * @return the name of the header {@code AwsLambdaResourceTagKeys}.
+         */
+        public String awsLambdaResourceTagKeys() {
+            return "AwsLambdaResourceTagKeys";
+        }
+
+        /**
+         * A description for the version to override the description in the
+         * function configuration.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: publishVersion
+         * 
+         * @return the name of the header {@code AwsLambdaVersionDescription}.
+         */
+        public String awsLambdaVersionDescription() {
+            return "AwsLambdaVersionDescription";
+        }
+
+        /**
+         * Only update the function if the revision ID matches the ID that's
+         * specified.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: publishVersion
+         * 
+         * @return the name of the header {@code AwsLambdaVersionRevisionId}.
+         */
+        public String awsLambdaVersionRevisionId() {
+            return "AwsLambdaVersionRevisionId";
+        }
+
+        /**
+         * The function version to set in the alias.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: createAlias listAliases
+         * 
+         * @return the name of the header {@code AwsLambdaFunctionVersion}.
+         */
+        public String awsLambdaFunctionVersion() {
+            return "AwsLambdaFunctionVersion";
+        }
+
+        /**
+         * The function name of the alias.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Required: true
+         * Group: createAlias deleteAlias getAlias
+         * 
+         * @return the name of the header {@code AwsLambdaAliasFunctionName}.
+         */
+        public String awsLambdaAliasFunctionName() {
+            return "AwsLambdaAliasFunctionName";
+        }
+
+        /**
+         * The function description to set in the alias.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: createAlias
+         * 
+         * @return the name of the header {@code
+         * AwsLambdaAliasFunctionDescription}.
+         */
+        public String awsLambdaAliasFunctionDescription() {
+            return "AwsLambdaAliasFunctionDescription";
         }
     }
     static Lambda2EndpointBuilder endpointBuilder(

@@ -510,6 +510,19 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * Since: 2.20
          * Maven coordinates: org.apache.camel:camel-caffeine
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default CaffeineCacheHeaderNameBuilder caffeineCache() {
+            return CaffeineCacheHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Caffeine Cache (camel-caffeine)
+         * Perform caching operations using Caffeine Cache.
+         * 
+         * Category: cache,datagrid,clustering
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-caffeine
+         * 
          * Syntax: <code>caffeine-cache:cacheName</code>
          * 
          * Path parameter: cacheName (required)
@@ -543,6 +556,110 @@ public interface CaffeineCacheEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return CaffeineCacheEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Caffeine Cache component.
+     */
+    public static class CaffeineCacheHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final CaffeineCacheHeaderNameBuilder INSTANCE = new CaffeineCacheHeaderNameBuilder();
+
+        /**
+         * The action to execute. Possible values: CLEANUP PUT PUT_ALL GET
+         * GET_ALL INVALIDATE INVALIDATE_ALL AS_MAP.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code CaffeineAction}.
+         */
+        public String caffeineAction() {
+            return "CaffeineAction";
+        }
+
+        /**
+         * The flag indicating whether the action has a result or not.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code CaffeineActionHasResult}.
+         */
+        public String caffeineActionHasResult() {
+            return "CaffeineActionHasResult";
+        }
+
+        /**
+         * The flag indicating whether the action was successful or not.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code CaffeineActionSucceeded}.
+         */
+        public String caffeineActionSucceeded() {
+            return "CaffeineActionSucceeded";
+        }
+
+        /**
+         * The key for all actions on a single entry.
+         * 
+         * The option is a: {@code } type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code CaffeineKey}.
+         */
+        public String caffeineKey() {
+            return "CaffeineKey";
+        }
+
+        /**
+         * The keys to get (GET_ALL), to invalidate (INVALIDATE_ALL) or existing
+         * (AS_MAP) according to the action.
+         * 
+         * The option is a: {@code Set} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code CaffeineKeys}.
+         */
+        public String caffeineKeys() {
+            return "CaffeineKeys";
+        }
+
+        /**
+         * The value of key for all put actions (PUT or PUT_ALL).
+         * 
+         * The option is a: {@code } type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code CaffeineValue}.
+         */
+        public String caffeineValue() {
+            return "CaffeineValue";
+        }
+
+        /**
+         * The old value returned according to the action.
+         * 
+         * The option is a: {@code } type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code CaffeineOldValue}.
+         */
+        public String caffeineOldValue() {
+            return "CaffeineOldValue";
         }
     }
     static CaffeineCacheEndpointBuilder endpointBuilder(

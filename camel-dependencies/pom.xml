@@ -77,7 +77,7 @@
     <azure-storage-blob-version>12.16.1</azure-storage-blob-version>
     <azure-storage-datalake-version>12.9.1</azure-storage-datalake-version>
     <azure-storage-queue-version>12.12.2</azure-storage-queue-version>
-    <bouncycastle-version>1.70</bouncycastle-version>
+    <bouncycastle-version>1.71</bouncycastle-version>
     <box-java-sdk-version>2.58.0</box-java-sdk-version>
     <braintree-gateway-version>3.16.1</braintree-gateway-version>
     <brave-zipkin-version>5.13.3</brave-zipkin-version>
@@ -166,7 +166,7 @@
     <cxf.xjc.jvmArgs></cxf.xjc.jvmArgs>
     <datasonnet-mapper-version>2.1.4</datasonnet-mapper-version>
     <debezium-mysql-connector-version>8.0.28</debezium-mysql-connector-version>
-    <debezium-version>1.9.3.Final</debezium-version>
+    <debezium-version>1.9.4.Final</debezium-version>
     <deltaspike-version>1.9.5</deltaspike-version>
     <depends-maven-plugin-version>1.4.0</depends-maven-plugin-version>
     <derby-version>10.14.2.0</derby-version>
@@ -232,7 +232,7 @@
     <google-guava-version>20.0</google-guava-version>
     <google-maps-services-version>0.10.1</google-maps-services-version>
     <google-oauth-client-version>1.34.0</google-oauth-client-version>
-    <graaljs-version>21.3.0</graaljs-version>
+    <graaljs-version>22.1.0</graaljs-version>
     <graphql-java-version>14.0</graphql-java-version>
     <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
     <grpc-google-auth-library-version>1.5.3</grpc-google-auth-library-version>
@@ -330,7 +330,7 @@
     <jgroups-raft-version>0.5.3.Final</jgroups-raft-version>
     <jgroups-version>4.2.17.Final</jgroups-version>
     <jib-version>0.21.0</jib-version>
-    <jira-guava-version>26.0-jre</jira-guava-version>
+    <jira-guava-version>30.1.1-jre</jira-guava-version>
     <jira-rest-client-api-version>5.2.4</jira-rest-client-api-version>
     <jnats-version>2.14.1</jnats-version>
     <jodatime2-version>2.10.11</jodatime2-version>
@@ -355,6 +355,7 @@
     <jt400-version>11.0</jt400-version>
     <jta-api-1.2-version>1.2</jta-api-1.2-version>
     <junit-jupiter-version>5.8.2</junit-jupiter-version>
+    <junit-pioneer-version>1.7.1</junit-pioneer-version>
     <junit-toolbox-version>2.4</junit-toolbox-version>
     <junit-version>4.13.2</junit-version>
     <jxmpp-version>0.6.4</jxmpp-version>
@@ -363,7 +364,7 @@
     <jzlib-version>1.1.3</jzlib-version>
     <kafka-version>3.1.1</kafka-version>
     <kafka-vertx-version>2.8.1</kafka-vertx-version>
-    <kotlin-version>1.7.0</kotlin-version>
+    <kotlin-version>1.6.21</kotlin-version>
     <kubernetes-client-version>5.12.2</kubernetes-client-version>
     <kubernetes-model-version>5.12.2</kubernetes-model-version>
     <kudu-version>1.15.0</kudu-version>
@@ -413,7 +414,7 @@
     <minio-version>8.4.1</minio-version>
     <mock-javamail-version>1.9</mock-javamail-version>
     <mockito-version>3.12.4</mockito-version>
-    <mockwebserver-version>0.1.8</mockwebserver-version>
+    <mockwebserver-version>0.2.2</mockwebserver-version>
     <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
     <mongo-java-driver-version>4.6.0</mongo-java-driver-version>
     <mustache-java-version>0.9.10</mustache-java-version>
@@ -438,7 +439,7 @@
     <opentelemetry-version>1.13.0</opentelemetry-version>
     <opentracing-tracerresolver-version>0.1.8</opentracing-tracerresolver-version>
     <opentracing-version>0.33.0</opentracing-version>
-    <optaplanner-version>8.20.0.Final</optaplanner-version>
+    <optaplanner-version>8.23.0.Final</optaplanner-version>
     <os-maven-plugin-version>1.7.0</os-maven-plugin-version>
     <paho-version>1.2.5</paho-version>
     <partial-build-plugin-version>2.7</partial-build-plugin-version>
@@ -481,16 +482,16 @@
     <servlet-version-range>[3,4)</servlet-version-range>
     <shiro-version>1.9.0</shiro-version>
     <shrinkwrap-descriptors-version>2.0.0</shrinkwrap-descriptors-version>
-    <shrinkwrap-resolver-version>3.1.3</shrinkwrap-resolver-version>
+    <shrinkwrap-resolver-version>3.1.4</shrinkwrap-resolver-version>
     <shrinkwrap-version>1.2.6</shrinkwrap-version>
     <slack-api-model-version>1.8.1</slack-api-model-version>
     <slf4j-api-version>1.7.36</slf4j-api-version>
     <slf4j-version>1.7.36</slf4j-version>
     <smack-version>4.3.5</smack-version>
-    <smallrye-config-version>2.10.0</smallrye-config-version>
+    <smallrye-config-version>2.10.1</smallrye-config-version>
     <smallrye-fault-tolerance-version>5.4.0</smallrye-fault-tolerance-version>
     <smallrye-health-version>3.2.1</smallrye-health-version>
-    <smallrye-metrics-version>3.0.4</smallrye-metrics-version>
+    <smallrye-metrics-version>3.0.5</smallrye-metrics-version>
     <snakeyaml-engine-version>2.3</snakeyaml-engine-version>
     <snakeyaml-version>1.30</snakeyaml-version>
     <snmp4j-version>2.6.3_1</snmp4j-version>
@@ -512,7 +513,7 @@
     <spring-ws-version>3.1.3</spring-ws-version>
     <spring5-version>5.3.20</spring5-version>
     <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
-    <squareup-okhttp-version>3.14.7</squareup-okhttp-version>
+    <squareup-okhttp-version>3.14.9</squareup-okhttp-version>
     <squareup-okio-version>1.17.2</squareup-okio-version>
     <sshd-version>2.8.0</sshd-version>
     <stax-api-version>1.0.1</stax-api-version>

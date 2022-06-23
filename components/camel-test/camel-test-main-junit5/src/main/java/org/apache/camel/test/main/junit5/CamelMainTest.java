@@ -219,6 +219,13 @@ public @interface CamelMainTest {
     boolean dumpRouteCoverage() default false;
 
     /**
+     * Whether JMX should be used during testing.
+     *
+     * @return <tt>false</tt> by default.
+     */
+    boolean useJmx() default false;
+
+    /**
      * Returns the timeout to use when shutting down (unit in seconds).
      * <p/>
      * Will default use 10 seconds.

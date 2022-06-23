@@ -1568,6 +1568,19 @@ public interface GrpcEndpointBuilderFactory {
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-grpc
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default GrpcHeaderNameBuilder grpc() {
+            return GrpcHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * gRPC (camel-grpc)
+         * Expose gRPC endpoints and access external gRPC endpoints.
+         * 
+         * Category: rpc
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-grpc
+         * 
          * Syntax: <code>grpc:host:port/service</code>
          * 
          * Path parameter: host (required)
@@ -1615,6 +1628,58 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointBuilder grpc(String componentName, String path) {
             return GrpcEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the gRPC component.
+     */
+    public static class GrpcHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final GrpcHeaderNameBuilder INSTANCE = new GrpcHeaderNameBuilder();
+
+        /**
+         * Method name handled by the consumer service.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GrpcMethodName}.
+         */
+        public String grpcMethodName() {
+            return "GrpcMethodName";
+        }
+
+        /**
+         * If provided, the given agent will prepend the gRPC library's user
+         * agent information.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GrpcUserAgent}.
+         */
+        public String grpcUserAgent() {
+            return "GrpcUserAgent";
+        }
+
+        /**
+         * Received event type from the sent request. Possible values: onNext
+         * onCompleted onError.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GrpcEventType}.
+         */
+        public String grpcEventType() {
+            return "GrpcEventType";
         }
     }
     static GrpcEndpointBuilder endpointBuilder(String componentName, String path) {

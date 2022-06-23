@@ -1677,6 +1677,19 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * Since: 2.10
          * Maven coordinates: org.apache.camel:camel-twitter
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default TwitterDirectMessageHeaderNameBuilder twitterDirectmessage() {
+            return TwitterDirectMessageHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Twitter Direct Message (camel-twitter)
+         * Send and receive Twitter direct messages.
+         * 
+         * Category: cloud,api,social,chat
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-twitter
+         * 
          * Syntax: <code>twitter-directmessage:user</code>
          * 
          * Path parameter: user (required)
@@ -1713,6 +1726,44 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return TwitterDirectMessageEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Twitter Direct Message component.
+     */
+    public static class TwitterDirectMessageHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final TwitterDirectMessageHeaderNameBuilder INSTANCE = new TwitterDirectMessageHeaderNameBuilder();
+
+        /**
+         * The user.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code TwitterUser}.
+         */
+        public String twitterUser() {
+            return "TwitterUser";
+        }
+
+        /**
+         * The type of event. The supported values are the values of the enum
+         * org.apache.camel.component.twitter.consumer.TwitterEventType.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code TwitterEventType}.
+         */
+        public String twitterEventType() {
+            return "TwitterEventType";
         }
     }
     static TwitterDirectMessageEndpointBuilder endpointBuilder(

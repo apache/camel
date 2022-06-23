@@ -695,6 +695,20 @@ public interface GooglePubsubEndpointBuilderFactory {
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-google-pubsub
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default GooglePubsubHeaderNameBuilder googlePubsub() {
+            return GooglePubsubHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Google Pubsub (camel-google-pubsub)
+         * Send and receive messages to/from Google Cloud Platform PubSub
+         * Service.
+         * 
+         * Category: cloud,messaging
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-google-pubsub
+         * 
          * Syntax: <code>google-pubsub:projectId:destinationName</code>
          * 
          * Path parameter: projectId (required)
@@ -737,6 +751,84 @@ public interface GooglePubsubEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return GooglePubsubEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Google Pubsub component.
+     */
+    public static class GooglePubsubHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final GooglePubsubHeaderNameBuilder INSTANCE = new GooglePubsubHeaderNameBuilder();
+
+        /**
+         * The ID of the message, assigned by the server when the message is
+         * published.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code GooglePubsub.MessageId}.
+         */
+        public String googlepubsubMessageid() {
+            return "GooglePubsub.MessageId";
+        }
+
+        /**
+         * The ID used to acknowledge the received message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GooglePubsub.MsgAckId}.
+         */
+        public String googlepubsubMsgackid() {
+            return "GooglePubsub.MsgAckId";
+        }
+
+        /**
+         * The time at which the message was published.
+         * 
+         * The option is a: {@code com.google.protobuf.Timestamp} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GooglePubsub.PublishTime}.
+         */
+        public String googlepubsubPublishtime() {
+            return "GooglePubsub.PublishTime";
+        }
+
+        /**
+         * The attributes of the message.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code GooglePubsub.Attributes}.
+         */
+        public String googlepubsubAttributes() {
+            return "GooglePubsub.Attributes";
+        }
+
+        /**
+         * If non-empty, identifies related messages for which publish order
+         * should be respected.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code GooglePubsub.OrderingKey}.
+         */
+        public String googlepubsubOrderingkey() {
+            return "GooglePubsub.OrderingKey";
         }
     }
     static GooglePubsubEndpointBuilder endpointBuilder(

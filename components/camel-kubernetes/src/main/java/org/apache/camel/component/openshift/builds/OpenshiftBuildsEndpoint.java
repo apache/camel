@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.openshift.builds;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -30,7 +31,8 @@ import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_B
  * Perform operations on OpenShift Builds.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_BUILDS, title = "Openshift Builds",
-             syntax = "openshift-builds:masterUrl", producerOnly = true, label = "container,cloud,paas",
+             syntax = "openshift-builds:masterUrl", producerOnly = true,
+             category = { Category.CONTAINER, Category.CLOUD, Category.PAAS },
              headersClass = KubernetesConstants.class)
 public class OpenshiftBuildsEndpoint extends AbstractKubernetesEndpoint {
 
@@ -45,7 +47,7 @@ public class OpenshiftBuildsEndpoint extends AbstractKubernetesEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new IllegalArgumentException("The kubernetes-builds doesn't support consumer");
+        throw new IllegalArgumentException("The openshift-builds doesn't support consumer");
     }
 
 }

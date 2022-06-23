@@ -440,6 +440,19 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default KubernetesSecretsHeaderNameBuilder kubernetesSecrets() {
+            return KubernetesSecretsHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Kubernetes Secrets (camel-kubernetes)
+         * Perform operations on Kubernetes Secrets.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
          * Syntax: <code>kubernetes-secrets:masterUrl</code>
          * 
          * Path parameter: masterUrl (required)
@@ -473,6 +486,82 @@ public interface KubernetesSecretsEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return KubernetesSecretsEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Kubernetes Secrets component.
+     */
+    public static class KubernetesSecretsHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final KubernetesSecretsHeaderNameBuilder INSTANCE = new KubernetesSecretsHeaderNameBuilder();
+
+        /**
+         * The Producer operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesOperation}.
+         */
+        public String kubernetesOperation() {
+            return "KubernetesOperation";
+        }
+
+        /**
+         * The namespace name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesNamespaceName}.
+         */
+        public String kubernetesNamespaceName() {
+            return "KubernetesNamespaceName";
+        }
+
+        /**
+         * The secret labels.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesSecretsLabels}.
+         */
+        public String kubernetesSecretsLabels() {
+            return "KubernetesSecretsLabels";
+        }
+
+        /**
+         * The secret name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesSecretName}.
+         */
+        public String kubernetesSecretName() {
+            return "KubernetesSecretName";
+        }
+
+        /**
+         * A secret object.
+         * 
+         * The option is a: {@code io.fabric8.kubernetes.api.model.Secret} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesSecret}.
+         */
+        public String kubernetesSecret() {
+            return "KubernetesSecret";
         }
     }
     static KubernetesSecretsEndpointBuilder endpointBuilder(

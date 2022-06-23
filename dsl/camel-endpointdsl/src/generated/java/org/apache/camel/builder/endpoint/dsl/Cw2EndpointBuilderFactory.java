@@ -471,6 +471,19 @@ public interface Cw2EndpointBuilderFactory {
          * Since: 3.1
          * Maven coordinates: org.apache.camel:camel-aws2-cw
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default Cw2HeaderNameBuilder aws2Cw() {
+            return Cw2HeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * AWS CloudWatch (camel-aws2-cw)
+         * Sending metrics to AWS CloudWatch using AWS SDK version 2.x.
+         * 
+         * Category: cloud,monitoring
+         * Since: 3.1
+         * Maven coordinates: org.apache.camel:camel-aws2-cw
+         * 
          * Syntax: <code>aws2-cw:namespace</code>
          * 
          * Path parameter: namespace (required)
@@ -502,6 +515,121 @@ public interface Cw2EndpointBuilderFactory {
          */
         default Cw2EndpointBuilder aws2Cw(String componentName, String path) {
             return Cw2EndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the AWS CloudWatch component.
+     */
+    public static class Cw2HeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final Cw2HeaderNameBuilder INSTANCE = new Cw2HeaderNameBuilder();
+
+        /**
+         * The Amazon CW metric namespace.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsCwMetricNamespace}.
+         */
+        public String awsCwMetricNamespace() {
+            return "AwsCwMetricNamespace";
+        }
+
+        /**
+         * The Amazon CW metric name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsCwMetricName}.
+         */
+        public String awsCwMetricName() {
+            return "AwsCwMetricName";
+        }
+
+        /**
+         * The Amazon CW metric value.
+         * 
+         * The option is a: {@code Double} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsCwMetricValue}.
+         */
+        public String awsCwMetricValue() {
+            return "AwsCwMetricValue";
+        }
+
+        /**
+         * The Amazon CW metric unit.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsCwMetricUnit}.
+         */
+        public String awsCwMetricUnit() {
+            return "AwsCwMetricUnit";
+        }
+
+        /**
+         * The Amazon CW metric timestamp.
+         * 
+         * The option is a: {@code Date} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsCwMetricTimestamp}.
+         */
+        public String awsCwMetricTimestamp() {
+            return "AwsCwMetricTimestamp";
+        }
+
+        /**
+         * A map of dimension names and dimension values.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsCwMetricDimensions}.
+         */
+        public String awsCwMetricDimensions() {
+            return "AwsCwMetricDimensions";
+        }
+
+        /**
+         * The Amazon CW metric dimension name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsCwMetricDimensionName}.
+         */
+        public String awsCwMetricDimensionName() {
+            return "AwsCwMetricDimensionName";
+        }
+
+        /**
+         * The Amazon CW metric dimension value.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsCwMetricDimensionValue}.
+         */
+        public String awsCwMetricDimensionValue() {
+            return "AwsCwMetricDimensionValue";
         }
     }
     static Cw2EndpointBuilder endpointBuilder(String componentName, String path) {

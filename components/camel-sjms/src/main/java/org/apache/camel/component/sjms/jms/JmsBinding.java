@@ -381,7 +381,7 @@ public class JmsBinding {
                 throw new JMSException("Cannot send message as message body is null, and option allowNullBody is false.");
             }
             LOG.trace("Using JmsMessageType: {}", type);
-            Message answer = createJmsMessageForType(exchange, body, headers, session, context, type);
+            Message answer = createJmsMessageForType(exchange, body, session, context, type);
             // ensure default delivery mode is used by default
             answer.setJMSDeliveryMode(Message.DEFAULT_DELIVERY_MODE);
             return answer;
@@ -441,7 +441,7 @@ public class JmsBinding {
      * @return jmsMessage or null if the mapping was not successfully
      */
     protected Message createJmsMessageForType(
-            Exchange exchange, Object body, Map<String, Object> headers, Session session, CamelContext context,
+            Exchange exchange, Object body, Session session, CamelContext context,
             JmsMessageType type)
             throws JMSException {
         switch (type) {

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
@@ -37,9 +36,9 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.main.download.MavenGav;
+import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
 
@@ -78,8 +77,16 @@ abstract class ExportBaseCommand extends CamelCommand {
                         defaultValue = "2.7.0")
     protected String springBootVersion;
 
-    @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus version",
-                        defaultValue = "2.9.2.Final")
+    @CommandLine.Option(names = { "--quarkus-group-id" }, description = "Quarkus Platform Maven groupId",
+                        defaultValue = "io.quarkus.platform")
+    protected String quarkusGroupId;
+
+    @CommandLine.Option(names = { "--quarkus-artifact-id" }, description = "Quarkus Platform Maven artifactId",
+                        defaultValue = "quarkus-bom")
+    protected String quarkusArtifactId;
+
+    @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
+                        defaultValue = "2.10.0.Final")
     protected String quarkusVersion;
 
     @CommandLine.Option(names = { "--maven-wrapper" }, defaultValue = "true",
@@ -200,7 +207,7 @@ abstract class ExportBaseCommand extends CamelCommand {
 
         // include custom dependencies defined in profile
         if (profile != null && profile.exists()) {
-            OrderedProperties prop = new OrderedProperties();
+            Properties prop = new CamelCaseOrderedProperties();
             prop.load(new FileInputStream(profile));
             String deps = prop.getProperty("camel.jbang.dependencies");
             if (deps != null) {
@@ -232,7 +239,7 @@ abstract class ExportBaseCommand extends CamelCommand {
             String packageName)
             throws Exception {
         // read the settings file and find the files to copy
-        OrderedProperties prop = new OrderedProperties();
+        Properties prop = new CamelCaseOrderedProperties();
         prop.load(new FileInputStream(settings));
 
         for (String k : SETTINGS_PROP_SOURCE_KEYS) {
@@ -281,9 +288,9 @@ abstract class ExportBaseCommand extends CamelCommand {
             File settings, File profile, File targetDir,
             Function<Properties, Object> customize)
             throws Exception {
-        OrderedProperties prop = new OrderedProperties();
+        Properties prop = new CamelCaseOrderedProperties();
         prop.load(new FileInputStream(settings));
-        OrderedProperties prop2 = new OrderedProperties();
+        Properties prop2 = new CamelCaseOrderedProperties();
         if (profile.exists()) {
             prop2.load(new FileInputStream(profile));
         }

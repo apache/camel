@@ -184,6 +184,19 @@ public interface JsonPatchEndpointBuilderFactory {
          * Since: 3.12
          * Maven coordinates: org.apache.camel:camel-json-patch
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default JsonPatchHeaderNameBuilder jsonPatch() {
+            return JsonPatchHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * JsonPatch (camel-json-patch)
+         * Transforms JSON using JSON patch (RFC 6902).
+         * 
+         * Category: transformation
+         * Since: 3.12
+         * Maven coordinates: org.apache.camel:camel-json-patch
+         * 
          * Syntax: <code>json-patch:resourceUri</code>
          * 
          * Path parameter: resourceUri (required)
@@ -227,6 +240,30 @@ public interface JsonPatchEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return JsonPatchEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the JsonPatch component.
+     */
+    public static class JsonPatchHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final JsonPatchHeaderNameBuilder INSTANCE = new JsonPatchHeaderNameBuilder();
+
+        /**
+         * The resource URI.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JsonPatchResourceUri}.
+         */
+        public String jsonPatchResourceUri() {
+            return "JsonPatchResourceUri";
         }
     }
     static JsonPatchEndpointBuilder endpointBuilder(

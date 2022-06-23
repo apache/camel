@@ -18,8 +18,9 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Properties;
 
-import org.apache.camel.util.OrderedProperties;
+import org.apache.camel.util.CamelCaseOrderedProperties;
 import picocli.CommandLine.Command;
 
 @Command(name = "export",
@@ -35,7 +36,7 @@ class Export extends ExportBaseCommand {
         // read runtime and gav from profile if not configured
         File profile = new File(getProfile() + ".properties");
         if (profile.exists()) {
-            OrderedProperties prop = new OrderedProperties();
+            Properties prop = new CamelCaseOrderedProperties();
             prop.load(new FileInputStream(profile));
             if (this.runtime == null) {
                 this.runtime = prop.getProperty("camel.jbang.runtime");
@@ -46,6 +47,8 @@ class Export extends ExportBaseCommand {
             // allow configuring versions from profile
             this.javaVersion = prop.getProperty("camel.jbang.javaVersion", this.javaVersion);
             this.kameletsVersion = prop.getProperty("camel.jbang.kameletsVersion", this.kameletsVersion);
+            this.quarkusGroupId = prop.getProperty("camel.jbang.quarkusGroupId", this.quarkusGroupId);
+            this.quarkusArtifactId = prop.getProperty("camel.jbang.quarkusArtifactId", this.quarkusArtifactId);
             this.quarkusVersion = prop.getProperty("camel.jbang.quarkusVersion", this.quarkusVersion);
             this.springBootVersion = prop.getProperty("camel.jbang.springBootVersion", this.springBootVersion);
         }
@@ -82,6 +85,8 @@ class Export extends ExportBaseCommand {
         cmd.logging = this.logging;
         cmd.loggingLevel = this.loggingLevel;
         cmd.mainClassname = this.mainClassname;
+        cmd.quarkusGroupId = this.quarkusGroupId;
+        cmd.quarkusArtifactId = this.quarkusArtifactId;
         cmd.quarkusVersion = this.quarkusVersion;
         cmd.springBootVersion = this.springBootVersion;
         cmd.mavenWrapper = this.mavenWrapper;

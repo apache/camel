@@ -788,6 +788,20 @@ public interface SchedulerEndpointBuilderFactory {
          * Since: 2.15
          * Maven coordinates: org.apache.camel:camel-scheduler
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default SchedulerHeaderNameBuilder scheduler() {
+            return SchedulerHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Scheduler (camel-scheduler)
+         * Generate messages in specified intervals using
+         * java.util.concurrent.ScheduledExecutorService.
+         * 
+         * Category: core,scheduling
+         * Since: 2.15
+         * Maven coordinates: org.apache.camel:camel-scheduler
+         * 
          * Syntax: <code>scheduler:name</code>
          * 
          * Path parameter: name (required)
@@ -822,6 +836,30 @@ public interface SchedulerEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return SchedulerEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Scheduler component.
+     */
+    public static class SchedulerHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final SchedulerHeaderNameBuilder INSTANCE = new SchedulerHeaderNameBuilder();
+
+        /**
+         * The timestamp of the message.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code MessageTimestamp}.
+         */
+        public String messageTimestamp() {
+            return "MessageTimestamp";
         }
     }
     static SchedulerEndpointBuilder endpointBuilder(

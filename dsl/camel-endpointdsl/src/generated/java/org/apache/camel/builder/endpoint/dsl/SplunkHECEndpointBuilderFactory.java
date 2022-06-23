@@ -328,6 +328,20 @@ public interface SplunkHECEndpointBuilderFactory {
          * Since: 3.3
          * Maven coordinates: org.apache.camel:camel-splunk-hec
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default SplunkHECHeaderNameBuilder splunkHec() {
+            return SplunkHECHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Splunk HEC (camel-splunk-hec)
+         * The splunk component allows to publish events in Splunk using the
+         * HTTP Event Collector.
+         * 
+         * Category: log,monitoring
+         * Since: 3.3
+         * Maven coordinates: org.apache.camel:camel-splunk-hec
+         * 
          * Syntax: <code>splunk-hec:splunkURL/token</code>
          * 
          * Path parameter: splunkURL (required)
@@ -368,6 +382,32 @@ public interface SplunkHECEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return SplunkHECEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Splunk HEC component.
+     */
+    public static class SplunkHECHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final SplunkHECHeaderNameBuilder INSTANCE = new SplunkHECHeaderNameBuilder();
+
+        /**
+         * Epoch-formatted time. Specify with the time query string parameter.
+         * Sets a default for all events in the request. The default time can be
+         * overridden.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SplunkHECIndexTime}.
+         */
+        public String splunkHECIndexTime() {
+            return "SplunkHECIndexTime";
         }
     }
     static SplunkHECEndpointBuilder endpointBuilder(

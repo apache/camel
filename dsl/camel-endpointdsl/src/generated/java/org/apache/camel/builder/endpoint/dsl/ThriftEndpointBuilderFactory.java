@@ -872,6 +872,20 @@ public interface ThriftEndpointBuilderFactory {
          * Since: 2.20
          * Maven coordinates: org.apache.camel:camel-thrift
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default ThriftHeaderNameBuilder thrift() {
+            return ThriftHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Thrift (camel-thrift)
+         * Call and expose remote procedures (RPC) with Apache Thrift data
+         * format and serialization mechanism.
+         * 
+         * Category: rpc,transformation
+         * Since: 2.20
+         * Maven coordinates: org.apache.camel:camel-thrift
+         * 
          * Syntax: <code>thrift:host:port/service</code>
          * 
          * Path parameter: host
@@ -922,6 +936,30 @@ public interface ThriftEndpointBuilderFactory {
          */
         default ThriftEndpointBuilder thrift(String componentName, String path) {
             return ThriftEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Thrift component.
+     */
+    public static class ThriftHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final ThriftHeaderNameBuilder INSTANCE = new ThriftHeaderNameBuilder();
+
+        /**
+         * Method name handled by the consumer service.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code ThriftMethodName}.
+         */
+        public String thriftMethodName() {
+            return "ThriftMethodName";
         }
     }
     static ThriftEndpointBuilder endpointBuilder(

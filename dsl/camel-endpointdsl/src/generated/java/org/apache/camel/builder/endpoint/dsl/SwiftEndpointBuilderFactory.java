@@ -247,6 +247,19 @@ public interface SwiftEndpointBuilderFactory {
          * Since: 2.19
          * Maven coordinates: org.apache.camel:camel-openstack
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default SwiftHeaderNameBuilder openstackSwift() {
+            return SwiftHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * OpenStack Swift (camel-openstack)
+         * Access OpenStack Swift object/blob store.
+         * 
+         * Category: cloud,paas
+         * Since: 2.19
+         * Maven coordinates: org.apache.camel:camel-openstack
+         * 
          * Syntax: <code>openstack-swift:host</code>
          * 
          * Path parameter: host (required)
@@ -280,6 +293,199 @@ public interface SwiftEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return SwiftEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the OpenStack Swift component.
+     */
+    public static class SwiftHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final SwiftHeaderNameBuilder INSTANCE = new SwiftHeaderNameBuilder();
+
+        /**
+         * The container name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: object container
+         * 
+         * @return the name of the header {@code containerName}.
+         */
+        public String containerName() {
+            return "containerName";
+        }
+
+        /**
+         * The object name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: object
+         * 
+         * @return the name of the header {@code objectName}.
+         */
+        public String objectName() {
+            return "objectName";
+        }
+
+        /**
+         * Container metadata prefix.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: container
+         * 
+         * @return the name of the header {@code X-Container-Meta-}.
+         */
+        public String xContainerMeta() {
+            return "X-Container-Meta-";
+        }
+
+        /**
+         * Versions location.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: container
+         * 
+         * @return the name of the header {@code X-Versions-Location}.
+         */
+        public String xVersionsLocation() {
+            return "X-Versions-Location";
+        }
+
+        /**
+         * ACL - container read.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: container
+         * 
+         * @return the name of the header {@code X-Container-Read}.
+         */
+        public String xContainerRead() {
+            return "X-Container-Read";
+        }
+
+        /**
+         * ACL - container write.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: container
+         * 
+         * @return the name of the header {@code X-Container-Write}.
+         */
+        public String xContainerWrite() {
+            return "X-Container-Write";
+        }
+
+        /**
+         * List options - limit.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: container
+         * 
+         * @return the name of the header {@code limit}.
+         */
+        public String limit() {
+            return "limit";
+        }
+
+        /**
+         * List options - marker.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: container
+         * 
+         * @return the name of the header {@code marker}.
+         */
+        public String marker() {
+            return "marker";
+        }
+
+        /**
+         * List options - end marker.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: container
+         * 
+         * @return the name of the header {@code end_marker}.
+         */
+        public String endMarker() {
+            return "end_marker";
+        }
+
+        /**
+         * List options - delimiter.
+         * 
+         * The option is a: {@code Character} type.
+         * 
+         * Group: container
+         * 
+         * @return the name of the header {@code delimiter}.
+         */
+        public String delimiter() {
+            return "delimiter";
+        }
+
+        /**
+         * The path.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: container object
+         * 
+         * @return the name of the header {@code path}.
+         */
+        public String path() {
+            return "path";
+        }
+
+        /**
+         * The operation to perform.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code operation}.
+         */
+        public String operation() {
+            return "operation";
+        }
+
+        /**
+         * The ID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code ID}.
+         */
+        public String iD() {
+            return "ID";
+        }
+
+        /**
+         * The name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code name}.
+         */
+        public String name() {
+            return "name";
         }
     }
     static SwiftEndpointBuilder endpointBuilder(

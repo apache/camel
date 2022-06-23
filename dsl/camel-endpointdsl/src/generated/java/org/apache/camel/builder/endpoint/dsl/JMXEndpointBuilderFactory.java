@@ -906,6 +906,19 @@ public interface JMXEndpointBuilderFactory {
          * Since: 2.6
          * Maven coordinates: org.apache.camel:camel-jmx
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default JMXHeaderNameBuilder jmx() {
+            return JMXHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * JMX (camel-jmx)
+         * Receive JMX notifications.
+         * 
+         * Category: monitoring
+         * Since: 2.6
+         * Maven coordinates: org.apache.camel:camel-jmx
+         * 
          * Syntax: <code>jmx:serverURL</code>
          * 
          * Path parameter: serverURL
@@ -939,6 +952,30 @@ public interface JMXEndpointBuilderFactory {
          */
         default JMXEndpointBuilder jmx(String componentName, String path) {
             return JMXEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the JMX component.
+     */
+    public static class JMXHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final JMXHeaderNameBuilder INSTANCE = new JMXHeaderNameBuilder();
+
+        /**
+         * The handback.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code jmx.handback}.
+         */
+        public String jmxHandback() {
+            return "jmx.handback";
         }
     }
     static JMXEndpointBuilder endpointBuilder(String componentName, String path) {

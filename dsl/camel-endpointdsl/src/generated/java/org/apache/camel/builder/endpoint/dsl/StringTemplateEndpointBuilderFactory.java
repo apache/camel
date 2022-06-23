@@ -288,6 +288,19 @@ public interface StringTemplateEndpointBuilderFactory {
          * Since: 1.2
          * Maven coordinates: org.apache.camel:camel-stringtemplate
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default StringTemplateHeaderNameBuilder stringTemplate() {
+            return StringTemplateHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * String Template (camel-stringtemplate)
+         * Transform messages using StringTemplate engine.
+         * 
+         * Category: transformation,script
+         * Since: 1.2
+         * Maven coordinates: org.apache.camel:camel-stringtemplate
+         * 
          * Syntax: <code>string-template:resourceUri</code>
          * 
          * Path parameter: resourceUri (required)
@@ -331,6 +344,58 @@ public interface StringTemplateEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return StringTemplateEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the String Template component.
+     */
+    public static class StringTemplateHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final StringTemplateHeaderNameBuilder INSTANCE = new StringTemplateHeaderNameBuilder();
+
+        /**
+         * A URI for the template resource to use instead of the endpoint
+         * configured.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code StringTemplateResourceUri}.
+         */
+        public String stringTemplateResourceUri() {
+            return "StringTemplateResourceUri";
+        }
+
+        /**
+         * Map of the variables which are made available to a script or
+         * template.
+         * 
+         * The option is a: {@code Map<String, Object>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code StringTemplateVariableMap}.
+         */
+        public String stringTemplateVariableMap() {
+            return "StringTemplateVariableMap";
+        }
+
+        /**
+         * The template to use instead of the endpoint configured.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code StringTemplateTemplate}.
+         */
+        public String stringTemplateTemplate() {
+            return "StringTemplateTemplate";
         }
     }
     static StringTemplateEndpointBuilder endpointBuilder(

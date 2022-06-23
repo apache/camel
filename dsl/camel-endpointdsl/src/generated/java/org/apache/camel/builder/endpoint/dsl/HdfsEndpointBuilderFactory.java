@@ -2624,6 +2624,19 @@ public interface HdfsEndpointBuilderFactory {
          * Since: 2.14
          * Maven coordinates: org.apache.camel:camel-hdfs
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default HdfsHeaderNameBuilder hdfs() {
+            return HdfsHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * HDFS (camel-hdfs)
+         * Read and write from/to an HDFS filesystem using Hadoop 2.x.
+         * 
+         * Category: bigdata,hadoop,file
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-hdfs
+         * 
          * Syntax: <code>hdfs:hostName:port/path</code>
          * 
          * Path parameter: hostName (required)
@@ -2669,6 +2682,98 @@ public interface HdfsEndpointBuilderFactory {
          */
         default HdfsEndpointBuilder hdfs(String componentName, String path) {
             return HdfsEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the HDFS component.
+     */
+    public static class HdfsHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final HdfsHeaderNameBuilder INSTANCE = new HdfsHeaderNameBuilder();
+
+        /**
+         * Indicates to close the stream.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HdfsClose}.
+         */
+        public String hdfsClose() {
+            return "HdfsClose";
+        }
+
+        /**
+         * (producer) Specifies the name of the file to write (relative to the
+         * endpoint path). The name can be a String or an Expression object.
+         * Only relevant when not using a split strategy. (consumer) Specifies
+         * the name of the file to read.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code FileName}.
+         */
+        public String fileName() {
+            return "FileName";
+        }
+
+        /**
+         * The name of the file consumed.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code FileNameConsumed}.
+         */
+        public String fileNameConsumed() {
+            return "FileNameConsumed";
+        }
+
+        /**
+         * The absolute path of the file.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code FileAbsolutePath}.
+         */
+        public String fileAbsolutePath() {
+            return "FileAbsolutePath";
+        }
+
+        /**
+         * The HDFS key.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KEY}.
+         */
+        public String kEY() {
+            return "KEY";
+        }
+
+        /**
+         * The size of the file.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code FileLength}.
+         */
+        public String fileLength() {
+            return "FileLength";
         }
     }
     static HdfsEndpointBuilder endpointBuilder(String componentName, String path) {

@@ -112,6 +112,19 @@ public interface SagaEndpointBuilderFactory {
          * Since: 2.21
          * Maven coordinates: org.apache.camel:camel-saga
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default SagaHeaderNameBuilder saga() {
+            return SagaHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Saga (camel-saga)
+         * Execute custom actions within a route using the Saga EIP.
+         * 
+         * Category: core,endpoint
+         * Since: 2.21
+         * Maven coordinates: org.apache.camel:camel-saga
+         * 
          * Syntax: <code>saga:action</code>
          * 
          * Path parameter: action (required)
@@ -145,6 +158,30 @@ public interface SagaEndpointBuilderFactory {
          */
         default SagaEndpointBuilder saga(String componentName, String path) {
             return SagaEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Saga component.
+     */
+    public static class SagaHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final SagaHeaderNameBuilder INSTANCE = new SagaHeaderNameBuilder();
+
+        /**
+         * The long running action.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code Long-Running-Action}.
+         */
+        public String longRunningAction() {
+            return "Long-Running-Action";
         }
     }
     static SagaEndpointBuilder endpointBuilder(String componentName, String path) {

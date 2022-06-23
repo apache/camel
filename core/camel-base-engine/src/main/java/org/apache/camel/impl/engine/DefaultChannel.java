@@ -180,13 +180,14 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         // then wrap the output with the tracer and debugger (debugger first,
         // as we do not want regular tracer to trace the debugger)
         if (route.isDebugging()) {
-            if (camelContext.getDebugger() != null) {
+            final Debugger customDebugger = camelContext.getDebugger();
+            if (customDebugger != null) {
                 // use custom debugger
-                Debugger debugger = camelContext.getDebugger();
-                addAdvice(new DebuggerAdvice(debugger, nextProcessor, targetOutputDef));
-            } else {
+                addAdvice(new DebuggerAdvice(customDebugger, nextProcessor, targetOutputDef));
+            }
+            BacklogDebugger debugger = getBacklogDebugger(camelContext, customDebugger == null);
+            if (debugger != null) {
                 // use backlog debugger
-                BacklogDebugger debugger = getOrCreateBacklogDebugger(camelContext);
                 camelContext.addService(debugger);
                 addAdvice(new BacklogDebuggerAdvice(debugger, nextProcessor, targetOutputDef));
             }
@@ -284,7 +285,13 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         return tracer;
     }
 
-    private static BacklogDebugger getOrCreateBacklogDebugger(CamelContext camelContext) {
+    /**
+     * @param  camelContext   the camel context from which the {@link BacklogDebugger} should be found.
+     * @param  createIfAbsent indicates whether a {@link BacklogDebugger} should be created if it cannot be found
+     * @return                the instance of {@link BacklogDebugger} that could be found in the context or that was
+     *                        created if {@code createIfAbsent} is set to {@code true}, {@code null} otherwise.
+     */
+    private static BacklogDebugger getBacklogDebugger(CamelContext camelContext, boolean createIfAbsent) {
         BacklogDebugger debugger = null;
         if (camelContext.getRegistry() != null) {
             // lookup in registry
@@ -296,7 +303,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         if (debugger == null) {
             debugger = camelContext.hasService(BacklogDebugger.class);
         }
-        if (debugger == null) {
+        if (debugger == null && createIfAbsent) {
             // fallback to use the default debugger
             debugger = BacklogDebugger.createDebugger(camelContext);
         }

@@ -312,6 +312,19 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * Since: 2.24
          * Maven coordinates: org.apache.camel:camel-jgroups-raft
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default JGroupsRaftHeaderNameBuilder jgroupsRaft() {
+            return JGroupsRaftHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * JGroups raft (camel-jgroups-raft)
+         * Exchange messages with JGroups-raft clusters.
+         * 
+         * Category: clustering,messaging
+         * Since: 2.24
+         * Maven coordinates: org.apache.camel:camel-jgroups-raft
+         * 
          * Syntax: <code>jgroups-raft:clusterName</code>
          * 
          * Path parameter: clusterName (required)
@@ -345,6 +358,187 @@ public interface JGroupsRaftEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return JGroupsRaftEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the JGroups raft component.
+     */
+    public static class JGroupsRaftHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final JGroupsRaftHeaderNameBuilder INSTANCE = new JGroupsRaftHeaderNameBuilder();
+
+        /**
+         * The Raft log size in number of entries.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code JGROUPSRAFT_LOG_SIZE}.
+         */
+        public String jgroupsraftLogSize() {
+            return "JGROUPSRAFT_LOG_SIZE";
+        }
+
+        /**
+         * The commit index.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code JGROUPSRAFT_COMMIT_INDEX}.
+         */
+        public String jgroupsraftCommitIndex() {
+            return "JGROUPSRAFT_COMMIT_INDEX";
+        }
+
+        /**
+         * The current raft term.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code JGROUPSRAFT_CURRENT_TERM}.
+         */
+        public String jgroupsraftCurrentTerm() {
+            return "JGROUPSRAFT_CURRENT_TERM";
+        }
+
+        /**
+         * Whether the node is the Raft Leader or not.
+         * 
+         * The option is a: {@code boolean} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code JGROUPSRAFT_IS_LEADER}.
+         */
+        public String jgroupsraftIsLeader() {
+            return "JGROUPSRAFT_IS_LEADER";
+        }
+
+        /**
+         * The index of the last log entry that was appended to the log.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code JGROUPSRAFT_LAST_APPLIED}.
+         */
+        public String jgroupsraftLastApplied() {
+            return "JGROUPSRAFT_LAST_APPLIED";
+        }
+
+        /**
+         * The Address ot Raft Leader or not.
+         * 
+         * The option is a: {@code org.jgroups.Address} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code JGROUPSRAFT_LEADER_ADDRESS}.
+         */
+        public String jgroupsraftLeaderAddress() {
+            return "JGROUPSRAFT_LEADER_ADDRESS";
+        }
+
+        /**
+         * The Raft log size in bytes.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code JGROUPSRAFT_LOG_SIZE_BYTE}.
+         */
+        public String jgroupsraftLogSizeByte() {
+            return "JGROUPSRAFT_LOG_SIZE_BYTE";
+        }
+
+        /**
+         * The Raft id of the node.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code JGROUPSRAFT_RAFT_ID}.
+         */
+        public String jgroupsraftRaftId() {
+            return "JGROUPSRAFT_RAFT_ID";
+        }
+
+        /**
+         * The event type.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.jgroups.raft.JGroupsRaftEventType} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code JGROUPSRAFT_EVENT_TYPE}.
+         */
+        public String jgroupsraftEventType() {
+            return "JGROUPSRAFT_EVENT_TYPE";
+        }
+
+        /**
+         * Offset to use in the byte buffer to be set().
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JGROUPSRAFT_SET_OFFSET}.
+         */
+        public String jgroupsraftSetOffset() {
+            return "JGROUPSRAFT_SET_OFFSET";
+        }
+
+        /**
+         * Length to use in the byte buffer to be set().
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JGROUPSRAFT_SET_LENGTH}.
+         */
+        public String jgroupsraftSetLength() {
+            return "JGROUPSRAFT_SET_LENGTH";
+        }
+
+        /**
+         * Timeout to be used in set() operation.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JGROUPSRAFT_SET_TIMEOUT}.
+         */
+        public String jgroupsraftSetTimeout() {
+            return "JGROUPSRAFT_SET_TIMEOUT";
+        }
+
+        /**
+         * Timeunit to be used in set() operation.
+         * 
+         * The option is a: {@code java.util.concurrent.TimeUnit} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JGROUPSRAFT_SET_TIMEUNIT}.
+         */
+        public String jgroupsraftSetTimeunit() {
+            return "JGROUPSRAFT_SET_TIMEUNIT";
         }
     }
     static JGroupsRaftEndpointBuilder endpointBuilder(

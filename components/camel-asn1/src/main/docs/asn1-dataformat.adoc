@@ -10,7 +10,7 @@
 
 *Since Camel {since}*
 
-The ASN.1 Data Format Data Format [Intoduction to ASN.1](https://www.itu.int/en/ITU-T/asn1/Pages/introduction.aspx) is a Camel Frameworks's data format implementation based on Bouncy Castle's bcprov-jdk15on library and jASN.1's java compiler for the formal notation used for describing data transmitted by telecommunications protocols, regardless of language implementation and physical representation of these data, whatever the application, whether complex or very simple. Messages can be unmarshalled (conversion to simple Java POJO(s)) to plain Java objects. By the help of Camel's routing engine and data transformations you can then play with POJO(s) and apply customised formatting and call other Camel Component's to convert and send messages to upstream systems.
+The ASN.1 Data Format Data Format [Intoduction to ASN.1](https://www.itu.int/en/ITU-T/asn1/Pages/introduction.aspx) is a Camel Frameworks's data format implementation based on Bouncy Castle's bcprov-jdk18on library and jASN.1's java compiler for the formal notation used for describing data transmitted by telecommunications protocols, regardless of language implementation and physical representation of these data, whatever the application, whether complex or very simple. Messages can be unmarshalled (conversion to simple Java POJO(s)) to plain Java objects. By the help of Camel's routing engine and data transformations you can then play with POJO(s) and apply customised formatting and call other Camel Component's to convert and send messages to upstream systems.
 
 == ASN.1 Data Format Options
 
@@ -29,7 +29,7 @@ In this first example we unmarshal BER file payload to OutputStream and send it 
 from("direct:unmarshal").unmarshal(asn1).to("mock:unmarshal");
 -----------------------------------------------------------------------
 
-In the second example we unmarshal BER file payload to byte array using Split EIP. The reason for applying Split EIP is that usually each BER file or (ASN.1 structured file) contains multiple records to process and Split EIP helps us to get each record in a file as byte arrays which is actually ASN1Primitive's instance (by the use of Bouncy Castle's ASN.1 support in bcprov-jdk15on library)
+In the second example we unmarshal BER file payload to byte array using Split EIP. The reason for applying Split EIP is that usually each BER file or (ASN.1 structured file) contains multiple records to process and Split EIP helps us to get each record in a file as byte arrays which is actually ASN1Primitive's instance (by the use of Bouncy Castle's ASN.1 support in bcprov-jdk18on library)
 Byte arrays then may be converted to ASN1Primitive by the help of public static method in (ASN1Primitive.fromByteArray)
 In such example, note that you need to set `usingIterator=true`
 

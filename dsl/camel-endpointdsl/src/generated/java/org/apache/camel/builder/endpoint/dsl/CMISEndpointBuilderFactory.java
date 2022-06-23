@@ -829,6 +829,20 @@ public interface CMISEndpointBuilderFactory {
          * Since: 2.11
          * Maven coordinates: org.apache.camel:camel-cmis
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default CMISHeaderNameBuilder cmis() {
+            return CMISHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * CMIS (camel-cmis)
+         * Read and write data from to/from a CMIS compliant content
+         * repositories.
+         * 
+         * Category: cms,database
+         * Since: 2.11
+         * Maven coordinates: org.apache.camel:camel-cmis
+         * 
          * Syntax: <code>cmis:cmsUrl</code>
          * 
          * Path parameter: cmsUrl (required)
@@ -861,6 +875,218 @@ public interface CMISEndpointBuilderFactory {
          */
         default CMISEndpointBuilder cmis(String componentName, String path) {
             return CMISEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the CMIS component.
+     */
+    public static class CMISHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final CMISHeaderNameBuilder INSTANCE = new CMISHeaderNameBuilder();
+
+        /**
+         * The action to perform.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.cmis.CamelCMISActions} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code cmis:action}.
+         */
+        public String cmisAction() {
+            return "cmis:action";
+        }
+
+        /**
+         * If CamelCMISFolderPath is not set, will try to find out the path of
+         * the node from this cmis property and it is name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code cmis:path}.
+         */
+        public String cmisPath() {
+            return "cmis:path";
+        }
+
+        /**
+         * If CamelCMISFolderPath is not set, will try to find out the path of
+         * the node from this cmis property and it is path.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code cmis:name}.
+         */
+        public String cmisName() {
+            return "cmis:name";
+        }
+
+        /**
+         * The type of the node.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code cmis:objectTypeId}.
+         */
+        public String cmisObjecttypeid() {
+            return "cmis:objectTypeId";
+        }
+
+        /**
+         * The check-in comment for the document version.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code cmis:checkinComment}.
+         */
+        public String cmisCheckincomment() {
+            return "cmis:checkinComment";
+        }
+
+        /**
+         * The mimetype to set for a document.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code cmis:contentStreamMimeType}.
+         */
+        public String cmisContentstreammimetype() {
+            return "cmis:contentStreamMimeType";
+        }
+
+        /**
+         * The current folder to use during the execution. If not specified will
+         * use the root folder.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Default: /
+         * Group: producer
+         * 
+         * @return the name of the header {@code CMISFolderPath}.
+         */
+        public String cMISFolderPath() {
+            return "CMISFolderPath";
+        }
+
+        /**
+         * The id of the object.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code CMISObjectId}.
+         */
+        public String cMISObjectId() {
+            return "CMISObjectId";
+        }
+
+        /**
+         * The id of the destination folder.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code CMISDestinationFolderId}.
+         */
+        public String cMISDestinationFolderId() {
+            return "CMISDestinationFolderId";
+        }
+
+        /**
+         * The id of the source folder.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code CMISSourceFolderId}.
+         */
+        public String cMISSourceFolderId() {
+            return "CMISSourceFolderId";
+        }
+
+        /**
+         * Number of nodes returned from the query.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code CMISResultCount}.
+         */
+        public String cMISResultCount() {
+            return "CMISResultCount";
+        }
+
+        /**
+         * In queryMode this header will force the producer to retrieve the
+         * content of document nodes.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code CMISRetrieveContent}.
+         */
+        public String cMISRetrieveContent() {
+            return "CMISRetrieveContent";
+        }
+
+        /**
+         * Max number of nodes to read.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code CMISReadSize}.
+         */
+        public String cMISReadSize() {
+            return "CMISReadSize";
+        }
+
+        /**
+         * Apply only to this version (false) or all versions (true).
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code CMISAllVersions}.
+         */
+        public String cMISAllVersions() {
+            return "CMISAllVersions";
+        }
+
+        /**
+         * The versioning state.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code cmis:versioningState}.
+         */
+        public String cmisVersioningstate() {
+            return "cmis:versioningState";
         }
     }
     static CMISEndpointBuilder endpointBuilder(String componentName, String path) {

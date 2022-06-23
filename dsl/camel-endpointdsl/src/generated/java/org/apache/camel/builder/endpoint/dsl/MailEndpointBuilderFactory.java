@@ -3361,6 +3361,19 @@ public interface MailEndpointBuilderFactory {
          * Since: 1.0
          * Maven coordinates: org.apache.camel:camel-mail
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default MailHeaderNameBuilder imap() {
+            return MailHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * IMAP (camel-mail)
+         * Send and receive emails using imap, pop3 and smtp protocols.
+         * 
+         * Category: mail
+         * Since: 1.0
+         * Maven coordinates: org.apache.camel:camel-mail
+         * 
          * Syntax: <code>imap:host:port</code>
          * 
          * Path parameter: host (required)
@@ -3508,6 +3521,162 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointBuilder smtps(String path) {
             return MailEndpointBuilderFactory.endpointBuilder("smtps", path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the IMAP component.
+     */
+    public static class MailHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final MailHeaderNameBuilder INSTANCE = new MailHeaderNameBuilder();
+
+        /**
+         * Subject.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Subject}.
+         */
+        public String subject() {
+            return "Subject";
+        }
+
+        /**
+         * From.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code From}.
+         */
+        public String from() {
+            return "From";
+        }
+
+        /**
+         * To.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code To}.
+         */
+        public String to() {
+            return "To";
+        }
+
+        /**
+         * Cc.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Cc}.
+         */
+        public String cc() {
+            return "Cc";
+        }
+
+        /**
+         * Bcc.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Bcc}.
+         */
+        public String bcc() {
+            return "Bcc";
+        }
+
+        /**
+         * Reply to.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Reply-To}.
+         */
+        public String replyTo() {
+            return "Reply-To";
+        }
+
+        /**
+         * The content type.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code contentType}.
+         */
+        public String contentType() {
+            return "contentType";
+        }
+
+        /**
+         * After processing a mail message, it can be copied to a mail folder
+         * with the given name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code copyTo}.
+         */
+        public String copyTo() {
+            return "copyTo";
+        }
+
+        /**
+         * After processing a mail message, it can be moved to a mail folder
+         * with the given name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code moveTo}.
+         */
+        public String moveTo() {
+            return "moveTo";
+        }
+
+        /**
+         * Deletes the messages after they have been processed.
+         * 
+         * The option is a: {@code boolean} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code delete}.
+         */
+        public String delete() {
+            return "delete";
+        }
+
+        /**
+         * The message ID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code MailMessageId}.
+         */
+        public String mailMessageId() {
+            return "MailMessageId";
         }
     }
     static MailEndpointBuilder endpointBuilder(String componentName, String path) {

@@ -107,9 +107,9 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
 
         // process accordingly to endpoint configuration
         if (consumer.getEndpoint().isSynchronous()) {
-            processSynchronously(exchange, ctx, msg);
+            processSynchronously(exchange, ctx);
         } else {
-            processAsynchronously(exchange, ctx, msg);
+            processAsynchronously(exchange, ctx);
         }
     }
 
@@ -132,11 +132,11 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
         // noop
     }
 
-    private void processSynchronously(final Exchange exchange, final ChannelHandlerContext ctx, final Object message) {
+    private void processSynchronously(final Exchange exchange, final ChannelHandlerContext ctx) {
         try {
             consumer.getProcessor().process(exchange);
             if (consumer.getConfiguration().isSync()) {
-                sendResponse(message, ctx, exchange);
+                sendResponse(ctx, exchange);
             }
         } catch (Exception e) {
             consumer.getExceptionHandler().handleException(e);
@@ -146,12 +146,12 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
         }
     }
 
-    private void processAsynchronously(final Exchange exchange, final ChannelHandlerContext ctx, final Object message) {
+    private void processAsynchronously(final Exchange exchange, final ChannelHandlerContext ctx) {
         consumer.getAsyncProcessor().process(exchange, doneSync -> {
             // send back response if the communication is synchronous
             try {
                 if (consumer.getConfiguration().isSync()) {
-                    sendResponse(message, ctx, exchange);
+                    sendResponse(ctx, exchange);
                 }
             } catch (Exception e) {
                 consumer.getExceptionHandler().handleException(e);
@@ -162,7 +162,7 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
         });
     }
 
-    private void sendResponse(Object message, ChannelHandlerContext ctx, Exchange exchange) throws Exception {
+    private void sendResponse(ChannelHandlerContext ctx, Exchange exchange) throws Exception {
         Object body = getResponseBody(exchange);
 
         if (body == null) {
@@ -185,10 +185,10 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
             // we got a body to write
             ChannelFutureListener listener = createResponseFutureListener(consumer, exchange, ctx.channel().remoteAddress());
             if (consumer.getConfiguration().isTcp()) {
-                NettyHelper.writeBodyAsync(LOG, ctx.channel(), null, body, exchange, listener);
+                NettyHelper.writeBodyAsync(LOG, ctx.channel(), null, body, listener);
             } else {
                 NettyHelper.writeBodyAsync(LOG, ctx.channel(),
-                        exchange.getProperty(NettyConstants.NETTY_REMOTE_ADDRESS, SocketAddress.class), body, exchange,
+                        exchange.getProperty(NettyConstants.NETTY_REMOTE_ADDRESS, SocketAddress.class), body,
                         listener);
             }
         }

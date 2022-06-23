@@ -471,6 +471,19 @@ public interface EventbridgeEndpointBuilderFactory {
          * Since: 3.6
          * Maven coordinates: org.apache.camel:camel-aws2-eventbridge
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default EventbridgeHeaderNameBuilder aws2Eventbridge() {
+            return EventbridgeHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * AWS Eventbridge (camel-aws2-eventbridge)
+         * Manage AWS Eventbridge cluster instances using AWS SDK version 2.x.
+         * 
+         * Category: cloud,management
+         * Since: 3.6
+         * Maven coordinates: org.apache.camel:camel-aws2-eventbridge
+         * 
          * Syntax: <code>aws2-eventbridge://eventbusNameOrArn</code>
          * 
          * Path parameter: eventbusNameOrArn (required)
@@ -504,6 +517,108 @@ public interface EventbridgeEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return EventbridgeEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the AWS Eventbridge component.
+     */
+    public static class EventbridgeHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final EventbridgeHeaderNameBuilder INSTANCE = new EventbridgeHeaderNameBuilder();
+
+        /**
+         * The operation we want to perform.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsEventbridgeOperation}.
+         */
+        public String awsEventbridgeOperation() {
+            return "AwsEventbridgeOperation";
+        }
+
+        /**
+         * The name of the rule.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsEventbridgeRuleName}.
+         */
+        public String awsEventbridgeRuleName() {
+            return "AwsEventbridgeRuleName";
+        }
+
+        /**
+         * The prefix matching the rule name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsEventbridgeRuleNamePrefix}.
+         */
+        public String awsEventbridgeRuleNamePrefix() {
+            return "AwsEventbridgeRuleNamePrefix";
+        }
+
+        /**
+         * The event pattern.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsEventbridgeEventPattern}.
+         */
+        public String awsEventbridgeEventPattern() {
+            return "AwsEventbridgeEventPattern";
+        }
+
+        /**
+         * The targets to update or add to the rule.
+         * 
+         * The option is a: {@code Collection<Target>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsEventbridgeTargets}.
+         */
+        public String awsEventbridgeTargets() {
+            return "AwsEventbridgeTargets";
+        }
+
+        /**
+         * The IDs of the targets to remove from the rule.
+         * 
+         * The option is a: {@code Collection<String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsEventbridgeTargetsIds}.
+         */
+        public String awsEventbridgeTargetsIds() {
+            return "AwsEventbridgeTargetsIds";
+        }
+
+        /**
+         * The Amazon Resource Name (ARN) of the target resource.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsEventbridgeTargetArn}.
+         */
+        public String awsEventbridgeTargetArn() {
+            return "AwsEventbridgeTargetArn";
         }
     }
     static EventbridgeEndpointBuilder endpointBuilder(

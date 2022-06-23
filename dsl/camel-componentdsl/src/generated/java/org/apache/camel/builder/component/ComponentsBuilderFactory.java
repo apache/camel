@@ -3210,6 +3210,20 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.OpenshiftBuildsComponentBuilderFactory.openshiftBuilds();
     }
     /**
+     * Openshift Deployment Configs (camel-kubernetes)
+     * Perform operations on Openshift Deployment Configs and get notified on
+     * Deployment Config changes.
+     * 
+     * Category: container,cloud,paas
+     * Since: 3.18
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.OpenshiftDeploymentconfigsComponentBuilderFactory.OpenshiftDeploymentconfigsComponentBuilder openshiftDeploymentconfigs() {
+        return org.apache.camel.builder.component.dsl.OpenshiftDeploymentconfigsComponentBuilderFactory.openshiftDeploymentconfigs();
+    }
+    /**
      * OpenStack Cinder (camel-openstack)
      * Access data in OpenStack Cinder block storage.
      * 

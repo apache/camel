@@ -1395,6 +1395,20 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-kubernetes
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default KubernetesPodsHeaderNameBuilder kubernetesPods() {
+            return KubernetesPodsHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Kubernetes Pods (camel-kubernetes)
+         * Perform operations on Kubernetes Pods and get notified on Pod
+         * changes.
+         * 
+         * Category: container,cloud,paas
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-kubernetes
+         * 
          * Syntax: <code>kubernetes-pods:masterUrl</code>
          * 
          * Path parameter: masterUrl (required)
@@ -1429,6 +1443,110 @@ public interface KubernetesPodsEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return KubernetesPodsEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Kubernetes Pods component.
+     */
+    public static class KubernetesPodsHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final KubernetesPodsHeaderNameBuilder INSTANCE = new KubernetesPodsHeaderNameBuilder();
+
+        /**
+         * The Producer operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesOperation}.
+         */
+        public String kubernetesOperation() {
+            return "KubernetesOperation";
+        }
+
+        /**
+         * The namespace name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesNamespaceName}.
+         */
+        public String kubernetesNamespaceName() {
+            return "KubernetesNamespaceName";
+        }
+
+        /**
+         * The pod labels.
+         * 
+         * The option is a: {@code Map<String, String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesPodsLabels}.
+         */
+        public String kubernetesPodsLabels() {
+            return "KubernetesPodsLabels";
+        }
+
+        /**
+         * The pod name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesPodName}.
+         */
+        public String kubernetesPodName() {
+            return "KubernetesPodName";
+        }
+
+        /**
+         * The spec for a pod.
+         * 
+         * The option is a: {@code io.fabric8.kubernetes.api.model.PodSpec}
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KubernetesPodSpec}.
+         */
+        public String kubernetesPodSpec() {
+            return "KubernetesPodSpec";
+        }
+
+        /**
+         * Action watched by the consumer.
+         * 
+         * The option is a: {@code io.fabric8.kubernetes.client.Watcher.Action}
+         * type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code KubernetesEventAction}.
+         */
+        public String kubernetesEventAction() {
+            return "KubernetesEventAction";
+        }
+
+        /**
+         * Timestamp of the action watched by the consumer.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code KubernetesEventTimestamp}.
+         */
+        public String kubernetesEventTimestamp() {
+            return "KubernetesEventTimestamp";
         }
     }
     static KubernetesPodsEndpointBuilder endpointBuilder(

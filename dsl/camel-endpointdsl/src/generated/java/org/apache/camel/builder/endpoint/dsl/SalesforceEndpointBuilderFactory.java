@@ -3938,6 +3938,19 @@ public interface SalesforceEndpointBuilderFactory {
          * Since: 2.12
          * Maven coordinates: org.apache.camel:camel-salesforce
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default SalesforceHeaderNameBuilder salesforce() {
+            return SalesforceHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Salesforce (camel-salesforce)
+         * Communicate with Salesforce using Java DTOs.
+         * 
+         * Category: cloud,api,crm
+         * Since: 2.12
+         * Maven coordinates: org.apache.camel:camel-salesforce
+         * 
          * Syntax: <code>salesforce:operationName:topicName</code>
          * 
          * Path parameter: operationName
@@ -4015,6 +4028,251 @@ public interface SalesforceEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return SalesforceEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Salesforce component.
+     */
+    public static class SalesforceHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final SalesforceHeaderNameBuilder INSTANCE = new SalesforceHeaderNameBuilder();
+
+        /**
+         * The replay id.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SalesforceReplayId}.
+         */
+        public String salesforceReplayId() {
+            return "SalesforceReplayId";
+        }
+
+        /**
+         * The change event schema.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SalesforceChangeEventSchema}.
+         */
+        public String salesforceChangeEventSchema() {
+            return "SalesforceChangeEventSchema";
+        }
+
+        /**
+         * The event type.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SalesforceEventType}.
+         */
+        public String salesforceEventType() {
+            return "SalesforceEventType";
+        }
+
+        /**
+         * The commit timestamp.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SalesforceCommitTimestamp}.
+         */
+        public String salesforceCommitTimestamp() {
+            return "SalesforceCommitTimestamp";
+        }
+
+        /**
+         * The commit user.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SalesforceCommitUser}.
+         */
+        public String salesforceCommitUser() {
+            return "SalesforceCommitUser";
+        }
+
+        /**
+         * The commit number.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SalesforceCommitNumber}.
+         */
+        public String salesforceCommitNumber() {
+            return "SalesforceCommitNumber";
+        }
+
+        /**
+         * The record ids.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SalesforceRecordIds}.
+         */
+        public String salesforceRecordIds() {
+            return "SalesforceRecordIds";
+        }
+
+        /**
+         * The change type.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SalesforceChangeType}.
+         */
+        public String salesforceChangeType() {
+            return "SalesforceChangeType";
+        }
+
+        /**
+         * The change origin.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SalesforceChangeOrigin}.
+         */
+        public String salesforceChangeOrigin() {
+            return "SalesforceChangeOrigin";
+        }
+
+        /**
+         * The transaction key.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SalesforceTransactionKey}.
+         */
+        public String salesforceTransactionKey() {
+            return "SalesforceTransactionKey";
+        }
+
+        /**
+         * The sequence number.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SalesforceSequenceNumber}.
+         */
+        public String salesforceSequenceNumber() {
+            return "SalesforceSequenceNumber";
+        }
+
+        /**
+         * Is transaction end.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SalesforceIsTransactionEnd}.
+         */
+        public String salesforceIsTransactionEnd() {
+            return "SalesforceIsTransactionEnd";
+        }
+
+        /**
+         * The entity name.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SalesforceEntityName}.
+         */
+        public String salesforceEntityName() {
+            return "SalesforceEntityName";
+        }
+
+        /**
+         * The platform event schema.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SalesforcePlatformEventSchema}.
+         */
+        public String salesforcePlatformEventSchema() {
+            return "SalesforcePlatformEventSchema";
+        }
+
+        /**
+         * The created date.
+         * 
+         * The option is a: {@code java.time.ZonedDateTime} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SalesforceCreatedDate}.
+         */
+        public String salesforceCreatedDate() {
+            return "SalesforceCreatedDate";
+        }
+
+        /**
+         * The topic name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SalesforceTopicName}.
+         */
+        public String salesforceTopicName() {
+            return "SalesforceTopicName";
+        }
+
+        /**
+         * The channel.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SalesforceChannel}.
+         */
+        public String salesforceChannel() {
+            return "SalesforceChannel";
+        }
+
+        /**
+         * The client id.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SalesforceClientId}.
+         */
+        public String salesforceClientId() {
+            return "SalesforceClientId";
         }
     }
     static SalesforceEndpointBuilder endpointBuilder(

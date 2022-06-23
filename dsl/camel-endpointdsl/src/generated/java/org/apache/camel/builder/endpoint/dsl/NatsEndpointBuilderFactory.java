@@ -2198,6 +2198,19 @@ public interface NatsEndpointBuilderFactory {
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-nats
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default NatsHeaderNameBuilder nats() {
+            return NatsHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Nats (camel-nats)
+         * Send and receive messages from NATS messaging system.
+         * 
+         * Category: messaging
+         * Since: 2.17
+         * Maven coordinates: org.apache.camel:camel-nats
+         * 
          * Syntax: <code>nats:topic</code>
          * 
          * Path parameter: topic (required)
@@ -2229,6 +2242,82 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointBuilder nats(String componentName, String path) {
             return NatsEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the Nats component.
+     */
+    public static class NatsHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final NatsHeaderNameBuilder INSTANCE = new NatsHeaderNameBuilder();
+
+        /**
+         * The timestamp of a consumed message.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code NatsMessageTimestamp}.
+         */
+        public String natsMessageTimestamp() {
+            return "NatsMessageTimestamp";
+        }
+
+        /**
+         * The SID of a consumed message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code NatsSID}.
+         */
+        public String natsSID() {
+            return "NatsSID";
+        }
+
+        /**
+         * The ReplyTo of a consumed message (may be null).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code NatsReplyTo}.
+         */
+        public String natsReplyTo() {
+            return "NatsReplyTo";
+        }
+
+        /**
+         * The Subject of a consumed message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code NatsSubject}.
+         */
+        public String natsSubject() {
+            return "NatsSubject";
+        }
+
+        /**
+         * The Queue name of a consumed message (may be null).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code NatsQueueName}.
+         */
+        public String natsQueueName() {
+            return "NatsQueueName";
         }
     }
     static NatsEndpointBuilder endpointBuilder(String componentName, String path) {

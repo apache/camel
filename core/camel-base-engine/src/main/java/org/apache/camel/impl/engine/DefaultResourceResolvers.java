@@ -32,9 +32,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.zip.GZIPInputStream;
 
-import javax.net.ssl.HttpsURLConnection;
-
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.spi.ContentTypeAware;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.ResourceResolver;
 import org.apache.camel.support.CamelContextHelper;
@@ -112,47 +111,7 @@ public final class DefaultResourceResolvers {
 
         @Override
         public Resource createResource(String location, String remaining) {
-            return new ResourceSupport(SCHEME, location) {
-                @Override
-                public boolean exists() {
-                    URLConnection connection = null;
-
-                    try {
-                        connection = new URL(location).openConnection();
-
-                        if (connection instanceof HttpURLConnection) {
-                            return ((HttpURLConnection) connection).getResponseCode() == HttpURLConnection.HTTP_OK;
-                        }
-
-                        return connection.getContentLengthLong() > 0;
-                    } catch (IOException e) {
-                        throw new IllegalArgumentException(e);
-                    } finally {
-                        // close the http connection to avoid
-                        // leaking gaps in case of an exception
-                        if (connection instanceof HttpURLConnection) {
-                            ((HttpURLConnection) connection).disconnect();
-                        }
-                    }
-                }
-
-                @Override
-                public InputStream getInputStream() throws IOException {
-                    URLConnection con = new URL(location).openConnection();
-                    con.setUseCaches(false);
-
-                    try {
-                        return con.getInputStream();
-                    } catch (IOException e) {
-                        // close the http connection to avoid
-                        // leaking gaps in case of an exception
-                        if (con instanceof HttpURLConnection) {
-                            ((HttpURLConnection) con).disconnect();
-                        }
-                        throw e;
-                    }
-                }
-            };
+            return new HttpResource(SCHEME, location);
         }
     }
 
@@ -169,47 +128,7 @@ public final class DefaultResourceResolvers {
 
         @Override
         public Resource createResource(String location, String remaining) {
-            return new ResourceSupport(SCHEME, location) {
-                @Override
-                public boolean exists() {
-                    URLConnection connection = null;
-
-                    try {
-                        connection = new URL(location).openConnection();
-
-                        if (connection instanceof HttpsURLConnection) {
-                            return ((HttpsURLConnection) connection).getResponseCode() == HttpURLConnection.HTTP_OK;
-                        }
-
-                        return connection.getContentLengthLong() > 0;
-                    } catch (IOException e) {
-                        throw new IllegalArgumentException(e);
-                    } finally {
-                        // close the http connection to avoid
-                        // leaking gaps in case of an exception
-                        if (connection instanceof HttpsURLConnection) {
-                            ((HttpsURLConnection) connection).disconnect();
-                        }
-                    }
-                }
-
-                @Override
-                public InputStream getInputStream() throws IOException {
-                    URLConnection con = new URL(location).openConnection();
-                    con.setUseCaches(false);
-
-                    try {
-                        return con.getInputStream();
-                    } catch (IOException e) {
-                        // close the http connection to avoid
-                        // leaking gaps in case of an exception
-                        if (con instanceof HttpsURLConnection) {
-                            ((HttpsURLConnection) con).disconnect();
-                        }
-                        throw e;
-                    }
-                }
-            };
+            return new HttpResource(SCHEME, location);
         }
     }
 
@@ -406,6 +325,65 @@ public final class DefaultResourceResolvers {
                     return new ByteArrayInputStream(remaining.getBytes());
                 }
             };
+        }
+    }
+
+    static final class HttpResource extends ResourceSupport implements ContentTypeAware {
+        private String contentType;
+
+        HttpResource(String scheme, String location) {
+            super(scheme, location);
+        }
+
+        @Override
+        public boolean exists() {
+            URLConnection connection = null;
+
+            try {
+                connection = new URL(getLocation()).openConnection();
+
+                if (connection instanceof HttpURLConnection) {
+                    return ((HttpURLConnection) connection).getResponseCode() == HttpURLConnection.HTTP_OK;
+                }
+
+                return connection.getContentLengthLong() > 0;
+            } catch (IOException e) {
+                throw new IllegalArgumentException(e);
+            } finally {
+                // close the http connection to avoid
+                // leaking gaps in case of an exception
+                if (connection instanceof HttpURLConnection) {
+                    ((HttpURLConnection) connection).disconnect();
+                }
+            }
+        }
+
+        @Override
+        public InputStream getInputStream() throws IOException {
+            URLConnection con = new URL(getLocation()).openConnection();
+            con.setUseCaches(false);
+
+            try {
+                setContentType(con.getContentType());
+                return con.getInputStream();
+            } catch (IOException e) {
+                // close the http connection to avoid
+                // leaking gaps in case of an exception
+                if (con instanceof HttpURLConnection) {
+                    ((HttpURLConnection) con).disconnect();
+                }
+                throw e;
+            }
+        }
+
+        @Override
+        public String getContentType() {
+            return this.contentType;
+        }
+
+        @Override
+        public void setContentType(String contentType) {
+            this.contentType = contentType;
         }
     }
 }

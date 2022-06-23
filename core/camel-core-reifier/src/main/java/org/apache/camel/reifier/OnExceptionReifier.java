@@ -88,7 +88,7 @@ public class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> 
             handle = createPredicate(definition.getHandled());
         }
 
-        return new CatchProcessor(classes, childProcessor, when, handle);
+        return new CatchProcessor(classes, childProcessor, when);
     }
 
     protected List<Class<? extends Throwable>> createExceptionClasses(ClassResolver resolver) throws ClassNotFoundException {

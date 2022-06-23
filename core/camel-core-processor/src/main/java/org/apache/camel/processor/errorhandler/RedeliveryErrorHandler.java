@@ -1040,7 +1040,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 logFailedDelivery(true, false, false, false, isDeadLetterChannel(), exchange, msg, e);
             }
 
-            redeliveryCounter = incrementRedeliveryCounter(exchange, e);
+            redeliveryCounter = incrementRedeliveryCounter(exchange);
         }
 
         /**
@@ -1519,7 +1519,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         /**
          * Increments the redelivery counter and adds the redelivered flag if the message has been redelivered
          */
-        private int incrementRedeliveryCounter(Exchange exchange, Throwable e) {
+        private int incrementRedeliveryCounter(Exchange exchange) {
             Message in = exchange.getIn();
             Integer counter = in.getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
             int next = counter != null ? counter + 1 : 1;

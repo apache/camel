@@ -775,6 +775,19 @@ public interface GridFsEndpointBuilderFactory {
          * Since: 2.18
          * Maven coordinates: org.apache.camel:camel-mongodb-gridfs
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default GridFsHeaderNameBuilder mongodbGridfs() {
+            return GridFsHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * MongoDB GridFS (camel-mongodb-gridfs)
+         * Interact with MongoDB GridFS.
+         * 
+         * Category: database,nosql
+         * Since: 2.18
+         * Maven coordinates: org.apache.camel:camel-mongodb-gridfs
+         * 
          * Syntax: <code>mongodb-gridfs:connectionBean</code>
          * 
          * Path parameter: connectionBean (required)
@@ -808,6 +821,160 @@ public interface GridFsEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return GridFsEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the MongoDB GridFS component.
+     */
+    public static class GridFsHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final GridFsHeaderNameBuilder INSTANCE = new GridFsHeaderNameBuilder();
+
+        /**
+         * The content type of the file.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code FileContentType}.
+         */
+        public String fileContentType() {
+            return "FileContentType";
+        }
+
+        /**
+         * The size of the file.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code FileLength}.
+         */
+        public String fileLength() {
+            return "FileLength";
+        }
+
+        /**
+         * The size of the file.
+         * 
+         * The option is a: {@code Date} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code FileLastModified}.
+         */
+        public String fileLastModified() {
+            return "FileLastModified";
+        }
+
+        /**
+         * The name of the file.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code FileName}.
+         */
+        public String fileName() {
+            return "FileName";
+        }
+
+        /**
+         * The content type of the file.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code Content-Type}.
+         */
+        public String contentType() {
+            return "Content-Type";
+        }
+
+        /**
+         * The file name produced.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code FileNameProduced}.
+         */
+        public String fileNameProduced() {
+            return "FileNameProduced";
+        }
+
+        /**
+         * Any additional metadata stored along with the file in JSON format.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code gridfs.metadata}.
+         */
+        public String gridfsMetadata() {
+            return "gridfs.metadata";
+        }
+
+        /**
+         * The operation to perform.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code gridfs.operation}.
+         */
+        public String gridfsOperation() {
+            return "gridfs.operation";
+        }
+
+        /**
+         * The number of bytes per chunk for the uploaded file.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code gridfs.chunksize}.
+         */
+        public String gridfsChunksize() {
+            return "gridfs.chunksize";
+        }
+
+        /**
+         * The ObjectId of the file produced.
+         * 
+         * The option is a: {@code org.bson.types.ObjectId} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code gridfs.fileid}.
+         */
+        public String gridfsFileid() {
+            return "gridfs.fileid";
+        }
+
+        /**
+         * The ObjectId of the file.
+         * 
+         * The option is a: {@code org.bson.types.ObjectId} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code gridfs.objectid}.
+         */
+        public String gridfsObjectid() {
+            return "gridfs.objectid";
         }
     }
     static GridFsEndpointBuilder endpointBuilder(

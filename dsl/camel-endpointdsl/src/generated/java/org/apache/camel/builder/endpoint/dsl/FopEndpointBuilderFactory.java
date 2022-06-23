@@ -161,6 +161,20 @@ public interface FopEndpointBuilderFactory {
          * Since: 2.10
          * Maven coordinates: org.apache.camel:camel-fop
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default FopHeaderNameBuilder fop() {
+            return FopHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * FOP (camel-fop)
+         * Render messages into PDF and other output formats supported by Apache
+         * FOP.
+         * 
+         * Category: file,transformation
+         * Since: 2.10
+         * Maven coordinates: org.apache.camel:camel-fop
+         * 
          * Syntax: <code>fop:outputType</code>
          * 
          * Path parameter: outputType (required)
@@ -199,6 +213,30 @@ public interface FopEndpointBuilderFactory {
          */
         default FopEndpointBuilder fop(String componentName, String path) {
             return FopEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the FOP component.
+     */
+    public static class FopHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final FopHeaderNameBuilder INSTANCE = new FopHeaderNameBuilder();
+
+        /**
+         * The output format.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code Fop.Output.Format}.
+         */
+        public String fopOutputFormat() {
+            return "Fop.Output.Format";
         }
     }
     static FopEndpointBuilder endpointBuilder(String componentName, String path) {
