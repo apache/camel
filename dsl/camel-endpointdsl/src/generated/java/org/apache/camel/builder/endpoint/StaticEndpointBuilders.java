@@ -11063,6 +11063,51 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.OpenshiftBuildsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Openshift Deployment Configs (camel-kubernetes)
+     * Perform operations on Openshift Deployment Configs and get notified on
+     * Deployment Config changes.
+     * 
+     * Category: container,cloud,paas
+     * Since: 3.18
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * Syntax: <code>openshift-deploymentconfigs:masterUrl</code>
+     * 
+     * Path parameter: masterUrl (required)
+     * Kubernetes Master url
+     * 
+     * @param path masterUrl
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.OpenshiftDeploymentConfigsEndpointBuilderFactory.OpenshiftDeploymentConfigsEndpointBuilder openshiftDeploymentconfigs(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.OpenshiftDeploymentConfigsEndpointBuilderFactory.endpointBuilder("openshift-deploymentconfigs", path);
+    }
+    /**
+     * Openshift Deployment Configs (camel-kubernetes)
+     * Perform operations on Openshift Deployment Configs and get notified on
+     * Deployment Config changes.
+     * 
+     * Category: container,cloud,paas
+     * Since: 3.18
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * Syntax: <code>openshift-deploymentconfigs:masterUrl</code>
+     * 
+     * Path parameter: masterUrl (required)
+     * Kubernetes Master url
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path masterUrl
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.OpenshiftDeploymentConfigsEndpointBuilderFactory.OpenshiftDeploymentConfigsEndpointBuilder openshiftDeploymentconfigs(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.OpenshiftDeploymentConfigsEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * OpenStack Cinder (camel-openstack)
      * Access data in OpenStack Cinder block storage.
      * 
