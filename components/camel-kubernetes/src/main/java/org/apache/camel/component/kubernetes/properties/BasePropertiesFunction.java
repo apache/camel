@@ -34,7 +34,10 @@ import org.apache.camel.util.StringHelper;
 /**
  * Base for kubernetes {@link PropertiesFunction}.
  */
-abstract class BaseConfigMapPropertiesFunction extends ServiceSupport implements PropertiesFunction, CamelContextAware {
+abstract class BasePropertiesFunction extends ServiceSupport implements PropertiesFunction, CamelContextAware {
+
+    public static String MOUNT_PATH_CONFIGMAPS = "camel.k.mount-path.configmaps";
+    public static String MOUNT_PATH_SECRETS = "camel.k.mount-path.secrets";
 
     private CamelContext camelContext;
     private KubernetesClient client;
@@ -45,6 +48,12 @@ abstract class BaseConfigMapPropertiesFunction extends ServiceSupport implements
     protected void doInit() throws Exception {
         if (client == null) {
             client = CamelContextHelper.findSingleByType(camelContext, KubernetesClient.class);
+        }
+        if (mountPathConfigMaps == null) {
+            mountPathConfigMaps = System.getProperty(MOUNT_PATH_CONFIGMAPS, System.getenv(MOUNT_PATH_CONFIGMAPS));
+        }
+        if (mountPathSecrets == null) {
+            mountPathSecrets = System.getProperty(MOUNT_PATH_SECRETS, System.getenv(MOUNT_PATH_SECRETS));
         }
         ObjectHelper.notNull(client, "KubernetesClient must be configured");
     }

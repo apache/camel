@@ -27,9 +27,7 @@ import org.apache.camel.spi.PropertiesFunction;
  * A {@link PropertiesFunction} that can lookup from Kubernetes configmaps.
  */
 @org.apache.camel.spi.annotations.PropertiesFunction("configmap")
-public class ConfigMapPropertiesFunction extends BaseConfigMapPropertiesFunction {
-
-    public static String MOUNT_PATH_CONFIGMAPS = "camel.k.mount-path.configmaps";
+public class ConfigMapPropertiesFunction extends BasePropertiesFunction {
 
     @Override
     public String getName() {
@@ -38,10 +36,8 @@ public class ConfigMapPropertiesFunction extends BaseConfigMapPropertiesFunction
 
     @Override
     Path getMountPath() {
-        // lookup JVM system first, and then ENV afterwards
-        String path = System.getProperty(MOUNT_PATH_CONFIGMAPS, System.getenv(MOUNT_PATH_CONFIGMAPS));
-        if (path != null) {
-            return Paths.get(path);
+        if (getMountPathConfigMaps() != null) {
+            return Paths.get(getMountPathConfigMaps());
         }
         return null;
     }

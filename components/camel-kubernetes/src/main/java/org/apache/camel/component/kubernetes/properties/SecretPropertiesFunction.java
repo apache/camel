@@ -27,9 +27,7 @@ import org.apache.camel.spi.PropertiesFunction;
  * A {@link PropertiesFunction} that can lookup from Kubernetes secret.
  */
 @org.apache.camel.spi.annotations.PropertiesFunction("secret")
-public class SecretPropertiesFunction extends BaseConfigMapPropertiesFunction {
-
-    public static String MOUNT_PATH_SECRETS = "camel.k.mount-path.secrets";
+public class SecretPropertiesFunction extends BasePropertiesFunction {
 
     @Override
     public String getName() {
@@ -38,10 +36,8 @@ public class SecretPropertiesFunction extends BaseConfigMapPropertiesFunction {
 
     @Override
     Path getMountPath() {
-        // lookup JVM system first, and then ENV afterwards
-        String path = System.getProperty(MOUNT_PATH_SECRETS, System.getenv(MOUNT_PATH_SECRETS));
-        if (path != null) {
-            return Paths.get(path);
+        if (getMountPathSecrets() != null) {
+            return Paths.get(getMountPathSecrets());
         }
         return null;
     }
