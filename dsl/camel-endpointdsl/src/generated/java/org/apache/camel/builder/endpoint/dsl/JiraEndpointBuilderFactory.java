@@ -874,9 +874,9 @@ public interface JiraEndpointBuilderFactory {
         }
 
         /**
-         * The comments of the issue.
+         * The comma separated list of the issue's components.
          * 
-         * The option is a: {@code List<String>} type.
+         * The option is a: {@code String} type.
          * 
          * Group: producer
          * 
@@ -1017,9 +1017,9 @@ public interface JiraEndpointBuilderFactory {
         }
 
         /**
-         * The watchers of the issue to add.
+         * The comma separated list of watchers to add to the issue.
          * 
-         * The option is a: {@code List<String>} type.
+         * The option is a: {@code String} type.
          * 
          * Group: producer
          * 
@@ -1032,7 +1032,7 @@ public interface JiraEndpointBuilderFactory {
         /**
          * The watchers of the issue to remove.
          * 
-         * The option is a: {@code List<String>} type.
+         * The option is a: {@code String} type.
          * 
          * Group: producer
          * 
