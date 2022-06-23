@@ -399,7 +399,7 @@
         <minimal-json-version>0.9.5</minimal-json-version>
         <minio-version>8.4.1</minio-version>
         <mock-javamail-version>1.9</mock-javamail-version>
-        <mockwebserver-version>0.1.8</mockwebserver-version>
+        <mockwebserver-version>0.2.2</mockwebserver-version>
         <mockito-version>3.12.4</mockito-version>
         <mongo-java-driver-version>4.6.0</mongo-java-driver-version>
         <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
@@ -500,7 +500,7 @@
         <spring-security-version>5.7.1</spring-security-version>
         <spring-ws-version>3.1.3</spring-ws-version>
         <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
-        <squareup-okhttp-version>3.14.7</squareup-okhttp-version>
+        <squareup-okhttp-version>3.14.9</squareup-okhttp-version>
         <squareup-okio-version>1.17.2</squareup-okio-version>
         <sshd-version>2.8.0</sshd-version>
         <stompjms-version>1.19</stompjms-version>
