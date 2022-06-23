@@ -203,7 +203,12 @@ public class DefaultRoutesCollector implements RoutesCollector {
 
     /**
      * Strategy to allow collecting additional routes from registry.
+     * 
+     * @param camelContext   the context
+     * @param excludePattern the exclusion pattern
+     * @param includePattern the inclusion pattern
      */
+    @SuppressWarnings("unused")
     protected Collection<RoutesBuilder> collectAdditionalRoutesFromRegistry(
             CamelContext camelContext,
             String excludePattern,
