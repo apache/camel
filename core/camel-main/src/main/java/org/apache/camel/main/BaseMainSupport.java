@@ -1015,19 +1015,19 @@ public abstract class BaseMainSupport extends BaseService {
         if (!threadPoolProperties.isEmpty() || mainConfigurationProperties.hasThreadPoolConfiguration()) {
             LOG.debug("Auto-configuring Thread Pool from loaded properties: {}", threadPoolProperties.size());
             MainSupportModelConfigurer.setThreadPoolProperties(camelContext, mainConfigurationProperties, threadPoolProperties,
-                    mainConfigurationProperties.isAutoConfigurationFailFast(), autoConfiguredProperties);
+                    autoConfiguredProperties);
         }
         // need to let camel-main setup health-check using its convention over configuration
         boolean hc = mainConfigurationProperties.health().getEnabled() != null; // health-check is enabled by default
         if (hc || !healthProperties.isEmpty() || mainConfigurationProperties.hasHealthCheckConfiguration()) {
             LOG.debug("Auto-configuring HealthCheck from loaded properties: {}", healthProperties.size());
-            setHealthCheckProperties(camelContext, healthProperties, mainConfigurationProperties.isAutoConfigurationFailFast(),
+            setHealthCheckProperties(camelContext, healthProperties,
                     autoConfiguredProperties);
         }
         if (!routeTemplateProperties.isEmpty()) {
             LOG.debug("Auto-configuring Route templates from loaded properties: {}", routeTemplateProperties.size());
             setRouteTemplateProperties(camelContext, routeTemplateProperties,
-                    mainConfigurationProperties.isAutoConfigurationFailFast(), autoConfiguredProperties);
+                    autoConfiguredProperties);
         }
         if (!lraProperties.isEmpty() || mainConfigurationProperties.hasLraConfiguration()) {
             LOG.debug("Auto-configuring Saga LRA from loaded properties: {}", lraProperties.size());
@@ -1103,7 +1103,7 @@ public abstract class BaseMainSupport extends BaseService {
 
     private void setRouteTemplateProperties(
             CamelContext camelContext, OrderedLocationProperties routeTemplateProperties,
-            boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
+            OrderedLocationProperties autoConfiguredProperties)
             throws Exception {
 
         // store the route template parameters as a source and register it on the camel context
@@ -1127,7 +1127,7 @@ public abstract class BaseMainSupport extends BaseService {
 
     private void setHealthCheckProperties(
             CamelContext camelContext, OrderedLocationProperties healthCheckProperties,
-            boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
+            OrderedLocationProperties autoConfiguredProperties)
             throws Exception {
 
         HealthConfigurationProperties health = mainConfigurationProperties.health();
