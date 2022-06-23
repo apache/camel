@@ -86,7 +86,7 @@ public final class MainSupportModelConfigurer {
             CamelContext camelContext,
             MainConfigurationProperties mainConfigurationProperties,
             OrderedLocationProperties threadPoolProperties,
-            boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
+            OrderedLocationProperties autoConfiguredProperties)
             throws Exception {
 
         ThreadPoolConfigurationProperties tp = mainConfigurationProperties.threadPool();
