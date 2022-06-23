@@ -341,6 +341,7 @@
         <junit-toolbox-version>2.4</junit-toolbox-version>
         <junit-version>4.13.2</junit-version>
         <junit-jupiter-version>5.8.2</junit-jupiter-version>
+        <junit-pioneer-version>1.7.1</junit-pioneer-version>
         <jxmpp-version>0.6.4</jxmpp-version>
         <jython-version>2.7.2</jython-version>
         <jython-standalone-version>2.7.2</jython-standalone-version>
@@ -3613,6 +3614,11 @@
                 <version>${junit-jupiter-version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit-pioneer</groupId>
+                <artifactId>junit-pioneer</artifactId>
+                <version>${junit-pioneer-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.awaitility</groupId>
