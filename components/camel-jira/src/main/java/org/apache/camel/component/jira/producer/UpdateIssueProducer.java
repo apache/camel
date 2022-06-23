@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jira.producer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.atlassian.jira.rest.client.api.IssueRestClient;
@@ -26,8 +27,16 @@ import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jira.JiraEndpoint;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 
-import static org.apache.camel.component.jira.JiraConstants.*;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_ASSIGNEE;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_COMPONENTS;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_KEY;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_PRIORITY_ID;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_PRIORITY_NAME;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_SUMMARY;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_TYPE_ID;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_TYPE_NAME;
 
 public class UpdateIssueProducer extends DefaultProducer {
 
@@ -49,7 +58,7 @@ public class UpdateIssueProducer extends DefaultProducer {
         String assigneeName = exchange.getIn().getHeader(ISSUE_ASSIGNEE, String.class);
         String priorityName = exchange.getIn().getHeader(ISSUE_PRIORITY_NAME, String.class);
         Long priorityId = exchange.getIn().getHeader(ISSUE_PRIORITY_ID, Long.class);
-        List<String> components = exchange.getIn().getHeader(ISSUE_COMPONENTS, List.class);
+        String components = exchange.getIn().getHeader(ISSUE_COMPONENTS, String.class);
         if (issueTypeId == null && issueTypeName != null) {
             Iterable<IssueType> issueTypes = client.getMetadataClient().getIssueTypes().claim();
             for (IssueType type : issueTypes) {
@@ -79,8 +88,13 @@ public class UpdateIssueProducer extends DefaultProducer {
         if (description != null) {
             builder.setDescription(description);
         }
-        if (components != null && !components.isEmpty()) {
-            builder.setComponentsNames(components);
+        if (ObjectHelper.isNotEmpty(components)) {
+            String[] compArr = components.split(",");
+            List<String> comps = new ArrayList<>(compArr.length);
+            for (String s : compArr) {
+                comps.add(s.trim());
+            }
+            builder.setComponentsNames(comps);
         }
         if (priorityId != null) {
             builder.setPriorityId(priorityId);

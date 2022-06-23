@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jira.producer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.atlassian.jira.rest.client.api.IssueRestClient;
@@ -28,6 +29,7 @@ import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jira.JiraEndpoint;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.component.jira.JiraConstants.*;
 
@@ -49,8 +51,8 @@ public class AddIssueProducer extends DefaultProducer {
         String assigneeName = exchange.getIn().getHeader(ISSUE_ASSIGNEE, String.class);
         String priorityName = exchange.getIn().getHeader(ISSUE_PRIORITY_NAME, String.class);
         Long priorityId = exchange.getIn().getHeader(ISSUE_PRIORITY_ID, Long.class);
-        List<String> components = exchange.getIn().getHeader(ISSUE_COMPONENTS, List.class);
-        List<String> watchers = exchange.getIn().getHeader(ISSUE_WATCHERS_ADD, List.class);
+        String components = exchange.getIn().getHeader(ISSUE_COMPONENTS, String.class);
+        String watchers = exchange.getIn().getHeader(ISSUE_WATCHERS_ADD, String.class);
         // search for issueTypeId from an issueTypeName
         if (issueTypeId == null && issueTypeName != null) {
             Iterable<IssueType> issueTypes = client.getMetadataClient().getIssueTypes().claim();
@@ -86,8 +88,16 @@ public class AddIssueProducer extends DefaultProducer {
         IssueInputBuilder builder = new IssueInputBuilder(projectKey, issueTypeId);
         builder.setDescription(exchange.getIn().getBody(String.class));
         builder.setSummary(summary);
-        if (components != null && !components.isEmpty()) {
-            builder.setComponentsNames(components);
+        if (ObjectHelper.isNotEmpty(components)) {
+            String[] compArr = components.split(",");
+            List<String> comps = new ArrayList<>(compArr.length);
+            for (String s : compArr) {
+                String c = s.trim();
+                if (c.length() > 0) {
+                    comps.add(c);
+                }
+            }
+            builder.setComponentsNames(comps);
         }
         if (priorityId != null) {
             builder.setPriorityId(priorityId);
@@ -99,17 +109,21 @@ public class AddIssueProducer extends DefaultProducer {
         IssueRestClient issueClient = client.getIssueClient();
         BasicIssue issueCreated = issueClient.createIssue(builder.build()).claim();
         Issue issue = issueClient.getIssue(issueCreated.getKey()).claim();
-        if (watchers != null && !watchers.isEmpty()) {
-            for (String watcher : watchers) {
-                issueClient.addWatcher(issue.getWatchers().getSelf(), watcher);
+        if (ObjectHelper.isNotEmpty(watchers)) {
+            String[] watArr = watchers.split(",");
+            for (String s : watArr) {
+                String watcher = s.trim();
+                if (watcher.length() > 0) {
+                    issueClient.addWatcher(issue.getWatchers().getSelf(), watcher);
+                }
             }
         }
 
         // support InOut
         if (exchange.getPattern().isOutCapable()) {
             // copy the header of in message to the out message
-            exchange.getOut().copyFrom(exchange.getIn());
-            exchange.getOut().setBody(issue);
+            exchange.getMessage().copyFrom(exchange.getIn());
+            exchange.getMessage().setBody(issue);
         } else {
             exchange.getIn().setBody(issue);
         }
