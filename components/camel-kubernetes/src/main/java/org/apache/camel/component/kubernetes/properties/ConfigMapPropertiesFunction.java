@@ -16,11 +16,12 @@
  */
 package org.apache.camel.component.kubernetes.properties;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Base64;
 
 import io.fabric8.kubernetes.api.model.ConfigMap;
 import org.apache.camel.spi.PropertiesFunction;
-import org.apache.camel.util.StringHelper;
 
 /**
  * A {@link PropertiesFunction} that can lookup from Kubernetes configmaps.
@@ -28,22 +29,25 @@ import org.apache.camel.util.StringHelper;
 @org.apache.camel.spi.annotations.PropertiesFunction("configmap")
 public class ConfigMapPropertiesFunction extends BaseConfigMapPropertiesFunction {
 
+    public static String MOUNT_PATH_CONFIGMAPS = "camel.k.mount-path.configmaps";
+
     @Override
     public String getName() {
         return "configmap";
     }
 
     @Override
-    public String apply(String remainder) {
-        String defaultValue = StringHelper.after(remainder, ":");
-
-        String name = StringHelper.before(remainder, "/");
-        String key = StringHelper.after(remainder, "/");
-
-        if (name == null || key == null) {
-            return defaultValue;
+    Path getMountPath() {
+        // lookup JVM system first, and then ENV afterwards
+        String path = System.getProperty(MOUNT_PATH_CONFIGMAPS, System.getenv(MOUNT_PATH_CONFIGMAPS));
+        if (path != null) {
+            return Paths.get(path);
         }
+        return null;
+    }
 
+    @Override
+    String lookup(String name, String key, String defaultValue) {
         String answer = null;
         ConfigMap cm = getClient().configMaps().withName(name).get();
         if (cm != null) {

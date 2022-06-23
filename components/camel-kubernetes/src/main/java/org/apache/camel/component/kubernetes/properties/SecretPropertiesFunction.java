@@ -16,11 +16,12 @@
  */
 package org.apache.camel.component.kubernetes.properties;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Base64;
 
 import io.fabric8.kubernetes.api.model.Secret;
 import org.apache.camel.spi.PropertiesFunction;
-import org.apache.camel.util.StringHelper;
 
 /**
  * A {@link PropertiesFunction} that can lookup from Kubernetes secret.
@@ -28,22 +29,25 @@ import org.apache.camel.util.StringHelper;
 @org.apache.camel.spi.annotations.PropertiesFunction("secret")
 public class SecretPropertiesFunction extends BaseConfigMapPropertiesFunction {
 
+    public static String MOUNT_PATH_SECRETS = "camel.k.mount-path.secrets";
+
     @Override
     public String getName() {
         return "secret";
     }
 
     @Override
-    public String apply(String remainder) {
-        String defaultValue = StringHelper.after(remainder, ":");
-
-        String name = StringHelper.before(remainder, "/");
-        String key = StringHelper.after(remainder, "/");
-
-        if (name == null || key == null) {
-            return defaultValue;
+    Path getMountPath() {
+        // lookup JVM system first, and then ENV afterwards
+        String path = System.getProperty(MOUNT_PATH_SECRETS, System.getenv(MOUNT_PATH_SECRETS));
+        if (path != null) {
+            return Paths.get(path);
         }
+        return null;
+    }
 
+    @Override
+    String lookup(String name, String key, String defaultValue) {
         String answer = null;
         Secret sec = getClient().secrets().withName(name).get();
         if (sec != null) {
