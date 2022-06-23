@@ -36,12 +36,13 @@ import org.apache.camel.util.StringHelper;
  */
 abstract class BasePropertiesFunction extends ServiceSupport implements PropertiesFunction, CamelContextAware {
 
-    public static String MOUNT_PATH_CONFIGMAPS = "org.apache.camel.component.kubernetes.properties.mount-path-configmaps";
-    public static String MOUNT_PATH_SECRETS = "org.apache.camel.component.kubernetes.properties.mount-path-secrets";
+    // keys in application.properties for mount paths
+    public static final String MOUNT_PATH_CONFIGMAPS = "org.apache.camel.component.kubernetes.properties.mount-path-configmaps";
+    public static final String MOUNT_PATH_SECRETS = "org.apache.camel.component.kubernetes.properties.mount-path-secrets";
 
-    // use camel-k env for mount paths
-    public static String ENV_MOUNT_PATH_CONFIGMAPS = "camel.k.mount-path.configmaps";
-    public static String ENV_MOUNT_PATH_SECRETS = "camel.k.mount-path.secrets";
+    // use camel-k ENV for mount paths
+    public static final String ENV_MOUNT_PATH_CONFIGMAPS = "camel.k.mount-path.configmaps";
+    public static final String ENV_MOUNT_PATH_SECRETS = "camel.k.mount-path.secrets";
 
     private CamelContext camelContext;
     private KubernetesClient client;
