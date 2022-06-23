@@ -40,8 +40,10 @@ public class DefaultAuthenticationAdapter implements AuthenticationAdapter {
 
     /**
      * You can add the customer convert code here
+     *
+     * @param subject the subject
      */
-    protected Authentication convertToAuthentication(Subject subject) {
+    protected Authentication convertToAuthentication(@SuppressWarnings("unused") Subject subject) {
         return null;
     }
 
