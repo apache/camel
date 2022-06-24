@@ -80,6 +80,7 @@ import static org.apache.camel.main.MainHelper.computeProperties;
 import static org.apache.camel.main.MainHelper.optionKey;
 import static org.apache.camel.main.MainHelper.setPropertiesOnTarget;
 import static org.apache.camel.main.MainHelper.validateOptionAndValue;
+import static org.apache.camel.util.LocationHelper.locationSummary;
 import static org.apache.camel.util.StringHelper.matches;
 
 /**
@@ -1685,37 +1686,6 @@ public abstract class BaseMainSupport extends BaseService {
             camelContext.addService(answer, true, false);
         }
         return answer;
-    }
-
-    private static String locationSummary(OrderedLocationProperties autoConfiguredProperties, String key) {
-        String loc = autoConfiguredProperties.getLocation(key);
-        if (loc == null) {
-            loc = "";
-        }
-        // remove scheme to make it shorter
-        if (loc.contains(":")) {
-            loc = StringHelper.after(loc, ":");
-        }
-        // strip paths so location is only the name
-        loc = FileUtil.stripPath(loc);
-        // clip long name
-        if (loc.length() > 28) {
-            int pos = loc.length() - 28;
-            loc = loc.substring(pos);
-        }
-        // let us have human friendly locations
-        if ("initial".equals(loc) || "override".equals(loc)) {
-            loc = "camel-main";
-        } else if ("SYS".equals(loc)) {
-            loc = "JVM System Property";
-        } else if ("ENV".equals(loc)) {
-            loc = "OS Environment Variable";
-        } else if ("arguments".equals(loc) || "CLI".equals(loc)) {
-            loc = "Command Line";
-        }
-        loc = "[" + loc + "]";
-        loc = String.format("%-30s", loc);
-        return loc;
     }
 
     private static final class PropertyPlaceholderListener implements PropertiesLookupListener {
