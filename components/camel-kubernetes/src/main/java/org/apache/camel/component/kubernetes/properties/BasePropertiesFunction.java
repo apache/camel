@@ -46,8 +46,6 @@ import org.slf4j.LoggerFactory;
  */
 abstract class BasePropertiesFunction extends ServiceSupport implements PropertiesFunction, CamelContextAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(BasePropertiesFunction.class);
-
     // keys in application.properties for mount paths
     public static final String MOUNT_PATH_CONFIGMAPS = "org.apache.camel.component.kubernetes.properties.mount-path-configmaps";
     public static final String MOUNT_PATH_SECRETS = "org.apache.camel.component.kubernetes.properties.mount-path-secrets";
@@ -55,6 +53,7 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
     // use camel-k ENV for mount paths
     public static final String ENV_MOUNT_PATH_CONFIGMAPS = "camel.k.mount-path.configmaps";
     public static final String ENV_MOUNT_PATH_SECRETS = "camel.k.mount-path.secrets";
+    private static final Logger LOG = LoggerFactory.getLogger(BasePropertiesFunction.class);
 
     private CamelContext camelContext;
     private KubernetesClient client;
