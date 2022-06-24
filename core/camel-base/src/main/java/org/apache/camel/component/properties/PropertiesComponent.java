@@ -105,7 +105,7 @@ public class PropertiesComponent extends ServiceSupport
     private static final String NEGATE_PREFIX = PREFIX_TOKEN + "!";
 
     private CamelContext camelContext;
-    private PropertiesFunctionResolver functionResolver = new DefaultPropertiesFunctionResolver();
+    private PropertiesFunctionResolver propertiesFunctionResolver = new DefaultPropertiesFunctionResolver();
     private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
     private final PropertiesLookup propertiesLookup = new DefaultPropertiesLookup(this);
     private final List<PropertiesLookupListener> propertiesLookupListeners = new ArrayList<>();
@@ -439,15 +439,15 @@ public class PropertiesComponent extends ServiceSupport
         this.propertiesParser = propertiesParser;
     }
 
-    public PropertiesFunctionResolver getFunctionResolver() {
-        return functionResolver;
+    public PropertiesFunctionResolver getPropertiesFunctionResolver() {
+        return propertiesFunctionResolver;
     }
 
     /**
      * To use a custom PropertiesFunctionResolver
      */
-    public void setFunctionResolver(PropertiesFunctionResolver functionResolver) {
-        this.functionResolver = functionResolver;
+    public void setPropertiesFunctionResolver(PropertiesFunctionResolver propertiesFunctionResolver) {
+        this.propertiesFunctionResolver = propertiesFunctionResolver;
     }
 
     @ManagedAttribute(description = "Whether to support using fallback values if a property cannot be found")
@@ -558,7 +558,7 @@ public class PropertiesComponent extends ServiceSupport
      */
     @Deprecated
     public Map<String, PropertiesFunction> getFunctions() {
-        return functionResolver.getFunctions();
+        return propertiesFunctionResolver.getFunctions();
     }
 
     /**
@@ -571,21 +571,21 @@ public class PropertiesComponent extends ServiceSupport
         if (name == null) {
             return null;
         }
-        return functionResolver.resolvePropertiesFunction(name);
+        return propertiesFunctionResolver.resolvePropertiesFunction(name);
     }
 
     /**
      * Registers the {@link PropertiesFunction} as a function to this component.
      */
     public void addPropertiesFunction(PropertiesFunction function) {
-        functionResolver.addPropertiesFunction(function);
+        propertiesFunctionResolver.addPropertiesFunction(function);
     }
 
     /**
      * Is there a {@link PropertiesFunction} with the given name?
      */
     public boolean hasFunction(String name) {
-        return functionResolver.hasFunction(name);
+        return propertiesFunctionResolver.hasFunction(name);
     }
 
     @ManagedAttribute(description = "System properties mode")
@@ -719,7 +719,7 @@ public class PropertiesComponent extends ServiceSupport
         super.doInit();
 
         ObjectHelper.notNull(camelContext, "CamelContext", this);
-        CamelContextAware.trySetCamelContext(functionResolver, camelContext);
+        CamelContextAware.trySetCamelContext(propertiesFunctionResolver, camelContext);
 
         if (systemPropertiesMode != SYSTEM_PROPERTIES_MODE_NEVER
                 && systemPropertiesMode != SYSTEM_PROPERTIES_MODE_FALLBACK
@@ -767,27 +767,27 @@ public class PropertiesComponent extends ServiceSupport
         }
 
         sources.sort(OrderedComparator.get());
-        ServiceHelper.initService(sources, functionResolver);
+        ServiceHelper.initService(sources, propertiesFunctionResolver);
     }
 
     @Override
     protected void doBuild() throws Exception {
-        ServiceHelper.buildService(sources, functionResolver);
+        ServiceHelper.buildService(sources, propertiesFunctionResolver);
     }
 
     @Override
     protected void doStart() throws Exception {
-        ServiceHelper.startService(sources, functionResolver);
+        ServiceHelper.startService(sources, propertiesFunctionResolver);
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(sources, functionResolver);
+        ServiceHelper.stopService(sources, propertiesFunctionResolver);
     }
 
     @Override
     protected void doShutdown() throws Exception {
-        ServiceHelper.stopAndShutdownServices(sources, functionResolver);
+        ServiceHelper.stopAndShutdownServices(sources, propertiesFunctionResolver);
     }
 
     private void addPropertiesLocationsAsPropertiesSource(PropertiesLocation location) {

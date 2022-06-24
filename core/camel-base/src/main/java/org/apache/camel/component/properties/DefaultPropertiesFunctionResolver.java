@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Default {@link PropertiesFunctionResolver}.
  */
-public final class DefaultPropertiesFunctionResolver extends ServiceSupport
+public class DefaultPropertiesFunctionResolver extends ServiceSupport
         implements PropertiesFunctionResolver, CamelContextAware, NonManagedService, StaticService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultPropertiesFunctionResolver.class);

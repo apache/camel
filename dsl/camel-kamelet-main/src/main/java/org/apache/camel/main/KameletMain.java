@@ -33,6 +33,7 @@ import org.apache.camel.main.download.DependencyDownloaderComponentResolver;
 import org.apache.camel.main.download.DependencyDownloaderDataFormatResolver;
 import org.apache.camel.main.download.DependencyDownloaderKamelet;
 import org.apache.camel.main.download.DependencyDownloaderLanguageResolver;
+import org.apache.camel.main.download.DependencyDownloaderPropertiesFunctionResolver;
 import org.apache.camel.main.download.DependencyDownloaderPropertyBindingListener;
 import org.apache.camel.main.download.DependencyDownloaderResourceLoader;
 import org.apache.camel.main.download.DependencyDownloaderRoutesLoader;
@@ -334,6 +335,11 @@ public class KameletMain extends MainCommandLineSupport {
         }
 
         try {
+            // properties functions
+            org.apache.camel.component.properties.PropertiesComponent pc
+                    = (org.apache.camel.component.properties.PropertiesComponent) answer.getPropertiesComponent();
+            pc.setPropertiesFunctionResolver(new DependencyDownloaderPropertiesFunctionResolver(answer));
+
             // dependencies from CLI
             Object dependencies = getInitialProperties().get("camel.jbang.dependencies");
             if (dependencies != null) {
