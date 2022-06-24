@@ -25,10 +25,17 @@ public class KubernetesPodsComponentConfigurer extends PropertyConfigurerSupport
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "kubernetesclient":
+        case "kubernetesClient": target.setKubernetesClient(property(camelContext, io.fabric8.kubernetes.client.KubernetesClient.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
+    }
+
+    @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"kubernetesClient"};
     }
 
     @Override
@@ -38,6 +45,8 @@ public class KubernetesPodsComponentConfigurer extends PropertyConfigurerSupport
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "kubernetesclient":
+        case "kubernetesClient": return io.fabric8.kubernetes.client.KubernetesClient.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         default: return null;
@@ -52,6 +61,8 @@ public class KubernetesPodsComponentConfigurer extends PropertyConfigurerSupport
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "kubernetesclient":
+        case "kubernetesClient": return target.getKubernetesClient();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         default: return null;

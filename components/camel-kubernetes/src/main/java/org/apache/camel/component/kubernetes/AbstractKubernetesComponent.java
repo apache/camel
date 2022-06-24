@@ -18,19 +18,27 @@ package org.apache.camel.component.kubernetes;
 
 import java.util.Map;
 
+import io.fabric8.kubernetes.client.KubernetesClient;
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 
 public abstract class AbstractKubernetesComponent extends DefaultComponent {
 
+    @Metadata(autowired = true)
+    private KubernetesClient kubernetesClient;
+
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         KubernetesConfiguration config = new KubernetesConfiguration();
         config.setMasterUrl(remaining);
+        config.setKubernetesClient(kubernetesClient);
+
         if (ObjectHelper.isEmpty(config.getMasterUrl())) {
             throw new IllegalArgumentException("Master URL must be specified");
         }
+
         Endpoint endpoint = doCreateEndpoint(uri, remaining, config);
         setProperties(endpoint, parameters);
         return endpoint;
@@ -38,4 +46,15 @@ public abstract class AbstractKubernetesComponent extends DefaultComponent {
 
     protected abstract AbstractKubernetesEndpoint doCreateEndpoint(
             String uri, String remaining, KubernetesConfiguration config);
+
+    public KubernetesClient getKubernetesClient() {
+        return kubernetesClient;
+    }
+
+    /**
+     * To use an existing kubernetes client.
+     */
+    public void setKubernetesClient(KubernetesClient kubernetesClient) {
+        this.kubernetesClient = kubernetesClient;
+    }
 }

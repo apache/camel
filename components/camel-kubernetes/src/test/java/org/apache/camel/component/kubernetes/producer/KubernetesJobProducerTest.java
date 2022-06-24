@@ -93,12 +93,13 @@ public class KubernetesJobProducerTest extends KubernetesTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:list").to("kubernetes-job:///?kubernetesClient=#kubernetesClient&operation=listJob");
-                from("direct:listByLabels")
-                        .to("kubernetes-job:///?kubernetesClient=#kubernetesClient&operation=listJobByLabels");
-                from("direct:get").to("kubernetes-job:///?kubernetesClient=#kubernetesClient&operation=getJob");
-                from("direct:create").to("kubernetes-job:///?kubernetesClient=#kubernetesClient&operation=createJob");
-                from("direct:delete").to("kubernetes-job:///?kubernetesClient=#kubernetesClient&operation=deleteJob");
+                // the kubernetes-client is autowired on the component
+
+                from("direct:list").to("kubernetes-job:foo?operation=listJob");
+                from("direct:listByLabels").to("kubernetes-job:foo?operation=listJobByLabels");
+                from("direct:get").to("kubernetes-job:foo?operation=getJob");
+                from("direct:create").to("kubernetes-job:foo?operation=createJob");
+                from("direct:delete").to("kubernetes-job:foo?operation=deleteJob");
             }
         };
     }
