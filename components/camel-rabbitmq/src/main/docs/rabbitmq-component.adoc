@@ -18,6 +18,9 @@ http://www.rabbitmq.com/[RabbitMQ] instances. Using the RabbitMQ AMQP
 client, this component offers a pure RabbitMQ approach over the generic
 http://camel.apache.org/amqp.html[AMQP] component.
 
+IMPORTANT: It is recommended to use the xref:components::spring-rabbit-component.adoc[Camel Spring RabbitMQ]
+component, instead of using this component.
+
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
