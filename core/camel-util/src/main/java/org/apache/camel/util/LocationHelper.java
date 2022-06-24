@@ -24,9 +24,9 @@ public final class LocationHelper {
     /**
      * The location as human-readable with the given key from the properties
      *
-     * @param properties  the properties
-     * @param key  the key
-     * @return the location or empty if not possible to resolve a location.
+     * @param  properties the properties
+     * @param  key        the key
+     * @return            the location or empty if not possible to resolve a location.
      */
     public static String locationSummary(OrderedLocationProperties properties, String key) {
         String loc = properties.getLocation(key);
