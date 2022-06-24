@@ -92,6 +92,7 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
                         .withReflection(true)
                         .withTarget(config)
                         .withCamelContext(camelContext)
+                        .withRemoveParameters(false)
                         .bind();
                 client = new DefaultKubernetesClient(config.build());
                 LOG.info("Auto-configuration KubernetesClient summary");
