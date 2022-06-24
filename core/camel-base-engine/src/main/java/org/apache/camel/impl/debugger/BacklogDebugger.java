@@ -68,6 +68,11 @@ public final class BacklogDebugger extends ServiceSupport {
      * {@code BacklogDebugger} should suspend processing the messages and wait for a debugger to attach or not.
      */
     public static final String SUSPEND_MODE_ENV_VAR_NAME = "CAMEL_DEBUGGER_SUSPEND";
+    /**
+     * The name of the system property that contains the value of the flag indicating whether the
+     * {@code BacklogDebugger} should suspend processing the messages and wait for a debugger to attach or not.
+     */
+    public static final String SUSPEND_MODE_SYSTEM_PROP_NAME = "org.apache.camel.debugger.suspend";
     private static final Logger LOG = LoggerFactory.getLogger(BacklogDebugger.class);
 
     private long fallbackTimeout = 300;
@@ -136,14 +141,15 @@ public final class BacklogDebugger extends ServiceSupport {
     /**
      * Creates a new backlog debugger.
      * <p>
-     * In case the environment variable {@link #SUSPEND_MODE_ENV_VAR_NAME} has been set to {@code true}, the message
-     * processing is directly suspended.
+     * In case the environment variable {@link #SUSPEND_MODE_ENV_VAR_NAME} or the system property
+     * {@link #SUSPEND_MODE_SYSTEM_PROP_NAME} has been set to {@code true}, the message processing is directly
+     * suspended.
      *
      * @param  context Camel context
      * @return         a new backlog debugger
      */
     public static BacklogDebugger createDebugger(CamelContext context) {
-        return new BacklogDebugger(context, Boolean.parseBoolean(System.getenv(SUSPEND_MODE_ENV_VAR_NAME)));
+        return new BacklogDebugger(context, resolveSuspendMode());
     }
 
     /**
@@ -220,13 +226,24 @@ public final class BacklogDebugger extends ServiceSupport {
     }
 
     /**
+     * Resolves the value of the flag indicating whether the {@code BacklogDebugger} should suspend processing the
+     * messages and wait for a debugger to attach or not.
+     *
+     * @return the value of the environment variable {@link #SUSPEND_MODE_ENV_VAR_NAME} if it has been set, otherwise
+     *         the value of the system property {@link #SUSPEND_MODE_SYSTEM_PROP_NAME}, {@code false} by default.
+     */
+    private static boolean resolveSuspendMode() {
+        final String value = System.getenv(SUSPEND_MODE_ENV_VAR_NAME);
+        return value == null ? Boolean.getBoolean(SUSPEND_MODE_SYSTEM_PROP_NAME) : Boolean.parseBoolean(value);
+    }
+
+    /**
      * Suspend the current thread if the <i>suspend mode</i> is enabled as long as the method {@link #attach()} is not
      * called. Do nothing otherwise.
      */
     private void suspendIfNeeded() {
         final CountDownLatch countDownLatch = suspend.get();
         if (countDownLatch != null) {
-            logger.log("Incoming message suspended");
             try {
                 countDownLatch.await();
             } catch (InterruptedException e) {
