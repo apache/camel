@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+  xmlns:camel="http://cxf.apache.org/transports/camel" 
+  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+  xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" 
+  xmlns:beans="http://www.springframework.org/schema/beans"
+  xmlns:cxf-beans="http://cxf.apache.org/configuration/beans"
+  xmlns:camel-spring="http://camel.apache.org/schema/spring"
+  targetNamespace="http://cxf.apache.org/transports/camel" 
+  elementFormDefault="qualified" jaxb:version="2.0">
+  
+    
+    <xs:import namespace="http://www.springframework.org/schema/beans" schemaLocation="http://www.springframework.org/schema/beans/spring-beans.xsd"/>
+    <xs:import namespace="http://cxf.apache.org/configuration/beans" schemaLocation="http://cxf.apache.org/schemas/configuration/cxf-beans.xsd"/>
+    <xs:import namespace="http://camel.apache.org/schema/spring" schemaLocation="http://camel.apache.org/schema/spring/camel-spring.xsd"/>
+    
+    <xs:element name="destination">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="beans:identifiedType">
+                    <xs:sequence>
+                        <xs:element ref="camel-spring:camelContext" minOccurs="0"/>
+                        <xs:element name="camelContextRef" type="xs:string" minOccurs="0"/>
+                    </xs:sequence>
+                    <xs:attributeGroup ref="cxf-beans:beanAttributes"/>
+                    <!-- here we need to specify the CamelContext reference --> 
+                    <xs:attribute name="camelContextId" type="xs:string" />    
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="conduit">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="beans:identifiedType">
+                    <xs:sequence>
+                        <xs:element ref="camel-spring:camelContext" minOccurs="0"/>                        
+                        <xs:element name="camelContextRef" type="xs:string" minOccurs="0"/>                        
+                    </xs:sequence>
+                    <xs:attributeGroup ref="cxf-beans:beanAttributes"/>
+                    <!-- here we need to specify the CamelContext reference --> 
+                    <xs:attribute name="camelContextId" type="xs:string" />    
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    
+</xs:schema>

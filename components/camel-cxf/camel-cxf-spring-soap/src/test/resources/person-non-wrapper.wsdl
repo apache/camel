@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<wsdl:definitions name="non-wrapper"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tns="http://camel.apache.org/non-wrapper"
+	xmlns:typens="http://camel.apache.org/non-wrapper/types"
+	xmlns:jaxws="http://java.sun.com/xml/ns/jaxws"
+	targetNamespace="http://camel.apache.org/non-wrapper">
+
+	<wsdl:types>
+		<xsd:schema targetNamespace="http://camel.apache.org/non-wrapper/types"
+		            elementFormDefault="qualified">
+			<xsd:element name="GetPerson">
+			  <xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="personId" type="xsd:string"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="GetPersonResponse">
+			  <xsd:complexType>
+					<xsd:sequence>
+					    <xsd:element name="personId" type="xsd:string"/>
+						<xsd:element name="ssn" type="xsd:string"/>
+						<xsd:element name="name" type="xsd:string"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="UnknownPersonFault">
+			  <xsd:complexType>
+					<xsd:sequence>
+					    <xsd:element name="personId" type="xsd:string"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:schema>
+  </wsdl:types>
+
+	<wsdl:message name="GetPersonRequest">
+		<wsdl:part name="payload" element="typens:GetPerson"/>
+	</wsdl:message>
+	<wsdl:message name="GetPersonResponse">
+		<wsdl:part name="payload" element="typens:GetPersonResponse"/>
+	</wsdl:message>
+	<wsdl:message name="UnknownPersonFault">
+		<wsdl:part name="payload" element="typens:UnknownPersonFault"/>
+	</wsdl:message>
+
+    <wsdl:portType name="Person">
+		<wsdl:operation name="GetPerson">
+			<wsdl:input message="tns:GetPersonRequest"/>
+			<wsdl:output message="tns:GetPersonResponse"/>
+			<wsdl:fault name="UnknownPerson" message="tns:UnknownPersonFault"/>
+		</wsdl:operation>
+	</wsdl:portType>
+
+    <wsdl:binding name="PersonSOAPBinding" type="tns:Person">
+    	<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="GetPerson">
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="UnknownPerson">
+				<soap:fault use="literal" name="UnknownPerson" />
+			</wsdl:fault>
+       </wsdl:operation>
+   </wsdl:binding>
+
+	<wsdl:service name="PersonService">
+    	<wsdl:port binding="tns:PersonSOAPBinding" name="soap">
+           <soap:address location="http://localhost:8092/PersonService/" />
+       </wsdl:port>
+   </wsdl:service>
+
+</wsdl:definitions>

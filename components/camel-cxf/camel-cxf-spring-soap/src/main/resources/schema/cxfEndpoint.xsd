@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<xsd:schema xmlns="http://camel.apache.org/schema/cxf/jaxws"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:beans="http://www.springframework.org/schema/beans"
+  xmlns:cxf-beans="http://cxf.apache.org/configuration/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  targetNamespace="http://camel.apache.org/schema/cxf/jaxws" 
+  elementFormDefault="qualified"
+  attributeFormDefault="unqualified">
+
+  <xsd:import namespace="http://www.springframework.org/schema/beans" schemaLocation="http://www.springframework.org/schema/beans/spring-beans.xsd"/>
+  <xsd:import namespace="http://cxf.apache.org/configuration/beans" schemaLocation="http://cxf.apache.org/schemas/configuration/cxf-beans.xsd"/>
+    
+  <xsd:element name="cxfEndpoint">
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="beans:identifiedType">
+          <xsd:all>
+            <xsd:element name="binding" type="xsd:anyType" minOccurs="0"/>
+            <xsd:element name="dataBinding" type="xsd:anyType" minOccurs="0"/>            
+            <xsd:element name="features" type="xsd:anyType" minOccurs="0"/>
+            <xsd:element name="inInterceptors" type="xsd:anyType" minOccurs="0"/>
+            <xsd:element name="inFaultInterceptors" type="xsd:anyType" minOccurs="0"/>            
+            <xsd:element name="outInterceptors" type="xsd:anyType" minOccurs="0"/>
+            <xsd:element name="outFaultInterceptors" type="xsd:anyType" minOccurs="0"/>
+            <xsd:element name="handlers" type="xsd:anyType" minOccurs="0"/>
+            <xsd:element name="properties" type="beans:mapType" minOccurs="0"/>
+            <xsd:element name="schemaLocations" type="schemasType" minOccurs="0"/>
+            <xsd:element name="serviceFactory" type="xsd:anyType" minOccurs="0"/>
+          </xsd:all>
+          <xsd:attributeGroup ref="cxf-beans:beanAttributes"/>
+          <xsd:attribute name="address" type="xsd:string" />
+          <xsd:attribute name="bindingId" type="xsd:string" />
+          <xsd:attribute name="bus" type="xsd:string" />
+          <xsd:attribute name="serviceClass" type="xsd:string"/>
+          <xsd:attribute name="transportId" type="xsd:string"/>
+          <xsd:attribute name="wsdlURL" type="xsd:string" />
+          <xsd:attribute name="endpointName" type="xsd:string" />
+          <xsd:attribute name="serviceName" type="xsd:string" />
+          <xsd:attribute name="loggingFeatureEnabled" type="xsd:boolean"/>
+          <xsd:attribute name="loggingSizeLimit" type="xsd:integer" />
+          <xsd:attribute name="skipFaultLogging" type="xsd:boolean" />
+          <xsd:attribute name="continuationTimeout" type="xsd:long" />
+          <xsd:attribute name="publishedEndpointUrl" type="xsd:string" />
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+  
+  <xsd:complexType name="schemasType">
+    <xsd:sequence>
+      <xsd:element name="schemaLocation" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="model">
+    <xsd:sequence>
+      <xsd:element name="resource" minOccurs="0" maxOccurs="unbounded">
+         <xsd:complexType>
+             <xsd:sequence>
+                 <xsd:element name="operation" minOccurs="0" maxOccurs="unbounded">
+                    <xsd:complexType>
+                      <xsd:sequence>
+                         <xsd:element name="param" minOccurs="0" maxOccurs="unbounded">
+                           <xsd:complexType>
+                              <xsd:attribute name="name" type="xsd:string"/>
+                              <xsd:attribute name="type" type="xsd:string"/>
+                           </xsd:complexType>
+                         </xsd:element>
+                      </xsd:sequence>
+                      <xsd:attribute name="name" type="xsd:string"/>
+                      <xsd:attribute name="path" type="xsd:string"/>
+                      <xsd:attribute name="verb" type="xsd:string"/>
+                      <xsd:attribute name="consumes" type="xsd:string"/>
+                      <xsd:attribute name="produces" type="xsd:string"/>
+                    </xsd:complexType>
+                 </xsd:element>
+             </xsd:sequence>
+             <xsd:attribute name="name" type="xsd:string"/>
+             <xsd:attribute name="path" type="xsd:string"/>
+         </xsd:complexType>
+      </xsd:element>   
+    </xsd:sequence>
+    <xsd:attribute name="id" type="xsd:string"/>
+  </xsd:complexType>  
+</xsd:schema>

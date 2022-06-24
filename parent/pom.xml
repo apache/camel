@@ -1172,6 +1172,31 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-cxf-rest</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-cxf-soap</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-cxf-spring-rest</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-cxf-spring-soap</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-cxf-spring-transport</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-cxf-transport</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -2780,6 +2805,16 @@
 				<artifactId>camel-zookeeper</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+                        	<groupId>org.apache.camel</groupId>
+                        	<artifactId>camel-cxf-spring-common</artifactId>
+                                <version>${project.version}</version>
+                	</dependency>
+			<dependency>
+                                <groupId>org.apache.camel</groupId>
+                        	<artifactId>camel-cxf-common</artifactId>
+                                <version>${project.version}</version>
+                	</dependency>
 			<!-- camel components: END -->
 
 			<!-- camel dsl support -->

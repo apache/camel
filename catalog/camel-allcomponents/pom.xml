@@ -355,6 +355,26 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-cxf-rest</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-cxf-soap</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-cxf-spring-rest</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-cxf-spring-soap</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-cxf-spring-transport</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-cxf-transport</artifactId>
 		</dependency>
 		<dependency>
@@ -1529,6 +1549,14 @@
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-zookeeper</artifactId>
 		</dependency>
+		<dependency>
+                        <groupId>org.apache.camel</groupId>
+                        <artifactId>camel-cxf-common</artifactId>
+                </dependency>
+		<dependency>
+                        <groupId>org.apache.camel</groupId>
+                        <artifactId>camel-cxf-spring-common</artifactId>
+                </dependency>
 	</dependencies>
 
 </project>
