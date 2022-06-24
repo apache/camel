@@ -58,8 +58,8 @@ public class GoogleMailComponent
                 client = getClientFactory().makeClient(config.getClientId(),
                         config.getClientSecret(), config.getScopes(),
                         config.getApplicationName(), config.getRefreshToken(), config.getAccessToken());
-            } else if (config.getKeyResource() != null && !config.getKeyResource().isBlank()) {
-                client = getClientFactory().makeClient(getCamelContext(), config.getKeyResource(),
+            } else if (config.getServiceAccountKey() != null && !config.getServiceAccountKey().isBlank()) {
+                client = getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(),
                         config.getScopes(), config.getApplicationName(), config.getDelegate());
             } else {
                 throw new IllegalArgumentException(

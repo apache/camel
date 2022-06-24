@@ -28,11 +28,11 @@ public class GmailUsersDraftsEndpointConfigurationConfigurer extends org.apache.
         map.put("Content", com.google.api.services.gmail.model.Draft.class);
         map.put("Delegate", java.lang.String.class);
         map.put("Id", java.lang.String.class);
-        map.put("KeyResource", java.lang.String.class);
         map.put("MediaContent", com.google.api.client.http.AbstractInputStreamContent.class);
         map.put("MethodName", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
         map.put("Scopes", java.util.Collection.class);
+        map.put("ServiceAccountKey", java.lang.String.class);
         map.put("UserId", java.lang.String.class);
         ALL_OPTIONS = map;
     }
@@ -57,8 +57,6 @@ public class GmailUsersDraftsEndpointConfigurationConfigurer extends org.apache.
         case "Delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
         case "id":
         case "Id": target.setId(property(camelContext, java.lang.String.class, value)); return true;
-        case "keyresource":
-        case "KeyResource": target.setKeyResource(property(camelContext, java.lang.String.class, value)); return true;
         case "mediacontent":
         case "MediaContent": target.setMediaContent(property(camelContext, com.google.api.client.http.AbstractInputStreamContent.class, value)); return true;
         case "methodname":
@@ -67,6 +65,8 @@ public class GmailUsersDraftsEndpointConfigurationConfigurer extends org.apache.
         case "RefreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "scopes":
         case "Scopes": target.setScopes(property(camelContext, java.util.Collection.class, value)); return true;
+        case "serviceaccountkey":
+        case "ServiceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "userid":
         case "UserId": target.setUserId(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -97,8 +97,6 @@ public class GmailUsersDraftsEndpointConfigurationConfigurer extends org.apache.
         case "Delegate": return java.lang.String.class;
         case "id":
         case "Id": return java.lang.String.class;
-        case "keyresource":
-        case "KeyResource": return java.lang.String.class;
         case "mediacontent":
         case "MediaContent": return com.google.api.client.http.AbstractInputStreamContent.class;
         case "methodname":
@@ -107,6 +105,8 @@ public class GmailUsersDraftsEndpointConfigurationConfigurer extends org.apache.
         case "RefreshToken": return java.lang.String.class;
         case "scopes":
         case "Scopes": return java.util.Collection.class;
+        case "serviceaccountkey":
+        case "ServiceAccountKey": return java.lang.String.class;
         case "userid":
         case "UserId": return java.lang.String.class;
         default: return null;
@@ -133,8 +133,6 @@ public class GmailUsersDraftsEndpointConfigurationConfigurer extends org.apache.
         case "Delegate": return target.getDelegate();
         case "id":
         case "Id": return target.getId();
-        case "keyresource":
-        case "KeyResource": return target.getKeyResource();
         case "mediacontent":
         case "MediaContent": return target.getMediaContent();
         case "methodname":
@@ -143,6 +141,8 @@ public class GmailUsersDraftsEndpointConfigurationConfigurer extends org.apache.
         case "RefreshToken": return target.getRefreshToken();
         case "scopes":
         case "Scopes": return target.getScopes();
+        case "serviceaccountkey":
+        case "ServiceAccountKey": return target.getServiceAccountKey();
         case "userid":
         case "UserId": return target.getUserId();
         default: return null;

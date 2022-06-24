@@ -71,12 +71,13 @@ public class BatchGoogleMailClientFactory implements GoogleMailClientFactory {
 
     @Override
     public Gmail makeClient(
-            CamelContext camelContext, String keyResource, Collection<String> scopes, String applicationName, String delegate) {
-        if (keyResource == null) {
+            CamelContext camelContext, String serviceAccountKey, Collection<String> scopes, String applicationName,
+            String delegate) {
+        if (serviceAccountKey == null) {
             throw new IllegalArgumentException("keyResource is required to create Gmail client.");
         }
         try {
-            Credential credential = authorizeServiceAccount(camelContext, keyResource, delegate, scopes);
+            Credential credential = authorizeServiceAccount(camelContext, serviceAccountKey, delegate, scopes);
             return new Gmail.Builder(transport, jsonFactory, credential).setApplicationName(applicationName).build();
         } catch (Exception e) {
             throw new RuntimeCamelException("Could not create Gmail client.", e);
@@ -84,11 +85,12 @@ public class BatchGoogleMailClientFactory implements GoogleMailClientFactory {
     }
 
     private Credential authorizeServiceAccount(
-            CamelContext camelContext, String keyResource, String delegate, Collection<String> scopes) {
+            CamelContext camelContext, String serviceAccountKey, String delegate, Collection<String> scopes) {
         // authorize
         try {
             GoogleCredential cred = GoogleCredential
-                    .fromStream(ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, keyResource), transport,
+                    .fromStream(ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, serviceAccountKey),
+                            transport,
                             jsonFactory)
                     .createScoped(scopes != null && scopes.size() != 0 ? scopes : null)
                     .createDelegated(delegate);
