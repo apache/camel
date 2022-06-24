@@ -183,7 +183,7 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
             // this iterator will do look ahead as we may have data
             // after the last end token, which the scanner would find
             // so we need to be one step ahead of the scanner
-            this.image = scanner.hasNext() ? next(true) : null;
+            this.image = scanner.hasNext() ? next() : null;
         }
 
         @Override
@@ -193,14 +193,10 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
 
         @Override
         public Object next() {
-            return next(false);
-        }
-
-        Object next(boolean first) {
             Object answer = image;
             // calculate next
             if (scanner.hasNext()) {
-                image = getNext(first);
+                image = getNext();
             } else {
                 image = null;
             }
@@ -212,7 +208,7 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
             return answer;
         }
 
-        Object getNext(boolean first) {
+        Object getNext() {
             String next = scanner.next();
 
             // only grab text after the start token

@@ -208,8 +208,7 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
 
         // if handover we need to do special handover to avoid handing over
         // RestBindingMarshalOnCompletion as it should not be handed over
-        Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, handover, true,
-                synchronization -> !synchronization.getClass().getName().contains("RestBindingMarshalOnCompletion"));
+        Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, handover, true);
 
         // we want the copy to have an uow
         UnitOfWork uow = getEndpoint().getCamelContext().adapt(ExtendedCamelContext.class).getUnitOfWorkFactory()

@@ -53,49 +53,24 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
         this(endpoint, headerSupplier, () -> null, null);
     }
 
-    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier, boolean caseSensitive) {
-        this(endpoint, headerSupplier, () -> null, null, caseSensitive);
-    }
-
     public HeaderSelectorProducer(Endpoint endpoint, String header) {
         this(endpoint, () -> header, () -> null, null);
-    }
-
-    public HeaderSelectorProducer(Endpoint endpoint, String header, boolean caseSensitive) {
-        this(endpoint, () -> header, () -> null, null, caseSensitive);
     }
 
     public HeaderSelectorProducer(Endpoint endpoint, String header, Object target) {
         this(endpoint, () -> header, () -> null, target);
     }
 
-    public HeaderSelectorProducer(Endpoint endpoint, String header, Object target, boolean caseSensitive) {
-        this(endpoint, () -> header, () -> null, target, caseSensitive);
-    }
-
     public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier, Object target) {
         this(endpoint, headerSupplier, () -> null, target);
-    }
-
-    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier, Object target, boolean caseSensitive) {
-        this(endpoint, headerSupplier, () -> null, target, caseSensitive);
     }
 
     public HeaderSelectorProducer(Endpoint endpoint, String header, String defaultHeaderValue) {
         this(endpoint, () -> header, () -> defaultHeaderValue, null);
     }
 
-    public HeaderSelectorProducer(Endpoint endpoint, String header, String defaultHeaderValue, boolean caseSensitive) {
-        this(endpoint, () -> header, () -> defaultHeaderValue, null, caseSensitive);
-    }
-
     public HeaderSelectorProducer(Endpoint endpoint, String header, Supplier<String> defaultHeaderValueSupplier) {
         this(endpoint, () -> header, defaultHeaderValueSupplier, null);
-    }
-
-    public HeaderSelectorProducer(Endpoint endpoint, String header, Supplier<String> defaultHeaderValueSupplier,
-                                  boolean caseSensitive) {
-        this(endpoint, () -> header, defaultHeaderValueSupplier, null, caseSensitive);
     }
 
     public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier,
@@ -103,27 +78,12 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
         this(endpoint, headerSupplier, defaultHeaderValueSupplier, null);
     }
 
-    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier,
-                                  Supplier<String> defaultHeaderValueSupplier, boolean caseSensitive) {
-        this(endpoint, headerSupplier, defaultHeaderValueSupplier, null, caseSensitive);
-    }
-
     public HeaderSelectorProducer(Endpoint endpoint, String header, String defaultHeaderValue, Object target) {
         this(endpoint, () -> header, () -> defaultHeaderValue, target);
     }
 
-    public HeaderSelectorProducer(Endpoint endpoint, String header, String defaultHeaderValue, Object target,
-                                  boolean caseSensitive) {
-        this(endpoint, () -> header, () -> defaultHeaderValue, target, caseSensitive);
-    }
-
     public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier,
                                   Supplier<String> defaultHeaderValueSupplier, Object target) {
-        this(endpoint, headerSupplier, defaultHeaderValueSupplier, target, true);
-    }
-
-    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier,
-                                  Supplier<String> defaultHeaderValueSupplier, Object target, boolean caseSensitive) {
         super(endpoint);
 
         this.headerSupplier = ObjectHelper.notNull(headerSupplier, "headerSupplier");

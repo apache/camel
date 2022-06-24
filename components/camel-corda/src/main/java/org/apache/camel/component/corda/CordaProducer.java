@@ -55,7 +55,7 @@ public class CordaProducer extends HeaderSelectorProducer {
     private CordaRPCOps cordaRPCOps;
 
     public CordaProducer(CordaEndpoint endpoint, final CordaConfiguration configuration, CordaRPCOps cordaRPCOps) {
-        super(endpoint, CordaConstants.OPERATION, () -> configuration.getOperation(), false);
+        super(endpoint, CordaConstants.OPERATION, () -> configuration.getOperation());
         //this.configuration = configuration;
         this.cordaRPCOps = cordaRPCOps;
     }
