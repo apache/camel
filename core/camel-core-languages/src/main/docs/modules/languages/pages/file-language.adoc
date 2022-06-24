@@ -15,7 +15,6 @@ The File Expression Language is an extension to the
 xref:simple-language.adoc[Simple] language, adding file related capabilities.
 These capabilities are related to common use cases working with file
 path and names. The goal is to allow expressions to be used with the
-
 xref:components::file-component.adoc[File] and xref:components::ftp-component.adoc[FTP]
 components for setting dynamic file patterns for both consumer and producer.
 
@@ -42,7 +41,7 @@ All the file tokens use the same expression name as the method on the
 supported by the current Exchange. For instance the xref:components::ftp-component.adoc[FTP]
 component supports some options, whereas the File component supports all of them.
 
-[width="100%",cols="10%,10%,10%,10%,10%,25%,25%",options="header",]
+[width="100%",cols="25%,10%,10%,10%,10%,10%,25%",options="header",]
 |===
 |Expression |Type |File Consumer |File Producer |FTP Consumer |FTP Producer |Description
 
