@@ -53,6 +53,7 @@ The data formats naming has been made consistent to use Camel Case:
 | bindy-csv | bindyCsv
 | bindy-fixed | bindyFixed
 | bindy-kvp | bindyKvp
+| customDataFormat | custom
 | gzip-deflater | gzipDeflater
 | jacksonxml | jacksonXml
 | json-fastjson | fastjson
