@@ -99,19 +99,19 @@ language can also be used.
 === Relative paths
 
 We have a `java.io.File` handle for the file `hello.txt` in the
-following *relative* directory: `.\filelanguage\test`. And we configure
-our endpoint to use this starting directory `.\filelanguage`. The file
+following *relative* directory: `./filelanguage/test`. And we configure
+our endpoint to use this starting directory `./filelanguage`. The file
 tokens will return as:
 
 [width="100%",cols="50%,50%",options="header",]
 |===
 |Expression |Returns
 
-|file:name |test\hello.txt
+|file:name |test/hello.txt
 
 |file:name.ext |txt
 
-|file:name.noext |test\hello
+|file:name.noext |test/hello
 
 |file:onlyname |hello.txt
 
@@ -119,33 +119,33 @@ tokens will return as:
 
 |file:ext |txt
 
-|file:parent |filelanguage\test
+|file:parent |filelanguage/test
 
-|file:path |filelanguage\test\hello.txt
+|file:path |filelanguage/test/hello.txt
 
 |file:absolute |false
 
-|file:absolute.path |\workspace\camel\camel-core\target\filelanguage\test\hello.txt
+|file:absolute.path |/workspace/camel/camel-core/target/filelanguage/test/hello.txt
 |===
 
 === Absolute paths
 
 We have a `java.io.File` handle for the file `hello.txt` in the
 following *absolute* directory:
-`\workspace\camel\camel-core\target\filelanguage\test`. And we configure
+`/workspace/camel/camel-core/target/filelanguage/test`. And we configure
 out endpoint to use the absolute starting directory
-`\workspace\camel\camel-core\target\filelanguage`. The file tokens will
+`/workspace/camel/camel-core/target/filelanguage`. The file tokens will
 return as:
 
 [width="100%",cols="50%,50%",options="header",]
 |===
 |Expression |Returns
 
-|file:name |test\hello.txt 
+|file:name |test/hello.txt 
 
 |file:name.ext |txt
 
-|file:name.noext |test\hello
+|file:name.noext |test/hello
 
 |file:onlyname |hello.txt
 
@@ -153,13 +153,13 @@ return as:
 
 |file:ext |txt
 
-|file:parent |\workspace\camel\camel-core\target\filelanguage\test
+|file:parent |/workspace/camel/camel-core/target/filelanguage/test
 
-|file:path |\workspace\camel\camel-core\target\filelanguage\test\hello.txt
+|file:path |/workspace/camel/camel-core/target/filelanguage/test/hello.txt
 
 |file:absolute |true
 
-|file:absolute.path |\workspace\camel\camel-core\target\filelanguage\test\hello.txt
+|file:absolute.path |/workspace/camel/camel-core/target/filelanguage/test/hello.txt
 |===
 
 == Samples
