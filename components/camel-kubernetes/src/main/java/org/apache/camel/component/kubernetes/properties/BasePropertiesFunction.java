@@ -82,7 +82,8 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
             // try to auto-configure via properties
             PropertiesComponent pc = camelContext.getPropertiesComponent();
             OrderedLocationProperties properties = (OrderedLocationProperties) pc
-                    .loadProperties(k -> k.startsWith("camel.kubernetes-client.") || k.startsWith("camel.kubernetesClient."));
+                    .loadProperties(k -> k.startsWith("camel.kubernetes-client.") || k.startsWith("camel.kubernetesClient."),
+                            k -> k.replace("camel.kubernetes-client.", "").replace("camel.kubernetesClient.", ""));
             if (!properties.isEmpty()) {
                 ConfigBuilder config = new ConfigBuilder();
                 PropertyBindingSupport.build()
