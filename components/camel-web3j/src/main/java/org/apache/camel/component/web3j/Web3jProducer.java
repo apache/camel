@@ -101,7 +101,7 @@ public class Web3jProducer extends HeaderSelectorProducer {
     private Web3jConfiguration configuration;
 
     public Web3jProducer(Web3jEndpoint endpoint, final Web3jConfiguration configuration) {
-        super(endpoint, Web3jConstants.OPERATION, () -> configuration.getOperationOrDefault(), false);
+        super(endpoint, Web3jConstants.OPERATION, () -> configuration.getOperationOrDefault());
         web3j = endpoint.getWeb3j();
         this.configuration = configuration;
         if (web3j instanceof Quorum) {

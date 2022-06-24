@@ -30,7 +30,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
@@ -51,7 +50,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.NormalizedEndpointUri;
-import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.spi.annotations.EagerClassloaded;
 import org.apache.camel.util.IOHelper;
@@ -289,22 +287,6 @@ public final class ExchangeHelper {
      * @param useSameMessageId whether to use same message id on the copy message.
      */
     public static Exchange createCorrelatedCopy(Exchange exchange, boolean handover, boolean useSameMessageId) {
-        return createCorrelatedCopy(exchange, handover, useSameMessageId, null);
-    }
-
-    /**
-     * Creates a new instance and copies from the current message exchange so that it can be forwarded to another
-     * destination as a new instance. Unlike regular copy this operation will not share the same
-     * {@link org.apache.camel.spi.UnitOfWork} so its should be used for async messaging, where the original and copied
-     * exchange are independent.
-     *
-     * @param exchange         original copy of the exchange
-     * @param handover         whether the on completion callbacks should be handed over to the new copy.
-     * @param useSameMessageId whether to use same message id on the copy message.
-     * @param filter           whether to handover the on completion
-     */
-    public static Exchange createCorrelatedCopy(
-            Exchange exchange, boolean handover, boolean useSameMessageId, Predicate<Synchronization> filter) {
         String id = exchange.getExchangeId();
 
         // make sure to do a safe copy as the correlated copy can be routed independently of the source.
