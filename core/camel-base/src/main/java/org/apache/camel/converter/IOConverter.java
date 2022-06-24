@@ -251,7 +251,7 @@ public final class IOConverter {
     @Converter(order = 29)
     public static byte[] toBytes(InputStream stream) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        IOHelper.copy(IOHelper.buffered(stream), bos);
+        IOHelper.copyAndCloseInput(IOHelper.buffered(stream), bos);
 
         // no need to close the ByteArrayOutputStream as it's close()
         // implementation is noop

@@ -235,7 +235,7 @@ public class SchemaReader {
     protected byte[] readSchemaResource() throws IOException {
         LOG.debug("reading schema resource: {}", schemaResourceUri);
         InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, schemaResourceUri);
-        byte[] bytes = null;
+        byte[] bytes;
         try {
             bytes = getBytes(is);
         } finally {
