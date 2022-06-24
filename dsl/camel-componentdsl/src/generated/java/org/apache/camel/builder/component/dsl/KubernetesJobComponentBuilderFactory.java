@@ -51,6 +51,22 @@ public interface KubernetesJobComponentBuilderFactory {
             extends
                 ComponentBuilder<KubernetesJobComponent> {
         /**
+         * To use an existing kubernetes client.
+         * 
+         * The option is a:
+         * &lt;code&gt;io.fabric8.kubernetes.client.KubernetesClient&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param kubernetesClient the value to set
+         * @return the dsl builder
+         */
+        default KubernetesJobComponentBuilder kubernetesClient(
+                io.fabric8.kubernetes.client.KubernetesClient kubernetesClient) {
+            doSetProperty("kubernetesClient", kubernetesClient);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -134,6 +150,7 @@ public interface KubernetesJobComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "kubernetesClient": ((KubernetesJobComponent) component).setKubernetesClient((io.fabric8.kubernetes.client.KubernetesClient) value); return true;
             case "bridgeErrorHandler": ((KubernetesJobComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((KubernetesJobComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((KubernetesJobComponent) component).setAutowiredEnabled((boolean) value); return true;

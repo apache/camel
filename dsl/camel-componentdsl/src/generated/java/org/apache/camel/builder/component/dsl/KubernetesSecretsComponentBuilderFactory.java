@@ -51,6 +51,22 @@ public interface KubernetesSecretsComponentBuilderFactory {
             extends
                 ComponentBuilder<KubernetesSecretsComponent> {
         /**
+         * To use an existing kubernetes client.
+         * 
+         * The option is a:
+         * &lt;code&gt;io.fabric8.kubernetes.client.KubernetesClient&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param kubernetesClient the value to set
+         * @return the dsl builder
+         */
+        default KubernetesSecretsComponentBuilder kubernetesClient(
+                io.fabric8.kubernetes.client.KubernetesClient kubernetesClient) {
+            doSetProperty("kubernetesClient", kubernetesClient);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -112,6 +128,7 @@ public interface KubernetesSecretsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "kubernetesClient": ((KubernetesSecretsComponent) component).setKubernetesClient((io.fabric8.kubernetes.client.KubernetesClient) value); return true;
             case "lazyStartProducer": ((KubernetesSecretsComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((KubernetesSecretsComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;

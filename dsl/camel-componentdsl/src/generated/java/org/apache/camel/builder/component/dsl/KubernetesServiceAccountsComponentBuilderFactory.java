@@ -51,6 +51,22 @@ public interface KubernetesServiceAccountsComponentBuilderFactory {
             extends
                 ComponentBuilder<KubernetesServiceAccountsComponent> {
         /**
+         * To use an existing kubernetes client.
+         * 
+         * The option is a:
+         * &lt;code&gt;io.fabric8.kubernetes.client.KubernetesClient&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param kubernetesClient the value to set
+         * @return the dsl builder
+         */
+        default KubernetesServiceAccountsComponentBuilder kubernetesClient(
+                io.fabric8.kubernetes.client.KubernetesClient kubernetesClient) {
+            doSetProperty("kubernetesClient", kubernetesClient);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -112,6 +128,7 @@ public interface KubernetesServiceAccountsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "kubernetesClient": ((KubernetesServiceAccountsComponent) component).setKubernetesClient((io.fabric8.kubernetes.client.KubernetesClient) value); return true;
             case "lazyStartProducer": ((KubernetesServiceAccountsComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((KubernetesServiceAccountsComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;

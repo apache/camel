@@ -53,6 +53,22 @@ public interface KubernetesPersistentVolumesComponentBuilderFactory {
             extends
                 ComponentBuilder<KubernetesPersistentVolumesComponent> {
         /**
+         * To use an existing kubernetes client.
+         * 
+         * The option is a:
+         * &lt;code&gt;io.fabric8.kubernetes.client.KubernetesClient&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param kubernetesClient the value to set
+         * @return the dsl builder
+         */
+        default KubernetesPersistentVolumesComponentBuilder kubernetesClient(
+                io.fabric8.kubernetes.client.KubernetesClient kubernetesClient) {
+            doSetProperty("kubernetesClient", kubernetesClient);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -114,6 +130,7 @@ public interface KubernetesPersistentVolumesComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "kubernetesClient": ((KubernetesPersistentVolumesComponent) component).setKubernetesClient((io.fabric8.kubernetes.client.KubernetesClient) value); return true;
             case "lazyStartProducer": ((KubernetesPersistentVolumesComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((KubernetesPersistentVolumesComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;

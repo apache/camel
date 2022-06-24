@@ -51,6 +51,22 @@ public interface KubernetesPodsComponentBuilderFactory {
             extends
                 ComponentBuilder<KubernetesPodsComponent> {
         /**
+         * To use an existing kubernetes client.
+         * 
+         * The option is a:
+         * &lt;code&gt;io.fabric8.kubernetes.client.KubernetesClient&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param kubernetesClient the value to set
+         * @return the dsl builder
+         */
+        default KubernetesPodsComponentBuilder kubernetesClient(
+                io.fabric8.kubernetes.client.KubernetesClient kubernetesClient) {
+            doSetProperty("kubernetesClient", kubernetesClient);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -134,6 +150,7 @@ public interface KubernetesPodsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "kubernetesClient": ((KubernetesPodsComponent) component).setKubernetesClient((io.fabric8.kubernetes.client.KubernetesClient) value); return true;
             case "bridgeErrorHandler": ((KubernetesPodsComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((KubernetesPodsComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((KubernetesPodsComponent) component).setAutowiredEnabled((boolean) value); return true;
