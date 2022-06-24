@@ -21,20 +21,32 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Locale;
+import java.util.Map;
 
+import io.fabric8.kubernetes.client.ConfigBuilder;
+import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.LocationHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.OrderedLocationProperties;
+import org.apache.camel.util.SensitiveUtils;
 import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base for kubernetes {@link PropertiesFunction}.
  */
 abstract class BasePropertiesFunction extends ServiceSupport implements PropertiesFunction, CamelContextAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(BasePropertiesFunction.class);
 
     // keys in application.properties for mount paths
     public static final String MOUNT_PATH_CONFIGMAPS = "org.apache.camel.component.kubernetes.properties.mount-path-configmaps";
@@ -50,6 +62,7 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
     private String mountPathSecrets;
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void doInit() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext");
         if (mountPathConfigMaps == null) {
@@ -63,6 +76,38 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
         if (client == null) {
             client = CamelContextHelper.findSingleByType(camelContext, KubernetesClient.class);
         }
+        if (client == null) {
+            // try to auto-configure via properties
+            PropertiesComponent pc = camelContext.getPropertiesComponent();
+            OrderedLocationProperties properties = (OrderedLocationProperties) pc
+                    .loadProperties(k -> k.startsWith("camel.kubernetes-client.") || k.startsWith("camel.kubernetesClient."));
+            if (!properties.isEmpty()) {
+                ConfigBuilder config = new ConfigBuilder();
+                PropertyBindingSupport.build()
+                        .withProperties((Map) properties)
+                        .withFluentBuilder(true)
+                        .withIgnoreCase(true)
+                        .withReflection(true)
+                        .withTarget(config)
+                        .withCamelContext(camelContext)
+                        .bind();
+                client = new DefaultKubernetesClient(config.build());
+                LOG.info("Auto-configuration io.fabric8.kubernetes.client.KubernetesClient summary");
+                for (var entry : properties.entrySet()) {
+                    String k = entry.getKey().toString();
+                    Object v = entry.getValue();
+                    String loc = LocationHelper.locationSummary(properties, k);
+                    if (SensitiveUtils.containsSensitive(k)) {
+                        LOG.info("    {} {}=xxxxxx", loc, k);
+                    } else {
+                        LOG.info("    {} {}={}", loc, k, v);
+                    }
+                }
+                // add to registry so the client can be reused
+                camelContext.getRegistry().bind("camelKubernetesClient", client);
+            }
+        }
+
         if (client == null && getMountPath() == null) {
             throw new IllegalArgumentException("Either a mount path or the Kubernetes Client must be configured");
         }
