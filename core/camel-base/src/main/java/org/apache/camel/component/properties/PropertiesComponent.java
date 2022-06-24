@@ -105,10 +105,10 @@ public class PropertiesComponent extends ServiceSupport
     private static final String NEGATE_PREFIX = PREFIX_TOKEN + "!";
 
     private CamelContext camelContext;
-    private final PropertiesFunctionResolver functionResolver = new PropertiesFunctionResolver();
+    private PropertiesFunctionResolver functionResolver = new DefaultPropertiesFunctionResolver();
     private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
     private final PropertiesLookup propertiesLookup = new DefaultPropertiesLookup(this);
-    private List<PropertiesLookupListener> propertiesLookupListeners = new ArrayList<>();
+    private final List<PropertiesLookupListener> propertiesLookupListeners = new ArrayList<>();
     private final List<PropertiesSource> sources = new ArrayList<>();
     private List<PropertiesLocation> locations = new ArrayList<>();
     private String location;
@@ -437,6 +437,17 @@ public class PropertiesComponent extends ServiceSupport
      */
     public void setPropertiesParser(PropertiesParser propertiesParser) {
         this.propertiesParser = propertiesParser;
+    }
+
+    public PropertiesFunctionResolver getFunctionResolver() {
+        return functionResolver;
+    }
+
+    /**
+     * To use a custom PropertiesFunctionResolver
+     */
+    public void setFunctionResolver(PropertiesFunctionResolver functionResolver) {
+        this.functionResolver = functionResolver;
     }
 
     @ManagedAttribute(description = "Whether to support using fallback values if a property cannot be found")

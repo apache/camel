@@ -16,136 +16,38 @@
  */
 package org.apache.camel.component.properties;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
-import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.NonManagedService;
-import org.apache.camel.StaticService;
-import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.PropertiesFunction;
-import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.support.service.ServiceSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Resolver for built-in and custom {@link PropertiesFunction}.
  */
-public final class PropertiesFunctionResolver extends ServiceSupport
-        implements CamelContextAware, NonManagedService, StaticService {
+public interface PropertiesFunctionResolver {
 
-    public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/properties-function/";
-
-    private static final Logger LOG = LoggerFactory.getLogger(PropertiesFunctionResolver.class);
-
-    private CamelContext camelContext;
-    private FactoryFinder factoryFinder;
-    private final Map<String, PropertiesFunction> functions = new LinkedHashMap<>();
-
-    public PropertiesFunctionResolver() {
-        // include out of the box functions
-        addPropertiesFunction(new EnvPropertiesFunction());
-        addPropertiesFunction(new SysPropertiesFunction());
-        addPropertiesFunction(new ServicePropertiesFunction());
-        addPropertiesFunction(new ServiceHostPropertiesFunction());
-        addPropertiesFunction(new ServicePortPropertiesFunction());
-    }
-
-    @Override
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    @Override
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
-    }
+    String RESOURCE_PATH = "META-INF/services/org/apache/camel/properties-function/";
 
     /**
      * Registers the {@link PropertiesFunction} as a function to this component.
      */
-    public void addPropertiesFunction(PropertiesFunction function) {
-        this.functions.put(function.getName(), function);
-    }
+    void addPropertiesFunction(PropertiesFunction function);
 
     /**
      * Gets the functions registered in this properties component.
      */
-    public Map<String, PropertiesFunction> getFunctions() {
-        return functions;
-    }
+    Map<String, PropertiesFunction> getFunctions();
 
     /**
      * Is there a {@link PropertiesFunction} with the given name?
      */
-    public boolean hasFunction(String name) {
-        return functions.containsKey(name);
-    }
+    boolean hasFunction(String name);
 
-    public PropertiesFunction resolvePropertiesFunction(String name) {
-        PropertiesFunction answer = functions.get(name);
-        if (answer == null) {
-            answer = resolve(camelContext, name);
-            if (answer != null) {
-                functions.put(name, answer);
-            }
-        }
-        return answer;
-    }
+    /**
+     * Resolves the properties function with the given name
+     *
+     * @param  name the name of the properties function
+     * @return      the function or <tt>null</tt> if not found
+     */
+    PropertiesFunction resolvePropertiesFunction(String name);
 
-    private PropertiesFunction resolve(CamelContext context, String name) {
-        // use factory finder to find a custom implementations
-        Class<?> type = null;
-        try {
-            type = findFactory(name, context);
-        } catch (Exception e) {
-            // ignore
-        }
-
-        if (type != null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Found PropertiesFunction: {} via: {}{}", type.getName(), factoryFinder.getResourcePath(), name);
-            }
-            if (PropertiesFunction.class.isAssignableFrom(type)) {
-                PropertiesFunction answer = (PropertiesFunction) context.getInjector().newInstance(type, false);
-                CamelContextAware.trySetCamelContext(answer, camelContext);
-                ServiceHelper.startService(answer);
-                return answer;
-            } else {
-                throw new IllegalArgumentException("Type is not a PropertiesFunction implementation. Found: " + type.getName());
-            }
-        }
-
-        return null;
-    }
-
-    private Class<?> findFactory(String name, CamelContext context) {
-        if (factoryFinder == null) {
-            factoryFinder = context.adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
-        }
-        return factoryFinder.findClass(name).orElse(null);
-    }
-
-    @Override
-    protected void doInit() throws Exception {
-        ServiceHelper.initService(functions.values());
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        ServiceHelper.startService(functions.values());
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        ServiceHelper.stopService(functions.values());
-    }
-
-    @Override
-    protected void doShutdown() throws Exception {
-        ServiceHelper.stopAndShutdownService(functions.values());
-    }
 }
