@@ -17,7 +17,6 @@
 package org.apache.camel.component.atmos.dto;
 
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.atmos.util.AtmosConstants;
@@ -45,7 +44,7 @@ public class AtmosFileUploadResult extends AtmosResult {
             });
 
         } else {
-            final String pathsExtracted = map.keySet().stream().collect(Collectors.joining("\n"));
+            final String pathsExtracted = String.join("\n", map.keySet());
 
             exchange.getIn().setHeader(AtmosConstants.UPLOADED_FILES, pathsExtracted);
             exchange.getIn().setBody(map);
