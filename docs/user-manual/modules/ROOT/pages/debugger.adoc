@@ -93,8 +93,9 @@ which can be used to extend for custom implementations.
 There is also a xref:backlog-debugger.adoc[Backlog Debugger] which allows debugging from JMX that is included into `camel-debug`.
 
 To be able to have enough time to add your breakpoints, you could need to suspend the message processing of Camel to make sure
-that you won't miss any messages. For this kind of need, you have to set the environment variable `CAMEL_DEBUGGER_SUSPEND` to `true`
-within the context of your application, then the `Backlog Debugger` suspends the message processing until the JMX operation `attach` is called. Calling the JMX operation `detach` suspends again the message processing.
+that you won't miss any messages. For this kind of need, you have to set either the environment variable `CAMEL_DEBUGGER_SUSPEND` or the system property `org.apache.camel.debugger.suspend` to `true` within the context of your application, then the `Backlog Debugger` suspends the message processing until the JMX operation `attach` is called. Calling the JMX operation `detach` suspends again the message processing.
+
+In case the environment variable and the system property are both set, the value of the environment variable is used.
 
 Several 3rd party tooling are using it:
 - https://hawt.io/[hawtio] uses this for its web based debugging functionality

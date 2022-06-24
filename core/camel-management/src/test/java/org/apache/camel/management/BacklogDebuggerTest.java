@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junitpioneer.jupiter.SetEnvironmentVariable;
+import org.junitpioneer.jupiter.SetSystemProperty;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -893,11 +894,35 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
     }
 
     /**
-     * Ensure that the suspend mode works as expected.
+     * Ensure that the suspend mode works as expected when it is set using an environment variable.
      */
     @Test
     @SetEnvironmentVariable(key = BacklogDebugger.SUSPEND_MODE_ENV_VAR_NAME, value = "true")
-    public void testSuspendMode() throws Exception {
+    public void testSuspendModeConfiguredWithEnvVariable() throws Exception {
+        testSuspendMode();
+    }
+
+    /**
+     * Ensure that the suspend mode works as expected when it is set using a system property.
+     */
+    @Test
+    @SetSystemProperty(key = BacklogDebugger.SUSPEND_MODE_SYSTEM_PROP_NAME, value = "true")
+    public void testSuspendModeConfiguredWithSystemProperty() throws Exception {
+        testSuspendMode();
+    }
+
+    /**
+     * Ensure that the suspend mode works as expected when it is configured by relying on the precedence of the env
+     * variable over the system property.
+     */
+    @Test
+    @SetEnvironmentVariable(key = BacklogDebugger.SUSPEND_MODE_ENV_VAR_NAME, value = "true")
+    @SetSystemProperty(key = BacklogDebugger.SUSPEND_MODE_SYSTEM_PROP_NAME, value = "false")
+    public void testSuspendModeConfiguredWithBoth() throws Exception {
+        testSuspendMode();
+    }
+
+    private void testSuspendMode() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = new ObjectName(
                 "org.apache.camel:context=" + context.getManagementName() + ",type=tracer,name=BacklogDebugger");
