@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.fabric8.kubernetes.client.ConfigBuilder;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
@@ -54,6 +55,8 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
     public static final String ENV_MOUNT_PATH_CONFIGMAPS = "camel.k.mount-path.configmaps";
     public static final String ENV_MOUNT_PATH_SECRETS = "camel.k.mount-path.secrets";
     private static final Logger LOG = LoggerFactory.getLogger(BasePropertiesFunction.class);
+
+    private static final AtomicBoolean LOGGED = new AtomicBoolean();
 
     private CamelContext camelContext;
     private KubernetesClient client;
@@ -91,7 +94,7 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
                         .withCamelContext(camelContext)
                         .bind();
                 client = new DefaultKubernetesClient(config.build());
-                LOG.info("Auto-configuration io.fabric8.kubernetes.client.KubernetesClient summary");
+                LOG.info("Auto-configuration KubernetesClient summary");
                 for (var entry : properties.entrySet()) {
                     String k = entry.getKey().toString();
                     Object v = entry.getValue();
@@ -102,13 +105,21 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
                         LOG.info("    {} {}={}", loc, k, v);
                     }
                 }
-                // add to registry so the client can be reused
-                camelContext.getRegistry().bind("camelKubernetesClient", client);
+            } else {
+                // create a default client to use
+                client = new DefaultKubernetesClient();
+                LOG.debug("Created default KubernetesClient (auto-configured by itself)");
             }
+            // add to registry so the client can be reused
+            camelContext.getRegistry().bind("camelKubernetesClient", client);
         }
-
         if (client == null && getMountPath() == null) {
             throw new IllegalArgumentException("Either a mount path or the Kubernetes Client must be configured");
+        }
+
+        if (client != null && LOGGED.compareAndSet(false, true)) {
+            // only log once
+            LOG.info("KubernetesClient using masterUrl: {} with namespace: {}", client.getMasterUrl(), client.getNamespace());
         }
     }
 
