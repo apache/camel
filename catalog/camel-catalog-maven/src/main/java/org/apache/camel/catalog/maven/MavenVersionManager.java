@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  */
 public class MavenVersionManager implements VersionManager, Closeable {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MavenVersionManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MavenVersionManager.class);
 
     private ClassLoader classLoader;
     private final ClassLoader groovyClassLoader = new GroovyClassLoader();
@@ -122,7 +122,7 @@ public class MavenVersionManager implements VersionManager, Closeable {
             return true;
         } catch (Exception e) {
             if (log) {
-                LOG.warn("Cannot load version {} due {}", version, e.getMessage(), e);
+                LOGGER.warn("Cannot load version {} due {}", version, e.getMessage(), e);
             }
             return false;
         }
@@ -152,7 +152,7 @@ public class MavenVersionManager implements VersionManager, Closeable {
             return true;
         } catch (Exception e) {
             if (log) {
-                LOG.warn("Cannot load runtime provider version {} due {}", version, e.getMessage(), e);
+                LOGGER.warn("Cannot load runtime provider version {} due {}", version, e.getMessage(), e);
             }
             return false;
         }
@@ -201,7 +201,7 @@ public class MavenVersionManager implements VersionManager, Closeable {
             }
         } catch (IOException e) {
             if (log) {
-                LOG.warn("Cannot open resource {} and version {} due {}", name, version, e.getMessage(), e);
+                LOGGER.warn("Cannot open resource {} and version {} due {}", name, version, e.getMessage(), e);
             }
         }
 
