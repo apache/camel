@@ -36,7 +36,8 @@ public class KubernetesClientConfigureTest {
 
         ConfigBuilder config = new ConfigBuilder();
 
-        PropertyConfigurer configurer = context.adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer(ConfigBuilder.class.getName(), context);
+        PropertyConfigurer configurer = context.adapt(ExtendedCamelContext.class).getConfigurerResolver()
+                .resolvePropertyConfigurer(ConfigBuilder.class.getName(), context);
         Assertions.assertNotNull(configurer, "Cannot find generated configurer");
 
         PropertyBindingSupport.build()
