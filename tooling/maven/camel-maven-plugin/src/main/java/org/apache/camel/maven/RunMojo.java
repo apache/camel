@@ -57,6 +57,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.artifact.MavenMetadataSource;
+import org.apache.maven.project.artifact.ProjectArtifact;
 import org.codehaus.mojo.exec.AbstractExecMojo;
 import org.codehaus.mojo.exec.ExecutableDependency;
 import org.codehaus.mojo.exec.Property;
@@ -145,7 +146,7 @@ public class RunMojo extends AbstractExecMojo {
     protected String extendedPluginDependencyArtifactId;
 
     @Component
-    private ArtifactResolver artifactResolver;
+    protected ArtifactResolver artifactResolver;
 
     @Component
     private ArtifactFactory artifactFactory;
@@ -668,25 +669,17 @@ public class RunMojo extends AbstractExecMojo {
      * @throws MojoExecutionException
      */
     private ClassLoader getClassLoader() throws MojoExecutionException, MojoFailureException {
-        List<URL> classpathURLs = new ArrayList<>();
-        // project classpath must be first
-        this.addRelevantProjectDependenciesToClasspath(classpathURLs);
-        // and extra plugin classpath
-        this.addExtraPluginDependenciesToClasspath(classpathURLs);
-        // and plugin classpath last
-        this.addRelevantPluginDependenciesToClasspath(classpathURLs);
-
-        if (!loggingLevel.equals("OFF")) {
-            getLog().info("Using built-in logging level: " + loggingLevel);
-            // and extra plugin classpath
-            this.addConsoleLogDependenciesToClasspath(classpathURLs);
-            // setup logging which can only be done by copying log4j.properties to project output to be in classpath
-            try {
-                String out = LOG4J_TEMPLATE.replace("@@@LOGGING_LEVEL@@@", loggingLevel);
-                IOHelper.writeText(out, new File(project.getBuild().getOutputDirectory() + "/log4j2.properties"));
-            } catch (Exception e) {
-                throw new MojoFailureException("Error configuring loggingLevel", e);
+        final List<Artifact> classpath = getClasspath();
+        final List<URL> classpathURLs = new ArrayList<>(classpath.size());
+        try {
+            for (Artifact artifact : classpath) {
+                File file = artifact.getFile();
+                if (file != null) {
+                    classpathURLs.add(file.toURI().toURL());
+                }
             }
+        } catch (MalformedURLException e) {
+            throw new MojoExecutionException("Error during setting up classpath", e);
         }
 
         if (logClasspath) {
@@ -695,39 +688,63 @@ public class RunMojo extends AbstractExecMojo {
                 getLog().info("  " + url.getFile());
             }
         }
-        return new URLClassLoader(classpathURLs.toArray(new URL[classpathURLs.size()]));
+        return new URLClassLoader(classpathURLs.toArray(new URL[0]));
+    }
+
+    /**
+     * @return the list of artifacts corresponding to the classpath to use when launching the application
+     */
+    protected List<Artifact> getClasspath() throws MojoExecutionException, MojoFailureException {
+        final List<Artifact> classpath = new ArrayList<>();
+        // project classpath must be first
+        this.addRelevantProjectDependenciesToClasspath(classpath);
+        // and extra plugin classpath
+        this.addExtraPluginDependenciesToClasspath(classpath);
+        // and plugin classpath last
+        this.addRelevantPluginDependenciesToClasspath(classpath);
+
+        if (!loggingLevel.equals("OFF")) {
+            getLog().info("Using built-in logging level: " + loggingLevel);
+            // and extra plugin classpath
+            this.addConsoleLogDependenciesToClasspath(classpath);
+            // setup logging which can only be done by copying log4j.properties to project output to be in classpath
+            try {
+                String out = LOG4J_TEMPLATE.replace("@@@LOGGING_LEVEL@@@", loggingLevel);
+                IOHelper.writeText(out, new File(project.getBuild().getOutputDirectory() + "/log4j2.properties"));
+            } catch (Exception e) {
+                throw new MojoFailureException("Error configuring loggingLevel", e);
+            }
+        }
+        return classpath;
     }
 
     /**
      * Add any relevant project dependencies to the classpath. Indirectly takes includePluginDependencies and
      * ExecutableDependency into consideration.
      *
-     * @param  path                   classpath of {@link java.net.URL} objects
+     * @param  classpath              the list of artifacts representing the classpath to which artifacts should be
+     *                                added
      * @throws MojoExecutionException
      */
-    private void addRelevantPluginDependenciesToClasspath(List<URL> path) throws MojoExecutionException {
+    private void addRelevantPluginDependenciesToClasspath(List<Artifact> classpath) throws MojoExecutionException {
         if (hasCommandlineArgs()) {
             arguments = parseCommandlineArgs();
         }
 
-        try {
-            for (Artifact classPathElement : this.determineRelevantPluginDependencies()) {
-                // we must skip org.osgi.core, otherwise we get a
-                // java.lang.NoClassDefFoundError: org.osgi.vendor.framework property not set
-                if (classPathElement.getArtifactId().equals("org.osgi.core")) {
-                    if (getLog().isDebugEnabled()) {
-                        getLog().debug("Skipping org.osgi.core -> " + classPathElement.getGroupId() + "/"
-                                       + classPathElement.getArtifactId() + "/" + classPathElement.getVersion());
-                    }
-                    continue;
+        for (Artifact classPathElement : this.determineRelevantPluginDependencies()) {
+            // we must skip org.osgi.core, otherwise we get a
+            // java.lang.NoClassDefFoundError: org.osgi.vendor.framework property not set
+            if (classPathElement.getArtifactId().equals("org.osgi.core")) {
+                if (getLog().isDebugEnabled()) {
+                    getLog().debug("Skipping org.osgi.core -> " + classPathElement.getGroupId() + "/"
+                                   + classPathElement.getArtifactId() + "/" + classPathElement.getVersion());
                 }
-
-                getLog().debug("Adding plugin dependency artifact: " + classPathElement.getArtifactId()
-                               + " to classpath");
-                path.add(classPathElement.getFile().toURI().toURL());
+                continue;
             }
-        } catch (MalformedURLException e) {
-            throw new MojoExecutionException("Error during setting up classpath", e);
+
+            getLog().debug("Adding plugin dependency artifact: " + classPathElement.getArtifactId()
+                           + " to classpath");
+            classpath.add(classPathElement);
         }
 
     }
@@ -736,100 +753,91 @@ public class RunMojo extends AbstractExecMojo {
      * Add any relevant project dependencies to the classpath. Indirectly takes includePluginDependencies and
      * ExecutableDependency into consideration.
      *
-     * @param  path                   classpath of {@link java.net.URL} objects
+     * @param  classpath              the list of artifacts representing the classpath to which artifacts should be
+     *                                added
      * @throws MojoExecutionException
      */
-    private void addExtraPluginDependenciesToClasspath(List<URL> path) throws MojoExecutionException {
+    private void addExtraPluginDependenciesToClasspath(List<Artifact> classpath) throws MojoExecutionException {
         if (extraPluginDependencyArtifactId == null && extendedPluginDependencyArtifactId == null) {
             return;
         }
 
-        try {
-            Set<Artifact> artifacts = new HashSet<>(this.pluginDependencies);
-            for (Artifact artifact : artifacts) {
-                if (artifact.getArtifactId().equals(extraPluginDependencyArtifactId)
-                        || artifact.getArtifactId().equals(extendedPluginDependencyArtifactId)) {
-                    getLog().debug("Adding extra plugin dependency artifact: " + artifact.getArtifactId()
-                                   + " to classpath");
-                    path.add(artifact.getFile().toURI().toURL());
+        final Set<Artifact> artifacts = new HashSet<>(this.pluginDependencies);
+        for (Artifact artifact : artifacts) {
+            if (artifact.getArtifactId().equals(extraPluginDependencyArtifactId)
+                    || artifact.getArtifactId().equals(extendedPluginDependencyArtifactId)) {
+                getLog().debug("Adding extra plugin dependency artifact: " + artifact.getArtifactId()
+                               + " to classpath");
+                classpath.add(artifact);
 
-                    // add the transient dependencies of this artifact
-                    Set<Artifact> deps = resolveExecutableDependencies(artifact, true);
-                    if (deps != null) {
-                        for (Artifact dep : deps) {
-                            getLog().debug("Adding extra plugin dependency artifact: " + dep.getArtifactId()
-                                           + " to classpath");
-                            path.add(dep.getFile().toURI().toURL());
-                        }
+                // add the transient dependencies of this artifact
+                Set<Artifact> deps = resolveExecutableDependencies(artifact, true);
+                if (deps != null) {
+                    for (Artifact dep : deps) {
+                        getLog().debug("Adding extra plugin dependency artifact: " + dep.getArtifactId()
+                                       + " to classpath");
+                        classpath.add(dep);
                     }
                 }
             }
-        } catch (MalformedURLException e) {
-            throw new MojoExecutionException("Error during setting up classpath", e);
         }
     }
 
     /**
      * Adds the JARs needed for using the built-in logging to console
      */
-    private void addConsoleLogDependenciesToClasspath(List<URL> path) throws MojoExecutionException {
-        try {
-            Set<Artifact> artifacts = new HashSet<>(this.pluginDependencies);
-            for (Artifact artifact : artifacts) {
-                // add these loggers in the beginning so they are first
-                if (artifact.getArtifactId().equals("jansi")) {
-                    // jansi for logging in color
-                    path.add(0, artifact.getFile().toURI().toURL());
-                } else if (artifact.getGroupId().equals("org.apache.logging.log4j")) {
-                    // add log4j as this is needed
-                    path.add(0, artifact.getFile().toURI().toURL());
-                } else if (artifact.getArtifactId().equals("camel-maven-plugin")) {
-                    // add ourselves
-                    path.add(0, artifact.getFile().toURI().toURL());
-                }
+    private void addConsoleLogDependenciesToClasspath(List<Artifact> classpath) {
+        Set<Artifact> artifacts = new HashSet<>(this.pluginDependencies);
+        for (Artifact artifact : artifacts) {
+            // add these loggers in the beginning so they are first
+            if (artifact.getArtifactId().equals("jansi")) {
+                // jansi for logging in color
+                classpath.add(0, artifact);
+            } else if (artifact.getGroupId().equals("org.apache.logging.log4j")) {
+                // add log4j as this is needed
+                classpath.add(0, artifact);
+            } else if (artifact.getArtifactId().equals("camel-maven-plugin")) {
+                // add ourselves
+                classpath.add(0, artifact);
             }
-        } catch (MalformedURLException e) {
-            throw new MojoExecutionException("Error during setting up classpath", e);
         }
     }
 
     /**
      * Add any relevant project dependencies to the classpath. Takes includeProjectDependencies into consideration.
      *
-     * @param  path                   classpath of {@link java.net.URL} objects
+     * @param  classpath              the list of artifacts representing the classpath to which artifacts should be
+     *                                added
      * @throws MojoExecutionException
      */
-    private void addRelevantProjectDependenciesToClasspath(List<URL> path) throws MojoExecutionException {
+    private void addRelevantProjectDependenciesToClasspath(List<Artifact> classpath) throws MojoExecutionException {
         if (this.includeProjectDependencies) {
-            try {
-                getLog().debug("Project Dependencies will be included.");
+            getLog().debug("Project Dependencies will be included.");
 
-                URL mainClasses = new File(project.getBuild().getOutputDirectory()).toURI().toURL();
-                getLog().debug("Adding to classpath : " + mainClasses);
-                path.add(mainClasses);
+            File mainClasses = new File(project.getBuild().getOutputDirectory());
+            getLog().debug("Adding to classpath : " + mainClasses);
+            classpath.add(
+                    new ProjectArtifact(project) {
+                        @Override
+                        public File getFile() {
+                            return mainClasses;
+                        }
+                    });
 
-                Set<Artifact> dependencies = CastUtils.cast(project.getArtifacts());
+            Set<Artifact> dependencies = CastUtils.cast(project.getArtifacts());
 
-                // system scope dependencies are not returned by maven 2.0. See
-                // MEXEC-17
-                dependencies.addAll(getAllNonTestScopedDependencies());
+            // system scope dependencies are not returned by maven 2.0. See
+            // MEXEC-17
+            dependencies.addAll(getAllNonTestScopedDependencies());
 
-                for (Artifact classPathElement : dependencies) {
-                    getLog().debug("Adding project dependency artifact: " + classPathElement.getArtifactId()
-                                   + " to classpath");
-                    File file = classPathElement.getFile();
-                    if (file != null) {
-                        path.add(file.toURI().toURL());
-                    }
-                }
-
-            } catch (MalformedURLException e) {
-                throw new MojoExecutionException("Error during setting up classpath", e);
+            for (Artifact classPathElement : dependencies) {
+                getLog().debug("Adding project dependency artifact: " + classPathElement.getArtifactId()
+                               + " to classpath");
+                classpath.add(classPathElement);
             }
         } else {
             getLog().debug("Project Dependencies will be excluded.");
         }
-
     }
 
     private Collection<Artifact> getAllNonTestScopedDependencies() throws MojoExecutionException {
