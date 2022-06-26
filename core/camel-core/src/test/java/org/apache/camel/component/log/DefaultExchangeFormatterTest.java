@@ -35,70 +35,65 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DefaultExchangeFormatterTest extends ContextTestSupport {
 
     @Test
-    public void testSendMessageToLogDefault() throws Exception {
-        template.sendBody("log:org.apache.camel.TEST", "Hello World");
+    public void testSendMessageToLogDefault() {
+        assertDoesNotThrow(() -> template.sendBody("log:org.apache.camel.TEST", "Hello World"));
     }
 
     @Test
-    public void testSendMessageToLogAllOff() throws Exception {
-        template.sendBody("log:org.apache.camel.TEST?showBody=false&showBodyType=false&showExchangePattern=false",
-                "Hello World");
+    public void testSendMessageToLogAllOff() {
+        assertDoesNotThrow(
+                () -> template.sendBody("log:org.apache.camel.TEST?showBody=false&showBodyType=false&showExchangePattern=false",
+                        "Hello World"));
     }
 
     @Test
-    public void testSendMessageToLogSingleOptions() throws Exception {
-        template.sendBody("log:org.apache.camel.TEST?showExchangeId=true", "Hello World");
-        template.sendBody("log:org.apache.camel.TEST?showExchangePattern=true", "Hello World");
-        template.sendBody("log:org.apache.camel.TEST?showExchangePattern=false", "Hello World");
-        template.sendBody("log:org.apache.camel.TEST?showProperties=true", "Hello World");
-        template.sendBody("log:org.apache.camel.TEST?showHeaders=true", "Hello World");
-        template.sendBody("log:org.apache.camel.TEST?showBodyType=true", "Hello World");
-        template.sendBody("log:org.apache.camel.TEST?showBody=true", "Hello World");
-        template.sendBody("log:org.apache.camel.TEST?showAll=true", "Hello World");
+    public void testSendMessageToLogSingleOptions() {
+        assertDoesNotThrow(() -> template.sendBody("log:org.apache.camel.TEST?showExchangeId=true", "Hello World"));
+        assertDoesNotThrow(() -> template.sendBody("log:org.apache.camel.TEST?showExchangePattern=true", "Hello World"));
+        assertDoesNotThrow(() -> template.sendBody("log:org.apache.camel.TEST?showExchangePattern=false", "Hello World"));
+        assertDoesNotThrow(() -> template.sendBody("log:org.apache.camel.TEST?showProperties=true", "Hello World"));
+        assertDoesNotThrow(() -> template.sendBody("log:org.apache.camel.TEST?showHeaders=true", "Hello World"));
+        assertDoesNotThrow(() -> template.sendBody("log:org.apache.camel.TEST?showBodyType=true", "Hello World"));
+        assertDoesNotThrow(() -> template.sendBody("log:org.apache.camel.TEST?showBody=true", "Hello World"));
+        assertDoesNotThrow(() -> template.sendBody("log:org.apache.camel.TEST?showAll=true", "Hello World"));
 
-        template.sendBody("log:org.apache.camel.TEST?showFuture=true", new MyFuture(new Callable<String>() {
-            public String call() throws Exception {
-                return "foo";
-            }
-        }));
-        template.sendBody("log:org.apache.camel.TEST?showFuture=false", new MyFuture(new Callable<String>() {
-            public String call() throws Exception {
-                return "bar";
-            }
-        }));
+        assertDoesNotThrow(() -> template.sendBody("log:org.apache.camel.TEST?showFuture=true", new MyFuture(() -> "foo")));
+
+        assertDoesNotThrow(() -> template.sendBody("log:org.apache.camel.TEST?showFuture=false", new MyFuture(() -> "bar")));
     }
 
     @Test
-    public void testSendMessageToLogMultiOptions() throws Exception {
-        template.sendBody("log:org.apache.camel.TEST?showHeaders=true", "Hello World");
-        template.sendBody("log:org.apache.camel.TEST?showAllProperties=true&showHeaders=true", "Hello World");
+    public void testSendMessageToLogMultiOptions() {
+        assertDoesNotThrow(() -> template.sendBody("log:org.apache.camel.TEST?showHeaders=true", "Hello World"));
+        assertDoesNotThrow(
+                () -> template.sendBody("log:org.apache.camel.TEST?showAllProperties=true&showHeaders=true", "Hello World"));
     }
 
     @Test
-    public void testSendMessageToLogShowFalse() throws Exception {
-        template.sendBody("log:org.apache.camel.TEST?showBodyType=false", "Hello World");
+    public void testSendMessageToLogShowFalse() {
+        assertDoesNotThrow(() -> template.sendBody("log:org.apache.camel.TEST?showBodyType=false", "Hello World"));
     }
 
     @Test
-    public void testSendMessageToLogMultiLine() throws Exception {
-        template.sendBody("log:org.apache.camel.TEST?multiline=true", "Hello World");
+    public void testSendMessageToLogMultiLine() {
+        assertDoesNotThrow(() -> template.sendBody("log:org.apache.camel.TEST?multiline=true", "Hello World"));
     }
 
     @Test
-    public void testSendByteArrayMessageToLogDefault() throws Exception {
-        template.sendBody("log:org.apache.camel.TEST", "Hello World".getBytes());
+    public void testSendByteArrayMessageToLogDefault() {
+        assertDoesNotThrow(() -> template.sendBody("log:org.apache.camel.TEST", "Hello World".getBytes()));
     }
 
     @Test
-    public void testSendMessageToLogMaxChars() throws Exception {
-        template.sendBody("log:org.apache.camel.TEST",
-                "Hello World this is a very long string that is NOT going to be chopped by maxchars");
+    public void testSendMessageToLogMaxChars() {
+        assertDoesNotThrow(() -> template.sendBody("log:org.apache.camel.TEST",
+                "Hello World this is a very long string that is NOT going to be chopped by maxchars"));
 
-        template.sendBody("log:org.apache.camel.TEST?maxChars=50",
-                "Hello World this is a very long string that is going to be chopped by maxchars");
+        assertDoesNotThrow(() -> template.sendBody("log:org.apache.camel.TEST?maxChars=50",
+                "Hello World this is a very long string that is going to be chopped by maxchars"));
 
-        template.sendBody("log:org.apache.camel.TEST?maxChars=50&showAll=true&multiline=true",
-                "Hello World this is a very long string that is going to be chopped by maxchars");
+        assertDoesNotThrow(() -> template.sendBody("log:org.apache.camel.TEST?maxChars=50&showAll=true&multiline=true",
+                "Hello World this is a very long string that is going to be chopped by maxchars"));
     }
 
     @Test
