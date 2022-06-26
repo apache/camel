@@ -60,6 +60,7 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
 
     private CamelContext camelContext;
     private KubernetesClient client;
+    private boolean clientEnabled = true;
     private String mountPathConfigMaps;
     private String mountPathSecrets;
 
@@ -75,10 +76,10 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
             mountPathSecrets = camelContext.getPropertiesComponent().resolveProperty(MOUNT_PATH_SECRETS)
                     .orElseGet(() -> System.getProperty(ENV_MOUNT_PATH_SECRETS, System.getenv(ENV_MOUNT_PATH_SECRETS)));
         }
-        if (client == null) {
+        if (clientEnabled && client == null) {
             client = CamelContextHelper.findSingleByType(camelContext, KubernetesClient.class);
         }
-        if (client == null) {
+        if (clientEnabled && client == null) {
             // try to auto-configure via properties
             PropertiesComponent pc = camelContext.getPropertiesComponent();
             OrderedLocationProperties properties = (OrderedLocationProperties) pc
@@ -115,10 +116,13 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
             // add to registry so the client can be reused
             camelContext.getRegistry().bind("camelKubernetesClient", client);
         }
-        if (client == null && getMountPath() == null) {
+
+        if (clientEnabled && client == null && getMountPath() == null) {
             throw new IllegalArgumentException("Either a mount path or the Kubernetes Client must be configured");
         }
-
+        if (!clientEnabled && getMountPath() == null) {
+            throw new IllegalArgumentException("Mount path must be configured");
+        }
         if (client != null && LOGGED.compareAndSet(false, true)) {
             // only log once
             LOG.info("KubernetesClient using masterUrl: {} with namespace: {}", client.getMasterUrl(), client.getNamespace());
@@ -146,12 +150,23 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
         this.client = client;
     }
 
+    public boolean isClientEnabled() {
+        return clientEnabled;
+    }
+
+    /**
+     * Whether to use KubernetesClient to lookup from the Kubernetes API server. Is by default enabled.
+     */
+    public void setClientEnabled(boolean clientEnabled) {
+        this.clientEnabled = clientEnabled;
+    }
+
     public String getMountPathConfigMaps() {
         return mountPathConfigMaps;
     }
 
     /**
-     * To use a volume mount to load configmaps, instead of using the Kubernetes API server
+     * To use a volume mount to load configmaps (first), and fallback to using the Kubernetes API server
      */
     public void setMountPathConfigMaps(String mountPathConfigMaps) {
         this.mountPathConfigMaps = mountPathConfigMaps;
@@ -162,7 +177,7 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
     }
 
     /**
-     * To use a volume mount to load secrets, instead of using the Kubernetes API server.
+     * To use a volume mount to load secrets (first), and fallback to using the Kubernetes API server
      */
     public void setMountPathSecrets(String mountPathSecrets) {
         this.mountPathSecrets = mountPathSecrets;

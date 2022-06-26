@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.kubernetes.properties;
 
+import java.util.Map;
+
 import io.fabric8.kubernetes.client.ConfigBuilder;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.Map;
 
 public class KubernetesClientConfigureTest {
 

@@ -31,6 +31,7 @@ public class SecretMountPropertiesFunctionTest extends KubernetesTestSupport {
     public void secretMountPropertiesFunction() throws Exception {
         SecretPropertiesFunction cmf = new SecretPropertiesFunction();
         cmf.setMountPathSecrets("src/test/resources/");
+        cmf.setClientEnabled(false);
         cmf.setCamelContext(context);
         cmf.start();
 
