@@ -357,7 +357,9 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
             builder &= Modifier.isPublic(m.getModifiers()) && m.getParameterCount() == 1;
             builder &= filterSetter(m);
             if (setter || builder) {
-                String getter = "get" + (builder ? Character.toUpperCase(m.getName().charAt(4)) + m.getName().substring(5) : Character.toUpperCase(m.getName().charAt(3)) + m.getName().substring(4));
+                String getter = "get" + (builder
+                        ? Character.toUpperCase(m.getName().charAt(4)) + m.getName().substring(5)
+                        : Character.toUpperCase(m.getName().charAt(3)) + m.getName().substring(4));
                 Class type = m.getParameterTypes()[0];
                 if (boolean.class == type || Boolean.class == type) {
                     try {
