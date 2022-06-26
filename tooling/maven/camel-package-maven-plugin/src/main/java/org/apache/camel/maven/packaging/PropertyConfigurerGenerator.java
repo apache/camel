@@ -102,8 +102,10 @@ public final class PropertyConfigurerGenerator {
                 for (BaseOptionModel option : options) {
                     String getOrSet = option.getName();
                     getOrSet = Character.toUpperCase(getOrSet.charAt(0)) + getOrSet.substring(1);
+                    boolean builder = option instanceof AbstractGenerateConfigurerMojo.ConfigurerOption
+                            && ((AbstractGenerateConfigurerMojo.ConfigurerOption) option).isBuilderMethod();
                     String setterLambda = setterLambda(getOrSet, option.getJavaType(), option.getSetterMethod(),
-                            option.getConfigurationField(), component, option.getType());
+                            option.getConfigurationField(), component, option.getType(), builder);
                     if (!option.getName().toLowerCase().equals(option.getName())) {
                         w.append(String.format("        case \"%s\":\n", option.getName().toLowerCase()));
                     }
@@ -337,26 +339,26 @@ public final class PropertyConfigurerGenerator {
 
     private static String setterLambda(
             String getOrSet, String type, String setterMethod, String configurationField, boolean component,
-            String optionKind) {
+            String optionKind, boolean builder) {
         // type may contain generics so remove those
         if (type.indexOf('<') != -1) {
             type = type.substring(0, type.indexOf('<'));
         }
         type = type.replace('$', '.');
+        String prefix = builder ? "with" : "set";
         if (configurationField != null) {
             if (component) {
                 String methodName
                         = "getOrCreate" + Character.toUpperCase(configurationField.charAt(0)) + configurationField.substring(1);
-                getOrSet = methodName + "(target).set" + getOrSet;
+                getOrSet = methodName + "(target)." + prefix + getOrSet;
             } else {
                 getOrSet = "target.get" + Character.toUpperCase(configurationField.charAt(0)) + configurationField.substring(1)
-                           + "().set" + getOrSet;
+                           + "()." + prefix + getOrSet;
             }
         } else {
-            getOrSet = "target.set" + getOrSet;
+            getOrSet = "target." + prefix + getOrSet;
         }
 
-        // target.setGroupSize(property(camelContext, java.lang.Integer.class, value))
         String rv;
         if ("duration".equals(optionKind) && "long".equals(type)) {
             rv = "property(camelContext, java.time.Duration.class, value).toMillis()";
