@@ -29,8 +29,10 @@ import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesFunction;
+import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.service.ServiceSupport;
@@ -87,15 +89,30 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
                             k -> k.replace("camel.kubernetes-client.", "").replace("camel.kubernetesClient.", ""));
             if (!properties.isEmpty()) {
                 ConfigBuilder config = new ConfigBuilder();
+
+                PropertyConfigurer configurer = camelContext.adapt(ExtendedCamelContext.class)
+                        .getConfigurerResolver().resolvePropertyConfigurer(ConfigBuilder.class.getName(), camelContext);
+
+                // use copy to keep track of which options was configureed or not
+                OrderedLocationProperties copy = new OrderedLocationProperties();
+                copy.putAll(properties);
+
                 PropertyBindingSupport.build()
-                        .withProperties((Map) properties)
+                        .withProperties((Map) copy)
                         .withFluentBuilder(true)
                         .withIgnoreCase(true)
-                        .withReflection(true)
+                        .withReflection(false)
+                        .withConfigurer(configurer)
                         .withTarget(config)
                         .withCamelContext(camelContext)
-                        .withRemoveParameters(false)
+                        .withRemoveParameters(true)
                         .bind();
+                if (!copy.isEmpty()) {
+                    // some options were not possible to configure
+                    for (var e : copy.entrySet()) {
+                        properties.remove(e.getKey());
+                    }
+                }
                 client = new DefaultKubernetesClient(config.build());
                 LOG.info("Auto-configuration KubernetesClient summary");
                 for (var entry : properties.entrySet()) {
@@ -107,6 +124,11 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
                     } else {
                         LOG.info("    {} {}={}", loc, k, v);
                     }
+                }
+                if (!copy.isEmpty()) {
+                    for (var e : copy.entrySet()) {
+                        LOG.warn("Property not auto-configured: camel.kubernetes-client.{}={}", e.getKey(), e.getValue());
+                    };
                 }
             } else {
                 // create a default client to use
