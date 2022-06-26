@@ -24,6 +24,7 @@ import org.openstack4j.model.network.Network;
 import org.openstack4j.model.network.NetworkType;
 import org.openstack4j.model.network.State;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -80,6 +81,6 @@ public class OpenstackNeutronNetworkTest extends OpenstackWiremockTestSupport {
     @Test
     void deleteShouldSucceed() {
         String uri = String.format(URI_FORMAT, url(), OpenstackConstants.DELETE);
-        template.requestBodyAndHeader(uri, null, OpenstackConstants.ID, NETWORK_ID);
+        assertDoesNotThrow(() -> template.requestBodyAndHeader(uri, null, OpenstackConstants.ID, NETWORK_ID));
     }
 }

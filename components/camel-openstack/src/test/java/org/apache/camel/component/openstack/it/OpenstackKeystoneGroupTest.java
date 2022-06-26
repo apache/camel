@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.openstack4j.api.Builders;
 import org.openstack4j.model.identity.v3.Group;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -97,7 +98,7 @@ public class OpenstackKeystoneGroupTest extends OpenstackWiremockTestSupport {
     @Test
     void deleteShouldSucceed() {
         String uri = String.format(URI_FORMAT, url(), OpenstackConstants.DELETE);
-        template.requestBodyAndHeader(uri, null, OpenstackConstants.ID, GROUP_ID);
+        assertDoesNotThrow(() -> template.requestBodyAndHeader(uri, null, OpenstackConstants.ID, GROUP_ID));
     }
 
     @Test
@@ -107,7 +108,7 @@ public class OpenstackKeystoneGroupTest extends OpenstackWiremockTestSupport {
         headers.put(KeystoneConstants.GROUP_ID, "851398fccda34f208e1839ebbc1251d1");
 
         String uri = String.format(URI_FORMAT, url(), KeystoneConstants.ADD_USER_TO_GROUP);
-        template.requestBodyAndHeaders(uri, null, headers, Group.class);
+        assertDoesNotThrow(() -> template.requestBodyAndHeaders(uri, null, headers, Group.class));
     }
 
     @Test
@@ -128,6 +129,6 @@ public class OpenstackKeystoneGroupTest extends OpenstackWiremockTestSupport {
         headers.put(KeystoneConstants.GROUP_ID, "851398fccda34f208e1839ebbc1251d1");
 
         String uri = String.format(URI_FORMAT, url(), KeystoneConstants.REMOVE_USER_FROM_GROUP);
-        template.requestBodyAndHeaders(uri, null, headers);
+        assertDoesNotThrow(() -> template.requestBodyAndHeaders(uri, null, headers));
     }
 }

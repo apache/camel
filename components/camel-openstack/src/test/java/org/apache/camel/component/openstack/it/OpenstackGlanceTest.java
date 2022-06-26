@@ -30,6 +30,7 @@ import org.openstack4j.model.image.ContainerFormat;
 import org.openstack4j.model.image.DiskFormat;
 import org.openstack4j.model.image.Image;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -98,6 +99,7 @@ public class OpenstackGlanceTest extends OpenstackWiremockTestSupport {
     @Test
     void deleteShouldSucceed() {
         String uri = String.format(URI_FORMAT, url(), OpenstackConstants.DELETE);
-        template.requestBodyAndHeader(uri, null, OpenstackConstants.ID, "8a2ea42d-06b5-42c2-a54d-97105420f2bb");
+        assertDoesNotThrow(
+                () -> template.requestBodyAndHeader(uri, null, OpenstackConstants.ID, "8a2ea42d-06b5-42c2-a54d-97105420f2bb"));
     }
 }
