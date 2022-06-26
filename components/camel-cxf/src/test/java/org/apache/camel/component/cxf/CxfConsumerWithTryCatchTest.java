@@ -23,7 +23,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.TestInstance;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -74,8 +74,8 @@ public class CxfConsumerWithTryCatchTest extends CxfConsumerTest {
     }
 
     @Override
-    @Test
-    public void testXmlDeclaration() throws Exception {
+    @Disabled("The test from the parent class is not applicable in this scenario")
+    public void testXmlDeclaration() {
         // do nothing here
     }
 

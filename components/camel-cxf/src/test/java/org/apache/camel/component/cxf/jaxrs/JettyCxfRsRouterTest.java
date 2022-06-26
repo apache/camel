@@ -17,7 +17,7 @@
 package org.apache.camel.component.cxf.jaxrs;
 
 import org.apache.camel.component.cxf.CXFTestSupport;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Disabled;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -35,8 +35,8 @@ public class JettyCxfRsRouterTest extends CxfRsRouterTest {
     }
 
     @Override
-    @Test
-    public void testEndpointUris() throws Exception {
+    @Disabled("The test from the parent class is not applicable in this scenario")
+    public void testEndpointUris() {
         // Don't test anything here
     }
 

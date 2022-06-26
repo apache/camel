@@ -60,9 +60,9 @@ public class CxfSimpleRouterWithUnwrappedStyleTest extends CxfSimpleRouterTest {
     }
 
     @Override
-    @Test
-    public void testOnwayInvocation() throws Exception {
-        // ignore the invocation without parameter, as the document-literal doesn't support the invocation without parameter.
+    @Disabled("Ignore the invocation without parameter, as the document-literal doesn't support the invocation without parameter")
+    public void testOnwayInvocation() {
+        // NO-OP
     }
 
     @Override
