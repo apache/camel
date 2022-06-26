@@ -173,7 +173,7 @@ public class AddIssueProducerTest extends CamelTestSupport {
         template.sendBodyAndHeaders(description, headers);
 
         Issue issue = issueRestClient.getIssue(backendIssue.getKey()).claim();
-        assertEquals(issue, issue);
+        assertEquals(backendIssue, issue);
         assertEquals(type, issue.getIssueType().getName());
         assertEquals(priority, issue.getPriority().getName());
         assertEquals(summary, issue.getSummary());
