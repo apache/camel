@@ -946,6 +946,35 @@ public final class ObjectHelper {
     }
 
     /**
+     * Checks if the given class has a subclass (extends or implements)
+     * 
+     * @param clazz    the class
+     * @param subClass the subclass (class or interface)
+     */
+    public static boolean isSubclass(Class<?> clazz, Class<?> subClass) {
+        if (clazz == subClass) {
+            return true;
+        }
+        if (clazz == null || subClass == null) {
+            return false;
+        }
+        for (Class<?> aClass = clazz; aClass != null; aClass = aClass.getSuperclass()) {
+            if (aClass == subClass) {
+                return true;
+            }
+            if (subClass.isInterface()) {
+                Class<?>[] interfaces = aClass.getInterfaces();
+                for (Class<?> anInterface : interfaces) {
+                    if (isSubclass(anInterface, subClass)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Used by camel-bean
      */
     public static int arrayLength(Object[] pojo) {
