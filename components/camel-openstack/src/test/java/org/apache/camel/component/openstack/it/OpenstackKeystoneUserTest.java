@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.openstack4j.api.Builders;
 import org.openstack4j.model.identity.v3.User;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -93,6 +94,6 @@ public class OpenstackKeystoneUserTest extends OpenstackWiremockTestSupport {
     @Test
     void deleteShouldSucceed() {
         String uri = String.format(URI_FORMAT, url(), OpenstackConstants.DELETE);
-        template.requestBodyAndHeader(uri, null, OpenstackConstants.ID, USER_ID);
+        assertDoesNotThrow(() -> template.requestBodyAndHeader(uri, null, OpenstackConstants.ID, USER_ID));
     }
 }
