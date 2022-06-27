@@ -37,7 +37,7 @@ public class HelloServiceImpl implements HelloService {
 
     @Override
     public String echo(String text) {
-        LOG.info("call for echo with " + text);
+        LOG.info("call for echo with {}", text);
         return "echo " + text;
     }
 

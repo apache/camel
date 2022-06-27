@@ -129,9 +129,6 @@
                     <reportFormat>brief</reportFormat>
                     <useFile>false</useFile>
                     <runOrder>alphabetical</runOrder>
-                    <!--parallel>classes</parallel>
-                    <perCoreThreadCount>true</perCoreThreadCount>
-                    <threadCount>2</threadCount-->
                 </configuration>
             </plugin>
         </plugins>
