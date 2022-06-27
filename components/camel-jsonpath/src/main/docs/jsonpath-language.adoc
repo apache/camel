@@ -108,7 +108,7 @@ See the https://github.com/json-path/JsonPath[JSONPath] project page for more sy
 
 == Supported message body types
 
-Camel JSonPath supports message body using the following types:
+Camel JSONPath supports message body using the following types:
 
 [width="100%",cols="3m,7",options="header"]
 |===
@@ -119,12 +119,12 @@ Camel JSonPath supports message body using the following types:
 | List | Message bodies as `java.util.List` types
 | POJO | *Optional* If Jackson is on the classpath, then camel-jsonpath
   is able to use Jackson to read the message body as POJO and convert to `java.util.Map`
-  which is supported by JSonPath. For example, you can add `camel-jackson` as dependency to include Jackson.
+  which is supported by JSONPath. For example, you can add `camel-jackson` as dependency to include Jackson.
 | InputStream | If none of the above types matches, then Camel will attempt to read the message body as a `java.io.InputStream`.
 |===
 
 If a message body is of unsupported type then an exception is thrown by default, however you
-can configure JSonPath to suppress exceptions (see below)
+can configure JSONPath to suppress exceptions (see below)
 
 
 == Suppressing exceptions
@@ -221,7 +221,7 @@ And in XML DSL:
 <jsonpath allowSimple="false">$.store.book[?(@.price &lt; 10)]</jsonpath>
 ----
 
-== JSonPath injection
+== JSONPath injection
 
 You can use xref:manual::bean-integration.adoc[Bean Integration] to invoke a
 method on a bean and use various languages such as JSONPath (via the `@JsonPath` annotation)

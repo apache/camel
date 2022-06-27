@@ -131,11 +131,11 @@ Multi-part SOAP messages are supported by the ServiceInterfaceStrategy.
 The ServiceInterfaceStrategy must be initialized with a service
 interface definition that is annotated in accordance with JAX-WS 2.2 and
 meets the requirements of the Document Bare style. The target method
-must meet the following criteria, as per the JAX-WS specification: 1) it
-must have at most one `in` or `in/out` non-header parameter, 2) if it
-has a return type other than `void` it must have no `in/out` or `out`
-non-header parameters, 3) if it it has a return type of `void` it must
-have at most one `in/out` or `out` non-header parameter.
+must meet the following criteria, as per the JAX-WS specification: 
+1. it must have at most one `in` or `in/out` non-header parameter, 
+2. if it has a return type other than `void` it must have no `in/out` or `out`
+non-header parameters,
+3. if it it has a return type of `void` it must have at most one `in/out` or `out` non-header parameter.
 
 The ServiceInterfaceStrategy should be initialized with a boolean
 parameter that indicates whether the mapping strategy applies to the
@@ -153,7 +153,7 @@ JAX-WS specifies the use of a type-parameterized `javax.xml.ws.Holder`
 object for `In/Out` and `Out` parameters. You may use an instance of the
 parameterized-type directly. The camel-soap DataFormat marshals Holder
 values in accordance with the JAXB mapping for the class of the
-`Holder`'s value. No mapping is provided for `Holder` objects in an
+``Holder``'s value. No mapping is provided for `Holder` objects in an
 unmarshalled response.
 
 == Examples

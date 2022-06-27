@@ -15,7 +15,6 @@ The File Expression Language is an extension to the
 xref:simple-language.adoc[Simple] language, adding file related capabilities.
 These capabilities are related to common use cases working with file
 path and names. The goal is to allow expressions to be used with the
-
 xref:components::file-component.adoc[File] and xref:components::ftp-component.adoc[FTP]
 components for setting dynamic file patterns for both consumer and producer.
 
@@ -42,7 +41,7 @@ All the file tokens use the same expression name as the method on the
 supported by the current Exchange. For instance the xref:components::ftp-component.adoc[FTP]
 component supports some options, whereas the File component supports all of them.
 
-[width="100%",cols="10%,10%,10%,10%,10%,25%,25%",options="header",]
+[width="100%",cols="25%,10%,10%,10%,10%,10%,25%",options="header",]
 |===
 |Expression |Type |File Consumer |File Producer |FTP Consumer |FTP Producer |Description
 
@@ -100,19 +99,19 @@ language can also be used.
 === Relative paths
 
 We have a `java.io.File` handle for the file `hello.txt` in the
-following *relative* directory: `.\filelanguage\test`. And we configure
-our endpoint to use this starting directory `.\filelanguage`. The file
+following *relative* directory: `./filelanguage/test`. And we configure
+our endpoint to use this starting directory `./filelanguage`. The file
 tokens will return as:
 
 [width="100%",cols="50%,50%",options="header",]
 |===
 |Expression |Returns
 
-|file:name |test\hello.txt
+|file:name |test/hello.txt
 
 |file:name.ext |txt
 
-|file:name.noext |test\hello
+|file:name.noext |test/hello
 
 |file:onlyname |hello.txt
 
@@ -120,33 +119,33 @@ tokens will return as:
 
 |file:ext |txt
 
-|file:parent |filelanguage\test
+|file:parent |filelanguage/test
 
-|file:path |filelanguage\test\hello.txt
+|file:path |filelanguage/test/hello.txt
 
 |file:absolute |false
 
-|file:absolute.path |\workspace\camel\camel-core\target\filelanguage\test\hello.txt
+|file:absolute.path |/workspace/camel/camel-core/target/filelanguage/test/hello.txt
 |===
 
 === Absolute paths
 
 We have a `java.io.File` handle for the file `hello.txt` in the
 following *absolute* directory:
-`\workspace\camel\camel-core\target\filelanguage\test`. And we configure
+`/workspace/camel/camel-core/target/filelanguage/test`. And we configure
 out endpoint to use the absolute starting directory
-`\workspace\camel\camel-core\target\filelanguage`. The file tokens will
+`/workspace/camel/camel-core/target/filelanguage`. The file tokens will
 return as:
 
 [width="100%",cols="50%,50%",options="header",]
 |===
 |Expression |Returns
 
-|file:name |test\hello.txt 
+|file:name |test/hello.txt 
 
 |file:name.ext |txt
 
-|file:name.noext |test\hello
+|file:name.noext |test/hello
 
 |file:onlyname |hello.txt
 
@@ -154,13 +153,13 @@ return as:
 
 |file:ext |txt
 
-|file:parent |\workspace\camel\camel-core\target\filelanguage\test
+|file:parent |/workspace/camel/camel-core/target/filelanguage/test
 
-|file:path |\workspace\camel\camel-core\target\filelanguage\test\hello.txt
+|file:path |/workspace/camel/camel-core/target/filelanguage/test/hello.txt
 
 |file:absolute |true
 
-|file:absolute.path |\workspace\camel\camel-core\target\filelanguage\test\hello.txt
+|file:absolute.path |/workspace/camel/camel-core/target/filelanguage/test/hello.txt
 |===
 
 == Samples

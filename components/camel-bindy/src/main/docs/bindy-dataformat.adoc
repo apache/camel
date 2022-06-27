@@ -1234,7 +1234,7 @@ and how to use the annotation:
 
 [source,java]
 ----
-@Message(keyValuePairSeparator = "=", pairSeparator = "\u0001", type="FIX", version="4.1")
+@Message(keyValuePairSeparator = "=", pairSeparator = "\\u0001", type="FIX", version="4.1")
 public class Order {
 
 }
@@ -1296,7 +1296,7 @@ This parameter represents the key of the field in the message:
 
 [source,java]
 ----
-@Message(keyValuePairSeparator = "=", pairSeparator = "\u0001", type="FIX", version="4.1")
+@Message(keyValuePairSeparator = "=", pairSeparator = "\\u0001", type="FIX", version="4.1")
 public class Order {
 
     @Link Header header;
@@ -1677,7 +1677,7 @@ FormattingOptions:
 * String
 
 The DefaultFormatFactory can be overridden by providing an instance of
-FactoryRegistry in the registry in use (e.g. spring or JNDI).
+FactoryRegistry in the registry in use (e.g. Spring or JNDI).
 
 == Using the Java DSL
 
