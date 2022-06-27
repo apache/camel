@@ -73,8 +73,12 @@ public final class ThreadHelper {
     }
 
     private static String replaceFirst(String input, String from, String to) {
-        // use StringHelper.replaceFirst as replace does not work on all JDK 11s (CAMEL-18232)
-        return StringHelper.replaceFirst(input, from ,to);
+        // use StringHelper.replaceFirst and replaceFirst (regexp) as replace does not work on all JDK 11s (CAMEL-18232)
+        String answer = StringHelper.replaceFirst(input, from, to);
+        if (!to.contains("$")) {
+            answer = answer.replaceFirst(from, to);
+        }
+        return answer;
     }
 
 }
