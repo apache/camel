@@ -12,7 +12,7 @@
 
 The HL7 component is used for working with the HL7 MLLP protocol and
 http://www.hl7.org/implement/standards/product_brief.cfm?product_id=185[HL7
-v2 messages] using the http://hl7api.sourceforge.net[HAPI library].
+v2 messages] using the https://hapifhir.github.io/hapi-hl7v2/[HAPI library].
 
 This component supports the following:
 
@@ -295,7 +295,7 @@ object:
 The unmarshal operation adds these fields from the MSH segment as
 headers on the Camel message:
 
-[width="100%",cols="10%,10%,80%",options="header",]
+[width="100%",cols="40%,20%,40%",options="header",]
 |===
 |Key |MSH field |Example
 
@@ -321,7 +321,7 @@ headers on the Camel message:
 
 |`CamelHL7VersionId` |`MSH-12` |`2.4`
 
-|`CamelHL7Context` |`` |`contains the
+|`CamelHL7Context` | |`contains the
 https://hapifhir.github.io/hapi-hl7v2/base/apidocs/ca/uhn/hl7v2/HapiContext.html[HapiContext]
 that was used to parse the message`
 
