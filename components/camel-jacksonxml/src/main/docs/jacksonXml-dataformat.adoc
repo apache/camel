@@ -93,7 +93,7 @@ Note that the weight field is missing in the resulting XML:
 <pojo age="30" weight="70"/>
 ----------------------------
 
-== Include/Exclude fields using the `jsonView` attribute with `JacksonXML`DataFormat
+== Include/Exclude fields using the `jsonView` attribute with ``JacksonXML``DataFormat
 
 As an example of using this attribute you can instead of:
 

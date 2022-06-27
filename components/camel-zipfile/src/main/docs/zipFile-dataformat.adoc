@@ -14,7 +14,7 @@ The Zip File Data Format is a message compression
 and de-compression format. Messages can be marshalled (compressed) to
 Zip files containing a single entry, and Zip files containing a single
 entry can be unmarshalled (decompressed) to the original file contents.
-This data format supports ZIP64, as long as Java 7 or later is being used].
+This data format supports ZIP64, as long as Java 7 or later is being used.
 
 == ZipFile Options
 
