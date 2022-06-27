@@ -310,7 +310,7 @@ from(kafka("topic1").brokers("localhost:9092"))
 
 from(kafka("topic2").brokers("localhost:9092"))
          .log("Kafka Message is: ${body}")
-         .to(aws2S3("camel-bucket").streamingUploadMode(true).batchMessageNumber(25).namingStrategy(AWS2S3EndpointBuilderFactory.AWSS3NamingStrategyEnum.progressive).keyName("{{kafkaTopic2}}/{{kafkaTopic2}}.txt"));
+         .to(aws2S3("camel-bucket").streamingUploadMode(true).batchMessageNumber(25).namingStrategy(AWS2S3EndpointBuilderFactory.AWSS3NamingStrategyEnum.random).keyName("{{kafkaTopic2}}/{{kafkaTopic2}}.txt"));
 --------------------------------------------------------------------------------
 
 The default size for a batch is 1 Mb, but you can adjust it according to your requirements.
@@ -359,7 +359,7 @@ In this case the upload will be completed after 10 seconds.
 
 == Bucket Autocreation
 
-With the option `autoCreateBucket` users are able to avoid the autocreation of an S3 Bucket in case it doesn't exist. The default for this option is `true`.
+With the option `autoCreateBucket` users are able to avoid the autocreation of an S3 Bucket in case it doesn't exist. The default for this option is `false`.
 If set to false any operation on a not-existent bucket in AWS won't be successful and an error will be returned.
 
 == Moving stuff between a bucket and another bucket

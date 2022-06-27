@@ -536,7 +536,7 @@ In this way the file.txt in the container containerblob1 of the account 'account
 
 === Development Notes (Important)
 
-All integration tests use [Testcontainers](https://www.testcontainers.org/) and run by default.
+All integration tests use https://www.testcontainers.org/[Testcontainers] and run by default.
 Obtaining of Azure accessKey and accountName is needed to be able to run all integration tests using Azure services.
 In addition to the mocked unit tests you *will need to run the integration tests
 with every change you make or even client upgrade as the Azure client can break things even on minor versions upgrade.*
