@@ -16,6 +16,10 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.logging.log4j.Level;
@@ -70,6 +74,12 @@ public final class RuntimeUtil {
             default: {
                 Configurator.setRootLevel(Level.INFO);
             }
+        }
+    }
+
+    public static void loadProperties(Properties properties, File file) throws IOException {
+        try (final FileInputStream fileInputStream = new FileInputStream(file)) {
+            properties.load(fileInputStream);
         }
     }
 
