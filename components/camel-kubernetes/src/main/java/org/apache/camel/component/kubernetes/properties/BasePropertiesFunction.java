@@ -49,9 +49,10 @@ import org.slf4j.LoggerFactory;
  */
 abstract class BasePropertiesFunction extends ServiceSupport implements PropertiesFunction, CamelContextAware {
 
-    // keys in application.properties for mount paths
-    public static final String MOUNT_PATH_CONFIGMAPS = "org.apache.camel.component.kubernetes.properties.mount-path-configmaps";
-    public static final String MOUNT_PATH_SECRETS = "org.apache.camel.component.kubernetes.properties.mount-path-secrets";
+    // keys in application.properties
+    public static final String CLIENT_ENABLED = "camel.kubernetes.client-enabled";
+    public static final String MOUNT_PATH_CONFIGMAPS = "camel.kubernetes.mount-path-configmaps";
+    public static final String MOUNT_PATH_SECRETS = "camel.kubernetes.mount-path-secrets";
 
     // use camel-k ENV for mount paths
     public static final String ENV_MOUNT_PATH_CONFIGMAPS = "camel.k.mount-path.configmaps";
@@ -62,7 +63,7 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
 
     private CamelContext camelContext;
     private KubernetesClient client;
-    private boolean clientEnabled = true;
+    private Boolean clientEnabled;
     private String mountPathConfigMaps;
     private String mountPathSecrets;
 
@@ -70,6 +71,10 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
     @SuppressWarnings("unchecked")
     protected void doInit() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext");
+        if (clientEnabled == null) {
+            clientEnabled = "true"
+                    .equalsIgnoreCase(camelContext.getPropertiesComponent().resolveProperty(CLIENT_ENABLED).orElse("true"));
+        }
         if (mountPathConfigMaps == null) {
             mountPathConfigMaps = camelContext.getPropertiesComponent().resolveProperty(MOUNT_PATH_CONFIGMAPS)
                     .orElseGet(() -> System.getProperty(ENV_MOUNT_PATH_CONFIGMAPS, System.getenv(ENV_MOUNT_PATH_CONFIGMAPS)));
