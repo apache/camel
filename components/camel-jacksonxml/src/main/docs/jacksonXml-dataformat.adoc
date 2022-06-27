@@ -128,9 +128,9 @@ And the same in XML DSL:
 
 == Setting serialization include option
 
-If you want to marshal a pojo to XML, and the pojo has some fields with
+If you want to marshal a POJO to XML, and the POJO has some fields with
 null values. And you want to skip these null values, then you need to
-set either an annotation on the pojo, 
+set either an annotation on the POJO, 
 
 [source,java]
 ------------------------------
@@ -140,7 +140,7 @@ public class MyPojo {
 }
 ------------------------------
 
-But this requires you to include that annotation in your pojo source
+But this requires you to include that annotation in your POJO source
 code. You can also configure the Camel JacksonXMLDataFormat to set the
 include option, as shown below:
 
@@ -186,9 +186,9 @@ Or from XML DSL you configure this as
 </dataFormats>
 -------------------------------------------------------
 
-== Unmarshalling from XML to List<Map> or List<pojo>
+== Unmarshalling from XML to List<Map> or List<POJO>
 
-If you are using Jackson to unmarshal XML to a list of map/pojo, you can
+If you are using Jackson to unmarshal XML to a list of map/POJO, you can
 now specify this by setting `useList="true"` or use
 the `org.apache.camel.component.jacksonxml.ListJacksonXMLDataFormat`.
 For example with Java you can do as shown below:
@@ -199,7 +199,7 @@ JacksonXMLDataFormat format = new ListJacksonXMLDataFormat();
 // or
 JacksonXMLDataFormat format = new JacksonXMLDataFormat();
 format.useList();
-// and you can specify the pojo class type also
+// and you can specify the POJO class type also
 format.setUnmarshalType(MyPojo.class);
 -------------------------------------------------------------
 
@@ -213,7 +213,7 @@ using `useList` attribute as shown below:
 </dataFormats>
 --------------------------------------------
 
-And you can specify the pojo type also
+And you can specify the POJO type also
 
 [source,xml]
 -------------------------------------------------------------------------------
