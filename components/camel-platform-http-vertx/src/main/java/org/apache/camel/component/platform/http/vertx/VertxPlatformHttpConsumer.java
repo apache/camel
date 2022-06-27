@@ -33,6 +33,7 @@ import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.auth.User;
 import io.vertx.ext.web.FileUpload;
+import io.vertx.ext.web.RequestBody;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.impl.RouteImpl;
@@ -269,7 +270,8 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
         } else {
             Method m = Method.valueOf(ctx.request().method().name());
             if (m.canHaveBody()) {
-                final Buffer body = ctx.getBody();
+                final RequestBody requestBody = ctx.body();
+                final Buffer body = requestBody.buffer();
                 if (body != null) {
                     result.setBody(body);
                 } else {
@@ -282,7 +284,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
         return result;
     }
 
-    private void populateAttachments(Set<FileUpload> uploads, Message message) {
+    private void populateAttachments(List<FileUpload> uploads, Message message) {
         for (FileUpload upload : uploads) {
             final String name = upload.name();
             final String fileName = upload.fileName();
