@@ -154,9 +154,9 @@ from("direct:start")
 
 == Rest producer binding
 
-The REST producer supports binding using JSon or XML like the rest-dsl does.
+The REST producer supports binding using JSON or XML like the rest-dsl does.
 
-For example to use jetty with json binding mode turned on you can configure this in the rest configuration:
+For example to use jetty with JSON binding mode turned on you can configure this in the rest configuration:
 
 [source,java]
 ----
@@ -166,7 +166,7 @@ from("direct:start")
   .to("rest:post:user");
 ----
 
-Then when calling the REST service using rest producer it will automatic bind any POJOs to json before calling the REST service:
+Then when calling the REST service using REST producer it will automatic bind any POJOs to JSON before calling the REST service:
 
 [source,java]
 ----
@@ -177,13 +177,13 @@ Then when calling the REST service using rest producer it will automatic bind an
   template.sendBody("direct:start", user);
 ----
 
-In the example above we send a POJO instance `UserPojo` as the message body. And because we have turned on JSon binding
-in the rest configuration, then the POJO will be marshalled from POJO to JSon before calling the REST service.
+In the example above we send a POJO instance `UserPojo` as the message body. And because we have turned on JSON binding
+in the rest configuration, then the POJO will be marshalled from POJO to JSON before calling the REST service.
 
-However if you want to also perform binding for the response message (eg what the REST service send back as response) you
-would need to configure the `outType` option to specify what is the classname of the POJO to unmarshal from JSon to POJO.
+However if you want to also perform binding for the response message (e.g. what the REST service sends back as response) you
+would need to configure the `outType` option to specify what is the class name of the POJO to unmarshal from JSON to POJO.
 
-For example if the REST service returns a JSon payload that binds to `com.foo.MyResponsePojo` you can configure this as shown:
+For example if the REST service returns a JSON payload that binds to `com.foo.MyResponsePojo` you can configure this as shown:
 
 [source,java]
 ----
@@ -203,7 +203,7 @@ can use the Rest DSL to define those in a nicer RESTful way.
 
 There is a *camel-example-servlet-rest-tomcat* example in the Apache
 Camel distribution, that demonstrates how to use the
-Rest DSL with SERVLET as
+Rest DSL with Servlet as
 transport that can be deployed on Apache Tomcat, or similar web
 containers.
 
