@@ -79,7 +79,7 @@ The opposite to `pipeline` is xref:multicast-eip.adoc[`multicast`].
 A xref:multicast-eip.adoc[Multicast] EIP routes a copy of the same message into each of its outputs,
 where these messages are processed independently. Pipeline EIP however, will route the same message
 sequentially in the pipeline where the output from the previous step is input to the next. The same principle
-from the Linux shell with chaining commands together with pipe (`'`).
+from the Linux shell with chaining commands together with pipe (`|`).
 
 === When using pipeline is necessary
 
