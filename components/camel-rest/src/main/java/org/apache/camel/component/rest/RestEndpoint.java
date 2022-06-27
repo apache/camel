@@ -177,10 +177,10 @@ public class RestEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * The Camel Rest component to use for the producer REST transport, such as http, undertow. If no component has
-     * been explicitly configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL,
-     * or if a org.apache.camel.spi.RestProducerFactory is registered in the registry. If either one is found, then that
-     * is being used.
+     * The Camel Rest component to use for the producer REST transport, such as http, undertow. If no component has been
+     * explicitly configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or
+     * if a org.apache.camel.spi.RestProducerFactory is registered in the registry. If either one is found, then that is
+     * being used.
      */
     public void setProducerComponentName(String producerComponentName) {
         this.producerComponentName = producerComponentName;
@@ -192,9 +192,9 @@ public class RestEndpoint extends DefaultEndpoint {
 
     /**
      * The Camel Rest component to use for the consumer REST transport, such as jetty, servlet, undertow. If no
-     * component has been explicitly configured, then Camel will lookup if there is a Camel component that integrates with
-     * the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If either one is
-     * found, then that is being used.
+     * component has been explicitly configured, then Camel will lookup if there is a Camel component that integrates
+     * with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If either one
+     * is found, then that is being used.
      */
     public void setConsumerComponentName(String consumerComponentName) {
         this.consumerComponentName = consumerComponentName;
