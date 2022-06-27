@@ -161,7 +161,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
         return PATH_PARAMETER_PATTERN.matcher(path).replaceAll(":$1");
     }
 
-    private void handleRequest(RoutingContext ctx) {
+    protected void handleRequest(RoutingContext ctx) {
         final Vertx vertx = ctx.vertx();
         final Exchange exchange = toExchange(ctx);
 
@@ -221,7 +221,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
                 });
     }
 
-    private Exchange toExchange(RoutingContext ctx) {
+    protected Exchange toExchange(RoutingContext ctx) {
         final Exchange exchange = createExchange(false);
         exchange.setPattern(ExchangePattern.InOut);
 
@@ -240,7 +240,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
         return exchange;
     }
 
-    private Message toCamelMessage(RoutingContext ctx, Exchange exchange) {
+    protected Message toCamelMessage(RoutingContext ctx, Exchange exchange) {
         final Message result = exchange.getIn();
 
         final HeaderFilterStrategy headerFilterStrategy = getEndpoint().getHeaderFilterStrategy();
@@ -284,7 +284,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
         return result;
     }
 
-    private void populateAttachments(List<FileUpload> uploads, Message message) {
+    protected void populateAttachments(List<FileUpload> uploads, Message message) {
         for (FileUpload upload : uploads) {
             final String name = upload.name();
             final String fileName = upload.fileName();
