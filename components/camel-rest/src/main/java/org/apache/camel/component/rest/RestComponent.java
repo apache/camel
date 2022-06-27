@@ -144,8 +144,8 @@ public class RestComponent extends DefaultComponent {
     }
 
     /**
-     * The Camel Rest component to use for (consumer) the REST transport, such as jetty, servlet, undertow. If no
-     * component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with
+     * The Camel Rest component to use for the consumer REST transport, such as jetty, servlet, undertow. If no
+     * component has been explicitly configured, then Camel will lookup if there is a Camel component that integrates with
      * the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If either one is
      * found, then that is being used.
      */
@@ -158,8 +158,8 @@ public class RestComponent extends DefaultComponent {
     }
 
     /**
-     * The Camel Rest component to use for (producer) the REST transport, such as http, undertow. If no component has
-     * been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL,
+     * The Camel Rest component to use for the producer REST transport, such as http, undertow. If no component has
+     * been explicitly configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL,
      * or if a org.apache.camel.spi.RestProducerFactory is registered in the registry. If either one is found, then that
      * is being used.
      */
@@ -173,8 +173,8 @@ public class RestComponent extends DefaultComponent {
     }
 
     /**
-     * The Camel Rest component to use for (producer) the REST transport, such as http, undertow. If no component has
-     * been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL,
+     * The Camel Rest component to use for the producer REST transport, such as http, undertow. If no component has
+     * been explicitly configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL,
      * or if a org.apache.camel.spi.RestProducerFactory is registered in the registry. If either one is found, then that
      * is being used.
      *
