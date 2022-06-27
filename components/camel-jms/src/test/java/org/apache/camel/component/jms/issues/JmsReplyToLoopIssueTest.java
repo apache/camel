@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.jms.issues;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
@@ -29,7 +32,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 public class JmsReplyToLoopIssueTest extends CamelTestSupport {
 
     @Test
-    public void testReplyToLoopIssue() throws Exception {
+    public void testReplyToLoopIssue() {
         getMockEndpoint("mock:foo").expectedBodiesReceived("World");
         getMockEndpoint("mock:bar").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:done").expectedBodiesReceived("World");
@@ -37,9 +40,7 @@ public class JmsReplyToLoopIssueTest extends CamelTestSupport {
         template.sendBodyAndHeader("direct:start", "World", "JMSReplyTo", "queue:bar");
 
         // sleep a little to ensure we do not do endless loop
-        Thread.sleep(250);
-
-        assertMockEndpointsSatisfied();
+        Awaitility.await().atMost(250, TimeUnit.MILLISECONDS).untilAsserted(() -> assertMockEndpointsSatisfied());
     }
 
     @Override
