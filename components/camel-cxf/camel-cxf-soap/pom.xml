@@ -43,7 +43,7 @@
             !org.apache.camel.component.cxf.feature,
             !org.apache.camel.component.cxf.interceptors,
             !org.apache.camel.component.cxf.jaxrs,
-            !org.apache.camel.component.cxf.spring,
+            !org.apache.camel.component.cxf.spring*,
             !org.apache.camel.component.cxf.util,
             !org.apache.camel.blueprint,
             javax.activation.*;version="${javax-activation-version-range}",

@@ -46,6 +46,7 @@
             !org.apache.camel.component.cxf.spring,
             !org.apache.camel.component.cxf.util,
             !org.apache.camel.blueprint,
+            !org.apache.camel.test,
             javax.xml.soap*;version="[1.3,2)";resolution:=optional,
             javax.xml.stream*;version="[0.0,2)";resolution:=optional,
             org.apache.camel.*;${camel.osgi.import.camel.version},
