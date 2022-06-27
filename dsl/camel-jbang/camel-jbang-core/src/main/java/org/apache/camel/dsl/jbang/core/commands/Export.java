@@ -17,9 +17,9 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.Properties;
 
+import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import picocli.CommandLine.Command;
 
@@ -37,7 +37,7 @@ class Export extends ExportBaseCommand {
         File profile = new File(getProfile() + ".properties");
         if (profile.exists()) {
             Properties prop = new CamelCaseOrderedProperties();
-            prop.load(new FileInputStream(profile));
+            RuntimeUtil.loadProperties(prop, profile);
             if (this.runtime == null) {
                 this.runtime = prop.getProperty("camel.jbang.runtime");
             }

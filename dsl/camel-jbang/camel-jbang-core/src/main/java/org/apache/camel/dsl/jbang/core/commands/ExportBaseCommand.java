@@ -17,7 +17,6 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -208,7 +207,7 @@ abstract class ExportBaseCommand extends CamelCommand {
         // include custom dependencies defined in profile
         if (profile != null && profile.exists()) {
             Properties prop = new CamelCaseOrderedProperties();
-            prop.load(new FileInputStream(profile));
+            RuntimeUtil.loadProperties(prop, profile);
             String deps = prop.getProperty("camel.jbang.dependencies");
             if (deps != null) {
                 for (String d : deps.split(",")) {
@@ -240,7 +239,7 @@ abstract class ExportBaseCommand extends CamelCommand {
             throws Exception {
         // read the settings file and find the files to copy
         Properties prop = new CamelCaseOrderedProperties();
-        prop.load(new FileInputStream(settings));
+        RuntimeUtil.loadProperties(prop, settings);
 
         for (String k : SETTINGS_PROP_SOURCE_KEYS) {
             String files = prop.getProperty(k);
@@ -289,10 +288,11 @@ abstract class ExportBaseCommand extends CamelCommand {
             Function<Properties, Object> customize)
             throws Exception {
         Properties prop = new CamelCaseOrderedProperties();
-        prop.load(new FileInputStream(settings));
+        RuntimeUtil.loadProperties(prop, settings);
+
         Properties prop2 = new CamelCaseOrderedProperties();
         if (profile.exists()) {
-            prop2.load(new FileInputStream(profile));
+            RuntimeUtil.loadProperties(prop2, profile);
         }
 
         for (Map.Entry<Object, Object> entry : prop.entrySet()) {

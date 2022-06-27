@@ -249,7 +249,7 @@ class Run extends CamelCommand {
 
     private Properties loadProfileProperties(File source) throws Exception {
         Properties prop = new CamelCaseOrderedProperties();
-        prop.load(new FileInputStream(source));
+        RuntimeUtil.loadProperties(prop, source);
 
         // special for routes include pattern that we need to "fix" after reading from properties
         // to make this work in run command

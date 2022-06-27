@@ -17,7 +17,6 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -27,6 +26,7 @@ import java.util.Set;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.RuntimeProvider;
+import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.main.download.MavenGav;
@@ -133,7 +133,7 @@ class ExportSpringBoot extends Export {
         context = context.replaceFirst("\\{\\{ \\.CamelVersion }}", camelVersion);
 
         Properties prop = new CamelCaseOrderedProperties();
-        prop.load(new FileInputStream(settings));
+        RuntimeUtil.loadProperties(prop, settings);
         String repos = prop.getProperty("camel.jbang.repos");
         if (repos == null) {
             context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", "");
