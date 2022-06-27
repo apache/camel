@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jms.issues;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.TextMessage;
@@ -27,6 +29,7 @@ import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.springframework.jms.core.JmsTemplate;
 
@@ -58,8 +61,7 @@ public class JmsAnotherCustomJMSReplyToTest extends CamelTestSupport {
         // send reply
         template.sendBody("activemq:" + replyTo.toString(), "My name is Arnio");
 
-        Thread.sleep(2000);
-        assertMockEndpointsSatisfied();
+        Awaitility.await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertMockEndpointsSatisfied());
     }
 
     @Override
