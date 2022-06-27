@@ -129,7 +129,6 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
                     for (var e : copy.entrySet()) {
                         LOG.warn("Property not auto-configured: camel.kubernetes-client.{}={}", e.getKey(), e.getValue());
                     }
-                    ;
                 }
             } else {
                 // create a default client to use
