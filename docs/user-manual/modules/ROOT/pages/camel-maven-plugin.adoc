@@ -4,6 +4,7 @@ The Camel Maven Plugin supports the following goals
 
  - camel:run - To run your Camel application
  - camel:dev - To run your Camel application in developer mode
+ - camel:debug - To run your Camel application in debug mode
  - camel:prepare-fatjar - To prepare your Camel application for being packaged as a fat-jar (such as by maven-assembly-plugin)
 
 == camel:run
