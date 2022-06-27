@@ -56,16 +56,25 @@ public final class ThreadHelper {
         String shortName = name.contains("?") ? StringHelper.before(name, "?") : name;
 
         // replace tokens
-        String answer = pattern.replace("#counter#", Long.toString(nextThreadCounter()));
-        answer = answer.replace("#longName#", longName);
-        answer = answer.replace("#name#", shortName);
+        String answer = replaceFirst(pattern, "#longName#", longName);
+        if (shortName != null) {
+            answer = replaceFirst(answer, "#name#", shortName);
+        }
+        String next = Long.toString(nextThreadCounter());
+        answer = replaceFirst(answer, "#counter#", next);
 
         // are there any #word# combos left, if so they should be considered invalid tokens
         if (INVALID_PATTERN.matcher(answer).matches()) {
-            throw new IllegalArgumentException("Pattern is invalid: " + pattern);
+            throw new IllegalArgumentException(
+                    "Pattern is invalid: [" + pattern + "] in resolved thread name: [" + answer + "]");
         }
 
         return answer;
+    }
+
+    private static String replaceFirst(String input, String from, String to) {
+        // use StringHelper.replaceFirst as replace does not work on all JDK 11s (CAMEL-18232)
+        return StringHelper.replaceFirst(input, from ,to);
     }
 
 }
