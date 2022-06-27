@@ -13170,7 +13170,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>slack:channel</code>
      * 
      * Path parameter: channel (required)
-     * The channel name (syntax #name) or slackuser (syntax userName) to send a
+     * The channel name (syntax #name) or slack user (syntax userName) to send a
      * message directly to an user.
      * 
      * @param path channel
@@ -13191,7 +13191,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>slack:channel</code>
      * 
      * Path parameter: channel (required)
-     * The channel name (syntax #name) or slackuser (syntax userName) to send a
+     * The channel name (syntax #name) or slack user (syntax userName) to send a
      * message directly to an user.
      * 
      * @param componentName to use a custom component name for the endpoint
