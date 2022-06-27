@@ -109,14 +109,14 @@ public class KafkaRecordProcessor {
             processor.process(exchange);
         } catch (Exception e) {
             exchange.setException(e);
-
+        }
+        if (exchange.getException() != null) {
             boolean breakOnErrorExit = processException(exchange, partition, lastResult.getPartitionLastOffset(),
                     exceptionHandler);
-
             return new ProcessingResult(breakOnErrorExit, lastResult.getPartitionLastOffset(), true);
+        } else {
+            return new ProcessingResult(false, record.offset(), exchange.getException() != null);
         }
-
-        return new ProcessingResult(false, record.offset(), exchange.getException() != null);
     }
 
     private boolean processException(
