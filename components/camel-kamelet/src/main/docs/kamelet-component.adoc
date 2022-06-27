@@ -62,7 +62,7 @@ routeTemplate("setMyBody")
 
 [IMPORTANT]
 ====
-To let the *Kamelet* component wiring the materialized route to the caller processor, we need to be able to identify the input and output endpoint of the route and this is done by using `kamele:source` to mark the input endpoint and `kamelet:sink` for the output endpoint.
+To let the *Kamelet* component wiring the materialized route to the caller processor, we need to be able to identify the input and output endpoint of the route and this is done by using `kamelet:source` to mark the input endpoint and `kamelet:sink` for the output endpoint.
 ====
 
 Then the template can be instantiated and invoked as shown below:
@@ -76,7 +76,7 @@ from("direct:setMyBody")
 
 Behind the scenes, the *Kamelet* component does the following things:
 
-1. it instantiates a route out of the Route Template identified by the given `templateId` path parameter (in this case `setBody`)
+1. it instantiates a route out of the Route Template identified by the given `templateId` path parameter (in this case `setMyBody`)
 2. it will act like the `direct` component and connect the current route to the materialized one.
 
 If you had to do it programmatically, it would have been something like:

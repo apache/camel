@@ -30,6 +30,7 @@ public class ConfigMapMountPropertiesFunctionTest extends KubernetesTestSupport 
     @Order(1)
     public void configMapMountPropertiesFunction() throws Exception {
         ConfigMapPropertiesFunction cmf = new ConfigMapPropertiesFunction();
+        cmf.setClientEnabled(false);
         cmf.setMountPathConfigMaps("src/test/resources/");
         cmf.setCamelContext(context);
         cmf.start();

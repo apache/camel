@@ -38,6 +38,7 @@ import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntitySetInfo;
 import org.apache.olingo.odata2.api.ep.EntityProvider;
+import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
@@ -47,6 +48,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -150,18 +152,18 @@ public class Olingo2AppAPITest extends AbstractOlingo2AppAPITestSupport {
     }
 
     @Test
-    public void testReadEntry() throws Exception {
+    public void testReadEntry() {
         final TestOlingo2ResponseHandler<ODataEntry> responseHandler = new TestOlingo2ResponseHandler<>();
 
         olingoApp.read(edm, TEST_MANUFACTURER, null, null, responseHandler);
-        ODataEntry entry = responseHandler.await();
+        final ODataEntry entry = assertDoesNotThrow(() -> responseHandler.await());
         LOG.info("Single Entry:  {}", prettyPrint(entry));
 
         responseHandler.reset();
 
         olingoApp.read(edm, TEST_CAR, null, null, responseHandler);
-        entry = responseHandler.await();
-        LOG.info("Single Entry:  {}", prettyPrint(entry));
+        final ODataEntry entry1 = assertDoesNotThrow(() -> responseHandler.await());
+        LOG.info("Single Entry:  {}", prettyPrint(entry1));
 
         responseHandler.reset();
         final Map<String, String> queryParams = new HashMap<>();
@@ -169,16 +171,16 @@ public class Olingo2AppAPITest extends AbstractOlingo2AppAPITestSupport {
 
         olingoApp.read(edm, TEST_MANUFACTURER, queryParams, null, responseHandler);
 
-        ODataEntry entryExpanded = responseHandler.await();
+        final ODataEntry entryExpanded = assertDoesNotThrow(() -> responseHandler.await());
         LOG.info("Single Entry with expanded Cars relation:  {}", prettyPrint(entryExpanded));
     }
 
     @Test
-    public void testReadUnparsedEntry() throws Exception {
+    public void testReadUnparsedEntry() throws EntityProviderException {
         final TestOlingo2ResponseHandler<InputStream> responseHandler = new TestOlingo2ResponseHandler<>();
 
         olingoApp.uread(edm, TEST_MANUFACTURER, null, null, responseHandler);
-        InputStream rawentry = responseHandler.await();
+        InputStream rawentry = assertDoesNotThrow(() -> responseHandler.await());
         ODataEntry entry = EntityProvider.readEntry(TEST_FORMAT_STRING, edmEntitySetMap.get(MANUFACTURERS), rawentry,
                 EntityProviderReadProperties.init().build());
         LOG.info("Single Entry:  {}", prettyPrint(entry));
@@ -186,7 +188,7 @@ public class Olingo2AppAPITest extends AbstractOlingo2AppAPITestSupport {
         responseHandler.reset();
 
         olingoApp.uread(edm, TEST_CAR, null, null, responseHandler);
-        rawentry = responseHandler.await();
+        rawentry = assertDoesNotThrow(() -> responseHandler.await());
         entry = EntityProvider.readEntry(TEST_FORMAT_STRING, edmEntitySetMap.get(CARS), rawentry,
                 EntityProviderReadProperties.init().build());
         LOG.info("Single Entry:  {}", prettyPrint(entry));
@@ -197,7 +199,7 @@ public class Olingo2AppAPITest extends AbstractOlingo2AppAPITestSupport {
 
         olingoApp.uread(edm, TEST_MANUFACTURER, queryParams, null, responseHandler);
 
-        rawentry = responseHandler.await();
+        rawentry = assertDoesNotThrow(() -> responseHandler.await());
         ODataEntry entryExpanded = EntityProvider.readEntry(TEST_FORMAT_STRING, edmEntitySetMap.get(MANUFACTURERS), rawentry,
                 EntityProviderReadProperties.init().build());
         LOG.info("Single Entry with expanded Cars relation:  {}", prettyPrint(entryExpanded));
@@ -210,14 +212,14 @@ public class Olingo2AppAPITest extends AbstractOlingo2AppAPITestSupport {
 
         olingoApp.read(edm, TEST_MANUFACTURER_FOUNDED_PROPERTY, null, null, propertyHandler);
 
-        Calendar founded = (Calendar) propertyHandler.await().get(FOUNDED_PROPERTY);
+        Calendar founded = (Calendar) assertDoesNotThrow(() -> propertyHandler.await().get(FOUNDED_PROPERTY));
         LOG.info("Founded property {}", founded);
 
         final TestOlingo2ResponseHandler<Calendar> valueHandler = new TestOlingo2ResponseHandler<>();
 
         olingoApp.read(edm, TEST_MANUFACTURER_FOUNDED_VALUE, null, null, valueHandler);
 
-        founded = valueHandler.await();
+        founded = assertDoesNotThrow(() -> valueHandler.await());
         LOG.info("Founded property {}", founded);
 
         final TestOlingo2ResponseHandler<HttpStatusCodes> statusHandler = new TestOlingo2ResponseHandler<>();
@@ -241,7 +243,7 @@ public class Olingo2AppAPITest extends AbstractOlingo2AppAPITestSupport {
 
         olingoApp.read(edm, TEST_MANUFACTURER_ADDRESS_PROPERTY, null, null, propertyHandler);
 
-        final Map<String, Object> address = propertyHandler.await();
+        final Map<String, Object> address = assertDoesNotThrow(() -> propertyHandler.await());
         LOG.info("Address property {}", prettyPrint(address, 0));
 
         statusHandler.reset();
@@ -318,22 +320,26 @@ public class Olingo2AppAPITest extends AbstractOlingo2AppAPITestSupport {
 
         olingoApp.read(edm, MANUFACTURERS + COUNT_OPTION, null, null, countHandler);
 
-        LOG.info("Manufacturers count: {}", countHandler.await());
+        final Long await1 = assertDoesNotThrow(() -> countHandler.await());
+        LOG.info("Manufacturers count: {}", await1);
 
         countHandler.reset();
         olingoApp.read(edm, TEST_MANUFACTURER + COUNT_OPTION, null, null, countHandler);
 
-        LOG.info("Manufacturer count: {}", countHandler.await());
+        final Long await2 = assertDoesNotThrow(() -> countHandler.await());
+        LOG.info("Manufacturer count: {}", await2);
 
         countHandler.reset();
         olingoApp.read(edm, TEST_MANUFACTURER_LINKS_CARS + COUNT_OPTION, null, null, countHandler);
 
-        LOG.info("Manufacturers links count: {}", countHandler.await());
+        final Long await3 = assertDoesNotThrow(() -> countHandler.await());
+        LOG.info("Manufacturers links count: {}", await3);
 
         countHandler.reset();
         olingoApp.read(edm, TEST_CAR_LINK_MANUFACTURER + COUNT_OPTION, null, null, countHandler);
 
-        LOG.info("Manufacturer link count: {}", countHandler.await());
+        final Long await4 = assertDoesNotThrow(() -> countHandler.await());
+        LOG.info("Manufacturer link count: {}", await4);
     }
 
     @Test

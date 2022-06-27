@@ -29,8 +29,10 @@ import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesFunction;
+import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.service.ServiceSupport;
@@ -47,9 +49,10 @@ import org.slf4j.LoggerFactory;
  */
 abstract class BasePropertiesFunction extends ServiceSupport implements PropertiesFunction, CamelContextAware {
 
-    // keys in application.properties for mount paths
-    public static final String MOUNT_PATH_CONFIGMAPS = "org.apache.camel.component.kubernetes.properties.mount-path-configmaps";
-    public static final String MOUNT_PATH_SECRETS = "org.apache.camel.component.kubernetes.properties.mount-path-secrets";
+    // keys in application.properties
+    public static final String CLIENT_ENABLED = "camel.kubernetes.client-enabled";
+    public static final String MOUNT_PATH_CONFIGMAPS = "camel.kubernetes.mount-path-configmaps";
+    public static final String MOUNT_PATH_SECRETS = "camel.kubernetes.mount-path-secrets";
 
     // use camel-k ENV for mount paths
     public static final String ENV_MOUNT_PATH_CONFIGMAPS = "camel.k.mount-path.configmaps";
@@ -60,6 +63,7 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
 
     private CamelContext camelContext;
     private KubernetesClient client;
+    private Boolean clientEnabled;
     private String mountPathConfigMaps;
     private String mountPathSecrets;
 
@@ -67,6 +71,10 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
     @SuppressWarnings("unchecked")
     protected void doInit() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext");
+        if (clientEnabled == null) {
+            clientEnabled = "true"
+                    .equalsIgnoreCase(camelContext.getPropertiesComponent().resolveProperty(CLIENT_ENABLED).orElse("true"));
+        }
         if (mountPathConfigMaps == null) {
             mountPathConfigMaps = camelContext.getPropertiesComponent().resolveProperty(MOUNT_PATH_CONFIGMAPS)
                     .orElseGet(() -> System.getProperty(ENV_MOUNT_PATH_CONFIGMAPS, System.getenv(ENV_MOUNT_PATH_CONFIGMAPS)));
@@ -75,25 +83,41 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
             mountPathSecrets = camelContext.getPropertiesComponent().resolveProperty(MOUNT_PATH_SECRETS)
                     .orElseGet(() -> System.getProperty(ENV_MOUNT_PATH_SECRETS, System.getenv(ENV_MOUNT_PATH_SECRETS)));
         }
-        if (client == null) {
+        if (clientEnabled && client == null) {
             client = CamelContextHelper.findSingleByType(camelContext, KubernetesClient.class);
         }
-        if (client == null) {
+        if (clientEnabled && client == null) {
             // try to auto-configure via properties
             PropertiesComponent pc = camelContext.getPropertiesComponent();
             OrderedLocationProperties properties = (OrderedLocationProperties) pc
-                    .loadProperties(k -> k.startsWith("camel.kubernetes-client.") || k.startsWith("camel.kubernetesClient."));
+                    .loadProperties(k -> k.startsWith("camel.kubernetes-client.") || k.startsWith("camel.kubernetesClient."),
+                            k -> k.replace("camel.kubernetes-client.", "").replace("camel.kubernetesClient.", ""));
             if (!properties.isEmpty()) {
                 ConfigBuilder config = new ConfigBuilder();
+
+                PropertyConfigurer configurer = camelContext.adapt(ExtendedCamelContext.class)
+                        .getConfigurerResolver().resolvePropertyConfigurer(ConfigBuilder.class.getName(), camelContext);
+
+                // use copy to keep track of which options was configureed or not
+                OrderedLocationProperties copy = new OrderedLocationProperties();
+                copy.putAll(properties);
+
                 PropertyBindingSupport.build()
-                        .withProperties((Map) properties)
+                        .withProperties((Map) copy)
                         .withFluentBuilder(true)
                         .withIgnoreCase(true)
-                        .withReflection(true)
+                        .withReflection(false)
+                        .withConfigurer(configurer)
                         .withTarget(config)
                         .withCamelContext(camelContext)
-                        .withRemoveParameters(false)
+                        .withRemoveParameters(true)
                         .bind();
+                if (!copy.isEmpty()) {
+                    // some options were not possible to configure
+                    for (var e : copy.entrySet()) {
+                        properties.remove(e.getKey());
+                    }
+                }
                 client = new DefaultKubernetesClient(config.build());
                 LOG.info("Auto-configuration KubernetesClient summary");
                 for (var entry : properties.entrySet()) {
@@ -106,6 +130,11 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
                         LOG.info("    {} {}={}", loc, k, v);
                     }
                 }
+                if (!copy.isEmpty()) {
+                    for (var e : copy.entrySet()) {
+                        LOG.warn("Property not auto-configured: camel.kubernetes-client.{}={}", e.getKey(), e.getValue());
+                    }
+                }
             } else {
                 // create a default client to use
                 client = new DefaultKubernetesClient();
@@ -114,10 +143,13 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
             // add to registry so the client can be reused
             camelContext.getRegistry().bind("camelKubernetesClient", client);
         }
-        if (client == null && getMountPath() == null) {
+
+        if (clientEnabled && client == null && getMountPath() == null) {
             throw new IllegalArgumentException("Either a mount path or the Kubernetes Client must be configured");
         }
-
+        if (!clientEnabled && getMountPath() == null) {
+            throw new IllegalArgumentException("Mount path must be configured");
+        }
         if (client != null && LOGGED.compareAndSet(false, true)) {
             // only log once
             LOG.info("KubernetesClient using masterUrl: {} with namespace: {}", client.getMasterUrl(), client.getNamespace());
@@ -145,12 +177,23 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
         this.client = client;
     }
 
+    public boolean isClientEnabled() {
+        return clientEnabled;
+    }
+
+    /**
+     * Whether to use KubernetesClient to lookup from the Kubernetes API server. Is by default enabled.
+     */
+    public void setClientEnabled(boolean clientEnabled) {
+        this.clientEnabled = clientEnabled;
+    }
+
     public String getMountPathConfigMaps() {
         return mountPathConfigMaps;
     }
 
     /**
-     * To use a volume mount to load configmaps, instead of using the Kubernetes API server
+     * To use a volume mount to load configmaps (first), and fallback to using the Kubernetes API server
      */
     public void setMountPathConfigMaps(String mountPathConfigMaps) {
         this.mountPathConfigMaps = mountPathConfigMaps;
@@ -161,7 +204,7 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
     }
 
     /**
-     * To use a volume mount to load secrets, instead of using the Kubernetes API server.
+     * To use a volume mount to load secrets (first), and fallback to using the Kubernetes API server
      */
     public void setMountPathSecrets(String mountPathSecrets) {
         this.mountPathSecrets = mountPathSecrets;

@@ -230,7 +230,9 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             timeoutOccurred.set(true);
 
             // timeout then cancel the task
-            currentShutdownTaskFuture.cancel(true);
+            if (currentShutdownTaskFuture != null) {
+                currentShutdownTaskFuture.cancel(true);
+            }
 
             // signal we are forcing shutdown now, since timeout occurred
             this.forceShutdown = forceShutdown;
@@ -372,6 +374,11 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         this.camelContext = camelContext;
     }
 
+    /**
+     * Future for the current shutdown task, when a task is in progress.
+     * <p/>
+     * Important: This API is only for advanced use-cases.
+     */
     public Future<?> getCurrentShutdownTaskFuture() {
         return currentShutdownTaskFuture;
     }

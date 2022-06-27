@@ -4,6 +4,7 @@ The Camel Maven Plugin supports the following goals
 
  - camel:run - To run your Camel application
  - camel:dev - To run your Camel application in developer mode
+ - camel:debug - To run your Camel application in debug mode
  - camel:prepare-fatjar - To prepare your Camel application for being packaged as a fat-jar (such as by maven-assembly-plugin)
 
 == camel:run
@@ -112,6 +113,19 @@ The maven plugin *dev* goal supports the following options which can be configur
 | durationMaxMessages | -1 | Sets the duration of maximum number of messages that the application will process before terminating.
 | logClasspath | false | Whether to log the classpath when starting
 | loggingLevel | OFF | Whether to use built-in console logging (uses log4j), which does not require to add any logging dependency to your project. However, the logging is fixed to log to the console, with a color style that is similar to Spring Boot. You can change the root logging level to: FATAL, ERROR, WARN, INFO, DEBUG, TRACE, OFF
+|===
+
+== camel:debug
+
+The `camel:debug` is an extension to `camel:dev` to run the Camel application in debug mode which allows to debug the Camel routes thanks to the Camel textual route debugger.
+
+=== Options
+
+The maven plugin *debug* goal supports the following options which can be configured from the command line (use `-D` syntax), or defined in the `pom.xml` file in the `<configuration>` tag.
+
+|===
+| Parameter | Default Value | Description
+| suspend | true | Indicates whether the message processing done by Camel should be suspended as long as a debugger is not attached.
 |===
 
 == camel:prepare-fatjar

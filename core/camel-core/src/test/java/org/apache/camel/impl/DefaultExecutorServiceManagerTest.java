@@ -123,7 +123,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
             context.getExecutorServiceManager().resolveThreadName("foo");
             fail("Should thrown an exception");
         } catch (IllegalArgumentException e) {
-            assertEquals("Pattern is invalid: Cool #xxx#", e.getMessage());
+            assertEquals("Pattern is invalid: [Cool #xxx#] in resolved thread name: [Cool #xxx#]", e.getMessage());
         }
 
         // reset it so we can shutdown properly

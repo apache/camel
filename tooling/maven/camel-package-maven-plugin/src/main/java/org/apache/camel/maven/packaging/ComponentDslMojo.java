@@ -85,19 +85,20 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
     /**
      * The package where to the main DSL component package is
      */
-    @Parameter(defaultValue = "org.apache.camel.builder.component")
+    @Parameter(property = "camel.pmp.package-name", defaultValue = "org.apache.camel.builder.component")
     protected String componentsDslPackageName;
 
     /**
      * The package where to generate component DSL specific factories
      */
-    @Parameter(defaultValue = "org.apache.camel.builder.component.dsl")
+    @Parameter(property = "camel.pmp.factories-package-name", defaultValue = "org.apache.camel.builder.component.dsl")
     protected String componentsDslFactoriesPackageName;
 
     /**
      * The catalog directory where the component json files are
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/components")
+    @Parameter(property = "camel.pmp.json-directory",
+               defaultValue = "${project.build.directory}/../../../catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/components")
     protected File jsonDir;
 
     private transient String licenseHeader;
@@ -119,6 +120,12 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
             getLog().debug("No dsl/camel-componentdsl folder found, skipping execution");
             return;
         }
+
+        if (jsonDir == null) {
+            getLog().debug("No json directory folder found, skipping execution");
+            return;
+        }
+
         Path root = camelDir.toPath();
         if (sourcesOutputDir == null) {
             sourcesOutputDir = root.resolve("src/generated/java").toFile();

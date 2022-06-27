@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 @ApplicationScoped
 public class MyRoutes extends RouteBuilder {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MyRoutes.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MyRoutes.class);
 
     @Inject
     @Uri(value = "seda:a")
@@ -46,7 +46,7 @@ public class MyRoutes extends RouteBuilder {
 
     @Override
     public void configure() {
-        LOG.info("Adding route from {} to {}", a, b);
+        LOGGER.info("Adding route from {} to {}", a, b);
         from(a).to(b);
     }
 

@@ -73,6 +73,18 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
     @Parameter(defaultValue = "true")
     protected boolean discoverClasses = true;
 
+    /**
+     * Whether to also allow using fluent builder style as configurer (getXXX and withXXX style).
+     */
+    @Parameter(defaultValue = "false")
+    protected boolean allowBuilderPattern;
+
+    /**
+     * Whether to skip deprecated methods.
+     */
+    @Parameter(defaultValue = "false")
+    protected boolean skipDeprecated;
+
     @Component
     private ArtifactFactory artifactFactory;
 
@@ -80,7 +92,9 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
 
     public static class ConfigurerOption extends BaseOptionModel {
 
-        public ConfigurerOption(String name, Class type, String getter) {
+        private boolean builderMethod;
+
+        public ConfigurerOption(String name, Class type, String getter, boolean builderMethod) {
             // we just use name, type
             setName(name);
             if (byte[].class == type) {
@@ -97,8 +111,12 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
                 setJavaType(type.getName());
             }
             setGetterMethod(getter);
+            this.builderMethod = builderMethod;
         }
 
+        public boolean isBuilderMethod() {
+            return builderMethod;
+        }
     }
 
     public AbstractGenerateConfigurerMojo() {
@@ -325,12 +343,23 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         Class clazz = projectClassLoader.loadClass(fqn);
         // find all public setters
         doWithMethods(clazz, m -> {
+            boolean deprecated = m.isAnnotationPresent(Deprecated.class);
+            if (skipDeprecated && deprecated) {
+                return;
+            }
+
             boolean setter = m.getName().length() >= 4 && m.getName().startsWith("set")
                     && Character.isUpperCase(m.getName().charAt(3));
             setter &= Modifier.isPublic(m.getModifiers()) && m.getParameterCount() == 1;
             setter &= filterSetter(m);
-            if (setter) {
-                String getter = "get" + Character.toUpperCase(m.getName().charAt(3)) + m.getName().substring(4);
+            boolean builder = allowBuilderPattern && m.getName().length() >= 5 && m.getName().startsWith("with")
+                    && Character.isUpperCase(m.getName().charAt(4));
+            builder &= Modifier.isPublic(m.getModifiers()) && m.getParameterCount() == 1;
+            builder &= filterSetter(m);
+            if (setter || builder) {
+                String getter = "get" + (builder
+                        ? Character.toUpperCase(m.getName().charAt(4)) + m.getName().substring(5)
+                        : Character.toUpperCase(m.getName().charAt(3)) + m.getName().substring(4));
                 Class type = m.getParameterTypes()[0];
                 if (boolean.class == type || Boolean.class == type) {
                     try {
@@ -343,9 +372,11 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
                 }
 
                 ConfigurerOption option = null;
-                String t = Character.toUpperCase(m.getName().charAt(3)) + m.getName().substring(3 + 1);
+                String t = builder
+                        ? Character.toUpperCase(m.getName().charAt(4)) + m.getName().substring(4 + 1)
+                        : Character.toUpperCase(m.getName().charAt(3)) + m.getName().substring(3 + 1);
                 if (names.add(t)) {
-                    option = new ConfigurerOption(t, type, getter);
+                    option = new ConfigurerOption(t, type, getter, builder);
                     answer.add(option);
                 } else {
                     boolean replace = false;
@@ -357,7 +388,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
                     }
                     if (replace) {
                         answer.removeIf(o -> o.getName().equals(t));
-                        option = new ConfigurerOption(t, type, getter);
+                        option = new ConfigurerOption(t, type, getter, builder);
                         answer.add(option);
                     }
                 }
@@ -378,8 +409,8 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
                         }
                         desc = desc.replace('$', '.');
                         desc = desc.trim();
-                        // skip if the type is generic or a wildcard
-                        if (!desc.isEmpty() && desc.indexOf('?') == -1 && !desc.contains(" extends ")) {
+                        // skip if the type is generic, or a wildcard (a single letter is regarded as unknown)
+                        if (desc.length() > 1 && desc.indexOf('?') == -1 && !desc.contains(" extends ")) {
                             option.setNestedType(desc);
                         }
                     }

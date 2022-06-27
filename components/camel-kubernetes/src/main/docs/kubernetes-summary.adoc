@@ -57,6 +57,13 @@ from("direct:createPod")
 
 By using the KubernetesConstants.KUBERNETES_POD_NAME header you can specify your Pod name and pass it to this operation.
 
+== Using Kubernetes ConfigMaps and Secrets
+
+The `camel-kubernetes` component also provides xref:manual:ROOT:using-propertyplaceholder.adoc[Property Placeholder]
+functions that loads the property values from Kubernetes _ConfigMaps_ or _Secrets_.
+
+For more information see xref:manual:ROOT:using-propertyplaceholder.adoc[Property Placeholder].
+
 :camel-spring-boot-name: kubernetes
 
 include::spring-boot:partial$starter.adoc[]

@@ -187,15 +187,16 @@ public final class IntrospectionSupport {
         String name = method.getName();
         Class<?> type = method.getReturnType();
         int parameterCount = method.getParameterCount();
+        Class<?> self = method.getDeclaringClass();
 
         // is it a setXXX method
         boolean validName = name.startsWith("set") && name.length() >= 4 && Character.isUpperCase(name.charAt(3));
         if (validName && parameterCount == 1) {
             // a setXXX can also be a builder pattern so check for its return type is itself
-            return type.equals(Void.TYPE) || allowBuilderPattern && method.getDeclaringClass().isAssignableFrom(type);
+            return type.equals(Void.TYPE) || allowBuilderPattern && ObjectHelper.isSubclass(self, type);
         }
         // or if its a builder method
-        if (allowBuilderPattern && parameterCount == 1 && method.getDeclaringClass().isAssignableFrom(type)) {
+        if (allowBuilderPattern && parameterCount == 1 && ObjectHelper.isSubclass(self, type)) {
             return true;
         }
 

@@ -19,6 +19,7 @@ package org.apache.camel.spring.management;
 import org.apache.camel.management.DefaultManagementAgent;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spring.EndpointReferenceTest;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -50,8 +51,8 @@ public class JmxInstrumentationWithConnectorTest extends EndpointReferenceTest {
     }
 
     @Override
-    @Test
-    public void testReferenceEndpointFromOtherCamelContext() throws Exception {
+    @Disabled("This test is not applicable in this scenario")
+    public void testReferenceEndpointFromOtherCamelContext() {
         // don't run the test in this method
     }
 }

@@ -33,6 +33,7 @@ import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.auth.User;
 import io.vertx.ext.web.FileUpload;
+import io.vertx.ext.web.RequestBody;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.impl.RouteImpl;
@@ -160,7 +161,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
         return PATH_PARAMETER_PATTERN.matcher(path).replaceAll(":$1");
     }
 
-    private void handleRequest(RoutingContext ctx) {
+    protected void handleRequest(RoutingContext ctx) {
         final Vertx vertx = ctx.vertx();
         final Exchange exchange = toExchange(ctx);
 
@@ -220,7 +221,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
                 });
     }
 
-    private Exchange toExchange(RoutingContext ctx) {
+    protected Exchange toExchange(RoutingContext ctx) {
         final Exchange exchange = createExchange(false);
         exchange.setPattern(ExchangePattern.InOut);
 
@@ -239,7 +240,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
         return exchange;
     }
 
-    private Message toCamelMessage(RoutingContext ctx, Exchange exchange) {
+    protected Message toCamelMessage(RoutingContext ctx, Exchange exchange) {
         final Message result = exchange.getIn();
 
         final HeaderFilterStrategy headerFilterStrategy = getEndpoint().getHeaderFilterStrategy();
@@ -269,7 +270,8 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
         } else {
             Method m = Method.valueOf(ctx.request().method().name());
             if (m.canHaveBody()) {
-                final Buffer body = ctx.getBody();
+                final RequestBody requestBody = ctx.body();
+                final Buffer body = requestBody.buffer();
                 if (body != null) {
                     result.setBody(body);
                 } else {
@@ -282,7 +284,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
         return result;
     }
 
-    private void populateAttachments(Set<FileUpload> uploads, Message message) {
+    protected void populateAttachments(List<FileUpload> uploads, Message message) {
         for (FileUpload upload : uploads) {
             final String name = upload.name();
             final String fileName = upload.fileName();

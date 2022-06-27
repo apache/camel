@@ -28,6 +28,7 @@ import org.openstack4j.model.storage.block.Volume;
 import org.openstack4j.model.storage.block.VolumeAttachment;
 import org.openstack4j.model.storage.block.VolumeType;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -118,12 +119,13 @@ public class OpenstackCinderVolumeTest extends OpenstackWiremockTestSupport {
         headers.put(CinderConstants.IS_BOOTABLE, false);
 
         String uri = String.format(URI_FORMAT, url(), OpenstackConstants.UPDATE);
-        template.requestBodyAndHeaders(uri, null, headers);
+        assertDoesNotThrow(() -> template.requestBodyAndHeaders(uri, null, headers));
     }
 
     @Test
     void deleteShouldSucceed() {
         String uri = String.format(URI_FORMAT, url(), OpenstackConstants.DELETE);
-        template.requestBodyAndHeader(uri, null, CinderConstants.VOLUME_ID, "fffab33e-38e8-4626-9fee-fe90f240ff0f");
+        assertDoesNotThrow(() -> template.requestBodyAndHeader(uri, null, CinderConstants.VOLUME_ID,
+                "fffab33e-38e8-4626-9fee-fe90f240ff0f"));
     }
 }
