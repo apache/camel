@@ -118,7 +118,7 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * The channel name (syntax #name) or slackuser (syntax @userName) to send a message directly to an user.
+     * The channel name (syntax #name) or slack user (syntax @userName) to send a message directly to an user.
      */
     public void setChannel(String channel) {
         this.channel = channel;
