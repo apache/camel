@@ -16,9 +16,7 @@
  */
 package org.apache.camel.component.cxf.converter;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,10 +37,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.when;
 
 public class ConverterTest {
 
@@ -56,7 +50,6 @@ public class ConverterTest {
         assertNotNull(array, "The array should not be null");
         assertEquals(2, array.length, "The array size should not be wrong");
     }
-
 
     @Test
     public void testFallbackConverter() throws Exception {

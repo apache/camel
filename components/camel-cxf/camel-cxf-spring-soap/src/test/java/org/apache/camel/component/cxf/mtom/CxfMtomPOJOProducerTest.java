@@ -29,7 +29,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

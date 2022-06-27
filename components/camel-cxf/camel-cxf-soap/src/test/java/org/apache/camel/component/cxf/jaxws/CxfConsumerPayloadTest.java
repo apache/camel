@@ -36,9 +36,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfConsumerPayloadTest extends CxfConsumerMessageTest {
 
-    protected static final String ECHO_RESPONSE = "<ns1:echoResponse xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"
-                                                  + "<return xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">echo Hello World!</return>"
-                                                  + "</ns1:echoResponse>";
+    protected static final String ECHO_RESPONSE
+            = "<ns1:echoResponse xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"
+              + "<return xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">echo Hello World!</return>"
+              + "</ns1:echoResponse>";
     protected static final String ECHO_BOOLEAN_RESPONSE
             = "<ns1:echoBooleanResponse xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"
               + "<return xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">true</return>"

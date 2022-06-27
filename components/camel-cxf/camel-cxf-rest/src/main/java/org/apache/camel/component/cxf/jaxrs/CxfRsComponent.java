@@ -92,8 +92,8 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSL
                 try {
                     //try spring first
                     Class<CxfRsEndpointFactoryBean> clazz = getCamelContext().getClassResolver()
-                        .resolveMandatoryClass("org.apache.camel.component.cxf.spring.jaxrs.SpringCxfRsEndpointFactoryBean",
-                                           CxfRsEndpointFactoryBean.class);
+                            .resolveMandatoryClass("org.apache.camel.component.cxf.spring.jaxrs.SpringCxfRsEndpointFactoryBean",
+                                    CxfRsEndpointFactoryBean.class);
                     factory = getCamelContext().getInjector().newInstance(clazz);
                 } catch (Throwable ex) {
                     factory = new DefaultCxfRsEndpointFactoryBean();

@@ -51,9 +51,6 @@ public final class CxfEndpointUtils {
         return qName;
     }
 
-    
-   
-
     public static boolean hasWebServiceAnnotation(Class<?> cls) {
         return hasAnnotation(cls, WebService.class) || hasAnnotation(cls, WebServiceProvider.class);
     }
@@ -82,7 +79,6 @@ public final class CxfEndpointUtils {
         }
     }
 
-   
     /**
      * Get effective address for a client to invoke a service. It first looks for the
      * {@link org.apache.camel.Exchange#DESTINATION_OVERRIDE_URL} in the IN message header. If the header is not found,
@@ -111,7 +107,6 @@ public final class CxfEndpointUtils {
     public static Bus createBus(CamelContext context) {
         BusFactory busFactory = BusFactory.newInstance();
 
-        
         return busFactory.createBus();
     }
 }

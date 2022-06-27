@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.cxf.jaxrs;
 
-import org.junit.jupiter.api.Test;
-
 import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.springframework.context.support.AbstractXmlApplicationContext;

@@ -24,7 +24,6 @@ import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.util.ObjectHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,8 +45,6 @@ public final class CxfRsEndpointUtils {
         }
         return qName;
     }
-
-    
 
     public static boolean hasAnnotation(Class<?> cls, Class<? extends Annotation> annotation) {
         if (cls == null || cls == Object.class) {
@@ -73,7 +70,6 @@ public final class CxfRsEndpointUtils {
         }
     }
 
-    
     /**
      * Get effective address for a client to invoke a service. It first looks for the
      * {@link org.apache.camel.Exchange#DESTINATION_OVERRIDE_URL} in the IN message header. If the header is not found,
@@ -93,5 +89,4 @@ public final class CxfRsEndpointUtils {
         return retval;
     }
 
-    
 }

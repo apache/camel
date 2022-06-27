@@ -150,15 +150,14 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         super(endpointUri, component);
         setAddress(endpointUri);
     }
-    
+
     public CxfRsEndpoint(Component component, String uri, AbstractJAXRSFactoryBean bean) {
         super(uri, component);
         setAddress(bean.getAddress());
         // Update the sfb address by resolving the properties
         bean.setAddress(getAddress());
-        
-    }
 
+    }
 
     @Override
     public boolean isLenientProperties() {

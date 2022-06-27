@@ -20,7 +20,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.DataFormat;
 import org.apache.camel.component.cxf.jaxws.CxfEndpoint;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

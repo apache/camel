@@ -98,7 +98,6 @@ public final class CxfConverter {
         return DataFormat.valueOf(name.toUpperCase());
     }
 
-
     /**
      * Use a fallback type converter so we can convert the embedded list element if the value is MessageContentsList.
      * The algorithm of this converter finds the first non-null list element from the list and applies conversion to the

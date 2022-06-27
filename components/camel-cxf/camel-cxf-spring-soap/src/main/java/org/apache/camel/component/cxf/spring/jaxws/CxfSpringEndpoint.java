@@ -45,7 +45,7 @@ import org.springframework.context.ApplicationContextAware;
  * Defines the <a href="http://camel.apache.org/cxf.html">CXF Endpoint</a>
  */
 public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContextAware {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(CxfSpringEndpoint.class);
 
     private String beanId;

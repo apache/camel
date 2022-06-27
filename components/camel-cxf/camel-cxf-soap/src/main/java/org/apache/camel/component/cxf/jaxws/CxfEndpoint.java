@@ -133,7 +133,8 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
 
     @UriParam(label = "advanced")
     protected Bus bus;
-
+    @UriParam(label = "advanced")
+    protected boolean defaultBus;
     protected volatile boolean createBus;
     protected final AtomicBoolean getBusHasBeenCalled = new AtomicBoolean();
 
@@ -187,8 +188,6 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     private CxfBinding cxfBinding;
     @UriParam(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy;
-    @UriParam(label = "advanced")
-    protected boolean defaultBus;
     @UriParam(label = "logging")
     private boolean loggingFeatureEnabled;
     @UriParam(label = "logging", defaultValue = "" + AbstractLoggingInterceptor.DEFAULT_LIMIT)
@@ -953,9 +952,10 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
             CamelContext context = getCamelContext();
             if (context.getClass().getName().endsWith("SpringCamelContext")) {
                 try {
-                    Class<?> cxfSpringEndpintUtilClazz = Class.forName("org.apache.camel.component.cxf.spring.jaxws.CxfSpringEndpointUtils");
+                    Class<?> cxfSpringEndpintUtilClazz
+                            = Class.forName("org.apache.camel.component.cxf.spring.jaxws.CxfSpringEndpointUtils");
                     Method method = cxfSpringEndpintUtilClazz.getMethod("createBus", CamelContext.class);
-                    bus = (Bus)method.invoke(null, context);
+                    bus = (Bus) method.invoke(null, context);
                 } catch (Exception ex) {
                     LOG.warn("Error creating Cxf Bus from SpringCamelContext. This exception will be ignored.", ex);
                     bus = CxfEndpointUtils.createBus(getCamelContext());
