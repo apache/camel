@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 abstract class BasePropertiesFunction extends ServiceSupport implements PropertiesFunction, CamelContextAware {
 
     // keys in application.properties
-    public static final String CLIENT_ENABLED = "camel.kubernetes.client-enabled";
+    public static final String CLIENT_ENABLED = "camel.kubernetes.client.enabled";
     public static final String MOUNT_PATH_CONFIGMAPS = "camel.kubernetes.mount-path-configmaps";
     public static final String MOUNT_PATH_SECRETS = "camel.kubernetes.mount-path-secrets";
 
@@ -90,8 +90,11 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
             // try to auto-configure via properties
             PropertiesComponent pc = camelContext.getPropertiesComponent();
             OrderedLocationProperties properties = (OrderedLocationProperties) pc
-                    .loadProperties(k -> k.startsWith("camel.kubernetes-client.") || k.startsWith("camel.kubernetesClient."),
-                            k -> k.replace("camel.kubernetes-client.", "").replace("camel.kubernetesClient.", ""));
+                    .loadProperties(k -> k.startsWith("camel.kubernetes.client."),
+                            k -> k.replace("camel.kubernetes.client.", ""));
+            // used for enabling this
+            properties.remove("enabled");
+
             if (!properties.isEmpty()) {
                 ConfigBuilder config = new ConfigBuilder();
 
@@ -132,7 +135,7 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
                 }
                 if (!copy.isEmpty()) {
                     for (var e : copy.entrySet()) {
-                        LOG.warn("Property not auto-configured: camel.kubernetes-client.{}={}", e.getKey(), e.getValue());
+                        LOG.warn("Property not auto-configured: camel.kubernetes.client.{}={}", e.getKey(), e.getValue());
                     }
                 }
             } else {
