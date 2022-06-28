@@ -98,6 +98,7 @@ with the information.
 and will throw a `HttpOperationFailedException` with the information.
 
 *throwExceptionOnFailure*
+
 The option, `throwExceptionOnFailure`, can be set to `false` to prevent
 the `HttpOperationFailedException` from being thrown for failed response
 codes. This allows you to get any response from the remote server. +
@@ -125,7 +126,7 @@ The following algorithm is used to determine what HTTP method should be used: +
 
 == Configuring URI to call
 
-You can set the HTTP producer's URI directly form the endpoint URI. In
+You can set the HTTP producer's URI directly from the endpoint URI. In
 the route below, Camel will call out to the external server, `oldhost`,
 using HTTP.
 
@@ -147,8 +148,8 @@ And the equivalent Spring sample:
 </camelContext>
 ---------------------------------------------------------------------
 
-You can override the HTTP endpoint URI by adding a header with the key,
-`Exchange.HTTP_URI`, on the message.
+You can override the HTTP endpoint URI by adding a header with the key
+`Exchange.HTTP_URI` on the message.
 
 [source,java]
 -----------------------------------------------------------
@@ -409,7 +410,7 @@ Configuring Apache HTTP Client Directly
 Basically camel-http component is built on the top of
 http://hc.apache.org/httpcomponents-client-ga/[Apache HttpClient].
 Please refer to
-http://hc.apache.org/httpcomponents-client-ga/tutorial/html/connmgmt.html#d4e537[SSL/TLS
+https://hc.apache.org/httpcomponents-client-4.5.x/current/tutorial/html/connmgmt.html[SSL/TLS
 customization] for details or have a look into the
 `org.apache.camel.component.http.HttpsServerTestSupport` unit test base
 class. +
