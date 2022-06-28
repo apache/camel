@@ -7,7 +7,7 @@
 :supportlevel: Stable
 :component-header: Only producer is supported
 //Manually maintained attributes
-:camel-spring-boot-name: splunk
+:camel-spring-boot-name: splunk-hec
 
 *Since Camel {since}*
 
