@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jms.issues;
 
+import java.time.Duration;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -83,12 +84,9 @@ public class JmsConcurrentConsumersTest extends CamelTestSupport {
             public void configure() {
                 from("activemq:a?concurrentConsumers=3").to("activemq:b?concurrentConsumers=3");
 
-                from("activemq:b?concurrentConsumers=3").process(exchange -> {
-                    String body = exchange.getIn().getBody(String.class);
-                    // sleep a little to simulate heavy work and force concurrency processing
-                    Thread.sleep(3000);
-                    exchange.getMessage().setBody("Bye " + body);
-                });
+                from("activemq:b?concurrentConsumers=3")
+                        .delay(Duration.ofSeconds(3).toMillis())
+                        .transform(body().prepend("Bye ")).to("log:reply");
             }
         };
     }

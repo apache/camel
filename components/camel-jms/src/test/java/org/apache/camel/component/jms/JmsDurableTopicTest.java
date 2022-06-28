@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
@@ -29,19 +32,18 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 public class JmsDurableTopicTest extends CamelTestSupport {
 
     @Test
-    public void testDurableTopic() throws Exception {
+    public void testDurableTopic() {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
         MockEndpoint mock2 = getMockEndpoint("mock:result2");
         mock2.expectedBodiesReceived("Hello World");
 
-        // wait a bit and send the message
-        Thread.sleep(1000);
-
-        template.sendBody("activemq:topic:foo", "Hello World");
-
-        assertMockEndpointsSatisfied();
+        Awaitility.await().atMost(2, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    template.sendBody("activemq:topic:foo", "Hello World");
+                    assertMockEndpointsSatisfied();
+                });
     }
 
     @Override

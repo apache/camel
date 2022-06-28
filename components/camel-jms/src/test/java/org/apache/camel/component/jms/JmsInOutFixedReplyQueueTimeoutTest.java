@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jms;
 
+import java.time.Duration;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +31,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  *
@@ -52,13 +54,11 @@ public class JmsInOutFixedReplyQueueTimeoutTest extends CamelTestSupport {
     public void testTimeout() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        try {
-            template.requestBody("direct:start", "World", String.class);
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
-        }
+        Exception ex = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("direct:start", "World", String.class),
+                "Should have thrown exception");
 
+        assertIsInstanceOf(ExchangeTimedOutException.class, ex.getCause());
         assertMockEndpointsSatisfied();
     }
 
@@ -81,13 +81,10 @@ public class JmsInOutFixedReplyQueueTimeoutTest extends CamelTestSupport {
                         .to("mock:result");
 
                 from("activemq:queue:foo")
-                        .process(exchange -> {
-                            String body = exchange.getIn().getBody(String.class);
-                            if ("World".equals(body)) {
-                                log.debug("Sleeping for 4 sec to force a timeout");
-                                Thread.sleep(4000);
-                            }
-                        }).transform(body().prepend("Bye ")).to("log:reply");
+                        .choice().when(body().isEqualTo("World"))
+                            .log("Sleeping for 4 sec to force a timeout")
+                            .delay(Duration.ofSeconds(4).toMillis()).endChoice().end()
+                        .transform(body().prepend("Bye ")).to("log:reply");
             }
         };
     }
