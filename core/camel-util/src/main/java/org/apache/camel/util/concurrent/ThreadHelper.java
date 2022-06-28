@@ -16,10 +16,10 @@
  */
 package org.apache.camel.util.concurrent;
 
-import org.apache.camel.util.StringHelper;
-
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
+
+import org.apache.camel.util.StringHelper;
 
 /**
  * Various helper method for thread naming.
