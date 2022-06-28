@@ -76,7 +76,7 @@ endpoint.
 
 image::images/debug.png[image]
 
-=== Java debugging of Camel route written with Java DSL
+=== Java debugging of Camel routes written with Java DSL
 
 A trick to debug Camel route written with Java DSL is to modify the route to insert a `processor` and then to set the breakpoint in it.
 
