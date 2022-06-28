@@ -482,11 +482,18 @@ The syntax for both functions are:
 configmap:name/key[:defaultValue]
 ----
 
-Where the default value is optional, for example
+Where the default value is optional, for example the following will lookup `myKey`,
+and fail if there is no such configmap.
 
 [source]
 ----
 configmap:mymap/mykey
+----
+
+In this example then it would not fail as a default value is provided:
+
+[source]
+----
 configmap:mymap/mykey:123
 ----
 
@@ -495,12 +502,14 @@ Before the Kubernetes property placeholder functions can be used they need to be
 - path - A _mount path_ that must be mounted to the running pod, to load the configmaps or secrets from local disk.
 - kubernetes client - *Autowired* An `io.fabric8.kubernetes.client.KubernetesClient` instance to use for connecting to the Kubernetes API server.
 
-Camel will autowire the `KubernetesClient` if a single instance of the client exists in the running application (lookup via the xref:registry.adoc[Registry]).
+Camel will first use _mount paths_ (if configured) to lookup, and then fallback to use the `KubernetesClient`.
+
+==== Configuring mount paths for ConfigMaps and Secrets
 
 The configuration of the _month path_ are used by the given order:
 
-1. Reading configuration property with keys `org.apache.camel.component.kubernetes.properties.mount-path-configmaps`
-and `org.apache.camel.component.kubernetes.properties.mount-path-secrets`.
+1. Reading configuration property with keys `camel.kubernetes.mount-path-configmaps`
+and `camel.kubernetes.mount-path-secrets`.
 2. Use JVM system property with key `camel.k.mount-path.configmaps` and `camel.k.mount-path.secrets` (Camel K compatible).
 3. Use OS ENV variable with key `camel.k.mount-path.configmaps` and `camel.k.mount-path.secrets` (Camel K compatible).
 
@@ -508,9 +517,43 @@ For example to use `/etc/camel/resources/` as mount path, you can configure this
 
 [source,properties]
 ----
-org.apache.camel.component.kubernetes.properties.mount-path-configmaps = /etc/camel/myconfig/
-org.apache.camel.component.kubernetes.properties.mount-path-secrets = /etc/camel/mysecrets/
+camel.kubernetes.mount-path-configmaps = /etc/camel/myconfig/
+camel.kubernetes.mount-path-secrets = /etc/camel/mysecrets/
 ----
+
+==== Configuring Kubernetes Client
+
+Camel will autowire the `KubernetesClient` if a single instance of the client exists in the running application (lookup via the xref:registry.adoc[Registry]).
+Otherwise, a new `KubernetesClient` is created. The client can be configured from either
+
+- Using `camel.kubernetes.client.` properties (see below for example)
+- Attempt to auto-configure itself by a combination of OS Environment variables, reading from `~./kube/config` configuration,
+and service account token file. For more details see the https://github.com/fabric8io/kubernetes-client documentation.
+
+You most likely only need to explicit configure the `KubernetesClient` when you want to connect
+from a local computer to a remote Kubernetes cluster, where you can specify various options,
+such as the masterUrl and oauthToken as shown:
+
+[source,properties]
+----
+camel.kubernetes.client.masterUrl = https://127.0.0.1:50179/
+camel.kubernetes-client.oauthToken = eyJhbGciOiJSUzI1NiIsImtpZCI...
+----
+
+The `KubernetesClient` has many options, see the https://github.com/fabric8io/kubernetes-client documentation.
+
+If you only use _mount paths_ then its good practice to disable `KubernetesClient` which can be done by setting enabled to false as show:
+
+[source,properties]
+----
+camel.kubernetes.client.enabled = false
+----
+
+When running your Camel applications inside an existing Kubernetes cluster, then you often
+would not need to explicit configure the `KubernetesClient` and can rely on default settings.
+
+TIP: If you use Camel Quarkus, then it is recommended to use their https://quarkus.io/guides/kubernetes-config
+which automatic pre-configure the `KubernetesClient` which Camel then will reuse.
 
 ==== Using configmap with Kubernetes
 
