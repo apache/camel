@@ -16,16 +16,18 @@
  */
 package org.apache.camel.util.concurrent;
 
+import org.apache.camel.util.StringHelper;
+
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
-
-import org.apache.camel.util.StringHelper;
 
 /**
  * Various helper method for thread naming.
  */
 public final class ThreadHelper {
+
     public static final String DEFAULT_PATTERN = "Camel Thread ##counter# - #name#";
+
     private static final Pattern INVALID_PATTERN = Pattern.compile(".*#\\w+#.*");
 
     private static AtomicLong threadCounter = new AtomicLong();
@@ -56,12 +58,12 @@ public final class ThreadHelper {
         String shortName = name.contains("?") ? StringHelper.before(name, "?") : name;
 
         // replace tokens
-        String answer = replaceFirst(pattern, "#longName#", longName);
+        String answer = StringHelper.replaceFirst(pattern, "#longName#", longName);
         if (shortName != null) {
-            answer = replaceFirst(answer, "#name#", shortName);
+            answer = StringHelper.replaceFirst(answer, "#name#", shortName);
         }
         String next = Long.toString(nextThreadCounter());
-        answer = replaceFirst(answer, "#counter#", next);
+        answer = StringHelper.replaceFirst(answer, "#counter#", next);
 
         // are there any #word# combos left, if so they should be considered invalid tokens
         if (INVALID_PATTERN.matcher(answer).matches()) {
@@ -69,15 +71,6 @@ public final class ThreadHelper {
                     "Pattern is invalid: [" + pattern + "] in resolved thread name: [" + answer + "]");
         }
 
-        return answer;
-    }
-
-    private static String replaceFirst(String input, String from, String to) {
-        // use StringHelper.replaceFirst and replaceFirst (regexp) as replace does not work on all JDK 11s (CAMEL-18232)
-        String answer = StringHelper.replaceFirst(input, from, to);
-        if (!to.contains("$")) {
-            answer = answer.replaceFirst(from, to);
-        }
         return answer;
     }
 
