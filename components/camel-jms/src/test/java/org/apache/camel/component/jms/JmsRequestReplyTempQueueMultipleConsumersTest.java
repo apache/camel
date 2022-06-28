@@ -29,6 +29,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.junit5.TestSupport.body;
@@ -55,17 +57,13 @@ public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupp
         context.getExecutorServiceManager().shutdown(executorService);
     }
 
-    @Test
-    public void testTempQueueRefreshed() throws Exception {
+    @ParameterizedTest
+    @ValueSource(ints = { 500, 100, 100 })
+    public void testTempQueueRefreshed(int numFiles) throws Exception {
         executorService = context.getExecutorServiceManager().newFixedThreadPool(this, "test", 5);
 
-        doSendMessages(100);
+        doSendMessages(numFiles);
         connectionFactory.clear();
-        Thread.sleep(1000);
-        doSendMessages(100);
-        connectionFactory.clear();
-        Thread.sleep(1000);
-        doSendMessages(100);
 
         context.getExecutorServiceManager().shutdown(executorService);
     }
