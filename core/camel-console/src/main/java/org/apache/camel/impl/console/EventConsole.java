@@ -99,6 +99,9 @@ public class EventConsole extends AbstractDevConsole {
             for (CamelEvent event : events) {
                 JsonObject jo = new JsonObject();
                 jo.put("type", event.getType().toString());
+                if (event.getTimestamp() > 0) {
+                    jo.put("timestamp", event.getTimestamp());
+                }
                 jo.put("message", event.toString());
                 arr.add(jo);
             }
@@ -109,6 +112,9 @@ public class EventConsole extends AbstractDevConsole {
             for (CamelEvent.ExchangeEvent event : exchangeEvents) {
                 JsonObject jo = new JsonObject();
                 jo.put("type", event.getType().toString());
+                if (event.getTimestamp() > 0) {
+                    jo.put("timestamp", event.getTimestamp());
+                }
                 jo.put("exchangeId", event.getExchange().getExchangeId());
                 jo.put("message", event.toString());
                 arr.add(jo);
