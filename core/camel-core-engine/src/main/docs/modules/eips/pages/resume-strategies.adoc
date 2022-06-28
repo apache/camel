@@ -77,6 +77,19 @@ Camel comes with a few builtin strategies that can be used to store, retrieve an
 * `SingleNodeKafkaResumeStrategy` - a resume strategy from the `camel-kafka` component that uses Kafka as the store for the offsets and is suitable for single node integrations.
 * `MultiNodeKafkaResumeStrategy` - a resume strategy from the `camel-kafka` component that uses Kafka as the store for the offsets and is suitable for multi node integrations (i.e.: integrations running on clusters using the xref:components::master-component.adoc[camel-master] component.
 
+=== Configuring the Strategies
+
+Some of the builtin strategies may need additional configuration. This can be done using the configuration builders
+available for each strategy. For instance, to configure either one of the Kafka strategies mentioned earlier, the
+`KafkaResumeStrategyConfiguration` needs to be used. It can be created using a code similar to the following:
+
+[source,java]
+----
+    KafkaResumeStrategyConfiguration resumeStrategyConfiguration = KafkaResumeStrategyConfigurationBuilder.newBuilder()
+            .withBootstrapServers(bootStrapAddress)
+            .withTopic(kafkaTopic)
+            .build();
+----
 
 === Implementing New Builtin Resume Strategies
 
