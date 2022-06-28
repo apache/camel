@@ -94,6 +94,7 @@ public abstract class DefaultConfigurationProperties<T> {
     @Metadata(defaultValue = "Default")
     private ManagementStatisticsLevel jmxManagementStatisticsLevel = ManagementStatisticsLevel.Default;
     private String jmxManagementNamePattern = "#name#";
+    private boolean camelEventsTimestampEnabled;
     private boolean useMdcLogging;
     private String mdcLoggingKeysPattern;
     private String threadNamePattern;
@@ -900,6 +901,19 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setJmxManagementNamePattern(String jmxManagementNamePattern) {
         this.jmxManagementNamePattern = jmxManagementNamePattern;
+    }
+
+    public boolean isCamelEventsTimestampEnabled() {
+        return camelEventsTimestampEnabled;
+    }
+
+    /**
+     * Whether to include timestamps for all emitted Camel Events. Enabling this allows to know fine-grained at what
+     * time each event was emitted, which can be used for reporting to report exactly the time of the events. This is by
+     * default false to avoid the overhead of including this information.
+     */
+    public void setCamelEventsTimestampEnabled(boolean camelEventsTimestampEnabled) {
+        this.camelEventsTimestampEnabled = camelEventsTimestampEnabled;
     }
 
     public boolean isUseMdcLogging() {
@@ -2060,6 +2074,16 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withJmxManagementNamePattern(String jmxManagementNamePattern) {
         this.jmxManagementNamePattern = jmxManagementNamePattern;
+        return (T) this;
+    }
+
+    /**
+     * Whether to include timestamps for all emitted Camel Events. Enabling this allows to know fine-grained at what
+     * time each event was emitted, which can be used for reporting to report exactly the time of the events. This is by
+     * default false to avoid the overhead of including this information.
+     */
+    public T withCamelEventsTimestampEnabled(boolean camelEventsTimestampEnabled) {
+        this.camelEventsTimestampEnabled = camelEventsTimestampEnabled;
         return (T) this;
     }
 

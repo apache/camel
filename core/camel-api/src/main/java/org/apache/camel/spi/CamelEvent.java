@@ -73,6 +73,14 @@ public interface CamelEvent {
     Object getSource();
 
     /**
+     * Timestamp for each event, when the event occurred. By default, the timestamp is not included and this method
+     * returns 0.
+     */
+    long getTimestamp();
+
+    void setTimestamp(long timestamp);
+
+    /**
      * This interface is implemented by all events that contain an exception and is used to retrieve the exception in a
      * universal way.
      */

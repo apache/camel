@@ -30,6 +30,16 @@ import org.apache.camel.Route;
 public interface EventFactory {
 
     /**
+     * Whether to include timestamp for each event, when the event occurred. This is by default false.
+     */
+    boolean isTimestampEnabled();
+
+    /**
+     * Whether to include timestamp for each event, when the event occurred.
+     */
+    void setTimestampEnabled(boolean timestampEnabled);
+
+    /**
      * Creates an {@link CamelEvent} for Camel is initializing.
      *
      * @param  context camel context

@@ -27,6 +27,7 @@ public class ServiceStopFailureEvent extends EventObject implements CamelEvent.S
     private CamelContext context;
     private Object service;
     private Throwable cause;
+    private long timestamp;
 
     public ServiceStopFailureEvent(CamelContext context, Object service, Throwable cause) {
         super(service);
@@ -47,6 +48,16 @@ public class ServiceStopFailureEvent extends EventObject implements CamelEvent.S
     @Override
     public Throwable getCause() {
         return cause;
+    }
+
+    @Override
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    @Override
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 
     @Override

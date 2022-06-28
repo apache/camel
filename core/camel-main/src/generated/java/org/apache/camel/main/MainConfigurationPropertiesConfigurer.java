@@ -49,6 +49,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "BeanIntrospectionLoggingLevel": target.setBeanIntrospectionLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "beanpostprocessorenabled":
         case "BeanPostProcessorEnabled": target.setBeanPostProcessorEnabled(property(camelContext, boolean.class, value)); return true;
+        case "cameleventstimestampenabled":
+        case "CamelEventsTimestampEnabled": target.setCamelEventsTimestampEnabled(property(camelContext, boolean.class, value)); return true;
         case "caseinsensitiveheaders":
         case "CaseInsensitiveHeaders": target.setCaseInsensitiveHeaders(property(camelContext, boolean.class, value)); return true;
         case "configurationclasses":
@@ -284,6 +286,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "BeanIntrospectionLoggingLevel": return org.apache.camel.LoggingLevel.class;
         case "beanpostprocessorenabled":
         case "BeanPostProcessorEnabled": return boolean.class;
+        case "cameleventstimestampenabled":
+        case "CamelEventsTimestampEnabled": return boolean.class;
         case "caseinsensitiveheaders":
         case "CaseInsensitiveHeaders": return boolean.class;
         case "configurationclasses":
@@ -520,6 +524,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "BeanIntrospectionLoggingLevel": return target.getBeanIntrospectionLoggingLevel();
         case "beanpostprocessorenabled":
         case "BeanPostProcessorEnabled": return target.isBeanPostProcessorEnabled();
+        case "cameleventstimestampenabled":
+        case "CamelEventsTimestampEnabled": return target.isCamelEventsTimestampEnabled();
         case "caseinsensitiveheaders":
         case "CaseInsensitiveHeaders": return target.isCaseInsensitiveHeaders();
         case "configurationclasses":

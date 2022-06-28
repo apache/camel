@@ -253,6 +253,9 @@ public final class DefaultConfigurationConfigurer {
             camelContext.getManagementStrategy().getManagementAgent()
                     .setManagementNamePattern(config.getJmxManagementNamePattern());
         }
+        if (config.isCamelEventsTimestampEnabled()) {
+            camelContext.getManagementStrategy().getEventFactory().setTimestampEnabled(true);
+        }
 
         // global options
         if (config.getGlobalOptions() != null) {
@@ -547,19 +550,16 @@ public final class DefaultConfigurationConfigurer {
             }
         }
         // vaults
-        // TODO: add more vault providers here
         AwsVaultConfiguration aws = getSingleBeanOfType(registry, AwsVaultConfiguration.class);
         if (aws != null) {
             VaultConfiguration vault = camelContext.getVaultConfiguration();
             vault.setAwsVaultConfiguration(aws);
         }
-
         GcpVaultConfiguration gcp = getSingleBeanOfType(registry, GcpVaultConfiguration.class);
         if (gcp != null) {
             VaultConfiguration vault = camelContext.getVaultConfiguration();
             vault.setGcpVaultConfiguration(gcp);
         }
-
         AzureVaultConfiguration azure = getSingleBeanOfType(registry, AzureVaultConfiguration.class);
         if (gcp != null) {
             VaultConfiguration vault = camelContext.getVaultConfiguration();
