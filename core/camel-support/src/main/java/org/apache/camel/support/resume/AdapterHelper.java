@@ -55,7 +55,7 @@ public final class AdapterHelper {
         if (adapterInstance instanceof ResumeAdapter) {
             ResumeAdapter resumeAdapter = (ResumeAdapter) adapterInstance;
 
-            Object obj = context.getRegistry().lookupByName("resumeCache");
+            Object obj = context.getRegistry().lookupByName(ResumeCache.DEFAULT_NAME);
             if (resumeAdapter instanceof Cacheable && obj instanceof ResumeCache) {
                 ((Cacheable) resumeAdapter).setCache((ResumeCache<?>) obj);
             } else {
