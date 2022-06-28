@@ -705,8 +705,10 @@ class Run extends CamelCommand {
 
         String ext2 = FileUtil.onlyExt(file, true);
         if (ext2 != null) {
+            boolean github = file.startsWith("github:") || file.startsWith("https://github.com/")
+                    || file.startsWith("https://gist.github.com/");
             // special for yaml or xml, as we need to check if they have camel or not
-            if ("xml".equals(ext2) || "yaml".equals(ext2)) {
+            if (!github && ("xml".equals(ext2) || "yaml".equals(ext2))) {
                 // load content into memory
                 try (FileInputStream fis = new FileInputStream(file)) {
                     String data = IOHelper.loadText(fis);
