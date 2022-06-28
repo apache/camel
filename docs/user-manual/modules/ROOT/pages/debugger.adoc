@@ -6,7 +6,7 @@ debug routes, trace messages and to use breakpoints with the EIP patterns in the
 The Debugger allows tooling or the likes to attach breakpoints which is
 being invoked when xref:exchange.adoc[Exchanges] are routed.
 
-== Debugging Camel routes
+== Java Debugging Camel routes in unit tests
 
 If you are developing unit tests using the `camel-test-junit5` component, then
 the Debugger is available if you turn it on via overriding the `isUseDebugger()`
@@ -76,6 +76,33 @@ endpoint.
 
 image::images/debug.png[image]
 
+=== Java debugging of Camel route written with Java DSL
+
+A trick to debug Camel route written with Java DSL is to modify the route to insert a `processor` and then to set the breakpoint in it.
+
+For instance:
+
+[source,java]
+-----------------------------------------------
+public class MyRouteBuilder extends RouteBuilder {
+
+    @Override
+    public void configure() throws Exception {
+        from("timer:demo").routeId("foo")
+        	.bean("myBean", "hello")
+			.process(new Processor() {
+				@Override
+				public void process(Exchange exchange) throws Exception {
+					System.out.println("put a breakpoint here");
+				}
+			})
+        	.log("${body}")
+        	.bean("myBean", "bye")
+        	.log("${body}");
+    }
+}
+-----------------------------------------------
+
 === Implementing a custom debugger
 
 The debugger API is defined in `org.apache.camel.spi.Debugger`.
@@ -88,11 +115,11 @@ the condition matches.
 Camel provides a base implementation `org.apache.camel.impl.DefaultDebugger`,
 which can be used to extend for custom implementations.
 
-=== JMX debugger
+=== Camel Route debugger through JMX
 
-There is also a xref:backlog-debugger.adoc[Backlog Debugger] which allows debugging from JMX that is included into `camel-debug`.
+There is also a xref:backlog-debugger.adoc[Backlog Debugger] which allows debugging from JMX. It is automatically provided when `camel-debug` is on the classpath (since 3.16) or when using the `camel:debug` Maven goal (since 3.18).
 
-To be able to have enough time to add your breakpoints, you could need to suspend the message processing of Camel to make sure
+To be able to have enough time to add your breakpoints, since 3.18, you could need to suspend the message processing of Camel to make sure
 that you won't miss any messages. For this kind of need, you have to set either the environment variable `CAMEL_DEBUGGER_SUSPEND` or the system property `org.apache.camel.debugger.suspend` to `true` within the context of your application, then the `Backlog Debugger` suspends the message processing until the JMX operation `attach` is called. Calling the JMX operation `detach` suspends again the message processing.
 
 In case the environment variable and the system property are both set, the value of the environment variable is used.
