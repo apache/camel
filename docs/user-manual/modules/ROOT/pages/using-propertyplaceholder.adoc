@@ -508,8 +508,8 @@ Camel will first use _mount paths_ (if configured) to lookup, and then fallback 
 
 The configuration of the _month path_ are used by the given order:
 
-1. Reading configuration property with keys `camel.kubernetes.mount-path-configmaps`
-and `camel.kubernetes.mount-path-secrets`.
+1. Reading configuration property with keys `camel.kubernetes-config.mount-path-configmaps`
+and `camel.kubernetes-config.mount-path-secrets`.
 2. Use JVM system property with key `camel.k.mount-path.configmaps` and `camel.k.mount-path.secrets` (Camel K compatible).
 3. Use OS ENV variable with key `camel.k.mount-path.configmaps` and `camel.k.mount-path.secrets` (Camel K compatible).
 
@@ -517,8 +517,8 @@ For example to use `/etc/camel/resources/` as mount path, you can configure this
 
 [source,properties]
 ----
-camel.kubernetes.mount-path-configmaps = /etc/camel/myconfig/
-camel.kubernetes.mount-path-secrets = /etc/camel/mysecrets/
+camel.kubernetes-config.mount-path-configmaps = /etc/camel/myconfig/
+camel.kubernetes-config.mount-path-secrets = /etc/camel/mysecrets/
 ----
 
 ==== Configuring Kubernetes Client
@@ -526,7 +526,7 @@ camel.kubernetes.mount-path-secrets = /etc/camel/mysecrets/
 Camel will autowire the `KubernetesClient` if a single instance of the client exists in the running application (lookup via the xref:registry.adoc[Registry]).
 Otherwise, a new `KubernetesClient` is created. The client can be configured from either
 
-- Using `camel.kubernetes.client.` properties (see below for example)
+- Using `camel.kubernetes-config.client.` properties (see below for example)
 - Attempt to auto-configure itself by a combination of OS Environment variables, reading from `~./kube/config` configuration,
 and service account token file. For more details see the https://github.com/fabric8io/kubernetes-client documentation.
 
@@ -536,8 +536,8 @@ such as the masterUrl and oauthToken as shown:
 
 [source,properties]
 ----
-camel.kubernetes.client.masterUrl = https://127.0.0.1:50179/
-camel.kubernetes-client.oauthToken = eyJhbGciOiJSUzI1NiIsImtpZCI...
+camel.kubernetes-config.client.masterUrl = https://127.0.0.1:50179/
+camel.kubernetes-config.client.oauthToken = eyJhbGciOiJSUzI1NiIsImtpZCI...
 ----
 
 The `KubernetesClient` has many options, see the https://github.com/fabric8io/kubernetes-client documentation.
@@ -546,7 +546,7 @@ If you only use _mount paths_ then its good practice to disable `KubernetesClien
 
 [source,properties]
 ----
-camel.kubernetes.client.enabled = false
+camel.kubernetes-config.client-enabled = false
 ----
 
 When running your Camel applications inside an existing Kubernetes cluster, then you often
@@ -646,6 +646,36 @@ Which reduces the route to:
   </route>
 </camelContext>
 ----
+
+==== Using configmap or secrets in local-mode
+
+During development you may want to run in _local mode_ where you do not need acces to a Kubernetes cluster, to lookup the configmap.
+In the local mode, then Camel will lookup the configmap _keys_ from local properties, eg:
+
+For example the example above with the postgresql kamelet, that was configured using a secret:
+
+[source,properties]
+----
+camel.component.kamelet.postgresql-sink.databaseName={{secret:mydb/myhost}}
+camel.component.kamelet.postgresql-sink.serverPort={{secret:mydb/myport}}
+camel.component.kamelet.postgresql-sink.username={{secret:mydb/myuser}}
+camel.component.kamelet.postgresql-sink.password={{secret:mydb/mypass}}
+----
+
+Now suppose we have a local Postrgres database we want to use, then we can turn on _local mode_
+and specify the credentials in the same properties file:
+
+[source,properties]
+----
+camel.kubernetes-config.local-mode = true
+mydb/myhost=localhost
+mydb/myport=1234
+mydb/myuser=scott
+mydb/mypass=tiger
+----
+
+NOTE: Notice how the key is prefixed with the name of the secret and a slash, eg `name/key`. This makes it easy to copy/paste
+from the actual use of the configmap/secret and into the `application.properties` file.
 
 === Using custom property placeholder functions
 

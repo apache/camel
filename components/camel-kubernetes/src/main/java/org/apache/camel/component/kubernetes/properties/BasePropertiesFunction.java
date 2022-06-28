@@ -50,9 +50,10 @@ import org.slf4j.LoggerFactory;
 abstract class BasePropertiesFunction extends ServiceSupport implements PropertiesFunction, CamelContextAware {
 
     // keys in application.properties
-    public static final String CLIENT_ENABLED = "camel.kubernetes.client.enabled";
-    public static final String MOUNT_PATH_CONFIGMAPS = "camel.kubernetes.mount-path-configmaps";
-    public static final String MOUNT_PATH_SECRETS = "camel.kubernetes.mount-path-secrets";
+    public static final String CLIENT_ENABLED = "camel.kubernetes-config.client-enabled";
+    public static final String LOCAL_MODE = "camel.kubernetes-config.local-mode";
+    public static final String MOUNT_PATH_CONFIGMAPS = "camel.kubernetes-config.mount-path-configmaps";
+    public static final String MOUNT_PATH_SECRETS = "camel.kubernetes-config.mount-path-secrets";
 
     // use camel-k ENV for mount paths
     public static final String ENV_MOUNT_PATH_CONFIGMAPS = "camel.k.mount-path.configmaps";
@@ -63,6 +64,7 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
 
     private CamelContext camelContext;
     private KubernetesClient client;
+    private Boolean localMode;
     private Boolean clientEnabled;
     private String mountPathConfigMaps;
     private String mountPathSecrets;
@@ -71,6 +73,16 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
     @SuppressWarnings("unchecked")
     protected void doInit() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext");
+        if (localMode == null) {
+            localMode = "true"
+                    .equalsIgnoreCase(camelContext.getPropertiesComponent().resolveProperty(LOCAL_MODE).orElse("false"));
+        }
+        if (!localMode) {
+            doInitKubernetesClient();
+        }
+    }
+
+    protected void doInitKubernetesClient() throws Exception {
         if (clientEnabled == null) {
             clientEnabled = "true"
                     .equalsIgnoreCase(camelContext.getPropertiesComponent().resolveProperty(CLIENT_ENABLED).orElse("true"));
@@ -90,11 +102,8 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
             // try to auto-configure via properties
             PropertiesComponent pc = camelContext.getPropertiesComponent();
             OrderedLocationProperties properties = (OrderedLocationProperties) pc
-                    .loadProperties(k -> k.startsWith("camel.kubernetes.client."),
-                            k -> k.replace("camel.kubernetes.client.", ""));
-            // used for enabling this
-            properties.remove("enabled");
-
+                    .loadProperties(k -> k.startsWith("camel.kubernetes-config.client."),
+                            k -> k.replace("camel.kubernetes-config.client.", ""));
             if (!properties.isEmpty()) {
                 ConfigBuilder config = new ConfigBuilder();
 
@@ -135,7 +144,8 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
                 }
                 if (!copy.isEmpty()) {
                     for (var e : copy.entrySet()) {
-                        LOG.warn("Property not auto-configured: camel.kubernetes.client.{}={}", e.getKey(), e.getValue());
+                        LOG.warn("Property not auto-configured: camel.kubernetes-config.client.{}={}", e.getKey(),
+                                e.getValue());
                     }
                 }
             } else {
@@ -220,6 +230,12 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
         String key = StringHelper.after(remainder, "/");
         if (name == null || key == null) {
             return defaultValue;
+        }
+
+        // local-mode will not lookup in kubernetes but as local properties
+        if (localMode) {
+            String localKey = name + "/" + key;
+            return getCamelContext().getPropertiesComponent().resolveProperty(localKey).orElse(defaultValue);
         }
 
         String answer = null;
