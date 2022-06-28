@@ -101,7 +101,7 @@ mapping with the SQSConfiguration option.
 
 [source,java]
 ---------------------------------------------------------------------------------
-from("aws2-sqs://MyQueue?amazonSQSClient=#client&delay=5000&maxMessagesPerPoll=5")
+from("aws2-sqs://MyQueue?autoCreateQueue=true")
 .to("mock:result");
 ---------------------------------------------------------------------------------
 
