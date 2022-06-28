@@ -161,8 +161,6 @@ instruct Camel to send the DeleteMessage, if being filtered.
 
 == Send Message
 
-You can set a `SendMessageBatchRequest` or an `Iterable`
-
 ------------------------------------------------------------------------------------------------------
 from("direct:start")
   .setBody(constant("Camel rocks!"))
