@@ -122,8 +122,12 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
         }
 
         if (jsonDir == null) {
-            getLog().debug("No json directory folder found, skipping execution");
-            return;
+            jsonDir = findCamelDirectory(baseDir, "catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/components");
+
+            if (jsonDir == null) {
+                getLog().debug("No json directory folder found, skipping execution");
+                return;
+            }
         }
 
         Path root = camelDir.toPath();
