@@ -3384,7 +3384,8 @@ public abstract class AbstractCamelContext extends BaseService
         if (startupSummaryLevel != StartupSummaryLevel.Oneline && startupSummaryLevel != StartupSummaryLevel.Off) {
             if (shutdownStrategy != null && shutdownStrategy.getTimeUnit() != null) {
                 long timeout = shutdownStrategy.getTimeUnit().toMillis(shutdownStrategy.getTimeout());
-                String to = TimeUtils.printDuration(timeout, true);
+                // only use precise print duration if timeout is shorter than 10 seconds
+                String to = TimeUtils.printDuration(timeout, timeout < 10000);
                 LOG.info("Apache Camel {} ({}) shutting down (timeout:{})", getVersion(), getName(), to);
             } else {
                 LOG.info("Apache Camel {} ({}) shutting down", getVersion(), getName());
