@@ -312,6 +312,33 @@ public class CamelPostProcessorHelper implements CamelContextAware {
             }
             Set<?> found = getCamelContext() != null ? getCamelContext().getRegistry().findByType(type) : null;
             if (found == null || found.isEmpty()) {
+                // this may be a common type so lets check this first
+                if (getCamelContext() != null && type.isAssignableFrom(Registry.class)) {
+                    return getCamelContext().getRegistry();
+                }
+                if (getCamelContext() != null && type.isAssignableFrom(TypeConverter.class)) {
+                    return getCamelContext().getTypeConverter();
+                }
+                // for templates then create a new instance and let camel manage its lifecycle
+                Service answer = null;
+                if (getCamelContext() != null && type.isAssignableFrom(FluentProducerTemplate.class)) {
+                    answer = getCamelContext().createFluentProducerTemplate();
+                }
+                if (getCamelContext() != null && type.isAssignableFrom(ProducerTemplate.class)) {
+                    answer = getCamelContext().createProducerTemplate();
+                }
+                if (getCamelContext() != null && type.isAssignableFrom(ConsumerTemplate.class)) {
+                    answer = getCamelContext().createConsumerTemplate();
+                }
+                if (answer != null) {
+                    // lets make camel context manage its lifecycle
+                    try {
+                        getCamelContext().addService(answer);
+                    } catch (Exception e) {
+                        throw RuntimeCamelException.wrapRuntimeException(e);
+                    }
+                    return answer;
+                }
                 throw new NoSuchBeanException(name, type.getName());
             } else if (found.size() > 1) {
                 throw new NoSuchBeanException(
