@@ -93,9 +93,9 @@ public class HBaseProducer extends DefaultProducer {
             } else if (!deleteOperations.isEmpty()) {
                 table.delete(deleteOperations);
             } else if (!getOperationResult.isEmpty()) {
-                mappingStrategy.applyGetResults(exchange.getOut(), new HBaseData(getOperationResult));
+                mappingStrategy.applyGetResults(exchange.getMessage(), new HBaseData(getOperationResult));
             } else if (!scanOperationResult.isEmpty()) {
-                mappingStrategy.applyScanResults(exchange.getOut(), new HBaseData(scanOperationResult));
+                mappingStrategy.applyScanResults(exchange.getMessage(), new HBaseData(scanOperationResult));
             }
         }
     }

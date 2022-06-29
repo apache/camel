@@ -63,7 +63,7 @@ public class CellMappingStrategyFactory {
         if (classLoader != null) {
             try {
                 Class<?> clazz = classLoader.loadClass(strategyClassName);
-                return (CellMappingStrategy) clazz.newInstance();
+                return (CellMappingStrategy) clazz.getDeclaredConstructor().newInstance();
             } catch (Throwable e) {
                 LOG.warn("Failed to load HBase cell mapping strategy from class {}.", strategyClassName);
             }
