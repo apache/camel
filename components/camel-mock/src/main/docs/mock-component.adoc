@@ -15,7 +15,7 @@
 *{component-header}*
 
 Testing of distributed and asynchronous processing is
-notoriously difficult. The xref:mock-component.adoc[Mock], xref:mock-component.adoc[Test]
+notoriously difficult. The xref:mock-component.adoc[Mock], xref:test.adoc[Test]
 and xref:dataset-component.adoc[DataSet] endpoints work great with the
 Camel Testing Framework to simplify your unit and
 integration testing using
@@ -39,7 +39,7 @@ Expression to create an order testing function,
 * Messages arrive match some kind of Predicate such
 as that specific headers have certain values, or that parts of the
 messages match some predicate, such as by evaluating an
-xref:languages:xpath-language.adoc[XPath] or xref:languages:xpath-language.adoc[XQuery]
+xref:languages:xpath-language.adoc[XPath] or xref:languages:xquery-language.adoc[XQuery]
 Expression.
 
 [NOTE]
@@ -153,27 +153,27 @@ methods are as follows:
 [width="100%",cols="1m,1",options="header",]
 |===
 |Method |Description
-|https://www.javadoc.io/doc/org.apache.camel/camel-mock/current/org/apache/camel/component/mock/MockEndpoint.html#expectedMessageCount-int-[expectedMessageCount(int)]
+|https://www.javadoc.io/doc/org.apache.camel/camel-mock/current/org/apache/camel/component/mock/MockEndpoint.html#expectedMessageCount(int)[expectedMessageCount(int)]
 |To define the expected message count on the endpoint.
 
-|https://www.javadoc.io/doc/org.apache.camel/camel-mock/current/org/apache/camel/component/mock/MockEndpoint.html#expectedMinimumMessageCount-int-[expectedMinimumMessageCount(int)]
+|https://www.javadoc.io/doc/org.apache.camel/camel-mock/current/org/apache/camel/component/mock/MockEndpoint.html#expectedMinimumMessageCount(int)[expectedMinimumMessageCount(int)]
 |To define the minimum number of expected messages on the endpoint.
 
-|https://www.javadoc.io/doc/org.apache.camel/camel-mock/current/org/apache/camel/component/mock/MockEndpoint.html#expectedBodiesReceived-java.lang.Object...-[expectedBodiesReceived(...)]
+|https://www.javadoc.io/doc/org.apache.camel/camel-mock/latest/org/apache/camel/component/mock/MockEndpoint.html#expectedBodiesReceived(java.util.List)[expectedBodiesReceived(...)]
 |To define the expected bodies that should be received (in order).
 
-|https://www.javadoc.io/doc/org.apache.camel/camel-mock/current/org/apache/camel/component/mock/MockEndpoint.html#expectedHeaderReceived-java.lang.String-java.lang.Object-[expectedHeaderReceived(...)]
+|https://www.javadoc.io/doc/org.apache.camel/camel-mock/latest/org/apache/camel/component/mock/MockEndpoint.html#expectedHeaderReceived(java.lang.String,java.lang.Object)[expectedHeaderReceived(...)]
 |To define the expected header that should be received
 
-|https://www.javadoc.io/doc/org.apache.camel/camel-mock/current/org/apache/camel/component/mock/MockEndpoint.html#expectsAscending-org.apache.camel.Expression-[expectsAscending(Expression)]
+|https://www.javadoc.io/doc/org.apache.camel/camel-mock/current/org/apache/camel/component/mock/MockEndpoint.html#expectsAscending(org.apache.camel.Expression)[expectsAscending(Expression)]
 |To add an expectation that messages are received in order, using the
 given Expression to compare messages.
 
-|https://www.javadoc.io/doc/org.apache.camel/camel-mock/current/org/apache/camel/component/mock/MockEndpoint.html#expectsDescending-org.apache.camel.Expression-[expectsDescending(Expression)]
+|https://www.javadoc.io/doc/org.apache.camel/camel-mock/current/org/apache/camel/component/mock/MockEndpoint.html#expectsDescending(org.apache.camel.Expression)[expectsDescending(Expression)]
 |To add an expectation that messages are received in order, using the
 given Expression to compare messages.
 
-|https://www.javadoc.io/doc/org.apache.camel/camel-mock/current/org/apache/camel/component/mock/MockEndpoint.html#expectsNoDuplicates-org.apache.camel.Expression-[expectsNoDuplicates(Expression)]
+|https://www.javadoc.io/doc/org.apache.camel/camel-mock/current/org/apache/camel/component/mock/MockEndpoint.html#expectsNoDuplicates(org.apache.camel.Expression)[expectsNoDuplicates(Expression)]
 |To add an expectation that no duplicate messages are received; using an
 Expression to calculate a unique identifier for
 each message. This could be something like the `JMSMessageID` if using
@@ -190,7 +190,7 @@ resultEndpoint.expectedBodiesReceived("firstMessageBody", "secondMessageBody", "
 == Adding expectations to specific messages
 
 In addition, you can use the
-http://javadoc.io/doc/org.apache.camel/camel-mock/latest/org/apache/camel/component/mock/MockEndpoint.html#message-int-[`message(int
+https://javadoc.io/doc/org.apache.camel/camel-mock/latest/org/apache/camel/component/mock/MockEndpoint.html[`message(int
 messageIndex)`] method to add assertions about a specific message that is
 received.
 
@@ -204,7 +204,7 @@ resultEndpoint.message(0).header("foo").isEqualTo("bar");
 ----
 
 There are some examples of the Mock endpoint in use in the
-https://github.com/apache/camel/tree/main/camel-core/src/test/java/org/apache/camel/processor/[`camel-core`
+https://github.com/apache/camel/tree/main/core/camel-core/src/test/java/org/apache/camel/processor[`camel-core`
 processor tests].
 
 == Mocking existing endpoints
