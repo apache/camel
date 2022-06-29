@@ -31,8 +31,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class SimpleScheduledRoutePolicyTest {
 
@@ -136,12 +136,7 @@ public class SimpleScheduledRoutePolicyTest {
             Thread.sleep(4000);
 
             boolean consumerSuspended = false;
-            try {
-                template.sendBody("direct:start", "Ready or not, Here, I come");
-            } catch (CamelExecutionException e) {
-                consumerSuspended = true;
-            }
-            assertTrue(consumerSuspended);
+            assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", "Ready or not, Here, I come"));
             context.getComponent("quartz", QuartzComponent.class).stop();
         }
     }
@@ -173,12 +168,9 @@ public class SimpleScheduledRoutePolicyTest {
             context.start();
 
             ServiceHelper.suspendService(context.getRoute("test").getConsumer());
-            try {
-                template.sendBody("direct:start", "Ready or not, Here, I come");
-                fail("Should have thrown an exception");
-            } catch (CamelExecutionException e) {
-                LOG.debug("Consumer successfully suspended");
-            }
+
+            assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", "Ready or not, Here, I come"),
+                    "Should have thrown an exception");
 
             Thread.sleep(4000);
             template.sendBody("direct:start", "Ready or not, Here, I come");
@@ -221,12 +213,8 @@ public class SimpleScheduledRoutePolicyTest {
             context.start();
             Thread.sleep(1000);
 
-            try {
-                template.sendBody("direct:start", "Ready or not, Here, I come");
-                fail("Should have thrown an exception");
-            } catch (CamelExecutionException e) {
-                LOG.debug("Consumer successfully suspended");
-            }
+            assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", "Ready or not, Here, I come"),
+                    "Should have thrown an exception");
 
             Thread.sleep(4000);
             template.sendBody("direct:start", "Ready or not, Here, I come");
@@ -266,12 +254,8 @@ public class SimpleScheduledRoutePolicyTest {
             context.start();
             Thread.sleep(1000);
 
-            try {
-                template.sendBody("direct:start", "Ready or not, Here, I come");
-                fail("Should have thrown an exception");
-            } catch (CamelExecutionException e) {
-                LOG.debug("Consumer successfully suspended");
-            }
+            assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", "Ready or not, Here, I come"),
+                    "Should have thrown an exception");
 
             Thread.sleep(4000);
             template.sendBody("direct:start", "Ready or not, Here, I come");
