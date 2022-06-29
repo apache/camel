@@ -2605,7 +2605,8 @@ public abstract class AbstractCamelContext extends BaseService
 
             if (LOG.isInfoEnabled()) {
                 LOG.info("Resumed {} routes", suspendedRouteServices.size());
-                LOG.info("Apache Camel {} ({}) resumed in {}", getVersion(), getName(), TimeUtils.printDuration(watch.taken(), true));
+                LOG.info("Apache Camel {} ({}) resumed in {}", getVersion(), getName(),
+                        TimeUtils.printDuration(watch.taken(), true));
             }
 
             // and clear the list as they have been resumed
