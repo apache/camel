@@ -102,7 +102,7 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry implements A
 
             // report how many type converters we have loaded
             if (additional > 0) {
-                LOG.info("Type converters loaded (fast: {}, scanned: {})", fast, additional);
+                LOG.debug("Type converters loaded (fast: {}, scanned: {})", fast, additional);
                 LOG.warn(
                         "Annotation scanning mode loaded {} type converters. Its recommended to migrate to @Converter(loader = true) for fast type converter mode.",
                         additional);
