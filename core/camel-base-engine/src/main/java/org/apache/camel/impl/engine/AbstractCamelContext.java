@@ -3161,8 +3161,10 @@ public abstract class AbstractCamelContext extends BaseService
             }
             if (disabled > 0) {
                 LOG.info("Routes startup (total:{} started:{} disabled:{})", total, started, disabled);
-            } else {
+            } else if (total != started) {
                 LOG.info("Routes startup (total:{} started:{})", total, started);
+            } else {
+                LOG.info("Routes startup (started:{})", started);
             }
             // if we are default/verbose then log each route line
             if (startupSummaryLevel == StartupSummaryLevel.Default || startupSummaryLevel == StartupSummaryLevel.Verbose) {
@@ -3582,8 +3584,10 @@ public abstract class AbstractCamelContext extends BaseService
             }
             if (forced > 0) {
                 logger.log(String.format("Routes stopped (total:%s stopped:%s forced:%s)", total, stopped, forced));
-            } else {
+            } else if (total != stopped) {
                 logger.log(String.format("Routes stopped (total:%s stopped:%s)", total, stopped));
+            } else {
+                logger.log(String.format("Routes stopped (stopped:%s)", stopped));
             }
             // if we are default/verbose then log each route line
             if (startupSummaryLevel == StartupSummaryLevel.Default || startupSummaryLevel == StartupSummaryLevel.Verbose) {
