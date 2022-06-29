@@ -15,7 +15,7 @@
 *{component-header}*
 
 Testing of distributed and asynchronous processing is
-notoriously difficult. The xref:mock-component.adoc[Mock], xref:test.adoc[Test]
+notoriously difficult. The xref:mock-component.adoc[Mock],
 and xref:dataset-component.adoc[DataSet] endpoints work great with the
 Camel Testing Framework to simplify your unit and
 integration testing using
