@@ -1,1 +1,1 @@
-../../../../../components/camel-cxf/src/main/docs/cxf-component.adoc
+../../../../../components/camel-cxf/camel-cxf-soap/src/main/docs/cxf-component.adoc
