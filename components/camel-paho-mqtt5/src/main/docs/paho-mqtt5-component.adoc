@@ -65,11 +65,11 @@ extracted out of (or put into) the MQTT message:
 [source,java]
 ----
 // Receive payload
-byte[] payload = (byte[]) consumerTemplate.receiveBody("paho:topic");
+byte[] payload = (byte[]) consumerTemplate.receiveBody("paho-mqtt5:topic");
 
 // Send payload
 byte[] payload = "message".getBytes();
-producerTemplate.sendBody("paho:topic", payload);
+producerTemplate.sendBody("paho-mqtt5:topic", payload);
 ----
 
 But of course Camel build-in xref:manual::type-converter.adoc[type conversion
@@ -80,11 +80,11 @@ example below Camel automatically converts binary payload into `String`
 [source,java]
 ----
 // Receive payload
-String payload = consumerTemplate.receiveBody("paho:topic", String.class);
+String payload = consumerTemplate.receiveBody("paho-mqtt5:topic", String.class);
 
 // Send payload
 String payload = "message";
-producerTemplate.sendBody("paho:topic", payload);
+producerTemplate.sendBody("paho-mqtt5:topic", payload);
 ----
 
 
@@ -95,7 +95,7 @@ installed on the same host as the Camel router:
 
 [source,java]
 ----
-from("paho:some/queue")
+from("paho-mqtt5:some/queue")
     .to("mock:test");
 ----
 
@@ -104,14 +104,14 @@ While the snippet below sends message to the MQTT broker:
 [source,java]
 ----
 from("direct:test")
-    .to("paho:some/target/queue");
+    .to("paho-mqtt5:some/target/queue");
 ----
 
 For example this is how to read messages from the remote MQTT broker: 
 
 [source,java]
 ----
-from("paho:some/queue?brokerUrl=tcp://iot.eclipse.org:1883")
+from("paho-mqtt5:some/queue?brokerUrl=tcp://iot.eclipse.org:1883")
     .to("mock:test");
 ----
 
@@ -121,7 +121,7 @@ And here we override the default topic and set to a dynamic topic
 ----
 from("direct:test")
     .setHeader(PahoConstants.CAMEL_PAHO_OVERRIDE_TOPIC, simple("${header.customerId}"))
-    .to("paho:some/target/queue");
+    .to("paho-mqtt5:some/target/queue");
 ----
 
 
