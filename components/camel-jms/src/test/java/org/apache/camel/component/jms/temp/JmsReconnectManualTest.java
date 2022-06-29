@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Test for issue CAMEL-3193. Camel should support reconnects in case of connection loss to jms server. After reconnect
  * Temporary destinations have to be recreated as they may become invalid
  */
-public class JmsReconnectTest {
+public class JmsReconnectManualTest {
 
     public interface MyService {
         String echo(String st);
@@ -53,12 +53,11 @@ public class JmsReconnectTest {
     MyService proxy;
 
     /**
-     * This test is disabled as the problem can currently not be reproduced using ActiveMQ. TODO Find a way to recreate
-     * the problem with ActiveMQ and fully automate the test
+     * TODO: Find a way to recreate the problem with ActiveMQ and fully automate the test
      * 
      * @throws Exception
      */
-    @Disabled
+    @Disabled("This test is disabled as the problem can currently not be reproduced using ActiveMQ.")
     @Test
     public void testRequestReply() throws Exception {
         BrokerService broker = ActiveMQEmbeddedServiceBuilder
