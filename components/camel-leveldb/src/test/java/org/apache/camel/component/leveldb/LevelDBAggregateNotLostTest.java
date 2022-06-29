@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.leveldb;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.params.Test;
+import org.awaitility.Awaitility;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -53,9 +56,10 @@ public class LevelDBAggregateNotLostTest extends LevelDBTestSupport {
 
         assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
 
-        Thread.sleep(1000);
+        final List<Exchange> receivedExchanges = Awaitility.await().atMost(1, TimeUnit.SECONDS)
+                .until(() -> getMockEndpoint("mock:aggregated").getReceivedExchanges(), Matchers.notNullValue());
 
-        String exchangeId = getMockEndpoint("mock:aggregated").getReceivedExchanges().get(0).getExchangeId();
+        String exchangeId = receivedExchanges.get(0).getExchangeId();
 
         // the exchange should be in the completed repo where we should be able to find it
         final LevelDBFile levelDBFile = getRepo().getLevelDBFile();

@@ -19,6 +19,7 @@ package org.apache.camel.component.kubernetes.producer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import io.fabric8.kubernetes.api.model.ReplicationController;
 import io.fabric8.kubernetes.api.model.ReplicationControllerBuilder;
@@ -30,6 +31,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.KubernetesServer;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -117,7 +119,7 @@ public class KubernetesReplicationControllersProducerTest extends KubernetesTest
     }
 
     @Test
-    public void createScaleAndDeleteReplicationController() throws Exception {
+    public void createScaleAndDeleteReplicationController() {
         server.expect().withPath("/api/v1/namespaces/test/replicationcontrollers/repl1")
                 .andReturn(200, new ReplicationControllerBuilder().withNewMetadata().withName("repl1")
                         .withResourceVersion("1").endMetadata().withNewSpec().withReplicas(5).endSpec().withNewStatus()
@@ -135,10 +137,8 @@ public class KubernetesReplicationControllersProducerTest extends KubernetesTest
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_REPLICAS, 1);
         });
 
-        Thread.sleep(3000);
-        int replicas = ex.getMessage().getBody(Integer.class);
-
-        assertEquals(5, replicas);
+        Awaitility.await().atMost(3, TimeUnit.SECONDS).untilAsserted(
+                () -> assertEquals(5, ex.getMessage().getBody(Integer.class)));
     }
 
     @Override

@@ -52,6 +52,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -196,7 +197,7 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
 
     @ParameterizedTest
     @EnumSource(LeaseResourceType.class)
-    public void testSlowLeaderLosingLeadershipOnlyInternally(LeaseResourceType type) throws Exception {
+    public void testSlowLeaderLosingLeadershipOnlyInternally(LeaseResourceType type) {
         LeaderRecorder mypod1 = addMember("mypod1", type);
         LeaderRecorder mypod2 = addMember("mypod2", type);
         context.start();
@@ -211,8 +212,8 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
 
         delayRequestsFromPod(firstLeader, 10, TimeUnit.SECONDS);
 
-        Thread.sleep(LEASE_TIME_MILLIS);
-        assertNull(formerLeaderRecorder.getCurrentLeader());
+        await().atMost(LEASE_TIME_MILLIS, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertNull(formerLeaderRecorder.getCurrentLeader()));
         assertEquals(firstLeader, formerLoserRecorder.getCurrentLeader());
     }
 

@@ -53,8 +53,8 @@ public class HL7MLLPCodecMessageFloodingTest extends HL7TestSupport {
                     Message input = exchange.getIn().getBody(Message.class);
                     Message response = input.generateACK();
                     exchange.getMessage().setBody(response);
-                    Thread.sleep(50); // simulate some processing time
-                }).to("mock:result");
+                }).delay(50) // simulate some processing time
+                        .to("mock:result");
             }
         };
     }

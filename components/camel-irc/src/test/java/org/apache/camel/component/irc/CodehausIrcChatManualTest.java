@@ -25,9 +25,9 @@ import org.schwering.irc.lib.IRCUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class CodehausIrcChat {
+public final class CodehausIrcChatManualTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CodehausIrcChat.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CodehausIrcChatManualTest.class);
 
     private static final class CodehausIRCEventAdapter extends IRCEventAdapter {
         @Override
@@ -86,7 +86,7 @@ public final class CodehausIrcChat {
         }
     }
 
-    private CodehausIrcChat() {
+    private CodehausIrcChatManualTest() {
     }
 
     public static void main(String[] args) throws InterruptedException {
