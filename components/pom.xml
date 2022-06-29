@@ -72,7 +72,6 @@
         <module>camel-jetty</module>
         <module>camel-undertow</module>
         <module>camel-cxf</module>
-        <module>camel-cxf-transport</module>
         <module>camel-jms</module>
         <module>camel-master</module>
         <module>camel-service</module>
