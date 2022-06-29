@@ -579,7 +579,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-cxf-transport</artifactId>
+        <artifactId>camel-cxf-rest</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -589,17 +589,12 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-cxf-rest</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-cxf-spring-common</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-cxf-spring-transport</artifactId>
+        <artifactId>camel-cxf-spring-rest</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -609,7 +604,12 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-cxf-spring-rest</artifactId>
+        <artifactId>camel-cxf-spring-transport</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-cxf-transport</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

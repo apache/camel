@@ -1,1 +1,1 @@
-../../../../../components/camel-cxf/src/main/docs/cxfrs-component.adoc
+../../../../../components/camel-cxf/camel-cxf-rest/src/main/docs/cxfrs-component.adoc
