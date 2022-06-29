@@ -73,13 +73,13 @@ and the latter as global transactions
 If you only have a single resource (such as one database, or one messaging system) then
 transactions can be simpler to orchestrate by the transaction manager. This is known as local transactions.
 
-The previous two examples above are both using a single resource, and are therefore using local transactions.
-When using local transactions and Spring Transactions, then you can use the dedicated transaction manager for the resource type:
+When using local transactions with Spring Transactions, then you can use the dedicated transaction manager
+for the resource type such as:
 
 - org.springframework.jdbc.datasource.DataSourceTransactionManager
 - org.springframework.jms.connection.JmsTransactionManager
 
-TIP: Consult the spring documentation for more local transaction managers.
+TIP: Consult the Spring documentation for more local transaction managers.
 
 ==== Global Transactions
 
