@@ -6,7 +6,7 @@ from the xref:enterprise-integration-patterns.adoc[EIP patterns] book.
 
 image::eip/MessageDispatcher.gif[image]
 
-In Camel the Message Dispatcher can be archived in different ways such as:
+In Camel the Message Dispatcher can be achieved in different ways such as:
 
 * You can use a component like xref:ROOT:jms-component.adoc[JMS] with selectors
 to implement a xref:selective-consumer.adoc[Selective Consumer] as the Message Dispatcher implementation.
