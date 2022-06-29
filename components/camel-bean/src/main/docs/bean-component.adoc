@@ -22,7 +22,7 @@ The Bean component binds beans to Camel message exchanges.
 bean:beanName[?options]
 ----
 
-Where *beanID* can be any string which is used to look up the bean in
+Where *beanName* can be any string which is used to look up the bean in
 the Registry
 
 // component-configure options: START

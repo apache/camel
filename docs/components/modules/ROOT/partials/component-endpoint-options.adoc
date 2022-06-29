@@ -70,7 +70,7 @@ ifeval::[{apicount} != 0]
 
 == API Parameters ({apicount} APIs)
 
-The @{doctitle} endpoint is an API based component and has additional parameters based on which API name and API method is used.
+The {doctitle} endpoint is an API based component and has additional parameters based on which API name and API method is used.
 The API name and API method is located in the endpoint URI as the `{apiSyntax}` path parameters:
 
 [subs='+attributes']
