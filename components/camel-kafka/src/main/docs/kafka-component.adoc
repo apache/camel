@@ -59,15 +59,15 @@ http://kafka.apache.org/documentation.html#producerconfigs[http://kafka.apache.o
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
-If you want to send a message to a dynamic topic then use `KafkaConstants.OVERRIDE_TOPIC` as its used as a one-time header
-that are not send along the message, as it's removed in the producer.
+If you want to send a message to a dynamic topic then use `KafkaConstants.OVERRIDE_TOPIC` as it is used as a one-time header
+that is not send along the message, as it is removed in the producer.
 
 == Consumer error handling
 
 While kafka consumer is polling messages from the kafka broker, then errors can happen. This section describes what happens and what
 you can configure.
 
-The consumer may throw exception when invoking the Kafka `poll` API. For example if the message cannot be de-serialized due invalid data,
+The consumer may throw exception when invoking the Kafka `poll` API. For example, if the message cannot be de-serialized due invalid data,
 and many other kind of errors. Those errors are in the form of `KafkaException` which are either _retryable_ or not. The exceptions
 which can be retried (`RetriableException`) will be retried again (with a poll timeout in between). All other kind of exceptions are
 handled according to the _pollOnError_ configuration. This configuration has the following values:
@@ -79,10 +79,10 @@ handled according to the _pollOnError_ configuration. This configuration has the
 * STOP will stop the consumer (have to be manually started/restarted if the consumer should be able to consume messages again).
 
 The default is *ERROR_HANDLER* which will let Camel's error handler (if any configured) process the caused exception.
-And then afterwards continue to poll the next message. This behavior is similar to the _bridgeErrorHandler_ option that
+Afterwards continue to poll the next message. This behavior is similar to the _bridgeErrorHandler_ option that
 Camel components have.
 
-For advanced control then a custom implementation of `org.apache.camel.component.kafka.PollExceptionStrategy` can be configured
+For advanced control a custom implementation of `org.apache.camel.component.kafka.PollExceptionStrategy` can be configured
 on the component level, which allows to control which exceptions causes which of the strategies above.
 
 == Samples
@@ -172,9 +172,9 @@ from("direct:start")
 
 == SSL configuration
 
-You have 2 different ways to configure the SSL communication on the Kafka` component.
+You have 2 different ways to configure the SSL communication on the Kafka component.
 
-The first way is through the many SSL endpoint parameters
+The first way is through the many SSL endpoint parameters:
 
 [source,java]
 ----
@@ -187,7 +187,7 @@ from("kafka:" + TOPIC + "?brokers=localhost:{{kafkaPort}}" +
         .to("mock:result");
 ----
 
-The second way is to use the `sslContextParameters` endpoint parameter.
+The second way is to use the `sslContextParameters` endpoint parameter:
 
 [source,java]
 ----
@@ -228,7 +228,7 @@ camelContext.addRoutes(new RouteBuilder() {
 The `camel-kafka` library provides a Kafka topic-based idempotent repository. This repository stores broadcasts all changes to idempotent state (add/remove) in a Kafka topic, and populates a local in-memory cache for each repository's process instance through event sourcing.
 The topic used must be unique per idempotent repository instance. The mechanism does not have any requirements about the number of topic partitions; as the repository consumes from all partitions at the same time. It also does not have any requirements about the replication factor of the topic.
 Each repository instance that uses the topic (e.g. typically on different machines running in parallel) controls its own consumer group, so in a cluster of 10 Camel processes using the same topic each will control its own offset.
-On startup, the instance subscribes to the topic and rewinds the offset to the beginning, rebuilding the cache to the latest state. The cache will not be considered warmed up until one poll of `pollDurationMs` in length returns 0 records. Startup will not be completed until either the cache has warmed up, or 30 seconds go by; if the latter happens the idempotent repository may be in an inconsistent state until its consumer catches up to the end of the topic.
+On startup, the instance subscribes to the topic, rewinds the offset to the beginning and rebuilds the cache to the latest state. The cache will not be considered warmed up until one poll of `pollDurationMs` in length returns 0 records. Startup will not be completed until either the cache has warmed up, or 30 seconds go by; if the latter happens the idempotent repository may be in an inconsistent state until its consumer catches up to the end of the topic.
 Be mindful of the format of the header used for the uniqueness check. By default, it uses Strings as the data types. When using primitive numeric formats, the header must be deserialized accordingly. Check the samples below for examples.
 
 A `KafkaIdempotentRepository` has the following properties:
@@ -303,7 +303,7 @@ from("direct:performInsert")
     .end()
 ----
 
-Alternatively, it is possible use a custom serializer configured via the route URL to perform the conversion:
+Alternatively, it is possible to use a custom serializer configured via the route URL to perform the conversion:
 
 [source,java]
 ----
@@ -341,7 +341,7 @@ from(from).routeId("foo")
 
 == Using manual commit with Kafka consumer
 
-By default the Kafka consumer will use auto commit, where the offset will be committed automatically in the background using a given interval.
+By default, the Kafka consumer will use auto commit, where the offset will be committed automatically in the background using a given interval.
 
 In case you want to force manual commits, you can use `KafkaManualCommit` API from the Camel Exchange, stored on the message header.
 This requires to turn on manual commits by either setting the option `allowManualCommit` to `true` on the `KafkaComponent`
@@ -355,7 +355,7 @@ kafka.setAllowManualCommit(true);
 camelContext.addComponent("kafka", kafka);
 ----
 
-You can then use the `KafkaManualCommit` from Java code such as a Camel `Processor`:
+Then you can use the `KafkaManualCommit` from Java code such as a Camel `Processor`:
 [source,java]
 ----
 public void process(Exchange exchange) {
@@ -365,12 +365,12 @@ public void process(Exchange exchange) {
 }
 ----
 
-This will force a synchronous commit which will block until the commit is acknowledge on Kafka, or if it fails an exception is thrown.
+This will force a synchronous commit which will block until the commit is acknowledged on Kafka, or if it fails an exception is thrown.
 You can use an asynchronous commit as well by configuring the `KafkaManualCommitFactory` with the `DefaultKafkaManualAsyncCommitFactory` implementation.
 
-The commit will then be done in the next consumer loop using the kafka asynchronous commit api.
+Then the commit will be done in the next consumer loop using the kafka asynchronous commit api.
 Be aware that records from a partition must be processed and committed by a unique thread.
-If not, this could lead with non consistent behaviors.
+If not, this could lead with non-consistent behaviors.
 This is mostly useful with aggregation's completion timeout strategies.
 
 If you want to use a custom implementation of `KafkaManualCommit` then you can configure a custom `KafkaManualCommitFactory`
@@ -410,7 +410,7 @@ from("kafka:my_topic?headerDeserializer=#myDeserializer")
 .to("kafka:my_topic?headerSerializer=#mySerializer")
 ----
 
-By default all headers are being filtered by `KafkaHeaderFilterStrategy`.
+By default, all headers are being filtered by `KafkaHeaderFilterStrategy`.
 Strategy filters out headers which start with `Camel` or `org.apache.camel` prefixes.
 Default strategy can be overridden by using `headerFilterStrategy` uri parameter in both `to` and `from` routes:
 
