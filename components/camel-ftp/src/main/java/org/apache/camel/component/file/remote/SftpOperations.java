@@ -1030,7 +1030,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             if (LOG.isDebugEnabled()) {
                 long time = watch.taken();
                 LOG.debug("Took {} ({} millis) to store file: {} and FTP client returned: true",
-                        TimeUtils.printDuration(time), time, targetName);
+                        TimeUtils.printDuration(time, true), time, targetName);
             }
 
             // after storing file, we may set chmod on the file

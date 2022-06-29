@@ -50,7 +50,7 @@ public class DefaultUuidGeneratorTest {
         }
         LOG.info("Last id:  " + uuidGenerator.generateUuid());
 
-        LOG.info("Took " + TimeUtils.printDuration(watch.taken()));
+        LOG.info("Took " + TimeUtils.printDuration(watch.taken(), true));
     }
 
 }

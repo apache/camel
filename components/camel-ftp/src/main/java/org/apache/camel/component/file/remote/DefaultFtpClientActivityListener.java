@@ -215,7 +215,7 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
             msg += " (size: " + StringHelper.humanReadableBytes(transferredBytes) + ")";
         }
         long taken = watch.taken();
-        String time = TimeUtils.printDuration(taken);
+        String time = TimeUtils.printDuration(taken, true);
         msg += " (took: " + time + ")";
         doLog(msg);
     }
@@ -269,7 +269,7 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
             msg += " (size: " + StringHelper.humanReadableBytes(transferredBytes) + ")";
         }
         long taken = watch.taken();
-        String time = TimeUtils.printDuration(taken);
+        String time = TimeUtils.printDuration(taken, true);
         msg += " (took: " + time + ")";
         doLog(msg);
     }

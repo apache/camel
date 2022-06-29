@@ -768,7 +768,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             if (log.isDebugEnabled()) {
                 long time = watch.taken();
                 log.debug("Took {} ({} millis) to store file: {} and FTP client returned: {}",
-                        TimeUtils.printDuration(time), time, targetName, answer);
+                        TimeUtils.printDuration(time, true), time, targetName, answer);
             }
 
             // store client reply information after the operation

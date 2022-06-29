@@ -167,7 +167,7 @@ public class KafkaFetchRecords implements Runnable {
     }
 
     private void setupInitializeErrorException(ForegroundTask task, int max) {
-        String time = TimeUtils.printDuration(task.elapsed());
+        String time = TimeUtils.printDuration(task.elapsed(), true);
         String topic = getPrintableTopic();
         String msg = "Gave up subscribing org.apache.kafka.clients.consumer.KafkaConsumer " +
                      threadId + " to " + topic + " after " + max + " attempts (elapsed: " + time + ").";
@@ -176,7 +176,7 @@ public class KafkaFetchRecords implements Runnable {
     }
 
     private void setupCreateConsumerException(ForegroundTask task, int max) {
-        String time = TimeUtils.printDuration(task.elapsed());
+        String time = TimeUtils.printDuration(task.elapsed(), true);
         String topic = getPrintableTopic();
         String msg = "Gave up creating org.apache.kafka.clients.consumer.KafkaConsumer "
                      + threadId + " to " + topic + " after " + max + " attempts (elapsed: " + time + ").";

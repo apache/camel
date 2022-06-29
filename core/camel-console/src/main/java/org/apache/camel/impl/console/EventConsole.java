@@ -27,6 +27,7 @@ import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.EventNotifierSupport;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 
 @DevConsole("event")
@@ -75,7 +76,11 @@ public class EventConsole extends AbstractDevConsole {
         if (!events.isEmpty()) {
             sb.append(String.format("Last %s Camel Events:", events.size()));
             for (CamelEvent event : events) {
-                sb.append(String.format("\n    %s", event));
+                if (event.getTimestamp() > 0) {
+                    sb.append(String.format("\n    %s (age: %s)", event, TimeUtils.printSince(event.getTimestamp())));
+                } else {
+                    sb.append(String.format("\n    %s", event));
+                }
             }
             sb.append("\n");
         }
@@ -83,7 +88,11 @@ public class EventConsole extends AbstractDevConsole {
             sb.append("\n");
             sb.append(String.format("Last %s Exchange Events:", exchangeEvents.size()));
             for (CamelEvent.ExchangeEvent event : exchangeEvents) {
-                sb.append(String.format("\n    %s", event));
+                if (event.getTimestamp() > 0) {
+                    sb.append(String.format("\n    %s (age: %s)", event, TimeUtils.printSince(event.getTimestamp())));
+                } else {
+                    sb.append(String.format("\n    %s", event));
+                }
             }
             sb.append("\n");
         }

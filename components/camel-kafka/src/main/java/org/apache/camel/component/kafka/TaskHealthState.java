@@ -89,7 +89,7 @@ public class TaskHealthState {
         if (isTerminated()) {
             msg += " (gave up recovering and terminated the kafka consumer; restart route or application to recover).";
         } else if (isRecoverable()) {
-            String time = TimeUtils.printDuration(getCurrentBackoffInterval());
+            String time = TimeUtils.printDuration(getCurrentBackoffInterval(), true);
             msg += " (recovery in progress using " + time + " intervals).";
         }
 

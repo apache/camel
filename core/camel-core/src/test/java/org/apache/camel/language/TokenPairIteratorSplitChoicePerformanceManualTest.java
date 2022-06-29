@@ -61,7 +61,7 @@ public class TokenPairIteratorSplitChoicePerformanceManualTest extends ContextTe
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(size).create();
 
         boolean matches = notify.matches(5, TimeUnit.MINUTES);
-        log.info("Processed file with {} elements in: {}", size, TimeUtils.printDuration(watch.taken()));
+        log.info("Processed file with {} elements in: {}", size, TimeUtils.printDuration(watch.taken(), true));
 
         log.info("Processed " + tiny.get() + " tiny messages");
         log.info("Processed " + small.get() + " small messages");

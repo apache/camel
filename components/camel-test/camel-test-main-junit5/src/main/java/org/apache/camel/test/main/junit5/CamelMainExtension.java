@@ -97,7 +97,7 @@ final class CamelMainExtension
             final Class<?> requiredTestClass = context.getRequiredTestClass();
             LOG.info("********************************************************************************");
             LOG.info("Testing done: {} ({})", currentTestName, requiredTestClass.getName());
-            LOG.info("Took: {} ({} millis)", TimeUtils.printDuration(time), time);
+            LOG.info("Took: {} ({} millis)", TimeUtils.printDuration(time, true), time);
             LOG.info("********************************************************************************");
         }
         dumpRouteCoverageIfNeeded(context, time, currentTestName);

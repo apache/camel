@@ -66,7 +66,7 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry implements A
         // core type converters is always loaded which does not use any classpath scanning and therefore is fast
         loadCoreAndFastTypeConverters();
 
-        String time = TimeUtils.printDuration(watch.taken());
+        String time = TimeUtils.printDuration(watch.taken(), true);
         LOG.debug("Loaded {} type converters in {}", typeMappings.size(), time);
 
         if (!loadTypeConvertersDone && isLoadTypeConverters()) {
@@ -114,7 +114,7 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry implements A
             }
         }
 
-        String time = TimeUtils.printDuration(watch.taken());
+        String time = TimeUtils.printDuration(watch.taken(), true);
         LOG.debug("Scanned {} type converters in {}", typeMappings.size(), time);
     }
 

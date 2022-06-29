@@ -13,6 +13,9 @@ such as from stacktraces. Previously only a sub set of known _secret_ keys was m
 
 The type converter from `InputStream` to `byte[]` will now close the input stream after the conversion.
 
+The `TimeUtils.printDuration` method outputs now in a more compact format (especially for long durations).
+Before `4d12h57m49s` and now `4d12h`. Use `precise=true` to include all details.
+
 === camel-endpointdsl
 
 The options for `lazyStartProducer` and `bridgeErrorHandler` has moved into the _advanced_ group.

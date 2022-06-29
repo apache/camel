@@ -192,7 +192,7 @@ public class RoutesConfigurer {
 
                 if (LOG.isDebugEnabled() && !routesFromDirectory.isEmpty()) {
                     LOG.debug("Loaded {} additional RoutesBuilder from: {} (took {})", routesFromDirectory.size(),
-                            getRoutesIncludePattern(), TimeUtils.printDuration(watch.taken()));
+                            getRoutesIncludePattern(), TimeUtils.printDuration(watch.taken(), true));
                 }
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeException(e);

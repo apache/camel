@@ -151,7 +151,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
         long delta = stop.taken();
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Took {} to poll: {}", TimeUtils.printDuration(delta), name);
+            LOG.debug("Took {} to poll: {}", TimeUtils.printDuration(delta, true), name);
         }
 
         // log if we hit the limit

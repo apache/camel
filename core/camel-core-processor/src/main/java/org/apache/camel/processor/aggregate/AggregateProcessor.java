@@ -928,7 +928,7 @@ public class AggregateProcessor extends AsyncProcessorSupport
 
         // log duration of this task so end user can see how long it takes to pre-check this upon starting
         LOG.info("Restored {} CompletionTimeout conditions in the AggregationTimeoutChecker in {}",
-                timeoutMap.size(), TimeUtils.printDuration(watch.taken()));
+                timeoutMap.size(), TimeUtils.printDuration(watch.taken(), true));
     }
 
     /**
@@ -1706,7 +1706,7 @@ public class AggregateProcessor extends AsyncProcessorSupport
 
         if (expected > 0) {
             LOG.info("Forcing completion of all groups with {} exchanges completed in {}", expected,
-                    TimeUtils.printDuration(watch.taken()));
+                    TimeUtils.printDuration(watch.taken(), true));
         }
     }
 

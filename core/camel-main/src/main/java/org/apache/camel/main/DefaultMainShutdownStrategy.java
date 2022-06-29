@@ -98,7 +98,7 @@ public class DefaultMainShutdownStrategy extends SimpleMainShutdownStrategy {
                 StopWatch watch = new StopWatch();
                 while (!main.getCamelContext().isStopped() && !done && watch.taken() < max) {
                     String msg = "Waiting for CamelContext to graceful shutdown (max:"
-                                 + TimeUtils.printDuration(max) + ", elapsed:" + TimeUtils.printDuration(watch.taken()) + ")";
+                                 + TimeUtils.printDuration(max, true) + ", elapsed:" + TimeUtils.printDuration(watch.taken(), true) + ")";
                     if (waits > 0 && waits % 5 == 0) {
                         // do some info logging every 5th time
                         LOG.info(msg);
@@ -116,7 +116,7 @@ public class DefaultMainShutdownStrategy extends SimpleMainShutdownStrategy {
                 boolean success = done || main.getCamelContext().isStopped();
                 if (!success) {
                     LOG.warn("CamelContext not yet shutdown completely after: {}. Forcing shutdown.",
-                            TimeUtils.printDuration(watch.taken()));
+                            TimeUtils.printDuration(watch.taken(), true));
                 }
                 tracker.close();
             }

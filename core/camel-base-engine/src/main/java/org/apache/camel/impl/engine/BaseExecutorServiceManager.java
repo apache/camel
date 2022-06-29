@@ -338,11 +338,11 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
             if (warned) {
                 LOG.info("Shutdown of ExecutorService: {} is shutdown: {} and terminated: {} took: {}.",
                         executorService, executorService.isShutdown(), executorService.isTerminated(),
-                        TimeUtils.printDuration(watch.taken()));
+                        TimeUtils.printDuration(watch.taken(), true));
             } else if (LOG.isDebugEnabled()) {
                 LOG.debug("Shutdown of ExecutorService: {} is shutdown: {} and terminated: {} took: {}.",
                         executorService, executorService.isShutdown(), executorService.isTerminated(),
-                        TimeUtils.printDuration(watch.taken()));
+                        TimeUtils.printDuration(watch.taken(), true));
             }
         }
 
@@ -422,7 +422,7 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
             if (executorService.awaitTermination(interval, TimeUnit.MILLISECONDS)) {
                 done = true;
             } else {
-                LOG.info("Waited {} for ExecutorService: {} to terminate...", TimeUtils.printDuration(watch.taken()),
+                LOG.info("Waited {} for ExecutorService: {} to terminate...", TimeUtils.printDuration(watch.taken(), true),
                         executorService);
                 // recalculate interval
                 interval = Math.min(2000, shutdownAwaitTermination - watch.taken());

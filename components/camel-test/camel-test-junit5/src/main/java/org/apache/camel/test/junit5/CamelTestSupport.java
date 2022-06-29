@@ -571,7 +571,7 @@ public abstract class CamelTestSupport
 
         LOG.info("********************************************************************************");
         LOG.info("Testing done: {} ({})", currentTestName, getClass().getName());
-        LOG.info("Took: {} ({} millis)", TimeUtils.printDuration(time), time);
+        LOG.info("Took: {} ({} millis)", TimeUtils.printDuration(time, true), time);
 
         // if we should dump route stats, then write that to a file
         if (isRouteCoverageEnabled()) {

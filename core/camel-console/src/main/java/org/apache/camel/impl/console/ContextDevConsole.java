@@ -44,9 +44,9 @@ public class ContextDevConsole extends AbstractDevConsole {
             sb.append(String.format("\n    Total: %s", mb.getExchangesTotal()));
             sb.append(String.format("\n    Failed: %s", mb.getExchangesFailed()));
             sb.append(String.format("\n    Inflight: %s", mb.getExchangesInflight()));
-            sb.append(String.format("\n    Mean Time: %s", TimeUtils.printDuration(mb.getMeanProcessingTime())));
-            sb.append(String.format("\n    Max Time: %s", TimeUtils.printDuration(mb.getMaxProcessingTime())));
-            sb.append(String.format("\n    Min Time: %s", TimeUtils.printDuration(mb.getMinProcessingTime())));
+            sb.append(String.format("\n    Mean Time: %s", TimeUtils.printDuration(mb.getMeanProcessingTime(), true)));
+            sb.append(String.format("\n    Max Time: %s", TimeUtils.printDuration(mb.getMaxProcessingTime(), true)));
+            sb.append(String.format("\n    Min Time: %s", TimeUtils.printDuration(mb.getMinProcessingTime(), true)));
             sb.append("\n");
         }
 

@@ -44,7 +44,7 @@ public class HttpProxyRouteTest extends BaseJettyTest {
             assertEquals("Bye " + i, out);
         }
 
-        LOG.info("Time taken: " + TimeUtils.printDuration(watch.taken()));
+        LOG.info("Time taken: " + TimeUtils.printDuration(watch.taken(), true));
     }
 
     @Test

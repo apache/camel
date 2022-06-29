@@ -2572,7 +2572,7 @@ public abstract class AbstractCamelContext extends BaseService
         watch.taken();
         if (LOG.isInfoEnabled()) {
             LOG.info("Apache Camel {} ({}) is suspended in {}", getVersion(), getName(),
-                    TimeUtils.printDuration(watch.taken()));
+                    TimeUtils.printDuration(watch.taken(), true));
         }
 
         EventHelper.notifyCamelContextSuspended(this);
@@ -2605,7 +2605,7 @@ public abstract class AbstractCamelContext extends BaseService
 
             if (LOG.isInfoEnabled()) {
                 LOG.info("Resumed {} routes", suspendedRouteServices.size());
-                LOG.info("Apache Camel {} ({}) resumed in {}", getVersion(), getName(), TimeUtils.printDuration(watch.taken()));
+                LOG.info("Apache Camel {} ({}) resumed in {}", getVersion(), getName(), TimeUtils.printDuration(watch.taken(), true));
             }
 
             // and clear the list as they have been resumed
@@ -2773,7 +2773,7 @@ public abstract class AbstractCamelContext extends BaseService
         startupStepRecorder.endStep(step);
 
         buildTaken = watch.taken();
-        LOG.debug("Apache Camel {} ({}) built in {}", getVersion(), getName(), TimeUtils.printDuration(buildTaken));
+        LOG.debug("Apache Camel {} ({}) built in {}", getVersion(), getName(), TimeUtils.printDuration(buildTaken, true));
     }
 
     protected void resetBuildTime() {
@@ -2972,7 +2972,7 @@ public abstract class AbstractCamelContext extends BaseService
         startupStepRecorder.endStep(step);
 
         initTaken = watch.taken();
-        LOG.debug("Apache Camel {} ({}) initialized in {}", getVersion(), getName(), TimeUtils.printDuration(initTaken));
+        LOG.debug("Apache Camel {} ({}) initialized in {}", getVersion(), getName(), TimeUtils.printDuration(initTaken, true));
     }
 
     @Override
@@ -3180,10 +3180,10 @@ public abstract class AbstractCamelContext extends BaseService
         if (startupSummaryLevel != StartupSummaryLevel.Off && LOG.isInfoEnabled()) {
             long taken = stopWatch.taken();
             long max = buildTaken + initTaken + taken;
-            String total = TimeUtils.printDuration(max);
-            String start = TimeUtils.printDuration(taken);
-            String init = TimeUtils.printDuration(initTaken);
-            String built = TimeUtils.printDuration(buildTaken);
+            String total = TimeUtils.printDuration(max, true);
+            String start = TimeUtils.printDuration(taken, true);
+            String init = TimeUtils.printDuration(initTaken, true);
+            String built = TimeUtils.printDuration(buildTaken, true);
             String jvm = logJvmUptime ? getJvmUptime() : null;
             if (jvm != null) {
                 LOG.info("Apache Camel {} ({}) started in {} (build:{} init:{} start:{} JVM-uptime:{})", getVersion(),
@@ -3381,7 +3381,7 @@ public abstract class AbstractCamelContext extends BaseService
         if (startupSummaryLevel != StartupSummaryLevel.Oneline && startupSummaryLevel != StartupSummaryLevel.Off) {
             if (shutdownStrategy != null && shutdownStrategy.getTimeUnit() != null) {
                 long timeout = shutdownStrategy.getTimeUnit().toMillis(shutdownStrategy.getTimeout());
-                String to = TimeUtils.printDuration(timeout);
+                String to = TimeUtils.printDuration(timeout, true);
                 LOG.info("Apache Camel {} ({}) shutting down (timeout:{})", getVersion(), getName(), to);
             } else {
                 LOG.info("Apache Camel {} ({}) shutting down", getVersion(), getName());
@@ -3515,7 +3515,7 @@ public abstract class AbstractCamelContext extends BaseService
 
         if (startupSummaryLevel != StartupSummaryLevel.Off) {
             if (LOG.isInfoEnabled()) {
-                String taken = TimeUtils.printDuration(stopWatch.taken());
+                String taken = TimeUtils.printDuration(stopWatch.taken(), true);
                 String jvm = logJvmUptime ? getJvmUptime() : null;
                 if (jvm != null) {
                     LOG.info("Apache Camel {} ({}) shutdown in {} (uptime:{} JVM-uptime:{})", getVersion(), getName(), taken,

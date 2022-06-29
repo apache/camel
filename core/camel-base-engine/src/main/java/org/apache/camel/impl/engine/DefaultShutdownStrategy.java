@@ -276,7 +276,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
         if (logger.shouldLog()) {
             logger.log(String.format("Graceful shutdown of %s routes completed in %s", routesOrdered.size(),
-                    TimeUtils.printDuration(watch.taken())));
+                    TimeUtils.printDuration(watch.taken(), true)));
         }
         return true;
     }

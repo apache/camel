@@ -157,7 +157,7 @@ public class JoorCSimpleCompiler extends ServiceSupport implements CSimpleCompil
     protected void doStop() throws Exception {
         super.doStop();
         if (counter > 0) {
-            LOG.info("csimple-joor compiled {} scripts in {}", counter, TimeUtils.printDuration(taken));
+            LOG.info("csimple-joor compiled {} scripts in {}", counter, TimeUtils.printDuration(taken, true));
         }
     }
 

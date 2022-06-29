@@ -51,7 +51,7 @@ public final class EagerClassloadedHelper {
         org.apache.camel.support.UnitOfWorkHelper.onClassloaded(LOG);
         // EAGER-CLASSLOADED: END
 
-        String time = TimeUtils.printDuration(watch.taken());
+        String time = TimeUtils.printDuration(watch.taken(), true);
         LOG.debug("Eager loaded {} classes in {}", count, time);
     }
 }

@@ -362,7 +362,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         if (LOG.isInfoEnabled()) {
             long l = System.currentTimeMillis() - startDate.getTime();
             LOG.info("Apache Camel {} ({}) {} routes started in {}",
-                    getVersion(), getName(), routes.size(), TimeUtils.printDuration(l));
+                    getVersion(), getName(), routes.size(), TimeUtils.printDuration(l, true));
         }
     }
 

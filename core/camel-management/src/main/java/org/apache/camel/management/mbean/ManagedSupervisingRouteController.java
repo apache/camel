@@ -192,12 +192,12 @@ public class ManagedSupervisingRouteController extends ManagedService implements
                         ? state.getFirstAttemptTime() : 0;
                 if (time > 0) {
                     long delta = System.currentTimeMillis() - time;
-                    elapsed = TimeUtils.printDuration(delta);
+                    elapsed = TimeUtils.printDuration(delta, true);
                 }
                 time = state != null && BackOffTimer.Task.Status.Active == state.getStatus() ? state.getLastAttemptTime() : 0;
                 if (time > 0) {
                     long delta = System.currentTimeMillis() - time;
-                    last = TimeUtils.printDuration(delta);
+                    last = TimeUtils.printDuration(delta, true);
                 }
                 String error = "";
                 String stacktrace = "";

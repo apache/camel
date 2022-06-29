@@ -302,7 +302,7 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
             // register loaded health-checks
             col.forEach(this::register);
             if (col.size() > 0) {
-                String time = TimeUtils.printDuration(watch.taken());
+                String time = TimeUtils.printDuration(watch.taken(), true);
                 LOG.info("Health checks (scanned: {}) loaded in {}", col.size(), time);
             }
         }

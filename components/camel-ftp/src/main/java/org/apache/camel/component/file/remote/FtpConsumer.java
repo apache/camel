@@ -31,7 +31,6 @@ import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
@@ -347,9 +346,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
             if (log != null) {
                 long since = listener.getLastLogActivityTimestamp();
                 if (since > 0) {
-                    StopWatch watch = new StopWatch(new Date(since));
-                    long delta = watch.taken();
-                    String human = TimeUtils.printDuration(delta);
+                    String human = TimeUtils.printSince(since);
                     return log + " " + human + " ago";
                 } else {
                     return log;
@@ -368,9 +365,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
             if (log != null) {
                 long since = listener.getLastVerboseLogActivityTimestamp();
                 if (since > 0) {
-                    StopWatch watch = new StopWatch(new Date(since));
-                    long delta = watch.taken();
-                    String human = TimeUtils.printDuration(delta);
+                    String human = TimeUtils.printSince(since);
                     return log + " " + human + " ago";
                 } else {
                     return log;
