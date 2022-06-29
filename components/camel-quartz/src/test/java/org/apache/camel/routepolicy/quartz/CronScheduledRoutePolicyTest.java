@@ -28,6 +28,7 @@ import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.quartz.QuartzComponent;
 import org.apache.camel.support.service.ServiceHelper;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -68,8 +69,8 @@ class CronTest1 extends NoBuilderTest {
         context.getRouteController().stopRoute("test1", 1000, TimeUnit.MILLISECONDS);
         context.getRouteController().stopRoute("test2", 1000, TimeUnit.MILLISECONDS);
 
-        Thread.sleep(5000);
-        assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test1"));
+        Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test1")));
         assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test2"));
         template.sendBody("direct:start1", "Ready or not, Here, I come");
         template.sendBody("direct:start2", "Ready or not, Here, I come");
@@ -105,9 +106,8 @@ class CronTest2 extends NoBuilderTest {
         });
         context.start();
 
-        Thread.sleep(5000);
-
-        assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test1"));
+        Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test1")));
         assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test2"));
     }
 }
@@ -136,8 +136,8 @@ class CronTest3 extends NoBuilderTest {
         context.start();
         context.getRouteController().stopRoute("test", 1000, TimeUnit.MILLISECONDS);
 
-        Thread.sleep(5000);
-        assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test"));
+        Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test")));
         template.sendBody("direct:start", "Ready or not, Here, I come");
 
         context.getComponent("quartz", QuartzComponent.class).stop();
@@ -166,8 +166,8 @@ class CronTest4 extends NoBuilderTest {
         });
         context.start();
 
-        Thread.sleep(5000);
-        assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test"));
+        Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test")));
     }
 }
 
@@ -252,9 +252,8 @@ class CronTest6 extends NoBuilderTest {
         });
         context.start();
 
-        Thread.sleep(5000);
-
-        assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test"));
+        Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test")));
         assertTrue(myPolicy.isStart(), "Should have called onStart");
         assertTrue(myPolicy.isStop(), "Should have called onStop");
     }
@@ -279,13 +278,14 @@ class CronTest7 extends NoBuilderTest {
         });
         context.start();
 
-        Thread.sleep(5000);
-
         // when suspending its only the consumer that suspends
         // there is a ticket to improve this
-        Consumer consumer = context.getRoute("test").getConsumer();
-        SuspendableService ss = (SuspendableService) consumer;
-        assertTrue(ss.isSuspended(), "Consumer should be suspended");
+        Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    Consumer consumer = context.getRoute("test").getConsumer();
+                    SuspendableService ss = (SuspendableService) consumer;
+                    assertTrue(ss.isSuspended(), "Consumer should be suspended");
+                });
     }
 }
 
@@ -313,8 +313,8 @@ class CronTest8 extends NoBuilderTest {
 
         ServiceHelper.suspendService(context.getRoute("test").getConsumer());
 
-        Thread.sleep(5000);
-        assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test"));
+        Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test")));
 
         template.sendBody("direct:start", "Ready or not, Here, I come");
 

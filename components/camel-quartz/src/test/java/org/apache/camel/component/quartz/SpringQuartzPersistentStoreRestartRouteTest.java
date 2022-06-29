@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.quartz;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
@@ -47,9 +50,8 @@ public class SpringQuartzPersistentStoreRestartRouteTest extends CamelSpringTest
         mock.expectedMessageCount(0);
 
         // wait a bit
-        Thread.sleep(2000);
-
-        assertMockEndpointsSatisfied();
+        Awaitility.await().atMost(2, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertMockEndpointsSatisfied());
 
         // start route, and we got messages again
         mock.reset();
