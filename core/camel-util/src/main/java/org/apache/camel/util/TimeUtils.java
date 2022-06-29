@@ -56,8 +56,25 @@ public final class TimeUtils {
         return printDuration(age, false);
     }
 
+    /**
+     * Prints the duration in a human-readable format as 9s, 27m44s, 3h12m, 3d8h, etc.
+     *
+     * @param  uptime the uptime in millis
+     * @return        the time used for displaying on screen or in logs
+     */
     public static String printDuration(Duration uptime) {
-        return printDuration(uptime.toMillis(), true);
+        return printDuration(uptime, false);
+    }
+
+    /**
+     * Prints the duration in a human-readable format as 9s, 27m44s, 3h12m, 3d8h, etc.
+     *
+     * @param  uptime the uptime in millis
+     * @param  precise whether to be precise and include more details
+     * @return        the time used for displaying on screen or in logs
+     */
+    public static String printDuration(Duration uptime, boolean precise) {
+        return printDuration(uptime.toMillis(), precise);
     }
 
     /**
@@ -127,11 +144,21 @@ public final class TimeUtils {
         return sb.toString();
     }
 
-    public static Duration toDuration(String source) throws IllegalArgumentException {
+    /**
+     * Converts to duration.
+     *
+     * @param source duration which can be in text format such as 15s
+     */
+    public static Duration toDuration(String source) {
         return Duration.ofMillis(toMilliSeconds(source));
     }
 
-    public static long toMilliSeconds(String source) throws IllegalArgumentException {
+    /**
+     * Converts to milliseconds.
+     *
+     * @param source duration which can be in text format such as 15s
+     */
+    public static long toMilliSeconds(String source) {
         // quick conversion if its only digits
         boolean digit = true;
         for (int i = 0; i < source.length(); i++) {
