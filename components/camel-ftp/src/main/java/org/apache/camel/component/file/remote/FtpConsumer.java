@@ -18,7 +18,6 @@ package org.apache.camel.component.file.remote;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.camel.Exchange;
