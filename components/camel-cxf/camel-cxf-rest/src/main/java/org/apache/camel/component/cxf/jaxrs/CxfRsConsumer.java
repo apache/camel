@@ -18,8 +18,8 @@ package org.apache.camel.component.cxf.jaxrs;
 
 import org.apache.camel.Processor;
 import org.apache.camel.Suspendable;
-import org.apache.camel.component.cxf.util.CxfUtils;
 import org.apache.camel.component.cxf.common.UnitOfWorkCloserInterceptor;
+import org.apache.camel.component.cxf.util.CxfUtils;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Server;
