@@ -206,13 +206,13 @@ public class JoltEndpoint extends ResourceEndpoint {
         }
 
         // now lets output the results to the exchange
-        Message out = exchange.getOut();
+        Message message = exchange.getMessage();
         if (getOutputType() == JoltInputOutputType.JsonString) {
-            out.setBody(JsonUtils.toJsonString(output));
+            message.setBody(JsonUtils.toJsonString(output));
         } else {
-            out.setBody(output);
+            message.setBody(output);
         }
-        out.setHeaders(exchange.getIn().getHeaders());
+        message.setHeaders(exchange.getIn().getHeaders());
     }
 
 }
