@@ -9677,7 +9677,19 @@ Sets the consumer listener to use.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="untilCheck" type="xs:string" use="required"/>
+        <xs:attribute name="untilCheck" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+References to a java.util.function.Predicate to use for until checks. The
+predicate is responsible for evaluating whether the processing can resume or
+not. Such predicate should return true if the consumption can resume, or false
+otherwise. The exact point of when the predicate is called is dependent on the
+component, and it may be called on either one of the available events.
+Implementations should not assume the predicate to be called at any specific
+point.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
