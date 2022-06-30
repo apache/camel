@@ -155,30 +155,13 @@ public final class CamelJavaRestDslParserHelper {
     }
 
     private boolean isRestConfiguration(Expression exp) {
-        String rootMethodName = null;
-
-        // find out if this is from a Camel route (eg from, route etc.)
-        Expression sub = exp;
-        while (sub instanceof MethodInvocation) {
-            sub = ((MethodInvocation) sub).getExpression();
-            if (sub instanceof MethodInvocation) {
-                Expression parent = ((MethodInvocation) sub).getExpression();
-                if (parent == null) {
-                    break;
-                }
-            }
-        }
-        if (sub instanceof MethodInvocation) {
-            rootMethodName = ((MethodInvocation) sub).getName().getIdentifier();
-        } else if (sub instanceof SimpleName) {
-            rootMethodName = ((SimpleName) sub).getIdentifier();
-        }
+        final String rootMethodName = findRootMethodName(exp);
 
         // must be from rest configuration
         return "restConfiguration".equals(rootMethodName);
     }
 
-    private boolean isRest(Expression exp) {
+    private String findRootMethodName(Expression exp) {
         String rootMethodName = null;
 
         // find out if this is from a Camel route (eg from, route etc.)
@@ -197,6 +180,11 @@ public final class CamelJavaRestDslParserHelper {
         } else if (sub instanceof SimpleName) {
             rootMethodName = ((SimpleName) sub).getIdentifier();
         }
+        return rootMethodName;
+    }
+
+    private boolean isRest(Expression exp) {
+        final String rootMethodName = findRootMethodName(exp);
 
         // must be from rest
         return "rest".equals(rootMethodName);
