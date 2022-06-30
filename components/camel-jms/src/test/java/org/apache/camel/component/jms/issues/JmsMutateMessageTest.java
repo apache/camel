@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JmsMutateMessageTest extends CamelTestSupport {
 
-    private String uri = "activemq:queue:hello";
+    private final String uri = "activemq:queue:hello";
 
     @Test
     public void testMutateMessage() throws Exception {

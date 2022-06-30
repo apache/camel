@@ -26,8 +26,6 @@ import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 public class JMSTransactionThrottlingRoutePolicyTest extends CamelSpringTestSupport {
 
-    private int size = 200;
-
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
@@ -44,6 +42,7 @@ public class JMSTransactionThrottlingRoutePolicyTest extends CamelSpringTestSupp
     @Test
     public void testJmsTransactedThrottlingRoutePolicy() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
+        int size = 200;
         mock.expectedMinimumMessageCount(size);
 
         for (int i = 0; i < size; i++) {

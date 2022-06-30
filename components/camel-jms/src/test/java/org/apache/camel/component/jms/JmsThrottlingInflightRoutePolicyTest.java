@@ -29,11 +29,10 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted
 
 public class JmsThrottlingInflightRoutePolicyTest extends CamelTestSupport {
 
-    private int size = 200;
-
     @Test
     public void testJmsThrottlingInflightRoutePolicy() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
+        int size = 200;
         mock.expectedMinimumMessageCount(size);
 
         for (int i = 0; i < size; i++) {

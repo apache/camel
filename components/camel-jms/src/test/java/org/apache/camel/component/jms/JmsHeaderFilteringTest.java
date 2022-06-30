@@ -43,7 +43,7 @@ public class JmsHeaderFilteringTest extends CamelTestSupport {
     private final String testQueueEndpointA = componentName + ":queue:test.a";
     private final String testQueueEndpointB = componentName + ":queue:test.b";
     private final String assertionReceiver = "mock:errors";
-    private CountDownLatch latch = new CountDownLatch(2);
+    private final CountDownLatch latch = new CountDownLatch(2);
 
     @Test
     public void testHeaderFilters() throws Exception {

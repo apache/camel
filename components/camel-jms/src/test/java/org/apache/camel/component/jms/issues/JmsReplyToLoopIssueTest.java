@@ -40,7 +40,7 @@ public class JmsReplyToLoopIssueTest extends CamelTestSupport {
         template.sendBodyAndHeader("direct:start", "World", "JMSReplyTo", "queue:bar");
 
         // sleep a little to ensure we do not do endless loop
-        Awaitility.await().atMost(250, TimeUnit.MILLISECONDS).untilAsserted(() -> assertMockEndpointsSatisfied());
+        Awaitility.await().atMost(250, TimeUnit.MILLISECONDS).untilAsserted(this::assertMockEndpointsSatisfied);
     }
 
     @Override

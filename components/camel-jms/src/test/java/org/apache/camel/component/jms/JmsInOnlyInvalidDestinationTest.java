@@ -37,7 +37,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 public class JmsInOnlyInvalidDestinationTest extends CamelTestSupport {
 
     @BindToRegistry("myResolver")
-    private MyDestinationResolver resolver = new MyDestinationResolver();
+    private final MyDestinationResolver resolver = new MyDestinationResolver();
 
     @Test
     public void testInvalidDestination() throws Exception {

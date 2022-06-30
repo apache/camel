@@ -34,13 +34,15 @@ public class JmsRouteWithInOnlyAndMultipleAcksTest extends CamelTestSupport {
     protected String componentName = "amq";
 
     @BindToRegistry("orderService")
-    private MyOrderServiceBean serviceBean = new MyOrderServiceBean();
+    private final MyOrderServiceBean serviceBean = new MyOrderServiceBean();
 
     @BindToRegistry("orderServiceNotificationWithAck-1")
-    private MyOrderServiceNotificationWithAckBean orderNotificationAckBean = new MyOrderServiceNotificationWithAckBean("1");
+    private final MyOrderServiceNotificationWithAckBean orderNotificationAckBean
+            = new MyOrderServiceNotificationWithAckBean("1");
 
     @BindToRegistry("orderServiceNotificationWithAck-2")
-    private MyOrderServiceNotificationWithAckBean orderNotificationAckBean2 = new MyOrderServiceNotificationWithAckBean("2");
+    private final MyOrderServiceNotificationWithAckBean orderNotificationAckBean2
+            = new MyOrderServiceNotificationWithAckBean("2");
 
     @Test
     public void testSendOrderWithMultipleAcks() throws Exception {
@@ -108,7 +110,7 @@ public class JmsRouteWithInOnlyAndMultipleAcksTest extends CamelTestSupport {
     }
 
     public static class MyOrderServiceNotificationWithAckBean {
-        private String id;
+        private final String id;
 
         public MyOrderServiceNotificationWithAckBean(String id) {
             this.id = id;

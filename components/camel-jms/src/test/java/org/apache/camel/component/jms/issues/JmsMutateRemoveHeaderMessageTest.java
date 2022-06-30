@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class JmsMutateRemoveHeaderMessageTest extends CamelTestSupport {
 
-    private String uri = "activemq:queue:hello";
+    private final String uri = "activemq:queue:hello";
 
     @Test
     public void testMutateMessage() throws Exception {

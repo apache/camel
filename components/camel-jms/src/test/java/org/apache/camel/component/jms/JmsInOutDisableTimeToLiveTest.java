@@ -31,8 +31,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class JmsInOutDisableTimeToLiveTest extends CamelTestSupport {
 
-    private String urlTimeout = "activemq:queue.in?requestTimeout=2000";
-    private String urlTimeToLiveDisabled = "activemq:queue.in?requestTimeout=2000&disableTimeToLive=true";
+    private final String urlTimeout = "activemq:queue.in?requestTimeout=2000";
+    private final String urlTimeToLiveDisabled = "activemq:queue.in?requestTimeout=2000&disableTimeToLive=true";
 
     @Test
     public void testInOutExpired() throws Exception {

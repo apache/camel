@@ -34,8 +34,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RequestReplyCorrelatedWithCustomHeaderTest extends CamelTestSupport {
 
-    private ConnectionFactory connectionFactory;
-
     public static void processRequest(
             @Body final String body,
             @Header("CustomCorrelation") final String customCorrelation,
@@ -66,7 +64,7 @@ public class RequestReplyCorrelatedWithCustomHeaderTest extends CamelTestSupport
     protected CamelContext createCamelContext() throws Exception {
         final CamelContext camelContext = super.createCamelContext();
 
-        connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
 
         final JmsComponent activeMq = jmsComponentAutoAcknowledge(connectionFactory);
         activeMq.getConfiguration().setCorrelationProperty("CustomCorrelation");

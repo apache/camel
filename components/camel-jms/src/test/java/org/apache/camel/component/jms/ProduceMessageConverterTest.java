@@ -36,7 +36,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 public class ProduceMessageConverterTest extends CamelTestSupport {
 
     @BindToRegistry("myMessageConverter")
-    private MyMessageConverter conv = new MyMessageConverter();
+    private final MyMessageConverter conv = new MyMessageConverter();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

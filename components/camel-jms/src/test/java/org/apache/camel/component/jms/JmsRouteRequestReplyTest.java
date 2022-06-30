@@ -259,8 +259,8 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
     }
 
     public class Task implements Callable<Task> {
-        private AtomicInteger counter;
-        private String fromUri;
+        private final AtomicInteger counter;
+        private final String fromUri;
         private volatile boolean ok = true;
         private volatile String message = "";
 

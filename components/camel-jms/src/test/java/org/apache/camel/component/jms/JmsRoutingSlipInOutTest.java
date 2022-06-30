@@ -36,7 +36,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 public class JmsRoutingSlipInOutTest extends CamelTestSupport {
 
     @BindToRegistry("myBean")
-    private MyBean bean = new MyBean();
+    private final MyBean bean = new MyBean();
 
     @Test
     public void testInOutRoutingSlip() throws Exception {

@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class JmsInOutPipelineWithBeanTest extends CamelTestSupport {
 
     @BindToRegistry("dummyBean")
-    private MyDummyBean bean = new MyDummyBean();
+    private final MyDummyBean bean = new MyDummyBean();
 
     @Test
     public void testA() {

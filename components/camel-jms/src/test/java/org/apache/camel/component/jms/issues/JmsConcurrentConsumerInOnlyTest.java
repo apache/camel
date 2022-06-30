@@ -31,11 +31,10 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
  */
 public class JmsConcurrentConsumerInOnlyTest extends CamelTestSupport {
 
-    private int size = 2000;
-
     @Test
     public void testConcurrentConsumers() throws Exception {
         // send messages to queue before processing
+        int size = 2000;
         for (int i = 0; i < size; i++) {
             template.sendBody("activemq:foo", "Hello " + i);
         }
