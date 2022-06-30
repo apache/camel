@@ -206,8 +206,8 @@ public class JqExpression extends ExpressionAdapter implements ExpressionResultT
     /**
      * Determines the payload by looking at heders, properties and finally the payload.
      *
-     * @param  exchange  the {@link Exchange} being processed
-     * @return           the {@link JsonNode} to be processed by the expression
+     * @param  exchange the {@link Exchange} being processed
+     * @return          the {@link JsonNode} to be processed by the expression
      */
     private JsonNode getPayload(Exchange exchange) throws Exception {
         JsonNode payload = null;
