@@ -77,14 +77,6 @@ public class JqExpression extends ExpressionAdapter implements ExpressionResultT
 
             JqFunctions.load(camelContext, scope);
             JqFunctions.loadLocal(scope);
-        } else {
-            // if no scope is explicit set or found in the registry, then a local
-            // child scope is created and local functions are loaded. Local
-            // functions do not leak into the global scope as they are local to
-            // the child scope.
-            this.scope = Scope.newChildScope(scope);
-
-            JqFunctions.loadLocal(scope);
         }
 
         try {

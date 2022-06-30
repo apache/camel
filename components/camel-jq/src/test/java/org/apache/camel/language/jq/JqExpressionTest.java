@@ -256,11 +256,9 @@ public class JqExpressionTest {
             expression.setScope(root);
             expression.init(context);
 
-            assertThat(expression.getScope()).isNotSameAs(root);
-            assertThat(expression.getScope().getParentScope()).isSameAs(root);
-
-            assertThat(root.getLocalFunctions()).doesNotContainKeys("header/1", "header/2");
-            assertThat(expression.getScope().getLocalFunctions()).containsKeys("header/1", "header/2");
+            assertThat(expression.getScope()).isSameAs(root);
+            assertThat(expression.getScope().getParentScope()).isNull();
+            assertThat(expression.getScope().getLocalFunctions()).doesNotContainKeys("header/1", "header/2");
         }
     }
 
@@ -273,11 +271,9 @@ public class JqExpressionTest {
             JqExpression expression = new JqExpression(".foo");
             expression.init(context);
 
-            assertThat(expression.getScope()).isNotSameAs(root);
-            assertThat(expression.getScope().getParentScope()).isSameAs(root);
-
-            assertThat(root.getLocalFunctions()).doesNotContainKeys("header/1", "header/2");
-            assertThat(expression.getScope().getLocalFunctions()).containsKeys("header/1", "header/2");
+            assertThat(expression.getScope()).isSameAs(root);
+            assertThat(expression.getScope().getParentScope()).isNull();
+            assertThat(expression.getScope().getLocalFunctions()).doesNotContainKeys("header/1", "header/2");
         }
     }
 }
