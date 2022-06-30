@@ -112,7 +112,7 @@ public class OpenstackCinderVolumeTest extends OpenstackWiremockTestSupport {
         headers.put(CinderConstants.VOLUME_ID, "fffab33e-38e8-4626-9fee-fe90f240ff0f");
         headers.put(OpenstackConstants.NAME, "name");
         headers.put(OpenstackConstants.DESCRIPTION, "description");
-        headers.put(CinderConstants.DESCRIPTION, 1024);
+        headers.put(CinderConstants.SIZE, 1024);
         headers.put(CinderConstants.VOLUME_TYPE, "volume-type");
         headers.put(CinderConstants.IMAGE_REF, "image-ref");
         headers.put(CinderConstants.SNAPSHOT_ID, "snaphot-id");

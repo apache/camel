@@ -70,7 +70,7 @@ public class OpenstackKeystoneRegionTest extends OpenstackWiremockTestSupport {
 
         assertEquals(2, regions.length);
         assertEquals(REGION_PARENTREGIONID, regions[0].getId());
-        assertEquals(null, regions[0].getParentRegionId());
+        assertNull(regions[0].getParentRegionId());
         assertEquals(REGION_ID, regions[1].getId());
         assertEquals(REGION_PARENTREGIONID, regions[1].getParentRegionId());
     }
