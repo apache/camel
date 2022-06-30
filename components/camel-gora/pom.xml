@@ -72,6 +72,11 @@
 
         <!-- apache gora -->
         <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+            <version>3.2.3</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.gora</groupId>
             <artifactId>gora-core</artifactId>
             <version>${apache-gora-version}</version>
