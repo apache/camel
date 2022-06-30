@@ -546,7 +546,7 @@
     <woodstox-version>4.4.1</woodstox-version>
     <xalan-version>2.7.2</xalan-version>
     <xbean-asm5-shaded-version>4.5</xbean-asm5-shaded-version>
-    <xbean-spring-version>4.17</xbean-spring-version>
+    <xbean-spring-version>4.21</xbean-spring-version>
     <xchange-guava-version>29.0-jre</xchange-guava-version>
     <xchange-version>5.0.13</xchange-version>
     <xerces-version>2.12.2</xerces-version>
