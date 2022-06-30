@@ -964,13 +964,13 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.CryptoComponentBuilderFactory.crypto();
     }
     /**
-     * CXF (camel-cxf)
+     * CXF (camel-cxf-soap)
      * Expose SOAP WebServices using Apache CXF or connect to external
      * WebServices using CXF WS client.
      * 
      * Category: soap,webservice
      * Since: 1.0
-     * Maven coordinates: org.apache.camel:camel-cxf
+     * Maven coordinates: org.apache.camel:camel-cxf-soap
      * 
      * @return the dsl builder
      */
@@ -978,13 +978,13 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.CxfComponentBuilderFactory.cxf();
     }
     /**
-     * CXF-RS (camel-cxf)
+     * CXF-RS (camel-cxf-rest)
      * Expose JAX-RS REST services using Apache CXF or connect to external REST
      * services using CXF REST client.
      * 
      * Category: rest
      * Since: 2.0
-     * Maven coordinates: org.apache.camel:camel-cxf
+     * Maven coordinates: org.apache.camel:camel-cxf-rest
      * 
      * @return the dsl builder
      */

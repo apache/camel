@@ -20,7 +20,7 @@ import javax.annotation.Generated;
 import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
-import org.apache.camel.component.cxf.CxfComponent;
+import org.apache.camel.component.cxf.jaxws.CxfComponent;
 
 /**
  * Expose SOAP WebServices using Apache CXF or connect to external WebServices
@@ -32,13 +32,13 @@ import org.apache.camel.component.cxf.CxfComponent;
 public interface CxfComponentBuilderFactory {
 
     /**
-     * CXF (camel-cxf)
+     * CXF (camel-cxf-soap)
      * Expose SOAP WebServices using Apache CXF or connect to external
      * WebServices using CXF WS client.
      * 
      * Category: soap,webservice
      * Since: 1.0
-     * Maven coordinates: org.apache.camel:camel-cxf
+     * Maven coordinates: org.apache.camel:camel-cxf-soap
      * 
      * @return the dsl builder
      */
