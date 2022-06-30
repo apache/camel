@@ -7,7 +7,7 @@
 :supportlevel: Stable
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
-:camel-spring-boot-name: cxf
+:camel-spring-boot-name: cxf-soap
 
 *Since Camel {since}*
 
