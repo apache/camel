@@ -30,9 +30,9 @@ import org.openstack4j.model.compute.Server.Status;
 import org.openstack4j.model.compute.ServerCreate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class OpenstackNovaServerTest extends OpenstackWiremockTestSupport {
 
@@ -59,7 +59,7 @@ public class OpenstackNovaServerTest extends OpenstackWiremockTestSupport {
 
     @Test
     void createSnapshotShouldSucceed() {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(OpenstackConstants.ID, SERVER_ID);
         headers.put(OpenstackConstants.NAME, SERVER_SNAPSHOT_NAME);
 
@@ -73,13 +73,11 @@ public class OpenstackNovaServerTest extends OpenstackWiremockTestSupport {
     void getWrongIdShouldThrow() {
         String uri = String.format(URI_FORMAT, url(), OpenstackConstants.GET);
 
-        try {
-            template.requestBodyAndHeader(uri, null, OpenstackConstants.ID, SERVER_WRONG_ID, Server.class);
-            fail("Getting nova server with wrong id should throw");
-        } catch (Exception ex) {
-            assertTrue(ex instanceof CamelExecutionException);
-            assertTrue(((CamelExecutionException) ex).getCause() instanceof ServerResponseException);
-        }
+        Exception ex = assertThrows(CamelExecutionException.class,
+                () -> template.requestBodyAndHeader(uri, null, OpenstackConstants.ID, SERVER_WRONG_ID, Server.class),
+                "Getting nova server with wrong id should throw");
+
+        assertInstanceOf(ServerResponseException.class, ex.getCause());
     }
 
     @Test

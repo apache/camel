@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.openstack.nova;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.nova.producer.KeypairProducer;
 import org.junit.jupiter.api.BeforeEach;
@@ -66,10 +63,6 @@ public class KeypairProducerTest extends NovaProducerTestSupport {
 
         when(keypairService.create(anyString(), anyString())).thenReturn(osTestKeypair);
         when(keypairService.create(anyString(), isNull())).thenReturn(osTestKeypair);
-
-        List<org.openstack4j.model.compute.Keypair> getAllList = new ArrayList<>();
-        getAllList.add(osTestKeypair);
-        getAllList.add(osTestKeypair);
 
         when(osTestKeypair.getName()).thenReturn(dummyKeypair.getName());
         when(osTestKeypair.getPublicKey()).thenReturn(dummyKeypair.getPublicKey());
