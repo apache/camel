@@ -56,7 +56,7 @@ public class JmsCustomJMSReplyToIssueTest extends CamelTestSupport {
         assertEquals("queue://myReplyQueue", replyTo.toString());
 
         // send reply
-        template.sendBody("activemq:" + replyTo.toString(), "Bye World");
+        template.sendBody("activemq:" + replyTo, "Bye World");
 
         assertMockEndpointsSatisfied();
     }

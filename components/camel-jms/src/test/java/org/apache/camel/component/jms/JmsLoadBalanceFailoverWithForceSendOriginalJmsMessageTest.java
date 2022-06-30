@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Unit test for Camel loadbalancer failover with JMS
  */
 public class JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest extends CamelTestSupport {
-    private boolean forceSendOriginalMessage = true;
+    private final boolean forceSendOriginalMessage = true;
 
     @Test
     public void testFailover() throws Exception {

@@ -26,7 +26,7 @@ import org.apache.camel.util.StringHelper;
 public class JmsRouteWithCustomKeyFormatStrategyTest extends JmsRouteWithDefaultKeyFormatStrategyTest {
 
     @BindToRegistry("myJmsKeyStrategy")
-    private MyCustomKeyFormatStrategy strategy = new MyCustomKeyFormatStrategy();
+    private final MyCustomKeyFormatStrategy strategy = new MyCustomKeyFormatStrategy();
 
     @Override
     protected String getUri() {

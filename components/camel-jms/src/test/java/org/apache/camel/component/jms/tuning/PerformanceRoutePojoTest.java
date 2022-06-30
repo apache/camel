@@ -29,8 +29,6 @@ public class PerformanceRoutePojoTest extends CamelSpringTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(PerformanceRoutePojoTest.class);
 
-    private int size = 200;
-
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/tuning/PerformanceRoutePojoTest-context.xml");
@@ -40,6 +38,7 @@ public class PerformanceRoutePojoTest extends CamelSpringTestSupport {
     public void testPojoPerformance() throws Exception {
         long start = System.currentTimeMillis();
 
+        int size = 200;
         getMockEndpoint("mock:audit").expectedMessageCount(size);
         getMockEndpoint("mock:audit").expectsNoDuplicates().body();
 

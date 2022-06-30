@@ -35,8 +35,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class AggregratedJmsRouteTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(AggregratedJmsRouteTest.class);
-    private String timeOutEndpointUri = "jms:queue:test.a";
-    private String multicastEndpointUri = "jms:queue:multicast";
+    private final String timeOutEndpointUri = "jms:queue:test.a";
+    private final String multicastEndpointUri = "jms:queue:multicast";
 
     /*
      * negative receive wait timeout for jms is blocking so timeout during processing does not hang

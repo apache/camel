@@ -29,7 +29,7 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class JmsAutoStartupTest extends CamelTestSupport {
 
@@ -40,7 +40,7 @@ public class JmsAutoStartupTest extends CamelTestSupport {
         Service service = context.getRoutes().get(0).getServices().get(0);
         JmsConsumer consumer = (JmsConsumer) service;
 
-        assertEquals(false, consumer.getListenerContainer().isRunning());
+        assertFalse(consumer.getListenerContainer().isRunning());
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         // should be stopped by default
@@ -49,7 +49,7 @@ public class JmsAutoStartupTest extends CamelTestSupport {
         template.sendBody("activemq:queue:foo", "Hello World");
 
         Awaitility.await().atMost(2, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertMockEndpointsSatisfied());
+                .untilAsserted(this::assertMockEndpointsSatisfied);
 
         mock.reset();
         mock.expectedBodiesReceived("Hello World");

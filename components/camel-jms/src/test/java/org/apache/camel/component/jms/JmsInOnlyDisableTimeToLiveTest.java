@@ -29,8 +29,8 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 
 public class JmsInOnlyDisableTimeToLiveTest extends CamelTestSupport {
 
-    private String urlTimeout = "activemq:queue.in?timeToLive=2000";
-    private String urlTimeToLiveDisabled = "activemq:queue.in?timeToLive=2000&disableTimeToLive=true";
+    private final String urlTimeout = "activemq:queue.in?timeToLive=2000";
+    private final String urlTimeToLiveDisabled = "activemq:queue.in?timeToLive=2000&disableTimeToLive=true";
 
     @Test
     public void testInOnlyExpired() throws Exception {

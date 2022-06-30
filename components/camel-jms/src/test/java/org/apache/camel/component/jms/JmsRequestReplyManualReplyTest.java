@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class JmsRequestReplyManualReplyTest extends CamelTestSupport {
 
     private static volatile String tempName;
-    private CountDownLatch latch = new CountDownLatch(1);
+    private final CountDownLatch latch = new CountDownLatch(1);
     private JmsTemplate jms;
 
     @Override

@@ -35,7 +35,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 public class JmsRequestReplyTemporaryRefreshFailureOnStartupTest extends CamelTestSupport {
 
     private String brokerName;
-    private Long recoveryInterval = 1000L;
+    private final Long recoveryInterval = 1000L;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

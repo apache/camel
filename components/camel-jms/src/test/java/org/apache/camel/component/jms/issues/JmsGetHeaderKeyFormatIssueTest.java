@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsGetHeaderKeyFormatIssueTest extends CamelTestSupport {
 
-    private String uri = "activemq:queue:hello?jmsKeyFormatStrategy=default";
+    private final String uri = "activemq:queue:hello?jmsKeyFormatStrategy=default";
 
     @Test
     public void testSendWithHeaders() throws Exception {

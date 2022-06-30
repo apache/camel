@@ -37,7 +37,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 public class JmsBeanMethodHeaderTest extends CamelTestSupport {
 
     @BindToRegistry("approveService")
-    private ApproveService service = new ApproveService();
+    private final ApproveService service = new ApproveService();
 
     @Test
     public void testPlainHeader() throws Exception {

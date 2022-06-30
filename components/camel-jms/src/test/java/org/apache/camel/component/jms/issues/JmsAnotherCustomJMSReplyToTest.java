@@ -59,9 +59,9 @@ public class JmsAnotherCustomJMSReplyToTest extends CamelTestSupport {
         assertEquals("queue://nameReplyQueue", replyTo.toString());
 
         // send reply
-        template.sendBody("activemq:" + replyTo.toString(), "My name is Arnio");
+        template.sendBody("activemq:" + replyTo, "My name is Arnio");
 
-        Awaitility.await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertMockEndpointsSatisfied());
+        Awaitility.await().atMost(2, TimeUnit.SECONDS).untilAsserted(this::assertMockEndpointsSatisfied);
     }
 
     @Override

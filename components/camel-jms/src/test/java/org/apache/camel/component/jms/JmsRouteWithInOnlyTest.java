@@ -37,7 +37,7 @@ public class JmsRouteWithInOnlyTest extends CamelTestSupport {
     protected String componentName = "activemq";
 
     @BindToRegistry("orderService")
-    private MyOrderServiceBean serviceBean = new MyOrderServiceBean();
+    private final MyOrderServiceBean serviceBean = new MyOrderServiceBean();
 
     @Test
     public void testSendOrder() throws Exception {

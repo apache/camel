@@ -34,8 +34,6 @@ public class PerformanceRouteTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(PerformanceRouteTest.class);
 
-    private int size = 200;
-
     @Test
     public void testPerformance() throws Exception {
         if (!canRunOnThisPlatform()) {
@@ -44,6 +42,7 @@ public class PerformanceRouteTest extends CamelTestSupport {
 
         long start = System.currentTimeMillis();
 
+        int size = 200;
         getMockEndpoint("mock:audit").expectedMessageCount(size);
         getMockEndpoint("mock:audit").expectsNoDuplicates().body();
 

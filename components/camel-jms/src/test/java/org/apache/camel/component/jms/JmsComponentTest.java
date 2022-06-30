@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JmsComponentTest extends CamelTestSupport {
 
@@ -36,16 +37,16 @@ public class JmsComponentTest extends CamelTestSupport {
         String reply = template.requestBody("activemq123:queue:hello?requestTimeout=5000", "Hello World", String.class);
         assertEquals("Bye World", reply);
 
-        assertEquals(true, endpoint.isAcceptMessagesWhileStopping());
-        assertEquals(true, endpoint.isAllowReplyManagerQuickStop());
-        assertEquals(true, endpoint.isAlwaysCopyMessage());
+        assertTrue(endpoint.isAcceptMessagesWhileStopping());
+        assertTrue(endpoint.isAllowReplyManagerQuickStop());
+        assertTrue(endpoint.isAlwaysCopyMessage());
         assertEquals(1, endpoint.getAcknowledgementMode());
-        assertEquals(true, endpoint.isAutoStartup());
+        assertTrue(endpoint.isAutoStartup());
         assertEquals(1, endpoint.getCacheLevel());
         assertEquals("foo", endpoint.getClientId());
         assertEquals(2, endpoint.getConcurrentConsumers());
-        assertEquals(true, endpoint.isDeliveryPersistent());
-        assertEquals(true, endpoint.isExplicitQosEnabled());
+        assertTrue(endpoint.isDeliveryPersistent());
+        assertTrue(endpoint.isExplicitQosEnabled());
         assertEquals(20, endpoint.getIdleTaskExecutionLimit());
         assertEquals(21, endpoint.getIdleConsumerLimit());
         assertEquals(5, endpoint.getMaxConcurrentConsumers());
@@ -54,7 +55,7 @@ public class JmsComponentTest extends CamelTestSupport {
         assertEquals(5000, endpoint.getReceiveTimeout());
         assertEquals(9000, endpoint.getRecoveryInterval());
         assertEquals(3000, endpoint.getTimeToLive());
-        assertEquals(true, endpoint.isTransacted());
+        assertTrue(endpoint.isTransacted());
         assertEquals(15000, endpoint.getTransactionTimeout());
     }
 

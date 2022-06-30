@@ -28,7 +28,7 @@ public class ConditionalExceptionProcessor implements Processor {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConditionalExceptionProcessor.class);
     private int count;
-    private int maxCalls;
+    private final int maxCalls;
     private String errorMsg;
 
     public ConditionalExceptionProcessor() {

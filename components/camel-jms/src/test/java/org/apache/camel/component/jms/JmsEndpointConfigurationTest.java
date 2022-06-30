@@ -53,7 +53,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ConsumeJmsMapMessageTest.class);
 
     @BindToRegistry("myConnectionFactory")
-    private ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("vm:myBroker");
+    private final ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("vm:myBroker");
     private final Processor failProcessor = exchange -> fail("Should not be reached");
 
     private final Processor dummyProcessor = exchange -> LOG.info("Received: " + exchange);
@@ -77,14 +77,14 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         JmsEndpoint endpoint = resolveMandatoryEndpoint(
                 "jms:topic:Foo.Bar?subscriptionDurable=true&subscriptionShared=true&subscriptionName=James", JmsEndpoint.class);
         JmsConfiguration configuration = endpoint.getConfiguration();
-        assertEquals(true, configuration.isSubscriptionDurable(), "isSubscriptionDurable()");
-        assertEquals(true, configuration.isSubscriptionShared(), "isSubscriptionShared()");
+        assertTrue(configuration.isSubscriptionDurable(), "isSubscriptionDurable()");
+        assertTrue(configuration.isSubscriptionShared(), "isSubscriptionShared()");
         assertEquals("James", configuration.getSubscriptionName(), "getSubscriptionName()");
 
         JmsConsumer consumer = endpoint.createConsumer(exchange -> LOG.info("Received: " + exchange));
         AbstractMessageListenerContainer listenerContainer = consumer.getListenerContainer();
-        assertEquals(true, listenerContainer.isSubscriptionDurable(), "isSubscriptionDurable()");
-        assertEquals(true, listenerContainer.isSubscriptionShared(), "isSubscriptionShared()");
+        assertTrue(listenerContainer.isSubscriptionDurable(), "isSubscriptionDurable()");
+        assertTrue(listenerContainer.isSubscriptionShared(), "isSubscriptionShared()");
         assertEquals("James", listenerContainer.getSubscriptionName(), "getSubscriptionName()");
     }
 
@@ -93,14 +93,14 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         JmsEndpoint endpoint = resolveMandatoryEndpoint("jms:topic:Foo.Bar?subscriptionShared=true&subscriptionName=James",
                 JmsEndpoint.class);
         JmsConfiguration configuration = endpoint.getConfiguration();
-        assertEquals(false, configuration.isSubscriptionDurable(), "isSubscriptionDurable()");
-        assertEquals(true, configuration.isSubscriptionShared(), "isSubscriptionShared()");
+        assertFalse(configuration.isSubscriptionDurable(), "isSubscriptionDurable()");
+        assertTrue(configuration.isSubscriptionShared(), "isSubscriptionShared()");
         assertEquals("James", configuration.getSubscriptionName(), "getSubscriptionName()");
 
         JmsConsumer consumer = endpoint.createConsumer(exchange -> LOG.info("Received: " + exchange));
         AbstractMessageListenerContainer listenerContainer = consumer.getListenerContainer();
-        assertEquals(false, listenerContainer.isSubscriptionDurable(), "isSubscriptionDurable()");
-        assertEquals(true, listenerContainer.isSubscriptionShared(), "isSubscriptionShared()");
+        assertFalse(listenerContainer.isSubscriptionDurable(), "isSubscriptionDurable()");
+        assertTrue(listenerContainer.isSubscriptionShared(), "isSubscriptionShared()");
         assertEquals("James", listenerContainer.getSubscriptionName(), "getSubscriptionName()");
     }
 
@@ -540,13 +540,13 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         JmsConfiguration configuration = endpoint.getConfiguration();
         assertEquals("James", configuration.getDurableSubscriptionName(), "getDurableSubscriptionName()");
         assertEquals("ABC", configuration.getClientId(), "getClientId()");
-        assertEquals(true, configuration.isDeliveryPersistent(), "isDeliveryPersistent()");
+        assertTrue(configuration.isDeliveryPersistent(), "isDeliveryPersistent()");
 
         JmsConsumer consumer = endpoint.createConsumer(exchange -> LOG.info("Received: " + exchange));
         AbstractMessageListenerContainer listenerContainer = consumer.getListenerContainer();
         assertEquals("James", listenerContainer.getDurableSubscriptionName(), "getDurableSubscriptionName()");
         assertEquals("ABC", listenerContainer.getClientId(), "getClientId()");
-        assertEquals(true, listenerContainer.isSubscriptionDurable(), "isSubscriptionDurable()");
+        assertTrue(listenerContainer.isSubscriptionDurable(), "isSubscriptionDurable()");
     }
 
     @Override

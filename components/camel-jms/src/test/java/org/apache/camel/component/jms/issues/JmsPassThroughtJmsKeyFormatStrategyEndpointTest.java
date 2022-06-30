@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsPassThroughtJmsKeyFormatStrategyEndpointTest extends CamelTestSupport {
 
-    private String uri = "activemq:queue:hello?jmsKeyFormatStrategy=passthrough";
+    private final String uri = "activemq:queue:hello?jmsKeyFormatStrategy=passthrough";
 
     @Test
     public void testSendWithHeaders() throws Exception {

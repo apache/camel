@@ -40,10 +40,10 @@ public class JmsRouteWithCustomListenerContainerTest extends CamelTestSupport {
     protected String componentName = "activemq";
 
     @BindToRegistry("orderService")
-    private MyOrderServiceBean serviceBean = new MyOrderServiceBean();
+    private final MyOrderServiceBean serviceBean = new MyOrderServiceBean();
 
     @BindToRegistry("myListenerContainerFactory")
-    private MyListenerContainerFactory containerFact = new MyListenerContainerFactory();
+    private final MyListenerContainerFactory containerFact = new MyListenerContainerFactory();
 
     @Test
     public void testSendOrder() throws Exception {

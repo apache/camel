@@ -36,7 +36,7 @@ public class JmsMessageCreatedStrategyEndpointTest extends CamelTestSupport {
     protected String componentName = "activemq";
 
     @BindToRegistry("myStrategy")
-    private MyMessageCreatedStrategy strategy = new MyMessageCreatedStrategy();
+    private final MyMessageCreatedStrategy strategy = new MyMessageCreatedStrategy();
 
     @Test
     public void testMessageCreatedStrategy() throws Exception {

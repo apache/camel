@@ -31,7 +31,7 @@ public class JmsInOutSynchronousTest extends CamelTestSupport {
 
     private static String beforeThreadName;
     private static String afterThreadName;
-    private String url = "activemq:queue:in?synchronous=true";
+    private final String url = "activemq:queue:in?synchronous=true";
 
     @Test
     public void testSynchronous() {
