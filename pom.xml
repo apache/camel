@@ -355,8 +355,11 @@
                             <exclude>**/stockquote-response.xml</exclude>
                             <exclude>**/org.apache.camel.dsl.kotlin.KotlinDSL.classname</exclude>
                             <exclude>**/quarkus-pom.ftl</exclude>
+                            <exclude>**/quarkus-docker/*</exclude>
+                            <exclude>.github/**/*</exclude>
                             <!-- Maven Wrapper -->
                             <exclude>.mvn/**/*</exclude>
+                            <exclude>**/maven-wrapper/*</exclude>
                         </excludes>
                     </configuration>
                 </plugin>
