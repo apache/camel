@@ -15,7 +15,7 @@
 *{component-header}*
 
 The Timer component is used to generate message exchanges when a
-timer fires You can only consume events from this endpoint.
+timer fires. You can only consume events from this endpoint.
 
 == URI format
 
@@ -114,17 +114,17 @@ can use a negative delay:
 
 In this way the timer will fire messages immediately.
 
-You can also specify a repeatCount parameter in conjunction with a
+You can also specify a `repeatCount` parameter in conjunction with a
 negative delay to stop firing messages after a fixed number has been
 reached.
 
-If you don't specify a repeatCount then the timer will continue firing
+If you don't specify a `repeatCount` then the timer will continue firing
 messages until the route will be stopped. 
 
 == Firing only once
 
 You may want to fire a message in a Camel route only once, such as when
-starting the route. To do that you use the repeatCount option as shown:
+starting the route. To do that you use the `repeatCount` option as shown:
 
 [source,xml]
 ----

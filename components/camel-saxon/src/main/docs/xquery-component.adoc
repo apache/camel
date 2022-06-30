@@ -154,11 +154,11 @@ XQuery is a very powerful language for querying, searching, sorting and
 returning XML. For help learning XQuery try these tutorials
 
 * Mike Kay's http://www.stylusstudio.com/xquery_primer.html[XQuery Primer]
-* The W3Schools http://www.w3schools.com/xquery/default.asp[XQuery Tutorial]
+* The W3Schools https://www.w3schools.com/xml/xquery_intro.asp[XQuery Tutorial]
 
 == Dependencies
 
-To use XQuery in your camel routes you need to add the a dependency on
+To use XQuery in your camel routes you need to add the dependency on
 *camel-saxon* which implements the XQuery language.
 
 If you use maven you could just add the following to your pom.xml,
