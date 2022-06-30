@@ -37,7 +37,12 @@ Users should therefore choose `camel-cxf` to migrate among the following JARs:
 For example if you were using CXF for SOAP and with Spring XML, then you would need to migrate
 from using `camel-cxf` to `camel-cxf-spring-soap` and `camel-cxf-spring-transport`.
 
-The camel-cxf XML schemas (XSD) has also changed namespaces:
+When using Spring Boot then you need to migrate from `camel-cxf-starter` to use SOAP or REST:
+
+- `camel-cxf-soap-starter`
+- `camel-cxf-rest-starter`
+
+The `camel-cxf` XML XSD schemas has also changed namespaces:
 
 |===
 |Old Namespace | New Namespace
