@@ -375,19 +375,7 @@ public final class CamelJavaParserHelper {
                     annotation = field.getAnnotation("org.apache.camel.EndpointInject");
                 }
                 if (annotation != null) {
-                    Expression exp = (Expression) annotation.getInternal();
-                    if (exp instanceof SingleMemberAnnotation) {
-                        exp = ((SingleMemberAnnotation) exp).getValue();
-                    } else if (exp instanceof NormalAnnotation) {
-                        List values = ((NormalAnnotation) exp).values();
-                        for (Object value : values) {
-                            MemberValuePair pair = (MemberValuePair) value;
-                            if ("uri".equals(pair.getName().toString())) {
-                                exp = pair.getValue();
-                                break;
-                            }
-                        }
-                    }
+                    Expression exp = extractExpression(annotation.getInternal());
                     String uri = CamelJavaParserHelper.getLiteralValue(clazz, block, exp);
                     if (!Strings.isNullOrEmpty(uri)) {
                         int position = ((SimpleName) arg).getStartPosition();
@@ -413,6 +401,23 @@ public final class CamelJavaParserHelper {
 
         // cannot parse it so add a failure
         uris.add(new ParserResult(node, -1, -1, arg.toString(), false));
+    }
+
+    private static Expression extractExpression(Object annotation) {
+        Expression exp = (Expression) annotation;
+        if (exp instanceof SingleMemberAnnotation) {
+            exp = ((SingleMemberAnnotation) exp).getValue();
+        } else if (exp instanceof NormalAnnotation) {
+            List values = ((NormalAnnotation) exp).values();
+            for (Object value : values) {
+                MemberValuePair pair = (MemberValuePair) value;
+                if ("uri".equals(pair.getName().toString())) {
+                    exp = pair.getValue();
+                    break;
+                }
+            }
+        }
+        return exp;
     }
 
     public static List<ParserResult> parseCamelLanguageExpressions(MethodSource<JavaClassSource> method, String language) {
@@ -630,19 +635,7 @@ public final class CamelJavaParserHelper {
                         boolean valid = "org.apache.camel.EndpointInject".equals(ann.getQualifiedName())
                                 || "org.apache.camel.cdi.Uri".equals(ann.getQualifiedName());
                         if (valid) {
-                            Expression exp = (Expression) ann.getInternal();
-                            if (exp instanceof SingleMemberAnnotation) {
-                                exp = ((SingleMemberAnnotation) exp).getValue();
-                            } else if (exp instanceof NormalAnnotation) {
-                                List values = ((NormalAnnotation) exp).values();
-                                for (Object value : values) {
-                                    MemberValuePair pair = (MemberValuePair) value;
-                                    if ("uri".equals(pair.getName().toString())) {
-                                        exp = pair.getValue();
-                                        break;
-                                    }
-                                }
-                            }
+                            Expression exp = extractExpression(ann.getInternal());
                             if (exp != null) {
                                 return getLiteralValue(clazz, block, exp);
                             }
