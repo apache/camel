@@ -61,6 +61,12 @@ The `camel-cxf` XML XSD schemas has also changed namespaces:
 
 |===
 
+And the `camel-cxf` SOAP component is moved to a new `jaxws` sub-package,
+i.e. `org.apache.camel.component.cxf` is now `org.apache.camel.component.cxf.jaws`.
+
+This means, for example, the `CxfComponent` class is now located
+in `org.apache.camel.component.cxf.jaxws`.
+
 === camel-endpointdsl
 
 The options for `lazyStartProducer` and `bridgeErrorHandler` has moved into the _advanced_ group.
