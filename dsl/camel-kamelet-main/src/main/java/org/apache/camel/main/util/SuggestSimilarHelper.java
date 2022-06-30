@@ -16,15 +16,10 @@
  */
 package org.apache.camel.main.util;
 
-import java.io.StringReader;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.lucene.analysis.core.KeywordAnalyzer;
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.search.spell.PlainTextDictionary;
-import org.apache.lucene.search.spell.SpellChecker;
-import org.apache.lucene.store.ByteBuffersDirectory;
+import org.apache.camel.catalog.lucene.LuceneSuggestionStrategy;
 
 public final class SuggestSimilarHelper {
 
@@ -34,27 +29,9 @@ public final class SuggestSimilarHelper {
     }
 
     public static List<String> didYouMean(List<String> names, String unknown) {
-        // each option must be on a separate line in a String
-        StringBuilder sb = new StringBuilder();
-        for (String name : names) {
-            sb.append(name);
-            sb.append("\n");
-        }
-        StringReader reader = new StringReader(sb.toString());
-
-        try {
-            PlainTextDictionary words = new PlainTextDictionary(reader);
-
-            // use in-memory lucene spell checker to make the suggestions
-            try (ByteBuffersDirectory dir = new ByteBuffersDirectory()) {
-                SpellChecker checker = new SpellChecker(dir);
-                checker.indexDictionary(words, new IndexWriterConfig(new KeywordAnalyzer()), false);
-
-                String[] suggestions = checker.suggestSimilar(unknown, MAX_SUGGESTIONS);
-                return Arrays.asList(suggestions);
-            }
-        } catch (Exception e) {
-            // ignore
+        String[] suggestions = LuceneSuggestionStrategy.suggestEndpointOptions(names, unknown, MAX_SUGGESTIONS);
+        if (suggestions != null) {
+            return Arrays.asList(suggestions);
         }
 
         return null;

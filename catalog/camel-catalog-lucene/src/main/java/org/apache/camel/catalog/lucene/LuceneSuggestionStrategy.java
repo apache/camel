@@ -17,6 +17,7 @@
 package org.apache.camel.catalog.lucene;
 
 import java.io.StringReader;
+import java.util.Collection;
 import java.util.Set;
 
 import org.apache.camel.catalog.SuggestionStrategy;
@@ -37,6 +38,10 @@ public class LuceneSuggestionStrategy implements SuggestionStrategy {
 
     @Override
     public String[] suggestEndpointOptions(Set<String> names, String unknownOption) {
+        return suggestEndpointOptions(names, unknownOption, maxSuggestions);
+    }
+
+    public static String[] suggestEndpointOptions(Collection<String> names, String unknownOption, int maxSuggestions) {
         // each option must be on a separate line in a String
         StringBuilder sb = new StringBuilder();
         for (String name : names) {
