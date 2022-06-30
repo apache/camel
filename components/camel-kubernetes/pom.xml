@@ -32,6 +32,10 @@
     <name>Camel :: Kubernetes</name>
 
     <properties>
+        <camel.osgi.export.pkg>
+            org.apache.camel.component.kubernetes*,
+            org.apache.camel.component.openshift*
+        </camel.osgi.export.pkg>
     </properties>
 
     <dependencyManagement>
