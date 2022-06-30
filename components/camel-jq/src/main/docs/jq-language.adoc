@@ -38,7 +38,7 @@ from("queue:books.new")
 == Message body types
 
 Camel JQ leverages `camel-jackson` for type conversion.
-To enable camel-jackson` POJO type conversion, refer to the Camel Jackson documentation.
+To enable camel-jackson POJO type conversion, refer to the Camel Jackson documentation.
 
 == Using header as input
 
