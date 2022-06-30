@@ -14,8 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf.util;
+package org.apache.camel.component.cxf.common;
 
+import org.apache.camel.component.cxf.util.CxfUtils;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.interceptor.OutgoingChainInterceptor;
 import org.apache.cxf.message.Exchange;
