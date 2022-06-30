@@ -527,27 +527,7 @@ public class ValidateMojo extends AbstractExecMojo {
     private String buildValidationErrorMessage(CamelEndpointDetails detail, EndpointValidationResult result) {
         StringBuilder sb = new StringBuilder();
         sb.append("Endpoint validation error at: ");
-        if (detail.getClassName() != null && detail.getLineNumber() != null) {
-            // this is from java code
-            sb.append(detail.getClassName());
-            if (detail.getMethodName() != null) {
-                sb.append(".").append(detail.getMethodName());
-            }
-            sb.append("(").append(asSimpleClassName(detail.getClassName())).append(".java:");
-            sb.append(detail.getLineNumber()).append(")");
-        } else if (detail.getLineNumber() != null) {
-            // this is from xml
-            String fqn = stripRootPath(asRelativeFile(detail.getFileName(), project), project);
-            if (fqn.endsWith(".xml")) {
-                fqn = fqn.substring(0, fqn.length() - 4);
-                fqn = asPackageName(fqn);
-            }
-            sb.append(fqn);
-            sb.append("(").append(asSimpleClassName(fqn)).append(".xml:");
-            sb.append(detail.getLineNumber()).append(")");
-        } else {
-            sb.append(detail.getFileName());
-        }
+        buildErrorMessage(sb, detail.getClassName(), detail.getLineNumber(), detail.getMethodName(), detail.getFileName());
         sb.append("\n\n");
         String out = result.summaryErrorMessage(false, ignoreDeprecated, true);
         sb.append(out);
@@ -675,6 +655,26 @@ public class ValidateMojo extends AbstractExecMojo {
     private StringBuilder buildValidationSuccessMessage(String str, String className, String lineNumber, String methodName, String fileName, String uri) {
         StringBuilder sb = new StringBuilder();
         sb.append(str);
+        buildErrorMessage(sb, className, lineNumber, methodName, fileName);
+        sb.append("\n");
+        sb.append("\n\t").append(uri);
+        sb.append("\n\n");
+        return sb;
+    }
+
+    private String buildEndpointValidationErrorMessage(CamelEndpointDetails detail) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Endpoint pair (seda/direct) validation error at: ");
+        buildErrorMessage(sb, detail.getClassName(), detail.getLineNumber(), detail.getMethodName(), detail.getFileName());
+        sb.append("\n");
+        sb.append("\n\t").append(detail.getEndpointUri());
+        sb.append("\n\n\t\t\t\t").append(endpointPathSummaryError(detail));
+        sb.append("\n\n");
+
+        return sb.toString();
+    }
+
+    private void buildErrorMessage(StringBuilder sb, String className, String lineNumber, String methodName, String fileName) {
         if (className != null && lineNumber != null) {
             // this is from java code
             sb.append(className);
@@ -696,42 +696,6 @@ public class ValidateMojo extends AbstractExecMojo {
         } else {
             sb.append(fileName);
         }
-        sb.append("\n");
-        sb.append("\n\t").append(uri);
-        sb.append("\n\n");
-        return sb;
-    }
-
-    private String buildEndpointValidationErrorMessage(CamelEndpointDetails detail) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Endpoint pair (seda/direct) validation error at: ");
-        if (detail.getClassName() != null && detail.getLineNumber() != null) {
-            // this is from java code
-            sb.append(detail.getClassName());
-            if (detail.getMethodName() != null) {
-                sb.append(".").append(detail.getMethodName());
-            }
-            sb.append("(").append(asSimpleClassName(detail.getClassName())).append(".java:");
-            sb.append(detail.getLineNumber()).append(")");
-        } else if (detail.getLineNumber() != null) {
-            // this is from xml
-            String fqn = stripRootPath(asRelativeFile(detail.getFileName(), project), project);
-            if (fqn.endsWith(".xml")) {
-                fqn = fqn.substring(0, fqn.length() - 4);
-                fqn = asPackageName(fqn);
-            }
-            sb.append(fqn);
-            sb.append("(").append(asSimpleClassName(fqn)).append(".xml:");
-            sb.append(detail.getLineNumber()).append(")");
-        } else {
-            sb.append(detail.getFileName());
-        }
-        sb.append("\n");
-        sb.append("\n\t").append(detail.getEndpointUri());
-        sb.append("\n\n\t\t\t\t").append(endpointPathSummaryError(detail));
-        sb.append("\n\n");
-
-        return sb.toString();
     }
 
     private static String endpointPathSummaryError(CamelEndpointDetails detail) {
@@ -766,27 +730,7 @@ public class ValidateMojo extends AbstractExecMojo {
 
                 StringBuilder sb = new StringBuilder();
                 sb.append("Simple validation error at: ");
-                if (detail.getClassName() != null && detail.getLineNumber() != null) {
-                    // this is from java code
-                    sb.append(detail.getClassName());
-                    if (detail.getMethodName() != null) {
-                        sb.append(".").append(detail.getMethodName());
-                    }
-                    sb.append("(").append(asSimpleClassName(detail.getClassName())).append(".java:");
-                    sb.append(detail.getLineNumber()).append(")");
-                } else if (detail.getLineNumber() != null) {
-                    // this is from xml
-                    String fqn = stripRootPath(asRelativeFile(detail.getFileName(), project), project);
-                    if (fqn.endsWith(".xml")) {
-                        fqn = fqn.substring(0, fqn.length() - 4);
-                        fqn = asPackageName(fqn);
-                    }
-                    sb.append(fqn);
-                    sb.append("(").append(asSimpleClassName(fqn)).append(".xml:");
-                    sb.append(detail.getLineNumber()).append(")");
-                } else {
-                    sb.append(detail.getFileName());
-                }
+                buildErrorMessage(sb, detail.getClassName(), detail.getLineNumber(), detail.getMethodName(), detail.getFileName());
                 sb.append("\n");
                 String[] lines = result.getError().split("\n");
                 for (String line : lines) {
