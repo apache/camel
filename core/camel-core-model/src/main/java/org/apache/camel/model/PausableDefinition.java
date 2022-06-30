@@ -100,7 +100,6 @@ public class PausableDefinition extends NoOutputDefinition<PausableDefinition> {
      */
     public PausableDefinition consumerListener(String consumerListenerRef) {
         setConsumerListener(consumerListenerRef);
-
         return this;
     }
 
@@ -109,7 +108,33 @@ public class PausableDefinition extends NoOutputDefinition<PausableDefinition> {
      */
     public PausableDefinition consumerListener(ConsumerListener<?, ?> consumerListener) {
         setConsumerListener(consumerListener);
-
         return this;
     }
+
+    /**
+     * References to a java.util.function.Predicate to use for until checks.
+     *
+     * The predicate is responsible for evaluating whether the processing can resume or not.
+     * Such predicate should return true if the consumption can resume, or false otherwise. The exact point of when the predicate is
+     * called is dependent on the component, and it may be called on either one of the available events. Implementations
+     * should not assume the predicate to be called at any specific point.
+     */
+    public PausableDefinition untilCheck(String untilCheck) {
+        setUntilCheck(untilCheck);
+        return this;
+    }
+
+    /**
+     * The java.util.function.Predicate to use for until checks.
+     *
+     * The predicate is responsible for evaluating whether the processing can resume or not.
+     * Such predicate should return true if the consumption can resume, or false otherwise. The exact point of when the predicate is
+     * called is dependent on the component, and it may be called on either one of the available events. Implementations
+     * should not assume the predicate to be called at any specific point.
+     */
+    public PausableDefinition untilCheck(Predicate<?> untilCheck) {
+        setUntilCheck(untilCheck);
+        return this;
+    }
+
 }
