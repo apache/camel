@@ -60,7 +60,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-cxf</artifactId>
+            <artifactId>camel-cxf-spring-soap</artifactId>
             <!-- conflicts with mockmail for unit testing, so we exclude this geronimo spec -->
             <exclusions>
                 <exclusion>
@@ -68,6 +68,10 @@
                     <artifactId>geronimo-javamail_1.4_spec</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-cxf-spring-transport</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.cxf</groupId>
