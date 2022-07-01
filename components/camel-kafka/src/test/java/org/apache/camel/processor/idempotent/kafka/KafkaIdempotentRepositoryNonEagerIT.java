@@ -17,6 +17,7 @@
 package org.apache.camel.processor.idempotent.kafka;
 
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
@@ -27,6 +28,7 @@ import org.apache.camel.component.kafka.integration.BaseEmbeddedKafkaTestSupport
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -64,9 +66,9 @@ public class KafkaIdempotentRepositoryNonEagerIT extends BaseEmbeddedKafkaTestSu
             template.sendBodyAndHeader("direct:in", "Test message", "id", i % 5);
         }
 
-        assertEquals(5, kafkaIdempotentRepository.getDuplicateCount());
+        await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(5, mockOut.getReceivedCounter()));
 
-        assertEquals(5, mockOut.getReceivedCounter());
         assertEquals(10, mockBefore.getReceivedCounter());
     }
 
@@ -86,11 +88,6 @@ public class KafkaIdempotentRepositoryNonEagerIT extends BaseEmbeddedKafkaTestSu
                 // no-op; expected
             }
         }
-
-        assertEquals(4, kafkaIdempotentRepository.getDuplicateCount()); // id{0}
-                                                                       // is
-                                                                       // not a
-                                                                       // duplicate
 
         assertEquals(6, mockOut.getReceivedCounter()); // id{0} goes through the
                                                       // idempotency check
