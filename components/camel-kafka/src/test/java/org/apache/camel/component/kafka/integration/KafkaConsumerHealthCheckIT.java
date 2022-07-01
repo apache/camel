@@ -97,7 +97,7 @@ public class KafkaConsumerHealthCheckIT extends CamelTestSupport {
     public static void beforeClass() {
         service.initialize();
 
-        LOG.info("### Embedded Kafka cluster broker list: " + service.getBootstrapServers());
+        LOG.info("### Embedded Kafka cluster broker list: {}", service.getBootstrapServers());
         System.setProperty("bootstrapServers", service.getBootstrapServers());
         System.setProperty("brokers", service.getBootstrapServers());
     }
