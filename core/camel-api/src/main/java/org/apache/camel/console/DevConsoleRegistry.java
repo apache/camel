@@ -53,7 +53,7 @@ public interface DevConsoleRegistry extends CamelContextAware, StaticService, Id
     void setEnabled(boolean enabled);
 
     /**
-     * Resolves {@link DevConsole by id.
+     * Resolves {@link DevConsole} by id.
      *
      * Will first lookup in this {@link DevConsoleRegistry} and then {@link org.apache.camel.spi.Registry}, and lastly
      * do classpath scanning via {@link org.apache.camel.spi.annotations.ServiceFactory}.

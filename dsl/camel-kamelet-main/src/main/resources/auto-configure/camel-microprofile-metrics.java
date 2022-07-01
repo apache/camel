@@ -26,5 +26,10 @@ if (mr == null) {
     var rpf = new org.apache.camel.component.microprofile.metrics.route.policy.MicroProfileMetricsRoutePolicyFactory();
     rpf.setMetricRegistry(mr);
     context.addRoutePolicyFactory(rpf);
+    // and setup dev console
+    var dcr = context.getExtension(org.apache.camel.console.DevConsoleRegistry.class);
+    if (dcr != null){
+        dcr.resolveById("microprofile-metrics");
+    }
 }
 return answer;
