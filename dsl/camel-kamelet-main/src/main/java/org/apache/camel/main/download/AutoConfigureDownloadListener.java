@@ -91,7 +91,7 @@ public class AutoConfigureDownloadListener implements DownloadListener, CamelCon
 
     protected void autoConfigure(String artifactId) {
         // is there any special auto configuration scripts?
-        InputStream is = getClass().getResourceAsStream("/auto-configure/" + artifactId + ".java");
+        InputStream is = getClass().getResourceAsStream("/auto-configure/" + artifactId + ".joor");
         if (is != null) {
             try {
                 // execute script via java-joor
