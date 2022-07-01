@@ -31,6 +31,7 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.TimeUtils;
 import org.joor.Reflect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,7 +89,7 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
     protected void doStop() throws Exception {
         super.doStop();
         if (counter > 0) {
-            LOG.info("jOOR language compiled {} scripts in {} millis", counter, taken);
+            LOG.info("jOOR language compiled {} scripts in {}", counter, TimeUtils.printDuration(taken, true));
         }
     }
 
