@@ -96,9 +96,6 @@ public class KafkaIdempotentRepositoryPersistenceIT extends BaseEmbeddedKafkaTes
         await().atMost(10, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals(count, mockBefore.getReceivedCounter()));
 
-        // filters second attempt with same value
-        assertEquals(5, kafkaIdempotentRepository.getDuplicateCount());
-
         // only first 5 records are received, the rest are filtered
         assertEquals(5, mockOut.getReceivedCounter());
     }
@@ -115,9 +112,6 @@ public class KafkaIdempotentRepositoryPersistenceIT extends BaseEmbeddedKafkaTes
         // all records sent initially
         await().atMost(10, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals(count, mockBefore.getReceivedCounter()));
-
-        // the state from the previous test guarantees that all attempts now are blocked
-        assertEquals(count, kafkaIdempotentRepository.getDuplicateCount());
 
         // nothing pass the idempotent consumer this time
         assertEquals(0, mockOut.getReceivedCounter());
@@ -137,9 +131,6 @@ public class KafkaIdempotentRepositoryPersistenceIT extends BaseEmbeddedKafkaTes
         // all records sent initially
         await().atMost(10, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals(count * passes, mockBefore.getReceivedCounter()));
-
-        // the state from the previous test guarantees that all attempts now are blocked
-        assertEquals(count * passes, kafkaIdempotentRepository.getDuplicateCount());
 
         // nothing gets passed the idempotent consumer this time
         assertEquals(0, mockOut.getReceivedCounter());
@@ -166,10 +157,7 @@ public class KafkaIdempotentRepositoryPersistenceIT extends BaseEmbeddedKafkaTes
         await().atMost(10, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals(count, mockBefore.getReceivedCounter()));
 
-        // there are no duplicate messages on this pass
-        assertEquals(0, kafkaIdempotentRepository.getDuplicateCount());
-
-        // so all of them should pass
+        // there are no duplicate messages on this run so all of them should pass
         assertEquals(count, mockOut.getReceivedCounter());
     }
 
