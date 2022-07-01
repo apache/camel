@@ -49,9 +49,9 @@ public class MicroProfileConsole extends AbstractDevConsole {
             mr.getConcurrentGauges().forEach((id, c) -> {
                 String name = id.getName();
                 long cnt = c.getCount();
-                long max = c.getMax();
                 long min = c.getMin();
-                sb.append(String.format("    %s: %s (max:%s min:%s)\n", name, cnt, max, min));
+                long max = c.getMax();
+                sb.append(String.format("    %s: %s (min:%s max:%s)\n", name, cnt, max, min));
             });
             sb.append("\nGauges:\n");
             mr.getGauges().forEach((id, c) -> {
@@ -74,14 +74,14 @@ public class MicroProfileConsole extends AbstractDevConsole {
                 double r1 = c.getOneMinuteRate();
                 double r5 = c.getFiveMinuteRate();
                 double r15 = c.getFifteenMinuteRate();
-                sb.append(String.format("    %s: %s (mean: %f 1m: %f 5m: %f 15m: %f)\n", name, cnt, mean, r1, r5, r15));
+                sb.append(String.format("    %s: %s (mean: %f 1min: %f 5min: %f 15min: %f)\n", name, cnt, mean, r1, r5, r15));
             });
             sb.append("\nSimpleTimers:\n");
             mr.getSimpleTimers().forEach((id, c) -> {
                 String name = id.getName();
                 long cnt = c.getCount();
                 String dur = TimeUtils.printDuration(c.getElapsedTime(), true);
-                sb.append(String.format("    %s: %s (duration: %s)\n", name, cnt, dur));
+                sb.append(String.format("    %s: %s (elapsed: %s)\n", name, cnt, dur));
             });
             sb.append("\nTimers:\n");
             mr.getTimers().forEach((id, c) -> {
@@ -92,7 +92,7 @@ public class MicroProfileConsole extends AbstractDevConsole {
                 double r1 = c.getOneMinuteRate();
                 double r5 = c.getFiveMinuteRate();
                 double r15 = c.getFifteenMinuteRate();
-                sb.append(String.format("    %s: %s (duration: %s mean: %f 1m: %f 5m: %f 15m: %f)\n", name, cnt, dur, mean, r1,
+                sb.append(String.format("    %s: %s (elapsed: %s mean: %f 1m: %f 5m: %f 15m: %f)\n", name, cnt, dur, mean, r1,
                         r5, r15));
             });
         }
@@ -121,7 +121,7 @@ public class MicroProfileConsole extends AbstractDevConsole {
                 jo.put("name", id.getName());
                 jo.put("count", c.getCount());
                 jo.put("max", c.getMax());
-                jo.put("minx", c.getMin());
+                jo.put("min", c.getMin());
                 list2.add(jo);
             });
             final List<JsonObject> list3 = new ArrayList<>();
@@ -159,7 +159,7 @@ public class MicroProfileConsole extends AbstractDevConsole {
                 JsonObject jo = new JsonObject();
                 jo.put("name", id.getName());
                 jo.put("count", c.getCount());
-                jo.put("elapsedTime", c.getElapsedTime().toMillis());
+                jo.put("elapsedTimeMillis", c.getElapsedTime().toMillis());
                 list6.add(jo);
             });
             final List<JsonObject> list7 = new ArrayList<>();
@@ -168,7 +168,7 @@ public class MicroProfileConsole extends AbstractDevConsole {
                 JsonObject jo = new JsonObject();
                 jo.put("name", id.getName());
                 jo.put("count", c.getCount());
-                jo.put("elapsedTime", c.getElapsedTime().toMillis());
+                jo.put("elapsedTimeMillis", c.getElapsedTime().toMillis());
                 jo.put("meanRate", c.getMeanRate());
                 jo.put("rate1minute", c.getOneMinuteRate());
                 jo.put("rate5minute", c.getFiveMinuteRate());
