@@ -353,8 +353,12 @@ public abstract class AbstractClientBase extends ServiceSupport
                 answer.put(headerName, header.getValue());
             }
         }
-        answer.put(Exchange.HTTP_RESPONSE_CODE, String.valueOf(response.getStatus()));
-        answer.put(Exchange.HTTP_RESPONSE_TEXT, response.getReason());
+
+        // don't set the response code to "0" and the response text to null if there's a response timeout
+        if (response.getStatus() != 0) {
+            answer.put(Exchange.HTTP_RESPONSE_CODE, String.valueOf(response.getStatus()));
+            answer.put(Exchange.HTTP_RESPONSE_TEXT, response.getReason());
+        }
 
         return answer;
     }
