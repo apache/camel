@@ -65,6 +65,7 @@ public class BridgeExceptionHandlerToErrorHandler implements ExceptionHandler {
 
         // set the caused exception
         exchange.setException(exception);
+        exchange.setProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, exception);
         // and the message
         exchange.getIn().setBody(message);
         // mark as bridged
