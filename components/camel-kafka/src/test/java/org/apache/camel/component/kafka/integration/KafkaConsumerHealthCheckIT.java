@@ -216,7 +216,7 @@ public class KafkaConsumerHealthCheckIT extends CamelTestSupport {
                     = res2.stream().filter(r -> r.getState().equals(HealthCheck.State.DOWN)).findFirst();
             Assertions.assertTrue(down.isPresent());
             String msg = down.get().getMessage().get();
-            Assertions.assertEquals("KafkaConsumer is not ready (recovery in progress using 5s intervals).", msg);
+            Assertions.assertTrue(msg.contains("KafkaConsumer is not ready"));
             Map<String, Object> map = down.get().getDetails();
             Assertions.assertEquals(TOPIC, map.get("topic"));
             Assertions.assertEquals("test-health-it", map.get("route.id"));
