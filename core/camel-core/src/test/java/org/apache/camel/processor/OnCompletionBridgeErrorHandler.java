@@ -45,7 +45,8 @@ public class OnCompletionBridgeErrorHandler extends ContextTestSupport {
         getMockEndpoint("mock:dead").expectedMessageCount(1);
         latch.countDown();
         assertMockEndpointsSatisfied();
-        Exception cause = getMockEndpoint("mock:dead").getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+        Exception cause = getMockEndpoint("mock:dead").getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT,
+                Exception.class);
         assertNotNull(cause);
         assertEquals("Simulated", cause.getMessage());
 
