@@ -27,7 +27,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -79,8 +78,6 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
     private static final int DEFAULT_POLL_DURATION_MS = 100;
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-
-    private final AtomicLong duplicateCount = new AtomicLong();
 
     // configurable
     private String topic;
@@ -348,7 +345,6 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
     @Override
     public boolean add(String key) {
         if (cache.containsKey(key)) {
-            duplicateCount.incrementAndGet();
             return false;
         } else {
             // update the local cache and broadcast the addition on the topic,
@@ -374,11 +370,7 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
     @ManagedOperation(description = "Does the store contain the given key")
     public boolean contains(String key) {
         log.debug("Checking cache for key:{}", key);
-        boolean containsKey = cache.containsKey(key);
-        if (containsKey) {
-            duplicateCount.incrementAndGet();
-        }
-        return containsKey;
+        return cache.containsKey(key);
     }
 
     @Override
@@ -400,11 +392,6 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
     @Override
     public void clear() {
         broadcastAction(null, CacheAction.clear);
-    }
-
-    @ManagedOperation(description = "Number of times duplicate messages have been detected")
-    public long getDuplicateCount() {
-        return duplicateCount.get();
     }
 
     @ManagedOperation(description = "Number of times duplicate messages have been detected")
