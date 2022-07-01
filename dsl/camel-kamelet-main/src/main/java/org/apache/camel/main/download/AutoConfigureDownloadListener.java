@@ -78,7 +78,8 @@ public class AutoConfigureDownloadListener implements DownloadListener, CamelCon
                     if (line.startsWith("dependency=")) {
                         MavenGav gav = MavenGav.parseGav(line.substring(11));
                         DependencyDownloader downloader = getCamelContext().hasService(DependencyDownloader.class);
-                        downloader.downloadDependency(gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
+                        // these are extra dependencies used in special use-case so download as hidden
+                        downloader.downloadHiddenDependency(gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
                     }
                 }
             } catch (Exception e) {

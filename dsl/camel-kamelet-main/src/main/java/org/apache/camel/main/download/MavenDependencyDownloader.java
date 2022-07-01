@@ -92,10 +92,24 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     }
 
     @Override
+    public void downloadHiddenDependency(String groupId, String artifactId, String version) {
+        doDownloadDependency(groupId, artifactId, version, true, true);
+    }
+
+    @Override
     public void downloadDependency(String groupId, String artifactId, String version, boolean transitively) {
-        // trigger listener
-        for (DownloadListener listener : downloadListeners) {
-            listener.onDownloadDependency(groupId, artifactId, version);
+        doDownloadDependency(groupId, artifactId, version, transitively, false);
+    }
+
+    protected void doDownloadDependency(
+            String groupId, String artifactId, String version, boolean transitively,
+            boolean hidden) {
+
+        if (!hidden) {
+            // trigger listener
+            for (DownloadListener listener : downloadListeners) {
+                listener.onDownloadDependency(groupId, artifactId, version);
+            }
         }
 
         // when running jbang directly then the CP has some existing camel components
