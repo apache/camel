@@ -17,6 +17,8 @@
 package org.apache.camel.main.download;
 
 import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -34,6 +36,7 @@ public class AutoConfigureDownloadListener implements DownloadListener, CamelCon
     private static final Logger LOG = LoggerFactory.getLogger(AutoConfigureDownloadListener.class);
 
     private CamelContext camelContext;
+    private final Set<String> artifacts = new HashSet<>();
 
     @Override
     public CamelContext getCamelContext() {
@@ -52,8 +55,11 @@ public class AutoConfigureDownloadListener implements DownloadListener, CamelCon
 
     @Override
     public void onDownloadedDependency(String groupId, String artifactId, String version) {
-        autoConfigureDependencies(groupId, artifactId, version);
-        autoConfigure(groupId, artifactId, version);
+        if (!artifacts.contains(artifactId)) {
+            artifacts.add(artifactId);
+            autoConfigureDependencies(artifactId);
+            autoConfigure(artifactId);
+        }
     }
 
     @Override
@@ -61,7 +67,7 @@ public class AutoConfigureDownloadListener implements DownloadListener, CamelCon
         // noop
     }
 
-    protected void autoConfigureDependencies(String groupId, String artifactId, String version) {
+    protected void autoConfigureDependencies(String artifactId) {
         // the auto-configuration may require additional dependencies being downloaded first
         InputStream is = getClass().getResourceAsStream("/auto-configure/" + artifactId + ".properties");
         if (is != null) {
@@ -83,7 +89,7 @@ public class AutoConfigureDownloadListener implements DownloadListener, CamelCon
         }
     }
 
-    protected void autoConfigure(String groupId, String artifactId, String version) {
+    protected void autoConfigure(String artifactId) {
         // is there any special auto configuration scripts?
         InputStream is = getClass().getResourceAsStream("/auto-configure/" + artifactId + ".java");
         if (is != null) {
@@ -92,7 +98,6 @@ public class AutoConfigureDownloadListener implements DownloadListener, CamelCon
                 String script = IOHelper.loadText(is);
                 Language lan = camelContext.resolveLanguage("joor");
                 Expression exp = lan.createExpression(script);
-                exp.init(camelContext);
                 Object out = exp.evaluate(new DefaultExchange(camelContext), Object.class);
                 if (ObjectHelper.isNotEmpty(out)) {
                     LOG.info("{}", out);
