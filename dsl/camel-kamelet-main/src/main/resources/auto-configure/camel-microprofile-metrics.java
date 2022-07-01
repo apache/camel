@@ -14,28 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.main.download;
-
-/**
- * Listener for downloading a dependency (can be downloaded from a local cache)
- */
-public interface DownloadListener {
-
-    /**
-     * Downloads a new dependency
-     */
-    void onDownloadDependency(String groupId, String artifactId, String version);
-
-    /**
-     * After the dependency has been downloaded
-     */
-    default void onDownloadedDependency(String groupId, String artifactId, String version) {
-        // noop
-    }
-
-    /**
-     * Uses an existing already downloaded dependency
-     */
-    void onAlreadyDownloadedDependency(String groupId, String artifactId, String version);
-
+var answer = "";
+var registry = context.getRegistry();
+var mr = registry.lookupByNameAndType("metricRegistry", org.eclipse.microprofile.metrics.MetricRegistry.class);
+if (mr == null) {
+    // automatic create metrics registry
+    answer = "Auto-configuring camel-microprofile-metrics: Creating default MetricRegistry";
+    mr = new io.smallrye.metrics.MetricRegistries().getApplicationRegistry();
+    registry.bind("metricRegistry", mr);
+    // also setup metrics as route policy factory to capture route level details
+    var rpf = new org.apache.camel.component.microprofile.metrics.route.policy.MicroProfileMetricsRoutePolicyFactory();
+    rpf.setMetricRegistry(mr);
+    context.addRoutePolicyFactory(rpf);
 }
+return answer;

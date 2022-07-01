@@ -24,12 +24,10 @@ import org.apache.camel.StaticService;
  */
 public interface DependencyDownloader extends CamelContextAware, StaticService {
 
-    DownloadListener getDownloadListener();
-
     /**
-     * Sets a listener to capture download activity
+     * Adds a listener to capture download activity
      */
-    void setDownloadListener(DownloadListener downloadListener);
+    void addDownloadListener(DownloadListener downloadListener);
 
     String getRepos();
 

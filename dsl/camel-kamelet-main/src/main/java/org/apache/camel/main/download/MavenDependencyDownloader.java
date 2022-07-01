@@ -23,10 +23,13 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
@@ -43,7 +46,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     private String[] bootClasspath;
     private DownloadThreadPool threadPool;
     private CamelContext camelContext;
-    private DownloadListener downloadListener;
+    private final Set<DownloadListener> downloadListeners = new LinkedHashSet<>();
     private String repos;
     private boolean fresh;
 
@@ -58,13 +61,9 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     }
 
     @Override
-    public DownloadListener getDownloadListener() {
-        return downloadListener;
-    }
-
-    @Override
-    public void setDownloadListener(DownloadListener downloadListener) {
-        this.downloadListener = downloadListener;
+    public void addDownloadListener(DownloadListener downloadListener) {
+        CamelContextAware.trySetCamelContext(downloadListener, getCamelContext());
+        downloadListeners.add(downloadListener);
     }
 
     @Override
@@ -95,8 +94,8 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     @Override
     public void downloadDependency(String groupId, String artifactId, String version, boolean transitively) {
         // trigger listener
-        if (downloadListener != null) {
-            downloadListener.onDownloadDependency(groupId, artifactId, version);
+        for (DownloadListener listener : downloadListeners) {
+            listener.onDownloadDependency(groupId, artifactId, version);
         }
 
         // when running jbang directly then the CP has some existing camel components
@@ -142,6 +141,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
 
             DependencyDownloaderClassLoader classLoader
                     = (DependencyDownloaderClassLoader) camelContext.getApplicationContextClassLoader();
+
             for (MavenArtifact a : artifacts) {
                 File file = a.getFile();
                 // only add to classpath if not already present (do not trigger listener)
@@ -151,6 +151,14 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                     LOG.trace("Added classpath: {}", a.getGav());
                 }
             }
+
+            if (!artifacts.isEmpty()) {
+                // trigger listener after downloaded and added to classloader
+                for (DownloadListener listener : downloadListeners) {
+                    listener.onDownloadedDependency(groupId, artifactId, version);
+                }
+            }
+
         }, gav);
     }
 
@@ -201,8 +209,10 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         if (bootClasspath != null) {
             for (String s : bootClasspath) {
                 if (s.contains(target)) {
-                    if (listener && downloadListener != null) {
-                        downloadListener.onDownloadDependency(groupId, artifactId, version);
+                    if (listener) {
+                        for (DownloadListener dl : downloadListeners) {
+                            dl.onDownloadDependency(groupId, artifactId, version);
+                        }
                     }
                     // already on classpath
                     return true;
@@ -218,8 +228,10 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                     String s = u.toString();
                     if (s.contains(target)) {
                         // trigger listener
-                        if (listener && downloadListener != null) {
-                            downloadListener.onDownloadDependency(groupId, artifactId, version);
+                        if (listener) {
+                            for (DownloadListener dl : downloadListeners) {
+                                dl.onDownloadDependency(groupId, artifactId, version);
+                            }
                         }
                         // already on classpath
                         return true;
