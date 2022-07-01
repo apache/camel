@@ -102,7 +102,7 @@ public class JoorExpression extends ExpressionAdapter {
     public void init(CamelContext context) {
         super.init(context);
 
-        if (preCompile) {
+        if (preCompile && this.method == null) {
             this.method = compiler.compile(context, text, singleQuotes);
         }
     }
