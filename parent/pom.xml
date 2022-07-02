@@ -1202,11 +1202,6 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-cxf</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-dataformat</artifactId>
 				<version>${project.version}</version>
 			</dependency>
