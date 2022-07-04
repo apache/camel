@@ -233,4 +233,19 @@ public class CamelComponentVerifierTest extends BaseHttpTest {
                 error.getDetails().get(ComponentVerifierExtension.VerificationError.HttpAttribute.HTTP_REDIRECT));
         assertTrue(error.getParameterKeys().contains("httpUri"));
     }
+
+    @Test
+    public void testConnectivityWithFollowRedirectEnabled() throws Exception {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("httpUri", getLocalServerUri("/redirect"));
+        parameters.put("httpMethod", "POST");
+        parameters.put("followRedirects", "true");
+
+        ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
+
+        assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
+        assertEquals(0, result.getErrors().size());
+
+    }
+
 }

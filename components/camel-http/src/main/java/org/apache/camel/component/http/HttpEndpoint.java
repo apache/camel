@@ -47,6 +47,7 @@ import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.pool.ConnPoolControl;
 import org.apache.http.pool.PoolStats;
 import org.apache.http.protocol.HttpContext;
@@ -144,6 +145,12 @@ public class HttpEndpoint extends HttpCommonEndpoint {
                             + " If there are no data from Camel headers needed to be included in the HTTP request then this can avoid"
                             + " parsing overhead with many object allocations for the JVM garbage collector.")
     private boolean skipRequestHeaders;
+
+    @UriParam(label = "producer,advanced", defaultValue = "false",
+              description = "Whether to the HTTP request should follow redirects."
+                            + " By default the HTTP request does not follow redirects ")
+    private boolean followRedirects;
+
     @UriParam(label = "producer,advanced",
               description = "Whether to skip mapping all the HTTP response headers to Camel headers."
                             + " If there are no data needed from HTTP headers then this can avoid parsing overhead"
@@ -265,6 +272,10 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         if (isBridgeEndpoint()) {
             // need to use noop cookiestore as we do not want to keep cookies in memory
             clientBuilder.setDefaultCookieStore(new NoopCookieStore());
+        }
+
+        if (isFollowRedirects()) {
+            clientBuilder.setRedirectStrategy(new LaxRedirectStrategy());
         }
 
         LOG.debug("Setup the HttpClientBuilder {}", clientBuilder);
@@ -563,6 +574,17 @@ public class HttpEndpoint extends HttpCommonEndpoint {
      */
     public void setSkipRequestHeaders(boolean skipRequestHeaders) {
         this.skipRequestHeaders = skipRequestHeaders;
+    }
+
+    public boolean isFollowRedirects() {
+        return followRedirects;
+    }
+
+    /**
+     * Whether to the HTTP request should follow redirects. By default the HTTP request does not follow redirects
+     */
+    public void setFollowRedirects(boolean followRedirects) {
+        this.followRedirects = followRedirects;
     }
 
     public boolean isSkipResponseHeaders() {
