@@ -470,7 +470,7 @@ public final class IntrospectionSupport {
 
         for (Iterator<Map.Entry<String, Object>> it = properties.entrySet().iterator(); it.hasNext();) {
             Map.Entry<String, Object> entry = it.next();
-            String name = entry.getKey().toString();
+            String name = entry.getKey();
             if (name.startsWith(optionPrefix)) {
                 Object value = properties.get(name);
                 name = name.substring(optionPrefix.length());
