@@ -813,11 +813,10 @@ public final class ObjectHelper {
     @Deprecated
     public static boolean contains(Object collectionOrArray, Object value) {
         // favor String types
-        if (collectionOrArray != null
-                && (collectionOrArray instanceof StringBuffer || collectionOrArray instanceof StringBuilder)) {
+        if (collectionOrArray instanceof StringBuffer || collectionOrArray instanceof StringBuilder) {
             collectionOrArray = collectionOrArray.toString();
         }
-        if (value != null && (value instanceof StringBuffer || value instanceof StringBuilder)) {
+        if (value instanceof StringBuffer || value instanceof StringBuilder) {
             value = value.toString();
         }
 
@@ -845,8 +844,7 @@ public final class ObjectHelper {
     public static boolean typeCoerceContains(
             TypeConverter typeConverter, Object collectionOrArray, Object value, boolean ignoreCase) {
         // favor String types
-        if (collectionOrArray != null
-                && (collectionOrArray instanceof StringBuffer || collectionOrArray instanceof StringBuilder)) {
+        if (collectionOrArray instanceof StringBuffer || collectionOrArray instanceof StringBuilder) {
             collectionOrArray = collectionOrArray.toString();
         }
         if (value instanceof StringBuffer || value instanceof StringBuilder) {

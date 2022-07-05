@@ -93,7 +93,7 @@ public class MixinRequiredModelMBean extends RequiredModelMBean {
                 Descriptor desc = info.getDescriptor();
                 if (desc != null) {
                     Object val = desc.getFieldValue("mask");
-                    return val != null && "true".equals(val);
+                    return "true".equals(val);
                 }
             }
         }
