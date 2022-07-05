@@ -83,7 +83,7 @@ public class HashicorpVaultProducer extends DefaultProducer {
         }
         String completePath = getEndpoint().getConfiguration().getSecretsEngine() + "/" + "data" + "/" + secretPath;
         if (ObjectHelper.isNotEmpty(secretVersion)) {
-            completePath = completePath + "?" + secretVersion;
+            completePath = completePath + "?version=" + secretVersion;
         }
         VaultResponse rawSecret = getEndpoint().getVaultTemplate().read(completePath);
         exchange.getMessage().setBody(rawSecret.getData());
