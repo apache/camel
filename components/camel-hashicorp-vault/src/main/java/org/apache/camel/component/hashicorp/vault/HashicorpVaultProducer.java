@@ -27,6 +27,8 @@ import org.springframework.vault.core.VaultKeyValueOperations;
 import org.springframework.vault.core.VaultKeyValueOperationsSupport;
 import org.springframework.vault.support.VaultResponse;
 
+import java.util.List;
+
 public class HashicorpVaultProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(HashicorpVaultProducer.class);
@@ -57,6 +59,9 @@ public class HashicorpVaultProducer extends DefaultProducer {
                 break;
             case deleteSecret:
                 deleteSecret();
+                break;
+            case listSecrets:
+                listSecrets(exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -94,6 +99,11 @@ public class HashicorpVaultProducer extends DefaultProducer {
                 = getEndpoint().getVaultTemplate().opsForKeyValue(getEndpoint().getConfiguration().getSecretsEngine(),
                         VaultKeyValueOperationsSupport.KeyValueBackend.versioned());
         keyValue.delete(getEndpoint().getConfiguration().getSecretPath());
+    }
+
+    private void listSecrets(Exchange exchange) {
+        List<String> secretsList = getEndpoint().getVaultTemplate().list(getEndpoint().getConfiguration().getSecretsEngine() + "/" + "metadata" + "/");
+        exchange.getMessage().setBody(secretsList);
     }
 
     @Override
