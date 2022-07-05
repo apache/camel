@@ -335,6 +335,19 @@ public interface HashicorpVaultEndpointBuilderFactory {
         public String hashicorpVaultSecretPath() {
             return "HashicorpVaultSecretPath";
         }
+
+        /**
+         * Set the desired secret version as header.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HashicorpVaultSecretVersion}.
+         */
+        public String hashicorpVaultSecretVersion() {
+            return "HashicorpVaultSecretVersion";
+        }
     }
     static HashicorpVaultEndpointBuilder endpointBuilder(
             String componentName,
