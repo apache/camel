@@ -33,7 +33,7 @@ public final class HashicorpVaultConstants {
 
     // headers set by the producer only
     @Metadata(label = "producer", description = "Set the desired secret version as header.",
-            javaType = "String")
+              javaType = "String")
     public static final String SECRET_VERSION = HEADER_PREFIX + "SecretVersion";
 
     private HashicorpVaultConstants() {
