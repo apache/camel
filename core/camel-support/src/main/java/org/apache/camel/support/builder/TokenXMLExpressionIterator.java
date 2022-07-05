@@ -179,7 +179,7 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
                     Pattern.MULTILINE | Pattern.DOTALL);
 
             this.inheritNamespaceToken = inheritNamespaceToken;
-            if (inheritNamespaceToken != null && OPTION_WRAP_TOKEN.equals(inheritNamespaceToken)) {
+            if (OPTION_WRAP_TOKEN.equals(inheritNamespaceToken)) {
                 this.wrapToken = true;
                 this.in = new RecordableInputStream(in, charset);
             } else {
