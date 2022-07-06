@@ -17,7 +17,6 @@
 package org.apache.camel.spi;
 
 import java.lang.annotation.Annotation;
-import java.net.URL;
 import java.util.Set;
 
 import org.apache.camel.StaticService;

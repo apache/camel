@@ -17,7 +17,6 @@
 package org.apache.camel.component.aws.secretsmanager;
 
 import java.util.Base64;
-import java.util.Properties;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
