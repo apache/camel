@@ -89,7 +89,7 @@ You can specify multiple context paths using `:` as a separator, for example
 
 JAXB 2 supports marshalling and unmarshalling XML tree fragments. By
 default JAXB looks for the `@XmlRootElement` annotation on a given class to
-operate on whole XML tree. This is useful, but not always. Sometimes
+operate on whole XML tree. This is useful, but not always. Sometimes the
 generated code does not have the `@XmlRootElement` annotation and sometimes you
 need to unmarshall only part of the tree.
 
@@ -107,7 +107,7 @@ one of the exchange headers, its value is used to override the `partNamespace` p
 on the `JaxbDataFormat`.
 
 While setting `partNamespace` through `JaxbConstants.JAXB_PART_NAMESPACE`, please
-note that you need to specify its value in the format `{namespaceUri}localPart`, as per the example below.
+note that you need to specify its value in the format `\{namespaceUri\}localPart`, as per the example below.
 
 [source,java]
 --------------------------------------------------------------------------------------
