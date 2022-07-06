@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.hashicorp.vault;
 
+import java.util.List;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -26,8 +28,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.vault.core.VaultKeyValueOperations;
 import org.springframework.vault.core.VaultKeyValueOperationsSupport;
 import org.springframework.vault.support.VaultResponse;
-
-import java.util.List;
 
 public class HashicorpVaultProducer extends DefaultProducer {
 
@@ -102,7 +102,8 @@ public class HashicorpVaultProducer extends DefaultProducer {
     }
 
     private void listSecrets(Exchange exchange) {
-        List<String> secretsList = getEndpoint().getVaultTemplate().list(getEndpoint().getConfiguration().getSecretsEngine() + "/" + "metadata" + "/");
+        List<String> secretsList = getEndpoint().getVaultTemplate()
+                .list(getEndpoint().getConfiguration().getSecretsEngine() + "/" + "metadata" + "/");
         exchange.getMessage().setBody(secretsList);
     }
 
