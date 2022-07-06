@@ -19,8 +19,6 @@ package org.apache.camel.component.activemq;
 import java.util.Collections;
 import java.util.List;
 
-import javax.jms.Queue;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;

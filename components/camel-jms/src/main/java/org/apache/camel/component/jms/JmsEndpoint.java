@@ -23,9 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.jms.ConnectionFactory;
 import javax.jms.ExceptionListener;
 import javax.jms.Message;
-import javax.jms.Queue;
 import javax.jms.Session;
-import javax.jms.Topic;
 
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Category;

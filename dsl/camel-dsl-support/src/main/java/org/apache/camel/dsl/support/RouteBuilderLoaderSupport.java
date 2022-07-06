@@ -40,8 +40,6 @@ import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.support.RoutesBuilderLoaderSupport;
 import org.apache.camel.util.IOHelper;
 
-import static org.apache.camel.util.IOHelper.buffered;
-
 /**
  * Base class for {@link RoutesBuilderLoader} implementations.
  */
