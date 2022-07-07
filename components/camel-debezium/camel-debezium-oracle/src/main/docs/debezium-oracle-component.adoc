@@ -4,7 +4,7 @@
 :artifactid: camel-debezium-oracle
 :description: Capture changes from a Oracle database.
 :since: 3.17
-:supportlevel: Preview
+:supportlevel: Stable
 :component-header: Only consumer is supported
 //Manually maintained attributes
 :group: Debezium

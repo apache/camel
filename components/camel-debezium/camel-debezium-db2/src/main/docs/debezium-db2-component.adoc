@@ -4,7 +4,7 @@
 :artifactid: camel-debezium-db2
 :description: Capture changes from a DB2 database.
 :since: 3.17
-:supportlevel: Preview
+:supportlevel: Stable
 :component-header: Only consumer is supported
 //Manually maintained attributes
 :group: Debezium

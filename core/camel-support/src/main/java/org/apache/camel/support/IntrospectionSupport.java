@@ -356,7 +356,7 @@ public final class IntrospectionSupport {
         ObjectHelper.notNull(properties, "properties");
 
         if (ObjectHelper.isNotEmpty(optionPrefix)) {
-            for (String name: properties.keySet()) {
+            for (String name : properties.keySet()) {
                 if (name.startsWith(optionPrefix)) {
                     return true;
                 }
