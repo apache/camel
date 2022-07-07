@@ -138,7 +138,7 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
      * @return         the builder
      */
     public ResequenceDefinition timeout(Duration timeout) {
-        return timeout(TimeUtils.printDuration(timeout));
+        return timeout(TimeUtils.printDuration(timeout, true));
     }
 
     /**
