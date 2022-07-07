@@ -93,7 +93,7 @@ public class SplunkHECConfiguration {
     }
 
     /**
-     * Splunk host.
+     * Splunk host field of the event message. This is not the Splunk host to connect to.
      */
     public void setHost(String host) {
         this.host = host;

@@ -93,6 +93,8 @@ class.
 
 |normal |Performs normal search and requires a search query in the search option.
 
+|realtime |Performs realtime search on live data and requires a search query in the search option.
+
 |savedsearch |Performs search based on a search query saved in splunk and requires the
 name of the query in the savedSearch option.
 |=======================================================================

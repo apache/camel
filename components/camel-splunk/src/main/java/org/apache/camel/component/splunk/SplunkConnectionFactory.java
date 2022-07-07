@@ -40,6 +40,7 @@ public class SplunkConnectionFactory {
     private String owner;
     private String username;
     private String password;
+    private String token;
     private int connectionTimeout;
     private boolean useSunHttpsHandler;
     private SSLSecurityProtocol sslProtocol;
@@ -95,6 +96,14 @@ public class SplunkConnectionFactory {
         this.sslProtocol = sslProtocol;
     }
 
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
     public synchronized Service createService(CamelContext camelContext) {
         final ServiceArgs args = new ServiceArgs();
         if (host != null) {
@@ -115,8 +124,13 @@ public class SplunkConnectionFactory {
         if (username != null) {
             args.setUsername(username);
         }
-        if (password != null) {
+        if (password != null && token == null) {
             args.setPassword(password);
+        }
+        if (token != null) {
+            args.setToken(String.format("Bearer %s", token));
+            args.remove("username");
+            args.remove("password");
         }
         // useful in cases where you want to bypass app. servers https handling
         // (wls i'm looking at you)
@@ -156,11 +170,9 @@ public class SplunkConnectionFactory {
             return service;
         } catch (Exception e) {
             throw new RuntimeException(
-                    String.format("could not connect to Splunk Server @ %s:%d - %s", host, port, e.getMessage()));
+                    String.format("could not connect to Splunk Server @ %s:%d - %s", host, port, e.getMessage()), e);
         } finally {
-            if (executor != null) {
-                camelContext.getExecutorServiceManager().shutdownNow(executor);
-            }
+            camelContext.getExecutorServiceManager().shutdownNow(executor);
         }
     }
 }

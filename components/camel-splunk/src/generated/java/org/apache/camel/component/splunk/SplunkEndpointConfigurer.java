@@ -88,6 +88,7 @@ public class SplunkEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "tcpReceiverPort": target.getConfiguration().setTcpReceiverPort(property(camelContext, int.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
+        case "token": target.getConfiguration().setToken(property(camelContext, java.lang.String.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
         case "usesunhttpshandler":
@@ -167,6 +168,7 @@ public class SplunkEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "tcpReceiverPort": return int.class;
         case "timeunit":
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
+        case "token": return java.lang.String.class;
         case "usefixeddelay":
         case "useFixedDelay": return boolean.class;
         case "usesunhttpshandler":
@@ -247,6 +249,7 @@ public class SplunkEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "tcpReceiverPort": return target.getConfiguration().getTcpReceiverPort();
         case "timeunit":
         case "timeUnit": return target.getTimeUnit();
+        case "token": return target.getConfiguration().getToken();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
         case "usesunhttpshandler":
