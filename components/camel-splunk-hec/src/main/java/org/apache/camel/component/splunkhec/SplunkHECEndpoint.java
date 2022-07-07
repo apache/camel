@@ -94,7 +94,7 @@ public class SplunkHECEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Splunk Host URL
+     * Splunk Host and Port (example: my_splunk_server:8089)
      */
     public void setSplunkURL(String splunkURL) {
         this.splunkURL = splunkURL;
@@ -105,7 +105,7 @@ public class SplunkHECEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Splunk authorization token
+     * Splunk HEC token (this is the token created for HEC and not the user's token)
      */
     public void setToken(String token) {
         this.token = token;
