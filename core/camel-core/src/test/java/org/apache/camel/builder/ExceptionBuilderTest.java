@@ -30,8 +30,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit test to test exception configuration
@@ -52,15 +52,11 @@ public class ExceptionBuilderTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(MESSAGE_INFO, "Damm a NPE");
 
-        try {
-            template.sendBody("direct:a", "Hello NPE");
-            fail("Should have thrown a NullPointerException");
-        } catch (RuntimeCamelException e) {
-            boolean b = e.getCause() instanceof NullPointerException;
-            assertTrue(b);
-            // expected
-        }
+        final RuntimeCamelException e
+                = assertThrows(RuntimeCamelException.class, () -> template.sendBody("direct:a", "Hello NPE"),
+                        "Should have thrown a RuntimeCamelException");
 
+        assertInstanceOf(NullPointerException.class, e.getCause(), "Exception cause should have been a NullPointerException");
         MockEndpoint.assertIsSatisfied(result, mock);
     }
 
@@ -72,15 +68,10 @@ public class ExceptionBuilderTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(MESSAGE_INFO, "Damm somekind of IO exception");
 
-        try {
-            template.sendBody("direct:a", "Hello IO");
-            fail("Should have thrown a IOException");
-        } catch (RuntimeCamelException e) {
-            boolean b = e.getCause() instanceof IOException;
-            assertTrue(b);
-            // expected
-        }
+        Exception e = assertThrows(RuntimeCamelException.class, () -> template.sendBody("direct:a", "Hello IO"),
+                "Should have thrown a RuntimeCamelException");
 
+        assertInstanceOf(IOException.class, e.getCause(), "Should have thrown a IOException");
         MockEndpoint.assertIsSatisfied(result, mock);
     }
 
@@ -92,14 +83,9 @@ public class ExceptionBuilderTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(MESSAGE_INFO, "Damm just exception");
 
-        try {
-            template.sendBody("direct:a", "Hello Exception");
-            fail("Should have thrown a Exception");
-        } catch (RuntimeCamelException e) {
-            boolean b = e.getCause() instanceof Exception;
-            assertTrue(b);
-            // expected
-        }
+        Exception e = assertThrows(RuntimeCamelException.class, () -> template.sendBody("direct:a", "Hello Exception"),
+                "Should have thrown a RuntimeCamelException");
+        assertInstanceOf(Exception.class, e.getCause(), "Should have thrown a IOException");
 
         MockEndpoint.assertIsSatisfied(result, mock);
     }
@@ -112,15 +98,9 @@ public class ExceptionBuilderTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(MESSAGE_INFO, "Damm my business is not going to well");
 
-        try {
-            template.sendBody("direct:a", "Hello business");
-            fail("Should have thrown a MyBusinessException");
-        } catch (RuntimeCamelException e) {
-            boolean b = e.getCause() instanceof MyBusinessException;
-            assertTrue(b);
-            // expected
-        }
-
+        Exception e = assertThrows(RuntimeCamelException.class, () -> template.sendBody("direct:a", "Hello business"),
+                "Should have thrown a RuntimeCamelException");
+        assertInstanceOf(MyBusinessException.class, e.getCause(), "Should have thrown a MyBusinessException");
         MockEndpoint.assertIsSatisfied(result, mock);
     }
 
@@ -133,14 +113,10 @@ public class ExceptionBuilderTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(MESSAGE_INFO, "Damm some security error");
 
-        try {
-            template.sendBody("direct:a", "I am not allowed to do this");
-            fail("Should have thrown a GeneralSecurityException");
-        } catch (RuntimeCamelException e) {
-            boolean b = e.getCause() instanceof GeneralSecurityException;
-            assertTrue(b);
-            // expected
-        }
+        Exception e
+                = assertThrows(RuntimeCamelException.class, () -> template.sendBody("direct:a", "I am not allowed to do this"),
+                        "Should have thrown a RuntimeCamelException");
+        assertInstanceOf(GeneralSecurityException.class, e.getCause(), "Should have thrown a GeneralSecurityException");
 
         MockEndpoint.assertIsSatisfied(result, mock);
     }
@@ -154,14 +130,10 @@ public class ExceptionBuilderTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(MESSAGE_INFO, "Damm some access error");
 
-        try {
-            template.sendBody("direct:a", "I am not allowed to access this");
-            fail("Should have thrown a GeneralSecurityException");
-        } catch (RuntimeCamelException e) {
-            boolean b = e.getCause() instanceof IllegalAccessException;
-            assertTrue(b);
-            // expected
-        }
+        Exception e = assertThrows(RuntimeCamelException.class,
+                () -> template.sendBody("direct:a", "I am not allowed to access this"),
+                "Should have thrown a RuntimeCamelException");
+        assertInstanceOf(IllegalAccessException.class, e.getCause(), "Should have thrown a IllegalAccessException");
 
         MockEndpoint.assertIsSatisfied(result, mock);
     }
