@@ -31,8 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class URISupportTest {
 
@@ -425,12 +425,9 @@ public class URISupportTest {
 
     @Test
     public void testParseQueryLenient() throws Exception {
-        try {
-            URISupport.parseQuery("password=secret&serviceName=somechat&", false, false);
-            fail("Should have thrown exception");
-        } catch (URISyntaxException e) {
-            // expected
-        }
+        assertThrows(URISyntaxException.class,
+                () -> URISupport.parseQuery("password=secret&serviceName=somechat&", false, false),
+                "Should have thrown a URISyntaxException");
 
         Map<String, Object> map = URISupport.parseQuery("password=secret&serviceName=somechat&", false, true);
         assertEquals(2, map.size());
