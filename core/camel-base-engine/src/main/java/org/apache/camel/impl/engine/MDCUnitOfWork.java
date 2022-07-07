@@ -85,6 +85,10 @@ public class MDCUnitOfWork extends DefaultUnitOfWork implements Service {
         if (breadcrumbId != null) {
             MDC.put(MDC_BREADCRUMB_ID, breadcrumbId);
         }
+        Route current = getRoute();
+        if (current != null) {
+            MDC.put(MDC_ROUTE_ID, current.getRouteId());
+        }
     }
 
     @Override
@@ -145,7 +149,8 @@ public class MDCUnitOfWork extends DefaultUnitOfWork implements Service {
             MDC.put(MDC_STEP_ID, stepId);
         }
         // return callback with after processing work
-        return new MDCCallback(callback, pattern);
+        final AsyncCallback uowCallback = super.beforeProcess(processor, exchange, callback);
+        return new MDCCallback(uowCallback, pattern);
     }
 
     @Override
