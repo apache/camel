@@ -129,13 +129,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         dirName = FileUtil.stripTrailingSeparator(dirName);
 
         // compute dir depending on stepwise is enabled or not
-        String dir = null;
-        if (isStepwise()) {
-            dir = ObjectHelper.isNotEmpty(dirName) ? dirName : absolutePath;
-            operations.changeCurrentDirectory(dir);
-        } else {
-            dir = absolutePath;
-        }
+        final String dir = computeDir(absolutePath, dirName);
 
         final FTPFile[] files = getFtpFiles(dir);
 
@@ -143,49 +137,80 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
             // no files in this directory to poll
             LOG.trace("No files found in directory: {}", dir);
             return true;
-        } else {
-            // we found some files
-            LOG.trace("Found {} files in directory: {}", files.length, dir);
         }
+
+        // we found some files
+        LOG.trace("Found {} files in directory: {}", files.length, dir);
 
         if (getEndpoint().isPreSort()) {
             Arrays.sort(files, Comparator.comparing(FTPFile::getName));
         }
 
         for (FTPFile file : files) {
-
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("FtpFile[name={}, dir={}, file={}]", file.getName(), file.isDirectory(), file.isFile());
-            }
-
-            // check if we can continue polling in files
-            if (!canPollMoreFiles(fileList)) {
+            if (handleFtpEntries(absolutePath, fileList, depth, files, file)) {
                 return false;
-            }
-
-            if (file.isDirectory()) {
-                RemoteFile<FTPFile> remote = asRemoteFile(absolutePath, file, getEndpoint().getCharset());
-                if (endpoint.isRecursive() && depth < endpoint.getMaxDepth() && isValidFile(remote, true, files)) {
-                    // recursive scan and add the sub files and folders
-                    String subDirectory = file.getName();
-                    String path = ObjectHelper.isNotEmpty(absolutePath) ? absolutePath + "/" + subDirectory : subDirectory;
-                    boolean canPollMore = pollSubDirectory(path, subDirectory, fileList, depth);
-                    if (!canPollMore) {
-                        return false;
-                    }
-                }
-            } else if (file.isFile()) {
-                RemoteFile<FTPFile> remote = asRemoteFile(absolutePath, file, getEndpoint().getCharset());
-                if (depth >= endpoint.getMinDepth() && isValidFile(remote, false, files)) {
-                    // matched file so add
-                    fileList.add(remote);
-                }
-            } else {
-                LOG.debug("Ignoring unsupported remote file type: {}", file);
             }
         }
 
         return true;
+    }
+
+    private boolean handleFtpEntries(
+            String absolutePath, List<GenericFile<FTPFile>> fileList, int depth, FTPFile[] files, FTPFile file) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("FtpFile[name={}, dir={}, file={}]", file.getName(), file.isDirectory(), file.isFile());
+        }
+
+        // check if we can continue polling in files
+        if (!canPollMoreFiles(fileList)) {
+            return true;
+        }
+
+        if (file.isDirectory()) {
+            if (handleDirectory(absolutePath, fileList, depth, files, file)) {
+                return true;
+            }
+        } else if (file.isFile()) {
+            handleFile(absolutePath, fileList, depth, files, file);
+        } else {
+            LOG.debug("Ignoring unsupported remote file type: {}", file);
+        }
+        return false;
+    }
+
+    private boolean handleDirectory(
+            String absolutePath, List<GenericFile<FTPFile>> fileList, int depth, FTPFile[] files, FTPFile file) {
+        RemoteFile<FTPFile> remote = asRemoteFile(absolutePath, file, getEndpoint().getCharset());
+        if (endpoint.isRecursive() && depth < endpoint.getMaxDepth() && isValidFile(remote, true, files)) {
+            // recursive scan and add the sub files and folders
+            String subDirectory = file.getName();
+            String path = ObjectHelper.isNotEmpty(absolutePath) ? absolutePath + "/" + subDirectory : subDirectory;
+            boolean canPollMore = pollSubDirectory(path, subDirectory, fileList, depth);
+            if (!canPollMore) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void handleFile(
+            String absolutePath, List<GenericFile<FTPFile>> fileList, int depth, FTPFile[] files, FTPFile file) {
+        RemoteFile<FTPFile> remote = asRemoteFile(absolutePath, file, getEndpoint().getCharset());
+        if (depth >= endpoint.getMinDepth() && isValidFile(remote, false, files)) {
+            // matched file so add
+            fileList.add(remote);
+        }
+    }
+
+    private String computeDir(String absolutePath, String dirName) {
+        String dir;
+        if (isStepwise()) {
+            dir = ObjectHelper.isNotEmpty(dirName) ? dirName : absolutePath;
+            operations.changeCurrentDirectory(dir);
+        } else {
+            dir = absolutePath;
+        }
+        return dir;
     }
 
     private FTPFile[] pollNamedFile() {
