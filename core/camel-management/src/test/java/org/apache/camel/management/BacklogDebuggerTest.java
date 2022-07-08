@@ -250,6 +250,28 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
                 "Should contain our added header");
         assertTrue(xml.contains("<exchangeProperty name=\"food\" type=\"java.lang.Integer\">987</exchangeProperty>"),
                 "Should contain our added exchange property");
+
+        // update body and header
+        mbeanServer.invoke(on, "setMessageBodyOnBreakpoint", new Object[] { "bar", "555", "java.lang.Integer" },
+                new String[] { "java.lang.String", "java.lang.Object", "java.lang.String" });
+        mbeanServer.invoke(on, "setMessageHeaderOnBreakpoint", new Object[] { "bar", "wine", "456", "java.lang.Integer" },
+                new String[] { "java.lang.String", "java.lang.String", "java.lang.Object", "java.lang.String" });
+        mbeanServer.invoke(on, "setExchangePropertyOnBreakpoint", new Object[] { "bar", "drink", "798", "java.lang.Integer" },
+                new String[] { "java.lang.String", "java.lang.String", "java.lang.Object", "java.lang.String" });
+
+        // the message should be updated
+        xml = (String) mbeanServer.invoke(on, "dumpTracedMessagesAsXml", new Object[] { "bar", true },
+                new String[] { "java.lang.String", "boolean" });
+        assertNotNull(xml);
+        log.info(xml);
+
+        assertTrue(xml.contains("555"), "Should contain our body");
+        assertTrue(xml.contains("<toNode>bar</toNode>"), "Should contain bar node");
+        assertTrue(xml.contains("<header key=\"wine\" type=\"java.lang.Integer\">456</header>"),
+                "Should contain our added header");
+        assertTrue(xml.contains("<exchangeProperty name=\"drink\" type=\"java.lang.Integer\">798</exchangeProperty>"),
+                "Should contain our added exchange property");
+
         resetMocks();
         mock.expectedMessageCount(1);
 

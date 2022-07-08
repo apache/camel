@@ -382,6 +382,7 @@ public final class BacklogDebugger extends ServiceSupport {
                 } else {
                     se.getExchange().getMessage().setBody(body);
                 }
+                refreshBacklogTracerEventMessage(nodeId, se);
             }
         }
     }
@@ -392,6 +393,7 @@ public final class BacklogDebugger extends ServiceSupport {
             logger.log("Breakpoint at node " + nodeId + " is removing message body on exchangeId: "
                        + se.getExchange().getExchangeId());
             se.getExchange().getMessage().setBody(null);
+            refreshBacklogTracerEventMessage(nodeId, se);
         }
     }
 
@@ -418,6 +420,7 @@ public final class BacklogDebugger extends ServiceSupport {
             } else {
                 se.getExchange().getMessage().setHeader(headerName, value);
             }
+            refreshBacklogTracerEventMessage(nodeId, se);
         }
     }
 
@@ -435,6 +438,7 @@ public final class BacklogDebugger extends ServiceSupport {
             logger.log("Breakpoint at node " + nodeId + " is removing message header on exchangeId: "
                        + se.getExchange().getExchangeId() + " with header: " + headerName);
             se.getExchange().getMessage().removeHeader(headerName);
+            refreshBacklogTracerEventMessage(nodeId, se);
         }
     }
 
@@ -596,6 +600,34 @@ public final class BacklogDebugger extends ServiceSupport {
     }
 
     /**
+     * Refresh the content of the existing backlog tracer event message corresponding to the given node id with the new
+     * content of exchange.
+     * 
+     * @param nodeId            the node id for the breakpoint
+     * @param suspendedExchange the content of the new suspended exchange to use to refresh the backlog tracer event
+     *                          message.
+     */
+    private void refreshBacklogTracerEventMessage(String nodeId, SuspendedExchange suspendedExchange) {
+        suspendedBreakpointMessages.computeIfPresent(
+                nodeId,
+                (nId, message) -> new DefaultBacklogTracerEventMessage(
+                        message.getUid(), message.getTimestamp(), message.getRouteId(), message.getToNode(),
+                        message.getExchangeId(),
+                        dumpAsXml(suspendedExchange.getExchange())));
+    }
+
+    /**
+     * Dumps the message as a generic XML structure.
+     *
+     * @param  exchange the exchange to dump as XML
+     * @return          the XML
+     */
+    private String dumpAsXml(Exchange exchange) {
+        return MessageHelper.dumpAsXml(exchange.getIn(), true, 2, isBodyIncludeStreams(), isBodyIncludeFiles(),
+                getBodyMaxChars());
+    }
+
+    /**
      * Represents a {@link org.apache.camel.spi.Breakpoint} that has a {@link Condition} on a specific node id.
      */
     private final class NodeBreakpoint extends BreakpointSupport implements Condition {
@@ -623,8 +655,7 @@ public final class BacklogDebugger extends ServiceSupport {
             String toNode = definition.getId();
             String routeId = CamelContextHelper.getRouteId(definition);
             String exchangeId = exchange.getExchangeId();
-            String messageAsXml = MessageHelper.dumpAsXml(exchange.getIn(), true, 2, isBodyIncludeStreams(),
-                    isBodyIncludeFiles(), getBodyMaxChars());
+            String messageAsXml = dumpAsXml(exchange);
             long uid = debugCounter.incrementAndGet();
 
             BacklogTracerEventMessage msg
@@ -686,8 +717,7 @@ public final class BacklogDebugger extends ServiceSupport {
             String toNode = definition.getId();
             String routeId = CamelContextHelper.getRouteId(definition);
             String exchangeId = exchange.getExchangeId();
-            String messageAsXml = MessageHelper.dumpAsXml(exchange.getIn(), true, 2, isBodyIncludeStreams(),
-                    isBodyIncludeFiles(), getBodyMaxChars());
+            String messageAsXml = dumpAsXml(exchange);
             long uid = debugCounter.incrementAndGet();
 
             BacklogTracerEventMessage msg
