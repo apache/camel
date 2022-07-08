@@ -13457,10 +13457,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>splunk-hec:splunkURL/token</code>
      * 
      * Path parameter: splunkURL (required)
-     * Splunk Host URL
+     * Splunk Host and Port (example: my_splunk_server:8089)
      * 
      * Path parameter: token (required)
-     * Splunk authorization token
+     * Splunk HEC token (this is the token created for HEC and not the user's
+     * token)
      * 
      * @param path splunkURL/token
      * @return the dsl builder
@@ -13481,10 +13482,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>splunk-hec:splunkURL/token</code>
      * 
      * Path parameter: splunkURL (required)
-     * Splunk Host URL
+     * Splunk Host and Port (example: my_splunk_server:8089)
      * 
      * Path parameter: token (required)
-     * Splunk authorization token
+     * Splunk HEC token (this is the token created for HEC and not the user's
+     * token)
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
