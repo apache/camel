@@ -21,7 +21,7 @@ public class EventHubsEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(22);
+        Set<String> props = new HashSet<>(24);
         props.add("amqpRetryOptions");
         props.add("amqpTransportType");
         props.add("blobAccessKey");
@@ -29,6 +29,8 @@ public class EventHubsEndpointUriFactory extends org.apache.camel.support.compon
         props.add("blobContainerName");
         props.add("blobStorageSharedKeyCredential");
         props.add("bridgeErrorHandler");
+        props.add("checkpointBatchSize");
+        props.add("checkpointBatchTimeout");
         props.add("checkpointStore");
         props.add("connectionString");
         props.add("consumerGroupName");
