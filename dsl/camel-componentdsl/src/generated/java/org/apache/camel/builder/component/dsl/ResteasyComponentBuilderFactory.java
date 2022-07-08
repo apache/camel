@@ -165,6 +165,22 @@ public interface ResteasyComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether to the HTTP request should follow redirects. By default the
+         * HTTP request does not follow redirects.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param followRedirects the value to set
+         * @return the dsl builder
+         */
+        default ResteasyComponentBuilder followRedirects(boolean followRedirects) {
+            doSetProperty("followRedirects", followRedirects);
+            return this;
+        }
+        /**
          * Whether to skip mapping all the Camel headers as HTTP request
          * headers. If there are no data from Camel headers needed to be
          * included in the HTTP request then this can avoid parsing overhead
@@ -397,6 +413,7 @@ public interface ResteasyComponentBuilderFactory {
             case "copyHeaders": ((ResteasyComponent) component).setCopyHeaders((boolean) value); return true;
             case "lazyStartProducer": ((ResteasyComponent) component).setLazyStartProducer((boolean) value); return true;
             case "responsePayloadStreamingThreshold": ((ResteasyComponent) component).setResponsePayloadStreamingThreshold((int) value); return true;
+            case "followRedirects": ((ResteasyComponent) component).setFollowRedirects((boolean) value); return true;
             case "skipRequestHeaders": ((ResteasyComponent) component).setSkipRequestHeaders((boolean) value); return true;
             case "skipResponseHeaders": ((ResteasyComponent) component).setSkipResponseHeaders((boolean) value); return true;
             case "allowJavaSerializedObject": ((ResteasyComponent) component).setAllowJavaSerializedObject((boolean) value); return true;
