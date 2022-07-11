@@ -141,6 +141,12 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
             key = StringHelper.before(remainder, "/");
             subkey = StringHelper.after(remainder, "/");
             defaultValue = StringHelper.after(subkey, ":");
+            if (ObjectHelper.isNotEmpty(defaultValue)) {
+                if (defaultValue.contains("@")) {
+                    version = StringHelper.after(defaultValue, "@");
+                    defaultValue = StringHelper.before(defaultValue, "@");
+                }
+            }
             if (subkey.contains(":")) {
                 subkey = StringHelper.before(subkey, ":");
             }
@@ -178,6 +184,10 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
         GetSecretValueRequest request;
         GetSecretValueRequest.Builder builder = GetSecretValueRequest.builder();
         builder.secretId(key);
+        System.err.println(key);
+        System.err.println(subkey);
+        System.err.println(defaultValue);
+        System.err.println(version);
         if (ObjectHelper.isNotEmpty(version)) {
             builder.versionId(version);
         }
