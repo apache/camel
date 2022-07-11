@@ -136,6 +136,7 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
         String subkey = null;
         String returnValue = null;
         String defaultValue = null;
+        String version = null;
         if (remainder.contains("/")) {
             key = StringHelper.before(remainder, "/");
             subkey = StringHelper.after(remainder, "/");
@@ -143,14 +144,25 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
             if (subkey.contains(":")) {
                 subkey = StringHelper.before(subkey, ":");
             }
+            if (subkey.contains("@")) {
+                version = StringHelper.after(subkey, "@");
+                subkey = StringHelper.before(subkey, "@");
+            }
         } else if (remainder.contains(":")) {
             key = StringHelper.before(remainder, ":");
             defaultValue = StringHelper.after(remainder, ":");
+            if (remainder.contains("@")) {
+                version = StringHelper.after(remainder, "@");
+                defaultValue = StringHelper.before(defaultValue, "@");
+            }
+        } else {
+            key = StringHelper.before(remainder, "@");
+            version = StringHelper.after(remainder, "@");
         }
 
         if (key != null) {
             try {
-                returnValue = getSecretFromSource(key, subkey, defaultValue);
+                returnValue = getSecretFromSource(key, subkey, defaultValue, version);
             } catch (JsonProcessingException e) {
                 throw new RuntimeCamelException("Something went wrong while recovering " + key + " from vault");
             }
@@ -160,12 +172,15 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
     }
 
     private String getSecretFromSource(
-            String key, String subkey, String defaultValue)
+            String key, String subkey, String defaultValue, String version)
             throws JsonProcessingException {
         String returnValue;
         GetSecretValueRequest request;
         GetSecretValueRequest.Builder builder = GetSecretValueRequest.builder();
         builder.secretId(key);
+        if (ObjectHelper.isNotEmpty(version)) {
+            builder.versionId(version);
+        }
         request = builder.build();
         try {
             GetSecretValueResponse secret = client.getSecretValue(request);
