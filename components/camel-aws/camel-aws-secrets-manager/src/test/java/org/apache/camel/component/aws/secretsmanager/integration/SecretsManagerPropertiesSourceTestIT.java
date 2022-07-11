@@ -386,7 +386,8 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{aws:test:pippo@e8d0e680-a504-4b70-a9b2-acf5efe0ba23}}")).to("mock:bar");
+                from("direct:version").setBody(simple("{{aws:test:pippo@e8d0e680-a504-4b70-a9b2-acf5efe0ba23}}"))
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -405,7 +406,8 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{aws:test1:pippo@e8d0e680-a504-4b70-a9b2-acf5efe0ba23}}")).to("mock:bar");
+                from("direct:version").setBody(simple("{{aws:test1:pippo@e8d0e680-a504-4b70-a9b2-acf5efe0ba23}}"))
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -424,7 +426,8 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{aws:test1:pippo@e8d0e680-a504-4b70-a9b2-acf5efe0ba29}}")).to("mock:bar");
+                from("direct:version").setBody(simple("{{aws:test1:pippo@e8d0e680-a504-4b70-a9b2-acf5efe0ba29}}"))
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -443,7 +446,8 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{aws:test/id:pippo@e8d0e680-a504-4b70-a9b2-acf5efe0ba23}}")).to("mock:bar");
+                from("direct:version").setBody(simple("{{aws:test/id:pippo@e8d0e680-a504-4b70-a9b2-acf5efe0ba23}}"))
+                        .to("mock:bar");
             }
         });
         context.start();
