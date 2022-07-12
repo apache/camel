@@ -156,8 +156,10 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
                 defaultValue = StringHelper.before(defaultValue, "@");
             }
         } else {
-            key = StringHelper.before(remainder, "@");
-            version = StringHelper.after(remainder, "@");
+            if (remainder.contains("@")) {
+                key = StringHelper.before(remainder, "@");
+                version = StringHelper.after(remainder, "@");
+            }
         }
 
         if (key != null) {
