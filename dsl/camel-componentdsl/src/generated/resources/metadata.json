@@ -7378,7 +7378,7 @@
     "version": "3.19.0-SNAPSHOT",
     "scheme": "whatsapp",
     "extendsScheme": "",
-    "syntax": "whatsapp:type",
+    "syntax": "whatsapp:phoneNumberId",
     "async": false,
     "api": false,
     "consumerOnly": false,

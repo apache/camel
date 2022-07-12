@@ -15441,12 +15441,12 @@ public class StaticEndpointBuilders {
      * Since: 3.18
      * Maven coordinates: org.apache.camel:camel-whatsapp
      * 
-     * Syntax: <code>whatsapp:type</code>
+     * Syntax: <code>whatsapp:phoneNumberId</code>
      * 
      * Path parameter: phoneNumberId (required)
      * The phone number ID taken from whatsapp-business dashboard.
      * 
-     * @param path type
+     * @param path phoneNumberId
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.WhatsAppEndpointBuilderFactory.WhatsAppEndpointBuilder whatsapp(
@@ -15461,14 +15461,14 @@ public class StaticEndpointBuilders {
      * Since: 3.18
      * Maven coordinates: org.apache.camel:camel-whatsapp
      * 
-     * Syntax: <code>whatsapp:type</code>
+     * Syntax: <code>whatsapp:phoneNumberId</code>
      * 
      * Path parameter: phoneNumberId (required)
      * The phone number ID taken from whatsapp-business dashboard.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path type
+     * @param path phoneNumberId
      * @return the dsl builder
      */
     public static org.apache.camel.builder.endpoint.dsl.WhatsAppEndpointBuilderFactory.WhatsAppEndpointBuilder whatsapp(
