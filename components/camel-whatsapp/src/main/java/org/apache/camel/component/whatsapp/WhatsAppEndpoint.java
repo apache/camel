@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Send messages.
  */
-@UriEndpoint(firstVersion = "3.18.0", scheme = "whatsapp", title = "WhatsApp", syntax = "whatsapp:type",
+@UriEndpoint(firstVersion = "3.18.0", scheme = "whatsapp", title = "WhatsApp", syntax = "whatsapp:phoneNumberId",
              category = {
                      Category.CLOUD, Category.API,
                      Category.CHAT },
