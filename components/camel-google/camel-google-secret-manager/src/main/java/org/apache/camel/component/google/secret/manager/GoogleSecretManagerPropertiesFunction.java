@@ -121,7 +121,7 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
 
     @Override
     public String getName() {
-        return "aws";
+        return "gcp";
     }
 
     @Override
