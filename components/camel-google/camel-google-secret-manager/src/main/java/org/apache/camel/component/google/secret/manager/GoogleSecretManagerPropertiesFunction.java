@@ -178,7 +178,8 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
             throws JsonProcessingException {
         String returnValue = null;
         try {
-            SecretVersionName secretVersionName = SecretVersionName.of(projectId, key, (ObjectHelper.isNotEmpty(version) ? version:"latest"));
+            SecretVersionName secretVersionName
+                    = SecretVersionName.of(projectId, key, (ObjectHelper.isNotEmpty(version) ? version : "latest"));
             AccessSecretVersionResponse response = client.accessSecretVersion(secretVersionName);
             if (ObjectHelper.isNotEmpty(response)) {
                 returnValue = response.getPayload().getData().toStringUtf8();
