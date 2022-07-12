@@ -331,6 +331,7 @@
 ** xref:web3j-component.adoc[Web3j Ethereum Blockchain]
 ** xref:webhook-component.adoc[Webhook]
 ** xref:weka-component.adoc[Weka]
+** xref:whatsapp-component.adoc[WhatsApp]
 ** xref:wordpress-component.adoc[Wordpress]
 ** xref:workday-component.adoc[Workday]
 ** xref:xchange-component.adoc[XChange]

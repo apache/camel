@@ -15434,6 +15434,49 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.WekaEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * WhatsApp (camel-whatsapp)
+     * Send messages.
+     * 
+     * Category: cloud,api,chat
+     * Since: 3.18
+     * Maven coordinates: org.apache.camel:camel-whatsapp
+     * 
+     * Syntax: <code>whatsapp:type</code>
+     * 
+     * Path parameter: phoneNumberId (required)
+     * The phone number ID taken from whatsapp-business dashboard.
+     * 
+     * @param path type
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.WhatsAppEndpointBuilderFactory.WhatsAppEndpointBuilder whatsapp(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.WhatsAppEndpointBuilderFactory.endpointBuilder("whatsapp", path);
+    }
+    /**
+     * WhatsApp (camel-whatsapp)
+     * Send messages.
+     * 
+     * Category: cloud,api,chat
+     * Since: 3.18
+     * Maven coordinates: org.apache.camel:camel-whatsapp
+     * 
+     * Syntax: <code>whatsapp:type</code>
+     * 
+     * Path parameter: phoneNumberId (required)
+     * The phone number ID taken from whatsapp-business dashboard.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path type
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.WhatsAppEndpointBuilderFactory.WhatsAppEndpointBuilder whatsapp(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.WhatsAppEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Wordpress (camel-wordpress)
      * Manage posts and users using Wordpress API.
      * 

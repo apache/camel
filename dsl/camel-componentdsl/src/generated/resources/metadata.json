@@ -7363,6 +7363,28 @@
     "producerOnly": true,
     "lenientProperties": false
   },
+  "WhatsappComponentBuilderFactory": {
+    "kind": "component",
+    "name": "whatsapp",
+    "title": "WhatsApp",
+    "description": "Send messages.",
+    "deprecated": false,
+    "firstVersion": "3.18.0",
+    "label": "cloud,api,chat",
+    "javaType": "org.apache.camel.component.whatsapp.WhatsAppComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-whatsapp",
+    "version": "3.19.0-SNAPSHOT",
+    "scheme": "whatsapp",
+    "extendsScheme": "",
+    "syntax": "whatsapp:type",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false
+  },
   "WordpressComponentBuilderFactory": {
     "kind": "component",
     "name": "wordpress",

@@ -4461,6 +4461,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.WekaComponentBuilderFactory.weka();
     }
     /**
+     * WhatsApp (camel-whatsapp)
+     * Send messages.
+     * 
+     * Category: cloud,api,chat
+     * Since: 3.18
+     * Maven coordinates: org.apache.camel:camel-whatsapp
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.WhatsappComponentBuilderFactory.WhatsappComponentBuilder whatsapp() {
+        return org.apache.camel.builder.component.dsl.WhatsappComponentBuilderFactory.whatsapp();
+    }
+    /**
      * Wordpress (camel-wordpress)
      * Manage posts and users using Wordpress API.
      * 
