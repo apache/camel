@@ -186,10 +186,6 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
         GetSecretValueRequest request;
         GetSecretValueRequest.Builder builder = GetSecretValueRequest.builder();
         builder.secretId(key);
-        System.err.println(key);
-        System.err.println(subkey);
-        System.err.println(defaultValue);
-        System.err.println(version);
         if (ObjectHelper.isNotEmpty(version)) {
             builder.versionId(version);
         }
