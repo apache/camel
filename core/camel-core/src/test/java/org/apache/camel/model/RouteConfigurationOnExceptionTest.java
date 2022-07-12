@@ -6,11 +6,8 @@ import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.apache.camel.builder.TemplatedRouteBuilder;
-import org.apache.camel.component.direct.DirectConsumerNotAvailableException;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import java.net.ConnectException;
 
 public class RouteConfigurationOnExceptionTest extends ContextTestSupport {
 
@@ -81,7 +78,6 @@ public class RouteConfigurationOnExceptionTest extends ContextTestSupport {
         final String testMsg = "{ test msg }";
 
         mockEndpoint.expectedMessageCount(0);
-        //mockEndpoint.expectedBodiesReceived(testMsg);
         template.sendBody("direct:start", testMsg);
         mockEndpoint.assertIsSatisfied();
 
