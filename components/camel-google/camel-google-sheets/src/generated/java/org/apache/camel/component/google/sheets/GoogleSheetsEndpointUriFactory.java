@@ -46,7 +46,6 @@ public class GoogleSheetsEndpointUriFactory extends org.apache.camel.support.com
         props.add("greedy");
         props.add("inBody");
         props.add("initialDelay");
-        props.add("keyResource");
         props.add("lazyStartProducer");
         props.add("methodName");
         props.add("pollStrategy");
@@ -59,6 +58,7 @@ public class GoogleSheetsEndpointUriFactory extends org.apache.camel.support.com
         props.add("schedulerProperties");
         props.add("scopes");
         props.add("sendEmptyMessageWhenIdle");
+        props.add("serviceAccountKey");
         props.add("splitResult");
         props.add("spreadsheetId");
         props.add("startScheduler");

@@ -63,7 +63,7 @@ public class GoogleMailComponent
                         config.getScopes(), config.getApplicationName(), config.getDelegate());
             } else {
                 throw new IllegalArgumentException(
-                        "(clientId and clientSecret) or keyResource are required to create Gmail client");
+                        "(clientId and clientSecret) or serviceAccountKey are required to create Gmail client");
             }
         }
         return client;

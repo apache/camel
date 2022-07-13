@@ -33,7 +33,7 @@ public interface GoogleSheetsClientFactory {
 
     Sheets makeClient(
             CamelContext camelContext,
-            String keyResource,
+            String serviceAccountKey,
             Collection<String> scopes,
             String applicationName,
             String delegate);

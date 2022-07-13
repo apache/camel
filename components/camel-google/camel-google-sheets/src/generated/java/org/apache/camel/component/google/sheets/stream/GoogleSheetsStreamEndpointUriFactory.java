@@ -37,7 +37,6 @@ public class GoogleSheetsStreamEndpointUriFactory extends org.apache.camel.suppo
         props.add("greedy");
         props.add("includeGridData");
         props.add("initialDelay");
-        props.add("keyResource");
         props.add("majorDimension");
         props.add("maxResults");
         props.add("pollStrategy");
@@ -50,6 +49,7 @@ public class GoogleSheetsStreamEndpointUriFactory extends org.apache.camel.suppo
         props.add("schedulerProperties");
         props.add("scopes");
         props.add("sendEmptyMessageWhenIdle");
+        props.add("serviceAccountKey");
         props.add("splitResults");
         props.add("spreadsheetId");
         props.add("startScheduler");

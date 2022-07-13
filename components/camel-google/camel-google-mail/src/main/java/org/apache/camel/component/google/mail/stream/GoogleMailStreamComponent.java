@@ -57,8 +57,8 @@ public class GoogleMailStreamComponent extends DefaultComponent {
                         googleMailConfiguration.getClientSecret(), googleMailConfiguration.getScopes(),
                         googleMailConfiguration.getApplicationName(), googleMailConfiguration.getRefreshToken(),
                         googleMailConfiguration.getAccessToken());
-            } else if (googleMailConfiguration.getKeyResource() != null) {
-                client = getClientFactory().makeClient(getCamelContext(), googleMailConfiguration.getKeyResource(),
+            } else if (googleMailConfiguration.getServiceAccountKey() != null) {
+                client = getClientFactory().makeClient(getCamelContext(), googleMailConfiguration.getServiceAccountKey(),
                         googleMailConfiguration.getScopes(), googleMailConfiguration.getApplicationName(),
                         googleMailConfiguration.getDelegate());
             }

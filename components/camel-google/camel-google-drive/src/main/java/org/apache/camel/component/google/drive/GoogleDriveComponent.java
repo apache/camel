@@ -62,7 +62,7 @@ public class GoogleDriveComponent
                         config.getScopes(), config.getApplicationName(), config.getDelegate());
             } else {
                 throw new IllegalArgumentException(
-                        "(clientId and clientSecret) or keyResource are required to create Google Drive client");
+                        "(clientId and clientSecret) or serviceAccountKey are required to create Google Drive client");
             }
         }
         return client;
