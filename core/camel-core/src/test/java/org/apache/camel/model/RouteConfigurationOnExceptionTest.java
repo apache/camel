@@ -23,80 +23,63 @@ import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.apache.camel.builder.TemplatedRouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class RouteConfigurationOnExceptionTest extends ContextTestSupport {
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+    protected RouteBuilder[] createRouteBuilders() {
+        return new RouteBuilder[] {
+                new RouteBuilder() {
+                    @Override
+                    public void configure() {
+                        routeTemplate("route-template")
+                                .from("direct:start-template")
+                                .routeConfigurationId("my-error-handler")
+                                .throwException(RuntimeException.class, "Expected Error");
+                    }
+                },
+                new RouteBuilder() {
+                    @Override
+                    public void configure() {
+                        TemplatedRouteBuilder.builder(context, "route-template")
+                                .routeId("my-test-file-route")
+                                .add();
+                    }
+                },
+                new RouteBuilder() {
+                    @Override
+                    public void configure() {
+                        from("direct:start-normal")
+                                .routeConfigurationId("my-error-handler")
+                                .throwException(RuntimeException.class, "Expected Error");
+                    }
+                },
+                new RouteConfigurationBuilder() {
+                    @Override
+                    public void configuration() {
+                        routeConfiguration("my-error-handler").onException(Exception.class).handled(true)
+                                .transform(constant("Error Received"))
+                                .to("mock:result");
+                    }
+                }
+        };
     }
 
     @Test
-    public void testGlobal() throws Exception {
-        context.addRoutes(new RouteConfigurationBuilder() {
-            @Override
-            public void configuration() throws Exception {
-                routeConfiguration("my-error-handler").onException(Exception.class)
-                        .handled(true)
-                        .log(LoggingLevel.ERROR, log, "--> Exception: ${exception.message}, Delivery was NOT rolled back");
-            }
-        });
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                routeTemplate("route-template-1")
-                        .templateParameter("route_url-1")
-                        .templateParameter("route_url-2")
-                        .templateParameter("route-id-param-id")
+    void testRouteTemplateCanSupportRouteConfiguration() throws Exception {
 
-                        .from("direct:{{route_url-1}}")
-                        .routeConfigurationId("my-error-handler")
-                        .end()
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedBodiesReceived("Error Received");
+        template.sendBody("direct:start-template", "foo");
+        assertMockEndpointsSatisfied();
+    }
 
-                        .log(LoggingLevel.INFO, log, "--> Executing")
-                        .to("direct:{{route_url-2}}")
-                        .id("{{route-id-param-id}}")
-                        .log(LoggingLevel.INFO, log, "--> Executed!");
-            }
-        });
-
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-
-                from("direct:start2")
-                        .to("mock:result2");
-            }
-        });
-
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                final String routeId = TemplatedRouteBuilder.builder(context, "route-template-1")
-                        .routeId("my-test-file-route")
-                        .parameter("route_url-1", "start")
-                        .parameter("route_url-2", "startWrong")
-                        .parameter("route-id-param-id", "my-internal-route-id")
-                        .add();
-            }
-        });
-
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:endpointMock");
-        AdviceWith.adviceWith(context, "my-test-file-route", routeBuilder -> {
-            routeBuilder.replaceFromWith("direct:start");
-            routeBuilder.weaveAddLast().to(mockEndpoint);
-            routeBuilder.setLogRouteAsXml(false);
-        });
-
-        context.start();
-
-        final String testMsg = "{ test msg }";
-
-        mockEndpoint.expectedMessageCount(0);
-        template.sendBody("direct:start", testMsg);
-        mockEndpoint.assertIsSatisfied();
-
+    @Test
+    void testNormalRouteCanSupportRouteConfiguration() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedBodiesReceived("Error Received");
+        template.sendBody("direct:start-normal", "foo");
+        assertMockEndpointsSatisfied();
     }
 }

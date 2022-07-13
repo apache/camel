@@ -36,26 +36,7 @@ import org.apache.camel.FailedToCreateRouteFromTemplateException;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.RouteTemplateContext;
-import org.apache.camel.model.BeanFactoryDefinition;
-import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.model.DefaultRouteTemplateContext;
-import org.apache.camel.model.FaultToleranceConfigurationDefinition;
-import org.apache.camel.model.Model;
-import org.apache.camel.model.ModelCamelContext;
-import org.apache.camel.model.ModelLifecycleStrategy;
-import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.ProcessorDefinitionHelper;
-import org.apache.camel.model.Resilience4jConfigurationDefinition;
-import org.apache.camel.model.RouteConfigurationDefinition;
-import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.RouteDefinitionHelper;
-import org.apache.camel.model.RouteFilters;
-import org.apache.camel.model.RouteTemplateBeanDefinition;
-import org.apache.camel.model.RouteTemplateDefinition;
-import org.apache.camel.model.RouteTemplateParameterDefinition;
-import org.apache.camel.model.TemplatedRouteBeanDefinition;
-import org.apache.camel.model.TemplatedRouteDefinition;
-import org.apache.camel.model.TemplatedRouteParameterDefinition;
+import org.apache.camel.model.*;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
@@ -67,11 +48,7 @@ import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.RouteTemplateLoaderListener;
 import org.apache.camel.spi.RouteTemplateParameterSource;
 import org.apache.camel.spi.ScriptingLanguage;
-import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.support.PatternHelper;
-import org.apache.camel.support.PropertyBindingSupport;
-import org.apache.camel.support.RouteTemplateHelper;
-import org.apache.camel.support.ScriptHelper;
+import org.apache.camel.support.*;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.ObjectHelper;
@@ -96,6 +73,7 @@ public class DefaultModel implements Model {
     private final Map<String, Resilience4jConfigurationDefinition> resilience4jConfigurations = new ConcurrentHashMap<>();
     private final Map<String, FaultToleranceConfigurationDefinition> faultToleranceConfigurations = new ConcurrentHashMap<>();
     private Function<RouteDefinition, Boolean> routeFilter;
+    private RoutesDefinition routeCollection = new RoutesDefinition();
 
     public DefaultModel(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -415,7 +393,11 @@ public class DefaultModel implements Model {
                     routeId, routeTemplateId,
                     "duplicate id detected: " + duplicate + ". Please correct ids to be unique among all your routes.");
         }
+
         addRouteDefinition(def);
+        routeCollection.setCamelContext(camelContext);
+        routeCollection.setRoutes(getRouteDefinitions());
+        routeCollection.prepareRoute(def);
         return def.getId();
     }
 
