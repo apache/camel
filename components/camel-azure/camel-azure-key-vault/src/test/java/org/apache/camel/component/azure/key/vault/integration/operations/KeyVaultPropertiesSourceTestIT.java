@@ -226,7 +226,7 @@ public class KeyVaultPropertiesSourceTestIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("azure:database1:pippo@79be21dd88774b91aff2dfa40fa9ea78}}"))
+                from("direct:version").setBody(simple("{{azure:database1:pippo@79be21dd88774b91aff2dfa40fa9ea77}}"))
                         .to("mock:bar");
             }
         });
@@ -247,7 +247,7 @@ public class KeyVaultPropertiesSourceTestIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{azure:database/password:pippo@79be21dd88774b91aff2dfa40fa9ea77}}}}"))
+                from("direct:version").setBody(simple("{{azure:database/password:pippo@79be21dd88774b91aff2dfa40fa9ea77}}"))
                         .to("mock:bar");
             }
         });
