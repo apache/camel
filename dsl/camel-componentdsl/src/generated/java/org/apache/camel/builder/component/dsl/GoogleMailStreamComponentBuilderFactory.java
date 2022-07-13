@@ -277,21 +277,6 @@ public interface GoogleMailStreamComponentBuilderFactory {
             return this;
         }
         /**
-         * Sets .json file with credentials for Service account.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param keyResource the value to set
-         * @return the dsl builder
-         */
-        default GoogleMailStreamComponentBuilder keyResource(
-                java.lang.String keyResource) {
-            doSetProperty("keyResource", keyResource);
-            return this;
-        }
-        /**
          * OAuth 2 refresh token. Using this, the Google Calendar component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
@@ -306,6 +291,21 @@ public interface GoogleMailStreamComponentBuilderFactory {
         default GoogleMailStreamComponentBuilder refreshToken(
                 java.lang.String refreshToken) {
             doSetProperty("refreshToken", refreshToken);
+            return this;
+        }
+        /**
+         * Sets .json file with credentials for Service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param serviceAccountKey the value to set
+         * @return the dsl builder
+         */
+        default GoogleMailStreamComponentBuilder serviceAccountKey(
+                java.lang.String serviceAccountKey) {
+            doSetProperty("serviceAccountKey", serviceAccountKey);
             return this;
         }
     }
@@ -346,8 +346,8 @@ public interface GoogleMailStreamComponentBuilderFactory {
             case "configuration": ((GoogleMailStreamComponent) component).setConfiguration((org.apache.camel.component.google.mail.stream.GoogleMailStreamConfiguration) value); return true;
             case "accessToken": getOrCreateConfiguration((GoogleMailStreamComponent) component).setAccessToken((java.lang.String) value); return true;
             case "clientSecret": getOrCreateConfiguration((GoogleMailStreamComponent) component).setClientSecret((java.lang.String) value); return true;
-            case "keyResource": getOrCreateConfiguration((GoogleMailStreamComponent) component).setKeyResource((java.lang.String) value); return true;
             case "refreshToken": getOrCreateConfiguration((GoogleMailStreamComponent) component).setRefreshToken((java.lang.String) value); return true;
+            case "serviceAccountKey": getOrCreateConfiguration((GoogleMailStreamComponent) component).setServiceAccountKey((java.lang.String) value); return true;
             default: return false;
             }
         }

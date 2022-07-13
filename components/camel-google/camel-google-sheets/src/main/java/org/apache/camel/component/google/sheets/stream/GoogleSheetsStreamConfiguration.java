@@ -63,7 +63,7 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
     private String valueRenderOption = "FORMATTED_VALUE";
     /* Service account */
     @UriParam(label = "security")
-    private String keyResource;
+    private String serviceAccountKey;
     @UriParam
     private String delegate;
 
@@ -215,17 +215,17 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
         this.splitResults = splitResults;
     }
 
-    public String getKeyResource() {
-        return keyResource;
+    public String getServiceAccountKey() {
+        return serviceAccountKey;
     }
 
     /**
      * Sets "*.json" file with credentials for Service account
      * 
-     * @param keyResource String file, classpath, or http url
+     * @param serviceAccountKey String file, classpath, or http url
      */
-    public void setKeyResource(String keyResource) {
-        this.keyResource = keyResource;
+    public void setServiceAccountKey(String serviceAccountKey) {
+        this.serviceAccountKey = serviceAccountKey;
     }
 
     public String getDelegate() {

@@ -720,21 +720,6 @@ public interface GoogleSheetsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets .json file with credentials for Service account.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param keyResource the value to set
-         * @return the dsl builder
-         */
-        default GoogleSheetsEndpointConsumerBuilder keyResource(
-                String keyResource) {
-            doSetProperty("keyResource", keyResource);
-            return this;
-        }
-        /**
          * OAuth 2 refresh token. Using this, the Google Sheets component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
@@ -749,6 +734,21 @@ public interface GoogleSheetsEndpointBuilderFactory {
         default GoogleSheetsEndpointConsumerBuilder refreshToken(
                 String refreshToken) {
             doSetProperty("refreshToken", refreshToken);
+            return this;
+        }
+        /**
+         * Sets .json file with credentials for Service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param serviceAccountKey the value to set
+         * @return the dsl builder
+         */
+        default GoogleSheetsEndpointConsumerBuilder serviceAccountKey(
+                String serviceAccountKey) {
+            doSetProperty("serviceAccountKey", serviceAccountKey);
             return this;
         }
     }
@@ -1047,21 +1047,6 @@ public interface GoogleSheetsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets .json file with credentials for Service account.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param keyResource the value to set
-         * @return the dsl builder
-         */
-        default GoogleSheetsEndpointProducerBuilder keyResource(
-                String keyResource) {
-            doSetProperty("keyResource", keyResource);
-            return this;
-        }
-        /**
          * OAuth 2 refresh token. Using this, the Google Sheets component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
@@ -1076,6 +1061,21 @@ public interface GoogleSheetsEndpointBuilderFactory {
         default GoogleSheetsEndpointProducerBuilder refreshToken(
                 String refreshToken) {
             doSetProperty("refreshToken", refreshToken);
+            return this;
+        }
+        /**
+         * Sets .json file with credentials for Service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param serviceAccountKey the value to set
+         * @return the dsl builder
+         */
+        default GoogleSheetsEndpointProducerBuilder serviceAccountKey(
+                String serviceAccountKey) {
+            doSetProperty("serviceAccountKey", serviceAccountKey);
             return this;
         }
     }
@@ -1269,20 +1269,6 @@ public interface GoogleSheetsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets .json file with credentials for Service account.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param keyResource the value to set
-         * @return the dsl builder
-         */
-        default GoogleSheetsEndpointBuilder keyResource(String keyResource) {
-            doSetProperty("keyResource", keyResource);
-            return this;
-        }
-        /**
          * OAuth 2 refresh token. Using this, the Google Sheets component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
@@ -1296,6 +1282,21 @@ public interface GoogleSheetsEndpointBuilderFactory {
          */
         default GoogleSheetsEndpointBuilder refreshToken(String refreshToken) {
             doSetProperty("refreshToken", refreshToken);
+            return this;
+        }
+        /**
+         * Sets .json file with credentials for Service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param serviceAccountKey the value to set
+         * @return the dsl builder
+         */
+        default GoogleSheetsEndpointBuilder serviceAccountKey(
+                String serviceAccountKey) {
+            doSetProperty("serviceAccountKey", serviceAccountKey);
             return this;
         }
     }

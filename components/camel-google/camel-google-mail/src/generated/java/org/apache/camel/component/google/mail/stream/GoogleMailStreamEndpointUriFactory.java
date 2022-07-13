@@ -37,7 +37,6 @@ public class GoogleMailStreamEndpointUriFactory extends org.apache.camel.support
         props.add("greedy");
         props.add("index");
         props.add("initialDelay");
-        props.add("keyResource");
         props.add("labels");
         props.add("markAsRead");
         props.add("maxResults");
@@ -51,6 +50,7 @@ public class GoogleMailStreamEndpointUriFactory extends org.apache.camel.support
         props.add("schedulerProperties");
         props.add("scopes");
         props.add("sendEmptyMessageWhenIdle");
+        props.add("serviceAccountKey");
         props.add("startScheduler");
         props.add("timeUnit");
         props.add("useFixedDelay");
