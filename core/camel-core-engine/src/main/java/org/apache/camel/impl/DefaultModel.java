@@ -97,7 +97,6 @@ public class DefaultModel implements Model {
     private final Map<String, Resilience4jConfigurationDefinition> resilience4jConfigurations = new ConcurrentHashMap<>();
     private final Map<String, FaultToleranceConfigurationDefinition> faultToleranceConfigurations = new ConcurrentHashMap<>();
     private Function<RouteDefinition, Boolean> routeFilter;
-    private RoutesDefinition routeCollection = new RoutesDefinition();
 
     public DefaultModel(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -419,6 +418,8 @@ public class DefaultModel implements Model {
         }
 
         addRouteDefinition(def);
+
+        RoutesDefinition routeCollection = new RoutesDefinition();
         routeCollection.setCamelContext(camelContext);
         routeCollection.setRoutes(getRouteDefinitions());
         routeCollection.prepareRoute(def);
