@@ -33,10 +33,10 @@ import org.springframework.vault.core.VaultTemplate;
 import org.springframework.vault.support.VaultResponse;
 
 /**
- * A {@link PropertiesFunction} that lookup the property value from AWS Secrets Manager service.
+ * A {@link PropertiesFunction} that lookup the property value from Hashicorp Vault instance.
  * <p/>
- * The credentials to access Secrets Manager is defined using three environment variables representing the static
- * credentials:
+ * The credentials to access Hashicorp Vault is defined using five environment variables representing the static
+ * credentials and service location:
  * <ul>
  * <li><tt>CAMEL_VAULT_AWS_ACCESS_KEY</tt></li>
  * <li><tt>CAMEL_VAULT_AWS_SECRET_KEY</tt></li>
