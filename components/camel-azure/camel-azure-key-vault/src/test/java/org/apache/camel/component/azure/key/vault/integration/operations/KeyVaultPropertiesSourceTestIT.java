@@ -144,7 +144,8 @@ public class KeyVaultPropertiesSourceTestIT extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{azure:database/password@79be21dd88774b91aff2dfa40fa9ea77}}")).to("mock:bar");
+                from("direct:version").setBody(simple("{{azure:database/password@79be21dd88774b91aff2dfa40fa9ea77}}"))
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -169,7 +170,8 @@ public class KeyVaultPropertiesSourceTestIT extends CamelTestSupport {
         });
         context.start();
 
-        getMockEndpoint("mock:bar").expectedBodiesReceived("{\"username\":\"admin\",\"password\":\"password123\",\"engine\":\"postgres\",\"host\":\"127.0.0.1\",\"port\":\"3128\",\"dbname\":\"db\"}");
+        getMockEndpoint("mock:bar").expectedBodiesReceived(
+                "{\"username\":\"admin\",\"password\":\"password123\",\"engine\":\"postgres\",\"host\":\"127.0.0.1\",\"port\":\"3128\",\"dbname\":\"db\"}");
 
         template.sendBody("direct:version", "Hello World");
         assertMockEndpointsSatisfied();
@@ -190,7 +192,8 @@ public class KeyVaultPropertiesSourceTestIT extends CamelTestSupport {
         });
         context.start();
 
-        getMockEndpoint("mock:bar").expectedBodiesReceived("{\"username\":\"admin\",\"password\":\"password123\",\"engine\":\"postgres\",\"host\":\"127.0.0.1\",\"port\":\"3128\",\"dbname\":\"db\"}");
+        getMockEndpoint("mock:bar").expectedBodiesReceived(
+                "{\"username\":\"admin\",\"password\":\"password123\",\"engine\":\"postgres\",\"host\":\"127.0.0.1\",\"port\":\"3128\",\"dbname\":\"db\"}");
 
         template.sendBody("direct:version", "Hello World");
         assertMockEndpointsSatisfied();
