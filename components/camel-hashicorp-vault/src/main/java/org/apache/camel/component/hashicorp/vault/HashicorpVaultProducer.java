@@ -107,6 +107,7 @@ public class HashicorpVaultProducer extends DefaultProducer {
         exchange.getMessage().setBody(secretsList);
     }
 
+
     @Override
     public HashicorpVaultEndpoint getEndpoint() {
         return (HashicorpVaultEndpoint) super.getEndpoint();

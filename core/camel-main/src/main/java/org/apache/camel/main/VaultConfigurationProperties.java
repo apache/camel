@@ -25,6 +25,7 @@ public class VaultConfigurationProperties extends VaultConfiguration implements 
     private AwsVaultConfigurationProperties aws;
     private GcpVaultConfigurationProperties gcp;
     private AzureVaultConfigurationProperties azure;
+    private HashicorpVaultConfigurationProperties hashicorp;
 
     public VaultConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -45,6 +46,9 @@ public class VaultConfigurationProperties extends VaultConfiguration implements 
         }
         if (azure != null) {
             azure.close();
+        }
+        if (hashicorp != null) {
+            hashicorp.close();
         }
     }
 
@@ -78,5 +82,13 @@ public class VaultConfigurationProperties extends VaultConfiguration implements 
             azure = new AzureVaultConfigurationProperties(parent);
         }
         return azure;
+    }
+
+    @Override
+    public HashicorpVaultConfigurationProperties hashicorp() {
+        if (hashicorp == null) {
+            hashicorp = new HashicorpVaultConfigurationProperties(parent);
+        }
+        return hashicorp;
     }
 }

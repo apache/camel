@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.vault.AwsVaultConfiguration;
 import org.apache.camel.vault.AzureVaultConfiguration;
 import org.apache.camel.vault.GcpVaultConfiguration;
+import org.apache.camel.vault.HashicorpVaultConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -169,4 +170,28 @@ public class MainVaultTest {
         main.stop();
     }
 
+    @Test
+    public void testMainHashicorp() throws Exception {
+        Main main = new Main();
+
+        main.addInitialProperty("camel.vault.hashicorp.token", "1111");
+        main.addInitialProperty("camel.vault.hashicorp.engine", "sec");
+        main.addInitialProperty("camel.vault.hashicorp.host", "localhost");
+        main.addInitialProperty("camel.vault.hashicorp.port", "8200");
+        main.addInitialProperty("camel.vault.hashicorp.scheme", "https");
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        HashicorpVaultConfiguration cfg = context.getVaultConfiguration().hashicorp();
+        assertNotNull(cfg);
+
+        Assertions.assertEquals("1111", cfg.getToken());
+        Assertions.assertEquals("sec", cfg.getEngine());
+        Assertions.assertEquals("localhost", cfg.getHost());
+        Assertions.assertEquals("8200", cfg.getPort());
+        Assertions.assertEquals("https", cfg.getScheme());
+        main.stop();
+    }
 }
