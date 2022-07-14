@@ -29,8 +29,8 @@ public class HashicorpVaultConfigurationPropertiesConfigurer extends org.apache.
         case "Engine": target.setEngine(property(camelContext, java.lang.String.class, value)); return true;
         case "gcpvaultconfiguration":
         case "GcpVaultConfiguration": target.setGcpVaultConfiguration(property(camelContext, org.apache.camel.vault.GcpVaultConfiguration.class, value)); return true;
-        case "hashicorp":
-        case "Hashicorp": target.setHashicorp(property(camelContext, org.apache.camel.vault.HashicorpVaultConfiguration.class, value)); return true;
+        case "hashicorpvaultconfiguration":
+        case "HashicorpVaultConfiguration": target.setHashicorpVaultConfiguration(property(camelContext, org.apache.camel.vault.HashicorpVaultConfiguration.class, value)); return true;
         case "host":
         case "Host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "port":
@@ -54,8 +54,8 @@ public class HashicorpVaultConfigurationPropertiesConfigurer extends org.apache.
         case "Engine": return java.lang.String.class;
         case "gcpvaultconfiguration":
         case "GcpVaultConfiguration": return org.apache.camel.vault.GcpVaultConfiguration.class;
-        case "hashicorp":
-        case "Hashicorp": return org.apache.camel.vault.HashicorpVaultConfiguration.class;
+        case "hashicorpvaultconfiguration":
+        case "HashicorpVaultConfiguration": return org.apache.camel.vault.HashicorpVaultConfiguration.class;
         case "host":
         case "Host": return java.lang.String.class;
         case "port":
@@ -80,8 +80,8 @@ public class HashicorpVaultConfigurationPropertiesConfigurer extends org.apache.
         case "Engine": return target.getEngine();
         case "gcpvaultconfiguration":
         case "GcpVaultConfiguration": return target.getGcpVaultConfiguration();
-        case "hashicorp":
-        case "Hashicorp": return target.getHashicorp();
+        case "hashicorpvaultconfiguration":
+        case "HashicorpVaultConfiguration": return target.getHashicorpVaultConfiguration();
         case "host":
         case "Host": return target.getHost();
         case "port":
