@@ -41,7 +41,7 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         });
         context.start();
 
-        getMockEndpoint("mock:bar").expectedBodiesReceived("{id=21}");
+        getMockEndpoint("mock:bar").expectedBodiesReceived("{id=21, password=password, username=admin}");
 
         template.sendBody("direct:start", "Hello World");
 
@@ -86,23 +86,25 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         });
         context.start();
 
-        getMockEndpoint("mock:bar").expectedBodiesReceived("pippo", "pippo");
+        getMockEndpoint("mock:bar").expectedBodiesReceived("admin", "password");
 
         template.sendBody("direct:username", "Hello World");
         template.sendBody("direct:password", "Hello World");
         assertMockEndpointsSatisfied();
     }
 
-    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_ACCESS_KEY", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_SECRET_KEY", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME_ENV", matches = ".*")
     @Test
     public void testSecretNotFoundFunction() {
         Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:start").setBody(simple("{{aws:testExample}}")).to("mock:bar");
+                    from("direct:start").setBody(simple("{{hashicorp:testExample}}")).to("mock:bar");
                 }
             });
             context.start();
@@ -115,16 +117,18 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         });
     }
 
-    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_ACCESS_KEY", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_SECRET_KEY", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME_ENV", matches = ".*")
     @Test
     public void testComplexNoSubkeyPropertiesFunction() {
         Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:username").setBody(simple("{{aws:database_sample/not_existent}}")).to("mock:bar");
+                    from("direct:username").setBody(simple("{{hashicorp:database_sample/not_existent}}")).to("mock:bar");
                 }
             });
             context.start();
@@ -136,16 +140,18 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         });
     }
 
-    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_ACCESS_KEY", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_SECRET_KEY", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME_ENV", matches = ".*")
     @Test
     public void testComplexCustomPropertiesDefaultValueFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{aws:postgresql/additional1:admin}}")).to("mock:bar");
-                from("direct:password").setBody(simple("{{aws:postgresql/additional2:secret}}")).to("mock:bar");
+                from("direct:username").setBody(simple("{{hashicorp:hello/additional1:admin}}")).to("mock:bar");
+                from("direct:password").setBody(simple("{{hashicorp:hello/additional2:secret}}")).to("mock:bar");
             }
         });
         context.start();
@@ -157,16 +163,18 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_ACCESS_KEY", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_SECRET_KEY", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME_ENV", matches = ".*")
     @Test
     public void testComplexCustomPropertiesDefaultValueExceptionFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{aws:test-3/additional1:admin}}")).to("mock:bar");
-                from("direct:password").setBody(simple("{{aws:test-3/additional2:secret}}")).to("mock:bar");
+                from("direct:username").setBody(simple("{{hashicorp:test-3/additional1:admin}}")).to("mock:bar");
+                from("direct:password").setBody(simple("{{hashicorp:test-3/additional2:secret}}")).to("mock:bar");
             }
         });
         context.start();
@@ -178,17 +186,19 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_ACCESS_KEY", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_SECRET_KEY", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME_ENV", matches = ".*")
     @Test
     public void testComplexCustomPropertiesExceptionFunction() {
         Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:username").setBody(simple("{{aws:test-3/additional1}}")).to("mock:bar");
-                    from("direct:password").setBody(simple("{{aws:test-3/additional2}}")).to("mock:bar");
+                    from("direct:username").setBody(simple("{{hashicorp:test-3/additional1}}")).to("mock:bar");
+                    from("direct:password").setBody(simple("{{hashicorp:test-3/additional2}}")).to("mock:bar");
                 }
             });
             context.start();
