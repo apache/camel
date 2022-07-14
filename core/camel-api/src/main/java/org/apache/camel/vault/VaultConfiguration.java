@@ -90,11 +90,11 @@ public class VaultConfiguration {
         this.azure = azure;
     }
 
-    public HashicorpVaultConfiguration getHashicorp() {
+    public HashicorpVaultConfiguration getHashicorpVaultConfiguration() {
         return hashicorp;
     }
 
-    public void setHashicorp(HashicorpVaultConfiguration hashicorp) {
+    public void setHashicorpVaultConfiguration(HashicorpVaultConfiguration hashicorp) {
         this.hashicorp = hashicorp;
     }
 }
