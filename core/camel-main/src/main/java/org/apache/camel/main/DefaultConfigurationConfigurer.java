@@ -558,7 +558,7 @@ public final class DefaultConfigurationConfigurer {
             vault.setGcpVaultConfiguration(gcp);
         }
         AzureVaultConfiguration azure = getSingleBeanOfType(registry, AzureVaultConfiguration.class);
-        if (gcp != null) {
+        if (azure != null) {
             VaultConfiguration vault = camelContext.getVaultConfiguration();
             vault.setAzureVaultConfiguration(azure);
         }
