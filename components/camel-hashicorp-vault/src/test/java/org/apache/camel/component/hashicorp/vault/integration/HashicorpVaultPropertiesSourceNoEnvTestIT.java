@@ -20,7 +20,6 @@ import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
@@ -29,9 +28,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 // Must be manually tested. Provide your own accessKey and secretKey using -Dcamel.vault.hashicorp.token, -Dcamel.vault.hashicorp.engine, -Dcamel.vault.hashicorp.host, -Dcamel.vault.hashicorp.port and -Dcamel.vault.hashicorp.scheme
 @EnabledIfSystemProperties({
         @EnabledIfSystemProperty(named = "camel.vault.hashicorp.token", matches = ".*",
-                disabledReason = "Token not provided"),
+                                 disabledReason = "Token not provided"),
         @EnabledIfSystemProperty(named = "camel.vault.hashicorp.engine", matches = ".*",
-                disabledReason = "Engine not provided"),
+                                 disabledReason = "Engine not provided"),
         @EnabledIfSystemProperty(named = "camel.vault.hashicorp.host", matches = ".*", disabledReason = "Host not provided"),
         @EnabledIfSystemProperty(named = "camel.vault.hashicorp.port", matches = ".*", disabledReason = "Port not provided"),
         @EnabledIfSystemProperty(named = "camel.vault.hashicorp.scheme", matches = ".*", disabledReason = "Scheme not provided")

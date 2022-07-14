@@ -18,7 +18,6 @@ package org.apache.camel.main;
 
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.Configurer;
-import org.apache.camel.vault.AwsVaultConfiguration;
 import org.apache.camel.vault.HashicorpVaultConfiguration;
 
 /**
