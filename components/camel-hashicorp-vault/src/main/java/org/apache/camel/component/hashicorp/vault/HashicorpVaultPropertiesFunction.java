@@ -38,28 +38,30 @@ import org.springframework.vault.support.VaultResponse;
  * The credentials to access Hashicorp Vault is defined using five environment variables representing the static
  * credentials and service location:
  * <ul>
- * <li><tt>CAMEL_VAULT_AWS_ACCESS_KEY</tt></li>
- * <li><tt>CAMEL_VAULT_AWS_SECRET_KEY</tt></li>
- * <li><tt>CAMEL_VAULT_AWS_REGION</tt></li>
- * <li><tt>CAMEL_VAULT_AWS_USE_DEFAULT_CREDENTIALS_PROVIDER</tt></li>
+ * <li><tt>CAMEL_HASHICORP_VAULT_TOKEN_ENV</tt></li>
+ * <li><tt>CAMEL_HASHICORP_VAULT_ENGINE_ENV</tt></li>
+ * <li><tt>CAMEL_HASHICORP_VAULT_HOST_ENV</tt></li>
+ * <li><tt>CAMEL_HASHICORP_VAULT_PORT_ENV</tt></li>
+ * <li><tt>CAMEL_HASHICORP_VAULT_SCHEME_ENV</tt></li>
  * </ul>
  * <p/>
  *
- * Otherwise it is possible to specify the credentials as properties:
+ * Otherwise it is possible to specify the credentials and service location as properties:
  *
  * <ul>
- * <li><tt>camel.vault.aws.accessKey</tt></li>
- * <li><tt>camel.vault.aws.secretKey</tt></li>
- * <li><tt>camel.vault.aws.region</tt></li>
- * <li><tt>camel.vault.aws.useDefaultCredentialsProvider</tt></li>
+ * <li><tt>camel.vault.hashicorp.token</tt></li>
+ * <li><tt>camel.vault.hashicorp.engine</tt></li>
+ * <li><tt>camel.vault.hashicorp.host</tt></li>
+ * <li><tt>camel.vault.hashicorp.port</tt></li>
+ * <li><tt>camel.vault.hashicorp.scheme</tt></li>
  * </ul>
  * <p/>
  *
  * This implementation is to return the secret value associated with a key. The properties related to this kind of
- * Properties Function are all prefixed with <tt>aws:</tt>. For example asking for <tt>aws:token</tt>, will return the
- * secret value associated to the secret named token on AWS Secrets Manager.
+ * Properties Function are all prefixed with <tt>hashicorp:</tt>. For example asking for <tt>hashicorp:token</tt>, will return the
+ * secret value associated to the secret named token on Hashicorp Vault instance.
  *
- * Another way of retrieving a secret value is using the following notation <tt>aws:database/username</tt>: in this case
+ * Another way of retrieving a secret value is using the following notation <tt>hashicorp:database/username</tt>: in this case
  * the field username of the secret database will be returned. As a fallback, the user could provide a default value,
  * which will be returned in case the secret doesn't exist, the secret has been marked for deletion or, for example, if
  * a particular field of the secret doesn't exist. For using this feature, the user could use the following notation
