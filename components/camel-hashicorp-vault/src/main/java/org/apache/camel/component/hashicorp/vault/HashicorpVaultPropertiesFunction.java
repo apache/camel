@@ -58,15 +58,15 @@ import org.springframework.vault.support.VaultResponse;
  * <p/>
  *
  * This implementation is to return the secret value associated with a key. The properties related to this kind of
- * Properties Function are all prefixed with <tt>hashicorp:</tt>. For example asking for <tt>hashicorp:token</tt>, will return the
- * secret value associated to the secret named token on Hashicorp Vault instance.
+ * Properties Function are all prefixed with <tt>hashicorp:</tt>. For example asking for <tt>hashicorp:token</tt>, will
+ * return the secret value associated to the secret named token on Hashicorp Vault instance.
  *
- * Another way of retrieving a secret value is using the following notation <tt>hashicorp:database/username</tt>: in this case
- * the field username of the secret database will be returned. As a fallback, the user could provide a default value,
- * which will be returned in case the secret doesn't exist, the secret has been marked for deletion or, for example, if
- * a particular field of the secret doesn't exist. For using this feature, the user could use the following notation
- * <tt>aws:database/username:admin</tt>. The admin value will be returned as default value, if the conditions above were
- * all met.
+ * Another way of retrieving a secret value is using the following notation <tt>hashicorp:database/username</tt>: in
+ * this case the field username of the secret database will be returned. As a fallback, the user could provide a default
+ * value, which will be returned in case the secret doesn't exist, the secret has been marked for deletion or, for
+ * example, if a particular field of the secret doesn't exist. For using this feature, the user could use the following
+ * notation <tt>aws:database/username:admin</tt>. The admin value will be returned as default value, if the conditions
+ * above were all met.
  */
 
 @org.apache.camel.spi.annotations.PropertiesFunction("hashicorp")
@@ -92,7 +92,8 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
         String host = System.getenv(CAMEL_HASHICORP_VAULT_HOST_ENV);
         String port = System.getenv(CAMEL_HASHICORP_VAULT_PORT_ENV);
         String scheme = System.getenv(CAMEL_HASHICORP_VAULT_SCHEME_ENV);
-        if (ObjectHelper.isEmpty(token) && ObjectHelper.isEmpty(engine) && ObjectHelper.isEmpty(host) && ObjectHelper.isEmpty(port) && ObjectHelper.isEmpty(scheme)) {
+        if (ObjectHelper.isEmpty(token) && ObjectHelper.isEmpty(engine) && ObjectHelper.isEmpty(host)
+                && ObjectHelper.isEmpty(port) && ObjectHelper.isEmpty(scheme)) {
             HashicorpVaultConfiguration hashicorpVaultConfiguration = getCamelContext().getVaultConfiguration().hashicorp();
             if (ObjectHelper.isNotEmpty(hashicorpVaultConfiguration)) {
                 token = hashicorpVaultConfiguration.getToken();
@@ -102,7 +103,8 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
                 scheme = hashicorpVaultConfiguration.getScheme();
             }
         }
-        if (ObjectHelper.isNotEmpty(token) && ObjectHelper.isNotEmpty(engine) && ObjectHelper.isNotEmpty(host) && ObjectHelper.isNotEmpty(port) && ObjectHelper.isNotEmpty(scheme)) {
+        if (ObjectHelper.isNotEmpty(token) && ObjectHelper.isNotEmpty(engine) && ObjectHelper.isNotEmpty(host)
+                && ObjectHelper.isNotEmpty(port) && ObjectHelper.isNotEmpty(scheme)) {
             VaultEndpoint vaultEndpoint = new VaultEndpoint();
             vaultEndpoint.setHost(host);
             vaultEndpoint.setPort(Integer.parseInt(port));
@@ -220,4 +222,3 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
         return camelContext;
     }
 }
-
