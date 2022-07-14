@@ -42,40 +42,28 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-=== Using AWS Secrets Manager Property Function
+=== Using Hashicorp Vault Property Function
 
 To use this function you'll need to provide credentials for Hashicorp vault as environment variables:
 
 [source,bash]
 ----
-export $CAMEL_VAULT_HASHICORP_USE_DEFAULT_CREDENTIALS_PROVIDER=accessKey
-export $CAMEL_VAULT_AWS_SECRET_KEY=secretKey
-export $CAMEL_VAULT_AWS_REGION=region
+export $CAMEL_VAULT_HASHICORP_TOKEN=token
+export $CAMEL_VAULT_HASHICORP_ENGINE=secretKey
+export $CAMEL_VAULT_HASHICORP_HOST=host
+export $CAMEL_VAULT_HASHICORP_PORT=port
+export $CAMEL_VAULT_HASHICORP_SCHEME=http/https
 ----
 
 You can also configure the credentials in the `application.properties` file such as:
 
 [source,properties]
 ----
-camel.vault.aws.accessKey = accessKey
-camel.vault.aws.secretKey = secretKey
-camel.vault.aws.region = region
-----
-
-If you want instead to use the https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS default credentials provider], you'll need to provide the following env variables:
-
-[source,bash]
-----
-export $CAMEL_VAULT_AWS_USE_DEFAULT_CREDENTIALS_PROVIDER=true
-export $CAMEL_VAULT_AWS_REGION=region
-----
-
-You can also configure the credentials in the `application.properties` file such as:
-
-[source,properties]
-----
-camel.vault.aws.defaultCredentialsProvider = true
-camel.vault.aws.region = region
+camel.vault.hashicorp.token = token
+camel.vault.hashicorp.engine = engine
+camel.vault.hashicorp.host = host
+camel.vault.hashicorp.port = port
+camel.vault.hashicorp.scheme = scheme
 ----
 
 At this point you'll be able to reference a property in the following way:
@@ -85,21 +73,21 @@ At this point you'll be able to reference a property in the following way:
 <camelContext>
     <route>
         <from uri="direct:start"/>
-        <to uri="{{aws:route}}"/>
+        <to uri="{{hashicorp:route}}"/>
     </route>
 </camelContext>
 ----
 
-Where route will be the name of the secret stored in the AWS Secrets Manager Service.
+Where route will be the name of the secret stored in the Hashicorp Vault instance.
 
-You could specify a default value in case the secret is not present on AWS Secret Manager:
+You could specify a default value in case the secret is not present on Hashicorp Vault instance:
 
 [source,xml]
 ----
 <camelContext>
     <route>
         <from uri="direct:start"/>
-        <to uri="{{aws:route:default}}"/>
+        <to uri="{{hashicorp:route:default}}"/>
     </route>
 </camelContext>
 ----
@@ -127,21 +115,21 @@ You're able to do get single secret value in your route, like for example:
 <camelContext>
     <route>
         <from uri="direct:start"/>
-        <log message="Username is {{aws:database/username}}"/>
+        <log message="Username is {{hashicorp:database/username}}"/>
     </route>
 </camelContext>
 ----
 
 Or re-use the property as part of an endpoint.
 
-You could specify a default value in case the particular field of secret is not present on AWS Secret Manager:
+You could specify a default value in case the particular field of secret is not present on Hashicorp Vault instance:
 
 [source,xml]
 ----
 <camelContext>
     <route>
         <from uri="direct:start"/>
-        <log message="Username is {{aws:database/username:admin}}"/>
+        <log message="Username is {{hashicorp:database/username:admin}}"/>
     </route>
 </camelContext>
 ----
@@ -155,37 +143,37 @@ There is also the syntax to get a particular version of the secret for both the 
 <camelContext>
     <route>
         <from uri="direct:start"/>
-        <to uri="{{aws:route@bf9b4f4b-8e63-43fd-a73c-3e2d3748b451}}"/>
+        <to uri="{{hashicorp:route@2}}"/>
     </route>
 </camelContext>
 ----
 
-This approach will return the RAW route secret with version 'bf9b4f4b-8e63-43fd-a73c-3e2d3748b451'.
+This approach will return the RAW route secret with version '2'.
 
 [source,xml]
 ----
 <camelContext>
     <route>
         <from uri="direct:start"/>
-        <to uri="{{aws:route:default@bf9b4f4b-8e63-43fd-a73c-3e2d3748b451}}"/>
+        <to uri="{{hashicorp:route:default@2}}"/>
     </route>
 </camelContext>
 ----
 
-This approach will return the route secret value with version 'bf9b4f4b-8e63-43fd-a73c-3e2d3748b451' or default value in case the secret doesn't exist or the version doesn't exist.
+This approach will return the route secret value with version '2' or default value in case the secret doesn't exist or the version doesn't exist.
 
 [source,xml]
 ----
 <camelContext>
     <route>
         <from uri="direct:start"/>
-        <log message="Username is {{aws:database/username:admin@bf9b4f4b-8e63-43fd-a73c-3e2d3748b451}}"/>
+        <log message="Username is {{hashicorp:database/username:admin@2}}"/>
     </route>
 </camelContext>
 ----
 
-This approach will return the username field of the database secret with version 'bf9b4f4b-8e63-43fd-a73c-3e2d3748b451' or admin in case the secret doesn't exist or the version doesn't exist.
+This approach will return the username field of the database secret with version '2' or admin in case the secret doesn't exist or the version doesn't exist.
 
 For the moment we are not considering the rotation function, if any will be applied, but it is in the work to be done.
 
-The only requirement is adding the camel-aws-secrets-manager jar to your Camel application.
+The only requirement is adding the camel-hashicorp-vault jar to your Camel application.
