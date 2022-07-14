@@ -26,11 +26,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
 
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
     @Test
     public void testFunctio() throws Exception {
         context.addRoutes(new RouteBuilder() {
@@ -48,11 +48,11 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
     @Test
     public void testFunctionWithField() throws Exception {
         context.addRoutes(new RouteBuilder() {
@@ -70,11 +70,11 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
     @Test
     public void testComplexCustomPropertiesFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
@@ -93,11 +93,11 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
     @Test
     public void testSecretNotFoundFunction() {
         Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
@@ -117,11 +117,11 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         });
     }
 
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
     @Test
     public void testComplexNoSubkeyPropertiesFunction() {
         Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
@@ -140,11 +140,11 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         });
     }
 
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
     @Test
     public void testComplexCustomPropertiesDefaultValueFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
@@ -163,11 +163,11 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
     @Test
     public void testComplexCustomPropertiesDefaultValueExceptionFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
@@ -186,11 +186,11 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
     @Test
     public void testComplexCustomPropertiesExceptionFunction() {
         Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
@@ -211,11 +211,11 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         });
     }
 
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
     @Test
     public void testComplexSimpleDefaultValueExceptionFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
@@ -234,11 +234,11 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
     @Test
     public void testComplexSimpleNoDefaultValueExceptionFunction() {
         Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
@@ -257,11 +257,11 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         });
     }
 
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
     @Test
     public void testComplexCustomPropertiesNoDefaultValueFunction() {
         Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
@@ -282,11 +282,11 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         });
     }
 
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
     @Test
     public void testComplexCustomPropertiesNotExistentDefaultValueFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
@@ -303,11 +303,11 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
     @Test
     public void testComplexCustomPropertiesDefaultCredsDefaultValueFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
@@ -324,11 +324,11 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
     @Test
     public void testPropertiesWithDefaultFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
@@ -347,11 +347,11 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
     @Test
     public void testPropertiesWithDefaultNotExistentFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
@@ -370,11 +370,11 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
     @Test
     public void testPropertiesWithVersionFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
@@ -391,11 +391,11 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
     @Test
     public void testPropertiesWithVersionAndNoFieldFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
@@ -412,11 +412,11 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
     @Test
     public void testPropertiesWithVersionNoFieldAndDefaultValueFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
@@ -434,11 +434,11 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
     @Test
     public void testPropertiesWithVersionNoFieldDefaultValueNotExistentSecretFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
@@ -456,11 +456,11 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
     @Test
     public void testPropertiesWithVersionNoFieldDefaultValueNotExistentVersionFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {
@@ -478,11 +478,11 @@ public class HashicorpVaultPropertiesSourceTestIT extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT_ENV", matches = ".*")
-    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME_ENV", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_TOKEN", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_ENGINE", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_HOST", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_PORT", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_HASHICORP_VAULT_SCHEME", matches = ".*")
     @Test
     public void testPropertiesWithVersionFieldAndDefaultValueFunction() throws Exception {
         context.addRoutes(new RouteBuilder() {

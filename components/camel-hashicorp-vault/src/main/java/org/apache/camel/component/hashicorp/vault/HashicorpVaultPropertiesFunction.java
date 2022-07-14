@@ -72,13 +72,13 @@ import org.springframework.vault.support.VaultResponse;
 @org.apache.camel.spi.annotations.PropertiesFunction("hashicorp")
 public class HashicorpVaultPropertiesFunction extends ServiceSupport implements PropertiesFunction, CamelContextAware {
 
-    private static final String CAMEL_HASHICORP_VAULT_TOKEN_ENV = "CAMEL_HASHICORP_VAULT_TOKEN_ENV";
-    private static final String CAMEL_HASHICORP_VAULT_ENGINE_ENV = "CAMEL_HASHICORP_VAULT_ENGINE_ENV";
-    private static final String CAMEL_HASHICORP_VAULT_HOST_ENV = "CAMEL_HASHICORP_VAULT_HOST_ENV";
+    private static final String CAMEL_HASHICORP_VAULT_TOKEN_ENV = "CAMEL_HASHICORP_VAULT_TOKEN";
+    private static final String CAMEL_HASHICORP_VAULT_ENGINE_ENV = "CAMEL_HASHICORP_VAULT_ENGINE";
+    private static final String CAMEL_HASHICORP_VAULT_HOST_ENV = "CAMEL_HASHICORP_VAULT_HOST";
     private static final String CAMEL_HASHICORP_VAULT_PORT_ENV
-            = "CAMEL_HASHICORP_VAULT_PORT_ENV";
+            = "CAMEL_HASHICORP_VAULT_PORT";
     private static final String CAMEL_HASHICORP_VAULT_SCHEME_ENV
-            = "CAMEL_HASHICORP_VAULT_SCHEME_ENV";
+            = "CAMEL_HASHICORP_VAULT_SCHEME";
     private CamelContext camelContext;
     private VaultTemplate client;
 
