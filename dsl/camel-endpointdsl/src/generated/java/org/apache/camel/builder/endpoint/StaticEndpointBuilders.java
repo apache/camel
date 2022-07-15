@@ -6836,10 +6836,10 @@ public class StaticEndpointBuilders {
     }
     /**
      * Aries (camel-hyperledger-aries)
-     * Access market data and trade on Bitcoin and Altcoin exchanges.
+     * Camel support for Hyperledger Aries
      * 
-     * Category: blockchain
-     * Since: 3.17
+     * Category: blockchain,identity
+     * Since: 3.19
      * Maven coordinates: org.apache.camel:camel-hyperledger-aries
      * 
      * Syntax: <code>hyperledger-aries:walletName</code>
@@ -6856,10 +6856,10 @@ public class StaticEndpointBuilders {
     }
     /**
      * Aries (camel-hyperledger-aries)
-     * Access market data and trade on Bitcoin and Altcoin exchanges.
+     * Camel support for Hyperledger Aries
      * 
-     * Category: blockchain
-     * Since: 3.17
+     * Category: blockchain,identity
+     * Since: 3.19
      * Maven coordinates: org.apache.camel:camel-hyperledger-aries
      * 
      * Syntax: <code>hyperledger-aries:walletName</code>
