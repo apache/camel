@@ -37,9 +37,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.PollingConsumerSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import static org.apache.camel.component.jpa.JpaHelper.getTargetEntityManager;
 
@@ -49,7 +46,7 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
 
     private transient ExecutorService executorService;
     private final EntityManagerFactory entityManagerFactory;
-    private final TransactionTemplate transactionTemplate;
+    private final TransactionStrategy transactionStrategy;
     private String query;
     private String namedQuery;
     private String nativeQuery;
@@ -61,7 +58,7 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
     public JpaPollingConsumer(JpaEndpoint endpoint) {
         super(endpoint);
         this.entityManagerFactory = endpoint.getEntityManagerFactory();
-        this.transactionTemplate = endpoint.createTransactionTemplate();
+        this.transactionStrategy = endpoint.getTransactionStrategy();
     }
 
     @Override
@@ -131,8 +128,11 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
         final EntityManager entityManager = getTargetEntityManager(null, entityManagerFactory,
                 getEndpoint().isUsePassedInEntityManager(), getEndpoint().isSharedEntityManager(), true);
 
-        Object out = transactionTemplate.execute(new TransactionCallback<Object>() {
-            public Object doInTransaction(TransactionStatus status) {
+        Exchange exchange = getEndpoint().createExchange();
+        exchange.getIn().setHeader(JpaConstants.ENTITY_MANAGER, entityManager);
+        transactionStrategy.executeInTransaction(new Runnable() {
+            @Override
+            public void run() {
                 if (getEndpoint().isJoinTransaction()) {
                     entityManager.joinTransaction();
                 }
@@ -174,13 +174,11 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
                     throw e;
                 }
 
-                return answer;
+                exchange.getIn().setBody(answer);
             }
 
         });
 
-        Exchange exchange = createExchange(out, entityManager);
-        exchange.getIn().setBody(out);
         return exchange;
     }
 

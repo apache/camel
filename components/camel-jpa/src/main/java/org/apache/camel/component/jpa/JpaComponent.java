@@ -47,6 +47,8 @@ public class JpaComponent extends DefaultComponent {
     private EntityManagerFactory entityManagerFactory;
     @Metadata
     private PlatformTransactionManager transactionManager;
+    @Metadata
+    private TransactionStrategy transactionStrategy;
     @Metadata(defaultValue = "true")
     private boolean joinTransaction = true;
     @Metadata
@@ -79,6 +81,17 @@ public class JpaComponent extends DefaultComponent {
      */
     public void setTransactionManager(PlatformTransactionManager transactionManager) {
         this.transactionManager = transactionManager;
+    }
+
+    public TransactionStrategy getTransactionStrategy() {
+        return transactionStrategy;
+    }
+
+    /**
+     * To use the {@link TransactionStrategy} for running the operations in a transaction.
+     */
+    public void setTransactionStrategy(TransactionStrategy transactionStrategy) {
+        this.transactionStrategy = transactionStrategy;
     }
 
     public boolean isJoinTransaction() {
@@ -182,6 +195,11 @@ public class JpaComponent extends DefaultComponent {
             }
         } else {
             LOG.info("Using EntityManagerFactory configured: {}", entityManagerFactory);
+        }
+
+        if (transactionStrategy != null) {
+            LOG.info("Using TransactionStrategy configured: {}", transactionStrategy);
+            return;
         }
 
         // lookup transaction manager and use it if only one provided
