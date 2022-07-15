@@ -5,6 +5,7 @@
 ** xref:activemq-component.adoc[ActiveMQ]
 ** xref:amqp-component.adoc[AMQP]
 ** xref:arangodb-component.adoc[ArangoDb]
+** xref:hyperledger-aries-component.adoc[Aries]
 ** xref:as2-component.adoc[AS2]
 ** xref:asterisk-component.adoc[Asterisk]
 ** xref:ahc-component.adoc[Async HTTP Client (AHC)]
