@@ -161,6 +161,37 @@ from("direct:start")
   .to("aws2-ddb://" + tableName + "?amazonDDBClient=#client");
 --------------------------------------------------------------------------------
 
+- GetItem: this operation will retrieve an entry from DynamoDB
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:get")
+  .process(exchange -> {
+      final Map<String, AttributeValue> keyMap = new HashMap<>();
+      keyMap.put("table-key", AttributeValue.builder().s("1").build());
+
+      exchange.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.GetItem);
+      exchange.getIn().setHeader(Ddb2Constants.ATTRIBUTE_NAMES, constant(List.of("table-key", "message")));
+      exchange.getIn().setHeader(Ddb2Constants.KEY, keyMap);
+  })
+  .toF("aws2-ddb://%s?amazonDDBClient=#client&consistentRead=true", tableName);
+--------------------------------------------------------------------------------
+
+- DeleteItem: this operation will delete an entry from DynamoDB
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:delete")
+  .process(exchange -> {
+      final Map<String, AttributeValue> keyMap = new HashMap<>();
+      keyMap.put("table-key", AttributeValue.builder().s("1").build());
+
+      exchange.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.DeleteItem);
+      exchange.getIn().setHeader(Ddb2Constants.KEY, keyMap);
+  })
+  .toF("aws2-ddb://%s?amazonDDBClient=#client&consistentRead=true", tableName);
+--------------------------------------------------------------------------------
+
 Maven users will need to add the following dependency to their pom.xml.
 
 *pom.xml*
