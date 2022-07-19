@@ -368,6 +368,26 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
                 return "onFailureOnly";
             }
         }
+
+        @Override
+        public void beforeHandover(Exchange target) {
+            // The onAfterRoute method will not be called after the handover
+            // To ensure that completions are called, remember the route IDs here.
+            // Assumption: the fromRouteId on the target Exchange is the route
+            // which owns the completion
+            LOG.debug("beforeHandover from Route {}", target.getFromRouteId());
+            final String exchangeRouteId = target.getFromRouteId();
+            if (routeScoped && exchangeRouteId != null && exchangeRouteId.equals(routeId)) {
+                List<String> routeIds = target.getProperty(ExchangePropertyKey.ON_COMPLETION_ROUTE_IDS, List.class);
+                if (routeIds == null) {
+                    routeIds = new ArrayList<>();
+                    target.setProperty(ExchangePropertyKey.ON_COMPLETION_ROUTE_IDS, routeIds);
+                }
+                if (!routeIds.contains(exchangeRouteId)) {
+                    routeIds.add(exchangeRouteId);
+                }
+            }
+        }
     }
 
     private final class OnCompletionSynchronizationBeforeConsumer extends SynchronizationAdapter implements Ordered {
