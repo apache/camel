@@ -82,7 +82,7 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
     private CamelContext camelContext;
     private VaultTemplate client;
 
-    protected String engine;
+    private String engine;
 
     @Override
     protected void doStart() throws Exception {

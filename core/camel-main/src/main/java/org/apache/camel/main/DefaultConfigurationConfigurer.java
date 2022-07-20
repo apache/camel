@@ -83,7 +83,11 @@ import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.support.jsse.GlobalSSLContextParametersSupplier;
 import org.apache.camel.support.startup.LoggingStartupStepRecorder;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.vault.*;
+import org.apache.camel.vault.AwsVaultConfiguration;
+import org.apache.camel.vault.AzureVaultConfiguration;
+import org.apache.camel.vault.GcpVaultConfiguration;
+import org.apache.camel.vault.HashicorpVaultConfiguration;
+import org.apache.camel.vault.VaultConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
