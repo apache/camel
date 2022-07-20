@@ -20,6 +20,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.function.LongSupplier;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.WrappedFile;
@@ -44,7 +45,11 @@ public class GenericFile<T> implements WrappedFile<T> {
     private String relativeFilePath;
     private String absoluteFilePath;
     private long fileLength;
+    // file length in case of lazy-loading
+    private LongSupplier fileLengthSupplier;
     private long lastModified;
+    // last modified in case of lazy-loading
+    private LongSupplier lastModifiedSupplier;
     private long lastOffsetValue;
     private T file;
     private GenericFileBinding<T> binding;
@@ -286,6 +291,10 @@ public class GenericFile<T> implements WrappedFile<T> {
     }
 
     public long getFileLength() {
+        if (fileLength == 0 && fileLengthSupplier != null) {
+            // file length not set, try lazy-loading
+            fileLength = fileLengthSupplier.getAsLong();
+        }
         return fileLength;
     }
 
@@ -293,12 +302,24 @@ public class GenericFile<T> implements WrappedFile<T> {
         this.fileLength = fileLength;
     }
 
+    void setFileLengthSupplier(LongSupplier supplier) {
+        fileLengthSupplier = supplier;
+    }
+
     public long getLastModified() {
+        if (lastModified == 0 && lastModifiedSupplier != null) {
+            // last modified not set, try lazy-loading
+            lastModified = lastModifiedSupplier.getAsLong();
+        }
         return lastModified;
     }
 
     public void setLastModified(long lastModified) {
         this.lastModified = lastModified;
+    }
+
+    void setLastModifiedSupplier(LongSupplier supplier) {
+        lastModifiedSupplier = supplier;
     }
 
     public String getCharset() {
