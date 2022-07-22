@@ -26,10 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.eventbridge.model.PutEventsResponse;
-import software.amazon.awssdk.services.eventbridge.model.Target;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class EventbridgePutEventsIT extends Aws2EventbridgeBase {
 
