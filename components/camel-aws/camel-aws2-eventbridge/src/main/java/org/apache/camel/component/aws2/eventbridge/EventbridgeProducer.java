@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -37,7 +36,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
-import software.amazon.awssdk.services.eventbridge.model.*;
+import software.amazon.awssdk.services.eventbridge.model.DeleteRuleRequest;
+import software.amazon.awssdk.services.eventbridge.model.DeleteRuleResponse;
+import software.amazon.awssdk.services.eventbridge.model.DescribeRuleRequest;
+import software.amazon.awssdk.services.eventbridge.model.DescribeRuleResponse;
+import software.amazon.awssdk.services.eventbridge.model.DisableRuleRequest;
+import software.amazon.awssdk.services.eventbridge.model.DisableRuleResponse;
+import software.amazon.awssdk.services.eventbridge.model.EnableRuleRequest;
+import software.amazon.awssdk.services.eventbridge.model.EnableRuleResponse;
+import software.amazon.awssdk.services.eventbridge.model.ListRuleNamesByTargetRequest;
+import software.amazon.awssdk.services.eventbridge.model.ListRuleNamesByTargetResponse;
+import software.amazon.awssdk.services.eventbridge.model.ListRulesRequest;
+import software.amazon.awssdk.services.eventbridge.model.ListRulesResponse;
+import software.amazon.awssdk.services.eventbridge.model.ListTargetsByRuleRequest;
+import software.amazon.awssdk.services.eventbridge.model.ListTargetsByRuleResponse;
+import software.amazon.awssdk.services.eventbridge.model.PutEventsRequest;
+import software.amazon.awssdk.services.eventbridge.model.PutEventsRequestEntry;
+import software.amazon.awssdk.services.eventbridge.model.PutEventsResponse;
+import software.amazon.awssdk.services.eventbridge.model.PutRuleRequest;
+import software.amazon.awssdk.services.eventbridge.model.PutRuleResponse;
+import software.amazon.awssdk.services.eventbridge.model.PutTargetsRequest;
+import software.amazon.awssdk.services.eventbridge.model.PutTargetsResponse;
+import software.amazon.awssdk.services.eventbridge.model.RemoveTargetsRequest;
+import software.amazon.awssdk.services.eventbridge.model.RemoveTargetsResponse;
+import software.amazon.awssdk.services.eventbridge.model.Target;
 
 /**
  * A Producer which sends messages to the Amazon Eventbridge Service SDK v2
