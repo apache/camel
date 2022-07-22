@@ -33,7 +33,9 @@ import org.apache.camel.support.DefaultConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.azure.eventhubs.EventHubsConstants.*;
+import static org.apache.camel.component.azure.eventhubs.EventHubsConstants.COMPLETED_BY_SIZE;
+import static org.apache.camel.component.azure.eventhubs.EventHubsConstants.COMPLETED_BY_TIMEOUT;
+import static org.apache.camel.component.azure.eventhubs.EventHubsConstants.UNCOMPLETED;
 
 public class EventHubsConsumer extends DefaultConsumer {
 
