@@ -36,7 +36,8 @@ public interface EventbridgeConstants {
     String TARGETS_IDS = "CamelAwsEventbridgeTargetsIds";
     @Metadata(description = "The Amazon Resource Name (ARN) of the target resource.", javaType = "String")
     String TARGET_ARN = "CamelAwsEventbridgeTargetArn";
-    @Metadata(description = "Comma separated list of Amazon Resource Names (ARN) of the resources related to Event", javaType = "String")
+    @Metadata(description = "Comma separated list of Amazon Resource Names (ARN) of the resources related to Event",
+              javaType = "String")
     String EVENT_RESOURCES_ARN = "CamelAwsEventbridgeResourcesArn";
     @Metadata(description = "The source related to Event", javaType = "String")
     String EVENT_SOURCE = "CamelAwsEventbridgeSource";

@@ -43,7 +43,8 @@ public class EventbridgePutEventsIT extends Aws2EventbridgeBase {
 
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(EventbridgeConstants.EVENT_RESOURCES_ARN, "arn:aws:sqs:eu-west-1:780410022472:camel-connector-test");
+                exchange.getIn().setHeader(EventbridgeConstants.EVENT_RESOURCES_ARN,
+                        "arn:aws:sqs:eu-west-1:780410022472:camel-connector-test");
                 exchange.getIn().setHeader(EventbridgeConstants.EVENT_SOURCE, "com.pippo");
                 exchange.getIn().setHeader(EventbridgeConstants.EVENT_DETAIL_TYPE, "peppe");
                 exchange.getIn().setBody("Test Event");
@@ -52,7 +53,8 @@ public class EventbridgePutEventsIT extends Aws2EventbridgeBase {
         assertMockEndpointsSatisfied();
         Assert.assertTrue(result.getExchanges().get(0).getMessage().getBody(PutEventsResponse.class).hasEntries());
         Assert.assertEquals(1, result.getExchanges().get(0).getMessage().getBody(PutEventsResponse.class).entries().size());
-        Assert.assertNotNull(result.getExchanges().get(0).getMessage().getBody(PutEventsResponse.class).entries().get(0).eventId());
+        Assert.assertNotNull(
+                result.getExchanges().get(0).getMessage().getBody(PutEventsResponse.class).entries().get(0).eventId());
 
     }
 
