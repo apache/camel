@@ -15,4 +15,5 @@
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
 
-adapterClass=org.apache.camel.component.atom.UpdatedDateFilter
+
+class=org.apache.camel.support.resume.ResumeActionAwareAdapter

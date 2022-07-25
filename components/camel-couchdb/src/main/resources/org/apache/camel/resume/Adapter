@@ -15,5 +15,4 @@
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
 
-
-adapterClass=org.apache.camel.support.resume.ResumeActionAwareAdapter
+class=org.apache.camel.support.resume.ResumeActionAwareAdapter
