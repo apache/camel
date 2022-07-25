@@ -53,6 +53,7 @@ import org.apache.camel.model.RouteFilters;
 import org.apache.camel.model.RouteTemplateBeanDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplateParameterDefinition;
+import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.TemplatedRouteBeanDefinition;
 import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.TemplatedRouteParameterDefinition;
@@ -415,7 +416,13 @@ public class DefaultModel implements Model {
                     routeId, routeTemplateId,
                     "duplicate id detected: " + duplicate + ". Please correct ids to be unique among all your routes.");
         }
+
         addRouteDefinition(def);
+
+        RoutesDefinition routeCollection = new RoutesDefinition();
+        routeCollection.setCamelContext(camelContext);
+        routeCollection.setRoutes(getRouteDefinitions());
+        routeCollection.prepareRoute(def);
         return def.getId();
     }
 
