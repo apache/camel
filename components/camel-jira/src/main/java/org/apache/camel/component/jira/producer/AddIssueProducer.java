@@ -29,6 +29,7 @@ import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jira.JiraEndpoint;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.component.jira.JiraConstants.*;
@@ -120,13 +121,7 @@ public class AddIssueProducer extends DefaultProducer {
         }
 
         // support InOut
-        if (exchange.getPattern().isOutCapable()) {
-            // copy the header of in message to the out message
-            exchange.getMessage().copyFrom(exchange.getIn());
-            exchange.getMessage().setBody(issue);
-        } else {
-            exchange.getIn().setBody(issue);
-        }
+        ExchangeHelper.setInOutBodyPatternAware(exchange, issue);
     }
 
 }

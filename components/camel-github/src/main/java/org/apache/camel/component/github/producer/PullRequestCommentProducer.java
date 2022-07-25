@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.github.GitHubConstants;
 import org.apache.camel.component.github.GitHubEndpoint;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.support.ExchangeHelper;
 import org.eclipse.egit.github.core.Comment;
 import org.eclipse.egit.github.core.service.IssueService;
 import org.eclipse.egit.github.core.service.PullRequestService;
@@ -78,11 +79,7 @@ public class PullRequestCommentProducer extends AbstractGitHubProducer {
         }
 
         // support InOut
-        if (exchange.getPattern().isOutCapable()) {
-            // copy the header of in message to the out message
-            exchange.getOut().copyFrom(exchange.getIn());
-            exchange.getOut().setBody(response);
-        }
+        ExchangeHelper.setOutBodyPatternAware(exchange, response);
     }
 
 }
