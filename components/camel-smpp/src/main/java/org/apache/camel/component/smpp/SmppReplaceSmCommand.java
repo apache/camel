@@ -20,6 +20,7 @@ import java.util.Date;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.support.ExchangeHelper;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.ReplaceSm;
@@ -64,7 +65,7 @@ public class SmppReplaceSmCommand extends SmppSmCommand {
                     exchange.getExchangeId(), replaceSm.getMessageId());
         }
 
-        Message rspMsg = getResponseMessage(exchange);
+        Message rspMsg = ExchangeHelper.getResultMessage(exchange);
         rspMsg.setHeader(SmppConstants.ID, replaceSm.getMessageId());
     }
 
