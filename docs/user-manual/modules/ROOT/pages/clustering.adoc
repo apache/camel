@@ -35,9 +35,8 @@ Out of the box camel provides the following implementations:
 [cols="1,1,2", options="header"]
 |====
 |Type       |Module           | Class
-|atomix     |camel-atomix     | org.apache.camel.component.atomix.cluster.AtomixClusterService
 |consul     |camel-consul     | org.apache.camel.component.consul.cluster.ConsulClusterService
-|file       |camel-core       | org.apache.camel.component.file.cluster.FileLockClusterService
+|file       |camel-file       | org.apache.camel.component.file.cluster.FileLockClusterService
 |infinispan |camel-infinispan | org.apache.camel.component.infinispan.cluster.InfinispanClusterService
 |jgroups |camel-jgroups | org.apache.camel.component.jgroups.cluster.JGroupsLockClusterService
 |jgroups-raft |camel-jgroups-raft | org.apache.camel.component.jgroups.raft.cluster.JGroupsRaftClusterService
