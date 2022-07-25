@@ -33,8 +33,8 @@ import org.slf4j.LoggerFactory;
 
 public final class AdapterHelper {
     private static final Logger LOG = LoggerFactory.getLogger(AdapterHelper.class);
-    private static final String ADAPTER_PROPERTIES = "/org/apache/camel/resume/adapter.properties";
-    private static final String PROP_ADAPTER_CLASS = "adapterClass";
+    private static final String ADAPTER_PROPERTIES = "/org/apache/camel/resume/Adapter";
+    private static final String PROP_ADAPTER_CLASS = "class";
 
     private AdapterHelper() {
     }
