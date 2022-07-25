@@ -26,12 +26,17 @@ used to acquire the master lock. e.g.
 
 [source,java]
 ----
-from("master:cheese:jms:foo").to("activemq:wine");
+from("master:cheese:jms:foo")
+  .to("activemq:wine");
 ----
 
-The above simulates the [Exclusive Consumers](http://activemq.apache.org/exclusive-consumer.html) type feature in
-ActiveMQ; but on any third party JMS provider which maybe doesn't support exclusive consumers.
+In this example, there master component ensures that the route is only active in one node, at any given time, in the cluster.
+So if there are 8 nodes in the cluster, then the master component will elect one route to be the leader, and only
+this route will be active, and hence only this route will consume messages from `jms:foo`.
+In case this route is stopped or unexpected terminated, then the master component will detect this,
+and re-elect another node to be active, which will then become active and start consuming messages from `jms:foo`.
 
+TIP: Apache ActiveMQ 5.x has such feature out of the box called https://activemq.apache.org/exclusive-consumer.html[Exclusive Consumers].
 
 == URI format
 
@@ -129,7 +134,6 @@ camel.component.zookeeper.cluster.service.nodes     = myzk:2181
 
 Camel provides the following ClusterService implementations:
 
-- camel-atomix
 - camel-consul
 - camel-file
 - camel-infinispan
@@ -137,7 +141,6 @@ Camel provides the following ClusterService implementations:
 - camel-jgroups
 - camel-kubernetes
 - camel-zookeeper
-
 
 
 include::spring-boot:partial$starter.adoc[]
