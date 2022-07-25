@@ -15,4 +15,4 @@
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
 
-adapterClass=org.apache.camel.component.aws2.kinesis.consumer.KinesisDefaultResumeAdapter
+class=org.apache.camel.component.file.consumer.adapters.FileResumeAdapterDelegate
