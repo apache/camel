@@ -24,8 +24,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.OptionalParameter.OctetString;
 import org.jsmpp.bean.OptionalParameter.Tag;
@@ -43,17 +41,6 @@ public abstract class AbstractSmppCommand implements SmppCommand {
     public AbstractSmppCommand(SMPPSession session, SmppConfiguration config) {
         this.session = session;
         this.config = config;
-    }
-
-    protected Message getResponseMessage(Exchange exchange) {
-        Message message;
-        if (exchange.getPattern().isOutCapable()) {
-            message = exchange.getOut();
-        } else {
-            message = exchange.getIn();
-        }
-
-        return message;
     }
 
     protected List<OptionalParameter> createOptionalParametersByCode(Map<Short, Object> optinalParamaters) {
