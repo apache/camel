@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.couchbase.CouchbaseContainer;
 
 public class CouchbaseLocalContainerService implements CouchbaseService, ContainerService<CouchbaseContainer> {
-    public static final String IMAGE_NAME = "couchbase/server:6.5.1";
+    public static final String IMAGE_NAME = "couchbase/server:7.1.1";
 
     /*
      * Couchbase container uses a dynamic port for the KV service. The configuration
