@@ -19,6 +19,7 @@ package org.apache.camel.component.twitter.timeline;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.twitter.TwitterEndpoint;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import twitter4j.Status;
@@ -54,12 +55,10 @@ public class UserProducer extends DefaultProducer {
          * Support the InOut exchange pattern in order to provide access to
          * the unique identifier for the published tweet which is returned in the response
          * by the Twitter REST API: https://dev.twitter.com/docs/api/1/post/statuses/update
+         *
+         * here we just copy the header of in message to the out message
          */
-        if (exchange.getPattern().isOutCapable()) {
-            // here we just copy the header of in message to the out message
-            exchange.getOut().copyFrom(exchange.getIn());
-            exchange.getOut().setBody(response);
-        }
+        ExchangeHelper.setOutBodyPatternAware(exchange, response);
     }
 
     private Status updateStatus(StatusUpdate status) throws Exception {
