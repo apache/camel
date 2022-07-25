@@ -33,6 +33,7 @@ import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -229,12 +230,8 @@ public class PubNubProducer extends DefaultAsyncProducer {
             }
             throw new RuntimeCamelException(status.getErrorData().getThrowable());
         }
-        if (exchange.getPattern().isOutCapable()) {
-            exchange.getOut().copyFrom(exchange.getIn());
-            exchange.getOut().setBody(body);
-        } else {
-            exchange.getIn().setBody(body);
-        }
+
+        ExchangeHelper.setInOutBodyPatternAware(exchange, body);
 
         // signal exchange completion
         callback.done(false);
