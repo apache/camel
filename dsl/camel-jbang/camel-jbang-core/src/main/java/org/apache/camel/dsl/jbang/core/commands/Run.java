@@ -275,11 +275,6 @@ class Run extends CamelCommand {
         removeDir(work);
         work.mkdirs();
 
-        // generate open-api early
-        if (openapi != null) {
-            generateOpenApi();
-        }
-
         Properties profileProperties = null;
         File profilePropertiesFile = new File(getProfile() + ".properties");
         if (profilePropertiesFile.exists()) {
@@ -296,7 +291,13 @@ class Run extends CamelCommand {
                 propertiesFiles = propertiesFiles + ",file:" + profilePropertiesFile.getName();
             }
             repos = profileProperties.getProperty("camel.jbang.repos", repos);
+            openapi = profileProperties.getProperty("camel.jbang.open-api", openapi);
             download = "true".equals(profileProperties.getProperty("camel.jbang.download", download ? "true" : "false"));
+        }
+
+        // generate open-api early
+        if (openapi != null) {
+            generateOpenApi();
         }
 
         // if no specific file to run then try to auto-detect
