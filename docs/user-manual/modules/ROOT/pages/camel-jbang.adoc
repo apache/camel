@@ -4,12 +4,27 @@ A JBang-based Camel app for easily running Camel routes.
 
 == Installation
 
-It is not necessary to install Camel JBang. However, if you prefer to do so, JBang makes it easy for us by providing an installation feature that works with GitHub. If you have JBang installed on your system, then you can run the following command to install Camel JBang:
+First you must install https://www.jbang.dev/[JBang] which is used for launching Camel.
+See instructions on https://www.jbang.dev/download/[JBang] how to download and install.
+
+After JBang is installed you can verify JBang is working by executing the following command from a command shell:
+
+[source,bash]
+----
+jbang version
+----
+
+Which should output the version of JBang.
+
+To make it easier to use Camel JBang then install the following:
 
 [source,bash]
 ----
 jbang app install camel@apache/camel
 ----
+
+This will install Apache Camel as the `camel` command within JBang, meaning that you can run Camel from the command line
+by just executing `camel` (see more next).
 
 == Using Camel JBang
 
@@ -17,29 +32,12 @@ The Camel JBang supports multiple commands. Running the command below, will prin
 
 [source,bash]
 ----
-jbang camel@apache/camel --help
+camel --help
 ----
 
 TIP: The first time you run this command, it may cause dependencies to be cached, therefore taking a few extra seconds to run.
 
 All the commands support the `--help` and will display the appropriate help if that flag is provided.
-
-
-=== Using a specific Camel version
-
-You can specify which Camel version to run as shown:
-
-[source,bash]
-----
-jbang run -Dcamel.jbang.version=3.17.0 camel@apache/camel [command]
-----
-
-And you can also try bleeding edge development by using SNAPSHOT such as:
-
-[source,bash]
-----
-jbang run -Dcamel.jbang.version=3.19.0-SNAPSHOT camel@apache/camel [command]
-----
 
 == Creating and running Camel routes
 
@@ -353,6 +351,22 @@ This will then download the files to local disk, which you can run afterwards:
 [source,bash]
 ----
 camel run *
+----
+
+=== Using a specific Camel version
+
+You can specify which Camel version to run as shown:
+
+[source,bash]
+----
+jbang run -Dcamel.jbang.version=3.17.0 camel@apache/camel [command]
+----
+
+And you can also try bleeding edge development by using SNAPSHOT such as:
+
+[source,bash]
+----
+jbang run -Dcamel.jbang.version=3.19.0-SNAPSHOT camel@apache/camel [command]
 ----
 
 === Running Camel K integrations or bindings
