@@ -522,7 +522,7 @@ Deletes a record in salesforce by External ID.
 
 `query`
 
-Runs a Salesforce SOQL query
+Runs a Salesforce SOQL query.
 
 |===
 | Parameter | Type | Description | Default | Required
@@ -535,7 +535,7 @@ Runs a Salesforce SOQL query
 
 *Output*
 
-Type: Instance of class supplied in `sObjectClass`, or `Iterator<SomeSObject>` if `streamQueryResult` is true.
+Type: Instance of class supplied in `sObjectClass`, or `Iterator<SomeSObject>` if `streamQueryResult` is true. If `streamQueryResult` is true, the header `CamelSalesforceQueryResultTotalSize` is set to the number of records that matched the query.
 
 [[queryMore]]
 ==== Query More
