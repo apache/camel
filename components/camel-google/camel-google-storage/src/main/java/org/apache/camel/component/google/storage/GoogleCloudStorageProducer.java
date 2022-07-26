@@ -117,7 +117,29 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
 
         Blob createdBlob;
         BlobId blobId = BlobId.of(bucketName, objectName);
-        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setMetadata(objectMetadata).build();
+
+        BlobInfo.Builder builder = BlobInfo.newBuilder(blobId);
+        String ct = objectMetadata.remove("Content-Type");
+        if (ct != null) {
+            builder.setContentType(ct);
+        }
+        String cd = objectMetadata.remove("Content-Disposition");
+        if (cd != null) {
+            builder.setContentDisposition(ct);
+        }
+        String ce = objectMetadata.remove("Content-Encoding");
+        if (ce != null) {
+            builder.setContentEncoding(ct);
+        }
+        String md5 = objectMetadata.remove("Content-Md5");
+        if (md5 != null) {
+            builder.setMd5(md5);
+        }
+        String cc = objectMetadata.remove("Cache-Control");
+        if (cc != null) {
+            builder.setCacheControl(ct);
+        }
+        BlobInfo blobInfo = builder.setMetadata(objectMetadata).build();
         // According to documentation, this internally uses a WriteChannel
         createdBlob = storage.createFrom(blobInfo, is);
         LOG.trace("created createdBlob [{}]", createdBlob);
@@ -160,7 +182,7 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
     }
 
     private Map<String, String> determineMetadata(final Exchange exchange) {
-        Map<String, String> objectMetadata = new HashMap<String, String>();
+        Map<String, String> objectMetadata = new HashMap<>();
 
         Long contentLength = exchange.getIn().getHeader(GoogleCloudStorageConstants.CONTENT_LENGTH, Long.class);
         if (contentLength != null) {
