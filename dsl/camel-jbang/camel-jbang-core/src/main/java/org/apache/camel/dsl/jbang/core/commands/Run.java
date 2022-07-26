@@ -291,7 +291,7 @@ class Run extends CamelCommand {
                 propertiesFiles = propertiesFiles + ",file:" + profilePropertiesFile.getName();
             }
             repos = profileProperties.getProperty("camel.jbang.repos", repos);
-            openapi = profileProperties.getProperty("camel.jbang.open-api", openapi);
+            openapi = profileProperties.getProperty("camel.jbang.openApi", openapi);
             download = "true".equals(profileProperties.getProperty("camel.jbang.download", download ? "true" : "false"));
         }
 
@@ -356,6 +356,7 @@ class Run extends CamelCommand {
         // allow java-dsl to compile to .class which we need in uber-jar mode
         writeSetting(main, profileProperties, "camel.main.routesCompileDirectory", WORK_DIR);
         writeSetting(main, profileProperties, "camel.jbang.dependencies", dependencies);
+        writeSetting(main, profileProperties, "camel.jbang.openApi", openapi);
         writeSetting(main, profileProperties, "camel.jbang.repos", repos);
         writeSetting(main, profileProperties, "camel.jbang.health", health ? "true" : "false");
         writeSetting(main, profileProperties, "camel.jbang.console", console ? "true" : "false");
