@@ -340,4 +340,8 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
         this.resumeStrategy = resumeStrategy;
     }
 
+    @Override
+    public String adapterFactoryService() {
+        return "file-adapter-factory";
+    }
 }
