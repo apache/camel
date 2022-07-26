@@ -191,6 +191,15 @@
             <to uri="mock:direct:end"/>
         </route>
 
+        <route id="transformEmptyBody">
+            <from uri="direct:transformEmptyBody"/>
+            <transform>
+                <datasonnet bodyMediaType="application/xml" outputMediaType="application/json"
+                            resultType="java.lang.String">{ "hello": "world" }</datasonnet>
+            </transform>
+            <to uri="mock:direct:end"/>
+        </route>
+
     </camelContext>
 
 </beans>
