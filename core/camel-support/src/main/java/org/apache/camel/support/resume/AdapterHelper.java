@@ -20,10 +20,10 @@ package org.apache.camel.support.resume;
 import java.util.Optional;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Consumer;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.resume.Cacheable;
 import org.apache.camel.resume.ResumeAdapter;
+import org.apache.camel.resume.ResumeAware;
 import org.apache.camel.resume.cache.ResumeCache;
 import org.apache.camel.spi.FactoryFinder;
 import org.slf4j.Logger;
@@ -31,23 +31,23 @@ import org.slf4j.LoggerFactory;
 
 public final class AdapterHelper {
     private static final Logger LOG = LoggerFactory.getLogger(AdapterHelper.class);
-    private static final String ADAPTER_PROPERTIES = "/org/apache/camel/resume/";
-    private static final String ADAPTER_KEY = "Adapter";
 
     private AdapterHelper() {
     }
 
-    public static ResumeAdapter eval(CamelContext context, Consumer consumer) {
+    public static ResumeAdapter eval(CamelContext context, ResumeAware resumeAware) {
         assert context != null;
-        assert consumer != null;
+        assert resumeAware != null;
 
         LOG.debug("Using the factory finder to search for the resume adapter");
-        final FactoryFinder factoryFinder = context.adapt(ExtendedCamelContext.class).getFactoryFinder(ADAPTER_PROPERTIES);
+        final FactoryFinder factoryFinder = context.adapt(ExtendedCamelContext.class).getFactoryFinder(FactoryFinder.DEFAULT_PATH);
+
 
         LOG.debug("Creating a new resume adapter");
-        final Optional<ResumeAdapter> adapterOptional = factoryFinder.newInstance(ADAPTER_KEY, ResumeAdapter.class);
+        Optional<ResumeAdapter> adapterOptional = factoryFinder.newInstance(resumeAware.adapterFactoryService(), ResumeAdapter.class);
 
         if (!adapterOptional.isPresent()) {
+
             throw new RuntimeException("Cannot find a resume adapter class in the consumer classpath or in the registry");
         }
 

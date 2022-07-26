@@ -644,7 +644,7 @@ public class DefaultRoute extends ServiceSupport implements Route {
             }
 
             if (consumer instanceof ResumeAware && resumeStrategy != null) {
-                ResumeAdapter resumeAdapter = AdapterHelper.eval(getCamelContext(), consumer);
+                ResumeAdapter resumeAdapter = AdapterHelper.eval(getCamelContext(), (ResumeAware) consumer);
                 resumeStrategy.setAdapter(resumeAdapter);
                 ((ResumeAware) consumer).setResumeStrategy(resumeStrategy);
             }
