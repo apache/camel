@@ -574,17 +574,11 @@ public final class ExchangeHelper {
     public static void prepareAggregation(Exchange oldExchange, Exchange newExchange) {
         // move body/header from OUT to IN
         if (oldExchange != null) {
-            if (oldExchange.hasOut()) {
-                oldExchange.setIn(oldExchange.getOut());
-                oldExchange.setOut(null);
-            }
+            ExchangeHelper.prepareOutToIn(oldExchange);
         }
 
         if (newExchange != null) {
-            if (newExchange.hasOut()) {
-                newExchange.setIn(newExchange.getOut());
-                newExchange.setOut(null);
-            }
+            ExchangeHelper.prepareOutToIn(newExchange);
         }
     }
 
