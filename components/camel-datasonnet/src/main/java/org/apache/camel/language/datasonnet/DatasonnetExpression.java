@@ -114,12 +114,18 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
         }
 
         Document<?> body;
+
+        String bodyAsString = MessageHelper.extractBodyAsString(exchange.getMessage());
+
         if (exchange.getMessage().getBody() instanceof Document) {
             body = (Document<?>) exchange.getMessage().getBody();
+        } else if (exchange.getMessage().getBody() == null || "".equals(bodyAsString)) {
+            //Empty body, force type to be application/java
+            body = new DefaultDocument<>("", MediaTypes.APPLICATION_JAVA);
         } else if (MediaTypes.APPLICATION_JAVA.equalsTypeAndSubtype(bodyMT) || bodyMT == null) {
             body = new DefaultDocument<>(exchange.getMessage().getBody());
         } else {
-            body = new DefaultDocument<>(MessageHelper.extractBodyAsString(exchange.getMessage()), bodyMT);
+            body = new DefaultDocument<>(bodyAsString, bodyMT);
         }
 
         // the mapper is pre initialized
