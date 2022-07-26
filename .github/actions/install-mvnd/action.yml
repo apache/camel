@@ -29,7 +29,7 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - run: curl -fsSL -o mvnd.zip https://dlcdn.apache.org/maven/mvnd/${{ inputs.version }}/maven-mvnd-${{ inputs.version }}-darwin-amd64.zip
+    - run: curl -fsSL -o mvnd.zip https://dlcdn.apache.org/maven/mvnd/${{ inputs.version }}/maven-mvnd-${{ inputs.version }}-linux-amd64.zip
       shell: bash
     - run: curl -fsSL -o mvnd.zip.sha256 https://dlcdn.apache.org/maven/mvnd/${{ inputs.version }}/maven-mvnd-${{ inputs.version }}-linux-amd64.zip.sha256
       shell: bash
