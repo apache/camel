@@ -880,6 +880,7 @@ public class AggregateProcessor extends AsyncProcessorSupport
 
         // send this exchange
         executorService.execute(() -> {
+            ExchangeHelper.prepareOutToIn(exchange);
 
             Runnable task = () -> processor.process(exchange, done -> {
                 // log exception if there was a problem
