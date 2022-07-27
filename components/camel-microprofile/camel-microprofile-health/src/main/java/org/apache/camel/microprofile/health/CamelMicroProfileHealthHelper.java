@@ -46,12 +46,14 @@ final class CamelMicroProfileHealthHelper {
             Set<String> metaKeys = check.getMetaData().keySet();
 
             result.getDetails().forEach((key, value) -> {
-                if (exposureLevel.equals("full")) {
-                    builder.withData(key, value.toString());
-                } else {
-                    // Filter health check metadata to have a less verbose output
-                    if (!metaKeys.contains(key)) {
+                if (value != null) {
+                    if (exposureLevel.equals("full")) {
                         builder.withData(key, value.toString());
+                    } else {
+                        // Filter health check metadata to have a less verbose output
+                        if (!metaKeys.contains(key)) {
+                            builder.withData(key, value.toString());
+                        }
                     }
                 }
             });
