@@ -23,6 +23,7 @@ import org.apache.camel.Component;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
+import org.apache.camel.component.stub.StubComponent;
 import org.apache.camel.impl.engine.DefaultComponentResolver;
 import org.apache.camel.main.http.VertxHttpServer;
 import org.apache.camel.main.util.SuggestSimilarHelper;
@@ -61,6 +62,11 @@ public final class DependencyDownloaderComponentResolver extends DefaultComponen
             answer = super.resolveComponent(name, context);
         } else {
             answer = super.resolveComponent("stub", context);
+        }
+        if (stub && answer instanceof StubComponent) {
+            StubComponent sc = (StubComponent) answer;
+            // enable shadow mode on stub component
+            sc.setShadow(true);
         }
         if (answer instanceof PlatformHttpComponent) {
             // setup a default http server on port 8080 if not already done
