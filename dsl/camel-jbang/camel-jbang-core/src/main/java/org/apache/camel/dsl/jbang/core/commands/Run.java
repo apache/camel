@@ -42,7 +42,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -208,7 +207,7 @@ class Run extends CamelCommand {
     }
 
     protected Integer runPipe(String file) throws Exception {
-        this.files = new String[]{file};
+        this.files = new String[] { file };
         pipeRun = true;
         return run();
     }
