@@ -22,7 +22,8 @@ import org.apache.camel.spi.Injector;
 
 public class KameletMainInjector implements Injector {
 
-    private static final String ACCEPTED_STUB_NAMES = "StubComponent,BeanComponent,ClassComponent,KameletComponent,RestComponent,RestApiComponent,PlatformHttpComponent,VertxHttpComponent";
+    private static final String ACCEPTED_STUB_NAMES
+            = "StubComponent,BeanComponent,ClassComponent,KameletComponent,RestComponent,RestApiComponent,PlatformHttpComponent,VertxHttpComponent";
 
     private final Injector delegate;
     private final boolean stub;
