@@ -214,9 +214,9 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
         if (!initialized) {
             initialized = true;
             outputsWithoutCatches = new ArrayList<>();
-            catchClauses = new ArrayList<>();
-            finallyClause = null;
-
+            if (catchClauses == null) {
+                catchClauses = new ArrayList<>();
+            }
             for (ProcessorDefinition<?> output : outputs) {
                 if (output instanceof CatchDefinition) {
                     catchClauses.add((CatchDefinition) output);
@@ -230,6 +230,13 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
                 } else {
                     outputsWithoutCatches.add(output);
                 }
+            }
+            // initialize parent
+            for (CatchDefinition cd : catchClauses) {
+                cd.setParent(this);
+            }
+            if (finallyClause != null) {
+                finallyClause.setParent(this);
             }
         }
     }
