@@ -307,7 +307,11 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
             sslContextParameters = getSslContextParameters();
         }
         if (sslContextParameters == null) {
-            sslContextParameters = retrieveGlobalSslContextParameters();
+            // only secure (https) should use global SSL
+            boolean secure = HttpHelper.isSecureConnection(uri);
+            if (secure) {
+                sslContextParameters = retrieveGlobalSslContextParameters();
+            }
         }
 
         String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
