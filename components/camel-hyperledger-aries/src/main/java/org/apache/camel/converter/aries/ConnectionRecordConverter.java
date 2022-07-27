@@ -20,23 +20,35 @@ import java.util.Map;
 
 import com.google.gson.JsonObject;
 import org.apache.camel.Converter;
-import org.hyperledger.aries.api.schema.SchemasCreatedFilter;
+import org.hyperledger.aries.api.connection.ConnectionRecord;
 
 @Converter(generateLoader = true)
-public final class SchemasCreatedFilterConverter extends AbstractAriesConverter {
+public final class ConnectionRecordConverter extends AbstractAriesConverter {
 
     @Converter
-    public static SchemasCreatedFilter toAries(JsonObject jsonObj) {
-        return toAries(jsonObj, SchemasCreatedFilter.class);
+    public static ConnectionRecord toAries(JsonObject jsonObj) {
+        return toAries(jsonObj, ConnectionRecord.class);
     }
 
     @Converter
-    public static SchemasCreatedFilter toAries(String json) {
-        return toAries(json, SchemasCreatedFilter.class);
+    public static ConnectionRecord toAries(String json) {
+        return toAries(json, ConnectionRecord.class);
     }
 
     @Converter
-    public static SchemasCreatedFilter toAries(Map<String, Object> map) {
-        return toAries(map, SchemasCreatedFilter.class);
+    public static ConnectionRecord toAries(Map<String, Object> map) {
+        return toAries(map, ConnectionRecord.class);
+    }
+
+    @Converter
+    public static JsonObject toJsonObject(ConnectionRecord item) {
+        return (JsonObject) GSON.toJsonTree(item, ConnectionRecord.class);
+    }
+
+    @Converter
+    @SuppressWarnings("unchecked")
+    public static Map<String, Object> toMap(ConnectionRecord item) {
+        JsonObject json = toJsonObject(item);
+        return GSON.fromJson(json, Map.class);
     }
 }
