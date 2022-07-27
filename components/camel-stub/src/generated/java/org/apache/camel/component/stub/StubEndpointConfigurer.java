@@ -17,5 +17,10 @@ import org.apache.camel.component.vm.VmEndpointConfigurer;
 @SuppressWarnings("unchecked")
 public class StubEndpointConfigurer extends VmEndpointConfigurer implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    @Override
+    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
+        super.configure(camelContext, obj, name, value, ignoreCase);
+        return true;
+    }
 }
 

@@ -82,7 +82,16 @@ public final class PropertyConfigurerGenerator {
             }
         }
 
-        if (!options.isEmpty() || !hasSuper) {
+        boolean stub = model != null && model.getName().equals("stub");
+        if (stub && options.isEmpty() && !component) {
+            // special for stub to accept and ignore lenient options
+            w.append("    @Override\n");
+            w.append(
+                    "    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {\n");
+            w.append("        super.configure(camelContext, obj, name, value, ignoreCase);\n");
+            w.append("        return true;\n");
+            w.append("    }\n");
+        } else if (!options.isEmpty() || !hasSuper) {
             if (component) {
                 // if its a component configurer then configuration classes are optional and we need
                 // to generate a method that can lazy create a new configuration if it was null
@@ -111,7 +120,10 @@ public final class PropertyConfigurerGenerator {
                     }
                     w.append(String.format("        case \"%s\": %s; return true;\n", option.getName(), setterLambda));
                 }
-                if (hasSuper) {
+                if (stub) {
+                    // special for stub to accept and ignore lenient options
+                    w.append("        default: return true;\n");
+                } else if (hasSuper) {
                     w.append("        default: return super.configure(camelContext, obj, name, value, ignoreCase);\n");
                 } else {
                     w.append("        default: return false;\n");
