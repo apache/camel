@@ -277,13 +277,13 @@ class ExportQuarkus extends Export {
                 if (clazz != null) {
                     RuntimeProvider provider = main.getCamelContext().getInjector().newInstance(clazz);
                     if (provider != null) {
-                        // re-create answer with the classloader that loaded spring-boot to be able to load resources in this catalog
+                        // re-create answer with the classloader that loaded quarkus to be able to load resources in this catalog
                         Class<CamelCatalog> clazz2
                                 = main.getCamelContext().getClassResolver().resolveClass(DEFAULT_CAMEL_CATALOG,
                                         CamelCatalog.class);
                         answer = main.getCamelContext().getInjector().newInstance(clazz2);
                         answer.setRuntimeProvider(provider);
-                        // use classloader that loaded spring-boot provider to ensure we can load its resources
+                        // use classloader that loaded quarkus provider to ensure we can load its resources
                         answer.getVersionManager().setClassLoader(main.getCamelContext().getApplicationContextClassLoader());
                         answer.enableCache();
                     }
