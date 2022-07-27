@@ -420,6 +420,9 @@ public final class VertxHttpServer {
             while (it.hasNext()) {
                 String k = it.next();
                 Object v = d.getDetails().get(k);
+                if (v == null) {
+                    v = ""; // in case of null value
+                }
                 boolean last = !it.hasNext();
                 sb.append("                 \"").append(k).append("\": \"").append(v).append("\"");
                 if (!last) {
