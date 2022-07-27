@@ -42,6 +42,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -207,7 +208,7 @@ class Run extends CamelCommand {
     }
 
     protected Integer runPipe(String file) throws Exception {
-        this.files = new String[] { file };
+        this.files = new String[]{file};
         pipeRun = true;
         return run();
     }
@@ -312,6 +313,10 @@ class Run extends CamelCommand {
                     files = new File(".").list((dir, name) -> !name.endsWith(".properties"));
                 }
             }
+        }
+        // filter out duplicate files
+        if (files != null && files.length > 0) {
+            files = Arrays.stream(files).distinct().toArray(String[]::new);
         }
 
         // configure logging first
