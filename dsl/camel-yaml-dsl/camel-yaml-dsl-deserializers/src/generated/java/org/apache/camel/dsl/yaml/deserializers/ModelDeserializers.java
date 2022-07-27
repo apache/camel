@@ -17530,6 +17530,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "header-name", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "mode", type = "enum:i,w,u,t"),
+                    @YamlProperty(name = "namespace", type = "array:org.apache.camel.model.PropertyDefinition"),
                     @YamlProperty(name = "trim", type = "boolean")
             }
     )
@@ -17572,6 +17573,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setMode(val);
                     break;
                 }
+                case "namespace": {
+                    java.util.List<org.apache.camel.model.PropertyDefinition> val = asFlatList(node, org.apache.camel.model.PropertyDefinition.class);
+                    target.setNamespace(val);
+                    break;
+                }
                 case "trim": {
                     String val = asText(node);
                     target.setTrim(val);
@@ -17606,6 +17612,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "header-name", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "log-namespaces", type = "boolean"),
+                    @YamlProperty(name = "namespace", type = "array:org.apache.camel.model.PropertyDefinition"),
                     @YamlProperty(name = "object-model", type = "string"),
                     @YamlProperty(name = "pre-compile", type = "boolean"),
                     @YamlProperty(name = "result-type", type = "enum:NUMBER,STRING,BOOLEAN,NODESET,NODE"),
@@ -17661,6 +17668,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "log-namespaces": {
                     String val = asText(node);
                     target.setLogNamespaces(val);
+                    break;
+                }
+                case "namespace": {
+                    java.util.List<org.apache.camel.model.PropertyDefinition> val = asFlatList(node, org.apache.camel.model.PropertyDefinition.class);
+                    target.setNamespace(val);
                     break;
                 }
                 case "object-model": {
@@ -17720,6 +17732,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "expression", type = "string", required = true),
                     @YamlProperty(name = "header-name", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
+                    @YamlProperty(name = "namespace", type = "array:org.apache.camel.model.PropertyDefinition"),
                     @YamlProperty(name = "trim", type = "boolean"),
                     @YamlProperty(name = "type", type = "string")
             }
@@ -17761,6 +17774,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "id": {
                     String val = asText(node);
                     target.setId(val);
+                    break;
+                }
+                case "namespace": {
+                    java.util.List<org.apache.camel.model.PropertyDefinition> val = asFlatList(node, org.apache.camel.model.PropertyDefinition.class);
+                    target.setNamespace(val);
                     break;
                 }
                 case "trim": {
