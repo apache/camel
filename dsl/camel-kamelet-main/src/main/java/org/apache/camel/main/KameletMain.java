@@ -286,6 +286,8 @@ public class KameletMain extends MainCommandLineSupport {
         if (stub) {
             // turn off auto-wiring when running in stub mode
             mainConfigurationProperties.setAutowiredEnabled(false);
+            // and turn off fail fast as we stub components
+            mainConfigurationProperties.setAutoConfigurationFailFast(false);
         }
 
         String info = startupInfo();
@@ -413,10 +415,6 @@ public class KameletMain extends MainCommandLineSupport {
         addInitialProperty("camel.component.kamelet.location", location);
         addInitialProperty("camel.component.rest.consumerComponentName", "platform-http");
         addInitialProperty("camel.component.rest.producerComponentName", "vertx-http");
-        if (stub) {
-            // enable shadow mode on stub component
-            addInitialProperty("camel.component.stub.shadow", "true");
-        }
     }
 
     protected String startupInfo() {
