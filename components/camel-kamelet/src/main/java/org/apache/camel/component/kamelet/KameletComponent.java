@@ -29,6 +29,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
@@ -401,7 +402,10 @@ public class KameletComponent extends DefaultComponent {
                 String id = context.addRouteFromTemplate(routeId, templateId, endpoint.getKameletProperties());
                 RouteDefinition def = context.getRouteDefinition(id);
 
-                if (!def.isPrepared()) {
+                // start the route if not already started
+                ServiceStatus status = context.getRouteController().getRouteStatus(id);
+                boolean started = status != null && status.isStarted();
+                if (!started) {
                     context.startRouteDefinitions(Collections.singletonList(def));
                 }
 
