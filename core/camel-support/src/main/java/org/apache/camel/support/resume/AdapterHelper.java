@@ -40,11 +40,12 @@ public final class AdapterHelper {
         assert resumeAware != null;
 
         LOG.debug("Using the factory finder to search for the resume adapter");
-        final FactoryFinder factoryFinder = context.adapt(ExtendedCamelContext.class).getFactoryFinder(FactoryFinder.DEFAULT_PATH);
-
+        final FactoryFinder factoryFinder
+                = context.adapt(ExtendedCamelContext.class).getFactoryFinder(FactoryFinder.DEFAULT_PATH);
 
         LOG.debug("Creating a new resume adapter");
-        Optional<ResumeAdapter> adapterOptional = factoryFinder.newInstance(resumeAware.adapterFactoryService(), ResumeAdapter.class);
+        Optional<ResumeAdapter> adapterOptional
+                = factoryFinder.newInstance(resumeAware.adapterFactoryService(), ResumeAdapter.class);
 
         if (!adapterOptional.isPresent()) {
 
