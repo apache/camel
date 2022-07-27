@@ -16,13 +16,18 @@
  */
 package org.apache.camel.model.language;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.spi.NamespaceAware;
+import org.apache.camel.spi.annotations.DslProperty;
 
 /**
  * A useful base class for any expression which may be namespace or XML content aware such as {@link XPathExpression} or
@@ -31,6 +36,8 @@ import org.apache.camel.spi.NamespaceAware;
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class NamespaceAwareExpression extends ExpressionDefinition implements NamespaceAware {
 
+    @XmlElement(name = "namespace")
+    private List<PropertyDefinition> namespace;
     @XmlTransient
     private Map<String, String> namespaces;
 
@@ -43,7 +50,7 @@ public abstract class NamespaceAwareExpression extends ExpressionDefinition impl
 
     @Override
     public Map<String, String> getNamespaces() {
-        return namespaces;
+        return getNamespaceAsMap();
     }
 
     /**
@@ -54,6 +61,29 @@ public abstract class NamespaceAwareExpression extends ExpressionDefinition impl
     @Override
     public void setNamespaces(Map<String, String> namespaces) {
         this.namespaces = namespaces;
+    }
+
+    public List<PropertyDefinition> getNamespace() {
+        return namespace;
+    }
+
+    /**
+     * Injects the XML Namespaces of prefix -> uri mappings
+     */
+    public void setNamespace(List<PropertyDefinition> namespace) {
+        this.namespace = namespace;
+    }
+
+    public Map<String, String> getNamespaceAsMap() {
+        if (namespaces == null && namespace != null) {
+            namespaces = new HashMap<>();
+        }
+        if (namespace != null) {
+            for (PropertyDefinition def : namespace) {
+                namespaces.put(def.getKey(), def.getValue());
+            }
+        }
+        return namespaces;
     }
 
 }
