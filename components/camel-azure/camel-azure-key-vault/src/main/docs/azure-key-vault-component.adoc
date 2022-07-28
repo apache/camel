@@ -4,7 +4,7 @@
 :artifactid: camel-azure-key-vault
 :description: Manage secrets and keys in Azure Key Vault Service
 :since: 3.17
-:supportlevel: Preview
+:supportlevel: Stable
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: Azure
