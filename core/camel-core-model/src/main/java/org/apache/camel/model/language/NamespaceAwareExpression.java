@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.model.PropertyDefinition;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spi.annotations.DslProperty;
 
@@ -37,6 +38,7 @@ import org.apache.camel.spi.annotations.DslProperty;
 public abstract class NamespaceAwareExpression extends ExpressionDefinition implements NamespaceAware {
 
     @XmlElement(name = "namespace")
+    @Metadata(label = "common")
     private List<PropertyDefinition> namespace;
     @XmlTransient
     private Map<String, String> namespaces;
