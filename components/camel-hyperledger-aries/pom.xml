@@ -33,16 +33,17 @@
     <packaging>jar</packaging>
 
 	<dependencies>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-support</artifactId>
+        </dependency>
         <dependency>
             <groupId>io.nessus.aries</groupId>
             <artifactId>nessus-aries-common</artifactId>
             <version>${nessus-hyperledger-aries-version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-support</artifactId>
-        </dependency>
-        
+
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit5</artifactId>
