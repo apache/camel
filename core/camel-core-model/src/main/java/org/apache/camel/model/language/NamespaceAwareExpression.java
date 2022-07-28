@@ -28,7 +28,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.NamespaceAware;
-import org.apache.camel.spi.annotations.DslProperty;
 
 /**
  * A useful base class for any expression which may be namespace or XML content aware such as {@link XPathExpression} or
