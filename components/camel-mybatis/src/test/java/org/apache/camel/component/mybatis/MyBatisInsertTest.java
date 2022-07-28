@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.mybatis;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
@@ -36,6 +39,26 @@ public class MyBatisInsertTest extends MyBatisTestSupport {
         account.setEmailAddress("Faraway@gmail.com");
 
         template.sendBody("direct:start", account);
+
+        assertMockEndpointsSatisfied();
+
+        // there should be 3 rows now
+        Integer rows = template.requestBody("mybatis:count?statementType=SelectOne", null, Integer.class);
+        assertEquals(3, rows.intValue(), "There should be 3 rows");
+    }
+
+    @Test
+    public void testInsertMap() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", 555);
+        map.put("firstName", "Donald");
+        map.put("lastName", "Duck");
+        map.put("emailAddress", "donald@duck.com");
+
+        template.sendBody("direct:start", map);
 
         assertMockEndpointsSatisfied();
 
