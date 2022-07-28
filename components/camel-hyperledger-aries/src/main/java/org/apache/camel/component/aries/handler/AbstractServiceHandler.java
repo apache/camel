@@ -113,7 +113,7 @@ public abstract class AbstractServiceHandler implements ServiceHandler {
     }
 
     public AriesClient baseClient() {
-        return getComponent().baseClient();
+        return getComponent().createAdminClient();
     }
 
     public AriesClient createClient() throws IOException {
