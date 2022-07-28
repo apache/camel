@@ -137,12 +137,12 @@ public class QuartzEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Whether to ignore quartz cannot schedule a trigger because the trigger will never fire in the future.
-     * This can happen when using a cron trigger that are configured to only run in the past.
+     * Whether to ignore quartz cannot schedule a trigger because the trigger will never fire in the future. This can
+     * happen when using a cron trigger that are configured to only run in the past.
      *
-     * By default, Quartz will fail to schedule the trigger and therefore fail to start the Camel route.
-     * You can set this to true which then logs a WARN and then ignore the problem, meaning that the route
-     * will never fire in the future.
+     * By default, Quartz will fail to schedule the trigger and therefore fail to start the Camel route. You can set
+     * this to true which then logs a WARN and then ignore the problem, meaning that the route will never fire in the
+     * future.
      */
     public void setIgnoreExpiredNextFireTime(boolean ignoreExpiredNextFireTime) {
         this.ignoreExpiredNextFireTime = ignoreExpiredNextFireTime;
@@ -391,7 +391,8 @@ public class QuartzEndpoint extends DefaultEndpoint {
                 Date ft = ot.computeFirstFireTime(cal);
                 if (ft == null && ignoreExpiredNextFireTime) {
                     scheduled = false;
-                    LOG.warn("Job {} (cron={}, triggerType={}, jobClass={}) not scheduled, because it will never fire in the future",
+                    LOG.warn(
+                            "Job {} (cron={}, triggerType={}, jobClass={}) not scheduled, because it will never fire in the future",
                             trigger.getKey(), cron, trigger.getClass().getSimpleName(),
                             jobDetail.getJobClass().getSimpleName());
                 } else {
