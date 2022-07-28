@@ -21,6 +21,8 @@ import java.util.Map;
 import io.undertow.server.HttpServerExchange;
 import org.apache.camel.Exchange;
 
+import static org.apache.camel.http.base.HttpHelper.evalPlaceholders;
+
 public class RestUndertowHttpBinding extends DefaultUndertowHttpBinding {
 
     public RestUndertowHttpBinding() {
@@ -47,24 +49,7 @@ public class RestUndertowHttpBinding extends DefaultUndertowHttpBinding {
         String consumerPath = endpoint.getHttpURI().getPath();
 
         if (useRestMatching(consumerPath)) {
-
-            // split using single char / is optimized in the jdk
-            String[] paths = path.split("/");
-            String[] consumerPaths = consumerPath.split("/");
-
-            for (int i = 0; i < consumerPaths.length; i++) {
-                if (paths.length < i) {
-                    break;
-                }
-                String p1 = consumerPaths[i];
-                if (p1.startsWith("{") && p1.endsWith("}")) {
-                    String key = p1.substring(1, p1.length() - 1);
-                    String value = paths[i];
-                    if (value != null) {
-                        headersMap.put(key, value);
-                    }
-                }
-            }
+            evalPlaceholders(headersMap, path, consumerPath);
         }
     }
 
