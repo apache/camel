@@ -35,7 +35,7 @@ public interface HyperledgerAriesEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the Aries component.
+     * Builder for endpoint for the Hyperledger Aries component.
      */
     public interface HyperledgerAriesEndpointBuilder
             extends
@@ -120,7 +120,7 @@ public interface HyperledgerAriesEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Aries component.
+     * Advanced builder for endpoint for the Hyperledger Aries component.
      */
     public interface AdvancedHyperledgerAriesEndpointBuilder
             extends
@@ -181,7 +181,7 @@ public interface HyperledgerAriesEndpointBuilderFactory {
 
     public interface HyperledgerAriesBuilders {
         /**
-         * Aries (camel-hyperledger-aries)
+         * Hyperledger Aries (camel-hyperledger-aries)
          * Camel support for Hyperledger Aries
          * 
          * Category: blockchain,identity
@@ -200,7 +200,7 @@ public interface HyperledgerAriesEndpointBuilderFactory {
             return HyperledgerAriesEndpointBuilderFactory.endpointBuilder("hyperledger-aries", path);
         }
         /**
-         * Aries (camel-hyperledger-aries)
+         * Hyperledger Aries (camel-hyperledger-aries)
          * Camel support for Hyperledger Aries
          * 
          * Category: blockchain,identity

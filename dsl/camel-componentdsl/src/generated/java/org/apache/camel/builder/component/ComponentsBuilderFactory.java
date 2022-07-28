@@ -2026,7 +2026,7 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.HwcloudSmnComponentBuilderFactory.hwcloudSmn();
     }
     /**
-     * Aries (camel-hyperledger-aries)
+     * Hyperledger Aries (camel-hyperledger-aries)
      * Camel support for Hyperledger Aries
      * 
      * Category: blockchain,identity

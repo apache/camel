@@ -31,7 +31,7 @@ import org.apache.camel.component.aries.HyperledgerAriesComponent;
 public interface HyperledgerAriesComponentBuilderFactory {
 
     /**
-     * Aries (camel-hyperledger-aries)
+     * Hyperledger Aries (camel-hyperledger-aries)
      * Camel support for Hyperledger Aries
      * 
      * Category: blockchain,identity
@@ -45,7 +45,7 @@ public interface HyperledgerAriesComponentBuilderFactory {
     }
 
     /**
-     * Builder for the Aries component.
+     * Builder for the Hyperledger Aries component.
      */
     interface HyperledgerAriesComponentBuilder
             extends

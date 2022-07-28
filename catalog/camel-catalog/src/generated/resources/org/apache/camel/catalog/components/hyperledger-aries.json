@@ -2,7 +2,7 @@
   "component": {
     "kind": "component",
     "name": "hyperledger-aries",
-    "title": "Aries",
+    "title": "Hyperledger Aries",
     "description": "Camel support for Hyperledger Aries",
     "deprecated": false,
     "firstVersion": "3.19.0",

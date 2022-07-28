@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 import org.hyperledger.aries.AriesClient;
 
-@UriEndpoint(firstVersion = "3.19.0", scheme = "hyperledger-aries", title = "Aries", syntax = "aries:walletName",
+@UriEndpoint(firstVersion = "3.19.0", scheme = "hyperledger-aries", title = "Hyperledger Aries", syntax = "aries:walletName",
              producerOnly = true, category = { Category.BLOCKCHAIN, Category.IDENTITY })
 public class HyperledgerAriesEndpoint extends DefaultEndpoint {
 

@@ -1,5 +1,5 @@
-= Aries Component
-:doctitle: Aries
+= Hyperledger Aries Component
+:doctitle: Hyperledger Aries
 :shortname: hyperledger-aries
 :artifactid: camel-hyperledger-aries
 :description: Camel support for Hyperledger Aries

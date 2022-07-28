@@ -6835,7 +6835,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.SimpleNotificationEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Aries (camel-hyperledger-aries)
+     * Hyperledger Aries (camel-hyperledger-aries)
      * Camel support for Hyperledger Aries
      * 
      * Category: blockchain,identity
@@ -6855,7 +6855,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.HyperledgerAriesEndpointBuilderFactory.endpointBuilder("hyperledger-aries", path);
     }
     /**
-     * Aries (camel-hyperledger-aries)
+     * Hyperledger Aries (camel-hyperledger-aries)
      * Camel support for Hyperledger Aries
      * 
      * Category: blockchain,identity
