@@ -33,8 +33,13 @@ public final class KnownDependenciesResolver {
     }
 
     public void loadKnownDependencies() {
+        doLoadKnownDependencies("/camel-main-known-dependencies.properties");
+        doLoadKnownDependencies("/camel-component-known-dependencies.properties");
+    }
+
+    private void doLoadKnownDependencies(String name) {
         try {
-            InputStream is = getClass().getResourceAsStream("/camel-main-known-dependencies.properties");
+            InputStream is = getClass().getResourceAsStream(name);
             if (is != null) {
                 Properties prop = new Properties();
                 prop.load(is);
