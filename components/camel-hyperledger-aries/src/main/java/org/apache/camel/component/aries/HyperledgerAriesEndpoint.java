@@ -69,12 +69,12 @@ public class HyperledgerAriesEndpoint extends DefaultEndpoint {
     }
 
     public AriesClient createClient() throws IOException {
+        NessusWallet wallet = getWallet();
         String walletName = getWalletName();
-        NessusWallet walletRecord = getComponent().getWallet(walletName);
-        if ("admin".equals(walletName) && walletRecord == null) {
-            return getComponent().createAdminClient();
+        if (wallet == null && "admin".equals(walletName)) {
+            return getComponent().adminClient();
         } else {
-            return getComponent().createClient(walletRecord);
+            return getComponent().createClient(wallet);
         }
     }
 }

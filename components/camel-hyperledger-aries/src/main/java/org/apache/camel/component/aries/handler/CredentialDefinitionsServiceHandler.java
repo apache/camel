@@ -45,6 +45,7 @@ public class CredentialDefinitionsServiceHandler extends AbstractServiceHandler 
     @SuppressWarnings("unchecked")
     @Override
     public void process(Exchange exchange, String service) throws Exception {
+
         if (service.equals("/credential-definitions/created")) {
             CredentialDefinitionFilter filter = maybeBody(exchange, CredentialDefinitionFilter.class);
             if (filter == null) {
@@ -63,6 +64,7 @@ public class CredentialDefinitionsServiceHandler extends AbstractServiceHandler 
             }
             CredentialDefinitionsCreated resObj = createClient().credentialDefinitionsCreated(filter).get();
             exchange.getIn().setBody(resObj);
+
         } else if (service.equals("/credential-definitions")) {
             CredentialDefinitionRequest credDefReq = maybeBody(exchange, CredentialDefinitionRequest.class);
             if (credDefReq == null) {

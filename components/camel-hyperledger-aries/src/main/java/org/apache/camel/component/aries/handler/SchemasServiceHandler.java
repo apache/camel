@@ -30,6 +30,7 @@ public class SchemasServiceHandler extends AbstractServiceHandler {
 
     @Override
     public void process(Exchange exchange, String service) throws Exception {
+
         if (service.equals("/schemas")) {
             SchemaSendRequest schemaReq = assertBody(exchange, SchemaSendRequest.class);
             if (schemaReq.getSchemaName() == null) {
@@ -40,6 +41,7 @@ public class SchemasServiceHandler extends AbstractServiceHandler {
             }
             SchemaSendResponse resObj = createClient().schemas(schemaReq).get();
             exchange.getIn().setBody(resObj);
+
         } else {
             throw new UnsupportedServiceException(service);
         }

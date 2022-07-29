@@ -27,7 +27,7 @@ public class HyperledgerAriesConfiguration {
     @UriPath(description = "The wallet to connect to")
     @Metadata(required = true)
     private String walletName;
-    @UriParam(description = "An ACA-Py API path")
+    @UriParam(description = "An API path (e.g. /issue-credential/records)")
     @Metadata(required = false)
     private String service;
     @UriParam(description = "A schema name")

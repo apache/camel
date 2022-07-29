@@ -16,23 +16,25 @@
  */
 package org.apache.camel.component.aries.handler;
 
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.aries.HyperledgerAriesEndpoint;
 import org.apache.camel.component.aries.UnsupportedServiceException;
-import org.hyperledger.acy_py.generated.model.DID;
+import org.hyperledger.aries.api.credentials.Credential;
 
-public class WalletServiceHandler extends AbstractServiceHandler {
+public class CredentialsServiceHandler extends AbstractServiceHandler {
 
-    public WalletServiceHandler(HyperledgerAriesEndpoint endpoint) {
+    public CredentialsServiceHandler(HyperledgerAriesEndpoint endpoint) {
         super(endpoint);
     }
 
     @Override
     public void process(Exchange exchange, String service) throws Exception {
 
-        if (service.equals("/wallet/did/public")) {
-            DID resObj = createClient().walletDidPublic().orElse(null);
-            exchange.getIn().setBody(resObj);
+        if (service.equals("/credentials")) {
+            List<Credential> credentials = adminClient().credentials().get();
+            exchange.getIn().setBody(credentials);
 
         } else {
             throw new UnsupportedServiceException(service);

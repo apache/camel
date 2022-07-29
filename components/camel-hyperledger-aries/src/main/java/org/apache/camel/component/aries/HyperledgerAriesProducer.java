@@ -21,7 +21,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.aries.handler.AbstractServiceHandler;
 import org.apache.camel.component.aries.handler.ConnectionsServiceHandler;
 import org.apache.camel.component.aries.handler.CredentialDefinitionsServiceHandler;
-import org.apache.camel.component.aries.handler.IssueCredentialServiceHandler;
+import org.apache.camel.component.aries.handler.CredentialsServiceHandler;
+import org.apache.camel.component.aries.handler.IssueCredentialV1ServiceHandler;
 import org.apache.camel.component.aries.handler.MultitenancyServiceHandler;
 import org.apache.camel.component.aries.handler.PresentProofServiceHandler;
 import org.apache.camel.component.aries.handler.RevocationServiceHandler;
@@ -50,20 +51,31 @@ public class HyperledgerAriesProducer extends DefaultProducer {
         String service = getService(exchange);
         if (service.startsWith("/connections")) {
             serviceHandler = new ConnectionsServiceHandler(getEndpoint());
+
         } else if (service.startsWith("/credential-definitions")) {
             serviceHandler = new CredentialDefinitionsServiceHandler(getEndpoint());
+
+        } else if (service.startsWith("/credentials")) {
+            serviceHandler = new CredentialsServiceHandler(getEndpoint());
+
         } else if (service.startsWith("/issue-credential")) {
-            serviceHandler = new IssueCredentialServiceHandler(getEndpoint());
+            serviceHandler = new IssueCredentialV1ServiceHandler(getEndpoint());
+
         } else if (service.startsWith("/multitenancy")) {
             serviceHandler = new MultitenancyServiceHandler(getEndpoint());
+
         } else if (service.startsWith("/present-proof")) {
             serviceHandler = new PresentProofServiceHandler(getEndpoint());
+
         } else if (service.startsWith("/revocation")) {
             serviceHandler = new RevocationServiceHandler(getEndpoint());
+
         } else if (service.startsWith("/schemas")) {
             serviceHandler = new SchemasServiceHandler(getEndpoint());
+
         } else if (service.startsWith("/wallet")) {
             serviceHandler = new WalletServiceHandler(getEndpoint());
+
         } else {
             throw new UnsupportedServiceException(service);
         }

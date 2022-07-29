@@ -13,6 +13,7 @@ org.apache.camel.converter.aries.RevRegCreateRequestConverterLoader
 org.apache.camel.converter.aries.RevokeRequestConverterLoader
 org.apache.camel.converter.aries.SchemaSendRequestConverterLoader
 org.apache.camel.converter.aries.SchemasCreatedFilterConverterLoader
+org.apache.camel.converter.aries.V1CredentialExchangeConverterLoader
 org.apache.camel.converter.aries.V1CredentialFreeOfferRequestConverterLoader
 org.apache.camel.converter.aries.V1CredentialIssueRequestConverterLoader
 org.apache.camel.converter.aries.V1CredentialStoreRequestConverterLoader

@@ -35,26 +35,32 @@ public class PresentProofServiceHandler extends AbstractServiceHandler {
 
     @Override
     public void process(Exchange exchange, String service) throws Exception {
+
         if (service.equals("/present-proof/send-request")) {
             PresentProofRequest reqObj = assertBody(exchange, PresentProofRequest.class);
             PresentationExchangeRecord resObj = createClient().presentProofSendRequest(reqObj).get();
             exchange.getIn().setBody(resObj);
+
         } else if (service.startsWith("/present-proof/records/")) {
+
             String presentationExchangeId = getServicePathToken(service, 2);
             if (service.endsWith("/credentials")) {
                 PresentationRequestCredentialsFilter reqObj = assertBody(exchange, PresentationRequestCredentialsFilter.class);
                 List<PresentationRequestCredentials> resObj
                         = createClient().presentProofRecordsCredentials(presentationExchangeId, reqObj).get();
                 exchange.getIn().setBody(resObj);
+
             } else if (service.endsWith("/send-presentation")) {
                 PresentationRequest reqObj = assertBody(exchange, PresentationRequest.class);
                 PresentationExchangeRecord resObj
                         = createClient().presentProofRecordsSendPresentation(presentationExchangeId, reqObj).get();
                 exchange.getIn().setBody(resObj);
+
             } else if (service.endsWith("/verify-presentation")) {
                 PresentationExchangeRecord resObj
                         = createClient().presentProofRecordsVerifyPresentation(presentationExchangeId).get();
                 exchange.getIn().setBody(resObj);
+
             } else {
                 throw new UnsupportedServiceException(service);
             }
