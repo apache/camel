@@ -139,6 +139,23 @@ public interface JpaComponentBuilderFactory {
             return this;
         }
         /**
+         * To use the TransactionStrategy for running the operations in a
+         * transaction.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.jpa.TransactionStrategy&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param transactionStrategy the value to set
+         * @return the dsl builder
+         */
+        default JpaComponentBuilder transactionStrategy(
+                org.apache.camel.component.jpa.TransactionStrategy transactionStrategy) {
+            doSetProperty("transactionStrategy", transactionStrategy);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -225,6 +242,7 @@ public interface JpaComponentBuilderFactory {
             case "joinTransaction": ((JpaComponent) component).setJoinTransaction((boolean) value); return true;
             case "sharedEntityManager": ((JpaComponent) component).setSharedEntityManager((boolean) value); return true;
             case "transactionManager": ((JpaComponent) component).setTransactionManager((org.springframework.transaction.PlatformTransactionManager) value); return true;
+            case "transactionStrategy": ((JpaComponent) component).setTransactionStrategy((org.apache.camel.component.jpa.TransactionStrategy) value); return true;
             case "bridgeErrorHandler": ((JpaComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((JpaComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((JpaComponent) component).setAutowiredEnabled((boolean) value); return true;
