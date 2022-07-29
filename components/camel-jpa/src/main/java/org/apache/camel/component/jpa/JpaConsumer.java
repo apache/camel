@@ -42,9 +42,6 @@ import org.apache.camel.util.CastUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
 
 public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
@@ -52,7 +49,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Map<String, Object> NOWAIT;
     private final EntityManagerFactory entityManagerFactory;
-    private final TransactionTemplate transactionTemplate;
+    private final TransactionStrategy transactionStrategy;
     private EntityManager entityManager;
     private QueryFactory queryFactory;
     private DeleteHandler<Object> deleteHandler;
@@ -83,7 +80,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     public JpaConsumer(JpaEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.entityManagerFactory = endpoint.getEntityManagerFactory();
-        this.transactionTemplate = endpoint.createTransactionTemplate();
+        this.transactionStrategy = endpoint.getTransactionStrategy();
     }
 
     @Override
@@ -102,10 +99,11 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
             LOG.trace("Recreated EntityManager {} on {}", entityManager, this);
         }
 
-        Object messagePolled = null;
+        final int[] messagePolled = { 0 };
         try {
-            messagePolled = transactionTemplate.execute(new TransactionCallback<Object>() {
-                public Object doInTransaction(TransactionStatus status) {
+            transactionStrategy.executeInTransaction(new Runnable() {
+                @Override
+                public void run() {
                     if (getEndpoint().isJoinTransaction()) {
                         entityManager.joinTransaction();
                     }
@@ -128,9 +126,8 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
                     }
 
                     PersistenceException cause = null;
-                    int messagePolled = 0;
                     try {
-                        messagePolled = processBatch(CastUtils.cast(answer));
+                        messagePolled[0] = processBatch(CastUtils.cast(answer));
                     } catch (Exception e) {
                         if (e instanceof PersistenceException) {
                             cause = (PersistenceException) e;
@@ -155,7 +152,6 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
                     entityManager.flush();
                     // must clear after flush
                     entityManager.clear();
-                    return messagePolled;
                 }
             });
         } catch (Exception e) {
@@ -167,7 +163,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
             throw new PersistenceException(e);
         }
 
-        return getEndpoint().getCamelContext().getTypeConverter().convertTo(int.class, messagePolled);
+        return getEndpoint().getCamelContext().getTypeConverter().convertTo(int.class, messagePolled[0]);
     }
 
     @Override
