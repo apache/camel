@@ -206,16 +206,22 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
      */
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        // Create the redelivery task object for this exchange (optimize to only create task can do redelivery or not)
-        Runnable task = taskFactory.acquire(exchange, callback);
+        try {
+            // Create the redelivery task object for this exchange (optimize to only create task can do redelivery or not)
+            Runnable task = taskFactory.acquire(exchange, callback);
 
-        // Run it
-        if (exchange.isTransacted()) {
-            reactiveExecutor.scheduleQueue(task);
-        } else {
-            reactiveExecutor.scheduleMain(task);
+            // Run it
+            if (exchange.isTransacted()) {
+                reactiveExecutor.scheduleQueue(task);
+            } else {
+                reactiveExecutor.scheduleMain(task);
+            }
+            return false;
+        } catch (Throwable e) {
+            exchange.setException(e);
+            callback.done(true);
+            return true;
         }
-        return false;
     }
 
     @Override
