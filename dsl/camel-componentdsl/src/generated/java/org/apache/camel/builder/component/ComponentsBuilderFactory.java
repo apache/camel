@@ -218,6 +218,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AvroComponentBuilderFactory.avro();
     }
     /**
+     * AWS Cloudtrail (camel-aws-cloudtrail)
+     * Consume events from Amazon Cloudtrail using AWS SDK version 2.x.
+     * 
+     * Category: cloud,eventbus
+     * Since: 3.19
+     * Maven coordinates: org.apache.camel:camel-aws-cloudtrail
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.AwsCloudtrailComponentBuilderFactory.AwsCloudtrailComponentBuilder awsCloudtrail() {
+        return org.apache.camel.builder.component.dsl.AwsCloudtrailComponentBuilderFactory.awsCloudtrail();
+    }
+    /**
      * AWS Secrets Manager (camel-aws-secrets-manager)
      * Manage AWS Secrets Manager services using AWS SDK version 2.x.
      * 

@@ -16,6 +16,7 @@
 ** xref:avro-component.adoc[Avro RPC]
 ** xref:aws-summary.adoc[AWS]
 *** xref:aws2-athena-component.adoc[AWS Athena]
+*** xref:aws-cloudtrail-component.adoc[AWS Cloudtrail]
 *** xref:aws2-cw-component.adoc[AWS CloudWatch]
 *** xref:aws2-ddb-component.adoc[AWS DynamoDB]
 *** xref:aws2-ddbstream-component.adoc[AWS DynamoDB Streams]
