@@ -42,11 +42,13 @@ public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
 
     @Override
     protected int poll() throws Exception {
-        LookupEventsRequest.Builder eventsRequestBuilder = LookupEventsRequest.builder().maxResults(getEndpoint().getConfiguration().getMaxResults());
+        LookupEventsRequest.Builder eventsRequestBuilder
+                = LookupEventsRequest.builder().maxResults(getEndpoint().getConfiguration().getMaxResults());
 
         List<LookupAttribute> attributes = new ArrayList<LookupAttribute>();
         if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getEventSource())) {
-            LookupAttribute eventSource = LookupAttribute.builder().attributeKey(LookupAttributeKey.EVENT_SOURCE).attributeValue(getEndpoint().getConfiguration().getEventSource()).build();
+            LookupAttribute eventSource = LookupAttribute.builder().attributeKey(LookupAttributeKey.EVENT_SOURCE)
+                    .attributeValue(getEndpoint().getConfiguration().getEventSource()).build();
             attributes.add(eventSource);
         }
         if (!attributes.isEmpty()) {
