@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import java.util.Map;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -24,8 +26,6 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.Map;
 
 public class PopulateInitialHeadersFailedIssueTest extends ContextTestSupport {
 
