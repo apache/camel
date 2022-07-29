@@ -32,9 +32,6 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import static org.apache.camel.component.jpa.JpaHelper.getTargetEntityManager;
 
@@ -43,7 +40,7 @@ public class JpaProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(JpaProducer.class);
 
     private final EntityManagerFactory entityManagerFactory;
-    private final TransactionTemplate transactionTemplate;
+    private final TransactionStrategy transactionStrategy;
     private final Expression expression;
     private String query;
     private String namedQuery;
@@ -58,7 +55,7 @@ public class JpaProducer extends DefaultProducer {
         super(endpoint);
         this.expression = expression;
         this.entityManagerFactory = endpoint.getEntityManagerFactory();
-        this.transactionTemplate = endpoint.createTransactionTemplate();
+        this.transactionStrategy = endpoint.getTransactionStrategy();
     }
 
     @Override
@@ -179,8 +176,9 @@ public class JpaProducer extends DefaultProducer {
         Query query = getQueryFactory().createQuery(entityManager);
         configureParameters(query, exchange);
 
-        transactionTemplate.execute(new TransactionCallback<Object>() {
-            public Object doInTransaction(TransactionStatus status) {
+        transactionStrategy.executeInTransaction(new Runnable() {
+            @Override
+            public void run() {
                 if (getEndpoint().isJoinTransaction()) {
                     entityManager.joinTransaction();
                 }
@@ -199,8 +197,6 @@ public class JpaProducer extends DefaultProducer {
                 if (getEndpoint().isFlushOnSend()) {
                     entityManager.flush();
                 }
-
-                return null;
             }
         });
     }
@@ -233,8 +229,9 @@ public class JpaProducer extends DefaultProducer {
         final Object key = exchange.getMessage().getBody();
 
         if (key != null) {
-            transactionTemplate.execute(new TransactionCallback<Object>() {
-                public Object doInTransaction(TransactionStatus status) {
+            transactionStrategy.executeInTransaction(new Runnable() {
+                @Override
+                public void run() {
                     if (getEndpoint().isJoinTransaction()) {
                         entityManager.joinTransaction();
                     }
@@ -255,8 +252,6 @@ public class JpaProducer extends DefaultProducer {
                     if (getEndpoint().isFlushOnSend()) {
                         entityManager.flush();
                     }
-
-                    return null;
                 }
             });
         }
@@ -266,8 +261,9 @@ public class JpaProducer extends DefaultProducer {
         final Object values = expression.evaluate(exchange, Object.class);
 
         if (values != null) {
-            transactionTemplate.execute(new TransactionCallback<Object>() {
-                public Object doInTransaction(TransactionStatus status) {
+            transactionStrategy.executeInTransaction(new Runnable() {
+                @Override
+                public void run() {
                     if (getEndpoint().isJoinTransaction()) {
                         entityManager.joinTransaction();
                     }
@@ -324,8 +320,6 @@ public class JpaProducer extends DefaultProducer {
                     if (getEndpoint().isFlushOnSend()) {
                         entityManager.flush();
                     }
-
-                    return null;
                 }
 
                 /**
