@@ -50,7 +50,7 @@ public class CloudtrailEndpoint extends ScheduledPollEndpoint {
         cloudTrailClient = configuration.getCloudTrailClient() != null
                 ? configuration.getCloudTrailClient()
                 : CloudtrailClientFactory.getCloudtrailClient(configuration).getCloudtrailClient();
-        }
+    }
 
     @Override
     public void doStop() throws Exception {

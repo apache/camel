@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.aws.cloudtrail.client;
 
-
 import software.amazon.awssdk.services.cloudtrail.CloudTrailClient;
 
 /**
