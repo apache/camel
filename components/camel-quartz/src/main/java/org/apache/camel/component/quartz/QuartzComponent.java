@@ -197,12 +197,12 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
     }
 
     /**
-     * Whether to ignore quartz cannot schedule a trigger because the trigger will never fire in the future.
-     * This can happen when using a cron trigger that are configured to only run in the past.
+     * Whether to ignore quartz cannot schedule a trigger because the trigger will never fire in the future. This can
+     * happen when using a cron trigger that are configured to only run in the past.
      *
-     * By default, Quartz will fail to schedule the trigger and therefore fail to start the Camel route.
-     * You can set this to true which then logs a WARN and then ignore the problem, meaning that the route
-     * will never fire in the future.
+     * By default, Quartz will fail to schedule the trigger and therefore fail to start the Camel route. You can set
+     * this to true which then logs a WARN and then ignore the problem, meaning that the route will never fire in the
+     * future.
      */
     public void setIgnoreExpiredNextFireTime(boolean ignoreExpiredNextFireTime) {
         this.ignoreExpiredNextFireTime = ignoreExpiredNextFireTime;
