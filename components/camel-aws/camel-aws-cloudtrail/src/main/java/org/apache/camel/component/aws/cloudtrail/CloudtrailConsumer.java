@@ -18,7 +18,10 @@ package org.apache.camel.component.aws.cloudtrail;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -29,12 +32,17 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.cloudtrail.CloudTrailClient;
-import software.amazon.awssdk.services.cloudtrail.model.*;
+import software.amazon.awssdk.services.cloudtrail.model.Event;
+import software.amazon.awssdk.services.cloudtrail.model.LookupAttribute;
+import software.amazon.awssdk.services.cloudtrail.model.LookupAttributeKey;
+import software.amazon.awssdk.services.cloudtrail.model.LookupEventsRequest;
+import software.amazon.awssdk.services.cloudtrail.model.LookupEventsResponse;
 
 public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(CloudtrailConsumer.class);
-    private static Instant lastTime = null;
+
+    private static Instant lastTime;
 
     public CloudtrailConsumer(CloudtrailEndpoint endpoint, Processor processor) {
         super(endpoint, processor);

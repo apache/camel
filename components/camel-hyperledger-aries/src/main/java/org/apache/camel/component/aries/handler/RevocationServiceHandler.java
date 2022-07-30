@@ -32,14 +32,17 @@ public class RevocationServiceHandler extends AbstractServiceHandler {
 
     @Override
     public void process(Exchange exchange, String service) throws Exception {
+
         if (service.equals("/revocation/create-registry")) {
             RevRegCreateRequest reqObj = assertBody(exchange, RevRegCreateRequest.class);
             IssuerRevRegRecord resObj = createClient().revocationCreateRegistry(reqObj).get();
             exchange.getIn().setBody(resObj);
+
         } else if (service.equals("/revocation/revoke")) {
             RevokeRequest reqObj = assertBody(exchange, RevokeRequest.class);
             RevocationModuleResponse resObj = createClient().revocationRevoke(reqObj).get();
             exchange.getIn().setBody(resObj);
+
         } else {
             throw new UnsupportedServiceException(service);
         }

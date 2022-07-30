@@ -112,8 +112,8 @@ public abstract class AbstractServiceHandler implements ServiceHandler {
         return endpoint.getComponent();
     }
 
-    public AriesClient baseClient() {
-        return getComponent().createAdminClient();
+    public AriesClient adminClient() {
+        return getComponent().adminClient();
     }
 
     public AriesClient createClient() throws IOException {

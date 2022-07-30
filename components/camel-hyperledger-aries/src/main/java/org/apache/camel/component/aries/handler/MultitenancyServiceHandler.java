@@ -45,6 +45,7 @@ public class MultitenancyServiceHandler extends AbstractServiceHandler {
 
     @Override
     public void process(Exchange exchange, String service) throws Exception {
+
         if (service.equals("/multitenancy/wallet")) {
             CreateWalletRequest walletRequest = assertBody(exchange, CreateWalletRequest.class);
             String walletName = walletRequest.getWalletName();
@@ -54,7 +55,7 @@ public class MultitenancyServiceHandler extends AbstractServiceHandler {
             String trusteeName = maybeHeader(exchange, HEADER_MULTITENANCY_TRUSTEE_WALLET, String.class);
 
             WalletRegistry walletRegistry = getComponent().getWalletRegistry();
-            WalletRecord walletResponse = baseClient().multitenancyWalletCreate(walletRequest).get();
+            WalletRecord walletResponse = adminClient().multitenancyWalletCreate(walletRequest).get();
             NessusWallet walletRecord = NessusWallet.build(walletResponse).withWalletRegistry(walletRegistry);
             getComponent().addWallet(walletRecord);
 

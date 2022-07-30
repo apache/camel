@@ -16,16 +16,22 @@
  */
 package org.apache.camel.component.aries.handler;
 
+import java.util.List;
+
+import io.nessus.aries.util.AssertState;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.aries.HyperledgerAriesEndpoint;
 import org.apache.camel.component.aries.UnsupportedServiceException;
 import org.hyperledger.acy_py.generated.model.ConnectionInvitation;
 import org.hyperledger.aries.api.connection.ConnectionAcceptInvitationFilter;
+import org.hyperledger.aries.api.connection.ConnectionFilter;
 import org.hyperledger.aries.api.connection.ConnectionReceiveInvitationFilter;
 import org.hyperledger.aries.api.connection.ConnectionRecord;
 import org.hyperledger.aries.api.connection.CreateInvitationRequest;
 import org.hyperledger.aries.api.connection.CreateInvitationResponse;
 import org.hyperledger.aries.api.connection.ReceiveInvitationRequest;
+import org.hyperledger.aries.api.trustping.PingRequest;
+import org.hyperledger.aries.api.trustping.PingResponse;
 
 public class ConnectionsServiceHandler extends AbstractServiceHandler {
 
@@ -36,7 +42,12 @@ public class ConnectionsServiceHandler extends AbstractServiceHandler {
     @Override
     public void process(Exchange exchange, String service) throws Exception {
 
-        if (service.equals("/connections/create-invitation")) {
+        if (service.equals("/connections")) {
+            ConnectionFilter filter = maybeHeader(exchange, ConnectionFilter.class);
+            List<ConnectionRecord> resObj = createClient().connections(filter).get();
+            exchange.getIn().setBody(resObj);
+
+        } else if (service.equals("/connections/create-invitation")) {
             CreateInvitationRequest reqObj = maybeBody(exchange, CreateInvitationRequest.class);
             if (reqObj == null) {
                 reqObj = CreateInvitationRequest.builder().build();
@@ -57,16 +68,28 @@ public class ConnectionsServiceHandler extends AbstractServiceHandler {
             ConnectionRecord resObj = createClient().connectionsReceiveInvitation(reqObj, filter).get();
             exchange.getIn().setBody(resObj);
 
-        } else if (service.equals("/connections/accept-invitation")) {
-            String connectionId = assertBody(exchange, String.class);
-            ConnectionAcceptInvitationFilter acceptFilter = maybeHeader(exchange, ConnectionAcceptInvitationFilter.class);
-            ConnectionRecord resObj = createClient().connectionsAcceptInvitation(connectionId, acceptFilter).get();
-            exchange.getIn().setBody(resObj);
+        } else if (service.startsWith("/connections/")) {
 
-        } else if (service.equals("/connections/get-single")) {
-            String connectionId = assertBody(exchange, String.class);
-            ConnectionRecord resObj = createClient().connectionsGetById(connectionId).get();
-            exchange.getIn().setBody(resObj);
+            String connectionId = getServicePathToken(service, 1);
+            AssertState.notNull(connectionId, "Null connectionId");
+
+            if (service.endsWith("/accept-invitation")) {
+                ConnectionAcceptInvitationFilter acceptFilter = maybeHeader(exchange, ConnectionAcceptInvitationFilter.class);
+                ConnectionRecord resObj = createClient().connectionsAcceptInvitation(connectionId, acceptFilter).get();
+                exchange.getIn().setBody(resObj);
+
+            } else if (service.endsWith("/send-ping")) {
+                PingRequest pingRequest = assertBody(exchange, PingRequest.class);
+                PingResponse resObj = createClient().connectionsSendPing(connectionId, pingRequest).get();
+                exchange.getIn().setBody(resObj);
+
+            } else if (service.endsWith(connectionId)) {
+                ConnectionRecord resObj = createClient().connectionsGetById(connectionId).orElse(null);
+                exchange.getIn().setBody(resObj);
+
+            } else {
+                throw new UnsupportedServiceException(service);
+            }
 
         } else {
             throw new UnsupportedServiceException(service);
