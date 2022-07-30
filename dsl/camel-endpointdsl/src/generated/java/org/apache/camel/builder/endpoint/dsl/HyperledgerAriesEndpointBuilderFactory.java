@@ -104,7 +104,7 @@ public interface HyperledgerAriesEndpointBuilderFactory {
             return this;
         }
         /**
-         * An ACA-Py API path.
+         * An API path (e.g. /issue-credential/records).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
