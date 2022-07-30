@@ -25,6 +25,7 @@ import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.camel.util.StringHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -128,6 +129,15 @@ class ExportQuarkus extends Export {
         FileUtil.removeDir(new File(BUILD_DIR));
 
         return 0;
+    }
+
+    @Override
+    protected String applicationPropertyLine(String key, String value) {
+        // quarkus use dash cased properties and lets turn camel into dash as well
+        if (key.startsWith("quarkus.") || key.startsWith("camel.")) {
+            key = StringHelper.camelCaseToDash(key);
+        }
+        return super.applicationPropertyLine(key, value);
     }
 
     private void copyDockerFiles() throws Exception {
