@@ -350,14 +350,18 @@ class Run extends CamelCommand {
         main.setAppName("Apache Camel (JBang)");
 
         writeSetting(main, profileProperties, "camel.main.name", name);
+        writeSetting(main, profileProperties, "camel.main.sourceLocationEnabled", "true");
         if (dev) {
+            writeSetting(main, profileProperties, "camel.main.routesReloadEnabled", "true");
             // allow quick shutdown during development
             writeSetting(main, profileProperties, "camel.main.shutdownTimeout", "5");
         }
-        writeSetting(main, profileProperties, "camel.main.routesReloadEnabled", dev ? "true" : "false");
-        writeSetting(main, profileProperties, "camel.main.sourceLocationEnabled", "true");
-        writeSetting(main, profileProperties, "camel.main.tracing", trace ? "true" : "false");
-        writeSetting(main, profileProperties, "camel.main.modeline", modeline ? "true" : "false");
+        if (trace) {
+            writeSetting(main, profileProperties, "camel.main.tracing", "true");
+        }
+        if (modeline) {
+            writeSetting(main, profileProperties, "camel.main.modeline", "true");
+        }
         // allow java-dsl to compile to .class which we need in uber-jar mode
         writeSetting(main, profileProperties, "camel.main.routesCompileDirectory", WORK_DIR);
         writeSetting(main, profileProperties, "camel.jbang.dependencies", dependencies);
