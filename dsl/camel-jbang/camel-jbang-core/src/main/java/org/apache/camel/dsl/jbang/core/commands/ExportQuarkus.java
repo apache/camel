@@ -25,7 +25,6 @@ import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.camel.util.StringHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -43,6 +42,7 @@ import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.commons.io.FileUtils;
 
 class ExportQuarkus extends Export {
