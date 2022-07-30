@@ -93,8 +93,8 @@ from("seda:someEndpoint").
 --------------------------------------------------
 
 If your test then invokes the
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html#assertIsSatisfied(org.apache.camel.CamelContext)[MockEndpoint.assertIsSatisfied(camelContext)
+https://www.javadoc.io/static/org.apache.camel/camel-core/2.25.4/org/apache/camel/component/mock/MockEndpoint.html#assertIsSatisfied-org.apache.camel.CamelContext-[MockEndpoint.assertIsSatisfied(camelContext)
 method], your test case will perform the necessary assertions.
 
 To see how you can set other expectations on the test endpoint, see the
-Mock component.
+https://camel.apache.org/components/2.x/mock-component.html[Mock component].
