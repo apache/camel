@@ -2374,6 +2374,39 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set a comma separated list of public key accepted algorithms. Some
+         * examples include:
+         * ssh-ed25519,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,rsa-sha2-512,rsa-sha2-256 If not specified the default list from JSCH will be used.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param publicKeyAcceptedAlgorithms the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointConsumerBuilder publicKeyAcceptedAlgorithms(
+                String publicKeyAcceptedAlgorithms) {
+            doSetProperty("publicKeyAcceptedAlgorithms", publicKeyAcceptedAlgorithms);
+            return this;
+        }
+        /**
+         * Set a comma separated list of algorithms supported for the server
+         * host key. Some examples include:
+         * ssh-ed25519,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,rsa-sha2-512,rsa-sha2-256 If not specified the default list from JSCH will be used.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param serverHostKeys the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointConsumerBuilder serverHostKeys(String serverHostKeys) {
+            doSetProperty("serverHostKeys", serverHostKeys);
+            return this;
+        }
+        /**
          * Sets whether to use strict host key checking.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -4204,6 +4237,39 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set a comma separated list of public key accepted algorithms. Some
+         * examples include:
+         * ssh-ed25519,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,rsa-sha2-512,rsa-sha2-256 If not specified the default list from JSCH will be used.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param publicKeyAcceptedAlgorithms the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointProducerBuilder publicKeyAcceptedAlgorithms(
+                String publicKeyAcceptedAlgorithms) {
+            doSetProperty("publicKeyAcceptedAlgorithms", publicKeyAcceptedAlgorithms);
+            return this;
+        }
+        /**
+         * Set a comma separated list of algorithms supported for the server
+         * host key. Some examples include:
+         * ssh-ed25519,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,rsa-sha2-512,rsa-sha2-256 If not specified the default list from JSCH will be used.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param serverHostKeys the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointProducerBuilder serverHostKeys(String serverHostKeys) {
+            doSetProperty("serverHostKeys", serverHostKeys);
+            return this;
+        }
+        /**
          * Sets whether to use strict host key checking.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -5671,6 +5737,39 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointBuilder privateKeyUri(String privateKeyUri) {
             doSetProperty("privateKeyUri", privateKeyUri);
+            return this;
+        }
+        /**
+         * Set a comma separated list of public key accepted algorithms. Some
+         * examples include:
+         * ssh-ed25519,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,rsa-sha2-512,rsa-sha2-256 If not specified the default list from JSCH will be used.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param publicKeyAcceptedAlgorithms the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointBuilder publicKeyAcceptedAlgorithms(
+                String publicKeyAcceptedAlgorithms) {
+            doSetProperty("publicKeyAcceptedAlgorithms", publicKeyAcceptedAlgorithms);
+            return this;
+        }
+        /**
+         * Set a comma separated list of algorithms supported for the server
+         * host key. Some examples include:
+         * ssh-ed25519,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,rsa-sha2-512,rsa-sha2-256 If not specified the default list from JSCH will be used.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param serverHostKeys the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointBuilder serverHostKeys(String serverHostKeys) {
+            doSetProperty("serverHostKeys", serverHostKeys);
             return this;
         }
         /**
