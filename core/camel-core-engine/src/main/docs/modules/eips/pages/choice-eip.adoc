@@ -201,7 +201,7 @@ And the same example using XML DSL:
 </route>
 ----
 
-And in YAML DS:
+And in YAML DSL:
 
 [source,yaml]
 ----
