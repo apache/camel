@@ -337,7 +337,7 @@
     <johnzon-version>1.2.17</johnzon-version>
     <jolt-version>0.1.7</jolt-version>
     <jool-version>0.9.14</jool-version>
-    <jooq-version>3.16.4</jooq-version>
+    <jooq-version>3.16.8</jooq-version>
     <joor-version>0.9.14</joor-version>
     <jose4j-version>0.6.4</jose4j-version>
     <jota-version>1.0.0-beta9</jota-version>
@@ -436,7 +436,7 @@
     <openjpa-version>3.2.2</openjpa-version>
     <openstack4j-version>3.10</openstack4j-version>
     <opentelemetry-alpha-version>${opentelemetry-version}-alpha</opentelemetry-alpha-version>
-    <opentelemetry-version>1.13.0</opentelemetry-version>
+    <opentelemetry-version>1.16.0</opentelemetry-version>
     <opentracing-tracerresolver-version>0.1.8</opentracing-tracerresolver-version>
     <opentracing-version>0.33.0</opentracing-version>
     <optaplanner-version>8.23.0.Final</optaplanner-version>
@@ -463,7 +463,7 @@
     <rabbitmq-amqp-client-version>5.14.0</rabbitmq-amqp-client-version>
     <rdf4j-model-version>3.7.4</rdf4j-model-version>
     <rdf4j-rio-version>3.7.4</rdf4j-rio-version>
-    <reactive-streams-version>1.0.3</reactive-streams-version>
+    <reactive-streams-version>1.0.4</reactive-streams-version>
     <reactor-netty-version>1.0.2</reactor-netty-version>
     <reactor-version>3.4.14</reactor-version>
     <redisson-version>3.16.7</redisson-version>
@@ -503,7 +503,7 @@
     <spock-version>2.1-groovy-3.0</spock-version>
     <spring-batch-version>4.3.6</spring-batch-version>
     <spring-data-redis-version>2.6.2</spring-data-redis-version>
-    <spring-integration-version>5.5.13</spring-integration-version>
+    <spring-integration-version>5.5.14</spring-integration-version>
     <spring-ldap-version>2.4.1</spring-ldap-version>
     <spring-rabbitmq-version>2.4.2</spring-rabbitmq-version>
     <spring-security-version>5.7.2</spring-security-version>
