@@ -520,7 +520,8 @@ public class KafkaFetchRecords implements Runnable {
     }
 
     private boolean isRecoverable() {
-        return (pollExceptionStrategy.canContinue() || isReconnect()) && isKafkaConsumerRunnable();
+        return (pollExceptionStrategy != null && pollExceptionStrategy.canContinue() || isReconnect())
+                && isKafkaConsumerRunnable();
     }
 
     // concurrent access happens here
