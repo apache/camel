@@ -55,12 +55,12 @@ public class MultitenancyServiceHandler extends AbstractServiceHandler {
             String trusteeName = maybeHeader(exchange, HEADER_MULTITENANCY_TRUSTEE_WALLET, String.class);
 
             WalletRegistry walletRegistry = getComponent().getWalletRegistry();
-            WalletRecord walletResponse = adminClient().multitenancyWalletCreate(walletRequest).get();
-            NessusWallet walletRecord = NessusWallet.build(walletResponse).withWalletRegistry(walletRegistry);
-            getComponent().addWallet(walletRecord);
+            WalletRecord walletRecord = adminClient().multitenancyWalletCreate(walletRequest).get();
+            NessusWallet wallet = NessusWallet.build(walletRecord).withWalletRegistry(walletRegistry);
+            getComponent().addWallet(wallet);
 
-            String walletId = walletRecord.getWalletId();
-            log.info("{}: [{}] {}", walletName, walletId, walletRecord);
+            String walletId = wallet.getWalletId();
+            log.info("{}: [{}] {}", walletName, walletId, wallet);
 
             if (ledgerRole != null) {
 
@@ -68,16 +68,13 @@ public class MultitenancyServiceHandler extends AbstractServiceHandler {
                         "LedgerRole " + ledgerRole + " requires selfRegister or trusteeWallet");
 
                 // Create a local DID for the wallet
-                AriesClient client = createClient(walletRecord);
+                AriesClient client = getComponent().createClient(walletName);
                 DID did = client.walletDidCreate(WalletDIDCreate.builder().build()).get();
                 log.info("{}: {}", walletName, did);
 
                 if (trusteeName != null) {
 
-                    NessusWallet trusteeWallet = getComponent().getWallet(trusteeName);
-                    AssertState.notNull(trusteeWallet, "Cannot obtain trustee wallet: " + trusteeName);
-
-                    AriesClient trustee = createClient(trusteeWallet);
+                    AriesClient trustee = getComponent().createClient(trusteeName);
                     TxnOrRegisterLedgerNymResponse nymResponse = trustee.ledgerRegisterNym(RegisterNymFilter.builder()
                             .did(did.getDid())
                             .verkey(did.getVerkey())
@@ -91,12 +88,13 @@ public class MultitenancyServiceHandler extends AbstractServiceHandler {
 
                 // Set the public DID for the wallet
                 client.walletDidPublic(did.getDid());
+                wallet.setPublicDid(did);
 
                 DIDEndpoint didEndpoint = client.walletGetDidEndpoint(did.getDid()).get();
                 log.info("{}: {}", walletName, didEndpoint);
             }
 
-            exchange.getIn().setBody(walletRecord);
+            exchange.getIn().setBody(wallet);
         } else {
             throw new UnsupportedServiceException(service);
         }
