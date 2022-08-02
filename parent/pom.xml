@@ -230,7 +230,8 @@
         <hadoop3-guava-version>29.0-jre</hadoop3-guava-version>
         <hamcrest-version>2.2</hamcrest-version>
         <hapi-version>2.3</hapi-version>
-        <hapi-fhir-version>4.1.0</hapi-fhir-version>
+        <hapi-base-version>2.3</hapi-base-version>
+        <hapi-fhir-version>4.2.0</hapi-fhir-version>
         <hawtbuf-version>1.11</hawtbuf-version>
         <hawtdispatch-version>1.22</hawtdispatch-version>
         <hazelcast-version>4.2.5</hazelcast-version>
