@@ -22,18 +22,41 @@ import java.util.Properties;
  * This class is a camelCase ordered {@link Properties} where the key/values are stored in the order they are added or
  * loaded.
  * <p/>
- * The keys are stored in camelCase style, for example a key of <code>camel.main.stream-caching-enabled</code> is stored
- * as <code>camel.main.streamCachingEnabled</code>
+ * The keys are stored in the original case, for example a key of <code>camel.main.stream-caching-enabled</code> is
+ * stored as <code>camel.main.stream-caching-enabled</code>.
  * <p/>
- * Note: This implementation is only intended as implementation detail for the Camel properties component, and has only
- * been designed to provide the needed functionality. The complex logic for loading properties has been kept from the
- * JDK {@link Properties} class.
+ * However the lookup of a value by key with the <tt>get</tt> methods, will support camelCase or dash style.
+ * <p/>
+ * Note: This implementation is only intended as implementation detail for Camel tooling such as camel-jbang, and has
+ * only been designed to provide the needed functionality. The complex logic for loading properties has been kept from
+ * the JDK {@link Properties} class.
  */
 public final class CamelCaseOrderedProperties extends BaseOrderedProperties {
 
     @Override
-    protected Object doPut(String key, String value) {
-        key = StringHelper.dashToCamelCase(key);
-        return super.doPut(key, value);
+    public synchronized Object get(Object key) {
+        return getProperty(key.toString());
     }
+
+    @Override
+    public String getProperty(String key) {
+        String answer = super.getProperty(key);
+        if (answer == null) {
+            answer = super.getProperty(StringHelper.dashToCamelCase(key));
+        }
+        if (answer == null) {
+            answer = super.getProperty(StringHelper.camelCaseToDash(key));
+        }
+        return answer;
+    }
+
+    @Override
+    public String getProperty(String key, String defaultValue) {
+        String answer = getProperty(key);
+        if (answer == null) {
+            answer = defaultValue;
+        }
+        return answer;
+    }
+
 }
