@@ -187,7 +187,7 @@ public class HttpsRouteTest extends BaseJettyTest {
         sslContextFactory.setKeyStorePassword(pwd);
         URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.p12");
         try {
-            sslContextFactory.setKeyStorePath(keyStoreUrl.toURI().getPath());
+            sslContextFactory.setKeyStorePath("file://" + keyStoreUrl.toURI().getPath());
         } catch (URISyntaxException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -203,7 +203,7 @@ public class HttpsRouteTest extends BaseJettyTest {
                 componentJetty.setSslPassword(pwd);
                 componentJetty.setSslKeyPassword(pwd);
                 URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.p12");
-                componentJetty.setKeystore(keyStoreUrl.toURI().getPath());
+                componentJetty.setKeystore("file://" + keyStoreUrl.toURI().getPath());
 
                 from("jetty:https://localhost:" + port1 + "/test").to("mock:a");
 

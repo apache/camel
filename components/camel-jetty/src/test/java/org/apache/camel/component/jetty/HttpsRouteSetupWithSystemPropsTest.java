@@ -36,11 +36,11 @@ public class HttpsRouteSetupWithSystemPropsTest extends HttpsRouteTest {
         // cert,
         // use the server keystore as the trust store for these tests
         URL trustStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.p12");
-        setSystemProp("javax.net.ssl.trustStore", trustStoreUrl.getPath());
+        setSystemProp("javax.net.ssl.trustStore", "file://" + trustStoreUrl.getPath());
 
         // START SNIPPET: e1
         // setup SSL using system properties
-        setSystemProp("org.eclipse.jetty.ssl.keystore", trustStoreUrl.getPath());
+        setSystemProp("org.eclipse.jetty.ssl.keystore", "file://" + trustStoreUrl.getPath());
         setSystemProp("org.eclipse.jetty.ssl.keypassword", pwd);
         setSystemProp("org.eclipse.jetty.ssl.password", pwd);
         setSystemProp("jdk.tls.client.protocols", "TLSv1.2");
