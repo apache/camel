@@ -22,26 +22,21 @@ import java.util.Map;
 
 import io.nessus.aries.AgentConfiguration;
 import io.nessus.aries.AriesClientFactory;
-import io.nessus.aries.util.AssertArg;
 import io.nessus.aries.util.AssertState;
-import io.nessus.aries.wallet.DefaultEventHandler;
 import io.nessus.aries.wallet.NessusWallet;
 import io.nessus.aries.wallet.WalletRegistry;
+import io.nessus.aries.websocket.WebSocketClient;
+import io.nessus.aries.websocket.WebSocketListener;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.hyperledger.aries.AriesClient;
-import org.hyperledger.aries.AriesWebSocketClient;
-import org.hyperledger.aries.api.multitenancy.WalletRecord;
-import org.hyperledger.aries.api.multitenancy.WalletRecord.WalletSettings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Component("hyperledger-aries")
 public class HyperledgerAriesComponent extends DefaultComponent {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HyperledgerAriesComponent.class);
+    // private static final Logger LOG = LoggerFactory.getLogger(HyperledgerAriesComponent.class);
 
     private final WalletRegistry walletRegistry = new WalletRegistry();
     private AgentConfiguration agentConfig;
@@ -50,7 +45,7 @@ public class HyperledgerAriesComponent extends DefaultComponent {
     private boolean removeWalletsOnShutdown;
 
     private AriesClient adminClient;
-    private AriesWebSocketClient adminWebSocketClient;
+    private WebSocketClient adminWebSocketClient;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -125,34 +120,22 @@ public class HyperledgerAriesComponent extends DefaultComponent {
         return adminClient;
     }
 
-    public AriesWebSocketClient adminWebSocketClient() {
+    public AriesClient createClient(String walletName) throws IOException {
+        NessusWallet wallet = assertWallet(walletName);
+        AgentConfiguration agentConfig = getAgentConfiguration();
+        return AriesClientFactory.createClient(agentConfig, wallet);
+    }
+
+    public WebSocketClient adminWebSocketClient(WebSocketListener wslistener) {
         if (adminWebSocketClient == null) {
-            WalletSettings settings = new WalletSettings();
-            settings.setWalletName("admin");
-            WalletRecord adminRecord = NessusWallet.builder()
-                    .walletId("00000000")
-                    .settings(settings)
-                    .build();
-            NessusWallet adminWallet = NessusWallet.build(adminRecord);
-            String webSocketUrl = agentConfig.getWebSocketUrl();
-            LOG.info("WebSocket connecting to {} ...", webSocketUrl);
-            adminWebSocketClient = AriesWebSocketClient.builder()
-                    .url(webSocketUrl)
-                    .handler(new DefaultEventHandler(adminWallet, walletRegistry))
-                    .apiKey(agentConfig.getApiKey())
-                    .build();
+            adminWebSocketClient = new WebSocketClient(agentConfig, null);
+            adminWebSocketClient.openWebSocket(wslistener);
         }
         return adminWebSocketClient;
     }
 
-    public AriesClient createClient(WalletRecord walletRecord) throws IOException {
-        AssertArg.notNull(walletRecord, "No WalletRecord");
-        AgentConfiguration agentConfig = getAgentConfiguration();
-        return AriesClientFactory.createClient(walletRecord, agentConfig);
-    }
-
-    public AriesWebSocketClient getWebSocketClient(String walletName) {
+    public WebSocketClient createWebSocketClient(String walletName, WebSocketListener wslistener) {
         NessusWallet wallet = assertWallet(walletName);
-        return wallet.getWebSocketClient();
+        return wallet.createWebSocketClient(getAgentConfiguration(), wslistener);
     }
 }

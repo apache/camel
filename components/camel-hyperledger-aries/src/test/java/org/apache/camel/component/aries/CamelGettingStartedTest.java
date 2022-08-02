@@ -17,12 +17,12 @@
 package org.apache.camel.component.aries;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
@@ -30,12 +30,12 @@ import java.util.function.UnaryOperator;
 import com.google.gson.JsonObject;
 import io.nessus.aries.wallet.CredentialProposalHelper;
 import io.nessus.aries.wallet.NessusWallet;
+import io.nessus.aries.websocket.WebSocketClient;
 import org.apache.camel.builder.RouteBuilder;
 import org.hyperledger.acy_py.generated.model.ConnectionInvitation;
 import org.hyperledger.acy_py.generated.model.DID;
 import org.hyperledger.acy_py.generated.model.IndyProofReqPredSpec.PTypeEnum;
 import org.hyperledger.acy_py.generated.model.IssuerRevRegRecord;
-import org.hyperledger.aries.AriesWebSocketClient;
 import org.hyperledger.aries.api.connection.ConnectionReceiveInvitationFilter;
 import org.hyperledger.aries.api.connection.ConnectionRecord;
 import org.hyperledger.aries.api.connection.CreateInvitationRequest;
@@ -75,6 +75,7 @@ import org.hyperledger.aries.api.revocation.RevocationEvent.RevocationEventState
 import org.hyperledger.aries.api.revocation.RevokeRequest;
 import org.hyperledger.aries.api.schema.SchemaSendRequest;
 import org.hyperledger.aries.api.schema.SchemaSendResponse;
+import org.hyperledger.aries.webhook.EventType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
@@ -342,9 +343,12 @@ public class CamelGettingStartedTest extends AbstractCamelAriesTest {
                 HEADER_MULTITENANCY_SELF_REGISTER_NYM, true),
                 WalletRecord.class);
 
-        DID publicDid = template.requestBodyAndHeaders("direct:government", null, Map.of(HEADER_SERVICE, "/wallet/did/public"),
-                DID.class);
-        Assertions.assertNotNull(publicDid, "Public DID not null");
+        template.requestBodyAndHeaders("direct:government", null,
+                Map.of(HEADER_SERVICE, "/wallet/did/public"), DID.class);
+
+        NessusWallet wallet = assertWallet(walletName);
+        wallet.createWebSocketClient(getAgentConfiguration());
+        Assertions.assertNotNull(wallet.getPublicDid(), "Public DID not null");
     }
 
     public void onboardFaberCollege(AttachmentContext ctx) throws IOException {
@@ -364,9 +368,12 @@ public class CamelGettingStartedTest extends AbstractCamelAriesTest {
                 HEADER_MULTITENANCY_LEDGER_ROLE, ENDORSER),
                 WalletRecord.class);
 
-        DID publicDid
-                = template.requestBodyAndHeaders("direct:faber", null, Map.of(HEADER_SERVICE, "/wallet/did/public"), DID.class);
-        Assertions.assertNotNull(publicDid, "Public DID not null");
+        template.requestBodyAndHeaders("direct:faber", null,
+                Map.of(HEADER_SERVICE, "/wallet/did/public"), DID.class);
+
+        NessusWallet wallet = assertWallet(walletName);
+        wallet.createWebSocketClient(getAgentConfiguration());
+        Assertions.assertNotNull(wallet.getPublicDid(), "Public DID not null");
     }
 
     public void onboardAcmeCorp(AttachmentContext ctx) throws IOException {
@@ -386,9 +393,12 @@ public class CamelGettingStartedTest extends AbstractCamelAriesTest {
                 HEADER_MULTITENANCY_LEDGER_ROLE, ENDORSER),
                 WalletRecord.class);
 
-        DID publicDid
-                = template.requestBodyAndHeaders("direct:acme", null, Map.of(HEADER_SERVICE, "/wallet/did/public"), DID.class);
-        Assertions.assertNotNull(publicDid, "Public DID not null");
+        template.requestBodyAndHeaders("direct:acme", null,
+                Map.of(HEADER_SERVICE, "/wallet/did/public"), DID.class);
+
+        NessusWallet wallet = assertWallet(walletName);
+        wallet.createWebSocketClient(getAgentConfiguration());
+        Assertions.assertNotNull(wallet.getPublicDid(), "Public DID not null");
     }
 
     public void onboardThriftBank(AttachmentContext ctx) throws IOException {
@@ -408,9 +418,12 @@ public class CamelGettingStartedTest extends AbstractCamelAriesTest {
                 HEADER_MULTITENANCY_LEDGER_ROLE, ENDORSER),
                 WalletRecord.class);
 
-        DID publicDid = template.requestBodyAndHeaders("direct:thrift", null, Map.of(HEADER_SERVICE, "/wallet/did/public"),
-                DID.class);
-        Assertions.assertNotNull(publicDid, "Public DID not null");
+        template.requestBodyAndHeaders("direct:thrift", null,
+                Map.of(HEADER_SERVICE, "/wallet/did/public"), DID.class);
+
+        NessusWallet wallet = assertWallet(walletName);
+        wallet.createWebSocketClient(getAgentConfiguration());
+        Assertions.assertNotNull(wallet.getPublicDid(), "Public DID not null");
     }
 
     public void onboardAlice(AttachmentContext ctx) throws IOException {
@@ -426,17 +439,20 @@ public class CamelGettingStartedTest extends AbstractCamelAriesTest {
                 .build();
 
         template.requestBody("direct:admin", walletRequest, WalletRecord.class);
+
+        NessusWallet wallet = getWallet(walletName);
+        wallet.createWebSocketClient(getAgentConfiguration());
     }
 
     void connectPeers(AttachmentContext ctx, String inviter, String invitee) throws Exception {
 
         logSection(String.format("Connect %s to %s", inviter, invitee));
 
-        NessusWallet inviterWallet = getAriesComponent().getWallet(inviter);
-        NessusWallet inviteeWallet = getAriesComponent().getWallet(invitee);
+        NessusWallet inviterWallet = getAriesComponent().assertWallet(inviter);
+        NessusWallet inviteeWallet = getAriesComponent().assertWallet(invitee);
 
-        AriesWebSocketClient inviterEvents = inviterWallet.getWebSocketClient();
-        AriesWebSocketClient inviteeEvents = inviteeWallet.getWebSocketClient();
+        WebSocketClient inviterEvents = inviterWallet.getWebSocketClient().startRecording(EventType.CONNECTIONS);
+        WebSocketClient inviteeEvents = inviteeWallet.getWebSocketClient().startRecording(EventType.CONNECTIONS);
 
         // Inviter creates an invitation (/connections/create-invitation)
         UnaryOperator<String> uri = wn -> "direct:" + wn.toLowerCase();
@@ -463,13 +479,13 @@ public class CamelGettingStartedTest extends AbstractCamelAriesTest {
                 ConnectionReceiveInvitationFilter.class.getName(), receiveParams),
                 ConnectionRecord.class);
 
-        ConnectionRecord inviterConnectionRecord = inviterEvents.connection()
-                .filter(ConnectionRecord::stateIsActive)
-                .blockFirst(Duration.ofSeconds(10));
+        ConnectionRecord inviterConnectionRecord = inviterEvents
+                .awaitConnection(ConnectionRecord::stateIsActive, 10, TimeUnit.SECONDS)
+                .findAny().get();
 
-        ConnectionRecord inviteeConnectionRecord = inviteeEvents.connection()
-                .filter(ConnectionRecord::stateIsActive)
-                .blockFirst(Duration.ofSeconds(10));
+        ConnectionRecord inviteeConnectionRecord = inviteeEvents
+                .awaitConnection(ConnectionRecord::stateIsActive, 10, TimeUnit.SECONDS)
+                .findAny().get();
 
         ctx.putAttachment(inviter + invitee + "Connection", inviterConnectionRecord);
         ctx.putAttachment(invitee + inviter + "Connection", inviteeConnectionRecord);
@@ -591,8 +607,8 @@ public class CamelGettingStartedTest extends AbstractCamelAriesTest {
 
         String faberAliceConnectionId = ctx.getConnection(FABER, ALICE).getConnectionId();
 
-        AriesWebSocketClient issuerEvents = getWallet(FABER).getWebSocketClient();
-        AriesWebSocketClient holderEvents = getWallet(ALICE).getWebSocketClient();
+        WebSocketClient issuerEvents = getWallet(FABER).getWebSocketClient().startRecording(EventType.ISSUE_CREDENTIAL);
+        WebSocketClient holderEvents = getWallet(ALICE).getWebSocketClient().startRecording(EventType.ISSUE_CREDENTIAL);
 
         /* 1. Faber sends the Transcript Credential Offer
          * 
@@ -622,9 +638,10 @@ public class CamelGettingStartedTest extends AbstractCamelAriesTest {
          * 
          */
 
-        V1CredentialExchange holderExchange = holderEvents.credentialEx()
-                .filter(cex -> cex.getState() == CredentialExchangeState.OFFER_RECEIVED)
-                .blockFirst(Duration.ofSeconds(10));
+        V1CredentialExchange holderExchange = holderEvents
+                .awaitIssueCredentialV1(cex -> cex.getCredentialDefinitionId().equals(transcriptCredDefId) &&
+                        cex.getState() == CredentialExchangeState.OFFER_RECEIVED, 10, TimeUnit.SECONDS)
+                .findAny().get();
 
         CredentialProposal credentialProposal = holderExchange.getCredentialProposalDict().getCredentialProposal();
         CredentialProposalHelper credentialHelper = new CredentialProposalHelper(credentialProposal);
@@ -646,9 +663,10 @@ public class CamelGettingStartedTest extends AbstractCamelAriesTest {
          * 
          */
 
-        V1CredentialExchange issuerExchange = issuerEvents.credentialEx()
-                .filter(cex -> cex.getState() == CredentialExchangeState.REQUEST_RECEIVED)
-                .blockFirst(Duration.ofSeconds(10));
+        V1CredentialExchange issuerExchange = issuerEvents
+                .awaitIssueCredentialV1(cex -> cex.getCredentialDefinitionId().equals(transcriptCredDefId) &&
+                        cex.getState() == CredentialExchangeState.REQUEST_RECEIVED, 10, TimeUnit.SECONDS)
+                .findAny().get();
 
         /* 5. Faber issues the Transcript Credential
          * 
@@ -665,9 +683,10 @@ public class CamelGettingStartedTest extends AbstractCamelAriesTest {
          * 
          */
 
-        holderExchange = holderEvents.credentialEx()
-                .filter(cex -> cex.getState() == CredentialExchangeState.CREDENTIAL_RECEIVED)
-                .blockFirst(Duration.ofSeconds(10));
+        holderExchange = holderEvents
+                .awaitIssueCredentialV1(cex -> cex.getCredentialDefinitionId().equals(transcriptCredDefId) &&
+                        cex.getState() == CredentialExchangeState.CREDENTIAL_RECEIVED, 10, TimeUnit.SECONDS)
+                .findAny().get();
 
         /* 7. Alice stores the Transcript Credential
          * 
@@ -683,9 +702,10 @@ public class CamelGettingStartedTest extends AbstractCamelAriesTest {
                 HEADER_SERVICE, "/issue-credential/records/" + holderCredentialExchangeId + "/store"),
                 V1CredentialExchange.class);
 
-        holderExchange = holderEvents.credentialEx()
-                .filter(cex -> cex.getState() == CredentialExchangeState.CREDENTIAL_ACKED)
-                .blockFirst(Duration.ofSeconds(10));
+        holderExchange = holderEvents
+                .awaitIssueCredentialV1(cex -> cex.getCredentialDefinitionId().equals(transcriptCredDefId) &&
+                        cex.getState() == CredentialExchangeState.CREDENTIAL_ACKED, 10, TimeUnit.SECONDS)
+                .findAny().get();
     }
 
     void applyForJobWithAcme(AttachmentContext ctx) throws Exception {
@@ -694,8 +714,8 @@ public class CamelGettingStartedTest extends AbstractCamelAriesTest {
 
         String acmeAliceConnectionId = ctx.getConnection(ACME, ALICE).getConnectionId();
 
-        AriesWebSocketClient verifierEvents = getWallet(ACME).getWebSocketClient();
-        AriesWebSocketClient proverEvents = getWallet(ALICE).getWebSocketClient();
+        WebSocketClient verifierEvents = getWallet(ACME).getWebSocketClient().startRecording(EventType.PRESENT_PROOF);
+        WebSocketClient proverEvents = getWallet(ALICE).getWebSocketClient().startRecording(EventType.PRESENT_PROOF);
 
         /* 1. Acme creates a Job Application Proof Request
          * 
@@ -741,13 +761,15 @@ public class CamelGettingStartedTest extends AbstractCamelAriesTest {
                         .build())
                 .build();
 
-        template.requestBodyAndHeaders("direct:acme", proofRequest, Map.of(
+        PresentationExchangeRecord verifierExchangeRecord = template.requestBodyAndHeaders("direct:acme", proofRequest, Map.of(
                 HEADER_SERVICE, "/present-proof/send-request"),
                 PresentationExchangeRecord.class);
 
-        PresentationExchangeRecord proverExchangeRecord = proverEvents.presentationEx()
-                .filter(pex -> pex.getState() == PresentationExchangeState.REQUEST_RECEIVED)
-                .blockFirst(Duration.ofSeconds(10));
+        String threadId = verifierExchangeRecord.getThreadId();
+        PresentationExchangeRecord proverExchangeRecord = proverEvents
+                .awaitPresentProofV1(pex -> pex.getState() == PresentationExchangeState.REQUEST_RECEIVED &&
+                        pex.getThreadId().equals(threadId), 10, TimeUnit.SECONDS)
+                .findAny().get();
 
         // 2. Alice searches her Wallet for Credentials that she can use for the creating of Proof for the Job-Application Proof Request
 
@@ -812,9 +834,10 @@ public class CamelGettingStartedTest extends AbstractCamelAriesTest {
                 HEADER_SERVICE, "/present-proof/records/" + proverExchangeId + "/send-presentation"),
                 PresentationExchangeRecord.class);
 
-        PresentationExchangeRecord verifierExchangeRecord = verifierEvents.presentationEx()
-                .filter(pex -> pex.getState() == PresentationExchangeState.PRESENTATION_RECEIVED)
-                .blockFirst(Duration.ofSeconds(10));
+        verifierExchangeRecord = verifierEvents
+                .awaitPresentProofV1(pex -> pex.getState() == PresentationExchangeState.PRESENTATION_RECEIVED &&
+                        pex.getThreadId().equals(threadId), 10, TimeUnit.SECONDS)
+                .findAny().get();
 
         /* 4. Acme verifies the Job Application Proof from Alice
          * 
@@ -826,15 +849,16 @@ public class CamelGettingStartedTest extends AbstractCamelAriesTest {
                 HEADER_SERVICE, "/present-proof/records/" + verifierExchangeId + "/verify-presentation"),
                 PresentationExchangeRecord.class);
 
-        verifierExchangeRecord = verifierEvents.presentationEx()
-                .filter(pex -> pex.getState() == PresentationExchangeState.VERIFIED)
-                .blockFirst(Duration.ofSeconds(10));
+        verifierExchangeRecord = verifierEvents
+                .awaitPresentProofV1(pex -> pex.getState() == PresentationExchangeState.VERIFIED &&
+                        pex.getThreadId().equals(threadId), 10, TimeUnit.SECONDS)
+                .findAny().get();
 
         Assertions.assertTrue(verifierExchangeRecord.isVerified(), "Not VERIFIED");
 
-        proverEvents.presentationEx()
-                .filter(pex -> pex.getState() == PresentationExchangeState.PRESENTATION_ACKED)
-                .blockFirst(Duration.ofSeconds(10));
+        proverEvents.awaitPresentProofV1(pex -> pex.getState() == PresentationExchangeState.PRESENTATION_ACKED &&
+                pex.getThreadId().equals(threadId), 10, TimeUnit.SECONDS)
+                .findAny().get();
 
         // [#1754] Prover cannot know verification outcome from PRESENTATION_ACKED
         // https://github.com/hyperledger/aries-cloudagent-python/issues/1754
@@ -847,8 +871,8 @@ public class CamelGettingStartedTest extends AbstractCamelAriesTest {
 
         String acmeAliceConnectionId = ctx.getConnection(ACME, ALICE).getConnectionId();
 
-        AriesWebSocketClient issuerEvents = getWallet(ACME).getWebSocketClient();
-        AriesWebSocketClient holderEvents = getWallet(ALICE).getWebSocketClient();
+        WebSocketClient issuerEvents = getWallet(ACME).getWebSocketClient().startRecording(EventType.ISSUE_CREDENTIAL);
+        WebSocketClient holderEvents = getWallet(ALICE).getWebSocketClient().startRecording(EventType.ISSUE_CREDENTIAL);
 
         /* 1. Acme sends the JobCertificate Credential Offer
          * 
@@ -877,9 +901,10 @@ public class CamelGettingStartedTest extends AbstractCamelAriesTest {
          * 
          */
 
-        V1CredentialExchange holderExchange = holderEvents.credentialEx()
-                .filter(cex -> cex.getState() == CredentialExchangeState.OFFER_RECEIVED)
-                .blockFirst(Duration.ofSeconds(10));
+        V1CredentialExchange holderExchange = holderEvents
+                .awaitIssueCredentialV1(cex -> cex.getCredentialDefinitionId().equals(jobCertificateCredDefId) &&
+                        cex.getState() == CredentialExchangeState.OFFER_RECEIVED, 10, TimeUnit.SECONDS)
+                .findAny().get();
 
         CredentialProposal credentialProposal = holderExchange.getCredentialProposalDict().getCredentialProposal();
         CredentialProposalHelper credentialHelper = new CredentialProposalHelper(credentialProposal);
@@ -901,9 +926,10 @@ public class CamelGettingStartedTest extends AbstractCamelAriesTest {
          * 
          */
 
-        V1CredentialExchange issuerExchange = issuerEvents.credentialEx()
-                .filter(cex -> cex.getState() == CredentialExchangeState.REQUEST_RECEIVED)
-                .blockFirst(Duration.ofSeconds(10));
+        V1CredentialExchange issuerExchange = issuerEvents
+                .awaitIssueCredentialV1(cex -> cex.getCredentialDefinitionId().equals(jobCertificateCredDefId) &&
+                        cex.getState() == CredentialExchangeState.REQUEST_RECEIVED, 10, TimeUnit.SECONDS)
+                .findAny().get();
 
         /* 5. Acme issues the JobCertificate Credential
          * 
@@ -920,9 +946,10 @@ public class CamelGettingStartedTest extends AbstractCamelAriesTest {
          * 
          */
 
-        holderExchange = holderEvents.credentialEx()
-                .filter(cex -> cex.getState() == CredentialExchangeState.CREDENTIAL_RECEIVED)
-                .blockFirst(Duration.ofSeconds(10));
+        holderExchange = holderEvents
+                .awaitIssueCredentialV1(cex -> cex.getCredentialDefinitionId().equals(jobCertificateCredDefId) &&
+                        cex.getState() == CredentialExchangeState.CREDENTIAL_RECEIVED, 10, TimeUnit.SECONDS)
+                .findAny().get();
 
         /* 7. Alice stores the Transcript Credential
          * 
@@ -938,9 +965,10 @@ public class CamelGettingStartedTest extends AbstractCamelAriesTest {
                 HEADER_SERVICE, "/issue-credential/records/" + holderCredentialExchangeId + "/store"),
                 V1CredentialExchange.class);
 
-        holderExchange = holderEvents.credentialEx()
-                .filter(cex -> cex.getState() == CredentialExchangeState.CREDENTIAL_ACKED)
-                .blockFirst(Duration.ofSeconds(10));
+        holderExchange = holderEvents
+                .awaitIssueCredentialV1(cex -> cex.getCredentialDefinitionId().equals(jobCertificateCredDefId) &&
+                        cex.getState() == CredentialExchangeState.CREDENTIAL_ACKED, 10, TimeUnit.SECONDS)
+                .findAny().get();
     }
 
     void applyForLoanWithThrift(AttachmentContext ctx, boolean expectedOutcome) throws Exception {
@@ -949,8 +977,8 @@ public class CamelGettingStartedTest extends AbstractCamelAriesTest {
 
         String thriftAliceConnectionId = ctx.getConnection(THRIFT, ALICE).getConnectionId();
 
-        AriesWebSocketClient verifierEvents = getWallet(THRIFT).getWebSocketClient();
-        AriesWebSocketClient proverEvents = getWallet(ALICE).getWebSocketClient();
+        WebSocketClient verifierEvents = getWallet(THRIFT).getWebSocketClient().startRecording(EventType.PRESENT_PROOF);
+        WebSocketClient proverEvents = getWallet(ALICE).getWebSocketClient().startRecording(EventType.PRESENT_PROOF);
 
         /* 1. Alice gets a Loan-Application Proof Request from Thrift Bank
          * 
@@ -992,13 +1020,16 @@ public class CamelGettingStartedTest extends AbstractCamelAriesTest {
                         .build())
                 .build();
 
-        template.requestBodyAndHeaders("direct:thrift", proofRequest, Map.of(
-                HEADER_SERVICE, "/present-proof/send-request"),
+        PresentationExchangeRecord verifierExchangeRecord = template.requestBodyAndHeaders("direct:thrift", proofRequest,
+                Map.of(
+                        HEADER_SERVICE, "/present-proof/send-request"),
                 PresentationExchangeRecord.class);
 
-        PresentationExchangeRecord proverExchangeRecord = proverEvents.presentationEx()
-                .filter(pex -> pex.getState() == PresentationExchangeState.REQUEST_RECEIVED)
-                .blockFirst(Duration.ofSeconds(10));
+        String threadId = verifierExchangeRecord.getThreadId();
+        PresentationExchangeRecord proverExchangeRecord = proverEvents
+                .awaitPresentProofV1(pex -> pex.getState() == PresentationExchangeState.REQUEST_RECEIVED &&
+                        pex.getThreadId().equals(threadId), 10, TimeUnit.SECONDS)
+                .findAny().get();
 
         // 2. Alice searches her Wallet for Credentials that she can use for the creating of Proof for the Loan-Application Proof Request
 
@@ -1058,9 +1089,10 @@ public class CamelGettingStartedTest extends AbstractCamelAriesTest {
                 HEADER_SERVICE, "/present-proof/records/" + proverExchangeId + "/send-presentation"),
                 PresentationExchangeRecord.class);
 
-        PresentationExchangeRecord verifierExchangeRecord = verifierEvents.presentationEx()
-                .filter(pex -> pex.getState() == PresentationExchangeState.PRESENTATION_RECEIVED)
-                .blockFirst(Duration.ofSeconds(10));
+        verifierExchangeRecord = verifierEvents
+                .awaitPresentProofV1(pex -> pex.getState() == PresentationExchangeState.PRESENTATION_RECEIVED &&
+                        pex.getThreadId().equals(threadId), 10, TimeUnit.SECONDS)
+                .findAny().get();
 
         /* 4. Thrift verifies the Loan-Application Proof from Alice
          * 
@@ -1072,15 +1104,16 @@ public class CamelGettingStartedTest extends AbstractCamelAriesTest {
                 HEADER_SERVICE, "/present-proof/records/" + verifierExchangeId + "/verify-presentation"),
                 PresentationExchangeRecord.class);
 
-        verifierExchangeRecord = verifierEvents.presentationEx()
-                .filter(pex -> pex.getState() == PresentationExchangeState.VERIFIED)
-                .blockFirst(Duration.ofSeconds(10));
+        verifierExchangeRecord = verifierEvents
+                .awaitPresentProofV1(pex -> pex.getState() == PresentationExchangeState.VERIFIED &&
+                        pex.getThreadId().equals(threadId), 10, TimeUnit.SECONDS)
+                .findAny().get();
 
         Assertions.assertEquals(expectedOutcome, verifierExchangeRecord.isVerified(), "Unexpected verification outcome");
 
-        proverEvents.presentationEx()
-                .filter(pex -> pex.getState() == PresentationExchangeState.PRESENTATION_ACKED)
-                .blockFirst(Duration.ofSeconds(10));
+        proverEvents.awaitPresentProofV1(pex -> pex.getState() == PresentationExchangeState.PRESENTATION_ACKED &&
+                pex.getThreadId().equals(threadId), 10, TimeUnit.SECONDS)
+                .findAny().get();
 
         // [#1754] Prover cannot know verification outcome from PRESENTATION_ACKED
         // https://github.com/hyperledger/aries-cloudagent-python/issues/1754
@@ -1093,8 +1126,8 @@ public class CamelGettingStartedTest extends AbstractCamelAriesTest {
 
         String thriftAliceConnectionId = ctx.getConnection(THRIFT, ALICE).getConnectionId();
 
-        AriesWebSocketClient verifierEvents = getWallet(THRIFT).getWebSocketClient();
-        AriesWebSocketClient proverEvents = getWallet(ALICE).getWebSocketClient();
+        WebSocketClient verifierEvents = getWallet(THRIFT).getWebSocketClient().startRecording(EventType.PRESENT_PROOF);
+        WebSocketClient proverEvents = getWallet(ALICE).getWebSocketClient().startRecording(EventType.PRESENT_PROOF);
 
         /* 1. Alice gets a second Proof Request from Thrift Bank
          * 
@@ -1121,13 +1154,16 @@ public class CamelGettingStartedTest extends AbstractCamelAriesTest {
                         .build())
                 .build();
 
-        template.requestBodyAndHeaders("direct:thrift", proofRequest, Map.of(
-                HEADER_SERVICE, "/present-proof/send-request"),
+        PresentationExchangeRecord verifierExchangeRecord = template.requestBodyAndHeaders("direct:thrift", proofRequest,
+                Map.of(
+                        HEADER_SERVICE, "/present-proof/send-request"),
                 PresentationExchangeRecord.class);
 
-        PresentationExchangeRecord proverExchangeRecord = proverEvents.presentationEx()
-                .filter(pex -> pex.getState() == PresentationExchangeState.REQUEST_RECEIVED)
-                .blockFirst(Duration.ofSeconds(10));
+        String threadId = verifierExchangeRecord.getThreadId();
+        PresentationExchangeRecord proverExchangeRecord = proverEvents
+                .awaitPresentProofV1(pex -> pex.getState() == PresentationExchangeState.REQUEST_RECEIVED &&
+                        pex.getThreadId().equals(threadId), 10, TimeUnit.SECONDS)
+                .findAny().get();
 
         // 2. Alice searches her Wallet for Credentials that she can use for the creating of Proof for the KYC Proof Request
 
@@ -1183,9 +1219,10 @@ public class CamelGettingStartedTest extends AbstractCamelAriesTest {
                 HEADER_SERVICE, "/present-proof/records/" + proverExchangeId + "/send-presentation"),
                 PresentationExchangeRecord.class);
 
-        PresentationExchangeRecord verifierExchangeRecord = verifierEvents.presentationEx()
-                .filter(pex -> pex.getState() == PresentationExchangeState.PRESENTATION_RECEIVED)
-                .blockFirst(Duration.ofSeconds(10));
+        verifierExchangeRecord = verifierEvents
+                .awaitPresentProofV1(pex -> pex.getState() == PresentationExchangeState.PRESENTATION_RECEIVED &&
+                        pex.getThreadId().equals(threadId), 10, TimeUnit.SECONDS)
+                .findAny().get();
 
         /* 4. Thrift verifies the KYC-Application Proof from Alice
          * 
@@ -1197,14 +1234,15 @@ public class CamelGettingStartedTest extends AbstractCamelAriesTest {
                 HEADER_SERVICE, "/present-proof/records/" + verifierExchangeId + "/verify-presentation"),
                 PresentationExchangeRecord.class);
 
-        verifierExchangeRecord = verifierEvents.presentationEx()
-                .filter(pex -> pex.getState() == PresentationExchangeState.VERIFIED)
-                .blockFirst(Duration.ofSeconds(10));
+        verifierExchangeRecord = verifierEvents
+                .awaitPresentProofV1(pex -> pex.getState() == PresentationExchangeState.VERIFIED &&
+                        pex.getThreadId().equals(threadId), 10, TimeUnit.SECONDS)
+                .findAny().get();
         Assertions.assertTrue(verifierExchangeRecord.isVerified(), "Not VERIFIED");
 
-        proverEvents.presentationEx()
-                .filter(pex -> pex.getState() == PresentationExchangeState.PRESENTATION_ACKED)
-                .blockFirst(Duration.ofSeconds(10));
+        proverEvents.awaitPresentProofV1(pex -> pex.getState() == PresentationExchangeState.PRESENTATION_ACKED &&
+                pex.getThreadId().equals(threadId), 10, TimeUnit.SECONDS)
+                .findAny().get();
 
         // [#1754] Prover cannot know verification outcome from PRESENTATION_ACKED
         // https://github.com/hyperledger/aries-cloudagent-python/issues/1754
@@ -1217,10 +1255,11 @@ public class CamelGettingStartedTest extends AbstractCamelAriesTest {
 
         String acmeAliceConnectionId = ctx.getConnection(ACME, ALICE).getConnectionId();
 
-        AriesWebSocketClient issuerEvents = getWallet(ACME).getWebSocketClient();
+        WebSocketClient issuerEvents
+                = getWallet(ACME).getWebSocketClient().startRecording(EventType.ISSUER_CRED_REV, EventType.ISSUE_CREDENTIAL);
 
         // [TODO] There is currently no event that the Holder could listen to
-        // AriesWebSocketClient holderEvents = getWallet(Alice).getWebSocketClient();   
+        // WebSocketClient holderEvents = assertWallet(Alice).getWebSocketClient();   
 
         // 1. Acme searches the Job-Certificate Credential
 
@@ -1248,19 +1287,12 @@ public class CamelGettingStartedTest extends AbstractCamelAriesTest {
                 HEADER_SERVICE, "/revocation/revoke"),
                 RevocationModuleResponse.class);
 
-        issuerEvents.issuerRevocation()
-                .filter(rev -> rev.getState() == RevocationEventState.ISSUED)
-                .blockFirst(Duration.ofSeconds(10));
+        issuerEvents.awaitIssuerRevocation(rev -> rev.getCredDefId().equals(jobCertificateCredDefId) &&
+                rev.getState() == RevocationEventState.REVOKED, 10, TimeUnit.SECONDS)
+                .findAny().get();
 
-        // [#1828] Issuer no longer receives revocation event [state=REVOKED]
-        // https://github.com/hyperledger/aries-cloudagent-python/issues/1828
-        //
-        // issuerEvents.issuerRevocation()
-        //    .filter(rev -> rev.getState() == RevocationEventState.REVOKED)
-        //    .blockFirst(Duration.ofSeconds(10));
-
-        issuerEvents.credentialEx()
-                .filter(cex -> cex.getState() == CredentialExchangeState.CREDENTIAL_REVOKED)
-                .blockFirst(Duration.ofSeconds(10));
+        issuerEvents.awaitIssueCredentialV1(cex -> cex.getCredentialDefinitionId().equals(jobCertificateCredDefId) &&
+                cex.getState() == CredentialExchangeState.CREDENTIAL_REVOKED, 10, TimeUnit.SECONDS)
+                .findAny().get();
     }
 }

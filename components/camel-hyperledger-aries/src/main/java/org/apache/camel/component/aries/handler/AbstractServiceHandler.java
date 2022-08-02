@@ -25,7 +25,6 @@ import org.apache.camel.component.aries.HyperledgerAriesComponent;
 import org.apache.camel.component.aries.HyperledgerAriesConfiguration;
 import org.apache.camel.component.aries.HyperledgerAriesEndpoint;
 import org.hyperledger.aries.AriesClient;
-import org.hyperledger.aries.api.multitenancy.WalletRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,9 +117,5 @@ public abstract class AbstractServiceHandler implements ServiceHandler {
 
     public AriesClient createClient() throws IOException {
         return endpoint.createClient();
-    }
-
-    public AriesClient createClient(WalletRecord walletRecord) throws IOException {
-        return getComponent().createClient(walletRecord);
     }
 }

@@ -20,16 +20,15 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import com.google.gson.Gson;
+import io.nessus.aries.AgentConfiguration;
 import io.nessus.aries.util.AttachmentKey;
 import io.nessus.aries.util.AttachmentSupport;
 import io.nessus.aries.wallet.NessusWallet;
 import io.nessus.aries.wallet.WalletBuilder;
 import io.nessus.aries.wallet.WalletRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.hyperledger.aries.AriesClient;
 import org.hyperledger.aries.api.connection.ConnectionRecord;
 import org.hyperledger.aries.api.ledger.IndyLedgerRoles;
-import org.hyperledger.aries.api.multitenancy.WalletRecord;
 import org.hyperledger.aries.config.GsonConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,8 +51,16 @@ public abstract class AbstractCamelAriesTest extends CamelTestSupport {
         return context.getComponent("hyperledger-aries", HyperledgerAriesComponent.class);
     }
 
+    public AgentConfiguration getAgentConfiguration() {
+        return getAriesComponent().getAgentConfiguration();
+    }
+
     public void setRemoveWalletsOnShutdown(boolean flag) {
         getAriesComponent().setRemoveWalletsOnShutdown(flag);
+    }
+
+    public NessusWallet assertWallet(String walletName) {
+        return getAriesComponent().assertWallet(walletName);
     }
 
     public NessusWallet getWallet(String walletName) {
@@ -88,10 +95,6 @@ public abstract class AbstractCamelAriesTest extends CamelTestSupport {
                 .build();
 
         return walletRecord;
-    }
-
-    public AriesClient createClient(WalletRecord walletRecord) throws IOException {
-        return getAriesComponent().createClient(walletRecord);
     }
 
     // Attachment Support ===============================================================
