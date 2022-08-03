@@ -16,11 +16,11 @@
  */
 package org.apache.camel.dsl.java.joor;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.spi.CompilePostProcessor;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.spi.CompilePostProcessor;
 
 public class JavaJoorClassLoader extends ClassLoader implements CompilePostProcessor {
 
@@ -36,7 +36,8 @@ public class JavaJoorClassLoader extends ClassLoader implements CompilePostProce
     }
 
     @Override
-    public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance) throws Exception {
+    public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance)
+            throws Exception {
         if (name != null && clazz != null) {
             classes.put(name, clazz);
         }
