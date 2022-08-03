@@ -210,14 +210,19 @@ public class DefaultUnitOfWork implements UnitOfWork {
             Synchronization synchronization = it.next();
 
             boolean handover = true;
+            SynchronizationVetoable veto = null;
             if (synchronization instanceof SynchronizationVetoable) {
-                SynchronizationVetoable veto = (SynchronizationVetoable) synchronization;
+                veto = (SynchronizationVetoable) synchronization;
                 handover = veto.allowHandover();
             }
 
             if (handover && (filter == null || filter.test(synchronization))) {
                 log.trace("Handover synchronization {} to: {}", synchronization, target);
                 target.adapt(ExtendedExchange.class).addOnCompletion(synchronization);
+                // Allow the synchronization to do housekeeping before transfer
+                if (veto != null) {
+                    veto.beforeHandover(target);
+                }
                 // remove it if its handed over
                 it.remove();
             } else {
