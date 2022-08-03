@@ -589,29 +589,29 @@ based dependency injection in Java classes.
 
 You can use the following Camel annotations (they work on all runtimes):
 
-- `@BindToRegistry` on class level to create an instance of the class and register in the xref:registry.adoc[Registry].
-- `@BeanInject` to dependency inject a bean on a class field.
-- `@PropertyInject` to inject a xref:using-propertyplaceholder.adoc[property placeholder]. Such as a property defined in `application.properties`.
-- `@BindToRegistry` on a method to create a bean by invoking the method.
-- `@Converter` on class level to auto-register the xref:type-converter.adoc[type converters] from the class.
+- `@org.apache.camel.BindToRegistry` on class level to create an instance of the class and register in the xref:registry.adoc[Registry].
+- `@org.apache.camel.BeanInject` to dependency inject a bean on a class field.
+- `@org.apache.camel.PropertyInject` to inject a xref:using-propertyplaceholder.adoc[property placeholder]. Such as a property defined in `application.properties`.
+- `@org.apache.camel.BindToRegistry` on a method to create a bean by invoking the method.
+- `@org.apache.camel.Converter` on class level to auto-register the xref:type-converter.adoc[type converters] from the class.
 
 ==== Using Spring Boot dependency injection
 
 You can use the following Spring Boot annotations:
 
-- `@Component` or `@Service` on class level to create an instance of the class and register in the xref:registry.adoc[Registry].
-- `@Autowired` to dependency inject a bean on a class field. `@Qualifier` can be used to specify the bean id.
-- `@Value` to inject a xref:using-propertyplaceholder.adoc[property placeholder]. Such as a property defined in `application.properties`.
-- `@Bean` on a method to create a bean by invoking the method.
+- `@org.springframework.stereotype.Component` or `@org.springframework.stereotype.Service` on class level to create an instance of the class and register in the xref:registry.adoc[Registry].
+- `@org.springframework.beans.factory.annotation.Autowired` to dependency inject a bean on a class field. `@org.springframework.beans.factory.annotation.Qualifier` can be used to specify the bean id.
+- `@org.springframework.beans.factory.annotation.Value` to inject a xref:using-propertyplaceholder.adoc[property placeholder]. Such as a property defined in `application.properties`.
+- `@org.springframework.context.annotation.Bean` on a method to create a bean by invoking the method.
 
 ==== Using Quarkus injection
 
 You can use the following Quarkus annotations:
 
-- `@ApplicationScoped` or `@Singleton` on class level to create an instance of the class and register in the xref:registry.adoc[Registry]. `@Named` can be used to specify the bean id.
-- `@Inject` to dependency inject a bean on a class field. `@Named` can be used to specify the bean id.
-- `@ConfigProperty` to inject a xref:using-propertyplaceholder.adoc[property placeholder]. Such as a property defined in `application.properties`.
-- `@Produces` on a method to create a bean by invoking the method. `@Named` can be used to specify the bean id.
+- `@javax.enterprise.context.ApplicationScoped` or `@javax.inject.Singleton` on class level to create an instance of the class and register in the xref:registry.adoc[Registry]. `@javax.inject.Named` can be used to specify the bean id.
+- `@javax.inject.Inject` to dependency inject a bean on a class field. `@javax.inject.Named` can be used to specify the bean id.
+- `@org.eclipse.microprofile.config.inject.ConfigProperty` to inject a xref:using-propertyplaceholder.adoc[property placeholder]. Such as a property defined in `application.properties`.
+- `@javax.enterprise.inject.Produces` on a method to create a bean by invoking the method. `@javax.inject.Named` can be used to specify the bean id.
 
 === Debugging
 
