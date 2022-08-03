@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RoutesBuilder;
@@ -62,6 +63,19 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
 
     public JavaRoutesBuilderLoader() {
         super(EXTENSION);
+    }
+
+    @Override
+    protected void doBuild() throws Exception {
+        super.doBuild();
+
+        // register joor classloader to camel so we are able to load classes we have compiled
+        CamelContext context = getCamelContext();
+        if (context != null) {
+            JavaJoorClassLoader cl = new JavaJoorClassLoader();
+            context.getClassResolver().addClassLoader(cl);
+            addCompilePostProcessor(cl);
+        }
     }
 
     @Override
