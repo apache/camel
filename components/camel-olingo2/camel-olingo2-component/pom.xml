@@ -132,7 +132,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.groovy</groupId>
+            <groupId>org.apache.groovy</groupId>
             <artifactId>groovy-ant</artifactId>
             <scope>test</scope>
         </dependency>
@@ -294,7 +294,7 @@
                         </executions>
                         <dependencies>
                             <dependency>
-                                <groupId>org.codehaus.groovy</groupId>
+                                <groupId>org.apache.groovy</groupId>
                                 <artifactId>groovy</artifactId>
                                 <version>${groovy-version}</version>
                                 <scope>runtime</scope>
