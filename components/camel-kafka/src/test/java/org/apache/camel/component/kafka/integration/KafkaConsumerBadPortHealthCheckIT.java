@@ -70,7 +70,7 @@ public class KafkaConsumerBadPortHealthCheckIT extends CamelTestSupport {
     private MyKafkaHeaderDeserializer deserializer = new MyKafkaHeaderDeserializer();
 
     @EndpointInject("kafka:" + TOPIC
-                    + "?groupId=group1&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer&"
+                    + "?groupId=KafkaConsumerBadPortHealthCheckIT&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer&"
                     + "valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
                     + "&autoCommitIntervalMs=1000&sessionTimeoutMs=30000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
     private Endpoint from;
