@@ -545,7 +545,39 @@ There is basic support for including regular Java source files together with Cam
 and let Camel JBang runtime compile the Java source. This means you can include smaller utility
 classes, POJOs, Camel Processors and whatnot that the application needs.
 
-NOTE: The Java source files cannot use package names. This may change in the future.
+If any of these beans must be used/shared in the Camel application then they must be shared via bean ids,
+and not via classloading.
+
+Given a bean as below:
+
+[source,java]
+----
+@org.apache.camel.BindToRegistry("helloBean")
+public class HelloBean {
+
+    public String greeting() {
+        return "Hello World";
+    }
+}
+----
+
+Notice how the class is annotated with `@BindToRegistry`, to assign the bean an id, which
+we can use to call the bean from Camel routes such as:
+
+TIP: Instead of using `@BindToRegistry` you can also use Spring or Quarkus annotations (see further below).
+
+[source,yaml]
+----
+- from:
+    uri: "timer:yaml"
+    parameters:
+      period: "1000"
+    steps:
+      - bean: "helloBean"
+      - log: "${body}"
+----
+
+IMPORTANT: The Java source files cannot use package names. This may change in the future.
 
 === Dependency Injection in Java classes
 
@@ -577,7 +609,7 @@ You can use the following Spring Boot annotations:
 You can use the following Quarkus annotations:
 
 - `@ApplicationScoped` or `@Singleton` on class level to create an instance of the class and register in the xref:registry.adoc[Registry]. `@Named` can be used to specify the bean id.
-- `@Inject` to dependency inject an bean on a class field. `@Named` can be used to specify the bean id.
+- `@Inject` to dependency inject a bean on a class field. `@Named` can be used to specify the bean id.
 - `@ConfigProperty` to inject a xref:using-propertyplaceholder.adoc[property placeholder]. Such as a property defined in `application.properties`.
 - `@Produces` on a method to create a bean by invoking the method. `@Named` can be used to specify the bean id.
 
