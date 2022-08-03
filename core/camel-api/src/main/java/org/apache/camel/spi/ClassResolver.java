@@ -27,6 +27,13 @@ import java.util.Enumeration;
 public interface ClassResolver {
 
     /**
+     * Adds a custom class loader to use.
+     *
+     * @param classLoader a custom class loader
+     */
+    void addClassLoader(ClassLoader classLoader);
+
+    /**
      * Resolves the given class by its name
      *
      * @param  name full qualified name of class
