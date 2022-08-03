@@ -156,6 +156,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                 LOG.debug(msg, e);
             }
             disconnect();
+            return 0; // return since we cannot poll mail messages, but will re-connect on next poll.
         }
 
         try {
@@ -176,12 +177,12 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         } finally {
             // need to ensure we release resources, but only if closeFolder or disconnect = true
             if (getEndpoint().getConfiguration().isCloseFolder() || getEndpoint().getConfiguration().isDisconnect()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Close mailbox folder {} from {}", folder.getName(),
-                            getEndpoint().getConfiguration().getMailStoreLogInformation());
-                }
                 try {
-                    if (folder.isOpen()) {
+                    if (folder != null && folder.isOpen()) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Close mailbox folder {} from {}", folder.getName(),
+                                    getEndpoint().getConfiguration().getMailStoreLogInformation());
+                        }
                         folder.close(true);
                     }
                 } catch (Exception e) {
@@ -205,7 +206,9 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             LOG.debug("Disconnecting from {}", getEndpoint().getConfiguration().getMailStoreLogInformation());
         }
         try {
-            store.close();
+            if (store != null) {
+                store.close();
+            }
         } catch (Exception e) {
             LOG.debug("Could not disconnect from {}. This exception is ignored.",
                     getEndpoint().getConfiguration().getMailStoreLogInformation(), e);
