@@ -23,6 +23,8 @@ import org.apache.camel.component.aries.HyperledgerAriesEndpoint;
 import org.apache.camel.component.aries.UnsupportedServiceException;
 import org.hyperledger.aries.api.credentials.Credential;
 
+import static java.util.Collections.emptyList;
+
 public class CredentialsServiceHandler extends AbstractServiceHandler {
 
     public CredentialsServiceHandler(HyperledgerAriesEndpoint endpoint) {
@@ -33,7 +35,7 @@ public class CredentialsServiceHandler extends AbstractServiceHandler {
     public void process(Exchange exchange, String service) throws Exception {
 
         if (service.equals("/credentials")) {
-            List<Credential> credentials = adminClient().credentials().get();
+            List<Credential> credentials = adminClient().credentials().orElse(emptyList());
             exchange.getIn().setBody(credentials);
 
         } else {

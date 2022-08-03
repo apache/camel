@@ -27,6 +27,7 @@ import org.hyperledger.aries.api.issue_credential_v1.V1CredentialExchange;
 import org.hyperledger.aries.api.issue_credential_v1.V1CredentialFreeOfferRequest;
 import org.hyperledger.aries.api.issue_credential_v1.V1CredentialIssueRequest;
 import org.hyperledger.aries.api.issue_credential_v1.V1CredentialOfferRequest;
+import org.hyperledger.aries.api.issue_credential_v1.V1CredentialProposalRequest;
 import org.hyperledger.aries.api.issue_credential_v1.V1CredentialStoreRequest;
 
 public class IssueCredentialV1ServiceHandler extends AbstractServiceHandler {
@@ -48,6 +49,11 @@ public class IssueCredentialV1ServiceHandler extends AbstractServiceHandler {
             V1CredentialExchange resObj = createClient().issueCredentialSendOffer(reqObj).get();
             exchange.getIn().setBody(resObj);
 
+        } else if (service.equals("/issue-credential/send-proposal")) {
+            V1CredentialProposalRequest reqObj = assertBody(exchange, V1CredentialProposalRequest.class);
+            V1CredentialExchange resObj = createClient().issueCredentialSendProposal(reqObj).get();
+            exchange.getIn().setBody(resObj);
+
         } else if (service.equals("/issue-credential/records")) {
             IssueCredentialRecordsFilter reqObj = assertBody(exchange, IssueCredentialRecordsFilter.class);
             List<V1CredentialExchange> resObj = createClient().issueCredentialRecords(reqObj).get();
@@ -55,21 +61,26 @@ public class IssueCredentialV1ServiceHandler extends AbstractServiceHandler {
 
         } else if (service.startsWith("/issue-credential/records/")) {
 
-            String credentialExchangeId = getServicePathToken(service, 2);
-            AssertState.notNull(credentialExchangeId, "Null credentialExchangeId");
+            String credExchangeId = getServicePathToken(service, 2);
+            AssertState.notNull(credExchangeId, "Null cred_ex_id");
 
             if (service.endsWith("/send-request")) {
-                V1CredentialExchange resObj = createClient().issueCredentialRecordsSendRequest(credentialExchangeId).get();
+                V1CredentialExchange resObj = createClient().issueCredentialRecordsSendRequest(credExchangeId).get();
                 exchange.getIn().setBody(resObj);
 
             } else if (service.endsWith("/issue")) {
                 V1CredentialIssueRequest reqObj = maybeHeader(exchange, V1CredentialIssueRequest.class);
-                V1CredentialExchange resObj = createClient().issueCredentialRecordsIssue(credentialExchangeId, reqObj).get();
+                V1CredentialExchange resObj = createClient().issueCredentialRecordsIssue(credExchangeId, reqObj).get();
                 exchange.getIn().setBody(resObj);
 
             } else if (service.endsWith("/store")) {
                 V1CredentialStoreRequest reqObj = maybeBody(exchange, V1CredentialStoreRequest.class);
-                V1CredentialExchange resObj = createClient().issueCredentialRecordsStore(credentialExchangeId, reqObj).get();
+                V1CredentialExchange resObj = createClient().issueCredentialRecordsStore(credExchangeId, reqObj).get();
+                exchange.getIn().setBody(resObj);
+
+            } else if (service.endsWith(credExchangeId)) {
+                // /issue-credential/records/{cred_ex_id}
+                V1CredentialExchange resObj = createClient().issueCredentialRecordsGetById(credExchangeId).orElse(null);
                 exchange.getIn().setBody(resObj);
 
             } else {

@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.aries.handler;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.aries.HyperledgerAriesEndpoint;
@@ -26,6 +28,8 @@ import org.hyperledger.aries.api.present_proof.PresentationExchangeRecord;
 import org.hyperledger.aries.api.present_proof.PresentationRequest;
 import org.hyperledger.aries.api.present_proof.PresentationRequestCredentials;
 import org.hyperledger.aries.api.present_proof.PresentationRequestCredentialsFilter;
+
+import static java.util.Collections.emptyList;
 
 public class PresentProofServiceHandler extends AbstractServiceHandler {
 
@@ -41,29 +45,42 @@ public class PresentProofServiceHandler extends AbstractServiceHandler {
             PresentationExchangeRecord resObj = createClient().presentProofSendRequest(reqObj).get();
             exchange.getIn().setBody(resObj);
 
+        } else if (service.equals("/present-proof/records")) {
+            List<PresentationExchangeRecord> resObj = createClient().presentProofRecords().orElse(emptyList()).stream()
+                    .sorted(Collections.reverseOrder((a, b) -> a.getState().ordinal() - b.getState().ordinal()))
+                    .peek(pe -> log.info("{}", pe))
+                    .collect(Collectors.toList());
+            exchange.getIn().setBody(resObj);
+
         } else if (service.startsWith("/present-proof/records/")) {
 
-            String presentationExchangeId = getServicePathToken(service, 2);
+            String presExchangeId = getServicePathToken(service, 2);
             if (service.endsWith("/credentials")) {
                 PresentationRequestCredentialsFilter reqObj = assertBody(exchange, PresentationRequestCredentialsFilter.class);
                 List<PresentationRequestCredentials> resObj
-                        = createClient().presentProofRecordsCredentials(presentationExchangeId, reqObj).get();
+                        = createClient().presentProofRecordsCredentials(presExchangeId, reqObj)
+                                .orElse(emptyList());
                 exchange.getIn().setBody(resObj);
 
             } else if (service.endsWith("/send-presentation")) {
                 PresentationRequest reqObj = assertBody(exchange, PresentationRequest.class);
                 PresentationExchangeRecord resObj
-                        = createClient().presentProofRecordsSendPresentation(presentationExchangeId, reqObj).get();
+                        = createClient().presentProofRecordsSendPresentation(presExchangeId, reqObj).get();
                 exchange.getIn().setBody(resObj);
 
             } else if (service.endsWith("/verify-presentation")) {
-                PresentationExchangeRecord resObj
-                        = createClient().presentProofRecordsVerifyPresentation(presentationExchangeId).get();
+                PresentationExchangeRecord resObj = createClient().presentProofRecordsVerifyPresentation(presExchangeId).get();
+                exchange.getIn().setBody(resObj);
+
+            } else if (service.endsWith(presExchangeId)) {
+                // /present-proof/records/{pres_ex_id}
+                PresentationExchangeRecord resObj = createClient().presentProofRecordsGetById(presExchangeId).orElse(null);
                 exchange.getIn().setBody(resObj);
 
             } else {
                 throw new UnsupportedServiceException(service);
             }
+
         } else {
             throw new UnsupportedServiceException(service);
         }
