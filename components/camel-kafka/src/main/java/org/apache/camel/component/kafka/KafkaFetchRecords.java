@@ -161,9 +161,6 @@ public class KafkaFetchRecords implements Runnable {
         if (LOG.isInfoEnabled()) {
             LOG.info("Terminating KafkaConsumer thread {} receiving from {}", threadId, getPrintableTopic());
         }
-
-        safeUnsubscribe();
-        IOHelper.close(consumer);
     }
 
     private void setupInitializeErrorException(ForegroundTask task, int max) {
@@ -350,8 +347,6 @@ public class KafkaFetchRecords implements Runnable {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("The kafka consumer was woken up while polling on thread {} for {}", threadId, getPrintableTopic());
             }
-
-            safeUnsubscribe();
         } catch (Exception e) {
             if (LOG.isDebugEnabled()) {
                 LOG.warn("Exception {} caught by thread {} while polling {} from kafka: {}",
@@ -520,7 +515,8 @@ public class KafkaFetchRecords implements Runnable {
     }
 
     private boolean isRecoverable() {
-        return (pollExceptionStrategy.canContinue() || isReconnect()) && isKafkaConsumerRunnable();
+        return (pollExceptionStrategy != null && pollExceptionStrategy.canContinue() || isReconnect())
+                && isKafkaConsumerRunnable();
     }
 
     // concurrent access happens here
