@@ -5,3 +5,7 @@ from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then y
 from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.18 to 3.19
+
+=== camel-api
+
+Added `addClassLoader` method to `org.apache.camel.spi.ClassResolver`.
