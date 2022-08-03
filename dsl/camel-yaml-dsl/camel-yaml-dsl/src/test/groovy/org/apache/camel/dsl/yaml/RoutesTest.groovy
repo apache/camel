@@ -146,6 +146,8 @@ class RoutesTest extends YamlTestSupport {
                     id: demo-route
                     stream-caching: true
                     auto-startup: false
+                    startup-order: 123
+                    route-policy: "myPolicy"
                     from:
                       uri: "direct:info"
                       steps:
@@ -158,6 +160,8 @@ class RoutesTest extends YamlTestSupport {
             routeId == 'demo-route'
             streamCache == 'true'
             autoStartup == 'false'
+            startupOrder == 123
+            routePolicyRef == 'myPolicy'
             input.endpointUri == 'direct:info'
 
             with (outputs[0], LogDefinition) {

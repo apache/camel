@@ -2313,6 +2313,12 @@
           "routeConfigurationId" : {
             "type" : "string"
           },
+          "routePolicy" : {
+            "type" : "string"
+          },
+          "startupOrder" : {
+            "type" : "number"
+          },
           "streamCaching" : {
             "type" : "boolean"
           }

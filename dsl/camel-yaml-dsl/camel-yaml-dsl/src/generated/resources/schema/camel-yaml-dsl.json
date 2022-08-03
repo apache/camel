@@ -2409,6 +2409,12 @@
           "route-configuration-id" : {
             "type" : "string"
           },
+          "route-policy" : {
+            "type" : "string"
+          },
+          "startup-order" : {
+            "type" : "number"
+          },
           "stream-caching" : {
             "type" : "boolean"
           }
