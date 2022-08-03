@@ -49,6 +49,7 @@ import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.TriggerKey;
+import org.quartz.spi.OperableTrigger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,6 +83,8 @@ public class QuartzEndpoint extends DefaultEndpoint {
     private String cron;
     @UriParam
     private boolean stateful;
+    @UriParam(label = "advanced")
+    private boolean ignoreExpiredNextFireTime;
     @UriParam(defaultValue = "true")
     private boolean deleteJob = true;
     @UriParam
@@ -127,6 +130,22 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
     public boolean isStateful() {
         return stateful;
+    }
+
+    public boolean isIgnoreExpiredNextFireTime() {
+        return ignoreExpiredNextFireTime;
+    }
+
+    /**
+     * Whether to ignore quartz cannot schedule a trigger because the trigger will never fire in the future. This can
+     * happen when using a cron trigger that are configured to only run in the past.
+     *
+     * By default, Quartz will fail to schedule the trigger and therefore fail to start the Camel route. You can set
+     * this to true which then logs a WARN and then ignore the problem, meaning that the route will never fire in the
+     * future.
+     */
+    public void setIgnoreExpiredNextFireTime(boolean ignoreExpiredNextFireTime) {
+        this.ignoreExpiredNextFireTime = ignoreExpiredNextFireTime;
     }
 
     public long getTriggerStartDelay() {
@@ -355,6 +374,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
         QuartzHelper.updateJobDataMap(getCamelContext(), jobDetail, getEndpointUri(), isUsingFixedCamelContextName());
 
+        boolean scheduled = true;
         if (triggerExisted) {
             // Reschedule job if trigger settings were changed
             if (hasTriggerChanged(oldTrigger, trigger)) {
@@ -362,8 +382,23 @@ public class QuartzEndpoint extends DefaultEndpoint {
             }
         } else {
             try {
-                // Schedule it now. Remember that scheduler might not be started it, but we can schedule now.
-                scheduler.scheduleJob(jobDetail, trigger);
+                // calculate whether the trigger can be triggered in the future
+                Calendar cal = null;
+                if (trigger.getCalendarName() != null) {
+                    cal = scheduler.getCalendar(trigger.getCalendarName());
+                }
+                OperableTrigger ot = (OperableTrigger) trigger;
+                Date ft = ot.computeFirstFireTime(cal);
+                if (ft == null && ignoreExpiredNextFireTime) {
+                    scheduled = false;
+                    LOG.warn(
+                            "Job {} (cron={}, triggerType={}, jobClass={}) not scheduled, because it will never fire in the future",
+                            trigger.getKey(), cron, trigger.getClass().getSimpleName(),
+                            jobDetail.getJobClass().getSimpleName());
+                } else {
+                    // Schedule it now. Remember that scheduler might not be started it, but we can schedule now.
+                    scheduler.scheduleJob(jobDetail, trigger);
+                }
             } catch (ObjectAlreadyExistsException ex) {
                 // some other VM might may have stored the job & trigger in DB in clustered mode, in the mean time
                 if (!(getComponent().isClustered())) {
@@ -377,14 +412,16 @@ public class QuartzEndpoint extends DefaultEndpoint {
             }
         }
 
-        if (LOG.isInfoEnabled()) {
-            Object nextFireTime = trigger.getNextFireTime();
-            if (nextFireTime != null) {
-                nextFireTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(nextFireTime);
+        if (scheduled) {
+            if (LOG.isInfoEnabled()) {
+                Object nextFireTime = trigger.getNextFireTime();
+                if (nextFireTime != null) {
+                    nextFireTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(nextFireTime);
+                }
+                LOG.info("Job {} (cron={}, triggerType={}, jobClass={}) is scheduled. Next fire date is {}",
+                        trigger.getKey(), cron, trigger.getClass().getSimpleName(),
+                        jobDetail.getJobClass().getSimpleName(), nextFireTime);
             }
-            LOG.info("Job {} (triggerType={}, jobClass={}) is scheduled. Next fire date is {}",
-                    trigger.getKey(), trigger.getClass().getSimpleName(),
-                    jobDetail.getJobClass().getSimpleName(), nextFireTime);
         }
 
         // Increase camel job count for this endpoint

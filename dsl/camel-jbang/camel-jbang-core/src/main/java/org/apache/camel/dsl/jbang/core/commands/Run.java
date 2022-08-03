@@ -275,11 +275,6 @@ class Run extends CamelCommand {
         removeDir(work);
         work.mkdirs();
 
-        // generate open-api early
-        if (openapi != null) {
-            generateOpenApi();
-        }
-
         Properties profileProperties = null;
         File profilePropertiesFile = new File(getProfile() + ".properties");
         if (profilePropertiesFile.exists()) {
@@ -296,7 +291,13 @@ class Run extends CamelCommand {
                 propertiesFiles = propertiesFiles + ",file:" + profilePropertiesFile.getName();
             }
             repos = profileProperties.getProperty("camel.jbang.repos", repos);
+            openapi = profileProperties.getProperty("camel.jbang.openApi", openapi);
             download = "true".equals(profileProperties.getProperty("camel.jbang.download", download ? "true" : "false"));
+        }
+
+        // generate open-api early
+        if (openapi != null) {
+            generateOpenApi();
         }
 
         // if no specific file to run then try to auto-detect
@@ -311,6 +312,10 @@ class Run extends CamelCommand {
                     files = new File(".").list((dir, name) -> !name.endsWith(".properties"));
                 }
             }
+        }
+        // filter out duplicate files
+        if (files != null && files.length > 0) {
+            files = Arrays.stream(files).distinct().toArray(String[]::new);
         }
 
         // configure logging first
@@ -344,17 +349,22 @@ class Run extends CamelCommand {
         main.setAppName("Apache Camel (JBang)");
 
         writeSetting(main, profileProperties, "camel.main.name", name);
+        writeSetting(main, profileProperties, "camel.main.sourceLocationEnabled", "true");
         if (dev) {
+            writeSetting(main, profileProperties, "camel.main.routesReloadEnabled", "true");
             // allow quick shutdown during development
             writeSetting(main, profileProperties, "camel.main.shutdownTimeout", "5");
         }
-        writeSetting(main, profileProperties, "camel.main.routesReloadEnabled", dev ? "true" : "false");
-        writeSetting(main, profileProperties, "camel.main.sourceLocationEnabled", "true");
-        writeSetting(main, profileProperties, "camel.main.tracing", trace ? "true" : "false");
-        writeSetting(main, profileProperties, "camel.main.modeline", modeline ? "true" : "false");
+        if (trace) {
+            writeSetting(main, profileProperties, "camel.main.tracing", "true");
+        }
+        if (modeline) {
+            writeSetting(main, profileProperties, "camel.main.modeline", "true");
+        }
         // allow java-dsl to compile to .class which we need in uber-jar mode
         writeSetting(main, profileProperties, "camel.main.routesCompileDirectory", WORK_DIR);
         writeSetting(main, profileProperties, "camel.jbang.dependencies", dependencies);
+        writeSetting(main, profileProperties, "camel.jbang.openApi", openapi);
         writeSetting(main, profileProperties, "camel.jbang.repos", repos);
         writeSetting(main, profileProperties, "camel.jbang.health", health ? "true" : "false");
         writeSetting(main, profileProperties, "camel.jbang.console", console ? "true" : "false");

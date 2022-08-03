@@ -98,10 +98,7 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
             if (!stop && more && (first || continueProcessing(exchange, "so breaking out of pipeline", LOG))) {
 
                 // prepare for next run
-                if (exchange.hasOut()) {
-                    exchange.setIn(exchange.getOut());
-                    exchange.setOut(null);
-                }
+                ExchangeHelper.prepareOutToIn(exchange);
 
                 // get the next processor
                 AsyncProcessor processor = processors.get(index++);
@@ -175,15 +172,21 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        // create task which has state used during routing
-        PooledExchangeTask task = taskFactory.acquire(exchange, callback);
+        try {
+            // create task which has state used during routing
+            PooledExchangeTask task = taskFactory.acquire(exchange, callback);
 
-        if (exchange.isTransacted()) {
-            reactiveExecutor.scheduleQueue(task);
-        } else {
-            reactiveExecutor.scheduleMain(task);
+            if (exchange.isTransacted()) {
+                reactiveExecutor.scheduleQueue(task);
+            } else {
+                reactiveExecutor.scheduleMain(task);
+            }
+            return false;
+        } catch (Throwable e) {
+            exchange.setException(e);
+            callback.done(true);
+            return true;
         }
-        return false;
     }
 
     @Override

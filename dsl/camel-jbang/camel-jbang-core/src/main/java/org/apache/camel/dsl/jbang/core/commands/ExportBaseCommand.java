@@ -73,7 +73,7 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String kameletsVersion;
 
     @CommandLine.Option(names = { "--spring-boot-version" }, description = "Spring Boot version",
-                        defaultValue = "2.7.0")
+                        defaultValue = "2.7.2")
     protected String springBootVersion;
 
     @CommandLine.Option(names = { "--quarkus-group-id" }, description = "Quarkus Platform Maven groupId",
@@ -85,7 +85,7 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String quarkusArtifactId;
 
     @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-                        defaultValue = "2.10.0.Final")
+                        defaultValue = "2.11.1.Final")
     protected String quarkusVersion;
 
     @CommandLine.Option(names = { "--maven-wrapper" }, defaultValue = "true",
@@ -163,13 +163,19 @@ abstract class ExportBaseCommand extends CamelCommand {
                     answer.add(v);
                 }
                 if (v != null && v.contains("org.apache.camel:camel-kamelet")) {
-                    // include kamelet catalog if we use kamelets
+                    // include yaml-dsl and kamelet catalog if we use kamelets
+                    answer.add("camel:yaml-dsl");
                     answer.add("org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
                 }
             } else if (line.startsWith("camel.jbang.dependencies=")) {
                 String deps = StringHelper.after(line, "camel.jbang.dependencies=");
                 for (String d : deps.split(",")) {
                     answer.add(d.trim());
+                    if (d.contains("org.apache.camel:camel-kamelet")) {
+                        // include yaml-dsl and kamelet catalog if we use kamelets
+                        answer.add("camel:yaml-dsl");
+                        answer.add("org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
+                    }
                 }
             } else if (line.startsWith("camel.main.routesIncludePattern=")) {
                 String routes = StringHelper.after(line, "camel.main.routesIncludePattern=");

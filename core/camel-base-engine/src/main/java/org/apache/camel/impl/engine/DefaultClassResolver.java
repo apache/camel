@@ -19,6 +19,8 @@ package org.apache.camel.impl.engine;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -31,6 +33,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class DefaultClassResolver implements ClassResolver, CamelContextAware {
 
+    private Set<ClassLoader> classLoaders;
     private CamelContext camelContext;
 
     public DefaultClassResolver() {
@@ -51,8 +54,26 @@ public class DefaultClassResolver implements ClassResolver, CamelContextAware {
     }
 
     @Override
+    public void addClassLoader(ClassLoader classLoader) {
+        if (classLoaders == null) {
+            classLoaders = new LinkedHashSet<>();
+        }
+        classLoaders.add(classLoader);
+    }
+
+    @Override
     public Class<?> resolveClass(String name) {
-        Class<?> answer = loadClass(name, DefaultClassResolver.class.getClassLoader());
+        Class<?> answer;
+        if (classLoaders != null) {
+            for (ClassLoader loader : classLoaders) {
+                answer = loadClass(name, loader);
+                if (answer != null) {
+                    return answer;
+                }
+            }
+        }
+
+        answer = loadClass(name, DefaultClassResolver.class.getClassLoader());
         if (answer == null && getApplicationContextClassLoader() != null) {
             // fallback and use application context class loader
             answer = loadClass(name, getApplicationContextClassLoader());
@@ -62,12 +83,7 @@ public class DefaultClassResolver implements ClassResolver, CamelContextAware {
 
     @Override
     public <T> Class<T> resolveClass(String name, Class<T> type) {
-        Class<T> answer = CastUtils.cast(loadClass(name, DefaultClassResolver.class.getClassLoader()));
-        if (answer == null && getApplicationContextClassLoader() != null) {
-            // fallback and use application context class loader
-            answer = CastUtils.cast(loadClass(name, getApplicationContextClassLoader()));
-        }
-        return answer;
+        return CastUtils.cast(resolveClass(name), type);
     }
 
     @Override

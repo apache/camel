@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Collection;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -48,6 +50,9 @@ import software.amazon.awssdk.services.eventbridge.model.ListRulesRequest;
 import software.amazon.awssdk.services.eventbridge.model.ListRulesResponse;
 import software.amazon.awssdk.services.eventbridge.model.ListTargetsByRuleRequest;
 import software.amazon.awssdk.services.eventbridge.model.ListTargetsByRuleResponse;
+import software.amazon.awssdk.services.eventbridge.model.PutEventsRequest;
+import software.amazon.awssdk.services.eventbridge.model.PutEventsRequestEntry;
+import software.amazon.awssdk.services.eventbridge.model.PutEventsResponse;
 import software.amazon.awssdk.services.eventbridge.model.PutRuleRequest;
 import software.amazon.awssdk.services.eventbridge.model.PutRuleResponse;
 import software.amazon.awssdk.services.eventbridge.model.PutTargetsRequest;
@@ -102,6 +107,9 @@ public class EventbridgeProducer extends DefaultProducer {
                 break;
             case listRuleNamesByTarget:
                 listRuleNamesByTarget(getEndpoint().getEventbridgeClient(), exchange);
+                break;
+            case putEvent:
+                putEvent(getEndpoint().getEventbridgeClient(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -475,6 +483,57 @@ public class EventbridgeProducer extends DefaultProducer {
                 result = eventbridgeClient.listRuleNamesByTarget(builder.build());
             } catch (AwsServiceException ase) {
                 LOG.trace("List Rule by Target command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
+        }
+    }
+
+    private void putEvent(EventBridgeClient eventbridgeClient, Exchange exchange) throws InvalidPayloadException, IOException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof PutEventsRequest) {
+                PutEventsResponse result;
+                try {
+                    result = eventbridgeClient.putEvents((PutEventsRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("PutEvents command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
+            PutEventsRequest.Builder builder = PutEventsRequest.builder();
+            PutEventsRequestEntry.Builder entryBuilder = PutEventsRequestEntry.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EventbridgeConstants.EVENT_RESOURCES_ARN))) {
+                String resourcesArn = exchange.getIn().getHeader(EventbridgeConstants.EVENT_RESOURCES_ARN, String.class);
+                entryBuilder.resources(Stream.of(resourcesArn.split(",")).collect(Collectors.toList()));
+            } else {
+                throw new IllegalArgumentException("At least one resource ARN must be specified");
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EventbridgeConstants.EVENT_DETAIL_TYPE))) {
+                String detailType = exchange.getIn().getHeader(EventbridgeConstants.EVENT_DETAIL_TYPE, String.class);
+                entryBuilder.detailType(detailType);
+            } else {
+                throw new IllegalArgumentException("Detail Type must be specified");
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EventbridgeConstants.EVENT_SOURCE))) {
+                String source = exchange.getIn().getHeader(EventbridgeConstants.EVENT_SOURCE, String.class);
+                entryBuilder.source(source);
+            } else {
+                throw new IllegalArgumentException("Source must be specified");
+            }
+            entryBuilder.eventBusName(getConfiguration().getEventbusName());
+            entryBuilder.detail(exchange.getMessage().getMandatoryBody(String.class));
+
+            builder.entries(entryBuilder.build());
+            PutEventsResponse result;
+            try {
+                result = eventbridgeClient.putEvents(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Put Events command returned the error code {}", ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);

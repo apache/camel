@@ -4274,6 +4274,20 @@ public interface SalesforceEndpointBuilderFactory {
         public String salesforceClientId() {
             return "SalesforceClientId";
         }
+
+        /**
+         * Total number of records matching a query.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * SalesforceQueryResultTotalSize}.
+         */
+        public String salesforceQueryResultTotalSize() {
+            return "SalesforceQueryResultTotalSize";
+        }
     }
     static SalesforceEndpointBuilder endpointBuilder(
             String componentName,

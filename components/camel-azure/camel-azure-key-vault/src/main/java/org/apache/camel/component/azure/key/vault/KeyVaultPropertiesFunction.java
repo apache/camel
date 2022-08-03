@@ -176,7 +176,7 @@ public class KeyVaultPropertiesFunction extends ServiceSupport implements Proper
             throws JsonProcessingException {
         String returnValue;
         try {
-            KeyVaultSecret secret = client.getSecret(key, (ObjectHelper.isNotEmpty(version) ? version : ""));
+            KeyVaultSecret secret = client.getSecret(key, ObjectHelper.isNotEmpty(version) ? version : "");
             returnValue = secret.getValue();
             if (ObjectHelper.isNotEmpty(subkey)) {
                 ObjectMapper mapper = new ObjectMapper();

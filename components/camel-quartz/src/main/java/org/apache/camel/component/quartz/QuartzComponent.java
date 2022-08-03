@@ -30,6 +30,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ExtendedStartupListener;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
@@ -79,6 +80,8 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
     private boolean prefixJobNameWithEndpointId;
     @Metadata(defaultValue = "true")
     private boolean prefixInstanceName = true;
+    @UriParam(label = "advanced")
+    private boolean ignoreExpiredNextFireTime;
 
     public QuartzComponent() {
     }
@@ -187,6 +190,22 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
      */
     public void setInterruptJobsOnShutdown(boolean interruptJobsOnShutdown) {
         this.interruptJobsOnShutdown = interruptJobsOnShutdown;
+    }
+
+    public boolean isIgnoreExpiredNextFireTime() {
+        return ignoreExpiredNextFireTime;
+    }
+
+    /**
+     * Whether to ignore quartz cannot schedule a trigger because the trigger will never fire in the future. This can
+     * happen when using a cron trigger that are configured to only run in the past.
+     *
+     * By default, Quartz will fail to schedule the trigger and therefore fail to start the Camel route. You can set
+     * this to true which then logs a WARN and then ignore the problem, meaning that the route will never fire in the
+     * future.
+     */
+    public void setIgnoreExpiredNextFireTime(boolean ignoreExpiredNextFireTime) {
+        this.ignoreExpiredNextFireTime = ignoreExpiredNextFireTime;
     }
 
     public SchedulerFactory getSchedulerFactory() {
@@ -396,6 +415,7 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
             cron = cron.replace('+', ' ');
             result.setCron(cron);
         }
+        result.setIgnoreExpiredNextFireTime(ignoreExpiredNextFireTime);
         setProperties(result, parameters);
         return result;
     }

@@ -17,96 +17,51 @@
 
 package org.apache.camel.support.resume;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Properties;
+import java.util.Optional;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Consumer;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.resume.Cacheable;
 import org.apache.camel.resume.ResumeAdapter;
+import org.apache.camel.resume.ResumeAware;
 import org.apache.camel.resume.cache.ResumeCache;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.spi.FactoryFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class AdapterHelper {
     private static final Logger LOG = LoggerFactory.getLogger(AdapterHelper.class);
-    private static final String ADAPTER_PROPERTIES = "/org/apache/camel/resume/adapter.properties";
-    private static final String PROP_ADAPTER_CLASS = "adapterClass";
 
     private AdapterHelper() {
     }
 
-    public static ResumeAdapter eval(CamelContext context, Consumer consumer) {
+    public static ResumeAdapter eval(CamelContext context, ResumeAware resumeAware) {
         assert context != null;
-        assert consumer != null;
+        assert resumeAware != null;
 
-        Object adapterInstance = context.getRegistry().lookupByName("resumeAdapter");
-        if (adapterInstance == null) {
-            adapterInstance = resolveAdapter(context, consumer);
+        LOG.debug("Using the factory finder to search for the resume adapter");
+        final FactoryFinder factoryFinder
+                = context.adapt(ExtendedCamelContext.class).getFactoryFinder(FactoryFinder.DEFAULT_PATH);
 
-            if (adapterInstance == null) {
-                throw new RuntimeException("Cannot find a resume adapter class in the consumer classpath or in the registry");
-            }
+        LOG.debug("Creating a new resume adapter");
+        Optional<ResumeAdapter> adapterOptional
+                = factoryFinder.newInstance(resumeAware.adapterFactoryService(), ResumeAdapter.class);
+
+        if (!adapterOptional.isPresent()) {
+
+            throw new RuntimeException("Cannot find a resume adapter class in the consumer classpath or in the registry");
         }
 
-        if (adapterInstance instanceof ResumeAdapter) {
-            ResumeAdapter resumeAdapter = (ResumeAdapter) adapterInstance;
+        final ResumeAdapter resumeAdapter = adapterOptional.get();
+        LOG.debug("Using the acquired resume adapter: {}", resumeAdapter.getClass().getName());
 
-            Object obj = context.getRegistry().lookupByName(ResumeCache.DEFAULT_NAME);
-            if (resumeAdapter instanceof Cacheable && obj instanceof ResumeCache) {
-                ((Cacheable) resumeAdapter).setCache((ResumeCache<?>) obj);
-            } else {
-                LOG.debug("The resume adapter {} is not cacheable", resumeAdapter.getClass().getName());
-            }
-
-            return resumeAdapter;
+        final Object cacheObj = context.getRegistry().lookupByName(ResumeCache.DEFAULT_NAME);
+        if (resumeAdapter instanceof Cacheable && cacheObj instanceof ResumeCache) {
+            ((Cacheable) resumeAdapter).setCache((ResumeCache<?>) cacheObj);
         } else {
-            LOG.error("Invalid resume adapter type: {}", getType(adapterInstance));
-            throw new IllegalArgumentException("Invalid resume adapter type: " + getType(adapterInstance));
-        }
-    }
-
-    private static Object resolveAdapter(CamelContext context, Consumer consumer) {
-        try (InputStream adapterStream = consumer.getClass().getResourceAsStream(ADAPTER_PROPERTIES)) {
-
-            if (adapterStream == null) {
-                LOG.error("Cannot find a resume adapter class in the consumer {} classpath", consumer.getClass());
-                return null;
-            }
-
-            Properties properties = new Properties();
-            properties.load(adapterStream);
-
-            String adapterClass = properties.getProperty(PROP_ADAPTER_CLASS);
-
-            if (ObjectHelper.isEmpty(adapterClass)) {
-                LOG.error("A resume adapter class is not defined in the adapter configuration");
-
-                return null;
-            }
-
-            LOG.debug("About to load an adapter class {} for consumer {}", adapterClass, consumer.getClass());
-            Class<?> clazz = context.getClassResolver().resolveClass(adapterClass);
-            if (clazz == null) {
-                LOG.error("Cannot find the resume adapter class in the classpath {}", adapterClass);
-
-                return null;
-            }
-
-            return clazz.getDeclaredConstructor().newInstance();
-        } catch (IOException e) {
-            LOG.error("Unable to read the resolve the resume adapter due to I/O error: {}", e.getMessage(), e);
-        } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
-            LOG.error("Unable to create a resume adapter instance: {}", e.getMessage(), e);
+            LOG.debug("The resume adapter {} is not cacheable", resumeAdapter.getClass().getName());
         }
 
-        return null;
-    }
-
-    private static Object getType(Object instance) {
-        return instance == null ? "null" : instance.getClass();
+        return resumeAdapter;
     }
 }

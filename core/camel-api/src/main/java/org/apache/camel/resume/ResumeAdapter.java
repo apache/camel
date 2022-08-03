@@ -28,6 +28,7 @@ package org.apache.camel.resume;
  * resume API, as well as to offer component-specific interfaces that can be specialized by other integrations.
  */
 public interface ResumeAdapter {
+    String RESUME_ADAPTER_FACTORY = "adapter-factory";
 
     /**
      * Execute the resume logic for the adapter

@@ -40,6 +40,7 @@ import org.apache.camel.main.download.DependencyDownloaderResourceLoader;
 import org.apache.camel.main.download.DependencyDownloaderRoutesLoader;
 import org.apache.camel.main.download.DependencyDownloaderStrategy;
 import org.apache.camel.main.download.DownloadListener;
+import org.apache.camel.main.download.KameletMainInjector;
 import org.apache.camel.main.download.KnownDependenciesResolver;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.main.http.VertxHttpServer;
@@ -286,6 +287,8 @@ public class KameletMain extends MainCommandLineSupport {
         if (stub) {
             // turn off auto-wiring when running in stub mode
             mainConfigurationProperties.setAutowiredEnabled(false);
+            // and turn off fail fast as we stub components
+            mainConfigurationProperties.setAutoConfigurationFailFast(false);
         }
 
         String info = startupInfo();
@@ -364,6 +367,7 @@ public class KameletMain extends MainCommandLineSupport {
             answer.setDataFormatResolver(new DependencyDownloaderDataFormatResolver(answer));
             answer.setLanguageResolver(new DependencyDownloaderLanguageResolver(answer));
             answer.setResourceLoader(new DependencyDownloaderResourceLoader(answer));
+            answer.setInjector(new KameletMainInjector(answer.getInjector(), stub));
             answer.addService(new DependencyDownloaderKamelet(answer));
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
@@ -413,10 +417,6 @@ public class KameletMain extends MainCommandLineSupport {
         addInitialProperty("camel.component.kamelet.location", location);
         addInitialProperty("camel.component.rest.consumerComponentName", "platform-http");
         addInitialProperty("camel.component.rest.producerComponentName", "vertx-http");
-        if (stub) {
-            // enable shadow mode on stub component
-            addInitialProperty("camel.component.stub.shadow", "true");
-        }
     }
 
     protected String startupInfo() {

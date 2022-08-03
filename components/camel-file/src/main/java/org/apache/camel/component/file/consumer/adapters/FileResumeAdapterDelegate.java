@@ -29,7 +29,9 @@ import org.apache.camel.resume.Deserializable;
 import org.apache.camel.resume.Offset;
 import org.apache.camel.resume.OffsetKey;
 import org.apache.camel.resume.cache.ResumeCache;
+import org.apache.camel.spi.annotations.JdkService;
 
+@JdkService("file-adapter-factory")
 public class FileResumeAdapterDelegate
         implements FileResumeAdapter, Cacheable, Deserializable, FileOffsetResumeAdapter, DirectoryEntriesResumeAdapter {
     private final DefaultDirectoryEntriesResumeAdapter directoryEntriesResumeAdapter

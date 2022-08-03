@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.support.ExchangeHelper;
 import org.jsmpp.bean.DataCodings;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.ESMClass;
@@ -76,7 +77,7 @@ public class SmppDataSmCommand extends AbstractSmppCommand {
                     exchange.getExchangeId(), result.getMessageId());
         }
 
-        Message message = getResponseMessage(exchange);
+        Message message = ExchangeHelper.getResultMessage(exchange);
         message.setHeader(SmppConstants.ID, result.getMessageId());
         message.setHeader(SmppConstants.OPTIONAL_PARAMETERS, createOptionalParameterByName(result.getOptionalParameters()));
         message.setHeader(SmppConstants.OPTIONAL_PARAMETER, createOptionalParameterByCode(result.getOptionalParameters()));

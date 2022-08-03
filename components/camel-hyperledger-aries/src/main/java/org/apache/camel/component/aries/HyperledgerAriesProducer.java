@@ -14,22 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.apache.camel.component.aries;
 
 import io.nessus.aries.util.AssertState;
@@ -37,7 +21,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.aries.handler.AbstractServiceHandler;
 import org.apache.camel.component.aries.handler.ConnectionsServiceHandler;
 import org.apache.camel.component.aries.handler.CredentialDefinitionsServiceHandler;
-import org.apache.camel.component.aries.handler.IssueCredentialServiceHandler;
+import org.apache.camel.component.aries.handler.CredentialsServiceHandler;
+import org.apache.camel.component.aries.handler.IssueCredentialV1ServiceHandler;
 import org.apache.camel.component.aries.handler.MultitenancyServiceHandler;
 import org.apache.camel.component.aries.handler.PresentProofServiceHandler;
 import org.apache.camel.component.aries.handler.RevocationServiceHandler;
@@ -66,20 +51,31 @@ public class HyperledgerAriesProducer extends DefaultProducer {
         String service = getService(exchange);
         if (service.startsWith("/connections")) {
             serviceHandler = new ConnectionsServiceHandler(getEndpoint());
+
         } else if (service.startsWith("/credential-definitions")) {
             serviceHandler = new CredentialDefinitionsServiceHandler(getEndpoint());
+
+        } else if (service.startsWith("/credentials")) {
+            serviceHandler = new CredentialsServiceHandler(getEndpoint());
+
         } else if (service.startsWith("/issue-credential")) {
-            serviceHandler = new IssueCredentialServiceHandler(getEndpoint());
+            serviceHandler = new IssueCredentialV1ServiceHandler(getEndpoint());
+
         } else if (service.startsWith("/multitenancy")) {
             serviceHandler = new MultitenancyServiceHandler(getEndpoint());
+
         } else if (service.startsWith("/present-proof")) {
             serviceHandler = new PresentProofServiceHandler(getEndpoint());
+
         } else if (service.startsWith("/revocation")) {
             serviceHandler = new RevocationServiceHandler(getEndpoint());
+
         } else if (service.startsWith("/schemas")) {
             serviceHandler = new SchemasServiceHandler(getEndpoint());
+
         } else if (service.startsWith("/wallet")) {
             serviceHandler = new WalletServiceHandler(getEndpoint());
+
         } else {
             throw new UnsupportedServiceException(service);
         }

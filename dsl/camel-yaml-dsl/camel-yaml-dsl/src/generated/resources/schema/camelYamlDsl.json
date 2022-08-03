@@ -6306,6 +6306,12 @@
               "type" : "string",
               "enum" : [ "i", "w", "u", "t" ]
             },
+            "namespace" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
+              }
+            },
             "trim" : {
               "type" : "boolean"
             }
@@ -6335,6 +6341,12 @@
             },
             "logNamespaces" : {
               "type" : "boolean"
+            },
+            "namespace" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
+              }
             },
             "objectModel" : {
               "type" : "string"
@@ -6376,6 +6388,12 @@
             },
             "id" : {
               "type" : "string"
+            },
+            "namespace" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
+              }
             },
             "trim" : {
               "type" : "boolean"

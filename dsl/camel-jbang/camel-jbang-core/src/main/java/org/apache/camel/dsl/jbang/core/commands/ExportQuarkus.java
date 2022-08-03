@@ -42,6 +42,7 @@ import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.commons.io.FileUtils;
 
 class ExportQuarkus extends Export {
@@ -128,6 +129,15 @@ class ExportQuarkus extends Export {
         FileUtil.removeDir(new File(BUILD_DIR));
 
         return 0;
+    }
+
+    @Override
+    protected String applicationPropertyLine(String key, String value) {
+        // quarkus use dash cased properties and lets turn camel into dash as well
+        if (key.startsWith("quarkus.") || key.startsWith("camel.")) {
+            key = StringHelper.camelCaseToDash(key);
+        }
+        return super.applicationPropertyLine(key, value);
     }
 
     private void copyDockerFiles() throws Exception {
@@ -277,13 +287,13 @@ class ExportQuarkus extends Export {
                 if (clazz != null) {
                     RuntimeProvider provider = main.getCamelContext().getInjector().newInstance(clazz);
                     if (provider != null) {
-                        // re-create answer with the classloader that loaded spring-boot to be able to load resources in this catalog
+                        // re-create answer with the classloader that loaded quarkus to be able to load resources in this catalog
                         Class<CamelCatalog> clazz2
                                 = main.getCamelContext().getClassResolver().resolveClass(DEFAULT_CAMEL_CATALOG,
                                         CamelCatalog.class);
                         answer = main.getCamelContext().getInjector().newInstance(clazz2);
                         answer.setRuntimeProvider(provider);
-                        // use classloader that loaded spring-boot provider to ensure we can load its resources
+                        // use classloader that loaded quarkus provider to ensure we can load its resources
                         answer.getVersionManager().setClassLoader(main.getCamelContext().getApplicationContextClassLoader());
                         answer.enableCache();
                     }

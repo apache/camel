@@ -620,6 +620,46 @@ public interface EventbridgeEndpointBuilderFactory {
         public String awsEventbridgeTargetArn() {
             return "AwsEventbridgeTargetArn";
         }
+
+        /**
+         * Comma separated list of Amazon Resource Names (ARN) of the resources
+         * related to Event.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsEventbridgeResourcesArn}.
+         */
+        public String awsEventbridgeResourcesArn() {
+            return "AwsEventbridgeResourcesArn";
+        }
+
+        /**
+         * The source related to Event.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsEventbridgeSource}.
+         */
+        public String awsEventbridgeSource() {
+            return "AwsEventbridgeSource";
+        }
+
+        /**
+         * The detail type related to Event.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsEventbridgeDetailType}.
+         */
+        public String awsEventbridgeDetailType() {
+            return "AwsEventbridgeDetailType";
+        }
     }
     static EventbridgeEndpointBuilder endpointBuilder(
             String componentName,

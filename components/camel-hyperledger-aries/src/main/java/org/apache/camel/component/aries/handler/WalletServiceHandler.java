@@ -29,9 +29,11 @@ public class WalletServiceHandler extends AbstractServiceHandler {
 
     @Override
     public void process(Exchange exchange, String service) throws Exception {
+
         if (service.equals("/wallet/did/public")) {
             DID resObj = createClient().walletDidPublic().orElse(null);
             exchange.getIn().setBody(resObj);
+
         } else {
             throw new UnsupportedServiceException(service);
         }

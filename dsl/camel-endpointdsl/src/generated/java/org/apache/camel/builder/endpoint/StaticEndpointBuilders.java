@@ -1535,6 +1535,49 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * AWS Cloudtrail (camel-aws-cloudtrail)
+     * Consume events from Amazon Cloudtrail using AWS SDK version 2.x.
+     * 
+     * Category: cloud,eventbus
+     * Since: 3.19
+     * Maven coordinates: org.apache.camel:camel-aws-cloudtrail
+     * 
+     * Syntax: <code>aws-cloudtrail:label</code>
+     * 
+     * Path parameter: label (required)
+     * A label for indexing cloudtrail endpoints
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.CloudtrailEndpointBuilderFactory.CloudtrailEndpointBuilder awsCloudtrail(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.CloudtrailEndpointBuilderFactory.endpointBuilder("aws-cloudtrail", path);
+    }
+    /**
+     * AWS Cloudtrail (camel-aws-cloudtrail)
+     * Consume events from Amazon Cloudtrail using AWS SDK version 2.x.
+     * 
+     * Category: cloud,eventbus
+     * Since: 3.19
+     * Maven coordinates: org.apache.camel:camel-aws-cloudtrail
+     * 
+     * Syntax: <code>aws-cloudtrail:label</code>
+     * 
+     * Path parameter: label (required)
+     * A label for indexing cloudtrail endpoints
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.CloudtrailEndpointBuilderFactory.CloudtrailEndpointBuilder awsCloudtrail(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.CloudtrailEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * AWS Secrets Manager (camel-aws-secrets-manager)
      * Manage AWS Secrets Manager services using AWS SDK version 2.x.
      * 
@@ -6835,7 +6878,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.SimpleNotificationEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Aries (camel-hyperledger-aries)
+     * Hyperledger Aries (camel-hyperledger-aries)
      * Camel support for Hyperledger Aries
      * 
      * Category: blockchain,identity
@@ -6855,7 +6898,7 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.HyperledgerAriesEndpointBuilderFactory.endpointBuilder("hyperledger-aries", path);
     }
     /**
-     * Aries (camel-hyperledger-aries)
+     * Hyperledger Aries (camel-hyperledger-aries)
      * Camel support for Hyperledger Aries
      * 
      * Category: blockchain,identity

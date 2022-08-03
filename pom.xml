@@ -126,7 +126,7 @@
         <!-- we need to override the version inherited from Apache POM for modules that use this POM as parent -->
         <surefire.version>${maven-surefire-plugin-version}</surefire.version>
         <java-diff-utils-version>4.7</java-diff-utils-version>
-        <maven-bundle-plugin-version>5.1.6</maven-bundle-plugin-version>
+        <maven-bundle-plugin-version>5.1.8</maven-bundle-plugin-version>
         <maven-enforcer-plugin-version>3.0.0</maven-enforcer-plugin-version>
 
         <!-- eclipse plugin need the jaxb in this pom.xml file -->
@@ -139,7 +139,7 @@
         <errorprone-version>2.5</errorprone-version>
         <mycila-license-version>3.0</mycila-license-version>
         <gmavenplus-plugin-version>1.11.1</gmavenplus-plugin-version>
-        <groovy-version>3.0.11</groovy-version>
+        <groovy-version>3.0.12</groovy-version>
 
         <camel.javadoc.offline>false</camel.javadoc.offline>
     </properties>
@@ -169,7 +169,7 @@
                 <enabled>true</enabled>
             </releases>
         </repository>
-        <!-- camel-ipfs and camel-weka -->
+        <!-- camel-ipfs, camel-hyperledger-aries, camel-weka -->
         <repository>
             <id>jboss.thirdparty</id>
             <name>JBoss Thirdparty Repository</name>

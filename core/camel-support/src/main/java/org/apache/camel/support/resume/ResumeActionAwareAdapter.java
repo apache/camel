@@ -25,7 +25,9 @@ import org.apache.camel.resume.Offset;
 import org.apache.camel.resume.OffsetKey;
 import org.apache.camel.resume.ResumeAction;
 import org.apache.camel.resume.ResumeActionAware;
+import org.apache.camel.resume.ResumeAdapter;
 import org.apache.camel.resume.cache.ResumeCache;
+import org.apache.camel.spi.annotations.JdkService;
 
 /**
  * A simple resume adapter that support caching, deserialization and actions. This is usually suitable for supporting
@@ -33,6 +35,7 @@ import org.apache.camel.resume.cache.ResumeCache;
  * (i.e.: such as when resuming from database components, where the resume operation can only be determined by the
  * integration itself)
  */
+@JdkService(ResumeAdapter.RESUME_ADAPTER_FACTORY)
 public class ResumeActionAwareAdapter implements ResumeActionAware, Cacheable, Deserializable {
     private ResumeCache<Object> cache;
     private ResumeAction resumeAction;

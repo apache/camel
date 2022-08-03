@@ -31,6 +31,7 @@ import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.DefaultInterceptSendToEndpoint;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,11 +109,7 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
         }
 
         if (!shouldSkip) {
-            if (exchange.hasOut()) {
-                // replace OUT with IN as detour changed something
-                exchange.setIn(exchange.getOut());
-                exchange.setOut(null);
-            }
+            ExchangeHelper.prepareOutToIn(exchange);
 
             // route to original destination leveraging the asynchronous routing engine if possible
             boolean s = producer.process(exchange, ds -> {

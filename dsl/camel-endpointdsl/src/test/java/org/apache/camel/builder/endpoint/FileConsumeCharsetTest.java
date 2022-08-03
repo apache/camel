@@ -28,17 +28,15 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-/**
- *
- */
 public class FileConsumeCharsetTest extends BaseEndpointDslTest {
+    private static final String TEST_DATA_DIR = BaseEndpointDslTest.generateUniquePath(FileConsumeCharsetTest.class);
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        TestSupport.deleteDirectory("target/data/files");
+        TestSupport.deleteDirectory(TEST_DATA_DIR);
         super.setUp();
-        template.sendBodyAndHeader("file://target/data/files?charset=UTF-8", "Hello World \u4f60\u597d", Exchange.FILE_NAME,
+        template.sendBodyAndHeader("file://" + TEST_DATA_DIR + "?charset=UTF-8", "Hello World \u4f60\u597d", Exchange.FILE_NAME,
                 "report.txt");
     }
 
@@ -54,14 +52,14 @@ public class FileConsumeCharsetTest extends BaseEndpointDslTest {
         oneExchangeDone.matchesWaitTime();
 
         // file should not exists
-        assertFalse(new File("target/data/files/report.txt").exists(), "File should been deleted");
+        assertFalse(new File(TEST_DATA_DIR, "report.txt").exists(), "File should been deleted");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new EndpointRouteBuilder() {
             public void configure() throws Exception {
-                from(file("target/data/files/").initialDelay(0).delay(10).fileName("report.txt").delete(true).charset("UTF-8"))
+                from(file(TEST_DATA_DIR).initialDelay(0).delay(10).fileName("report.txt").delete(true).charset("UTF-8"))
                         .convertBodyTo(String.class)
                         .to(mock("result"));
             }

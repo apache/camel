@@ -752,6 +752,28 @@
     "producerOnly": true,
     "lenientProperties": false
   },
+  "AwsCloudtrailComponentBuilderFactory": {
+    "kind": "component",
+    "name": "aws-cloudtrail",
+    "title": "AWS Cloudtrail",
+    "description": "Consume events from Amazon Cloudtrail using AWS SDK version 2.x.",
+    "deprecated": false,
+    "firstVersion": "3.19.0",
+    "label": "cloud,eventbus",
+    "javaType": "org.apache.camel.component.aws.cloudtrail.CloudtrailComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-aws-cloudtrail",
+    "version": "3.19.0-SNAPSHOT",
+    "scheme": "aws-cloudtrail",
+    "extendsScheme": "",
+    "syntax": "aws-cloudtrail:label",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false
+  },
   "AwsSecretsManagerComponentBuilderFactory": {
     "kind": "component",
     "name": "aws-secrets-manager",
@@ -3310,7 +3332,7 @@
   "HyperledgerAriesComponentBuilderFactory": {
     "kind": "component",
     "name": "hyperledger-aries",
-    "title": "Aries",
+    "title": "Hyperledger Aries",
     "description": "Camel support for Hyperledger Aries",
     "deprecated": false,
     "firstVersion": "3.19.0",
@@ -4236,7 +4258,7 @@
     "async": false,
     "api": false,
     "consumerOnly": false,
-    "producerOnly": true,
+    "producerOnly": false,
     "lenientProperties": false
   },
   "KubernetesCustomResourcesComponentBuilderFactory": {

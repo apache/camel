@@ -465,9 +465,16 @@ public final class AdviceWithTasks {
             return node.getOutputs();
         }
         List<ProcessorDefinition<?>> outputs = parent.getOutputs();
-        if (outputs.size() == 1 && outputs.get(0).isAbstract()) {
-            // if the output is abstract then get its output, as
-            outputs = outputs.get(0).getOutputs();
+        boolean allAbstract = true;
+        for (ProcessorDefinition<?> def : outputs) {
+            allAbstract &= def.isAbstract();
+            if (!allAbstract) {
+                break;
+            }
+        }
+        if (outputs.size() >= 1 && allAbstract) {
+            // if all outputs are abstract then get its last output, as
+            outputs = outputs.get(outputs.size() - 1).getOutputs();
         }
         return outputs;
     }
