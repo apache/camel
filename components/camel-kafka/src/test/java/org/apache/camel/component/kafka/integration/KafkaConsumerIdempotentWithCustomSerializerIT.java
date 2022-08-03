@@ -37,7 +37,7 @@ public class KafkaConsumerIdempotentWithCustomSerializerIT extends KafkaConsumer
             = new KafkaIdempotentRepository("TEST_IDEMPOTENT", getBootstrapServers());
 
     @EndpointInject("kafka:" + TOPIC
-                    + "?groupId=group2&autoOffsetReset=earliest"
+                    + "?groupId=KafkaConsumerIdempotentWithCustomSerializerIT&autoOffsetReset=earliest"
                     + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
                     + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
                     + "&headerDeserializer=#class:org.apache.camel.component.kafka.integration.CustomHeaderDeserializer"

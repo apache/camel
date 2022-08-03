@@ -37,7 +37,7 @@ public class KafkaConsumerIdempotentWithProcessorIT extends KafkaConsumerIdempot
             = new KafkaIdempotentRepository("TEST_IDEMPOTENT", getBootstrapServers());
 
     @EndpointInject("kafka:" + TOPIC
-                    + "?groupId=group2&autoOffsetReset=earliest"
+                    + "?groupId=KafkaConsumerIdempotentWithProcessorIT&autoOffsetReset=earliest"
                     + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
                     + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
                     + "&autoCommitIntervalMs=1000&sessionTimeoutMs=30000&autoCommitEnable=true"
