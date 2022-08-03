@@ -221,6 +221,12 @@ class ExportQuarkus extends Export {
                 sb.append("            <version>").append(v).append("</version>\n");
             }
             sb.append("        </dependency>\n");
+            if (aid.equalsIgnoreCase("camel-kamelets")) {
+                sb.append("        <dependency>\n");
+                sb.append("            <groupId>").append("org.apache.camel.quarkus").append("</groupId>\n");
+                sb.append("            <artifactId>").append("camel-quarkus-yaml-dsl").append("</artifactId>\n");
+                sb.append("        </dependency>\n");
+            }
         }
         context = context.replaceFirst("\\{\\{ \\.CamelDependencies }}", sb.toString());
 
@@ -290,7 +296,7 @@ class ExportQuarkus extends Export {
                         // re-create answer with the classloader that loaded quarkus to be able to load resources in this catalog
                         Class<CamelCatalog> clazz2
                                 = main.getCamelContext().getClassResolver().resolveClass(DEFAULT_CAMEL_CATALOG,
-                                        CamelCatalog.class);
+                                CamelCatalog.class);
                         answer = main.getCamelContext().getInjector().newInstance(clazz2);
                         answer.setRuntimeProvider(provider);
                         // use classloader that loaded quarkus provider to ensure we can load its resources
