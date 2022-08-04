@@ -60,7 +60,7 @@ public class KafkaConsumerNoopCommitIT extends BaseManualCommitTestSupport {
         };
     }
 
-    @RepeatedTest(1)
+    @Test
     public void kafkaAutoCommitDisabledDuringRebalance() throws Exception {
         to.expectedMessageCount(1);
         String firstMessage = "message-0";
@@ -100,7 +100,7 @@ public class KafkaConsumerNoopCommitIT extends BaseManualCommitTestSupport {
         to.assertIsSatisfied(3000);
     }
 
-    @RepeatedTest(1)
+    @Test
     public void kafkaManualCommit() throws Exception {
         kafkaManualCommitTest(TOPIC);
     }
