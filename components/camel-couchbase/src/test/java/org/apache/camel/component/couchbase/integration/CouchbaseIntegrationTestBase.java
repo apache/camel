@@ -61,7 +61,6 @@ public class CouchbaseIntegrationTestBase extends CamelTestSupport {
     public static void tearDownCouchbase() {
         cluster.buckets().dropBucket(bucketName);
         cluster.disconnect();
-        service.shutdown();
     }
 
     public String getConnectionUri() {
