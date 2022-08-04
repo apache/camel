@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kafka.integration;
+package org.apache.camel.component.kafka.integration.health;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -28,6 +28,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.KafkaComponent;
 import org.apache.camel.component.kafka.MockConsumerInterceptor;
+import org.apache.camel.component.kafka.integration.BaseEmbeddedKafkaTestSupport;
 import org.apache.camel.component.kafka.serde.DefaultKafkaHeaderDeserializer;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.health.HealthCheck;
@@ -40,7 +41,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.internals.RecordHeader;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -50,6 +50,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +61,7 @@ import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 public class KafkaConsumerBadPortHealthCheckIT extends CamelTestSupport {
     public static final String TOPIC = "test-health";
 
+    @RegisterExtension
     public static KafkaService service = KafkaServiceFactory.createService();
 
     protected static AdminClient kafkaAdminClient;
@@ -88,16 +90,9 @@ public class KafkaConsumerBadPortHealthCheckIT extends CamelTestSupport {
 
     @BeforeAll
     public static void beforeClass() {
-        service.initialize();
-
         LOG.info("### Embedded Kafka cluster broker list: {}", service.getBootstrapServers());
         System.setProperty("bootstrapServers", service.getBootstrapServers());
         System.setProperty("brokers", service.getBootstrapServers());
-    }
-
-    @AfterAll
-    public static void afterClass() {
-        service.shutdown();
     }
 
     @BeforeEach
