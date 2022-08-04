@@ -53,7 +53,7 @@ class XPathNamespaceTest extends YamlTestSupport {
                 with(whenClauses[0], WhenDefinition) {
                     var x = expression as XPathExpression
                     x.expression == '/c:number = 55'
-                    x.namespace.size == 2
+                    x.namespace.size() == 2
                     x.namespace[0].key == 'c'
                     x.namespace[0].value == 'http://acme.com/cheese'
                     x.namespace[1].key == 'w'
