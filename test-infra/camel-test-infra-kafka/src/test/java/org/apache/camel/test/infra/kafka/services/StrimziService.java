@@ -31,12 +31,14 @@ public class StrimziService implements KafkaService, ContainerService<StrimziCon
     private final StrimziContainer strimziContainer;
 
     public StrimziService() {
+        this("zookeeper-" + TestUtils.randomWithRange(1, 100),
+             "strimzi-" + TestUtils.randomWithRange(1, 100));
+    }
+
+    public StrimziService(String zookeeperInstanceName, String strimziInstanceName) {
         Network network = Network.newNetwork();
 
-        String zookeeperInstanceName = "zookeeper-" + TestUtils.randomWithRange(1, 100);
         zookeeperContainer = initZookeeperContainer(network, zookeeperInstanceName);
-
-        String strimziInstanceName = "strimzi-" + TestUtils.randomWithRange(1, 100);
         strimziContainer = initStrimziContainer(network, strimziInstanceName, zookeeperInstanceName);
     }
 
