@@ -17,8 +17,44 @@
 package org.apache.camel.test.infra.couchdb.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
 public final class CouchDbServiceFactory {
+    static class SingletonCouchDbService extends SingletonService<CouchDbService> implements CouchDbService {
+        public SingletonCouchDbService(CouchDbService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public void beforeAll(ExtensionContext extensionContext) {
+            addToStore(extensionContext);
+        }
+
+        @Override
+        public void afterAll(ExtensionContext extensionContext) {
+            // NO-OP
+        }
+
+        @Override
+        public String host() {
+            return getService().host();
+        }
+
+        @Override
+        public int port() {
+            return getService().port();
+        }
+
+        @Override
+        public String getServiceAddress() {
+            return getService().getServiceAddress();
+        }
+    }
+
+    private static SimpleTestServiceBuilder<CouchDbService> instance;
+    private static CouchDbService service;
+
     private CouchDbServiceFactory() {
 
     }
@@ -32,5 +68,21 @@ public final class CouchDbServiceFactory {
                 .addLocalMapping(CouchDbLocalContainerService::new)
                 .addRemoteMapping(CouchDbRemoteService::new)
                 .build();
+    }
+
+    public static CouchDbService createSingletonService() {
+        if (service == null) {
+            if (instance == null) {
+                instance = builder();
+
+                instance.addLocalMapping(() -> new SingletonCouchDbService(new CouchDbLocalContainerService(), "couchdb"))
+                        .addRemoteMapping(CouchDbRemoteService::new);
+
+            }
+
+            service = instance.build();
+        }
+
+        return service;
     }
 }
