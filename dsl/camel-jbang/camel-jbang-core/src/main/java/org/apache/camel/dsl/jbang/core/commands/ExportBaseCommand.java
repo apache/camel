@@ -54,6 +54,10 @@ abstract class ExportBaseCommand extends CamelCommand {
             "camel.jbang.classpathFiles"
     };
 
+    @CommandLine.Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "application",
+                        description = "Profile to use, which refers to loading properties file with the given profile name. By default application.properties is loaded.")
+    protected String profile;
+
     @CommandLine.Option(names = { "--runtime" }, description = "Runtime (spring-boot, quarkus, or camel-main)")
     protected String runtime;
 
@@ -120,6 +124,10 @@ abstract class ExportBaseCommand extends CamelCommand {
         }
         // export
         return export();
+    }
+
+    public String getProfile() {
+        return profile;
     }
 
     protected abstract Integer export() throws Exception;

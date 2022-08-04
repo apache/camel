@@ -27,10 +27,6 @@ import picocli.CommandLine.Command;
 public class CamelJBangMain implements Callable<Integer> {
     private static CommandLine commandLine;
 
-    @CommandLine.Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "application",
-                        description = "Profile")
-    private String profile;
-
     public static void run(String... args) {
         CamelJBangMain main = new CamelJBangMain();
         commandLine = new CommandLine(main)
@@ -58,7 +54,4 @@ public class CamelJBangMain implements Callable<Integer> {
         return 0;
     }
 
-    public String getProfile() {
-        return profile;
-    }
 }
