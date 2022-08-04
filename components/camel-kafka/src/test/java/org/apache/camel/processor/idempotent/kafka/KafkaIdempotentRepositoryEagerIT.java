@@ -18,7 +18,6 @@ package org.apache.camel.processor.idempotent.kafka;
 
 import java.util.UUID;
 
-import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.RoutesBuilder;
@@ -36,8 +35,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class KafkaIdempotentRepositoryEagerIT extends BaseEmbeddedKafkaTestSupport {
 
-    // Every instance of the repository must use a different topic to guarantee isolation between tests
-    @BindToRegistry("kafkaIdempotentRepository")
     private KafkaIdempotentRepository kafkaIdempotentRepository;
 
     @EndpointInject("mock:out")
@@ -48,14 +45,15 @@ public class KafkaIdempotentRepositoryEagerIT extends BaseEmbeddedKafkaTestSuppo
 
     @Override
     protected RoutesBuilder createRouteBuilder() {
+        // Every instance of the repository must use a different topic to guarantee isolation between tests
         kafkaIdempotentRepository = new KafkaIdempotentRepository("TEST_EAGER_" + UUID.randomUUID(), getBootstrapServers());
-        context.getRegistry().bind("kafkaIdempotentRepository", kafkaIdempotentRepository);
+        context.getRegistry().bind("kafkaIdempotentRepositoryEager", kafkaIdempotentRepository);
 
         return new RouteBuilder() {
             @Override
             public void configure() {
                 from("direct:in").to("mock:before").idempotentConsumer(header("id"))
-                        .idempotentRepository("kafkaIdempotentRepository").to("mock:out").end();
+                        .idempotentRepository("kafkaIdempotentRepositoryEager").to("mock:out").end();
             }
         };
     }
