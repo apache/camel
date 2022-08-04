@@ -37,7 +37,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class KafkaIdempotentRepositoryNonEagerIT extends BaseEmbeddedKafkaTestSupport {
 
-    // Every instance of the repository must use a different topic to guarantee isolation between tests
     private KafkaIdempotentRepository kafkaIdempotentRepository;
 
     @EndpointInject("mock:out")
@@ -48,14 +47,15 @@ public class KafkaIdempotentRepositoryNonEagerIT extends BaseEmbeddedKafkaTestSu
 
     @Override
     protected RoutesBuilder createRouteBuilder() {
+        // Every instance of the repository must use a different topic to guarantee isolation between tests
         kafkaIdempotentRepository = new KafkaIdempotentRepository("TEST_NON_EAGER_" + UUID.randomUUID(), getBootstrapServers());
-        context.getRegistry().bind("kafkaIdempotentRepository", kafkaIdempotentRepository);
+        context.getRegistry().bind("kafkaIdempotentRepositoryNonEager", kafkaIdempotentRepository);
 
         return new RouteBuilder() {
             @Override
             public void configure() {
                 from("direct:in").to("mock:before").idempotentConsumer(header("id"))
-                        .idempotentRepository("kafkaIdempotentRepository").eager(false).to("mock:out").end();
+                        .idempotentRepository("kafkaIdempotentRepositoryNonEager").eager(false).to("mock:out").end();
             }
         };
     }
