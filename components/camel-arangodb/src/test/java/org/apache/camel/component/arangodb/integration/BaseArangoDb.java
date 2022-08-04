@@ -30,7 +30,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class BaseArangoDb extends CamelTestSupport {
     @RegisterExtension
-    public static ArangoDBService service = ArangoDBServiceFactory.createSingletonService();
+    public static ArangoDBService service = ArangoDBServiceFactory.createService();
 
     protected static final String DATABASE_NAME = "dbTest";
     protected static final String COLLECTION_NAME = "camelTest";
