@@ -61,7 +61,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
         // cert,
         // use the server keystore as the trust store for these tests
         URL trustStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.p12");
-        setSystemProp("javax.net.ssl.trustStore", "file://" + trustStoreUrl.toURI().getPath());
+        setSystemProp("javax.net.ssl.trustStore", trustStoreUrl.toURI().getPath());
         setSystemProp("javax.net.ssl.trustStorePassword", "changeit");
         setSystemProp("javax.net.ssl.trustStoreType", "PKCS12");
     }
