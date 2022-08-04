@@ -132,6 +132,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <reuseForks>true</reuseForks>
+                </configuration>
                 <executions>
                     <execution>
                         <id>kafka-3</id>
@@ -139,6 +142,7 @@
                             <systemPropertyVariables>
                                 <kafka.instance.type>local-kafka3-container</kafka.instance.type>
                             </systemPropertyVariables>
+                            <reuseForks>true</reuseForks>
                             <reportNameSuffix>kafka-3</reportNameSuffix>
                         </configuration>
                         <goals>
@@ -147,6 +151,7 @@
                         </goals>
                     </execution>
                 </executions>
+
             </plugin>
         </plugins>
     </build>
