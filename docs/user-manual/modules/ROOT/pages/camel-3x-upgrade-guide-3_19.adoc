@@ -9,3 +9,9 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 === camel-api
 
 Added `addClassLoader` method to `org.apache.camel.spi.ClassResolver`.
+
+=== camel-yaml-dsl
+
+Removed using `template` as a custom alias for `routeTemplate` or `route-template`.
+
+Removed the `tod` custom alias for `toD` or `to-d`.
