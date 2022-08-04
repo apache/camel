@@ -698,6 +698,16 @@ camel export --runtime=camel-main --gav=com.foo:acme:1.0-SNAPSHOT --dir=../mypro
 
 TIP: See the possible options by running: `camel export --help` for more details.
 
+=== Exporting with JMX management included
+
+Usually when exporting to Spring Boot, Quarkus or Camel Main, then JMX management is not included out of the box.
+To include JMX, you need to add `camel:management` in the `--deps` option, as shown below:
+
+[source,bash]
+----
+camel export --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT --deps=camel:management --dir=../myproject
+----
+
 == Troubleshooting
 
 When using https://www.jbang.dev/[JBang] then JBang stores state in `~/.jbang` directory.
