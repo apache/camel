@@ -22,10 +22,68 @@ import org.apache.camel.dsl.yaml.support.model.MyUppercaseProcessor
 import org.apache.camel.model.RouteDefinition
 
 class TemplatedRouteTest extends YamlTestSupport {
+
     def "create templated route"() {
         setup:
         loadRoutes """
-                - template:
+                - routeTemplate:
+                    id: "myTemplate"
+                    from:
+                      uri: "direct:{{directName}}"
+                      steps:
+                        - process:
+                            ref: "{{myProcessor}}"
+                        - to: "mock:result"
+                - templatedRoute:
+                    route-id: "myRoute"
+                    route-template-ref: "myTemplate"
+                    parameters:
+                      - name: "directName"
+                        value: "foo"
+                    beans:
+                      - name: "myProcessor"
+                        type: "groovy"
+                        script: |
+                            new ${MyUppercaseProcessor.class.name}()
+                - templatedRoute:
+                    route-id: "myRoute2"
+                    route-template-ref: "myTemplate"
+                    parameters:
+                      - name: "directName"
+                        value: "foo2"
+                    beans:
+                      - name: "myProcessor"
+                        type: "groovy"
+                        bean-type: "org.apache.camel.Processor"
+                        script: "new ${MyUppercaseProcessor.class.name}()"                 
+            """
+        withMock('mock:result') {
+            expectedMessageCount 2
+            expectedBodiesReceived 'HELLO', "WORLD"
+        }
+        when:
+        context.start()
+        withTemplate {
+            to('direct:foo').withBody('hello').send()
+            to('direct:foo2').withBody('world').send()
+        }
+        then:
+        context.routeTemplateDefinitions.size() == 1
+        context.routeDefinitions.size() == 2
+
+        with(context.routeDefinitions[0], RouteDefinition) {
+            routeId == 'myRoute'
+        }
+        with(context.routeDefinitions[1], RouteDefinition) {
+            routeId == 'myRoute2'
+        }
+        MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "create templated-route"() {
+        setup:
+        loadRoutes """
+                - route-template:
                     id: "myTemplate"
                     from:
                       uri: "direct:{{directName}}"

@@ -30,7 +30,7 @@ class RouteTemplateTest extends YamlTestSupport {
     def "create template"() {
         when:
         loadRoutes '''
-                - template:
+                - routeTemplate:
                     id: "myTemplate"
                     from:
                       uri: "direct:info"
@@ -77,7 +77,7 @@ class RouteTemplateTest extends YamlTestSupport {
         where:
         resource << [
                 asResource('beans', """
-                        - template:
+                        - routeTemplate:
                             id: "myTemplate"
                             beans:
                               - name: "myProcessor"
@@ -94,7 +94,7 @@ class RouteTemplateTest extends YamlTestSupport {
                               - to: "mock:result"
                     """),
                 asResource('script', """
-                        - template:
+                        - routeTemplate:
                             id: "myTemplate"
                             beans:
                               - name: "myProcessor"
@@ -112,7 +112,7 @@ class RouteTemplateTest extends YamlTestSupport {
                               - to: "mock:result"
                     """),
                 asResource('script-bean-type', """
-                        - template:
+                        - routeTemplate:
                             id: "myTemplate"
                             beans:
                               - name: "myProcessor"
@@ -131,7 +131,7 @@ class RouteTemplateTest extends YamlTestSupport {
                               - to: "mock:result"
                     """),
                 asResource('script-block', """
-                        - template:
+                        - routeTemplate:
                             id: "myTemplate"
                             beans:
                               - name: "myProcessor"
@@ -155,7 +155,7 @@ class RouteTemplateTest extends YamlTestSupport {
     def "create template with bean and properties"() {
         setup:
         loadRoutes """                
-                - template:
+                - routeTemplate:
                     id: "myTemplate"
                     beans:
                       - name: "myProcessor"
@@ -199,7 +199,7 @@ class RouteTemplateTest extends YamlTestSupport {
     def "create template with bean and property"() {
         setup:
         loadRoutes """                
-                - template:
+                - routeTemplate:
                     id: "myTemplate"
                     beans:
                       - name: "myProcessor"
@@ -244,7 +244,7 @@ class RouteTemplateTest extends YamlTestSupport {
     def "create template with properties"() {
         when:
         loadRoutes """
-                - template:
+                - routeTemplate:
                     id: "myTemplate"
                     parameters:
                       - name: "foo"
@@ -281,7 +281,7 @@ class RouteTemplateTest extends YamlTestSupport {
     def "create template with optional properties"() {
         when:
         loadRoutes """
-                - template:
+                - routeTemplate:
                     id: "myTemplate"
                     parameters:
                       - name: "foo"
@@ -333,7 +333,7 @@ class RouteTemplateTest extends YamlTestSupport {
     def "create template with joor"() {
         setup:
             loadRoutes """                
-                    - template:
+                    - routeTemplate:
                         id: "myTemplate"
                         beans:
                           - name: "myAgg"
@@ -378,7 +378,7 @@ class RouteTemplateTest extends YamlTestSupport {
     def "create template with groovy"() {
         setup:
             loadRoutes """                
-                    - template:
+                    - routeTemplate:
                         id: "myTemplate"
                         beans:
                           - name: "myAgg"
