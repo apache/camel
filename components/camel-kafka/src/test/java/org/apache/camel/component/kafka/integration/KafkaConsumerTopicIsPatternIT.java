@@ -38,8 +38,9 @@ public class KafkaConsumerTopicIsPatternIT extends BaseEmbeddedKafkaTestSupport 
     public static final String TOPIC = "vess123d";
     public static final String TOPIC_PATTERN = "v.*d";
 
-    @EndpointInject("kafka:" + TOPIC_PATTERN + "?topicIsPattern=true&groupId=group1&autoOffsetReset=earliest"
-                    + "&autoCommitIntervalMs=1000&sessionTimeoutMs=30000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor&metadataMaxAgeMs=1000")
+    @EndpointInject("kafka:" + TOPIC_PATTERN
+                    + "?topicIsPattern=true&groupId=KafkaConsumerTopicIsPatternIT&autoOffsetReset=earliest"
+                    + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor&metadataMaxAgeMs=1000")
     private Endpoint from;
 
     @EndpointInject("mock:result")
