@@ -420,4 +420,38 @@ class RouteTemplateTest extends YamlTestSupport {
             MockEndpoint.assertIsSatisfied(context)
     }
 
+    def "create route-template with parameters"() {
+        when:
+        loadRoutes """
+                - route-template:
+                    id: "myTemplate"
+                    parameters:
+                      - name: "foo"
+                      - name: "bar"
+                    from:
+                      uri: "direct:{{foo}}"
+                      steps:
+                        - log: "{{bar}}"
+            """
+        then:
+        context.routeTemplateDefinitions.size() == 1
+
+        with(context.routeTemplateDefinitions[0], RouteTemplateDefinition) {
+            id == 'myTemplate'
+            configurer == null
+
+            templateParameters.any {
+                it.name == 'foo'
+            }
+            templateParameters.any {
+                it.name == 'bar'
+            }
+
+            route.input.endpointUri == 'direct:{{foo}}'
+            with(route.outputs[0], LogDefinition) {
+                message == '{{bar}}'
+            }
+        }
+    }
+
 }
