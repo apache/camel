@@ -48,6 +48,9 @@ public final class MongoDBServiceFactory {
         }
     }
 
+    private static SimpleTestServiceBuilder<MongoDBService> instance;
+    private static MongoDBService service;
+
     private MongoDBServiceFactory() {
 
     }
@@ -64,9 +67,16 @@ public final class MongoDBServiceFactory {
     }
 
     public static MongoDBService createSingletonService() {
-        return builder()
-                .addLocalMapping(() -> new SingletonMongoDBService(new MongoDBLocalContainerService(), "mongo-db"))
-                .addRemoteMapping(MongoDBRemoteService::new)
-                .build();
+        if (service == null) {
+            if (instance == null) {
+                instance = builder();
+                instance.addLocalMapping(() -> new SingletonMongoDBService(new MongoDBLocalContainerService(), "mongo-db"))
+                        .addRemoteMapping(MongoDBRemoteService::new);
+            }
+
+            service = instance.build();
+        }
+
+        return service;
     }
 }
