@@ -24,6 +24,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public class CouchDbTestSupport extends CamelTestSupport {
     @SuppressWarnings("unused")
     @RegisterExtension
-    static CouchDbService service = CouchDbServiceFactory.createService();
+    static CouchDbService service = CouchDbServiceFactory.createSingletonService();
 
 }
