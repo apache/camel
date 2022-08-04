@@ -37,8 +37,4 @@ abstract class CamelCommand implements Callable<Integer> {
         return main;
     }
 
-    public String getProfile() {
-        return main.getProfile();
-    }
-
 }

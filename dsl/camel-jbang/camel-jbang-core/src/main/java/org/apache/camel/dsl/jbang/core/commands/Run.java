@@ -61,6 +61,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
+import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
@@ -97,6 +98,10 @@ class Run extends CamelCommand {
     @Parameters(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
                 arity = "0..9")
     String[] files;
+
+    @CommandLine.Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "application",
+            description = "Profile to use, which refers to loading properties file with the given profile name. By default application.properties is loaded.")
+    String profile;
 
     @Option(names = {
             "--dep", "--deps" }, description = "Add additional dependencies (Use commas to separate multiple dependencies).")
@@ -189,6 +194,10 @@ class Run extends CamelCommand {
     }
 
     //CHECKSTYLE:ON
+
+    public String getProfile() {
+        return profile;
+    }
 
     @Override
     public Integer call() throws Exception {
