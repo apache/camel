@@ -408,6 +408,7 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
 
         @Override
         public void onAfterRoute(Route route, Exchange exchange) {
+            LOG.debug("onAfterRoute from Route {}", route.getRouteId());
             // route scope = should be from this route
             if (routeScoped && !route.getRouteId().equals(routeId)) {
                 return;
@@ -447,6 +448,11 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
                 LOG.debug("Processing onAfterRoute: {}", copy);
                 doProcess(processor, copy);
             }
+        }
+
+        @Override
+        public boolean allowHandover() {
+            return false;
         }
 
         @Override
