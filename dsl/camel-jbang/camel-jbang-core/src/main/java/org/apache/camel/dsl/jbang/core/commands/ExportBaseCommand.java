@@ -58,6 +58,10 @@ abstract class ExportBaseCommand extends CamelCommand {
                         description = "Profile to use, which refers to loading properties file with the given profile name. By default application.properties is loaded.")
     protected String profile;
 
+    @CommandLine.Option(names = {
+            "--dep", "--deps" }, description = "Add additional dependencies (Use commas to separate multiple dependencies).")
+    String dependencies;
+
     @CommandLine.Option(names = { "--runtime" }, description = "Runtime (spring-boot, quarkus, or camel-main)")
     protected String runtime;
 
@@ -158,6 +162,14 @@ abstract class ExportBaseCommand extends CamelCommand {
             }
             return o1.compareTo(o2);
         });
+
+        // custom dependencies
+        if (dependencies != null) {
+            for (String d : dependencies.split(",")) {
+                answer.add(d.trim());
+            }
+        }
+
         List<String> lines = Files.readAllLines(settings.toPath());
         for (String line : lines) {
             if (line.startsWith("dependency=")) {
