@@ -20,13 +20,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
+
 public class SplitterWithScannerIoExceptionTest extends ContextTestSupport {
 
     @Test
     public void testSplitterStreamingWithError() throws Exception {
-        if (isPlatform("aix") || isJavaVendor("ibm")) {
-            return;
-        }
+        assumeFalse(isPlatform("aix"));
+        assumeFalse(isJavaVendor("ibm"));
 
         getMockEndpoint("mock:a").expectedMinimumMessageCount(250);
         getMockEndpoint("mock:b").expectedMessageCount(0);

@@ -31,6 +31,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 
 import static org.apache.camel.test.junit5.TestSupport.isJavaVendor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  *
@@ -73,9 +74,7 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
 
     @Test
     public void testSpringDSLXPathSaxonFlag() throws Exception {
-        if (!jvmAdequate) {
-            return;
-        }
+        assumeTrue(jvmAdequate, "JVM is not adequate");
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:testSaxonWithFlagResult");
         mockEndpoint.expectedMessageCount(1);
@@ -90,9 +89,7 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
 
     @Test
     public void testSpringDSLXPathFactory() throws Exception {
-        if (!jvmAdequate) {
-            return;
-        }
+        assumeTrue(jvmAdequate, "JVM is not adequate");
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:testSaxonWithFactoryResult");
         mockEndpoint.expectedMessageCount(1);
@@ -108,9 +105,7 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
     @Disabled("See http://www.saxonica.com/documentation/index.html#!xpath-api/jaxp-xpath/factory")
     @Test
     public void testSpringDSLXPathObjectModel() throws Exception {
-        if (!jvmAdequate) {
-            return;
-        }
+        assumeTrue(jvmAdequate, "JVM is not adequate");
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:testSaxonWithObjectModelResult");
         mockEndpoint.expectedMessageCount(1);
@@ -125,9 +120,7 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
 
     @Test
     public void testSpringDSLXPathSaxonFlagPredicate() throws Exception {
-        if (!jvmAdequate) {
-            return;
-        }
+        assumeTrue(jvmAdequate, "JVM is not adequate");
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:testSaxonWithFlagResultPredicate");
         mockEndpoint.expectedMessageCount(1);
@@ -139,9 +132,7 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
 
     @Test
     public void testSpringDSLXPathFactoryPredicate() throws Exception {
-        if (!jvmAdequate) {
-            return;
-        }
+        assumeTrue(jvmAdequate, "JVM is not adequate");
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:testSaxonWithFactoryResultPredicate");
         mockEndpoint.expectedMessageCount(1);
@@ -154,9 +145,7 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
     @Disabled("See http://www.saxonica.com/documentation/index.html#!xpath-api/jaxp-xpath/factory")
     @Test
     public void testSpringDSLXPathObjectModelPredicate() throws Exception {
-        if (!jvmAdequate) {
-            return;
-        }
+        assumeTrue(jvmAdequate, "JVM is not adequate");
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:testSaxonWithObjectModelResultPredicate");
         mockEndpoint.expectedMessageCount(1);

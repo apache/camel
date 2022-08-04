@@ -113,10 +113,7 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
     public void testThrottleVisableViaJmx() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         assumeFalse(isPlatform("aix"));
-        if (isPlatform("windows")) {
-            // windows needs more sleep to read updated jmx values so we skip as we dont want further delays in core tests
-            return;
-        }
+        assumeFalse(isPlatform("windows"));
 
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
@@ -146,10 +143,7 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
     public void testThrottleAsyncVisableViaJmx() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         assumeFalse(isPlatform("aix"));
-        if (isPlatform("windows")) {
-            // windows needs more sleep to read updated jmx values so we skip as we dont want further delays in core tests
-            return;
-        }
+        assumeFalse(isPlatform("windows"));
 
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
@@ -181,10 +175,7 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
     public void testThrottleAsyncExceptionVisableViaJmx() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         assumeFalse(isPlatform("aix"));
-        if (isPlatform("windows")) {
-            // windows needs more sleep to read updated jmx values so we skip as we dont want further delays in core tests
-            return;
-        }
+        assumeFalse(isPlatform("windows"));
 
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();

@@ -26,6 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class ThrottlerTest extends ContextTestSupport {
     private static final int INTERVAL = 500;
@@ -39,9 +40,7 @@ public class ThrottlerTest extends ContextTestSupport {
 
     @Test
     public void testSendLotsOfMessagesButOnly3GetThroughWithin2Seconds() throws Exception {
-        if (!canTest()) {
-            return;
-        }
+        assumeTrue(canTest());
 
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(3);
@@ -58,9 +57,7 @@ public class ThrottlerTest extends ContextTestSupport {
 
     @Test
     public void testSendLotsOfMessagesWithRejectExecution() throws Exception {
-        if (!canTest()) {
-            return;
-        }
+        assumeTrue(canTest());
 
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(2);
@@ -79,9 +76,7 @@ public class ThrottlerTest extends ContextTestSupport {
 
     @Test
     public void testSendLotsOfMessagesSimultaneouslyButOnly3GetThrough() throws Exception {
-        if (!canTest()) {
-            return;
-        }
+        assumeTrue(canTest());
 
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         long elapsed = sendMessagesAndAwaitDelivery(MESSAGE_COUNT, "direct:a", MESSAGE_COUNT, resultEndpoint);
@@ -90,9 +85,7 @@ public class ThrottlerTest extends ContextTestSupport {
 
     @Test
     public void testConfigurationWithConstantExpression() throws Exception {
-        if (!canTest()) {
-            return;
-        }
+        assumeTrue(canTest());
 
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         long elapsed = sendMessagesAndAwaitDelivery(MESSAGE_COUNT, "direct:expressionConstant", MESSAGE_COUNT, resultEndpoint);
@@ -101,9 +94,7 @@ public class ThrottlerTest extends ContextTestSupport {
 
     @Test
     public void testConfigurationWithHeaderExpression() throws Exception {
-        if (!canTest()) {
-            return;
-        }
+        assumeTrue(canTest());
 
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(MESSAGE_COUNT);

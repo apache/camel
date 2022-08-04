@@ -43,6 +43,8 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
+
 @Parameterized
 public class CompositeApiIntegrationTest extends AbstractSalesforceTestBase {
 
@@ -206,9 +208,7 @@ public class CompositeApiIntegrationTest extends AbstractSalesforceTestBase {
 
     @Test
     public void shouldSupportRelatedObjectRetrieval() {
-        if (Version.create(version).compareTo(Version.create("36.0")) < 0) {
-            return;
-        }
+        assumeFalse(Version.create(version).compareTo(Version.create("36.0")) < 0, "Version must be less than 36.0");
 
         final SObjectComposite composite = new SObjectComposite("36.0", true);
         composite.addGetRelated("Account", accountId, "CreatedBy", "GetRelatedAccountReferenceId");
