@@ -17,20 +17,10 @@
 
 package org.apache.camel.processor.resume.kafka;
 
-import java.nio.ByteBuffer;
-import java.util.Collections;
-import java.util.Properties;
-import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.camel.resume.Deserializable;
 import org.apache.camel.resume.Resumable;
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,6 +56,5 @@ public class MultiNodeKafkaResumeStrategy<K extends Resumable> extends SingleNod
                                         ExecutorService executorService) {
         super(resumeStrategyConfiguration, executorService);
     }
-
 
 }
