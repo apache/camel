@@ -43,6 +43,9 @@ public final class HBaseServiceFactory {
         }
     }
 
+    private static SimpleTestServiceBuilder<HBaseService> instance;
+    private static HBaseService service;
+
     private HBaseServiceFactory() {
 
     }
@@ -58,8 +61,16 @@ public final class HBaseServiceFactory {
     }
 
     public static HBaseService createSingletonService() {
-        return builder()
-                .addLocalMapping(() -> new SingletonHBaseService(new HBaseLocalContainerService(), "hbase"))
-                .build();
+        if (service == null) {
+            if (instance == null) {
+                instance = builder();
+
+                instance.addLocalMapping(() -> new SingletonHBaseService(new HBaseLocalContainerService(), "hbase"));
+            }
+
+            service = instance.build();
+        }
+
+        return service;
     }
 }
