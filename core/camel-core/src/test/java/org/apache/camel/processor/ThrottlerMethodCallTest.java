@@ -27,6 +27,7 @@ import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class ThrottlerMethodCallTest extends ContextTestSupport {
     private static final int INTERVAL = 100;
@@ -50,9 +51,7 @@ public class ThrottlerMethodCallTest extends ContextTestSupport {
 
     @Test
     public void testConfigurationWithMethodCallExpression() throws Exception {
-        if (!canTest()) {
-            return;
-        }
+        assumeTrue(canTest());
 
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(messageCount);

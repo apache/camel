@@ -25,6 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class ThrottlerDslTest extends ContextTestSupport {
     private static final int INTERVAL = 500;
@@ -37,9 +38,7 @@ public class ThrottlerDslTest extends ContextTestSupport {
 
     @Test
     public void testDsl() throws Exception {
-        if (!canTest()) {
-            return;
-        }
+        assumeTrue(canTest());
 
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(messageCount);

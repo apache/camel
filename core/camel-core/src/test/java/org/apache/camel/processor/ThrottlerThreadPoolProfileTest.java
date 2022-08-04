@@ -22,6 +22,8 @@ import org.apache.camel.builder.ThreadPoolProfileBuilder;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+
 public class ThrottlerThreadPoolProfileTest extends ContextTestSupport {
 
     protected boolean canTest() {
@@ -31,9 +33,7 @@ public class ThrottlerThreadPoolProfileTest extends ContextTestSupport {
 
     @Test
     public void testThreadPool() throws Exception {
-        if (!canTest()) {
-            return;
-        }
+        assumeTrue(canTest());
 
         getMockEndpoint("mock:result").expectedMessageCount(2);
 

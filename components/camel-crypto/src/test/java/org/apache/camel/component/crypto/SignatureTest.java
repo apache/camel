@@ -47,6 +47,7 @@ import static org.apache.camel.component.crypto.DigitalSignatureConstants.SIGNAT
 import static org.apache.camel.test.junit5.TestSupport.isJavaVendor;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 public class SignatureTest extends CamelTestSupport {
 
@@ -242,10 +243,7 @@ public class SignatureTest extends CamelTestSupport {
 
     @Test
     void testSetProviderInRouteDefinition() throws Exception {
-        if (isJavaVendor("ibm")) {
-            return;
-        }
-        // can only be run on SUN JDK
+        assumeFalse(isJavaVendor("ibm"), "can only be run on SUN JDK");
         setupMock();
         sendBody("direct:provider", payload);
         assertMockEndpointsSatisfied();

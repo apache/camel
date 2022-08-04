@@ -28,6 +28,7 @@ import org.junit.jupiter.api.parallel.Resources;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
 import static org.apache.camel.test.junit5.TestSupport.isJavaVendor;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * Tests that verify the usage of default settings in the XPath language by declaring a bean called xpath in the
@@ -71,9 +72,7 @@ public class XPathLanguageDefaultSettingsTest extends CamelSpringTestSupport {
 
     @Test
     public void testSpringDSLXPathLanguageDefaultSettings() throws Exception {
-        if (!jvmAdequate) {
-            return;
-        }
+        assumeTrue(jvmAdequate, "JVM is not adequate");
 
         MockEndpoint mockEndpointResult = getMockEndpoint("mock:testDefaultXPathSettingsResult");
         MockEndpoint mockEndpointException = getMockEndpoint("mock:testDefaultXPathSettingsResultException");

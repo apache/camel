@@ -37,6 +37,7 @@ import org.junit.jupiter.api.condition.OS;
 import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_SERVICE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedPooledExchangeTest extends ManagementTestSupport {
@@ -59,9 +60,7 @@ public class ManagedPooledExchangeTest extends ManagementTestSupport {
     @Test
     public void testSameExchange() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
+        assumeFalse(isPlatform("aix"));
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(3);

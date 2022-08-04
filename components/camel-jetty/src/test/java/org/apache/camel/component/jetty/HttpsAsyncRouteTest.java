@@ -46,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 @ResourceLock(SSL_SYSPROPS)
 public class HttpsAsyncRouteTest extends HttpsRouteTest {
@@ -94,9 +95,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
     @Test
     public void testEndpoint() throws Exception {
         // these tests does not run well on Windows
-        if (isPlatform("windows")) {
-            return;
-        }
+        assumeFalse(isPlatform("windows"), "Test is not intended for windows");
 
         MockEndpoint mockEndpointA = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
         mockEndpointA.expectedBodiesReceived(expectedBody);
@@ -125,9 +124,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
     @Test
     public void testEndpointWithoutHttps() {
         // these tests does not run well on Windows
-        if (isPlatform("windows")) {
-            return;
-        }
+        assumeFalse(isPlatform("windows"), "Test is not intended for windows");
 
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
         try {
@@ -142,9 +139,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
     @Test
     public void testHelloEndpoint() throws Exception {
         // these tests does not run well on Windows
-        if (isPlatform("windows")) {
-            return;
-        }
+        assumeFalse(isPlatform("windows"), "Test is not intended for windows");
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         URL url = new URL("https://localhost:" + port1 + "/hello");
@@ -166,9 +161,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
     @Test
     public void testHelloEndpointWithoutHttps() throws Exception {
         // these tests does not run well on Windows
-        if (isPlatform("windows")) {
-            return;
-        }
+        assumeFalse(isPlatform("windows"), "Test is not intended for windows");
 
         try {
             new URL("http://localhost:" + port1 + "/hello").openStream();
