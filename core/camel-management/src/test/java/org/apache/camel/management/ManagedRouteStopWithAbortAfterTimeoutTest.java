@@ -33,17 +33,12 @@ import org.junit.jupiter.api.condition.OS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
-@DisabledOnOs(OS.AIX)
+@DisabledOnOs({ OS.WINDOWS, OS.AIX })
 public class ManagedRouteStopWithAbortAfterTimeoutTest extends ManagementTestSupport {
 
     @Test
     public void testStopRouteWithAbortAfterTimeoutTrue() throws Exception {
-        // JMX tests dont work well on AIX or windows CI servers (hangs them)
-        assumeFalse(isPlatform("aix"));
-        assumeFalse(isPlatform("windows"));
-
         MockEndpoint mockEP = getMockEndpoint("mock:result");
         mockEP.setExpectedMessageCount(10);
 
@@ -81,10 +76,6 @@ public class ManagedRouteStopWithAbortAfterTimeoutTest extends ManagementTestSup
 
     @Test
     public void testStopRouteWithAbortAfterTimeoutFalse() throws Exception {
-        // JMX tests dont work well on AIX or windows CI servers (hangs them)
-        assumeFalse(isPlatform("aix"));
-        assumeFalse(isPlatform("windows"));
-
         MockEndpoint mockEP = getMockEndpoint("mock:result");
 
         MBeanServer mbeanServer = getMBeanServer();

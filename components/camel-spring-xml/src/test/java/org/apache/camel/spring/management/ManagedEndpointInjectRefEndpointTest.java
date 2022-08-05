@@ -50,12 +50,6 @@ public class ManagedEndpointInjectRefEndpointTest extends SpringTestSupport {
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
 
-    @Override
-    protected boolean canRunOnThisPlatform() {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        return !isPlatform("aix");
-    }
-
     @Test
     public void testRef() throws Exception {
         // fire a message to get it running

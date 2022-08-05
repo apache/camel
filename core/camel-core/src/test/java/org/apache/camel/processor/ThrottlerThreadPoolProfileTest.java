@@ -21,20 +21,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ThreadPoolProfileBuilder;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
-
+@DisabledOnOs(OS.WINDOWS)
 public class ThrottlerThreadPoolProfileTest extends ContextTestSupport {
-
-    protected boolean canTest() {
-        // skip test on windows as it does not run well there
-        return !isPlatform("windows");
-    }
 
     @Test
     public void testThreadPool() throws Exception {
-        assumeTrue(canTest());
-
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
         template.sendBody("direct:start", "Hello");

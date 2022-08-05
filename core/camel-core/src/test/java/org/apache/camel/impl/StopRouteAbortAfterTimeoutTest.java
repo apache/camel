@@ -22,18 +22,16 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@DisabledOnOs(OS.WINDOWS)
 public class StopRouteAbortAfterTimeoutTest extends ContextTestSupport {
 
     @Test
     public void testStopRouteWithAbortAfterTimeoutTrue() throws Exception {
-        // doesnt test to well on all Windows
-        if (isPlatform("windows")) {
-            return;
-        }
-
         MockEndpoint mockEP = getMockEndpoint("mock:result");
         mockEP.setExpectedMessageCount(10);
 
@@ -60,11 +58,6 @@ public class StopRouteAbortAfterTimeoutTest extends ContextTestSupport {
 
     @Test
     public void testStopRouteWithAbortAfterTimeoutFalse() throws Exception {
-        // doesnt test to well on all Windows
-        if (isPlatform("windows")) {
-            return;
-        }
-
         MockEndpoint mockEP = getMockEndpoint("mock:result");
 
         // send some message through the route

@@ -25,17 +25,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 @Disabled("Manual test")
+@DisabledOnOs(OS.WINDOWS)
 public class FileAsyncStressManuallyManualTest extends ContextTestSupport {
 
     @Test
     public void testAsyncStress() throws Exception {
-        // do not test on windows
-        assumeFalse(isPlatform("windows"));
-
         // test by starting the unit test FileAsyncStressFileDropper in another
         // JVM
 

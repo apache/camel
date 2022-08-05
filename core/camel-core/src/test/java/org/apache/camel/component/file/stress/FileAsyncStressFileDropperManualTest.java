@@ -22,10 +22,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 @Disabled("Manual test")
+@DisabledOnOs(OS.WINDOWS)
 public class FileAsyncStressFileDropperManualTest extends ContextTestSupport {
 
     private static int counter;
@@ -36,9 +37,6 @@ public class FileAsyncStressFileDropperManualTest extends ContextTestSupport {
 
     @Test
     public void testDropInNewFiles() throws Exception {
-        // do not test on windows
-        assumeFalse(isPlatform("windows"));
-
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(250);
 
