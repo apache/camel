@@ -46,7 +46,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
 
     private static final Logger LOG = LoggerFactory.getLogger(StreamConsumer.class);
 
-    private static final String TYPES = "in,file,url";
+    private static final String TYPES = "in,file";
     private static final String INVALID_URI = "Invalid uri, valid form: 'stream:{" + TYPES + "}'";
     private static final List<String> TYPES_LIST = Arrays.asList(TYPES.split(","));
     private ExecutorService executor;
