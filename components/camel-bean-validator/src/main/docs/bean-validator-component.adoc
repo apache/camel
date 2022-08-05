@@ -17,7 +17,7 @@ The Validator component performs bean validation of the message body
 using the Java Bean Validation API
 (http://jcp.org/en/jsr/detail?id=303[JSR 303]). Camel uses the reference
 implementation, which is
-http://docs.jboss.org/hibernate/validator/4.3/reference/en-US/html_single/[Hibernate
+https://docs.jboss.org/hibernate/validator/6.2/reference/en-US/html_single/[Hibernate
 Validator].
 
 Maven users will need to add the following dependency to their `pom.xml`
