@@ -26,8 +26,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
-
 @Disabled("Manual test")
 @DisabledOnOs(OS.WINDOWS)
 public class FileConsumerPollManyFilesManualTest extends ContextTestSupport {
