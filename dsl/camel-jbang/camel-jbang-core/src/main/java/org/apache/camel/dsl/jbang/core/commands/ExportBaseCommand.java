@@ -60,7 +60,7 @@ abstract class ExportBaseCommand extends CamelCommand {
 
     @CommandLine.Option(names = {
             "--dep", "--deps" }, description = "Add additional dependencies (Use commas to separate multiple dependencies).")
-    String dependencies;
+    protected String dependencies;
 
     @CommandLine.Option(names = { "--runtime" }, description = "Runtime (spring-boot, quarkus, or camel-main)")
     protected String runtime;
