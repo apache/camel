@@ -145,6 +145,23 @@ The console can give you insights into your running Camel application, such as r
 routes that takes the longest time to process messages. You can then drill down to pin-point, exactly
 which individual EIPs in these routes are the slowest.
 
+The developer console can also output the data in JSon format, which for example can be used by 3rd-party tooling
+to scrape the information.
+
+For example to output the top routes via curl, you can execute:
+
+[source,bash]
+----
+curl -s -H "Accept: application/json"  http://0.0.0.0:8080/q/dev/top/
+----
+
+And if you have `jq` installed which can format and output the JSon data in colour, then do:
+
+[source,bash]
+----
+curl -s -H "Accept: application/json"  http://0.0.0.0:8080/q/dev/top/ | jq
+----
+
 === Using profiles
 
 Camel JBang have the concept of profiles. A _profile_ is essentially a name (id) that refers
