@@ -40,8 +40,30 @@ public class RouteConfigurationOnExceptionTest extends ContextTestSupport {
                 new RouteBuilder() {
                     @Override
                     public void configure() {
+                        routeTemplate("route-template-parameter")
+                                .templateParameter("configuration-id")
+                                .templateParameter("route-id")
+                                .from("direct:start-template-parameter")
+                                .routeId("{{route-id}}")
+                                .routeConfigurationId("{{configuration-id}}")
+                                .throwException(RuntimeException.class, "Expected Error");
+                    }
+                },
+                new RouteBuilder() {
+                    @Override
+                    public void configure() {
                         TemplatedRouteBuilder.builder(context, "route-template")
                                 .routeId("my-test-file-route")
+                                .add();
+                    }
+                },
+                new RouteBuilder() {
+                    @Override
+                    public void configure() {
+                        TemplatedRouteBuilder.builder(context, "route-template-parameter")
+                                .routeId("my-test-file-route-parameter")
+                                .parameter("configuration-id", "my-error-handler")
+                                .parameter("route-id", "custom-route-id")
                                 .add();
                     }
                 },
@@ -70,6 +92,15 @@ public class RouteConfigurationOnExceptionTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedBodiesReceived("Error Received");
         template.sendBody("direct:start-template", "foo");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    void testRouteTemplateCanSupportRouteConfigurationWithParameter() throws Exception {
+
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedBodiesReceived("Error Received");
+        template.sendBody("direct:start-template-parameter", "foo");
         assertMockEndpointsSatisfied();
     }
 
