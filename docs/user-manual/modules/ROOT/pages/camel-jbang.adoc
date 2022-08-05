@@ -63,7 +63,7 @@ camel run cheese.xml
 
 NOTE: You can create and run any of the supported xref:dsl.adoc[DSLs] in Camel such as YAML, XML, Java, Groovy.
 
-To create a new .java integration, you simply do:
+To create a new .java route, you simply do:
 
 [source,bash]
 ----
@@ -100,6 +100,13 @@ Or you can run all files starting with foo*
 camel run foo*
 ----
 
+And to run everything
+
+[source,bash]
+----
+camel run *
+----
+
 TIP: The run goal can also detect files that are `properties`.
 
 === Dev mode with live reload
@@ -109,10 +116,17 @@ using the `--dev` options as shown:
 
 [source,bash]
 ----
-camel run jms-amqp-10-sink-binding.yaml --dev
+camel run foo.yaml --dev
 ----
 
 Then while the Camel application is running, you can update the YAML route and update when saving.
+
+This works for all DLS even java, so you can do:
+
+[source,bash]
+----
+camel run hello.java --dev
+----
 
 NOTE: The live reload is meant for development purposes, and if you encounter problems with reloading
 such as JVM class loading issues, then you may need to restart the application.
