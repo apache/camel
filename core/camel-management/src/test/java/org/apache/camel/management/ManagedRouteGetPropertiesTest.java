@@ -37,9 +37,6 @@ public class ManagedRouteGetPropertiesTest extends ManagementTestSupport {
 
     @Test
     public void testGetProperties() throws Exception {
-        // JMX tests don't work well on AIX CI servers (hangs them)
-        assumeFalse(isPlatform("aix"));
-
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = getRouteObjectName(mbeanServer);
 

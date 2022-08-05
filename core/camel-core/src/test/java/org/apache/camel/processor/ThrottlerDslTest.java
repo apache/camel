@@ -23,23 +23,18 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
+@DisabledOnOs(OS.WINDOWS)
 public class ThrottlerDslTest extends ContextTestSupport {
     private static final int INTERVAL = 500;
     protected int messageCount = 9;
 
-    protected boolean canTest() {
-        // skip test on windows as it does not run well there
-        return !isPlatform("windows");
-    }
-
     @Test
     public void testDsl() throws Exception {
-        assumeTrue(canTest());
-
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(messageCount);
 

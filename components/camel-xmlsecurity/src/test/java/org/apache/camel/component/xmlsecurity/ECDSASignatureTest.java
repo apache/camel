@@ -179,7 +179,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
 
     @Test
     public void testECDSASHA1() throws Exception {
-        assumeTrue(canTest, "Test preconditions failed: canTest="+canTest);
+        assumeTrue(canTest, "Test preconditions failed: canTest=" + canTest);
         setupMock();
         sendBody("direct:ecdsa_sha1", payload);
         assertMockEndpointsSatisfied();
@@ -187,7 +187,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
 
     @Test
     public void testECDSASHA224() throws Exception {
-        assumeTrue(canTest, "Test preconditions failed: canTest="+canTest);
+        assumeTrue(canTest, "Test preconditions failed: canTest=" + canTest);
         setupMock();
         sendBody("direct:ecdsa_sha224", payload);
         assertMockEndpointsSatisfied();
@@ -195,7 +195,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
 
     @Test
     public void testECDSASHA256() throws Exception {
-        assumeTrue(canTest, "Test preconditions failed: canTest="+canTest);
+        assumeTrue(canTest, "Test preconditions failed: canTest=" + canTest);
         setupMock();
         sendBody("direct:ecdsa_sha256", payload);
         assertMockEndpointsSatisfied();
@@ -203,7 +203,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
 
     @Test
     public void testECDSASHA384() throws Exception {
-        assumeTrue(canTest, "Test preconditions failed: canTest="+canTest);
+        assumeTrue(canTest, "Test preconditions failed: canTest=" + canTest);
         setupMock();
         sendBody("direct:ecdsa_sha384", payload);
         assertMockEndpointsSatisfied();
@@ -211,7 +211,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
 
     @Test
     public void testECDSASHA512() throws Exception {
-        assumeTrue(canTest, "Test preconditions failed: canTest="+canTest);
+        assumeTrue(canTest, "Test preconditions failed: canTest=" + canTest);
         setupMock();
         sendBody("direct:ecdsa_sha512", payload);
         assertMockEndpointsSatisfied();
@@ -219,7 +219,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
 
     @Test
     public void testECDSARIPEMD160() throws Exception {
-        assumeTrue(canTest, "Test preconditions failed: canTest="+canTest);
+        assumeTrue(canTest, "Test preconditions failed: canTest=" + canTest);
         setupMock();
         sendBody("direct:ecdsa_ripemd160", payload);
         assertMockEndpointsSatisfied();

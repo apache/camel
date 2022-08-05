@@ -29,6 +29,7 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.condition.OS.AIX;
 
+@DisabledOnOs(AIX)
 public class ValidatorFactoryRegistryTest extends CamelTestSupport {
 
     @BindToRegistry("myValidatorFactory")
@@ -49,7 +50,6 @@ public class ValidatorFactoryRegistryTest extends CamelTestSupport {
         super.setUp();
     }
 
-    @DisabledOnOs(AIX)
     @Test
     void configureValidatorFactoryFromRegistry() throws Exception {
         BeanValidatorEndpoint endpoint

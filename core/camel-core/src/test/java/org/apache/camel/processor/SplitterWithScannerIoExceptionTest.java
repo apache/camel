@@ -19,14 +19,16 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
+@DisabledOnOs(OS.AIX)
 public class SplitterWithScannerIoExceptionTest extends ContextTestSupport {
 
     @Test
     public void testSplitterStreamingWithError() throws Exception {
-        assumeFalse(isPlatform("aix"));
         assumeFalse(isJavaVendor("ibm"));
 
         getMockEndpoint("mock:a").expectedMinimumMessageCount(250);

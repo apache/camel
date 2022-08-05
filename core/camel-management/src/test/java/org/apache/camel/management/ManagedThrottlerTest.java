@@ -39,7 +39,6 @@ import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TY
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedThrottlerTest extends ManagementTestSupport {
@@ -109,12 +108,9 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         assertTrue(total > 1000, "Should be around 1 sec now: was " + total);
     }
 
+    @DisabledOnOs(OS.WINDOWS)
     @Test
     public void testThrottleVisableViaJmx() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        assumeFalse(isPlatform("aix"));
-        assumeFalse(isPlatform("windows"));
-
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
 
@@ -139,12 +135,9 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         assertEquals(10, completed.longValue());
     }
 
+    @DisabledOnOs(OS.WINDOWS)
     @Test
     public void testThrottleAsyncVisableViaJmx() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        assumeFalse(isPlatform("aix"));
-        assumeFalse(isPlatform("windows"));
-
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
 
@@ -171,12 +164,9 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         assertEquals(10, completed.longValue());
     }
 
+    @DisabledOnOs(OS.WINDOWS)
     @Test
     public void testThrottleAsyncExceptionVisableViaJmx() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        assumeFalse(isPlatform("aix"));
-        assumeFalse(isPlatform("windows"));
-
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
 

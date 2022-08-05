@@ -27,13 +27,15 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import zipkin2.reporter.Reporter;
 
-import static org.apache.camel.test.junit5.TestSupport.isPlatform;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.AIX)
 public class ManagedZipkinSimpleRouteTest extends CamelTestSupport {
 
     private ZipkinTracer zipkin;
@@ -67,11 +69,6 @@ public class ManagedZipkinSimpleRouteTest extends CamelTestSupport {
 
     @Test
     public void testZipkinRoute() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = new ObjectName(
                 "org.apache.camel:context=" + context.getManagementName() + ",type=services,name=ZipkinTracer");

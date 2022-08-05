@@ -26,10 +26,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 @Disabled("Manual test")
+@DisabledOnOs(OS.WINDOWS)
 public class FileAsyncStressManualTest extends ContextTestSupport {
 
     private int files = 150;
@@ -37,8 +38,6 @@ public class FileAsyncStressManualTest extends ContextTestSupport {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        // do not test on windows
-        assumeFalse(isPlatform("windows"));
         super.setUp();
         for (int i = 0; i < files; i++) {
             template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, i + ".txt");
@@ -47,9 +46,6 @@ public class FileAsyncStressManualTest extends ContextTestSupport {
 
     @Test
     public void testAsyncStress() throws Exception {
-        // do not test on windows
-        assumeFalse(isPlatform("windows"));
-
         // start route when all the files have been written
         context.getRouteController().startRoute("foo");
 
