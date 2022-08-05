@@ -129,6 +129,22 @@ camel run hello.java --dev
 NOTE: The live reload is meant for development purposes, and if you encounter problems with reloading
 such as JVM class loading issues, then you may need to restart the application.
 
+=== Developer Console
+
+You can enable the developer console, which presents a variety of information to the developer.
+
+[source,bash]
+----
+camel run hello.java --console
+----
+
+The console is then accessible from a web browser at: http://localhost:8080/q/dev (by default).
+The link is also shown in the log when Camel is starting up.
+
+The console can give you insights into your running Camel application, such as reporting the top
+routes that takes the longest time to process messages. You can then drill down to pin-point, exactly
+which individual EIPs in these routes are the slowest.
+
 === Using profiles
 
 Camel JBang have the concept of profiles. A _profile_ is essentially a name (id) that refers
