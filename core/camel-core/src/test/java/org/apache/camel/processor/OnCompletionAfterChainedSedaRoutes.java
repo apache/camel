@@ -24,13 +24,13 @@ public class OnCompletionAfterChainedSedaRoutes extends ContextTestSupport {
 
     @Test
     public void testOnCompletionChained() throws Exception {
-        String body = "<body>";
+        final var body = "<body>";
 
-        getMockEndpoint("mock:end").expectedBodiesReceived(body);
-        getMockEndpoint("mock:adone").expectedBodiesReceived(body);
-        getMockEndpoint("mock:bdone").expectedBodiesReceived(body);
-        getMockEndpoint("mock:cdone").expectedBodiesReceived(body);
-        getMockEndpoint("mock:ddone").expectedBodiesReceived(body);
+        final var completionMockEndpoint = getMockEndpoint("mock:completion");
+
+        completionMockEndpoint.expectedMessageCount(5);
+        completionMockEndpoint.expectedBodiesReceived(
+                body, "completion:d", "completion:c", "completion:b", "completion:a");
 
         template.sendBody("direct:a", body);
 
@@ -43,20 +43,39 @@ public class OnCompletionAfterChainedSedaRoutes extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:a")
-                .onCompletion().log("a - done").to("mock:adone").end()
-                .to("seda:b");
+                    .onCompletion()
+                        .log("a - done")
+                        .process(exchange -> exchange.getMessage().setBody("completion:a"))
+                        .to("mock:completion")
+                        .end()
+                    .to("seda:b");
 
                 from("seda:b")
-                .onCompletion().log("b - done").to("mock:bdone").end()
-                .to("seda:c");
+                    .onCompletion()
+                        .log("b - done")
+                        .process(exchange -> exchange.getMessage().setBody("completion:b"))
+                        .to("mock:completion")
+                        .end()
+                    .delay(100)
+                    .to("seda:c");
 
                 from("seda:c")
-                .onCompletion().log("c - done").to("mock:cdone").end()
-                .to("seda:d");
+                    .onCompletion()
+                        .log("c - done")
+                        .process(exchange -> exchange.getMessage().setBody("completion:c"))
+                        .to("mock:completion")
+                        .end()
+                    .delay(100)
+                    .to("seda:d");
 
                 from("seda:d")
-                .onCompletion().log("d - done").to("mock:ddone").end()
-                .to("mock:end");
+                    .onCompletion()
+                        .log("d - done")
+                        .process(exchange -> exchange.getMessage().setBody("completion:d"))
+                        .to("mock:completion")
+                        .end()
+                    .delay(100)
+                    .to("mock:completion");
             }
 
         };
