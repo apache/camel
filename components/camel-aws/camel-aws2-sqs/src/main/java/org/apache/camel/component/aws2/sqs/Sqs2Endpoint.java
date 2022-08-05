@@ -167,23 +167,30 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
                 queueUrl = getQueueUrlResult.queueUrl();
             } else {
                 // check whether the queue already exists
-                boolean done = false;
-                while (!done) {
-                    ListQueuesResponse listQueuesResult
-                            = client.listQueues(ListQueuesRequest.builder().maxResults(1000).build());
+                String queueNamePath = "/" + configuration.getQueueName();
+                ListQueuesRequest.Builder listQueuesRequestBuilder
+                        = ListQueuesRequest.builder().maxResults(1000).queueNamePrefix(configuration.getQueueName());
+
+                for (;;) {
+                    ListQueuesResponse listQueuesResult = client.listQueues(listQueuesRequestBuilder.build());
                     for (String url : listQueuesResult.queueUrls()) {
-                        if (url.endsWith("/" + configuration.getQueueName())) {
+                        if (url.endsWith(queueNamePath)) {
                             queueUrl = url;
                             LOG.trace("Queue available at '{}'.", queueUrl);
                             break;
                         }
                     }
-                    if (listQueuesResult.nextToken() == null) {
-                        done = true;
-                        continue;
+
+                    if (queueUrl != null) {
+                        break;
                     }
+
                     String token = listQueuesResult.nextToken();
-                    listQueuesResult = client.listQueues(ListQueuesRequest.builder().nextToken(token).build());
+                    if (token == null) {
+                        break;
+                    }
+
+                    listQueuesRequestBuilder = listQueuesRequestBuilder.nextToken(token);
                 }
             }
         }
