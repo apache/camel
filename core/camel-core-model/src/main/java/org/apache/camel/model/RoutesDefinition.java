@@ -274,7 +274,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
                         ids = route.getRouteConfigurationId().split(",");
                     }
                 } else {
-                    ids = new String[]{"*"};
+                    ids = new String[] { "*" };
                 }
 
                 // if there are multiple ids configured then we should apply in that same order
