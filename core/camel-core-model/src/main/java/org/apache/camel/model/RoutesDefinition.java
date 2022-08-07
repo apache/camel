@@ -255,25 +255,29 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
             List<RouteConfigurationDefinition> globalConfigurations
                     = getCamelContext().adapt(ModelCamelContext.class).getRouteConfigurationDefinitions();
             if (globalConfigurations != null) {
-
-                // if there are multiple ids configured then we should apply in that same order
                 String[] ids;
                 if (route.getRouteConfigurationId() != null) {
-                    // if the RouteConfigurationId was configured with property placeholder it should be resolved
+                    // if the RouteConfigurationId was configured with property placeholder it should be resolved first
+                    // and include properties sources from the template parameters
                     if (route.getTemplateParameters() != null && route.getRouteConfigurationId().startsWith("{{")) {
-                        OrderedLocationProperties locationProperties = new OrderedLocationProperties();
-                        locationProperties.putAll("TemplateProperties", new HashMap<>(route.getTemplateParameters()));
-                        camelContext.getPropertiesComponent().setLocalProperties(locationProperties);
-                        ids = camelContext.adapt(ExtendedCamelContext.class)
-                                .resolvePropertyPlaceholders(route.getRouteConfigurationId(), true)
-                                .split(",");
+                        OrderedLocationProperties props = new OrderedLocationProperties();
+                        props.putAll("TemplateProperties", new HashMap<>(route.getTemplateParameters()));
+                        camelContext.getPropertiesComponent().setLocalProperties(props);
+                        try {
+                            ids = camelContext.adapt(ExtendedCamelContext.class)
+                                    .resolvePropertyPlaceholders(route.getRouteConfigurationId(), true)
+                                    .split(",");
+                        } finally {
+                            camelContext.getPropertiesComponent().setLocalProperties(null);
+                        }
                     } else {
                         ids = route.getRouteConfigurationId().split(",");
                     }
                 } else {
-                    ids = new String[] { "*" };
+                    ids = new String[]{"*"};
                 }
 
+                // if there are multiple ids configured then we should apply in that same order
                 for (String id : ids) {
                     // sort according to ordered
                     globalConfigurations.stream().sorted(OrderedComparator.get())

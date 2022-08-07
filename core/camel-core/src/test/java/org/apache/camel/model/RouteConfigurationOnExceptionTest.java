@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.model;
 
 import org.apache.camel.ContextTestSupport;
@@ -88,7 +87,6 @@ public class RouteConfigurationOnExceptionTest extends ContextTestSupport {
 
     @Test
     void testRouteTemplateCanSupportRouteConfiguration() throws Exception {
-
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedBodiesReceived("Error Received");
         template.sendBody("direct:start-template", "foo");
@@ -97,7 +95,6 @@ public class RouteConfigurationOnExceptionTest extends ContextTestSupport {
 
     @Test
     void testRouteTemplateCanSupportRouteConfigurationWithParameter() throws Exception {
-
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedBodiesReceived("Error Received");
         template.sendBody("direct:start-template-parameter", "foo");
