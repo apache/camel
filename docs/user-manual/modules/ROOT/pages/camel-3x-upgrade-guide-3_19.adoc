@@ -15,3 +15,7 @@ Added `addClassLoader` method to `org.apache.camel.spi.ClassResolver`.
 Removed using `template` as a custom alias for `routeTemplate` or `route-template`.
 
 Removed the `tod` custom alias for `toD` or `to-d`.
+
+=== camel-salesforce
+
+The URI format for consumer operations has changed. All consumer URIs now use the `subscribe` operation. E.g., `salesforce:subscribe:<topic_name>`, `salesforce:subscribe:event/<event_name>`, `salesforce:subscribe:data/ChangeEvents`.

@@ -288,19 +288,20 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         OperationName operationName = null;
         String topicName = null;
         String apexUrl = null;
-        try {
-            LOG.debug("Creating endpoint for: {}", remaining);
-            if (remaining.startsWith(APEX_CALL_PREFIX)) {
-                // extract APEX URL
-                apexUrl = remaining.substring(APEX_CALL_PREFIX.length());
-                remaining = OperationName.APEX_CALL.value();
+        LOG.debug("Creating endpoint for: {}", remaining);
+        if (remaining.startsWith(APEX_CALL_PREFIX)) {
+            // extract APEX URL
+            apexUrl = remaining.substring(APEX_CALL_PREFIX.length());
+            remaining = OperationName.APEX_CALL.value();
+        } else if (remaining.startsWith(OperationName.SUBSCRIBE.value())) {
+            final String[] parts = remaining.split(":");
+            if (parts.length != 2) {
+                throw new IllegalArgumentException("topicName must be supplied for subscribe operation.");
             }
-            operationName = OperationName.fromValue(remaining);
-        } catch (IllegalArgumentException ex) {
-            // if its not an operation name, treat is as topic name for consumer
-            // endpoints
-            topicName = remaining;
+            remaining = parts[0];
+            topicName = parts[1];
         }
+        operationName = OperationName.fromValue(remaining);
 
         // create endpoint config
         if (config == null) {

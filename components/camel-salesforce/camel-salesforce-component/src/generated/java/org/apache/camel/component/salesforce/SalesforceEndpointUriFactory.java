@@ -99,7 +99,7 @@ public class SalesforceEndpointUriFactory extends org.apache.camel.support.compo
 
         Map<String, Object> copy = new HashMap<>(properties);
 
-        uri = buildPathParameter(syntax, uri, "operationName", null, false, copy);
+        uri = buildPathParameter(syntax, uri, "operationName", null, true, copy);
         uri = buildPathParameter(syntax, uri, "topicName", null, false, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;

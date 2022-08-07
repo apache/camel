@@ -105,7 +105,9 @@ public enum OperationName {
     COMPOSITE_DELETE_SOBJECT_COLLECTIONS("compositeDeleteSObjectCollections"),
 
     // Raw operation
-    RAW("raw");
+    RAW("raw"),
+
+    SUBSCRIBE("subscribe");
 
     private final String value;
 
