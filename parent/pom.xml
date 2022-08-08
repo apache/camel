@@ -331,7 +331,7 @@
         <jsch-version>0.2.1</jsch-version>
         <json-api>1.0</json-api>
         <jsonassert-version>1.5.1</jsonassert-version>
-        <json-path-version>2.6.0</json-path-version>
+        <json-path-version>2.7.0</json-path-version>
         <json-patch-version>1.13</json-patch-version>
         <jsonata4java-version>1.5.8</jsonata4java-version>
         <json-schema-validator-version>2.2.14</json-schema-validator-version>
