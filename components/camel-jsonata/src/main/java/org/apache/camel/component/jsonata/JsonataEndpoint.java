@@ -28,10 +28,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -114,13 +114,11 @@ public class JsonataEndpoint extends ResourceEndpoint {
         }
         output = expressions.evaluate(input);
 
-        // now lets output the results to the exchange 
-        Message out = exchange.getMessage();
+        // now lets output the results to the exchange
+        Object body = output;
         if (getOutputType() == JsonataInputOutputType.JsonString) {
-            out.setBody(output.toString());
-        } else {
-            out.setBody(output);
+            body = output.toString();
         }
-        out.setHeaders(exchange.getIn().getHeaders());
+        ExchangeHelper.setInOutBodyPatternAware(exchange, body);
     }
 }

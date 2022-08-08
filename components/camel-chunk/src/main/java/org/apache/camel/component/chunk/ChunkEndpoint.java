@@ -29,7 +29,6 @@ import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -123,9 +122,7 @@ public class ChunkEndpoint extends ResourceEndpoint {
             writer.flush();
 
             // Fill out message
-            Message out = exchange.getOut();
-            out.setBody(newChunk.toString());
-            out.setHeaders(exchange.getIn().getHeaders());
+            ExchangeHelper.setInOutBodyPatternAware(exchange, newChunk.toString());
         } else {
             exchange.getIn().removeHeader(ChunkConstants.CHUNK_RESOURCE_URI);
             ChunkEndpoint newEndpoint
