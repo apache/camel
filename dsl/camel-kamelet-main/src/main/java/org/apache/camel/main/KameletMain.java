@@ -344,11 +344,6 @@ public class KameletMain extends MainCommandLineSupport {
         }
 
         try {
-            // properties functions
-            org.apache.camel.component.properties.PropertiesComponent pc
-                    = (org.apache.camel.component.properties.PropertiesComponent) answer.getPropertiesComponent();
-            pc.setPropertiesFunctionResolver(new DependencyDownloaderPropertiesFunctionResolver(answer));
-
             // dependencies from CLI
             Object dependencies = getInitialProperties().get("camel.jbang.dependencies");
             if (dependencies != null) {
@@ -374,6 +369,18 @@ public class KameletMain extends MainCommandLineSupport {
         }
 
         return answer;
+    }
+
+    @Override
+    protected void configurePropertiesService(CamelContext camelContext) throws Exception {
+        super.configurePropertiesService(camelContext);
+
+        // properties functions, which can download
+        if (download) {
+            org.apache.camel.component.properties.PropertiesComponent pc
+                    = (org.apache.camel.component.properties.PropertiesComponent) camelContext.getPropertiesComponent();
+            pc.setPropertiesFunctionResolver(new DependencyDownloaderPropertiesFunctionResolver(camelContext));
+        }
     }
 
     @Override

@@ -146,6 +146,8 @@ abstract class ExportBaseCommand extends CamelCommand {
 
     protected Integer runSilently() throws Exception {
         Run run = new Run(getMain());
+        // need to declare the profile to use for run
+        run.profile = profile;
         Integer code = run.runSilent();
         return code;
     }
