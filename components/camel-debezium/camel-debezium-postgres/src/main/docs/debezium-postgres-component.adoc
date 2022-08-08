@@ -15,13 +15,11 @@
 *{component-header}*
 
 
-The Debezium PostgresSQL component is wrapper around https://debezium.io/[Debezium] using https://debezium.io/documentation/reference/0.9/operations/embedded.html[Debezium Embedded], which enables Change Data Capture from PostgresSQL database using Debezium without the need for Kafka or Kafka Connect.
+The Debezium PostgresSQL component is wrapper around https://debezium.io/[Debezium] using https://debezium.io/documentation/reference/1.9/development/engine.html[Debezium Engine], which enables Change Data Capture from PostgresSQL database using Debezium without the need for Kafka or Kafka Connect.
 
-*Note on handling failures:* Per https://debezium.io/documentation/reference/0.9/operations/embedded.html#_handling_failures[Debezium Embedded Engine] documentation, the engines is actively recording source offsets and periodically flushes these offsets to a persistent storage, so when the application is restarted or crashed, the engine will resume from the last recorded offset.
+*Note on handling failures:* Per https://debezium.io/documentation/reference/1.9/development/engine.html#_handling_failures[Debezium Embedded Engine] documentation, the engines is actively recording source offsets and periodically flushes these offsets to a persistent storage, so when the application is restarted or crashed, the engine will resume from the last recorded offset.
 Thus, at normal operation, your downstream routes will receive each event exactly once, however in case of an application crash (not having a graceful shutdown), the application will resume from the last recorded offset,
 which may result in receiving duplicate events immediately after the restart. Therefore, your downstream routes should be tolerant enough of such case and deduplicate events if needed.
-
-*Note:* The Debezium PostgresSQL component is currently not supported in OSGi
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component.
@@ -107,7 +105,7 @@ from("debezium-postgres:[name]?[options]])
     });
 ----
 
-*Important Note:* This component is a thin wrapper around Debezium Engine as mentioned, therefore before using this component in production, you need to understand how Debezium works and how configurations can reflect the expected behavior, especially in regards to https://debezium.io/documentation/reference/0.9/operations/embedded.html#_handling_failures[handling failures].
+*Important Note:* This component is a thin wrapper around Debezium Engine as mentioned, therefore before using this component in production, you need to understand how Debezium works and how configurations can reflect the expected behavior, especially in regards to https://debezium.io/documentation/reference/1.9/development/engine.html#_handling_failures[handling failures].
 
 
 include::spring-boot:partial$starter.adoc[]

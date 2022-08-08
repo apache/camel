@@ -14,16 +14,14 @@
 
 *{component-header}*
 
-The Debezium MongoDB component is wrapper around https://debezium.io/[Debezium] using https://debezium.io/documentation/reference/0.9/operations/embedded.html[Debezium Embedded], which enables Change Data Capture from MongoDB database using Debezium without the need for Kafka or Kafka Connect.
+The Debezium MongoDB component is wrapper around https://debezium.io/[Debezium] using https://debezium.io/documentation/reference/1.9/development/engine.html[Debezium Engine], which enables Change Data Capture from MongoDB database using Debezium without the need for Kafka or Kafka Connect.
 
 *Note:* The Debezium MongoDB connector uses MongoDB’s oplog to capture the changes, so the connector works only with MongoDB replica sets or with sharded clusters where each shard is a separate replica set, therefore you will need to have your MongoDB instance running either in replica set mode
 or sharded clusters mode.
 
-*Note on handling failures:* Per https://debezium.io/documentation/reference/0.9/operations/embedded.html#_handling_failures[Debezium Embedded Engine] documentation, the engines is actively recording source offsets and periodically flushes these offsets to a persistent storage, so when the application is restarted or crashed, the engine will resume from the last recorded offset.
+*Note on handling failures:* Per https://debezium.io/documentation/reference/1.9/development/engine.html#_handling_failures[Debezium Embedded Engine] documentation, the engines is actively recording source offsets and periodically flushes these offsets to a persistent storage, so when the application is restarted or crashed, the engine will resume from the last recorded offset.
 Thus, at normal operation, your downstream routes will receive each event exactly once, however in case of an application crash (not having a graceful shutdown), the application will resume from the last recorded offset,
 which may result in receiving duplicate events immediately after the restart. Therefore, your downstream routes should be tolerant enough of such case and deduplicate events if needed.
-
-*Note:* The Debezium Mongodb component is currently not supported in OSGi
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component.
@@ -96,7 +94,7 @@ from("debezium-mongodb:dbz-test-1?offsetStorageFileName=/usr/offset-file-1.dat&m
 
 By default, the component will emit the events in the body String JSON format in case of `u`, `c` or `r` operations, this can be easily converted to JSON using Camel JSON Data Format e.g: `.unmarshal().json()` like the above example. In case of operation `d`, the body will be `null`.
 
-*Important Note:* This component is a thin wrapper around Debezium Engine as mentioned, therefore before using this component in production, you need to understand how Debezium works and how configurations can reflect the expected behavior, especially in regards to https://debezium.io/documentation/reference/0.9/operations/embedded.html#_handling_failures[handling failures].
+*Important Note:* This component is a thin wrapper around Debezium Engine as mentioned, therefore before using this component in production, you need to understand how Debezium works and how configurations can reflect the expected behavior, especially in regards to https://debezium.io/documentation/reference/1.9/development/engine.html#_handling_failures[handling failures].
 
 
 include::spring-boot:partial$starter.adoc[]
