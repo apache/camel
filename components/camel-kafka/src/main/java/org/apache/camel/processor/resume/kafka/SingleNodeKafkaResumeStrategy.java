@@ -176,7 +176,7 @@ public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements Kafka
                 LOG.trace("Read from Kafka: {}", value);
 
                 if (!deserializable.deserialize(ByteBuffer.wrap(record.key()), ByteBuffer.wrap(record.value()))) {
-                    LOG.warn("Deserializar indicates that this is the last record to deserialize");
+                    LOG.warn("Deserializer indicates that this is the last record to deserialize");
                 }
             }
         } while (true);
