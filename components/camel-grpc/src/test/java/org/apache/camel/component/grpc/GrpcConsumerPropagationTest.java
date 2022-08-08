@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GrpcConsumerPropagationTest extends CamelTestSupport {
 
@@ -82,7 +83,7 @@ public class GrpcConsumerPropagationTest extends CamelTestSupport {
         StreamObserver<PingRequest> requestObserver = asyncOnNextStub.pingAsyncSync(responseObserver);
         requestObserver.onNext(pingRequest);
         requestObserver.onCompleted();
-        latch.await(5, TimeUnit.SECONDS);
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:async-on-next-propagation");
         mockEndpoint.expectedMessageCount(1);
@@ -101,13 +102,11 @@ public class GrpcConsumerPropagationTest extends CamelTestSupport {
     public void testOnCompletedPropagation() throws Exception {
         LOG.info("gRPC pingAsyncAsync method async test start");
         final CountDownLatch latch = new CountDownLatch(1);
-        PingRequest pingRequest
-                = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
         PongResponseStreamObserver responseObserver = new PongResponseStreamObserver(latch);
 
         StreamObserver<PingRequest> requestObserver = asyncOnCompletedStub.pingAsyncAsync(responseObserver);
         requestObserver.onCompleted();
-        latch.await(5, TimeUnit.SECONDS);
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:async-on-completed-propagation");
         mockEndpoint.expectedMessageCount(1);

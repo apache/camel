@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GrpcConsumerConcurrentTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(GrpcConsumerConcurrentTest.class);
@@ -79,7 +80,7 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
                 requestObserver.onNext(pingRequest);
                 requestObserver.onCompleted();
                 try {
-                    latch.await(5, TimeUnit.SECONDS);
+                    assertTrue(latch.await(5, TimeUnit.SECONDS));
                 } catch (InterruptedException e) {
                     LOG.debug("Unhandled exception (probably safe to ignore): {}", e.getMessage(), e);
                 }
@@ -120,7 +121,7 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
                 requestObserver.onNext(pingRequest);
                 requestObserver.onCompleted();
                 try {
-                    latch.await(5, TimeUnit.SECONDS);
+                    assertTrue(latch.await(5, TimeUnit.SECONDS));
                 } catch (InterruptedException e) {
                     LOG.debug("Interrupted while waiting for the response", e);
                 }
@@ -184,14 +185,14 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
         }
     }
 
-    public class GrpcMessageBuilder {
+    static class GrpcMessageBuilder {
         public PongResponse buildAsyncPongResponse(List<PingRequest> pingRequests) {
             return PongResponse.newBuilder().setPongName(pingRequests.get(0).getPingName() + GRPC_TEST_PONG_VALUE)
                     .setPongId(pingRequests.get(0).getPingId()).build();
         }
     }
 
-    public class HeaderExchangeProcessor implements Processor {
+    static class HeaderExchangeProcessor implements Processor {
 
         @Override
         @SuppressWarnings("unchecked")

@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GrpcConsumerExceptionTest extends CamelTestSupport {
 
@@ -74,7 +75,7 @@ public class GrpcConsumerExceptionTest extends CamelTestSupport {
     @Test
     public void testExchangeExceptionHandling() {
         LOG.info("gRPC exchange exception handling test start");
-        assertDoesNotThrow(() -> runExchangeExceptionHandlingTest());
+        assertDoesNotThrow(this::runExchangeExceptionHandlingTest);
     }
 
     private void runExchangeExceptionHandlingTest() throws InterruptedException {
@@ -84,7 +85,7 @@ public class GrpcConsumerExceptionTest extends CamelTestSupport {
         PongResponseStreamObserver responseObserver = new PongResponseStreamObserver(latch);
 
         nonBlockingStub.pingSyncSync(pingRequest, responseObserver);
-        latch.await(5, TimeUnit.SECONDS);
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
     }
 
     @Override
@@ -100,7 +101,7 @@ public class GrpcConsumerExceptionTest extends CamelTestSupport {
         };
     }
 
-    public class PongResponseStreamObserver implements StreamObserver<PongResponse> {
+    static class PongResponseStreamObserver implements StreamObserver<PongResponse> {
         private PongResponse pongResponse;
         private final CountDownLatch latch;
 
