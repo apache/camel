@@ -167,7 +167,7 @@
     <cxf.xjc.jvmArgs></cxf.xjc.jvmArgs>
     <datasonnet-mapper-version>2.1.4</datasonnet-mapper-version>
     <debezium-mysql-connector-version>8.0.28</debezium-mysql-connector-version>
-    <debezium-version>1.9.4.Final</debezium-version>
+    <debezium-version>1.9.5.Final</debezium-version>
     <deltaspike-version>1.9.5</deltaspike-version>
     <depends-maven-plugin-version>1.4.0</depends-maven-plugin-version>
     <derby-version>10.14.2.0</derby-version>
