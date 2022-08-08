@@ -23,7 +23,6 @@ import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -154,9 +153,7 @@ public class StringTemplateEndpoint extends ResourceEndpoint {
         stTemplate.write(new NoIndentWriter(buffer));
 
         // now lets output the results to the exchange
-        Message out = exchange.getOut();
-        out.setBody(buffer.toString());
-        out.setHeaders(exchange.getIn().getHeaders());
-        out.setHeader(StringTemplateConstants.STRINGTEMPLATE_RESOURCE_URI, getResourceUri());
+        ExchangeHelper.setInOutBodyPatternAware(exchange, buffer.toString());
+        exchange.getMessage().setHeader(StringTemplateConstants.STRINGTEMPLATE_RESOURCE_URI, getResourceUri());
     }
 }

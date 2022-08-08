@@ -169,12 +169,10 @@ public class JsltEndpoint extends ResourceEndpoint {
         }
 
         Map<String, JsonNode> variables = extractVariables(exchange);
-
         JsonNode output = getTransform(exchange.getMessage()).apply(variables, input);
 
-        Message out = exchange.getMessage();
-        out.setBody(isPrettyPrint() ? output.toPrettyString() : output.toString());
-        out.setHeaders(exchange.getIn().getHeaders());
+        Object body = isPrettyPrint() ? output.toPrettyString() : output.toString();
+        ExchangeHelper.setInOutBodyPatternAware(exchange, body);
     }
 
     /**
