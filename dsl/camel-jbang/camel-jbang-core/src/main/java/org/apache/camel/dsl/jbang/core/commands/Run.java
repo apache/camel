@@ -111,7 +111,7 @@ class Run extends CamelCommand {
     String repos;
 
     @Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
-    private boolean fresh;
+    boolean fresh;
 
     @Option(names = {"--download"}, defaultValue = "true", description = "Whether to allow automatic downloaded JAR dependencies, over the internet, that Camel requires.")
     boolean download = true;
