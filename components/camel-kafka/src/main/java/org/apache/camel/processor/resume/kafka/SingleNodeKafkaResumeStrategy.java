@@ -130,7 +130,9 @@ public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements Kafka
         OffsetKey<?> key = offset.getOffsetKey();
         Offset<?> offsetValue = offset.getLastOffset();
 
-        LOG.debug("Updating offset on Kafka with key {} to {}", key.getValue(), offsetValue.getValue());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Updating offset on Kafka with key {} to {}", key.getValue(), offsetValue.getValue());
+        }
 
         ByteBuffer keyBuffer = key.serialize();
         ByteBuffer valueBuffer = offsetValue.serialize();
@@ -173,7 +175,9 @@ public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements Kafka
             for (ConsumerRecord<byte[], byte[]> record : records) {
                 byte[] value = record.value();
 
-                LOG.trace("Read from Kafka: {}", value);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Read from Kafka: {}", value);
+                }
 
                 if (!deserializable.deserialize(ByteBuffer.wrap(record.key()), ByteBuffer.wrap(record.value()))) {
                     LOG.warn("Deserializer indicates that this is the last record to deserialize");
