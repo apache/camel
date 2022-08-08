@@ -54,11 +54,11 @@ public class SalesforceComponentVerifierExtension extends DefaultComponentVerifi
         ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS)
                 .errors(ResultErrorHelper
                         .requiresAny(parameters,
-                                OptionsGroup.withName(AuthenticationType.USERNAME_PASSWORD).options("clientId", "clientSecret",
+                                OptionsGroup.withName(AuthenticationType.USERNAME_PASSWORD).options("operationName", "clientId", "clientSecret",
                                         "userName", "password", "!refreshToken", "!keystore"),
-                                OptionsGroup.withName(AuthenticationType.REFRESH_TOKEN).options("clientId", "clientSecret",
+                                OptionsGroup.withName(AuthenticationType.REFRESH_TOKEN).options("operationName", "clientId", "clientSecret",
                                         "refreshToken", "!password", "!keystore"),
-                                OptionsGroup.withName(AuthenticationType.JWT).options("clientId", "userName", "keystore",
+                                OptionsGroup.withName(AuthenticationType.JWT).options("operationName", "clientId", "userName", "keystore",
                                         "!password", "!refreshToken")));
 
         // Validate using the catalog
