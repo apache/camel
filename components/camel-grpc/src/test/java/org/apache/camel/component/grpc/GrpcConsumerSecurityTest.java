@@ -119,6 +119,7 @@ public class GrpcConsumerSecurityTest extends CamelTestSupport {
 
         StreamObserver<PingRequest> requestObserver = tlsAsyncStub.pingAsyncSync(responseObserver);
         requestObserver.onNext(pingRequest);
+        requestObserver.onCompleted();
         latch.await(5, TimeUnit.SECONDS);
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:tls-enable");
@@ -145,6 +146,7 @@ public class GrpcConsumerSecurityTest extends CamelTestSupport {
 
         StreamObserver<PingRequest> requestObserver = jwtCorrectAsyncStub.pingAsyncSync(responseObserver);
         requestObserver.onNext(pingRequest);
+        requestObserver.onCompleted();
         latch.await(5, TimeUnit.SECONDS);
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:jwt-correct-secret");
