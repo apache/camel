@@ -3953,9 +3953,9 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * Syntax: <code>salesforce:operationName:topicName</code>
          * 
-         * Path parameter: operationName
+         * Path parameter: operationName (required)
          * The operation to use
-         * There are 65 enums and the value can be one of: getVersions,
+         * There are 66 enums and the value can be one of: getVersions,
          * getResources, getGlobalObjects, getBasicInfo, getDescription,
          * getSObject, createSObject, updateSObject, deleteSObject,
          * getSObjectWithId, upsertSObject, deleteSObjectWithId, getBlobField,
@@ -3973,7 +3973,7 @@ public interface SalesforceEndpointBuilderFactory {
          * bulk2GetSuccessfulResults, bulk2GetFailedResults,
          * bulk2GetUnprocessedRecords, bulk2CreateQueryJob, bulk2GetQueryJob,
          * bulk2GetAllQueryJobs, bulk2GetQueryJobResults, bulk2AbortQueryJob,
-         * bulk2DeleteQueryJob, raw
+         * bulk2DeleteQueryJob, raw, subscribe
          * 
          * Path parameter: topicName
          * The name of the topic/channel to use
@@ -3994,9 +3994,9 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * Syntax: <code>salesforce:operationName:topicName</code>
          * 
-         * Path parameter: operationName
+         * Path parameter: operationName (required)
          * The operation to use
-         * There are 65 enums and the value can be one of: getVersions,
+         * There are 66 enums and the value can be one of: getVersions,
          * getResources, getGlobalObjects, getBasicInfo, getDescription,
          * getSObject, createSObject, updateSObject, deleteSObject,
          * getSObjectWithId, upsertSObject, deleteSObjectWithId, getBlobField,
@@ -4014,7 +4014,7 @@ public interface SalesforceEndpointBuilderFactory {
          * bulk2GetSuccessfulResults, bulk2GetFailedResults,
          * bulk2GetUnprocessedRecords, bulk2CreateQueryJob, bulk2GetQueryJob,
          * bulk2GetAllQueryJobs, bulk2GetQueryJobResults, bulk2AbortQueryJob,
-         * bulk2DeleteQueryJob, raw
+         * bulk2DeleteQueryJob, raw, subscribe
          * 
          * Path parameter: topicName
          * The name of the topic/channel to use
