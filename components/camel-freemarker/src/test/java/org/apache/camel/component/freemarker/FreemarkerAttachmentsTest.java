@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.freemarker;
 
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -50,7 +50,6 @@ public class FreemarkerAttachmentsTest extends CamelTestSupport {
 
         assertEquals("Dear Christian. You ordered item 7 on Monday.", exchange.getMessage().getBody());
         assertEquals("Christian", exchange.getMessage().getHeader("name"));
-
 
         AttachmentMessage am = exchange.getMessage(AttachmentMessage.class);
         assertNotNull(am);
