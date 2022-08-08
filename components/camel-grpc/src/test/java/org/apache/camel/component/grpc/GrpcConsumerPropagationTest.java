@@ -81,6 +81,7 @@ public class GrpcConsumerPropagationTest extends CamelTestSupport {
 
         StreamObserver<PingRequest> requestObserver = asyncOnNextStub.pingAsyncSync(responseObserver);
         requestObserver.onNext(pingRequest);
+        requestObserver.onCompleted();
         latch.await(5, TimeUnit.SECONDS);
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:async-on-next-propagation");
