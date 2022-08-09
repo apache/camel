@@ -14287,8 +14287,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>stream:kind</code>
      * 
      * Path parameter: kind (required)
-     * Kind of stream to use such as System.in or System.out.
-     * There are 5 enums and the value can be one of: in, out, err, header, file
+     * Kind of stream to use such as System.in, System.out, a file, or a http
+     * url.
+     * There are 6 enums and the value can be one of: in, out, err, header,
+     * file, http
      * 
      * @param path kind
      * @return the dsl builder
@@ -14308,8 +14310,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>stream:kind</code>
      * 
      * Path parameter: kind (required)
-     * Kind of stream to use such as System.in or System.out.
-     * There are 5 enums and the value can be one of: in, out, err, header, file
+     * Kind of stream to use such as System.in, System.out, a file, or a http
+     * url.
+     * There are 6 enums and the value can be one of: in, out, err, header,
+     * file, http
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
