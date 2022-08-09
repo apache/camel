@@ -33,7 +33,7 @@
 
     <properties>
         <firstVersion>3.0</firstVersion>
-        <label>cloud</label>
+        <label>core,cloud</label>
     </properties>
 
     <dependencies>

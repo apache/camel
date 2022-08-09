@@ -33,6 +33,7 @@
 
     <properties>
         <firstVersion>3.1.0</firstVersion>
+        <label>dsl</label>
         <camel.osgi.import>
             org.apache.camel.model;${camel.osgi.import.camel.version},
             org.apache.camel.model.cloud;${camel.osgi.import.camel.version},

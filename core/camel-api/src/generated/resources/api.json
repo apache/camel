@@ -6,6 +6,7 @@
     "description": "The Camel API",
     "deprecated": false,
     "firstVersion": "3.0.0",
+    "label": "core",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-api",

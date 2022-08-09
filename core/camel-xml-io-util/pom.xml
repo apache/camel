@@ -33,6 +33,7 @@
 
     <properties>
         <firstVersion>3.10.0</firstVersion>
+        <label>core,xml</label>
     </properties>
 
     <dependencies>
