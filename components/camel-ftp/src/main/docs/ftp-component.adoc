@@ -504,6 +504,11 @@ The file paths are matched with the following rules:
 
 The sample below demonstrates how to use it:
 
+[source,java]
+----
+from("ftp://admin@localhost:2222/public/camel?antInclude=**/*.txt").to("...");
+----
+
 == Using a proxy with SFTP
 
 To use an HTTP proxy to connect to your remote host, you can configure
