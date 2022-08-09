@@ -20,11 +20,13 @@ package org.apache.camel.processor.resume.kafka;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -152,13 +154,24 @@ public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements Kafka
             throw new RuntimeCamelException("Cannot load data for an adapter that is not deserializable");
         }
 
-        executorService.submit(this::refresh);
+        CountDownLatch latch = new CountDownLatch(resumeStrategyConfiguration.getMaxInitializationRetries());
+        executorService.submit(() -> refresh(latch));
+
+        try {
+            LOG.trace("Waiting for kafka resume strategy async initialization");
+            if (!latch.await(resumeStrategyConfiguration.getMaxInitializationDuration().toMillis(), TimeUnit.MILLISECONDS)) {
+                LOG.debug("The initialization timed out");
+            }
+            LOG.trace("Kafka resume strategy initialization complete");
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
      * Launch a thread to refresh the offsets periodically
      */
-    private void refresh() {
+    private void refresh(CountDownLatch latch) {
         LOG.trace("Creating a offset cache refresher");
 
         try {
@@ -169,7 +182,7 @@ public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements Kafka
             LOG.debug("Loading records from topic {}", resumeStrategyConfiguration.getTopic());
             consumer.subscribe(Collections.singletonList(getResumeStrategyConfiguration().getTopic()));
 
-            poll(consumer);
+            poll(consumer, latch);
         } catch (WakeupException e) {
             LOG.info("Kafka consumer was interrupted during a blocking call");
         } catch (Exception e) {
@@ -182,26 +195,32 @@ public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements Kafka
         }
     }
 
-    protected void poll(Consumer<byte[], byte[]> consumer) {
+    protected void poll(Consumer<byte[], byte[]> consumer, CountDownLatch latch) {
         Deserializable deserializable = (Deserializable) adapter;
+        boolean initialized = false;
 
         do {
             ConsumerRecords<byte[], byte[]> records = consume(consumer);
-
-            if (records.isEmpty()) {
-                continue;
-            }
 
             for (ConsumerRecord<byte[], byte[]> record : records) {
                 byte[] value = record.value();
 
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Read from Kafka: {}", value);
+                    LOG.trace("Read from Kafka at {} ({}): {}", Instant.ofEpochMilli(record.timestamp()),
+                            record.timestampType(), value);
                 }
 
                 if (!deserializable.deserialize(ByteBuffer.wrap(record.key()), ByteBuffer.wrap(record.value()))) {
                     LOG.warn("Deserializer indicates that this is the last record to deserialize");
                 }
+            }
+
+            if (!initialized) {
+                if (latch.getCount() == 1) {
+                    initialized = true;
+                }
+
+                latch.countDown();
             }
         } while (true);
     }
