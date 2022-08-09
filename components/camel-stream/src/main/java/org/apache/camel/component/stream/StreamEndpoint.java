@@ -42,11 +42,15 @@ public class StreamEndpoint extends DefaultEndpoint {
 
     private transient Charset charset;
 
-    @UriPath(enums = "in,out,err,header,file")
+    @UriPath(enums = "in,out,err,header,file,http")
     @Metadata(required = true)
     private String kind;
     @UriParam
     private String fileName;
+    @UriParam(label = "consumer")
+    private String httpUrl;
+    @UriParam(label = "consumer")
+    private String httpHeaders;
     @UriParam(label = "consumer")
     private boolean scanStream;
     @UriParam(label = "consumer")
@@ -107,7 +111,7 @@ public class StreamEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Kind of stream to use such as System.in or System.out.
+     * Kind of stream to use such as System.in, System.out, a file, or a http url.
      */
     public void setKind(String kind) {
         this.kind = kind;
@@ -122,6 +126,29 @@ public class StreamEndpoint extends DefaultEndpoint {
      */
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public String getHttpUrl() {
+        return httpUrl;
+    }
+
+    /**
+     * When using stream:http format, this option specifies the http url to stream from.
+     */
+    public void setHttpUrl(String httpUrl) {
+        this.httpUrl = httpUrl;
+    }
+
+    public String getHttpHeaders() {
+        return httpHeaders;
+    }
+
+    /**
+     * When using stream:http format, this option specifies optional http headers, such as Accept: application/json.
+     * Multiple headers can be separated by comma.
+     */
+    public void setHttpHeaders(String httpHeaders) {
+        this.httpHeaders = httpHeaders;
     }
 
     public long getDelay() {

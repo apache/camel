@@ -37,6 +37,7 @@ stream:out[?options]
 stream:err[?options]
 stream:header[?options]
 stream:file?fileName=/foo/bar.txt
+stream:http?httpUrl=http:myserver:8080/data
 -----------------------
 
 If the `stream:header` URI is specified, the `stream` header is used to
@@ -111,6 +112,17 @@ If you want to re-load the file if it rollover/rewritten then you should also tu
 ----
 from("stream:file?fileName=/server/logs/server.log&scanStream=true&scanStreamDelay=1000&retry=true&fileWatcher=true")
   .to("bean:logService?method=parseLogLine");
+----
+
+== Reading HTTP server side streaming
+
+The camel-stream component has basic support for connecting to a remote HTTP server and read streaming data
+(chunk of data separated by new-line).
+
+[source,java]
+----
+from("stream:http?scanStream=true&httpUrl=http://localhost:8500")
+  .to("log:input");
 ----
 
 

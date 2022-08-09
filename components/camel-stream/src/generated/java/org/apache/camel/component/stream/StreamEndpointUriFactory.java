@@ -21,7 +21,7 @@ public class StreamEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(22);
+        Set<String> props = new HashSet<>(24);
         props.add("appendNewLine");
         props.add("autoCloseCount");
         props.add("bridgeErrorHandler");
@@ -34,6 +34,8 @@ public class StreamEndpointUriFactory extends org.apache.camel.support.component
         props.add("fileWatcher");
         props.add("groupLines");
         props.add("groupStrategy");
+        props.add("httpHeaders");
+        props.add("httpUrl");
         props.add("initialPromptDelay");
         props.add("kind");
         props.add("lazyStartProducer");
