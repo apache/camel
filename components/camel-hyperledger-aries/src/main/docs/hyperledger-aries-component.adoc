@@ -6,6 +6,8 @@
 :since: 3.19
 :supportlevel: Preview
 :component-header: Only producer is supported
+//Manually maintained attributes
+:camel-spring-boot-name: hyperledger-aries
 
 *Since Camel {since}*
 
