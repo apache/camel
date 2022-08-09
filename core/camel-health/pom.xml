@@ -34,7 +34,7 @@
 
     <properties>
         <firstVersion>3.4.0</firstVersion>
-        <label>core,management</label>
+        <label>core,monitoring</label>
         <camel-prepare-component>false</camel-prepare-component>
     </properties>
 
