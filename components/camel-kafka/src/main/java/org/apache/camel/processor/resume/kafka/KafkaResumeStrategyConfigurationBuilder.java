@@ -17,6 +17,7 @@
 
 package org.apache.camel.processor.resume.kafka;
 
+import java.time.Duration;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -43,6 +44,8 @@ public class KafkaResumeStrategyConfigurationBuilder
     private Properties producerProperties;
     private Properties consumerProperties;
     private String topic;
+    private Duration maxInitializationDuration = Duration.ofSeconds(10);
+    private int maxInitializationRetries = 5;
 
     private KafkaResumeStrategyConfigurationBuilder() {
     }
@@ -103,6 +106,18 @@ public class KafkaResumeStrategyConfigurationBuilder
         return this;
     }
 
+    public KafkaResumeStrategyConfigurationBuilder withMaxInitializationDuration(Duration duration) {
+        this.maxInitializationDuration = duration;
+
+        return this;
+    }
+
+    public KafkaResumeStrategyConfigurationBuilder withMaxInitializationRetries(int retries) {
+        this.maxInitializationRetries = retries;
+
+        return this;
+    }
+
     /**
      * Creates a basic consumer
      *
@@ -138,6 +153,8 @@ public class KafkaResumeStrategyConfigurationBuilder
         resumeStrategyConfiguration.setConsumerProperties(consumerProperties);
         resumeStrategyConfiguration.setProducerProperties(producerProperties);
         resumeStrategyConfiguration.setTopic(topic);
+        resumeStrategyConfiguration.setMaxInitializationDuration(maxInitializationDuration);
+        resumeStrategyConfiguration.setMaxInitializationRetries(maxInitializationRetries);
 
         return resumeStrategyConfiguration;
     }

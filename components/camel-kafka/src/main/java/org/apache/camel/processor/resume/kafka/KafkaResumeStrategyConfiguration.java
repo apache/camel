@@ -17,6 +17,7 @@
 
 package org.apache.camel.processor.resume.kafka;
 
+import java.time.Duration;
 import java.util.Properties;
 
 import org.apache.camel.resume.ResumeStrategyConfiguration;
@@ -28,6 +29,8 @@ public class KafkaResumeStrategyConfiguration extends ResumeStrategyConfiguratio
     private Properties producerProperties;
     private Properties consumerProperties;
     private String topic;
+    private Duration maxInitializationDuration;
+    private int maxInitializationRetries;
 
     public Properties getProducerProperties() {
         return producerProperties;
@@ -57,5 +60,25 @@ public class KafkaResumeStrategyConfiguration extends ResumeStrategyConfiguratio
         assert topic != null;
 
         this.topic = topic;
+    }
+
+    public Duration getMaxInitializationDuration() {
+        return maxInitializationDuration;
+    }
+
+    public void setMaxInitializationDuration(Duration maxInitializationDuration) {
+        this.maxInitializationDuration = maxInitializationDuration;
+    }
+
+    public int getMaxInitializationRetries() {
+        return maxInitializationRetries;
+    }
+
+    public void setMaxInitializationRetries(int maxInitializationRetries) {
+        if (maxInitializationRetries < 1) {
+            throw new IllegalArgumentException("The maximum number of initialization retries must be equal or bigger than 1");
+        }
+
+        this.maxInitializationRetries = maxInitializationRetries;
     }
 }
