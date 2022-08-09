@@ -30,6 +30,8 @@ import org.apache.camel.resume.Offset;
 import org.apache.camel.resume.OffsetKey;
 import org.apache.camel.resume.cache.ResumeCache;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.support.resume.OffsetKeys;
+import org.apache.camel.support.resume.Offsets;
 
 @JdkService("file-adapter-factory")
 public class FileResumeAdapterDelegate
@@ -83,7 +85,7 @@ public class FileResumeAdapterDelegate
             fileOffsetResumeAdapter.deserializeFileOffset((File) keyObj, (Long) valueObj);
         }
 
-        return true;
+        return add(OffsetKeys.of(keyObj), Offsets.of(valueObj));
     }
 
     @Override
