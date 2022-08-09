@@ -34,6 +34,7 @@
 
     <properties>
         <firstVersion>3.0.0</firstVersion>
+        <label>core,management</label>
         <camel.surefire.parallel>false</camel.surefire.parallel>
         <camel.surefire.forkCount>4</camel.surefire.forkCount>
         <camel.surefire.forkTimeout>3000</camel.surefire.forkTimeout>
