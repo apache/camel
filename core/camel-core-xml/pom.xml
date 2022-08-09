@@ -33,6 +33,7 @@
 
     <properties>
         <firstVersion>2.4.0</firstVersion>
+        <label>dsl</label>
         <camel.osgi.import>
             javax.xml.bind*;version="[2.2,3.0)",
             *
