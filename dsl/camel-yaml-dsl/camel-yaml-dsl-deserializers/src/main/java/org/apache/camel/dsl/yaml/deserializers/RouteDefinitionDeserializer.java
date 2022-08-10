@@ -45,6 +45,9 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
                   @YamlProperty(name = "route-policy", type = "string"),
                   @YamlProperty(name = "startup-order", type = "number"),
                   @YamlProperty(name = "stream-caching", type = "boolean"),
+                  @YamlProperty(name = "message-history", type = "boolean"),
+                  @YamlProperty(name = "log-mask", type = "boolean"),
+                  @YamlProperty(name = "trace", type = "boolean"),
                   @YamlProperty(name = "from", type = "object:org.apache.camel.model.FromDefinition", required = true)
           })
 public class RouteDefinitionDeserializer extends YamlDeserializerBase<RouteDefinition> {
@@ -95,6 +98,15 @@ public class RouteDefinitionDeserializer extends YamlDeserializerBase<RouteDefin
                     break;
                 case "stream-caching":
                     target.setStreamCache(asText(val));
+                    break;
+                case "log-mask":
+                    target.setLogMask(asText(val));
+                    break;
+                case "message-history":
+                    target.setMessageHistory(asText(val));
+                    break;
+                case "trace":
+                    target.setTrace(asText(val));
                     break;
                 case "from":
                     val.setProperty(RouteDefinition.class.getName(), target);

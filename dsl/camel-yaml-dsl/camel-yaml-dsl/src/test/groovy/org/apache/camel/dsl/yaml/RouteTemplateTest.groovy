@@ -20,6 +20,7 @@ import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.dsl.yaml.support.model.MySetBody
 import org.apache.camel.dsl.yaml.support.model.MyUppercaseProcessor
+import org.apache.camel.impl.engine.DefaultRoute
 import org.apache.camel.model.LogDefinition
 import org.apache.camel.model.RouteTemplateDefinition
 import org.apache.camel.model.ToDefinition
@@ -452,6 +453,35 @@ class RouteTemplateTest extends YamlTestSupport {
                 message == '{{bar}}'
             }
         }
+    }
+
+    def "create route-template with route"() {
+        setup:
+        loadRoutes """
+                - route-template:
+                    id: "myTemplate"
+                    parameters:
+                      - name: "foo"
+                      - name: "bar"
+                    route:
+                      stream-caching: false
+                      message-history: true
+                      log-mask: true
+                      from:
+                        uri: "direct:{{foo}}"
+                        steps:
+                          - to: "mock:{{bar}}"
+            """
+        when:
+            context.addRouteFromTemplate('myId', 'myTemplate', [foo: "start", bar: "result"])
+            context.start()
+
+        then:
+            with(context.routes[0], DefaultRoute) {
+                it.isStreamCaching() == false
+                it.isMessageHistory() == true
+                it.isLogMask() == true
+            }
     }
 
 }

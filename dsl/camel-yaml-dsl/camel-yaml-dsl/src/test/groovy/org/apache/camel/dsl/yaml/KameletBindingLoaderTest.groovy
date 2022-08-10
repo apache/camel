@@ -552,4 +552,39 @@ class KameletBindingLoaderTest extends YamlTestSupport {
         }
     }
 
+    def "kamelet start route"() {
+        when:
+        loadBindings('''
+                apiVersion: camel.apache.org/v1alpha1
+                kind: KameletBinding
+                metadata:
+                  name: timer-event-source                  
+                spec:
+                  source:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: route-timer-source
+                    properties:
+                      message: "Hello world!"
+                  sink:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: log-sink
+            ''')
+        then:
+        context.routeDefinitions.size() == 3
+
+        // global stream caching enabled
+        context.streamCaching == true
+
+        with (context.routeDefinitions[1]) {
+            template == true
+            // stream-caching is disabled in the kamelet
+            streamCache == "false"
+            messageHistory == "true"
+        }
+    }
+
 }
