@@ -2421,6 +2421,12 @@
           "id" : {
             "type" : "string"
           },
+          "log-mask" : {
+            "type" : "boolean"
+          },
+          "message-history" : {
+            "type" : "boolean"
+          },
           "precondition" : {
             "type" : "string"
           },
@@ -2434,6 +2440,9 @@
             "type" : "number"
           },
           "stream-caching" : {
+            "type" : "boolean"
+          },
+          "trace" : {
             "type" : "boolean"
           }
         },
@@ -2486,9 +2495,12 @@
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateParameterDefinition"
             }
+          },
+          "route" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.RouteDefinition"
           }
         },
-        "required" : [ "from", "id" ]
+        "required" : [ "id" ]
       },
       "org.apache.camel.model.RouteTemplateParameterDefinition" : {
         "type" : "object",

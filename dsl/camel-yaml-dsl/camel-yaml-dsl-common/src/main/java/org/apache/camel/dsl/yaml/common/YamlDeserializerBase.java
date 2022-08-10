@@ -63,6 +63,7 @@ public abstract class YamlDeserializerBase<T> extends YamlDeserializerSupport im
             target = newInstance();
             onNewTarget(node, target, line);
             setProperties(target, mn);
+            afterPropertiesSet(target, mn);
         } else {
             throw new UnsupportedNodeTypeException(node);
         }
@@ -76,6 +77,13 @@ public abstract class YamlDeserializerBase<T> extends YamlDeserializerSupport im
      * @return the instance.
      */
     protected abstract T newInstance();
+
+    /**
+     * Allows custom validation after the properties has been set on the target
+     */
+    protected void afterPropertiesSet(T target, Node node) {
+        // noop
+    }
 
     /**
      * Creates a Java instance of the expected type from a string.
