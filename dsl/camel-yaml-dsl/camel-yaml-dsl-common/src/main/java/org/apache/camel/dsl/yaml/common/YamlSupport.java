@@ -224,11 +224,17 @@ public final class YamlSupport {
                 setDeserializationContext(val, dc);
 
                 switch (key) {
+                    case "id":
+                        // ignore
+                        break;
+                    case "description":
+                        // ignore
+                        break;
                     case "uri":
                         uri = asText(val);
                         break;
                     case "parameters":
-                        parameters = parseParameters(route, tuple);
+                        parameters = parseParameters(tuple);
                         break;
                     case "steps":
                         // steps must be set on the route

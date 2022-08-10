@@ -36,6 +36,8 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
           order = YamlDeserializerResolver.ORDER_DEFAULT,
           properties = {
                   @YamlProperty(name = "uri", type = "string", required = true),
+                  @YamlProperty(name = "id", type = "string"),
+                  @YamlProperty(name = "description", type = "string"),
                   @YamlProperty(name = "parameters", type = "object"),
                   @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition", required = true)
           })
@@ -64,6 +66,8 @@ public class OutputAwareFromDefinitionDeserializer extends YamlDeserializerBase<
         }
 
         String uri = null;
+        String id = null;
+        org.apache.camel.model.DescriptionDefinition desc = null;
         Map<String, Object> parameters = null;
 
         for (NodeTuple tuple : node.getValue()) {
@@ -73,14 +77,20 @@ public class OutputAwareFromDefinitionDeserializer extends YamlDeserializerBase<
             setDeserializationContext(val, dc);
 
             switch (key) {
-                case "steps":
-                    setSteps(target, val);
+                case "id":
+                    id = asText(val);
+                    break;
+                case "description":
+                    desc = asType(val, org.apache.camel.model.DescriptionDefinition.class);
                     break;
                 case "uri":
                     uri = asText(val);
                     break;
                 case "parameters":
-                    parameters = parseParameters(target, tuple);
+                    parameters = parseParameters(tuple);
+                    break;
+                case "steps":
+                    setSteps(target, val);
                     break;
                 default:
                     throw new UnsupportedFieldException(node, key);
@@ -95,6 +105,12 @@ public class OutputAwareFromDefinitionDeserializer extends YamlDeserializerBase<
             if (line != -1) {
                 from.setLineNumber(line);
                 from.setLocation(dc.getResource().getLocation());
+            }
+            if (id != null) {
+                from.setId(id);
+            }
+            if (desc != null) {
+                from.setDescription(desc);
             }
             target.setDelegate(from);
         }

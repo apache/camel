@@ -249,6 +249,12 @@
       "org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition" : {
         "type" : "object",
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
           "parameters" : {
             "type" : "object"
           },
@@ -270,6 +276,12 @@
           "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition"
         } ],
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
           "parameters" : {
             "type" : "object"
           },
@@ -905,6 +917,12 @@
       "org.apache.camel.model.FromDefinition" : {
         "type" : "object",
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
           "parameters" : {
             "type" : "object"
           },
