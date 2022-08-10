@@ -22,6 +22,7 @@ import org.apache.camel.component.pulsar.PulsarConfiguration;
 import org.apache.camel.component.pulsar.PulsarConsumer;
 import org.apache.camel.component.pulsar.PulsarEndpoint;
 import org.apache.camel.component.pulsar.PulsarMessageListener;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.pulsar.client.api.ConsumerBuilder;
 import org.apache.pulsar.client.api.DeadLetterPolicy;
 import org.apache.pulsar.client.api.DeadLetterPolicy.DeadLetterPolicyBuilder;
@@ -66,6 +67,15 @@ public final class CommonCreationStrategyImpl {
 
             builder.deadLetterPolicy(policy.build());
         }
+
+        if (ObjectHelper.isNotEmpty(endpointConfiguration.getAckTimeoutRedeliveryBackoff())) {
+            builder.ackTimeoutRedeliveryBackoff(endpointConfiguration.getAckTimeoutRedeliveryBackoff());
+        }
+
+        if (ObjectHelper.isNotEmpty(endpointConfiguration.getNegativeAckRedeliveryBackoff())) {
+            builder.negativeAckRedeliveryBackoff(endpointConfiguration.getNegativeAckRedeliveryBackoff());
+        }
+
         return builder;
     }
 }
