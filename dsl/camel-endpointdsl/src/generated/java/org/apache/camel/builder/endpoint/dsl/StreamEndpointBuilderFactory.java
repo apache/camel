@@ -171,6 +171,37 @@ public interface StreamEndpointBuilderFactory {
             return this;
         }
         /**
+         * When using stream:http format, this option specifies optional http
+         * headers, such as Accept: application/json. Multiple headers can be
+         * separated by comma.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param httpHeaders the value to set
+         * @return the dsl builder
+         */
+        default StreamEndpointConsumerBuilder httpHeaders(String httpHeaders) {
+            doSetProperty("httpHeaders", httpHeaders);
+            return this;
+        }
+        /**
+         * When using stream:http format, this option specifies the http url to
+         * stream from.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param httpUrl the value to set
+         * @return the dsl builder
+         */
+        default StreamEndpointConsumerBuilder httpUrl(String httpUrl) {
+            doSetProperty("httpUrl", httpUrl);
+            return this;
+        }
+        /**
          * Initial delay in milliseconds before showing the message prompt. This
          * delay occurs only once. Can be used during system startup to avoid
          * message prompts being written while other logging is done to the
@@ -944,9 +975,10 @@ public interface StreamEndpointBuilderFactory {
          * Syntax: <code>stream:kind</code>
          * 
          * Path parameter: kind (required)
-         * Kind of stream to use such as System.in or System.out.
-         * There are 5 enums and the value can be one of: in, out, err, header,
-         * file
+         * Kind of stream to use such as System.in, System.out, a file, or a
+         * http url.
+         * There are 6 enums and the value can be one of: in, out, err, header,
+         * file, http
          * 
          * @param path kind
          * @return the dsl builder
@@ -965,9 +997,10 @@ public interface StreamEndpointBuilderFactory {
          * Syntax: <code>stream:kind</code>
          * 
          * Path parameter: kind (required)
-         * Kind of stream to use such as System.in or System.out.
-         * There are 5 enums and the value can be one of: in, out, err, header,
-         * file
+         * Kind of stream to use such as System.in, System.out, a file, or a
+         * http url.
+         * There are 6 enums and the value can be one of: in, out, err, header,
+         * file, http
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
