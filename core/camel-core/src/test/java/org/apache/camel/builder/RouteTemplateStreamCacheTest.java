@@ -37,11 +37,11 @@ public class RouteTemplateStreamCacheTest {
                             .templateParameter("bar")
                             .templateParameter("mask")
                             .route()
-                                .noStreamCaching()
-                                .messageHistory()
-                                .logMask("{{mask}}")
-                                .from("direct:{{foo}}")
-                                .to("mock:{{bar}}");
+                            .noStreamCaching()
+                            .messageHistory()
+                            .logMask("{{mask}}")
+                            .from("direct:{{foo}}")
+                            .to("mock:{{bar}}");
                 }
             });
 
