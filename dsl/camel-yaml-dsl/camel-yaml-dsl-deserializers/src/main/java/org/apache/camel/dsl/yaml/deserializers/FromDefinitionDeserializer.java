@@ -30,6 +30,7 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
 import org.snakeyaml.engine.v2.nodes.NodeType;
 
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asType;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.getDeserializationContext;
 
 @YamlType(
@@ -38,6 +39,8 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.getDeseri
           order = YamlDeserializerResolver.ORDER_DEFAULT,
           properties = {
                   @YamlProperty(name = "uri", type = "string", required = true),
+                  @YamlProperty(name = "id", type = "string"),
+                  @YamlProperty(name = "description", type = "string"),
                   @YamlProperty(name = "parameters", type = "object"),
                   @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition", required = true)
           })
@@ -50,16 +53,21 @@ public class FromDefinitionDeserializer implements ConstructNode {
             line = node.getStartMark().get().getLine();
         }
 
-        // we want the line number of the "uri" when using from
+        org.apache.camel.model.DescriptionDefinition desc = null;
+        String id = null;
         if (node.getNodeType() == NodeType.MAPPING) {
             final MappingNode mn = (MappingNode) node;
             for (NodeTuple tuple : mn.getValue()) {
                 final String key = asText(tuple.getKeyNode());
                 if ("uri".equals(key)) {
+                    // we want the line number of the "uri" when using from
                     if (tuple.getKeyNode().getStartMark().isPresent()) {
                         line = tuple.getKeyNode().getStartMark().get().getLine() + 1;
                     }
-                    break;
+                } else if ("description".equals(key)) {
+                    desc = asType(tuple.getValueNode(), org.apache.camel.model.DescriptionDefinition.class);
+                } else if ("id".equals(key)) {
+                    id = asText(tuple.getValueNode());
                 }
             }
         }
@@ -78,6 +86,13 @@ public class FromDefinitionDeserializer implements ConstructNode {
         // set from as input on the route
         route.setInput(target);
 
+        if (desc != null) {
+            target.setDescription(desc);
+        }
+        if (id != null) {
+            target.setId(id);
+        }
+
         // enrich model with line number
         if (line != -1) {
             target.setLineNumber(line);
@@ -88,4 +103,5 @@ public class FromDefinitionDeserializer implements ConstructNode {
         }
         return target;
     }
+
 }
