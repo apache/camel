@@ -16,6 +16,31 @@ Removed using `template` as a custom alias for `routeTemplate` or `route-templat
 
 Removed the `tod` custom alias for `toD` or `to-d`.
 
+A route template can now also define a `route` which allows specifying route
+options that otherwise is not possible when using `from`.
+
+For example, you can now disable stream-caching, as shown in the snippet below that are from a Kamelet:
+
+[source,yaml]
+----
+spec:
+  template:
+    route:
+      stream-caching: false
+      message-history: true
+      from:
+        uri: timer:tick
+        parameters:
+          period: "{{period}}"
+        steps:
+          - set-body:
+              constant: "{{message}}"
+          - set-header:
+              name: "Content-Type"
+              constant: "{{contentType}}"
+          - to: kamelet:sink
+----
+
 === camel-salesforce
 
 The URI format for consumer operations has changed. All consumer URIs now use the `subscribe` operation. E.g., `salesforce:subscribe:<topic_name>`, `salesforce:subscribe:event/<event_name>`, `salesforce:subscribe:data/ChangeEvents`.
