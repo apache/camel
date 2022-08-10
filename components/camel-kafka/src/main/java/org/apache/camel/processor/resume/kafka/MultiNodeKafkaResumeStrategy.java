@@ -40,9 +40,9 @@ import org.slf4j.LoggerFactory;
  *
  * @param <K> the type of key
  */
+@Deprecated
 public class MultiNodeKafkaResumeStrategy<K extends Resumable> extends SingleNodeKafkaResumeStrategy<K> {
     private static final Logger LOG = LoggerFactory.getLogger(MultiNodeKafkaResumeStrategy.class);
-    private final ExecutorService executorService;
 
     /**
      * Create a new instance of this class
@@ -64,68 +64,8 @@ public class MultiNodeKafkaResumeStrategy<K extends Resumable> extends SingleNod
 
     public MultiNodeKafkaResumeStrategy(KafkaResumeStrategyConfiguration resumeStrategyConfiguration,
                                         ExecutorService executorService) {
-        super(resumeStrategyConfiguration);
-
-        this.executorService = executorService;
+        super(resumeStrategyConfiguration, executorService);
     }
 
-    protected void poll() {
-        poll(getConsumer());
-    }
 
-    protected void poll(Consumer<byte[], byte[]> consumer) {
-        Deserializable deserializable = (Deserializable) getAdapter();
-
-        ConsumerRecords<byte[], byte[]> records;
-        do {
-            records = consume(10, consumer);
-
-            if (records.isEmpty()) {
-                break;
-            }
-
-            for (ConsumerRecord<byte[], byte[]> record : records) {
-                byte[] value = record.value();
-
-                LOG.trace("Read from Kafka: {}", value);
-
-                deserializable.deserialize(ByteBuffer.wrap(record.key()), ByteBuffer.wrap(record.value()));
-            }
-        } while (true);
-    }
-
-    @Override
-    public void loadCache() throws Exception {
-        super.loadCache();
-
-        executorService.submit(() -> refresh());
-    }
-
-    /**
-     * Launch a thread to refresh the offsets periodically
-     */
-    private void refresh() {
-        LOG.trace("Creating a offset cache refresher");
-        try {
-            Properties prop = (Properties) getResumeStrategyConfiguration().getConsumerProperties().clone();
-            prop.setProperty(ConsumerConfig.GROUP_ID_CONFIG, UUID.randomUUID().toString());
-
-            try (Consumer<byte[], byte[]> consumer = new KafkaConsumer<>(prop)) {
-                consumer.subscribe(Collections.singletonList(getResumeStrategyConfiguration().getTopic()));
-
-                poll(consumer);
-            }
-        } catch (Exception e) {
-            LOG.error("Error while refreshing the local cache: {}", e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public void stop() {
-        try {
-            executorService.shutdown();
-        } finally {
-            super.stop();
-        }
-    }
 }
