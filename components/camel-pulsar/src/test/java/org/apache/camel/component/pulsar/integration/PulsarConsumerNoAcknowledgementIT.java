@@ -40,9 +40,9 @@ public class PulsarConsumerNoAcknowledgementIT extends PulsarITSupport {
     private static final String PRODUCER = "camel-producer-1";
 
     @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
-            + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
-            + "&ackTimeoutMillis=1000"
-            + "&ackTimeoutRedeliveryBackoff=#ackTimeoutRedeliveryBackoff")
+                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
+                    + "&ackTimeoutMillis=1000"
+                    + "&ackTimeoutRedeliveryBackoff=#ackTimeoutRedeliveryBackoff")
     private Endpoint from;
 
     @EndpointInject("mock:result")
