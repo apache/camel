@@ -17,6 +17,7 @@
 package org.apache.camel.component.pulsar.integration;
 
 import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
