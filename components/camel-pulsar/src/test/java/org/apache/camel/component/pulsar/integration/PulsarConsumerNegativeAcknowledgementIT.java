@@ -42,6 +42,7 @@ public class PulsarConsumerNegativeAcknowledgementIT extends PulsarITSupport {
     private static final String PRODUCER = "camel-producer-1";
 
     @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
+                    + "&allowManualAcknowledgement=true&ackTimeoutMillis=60000" // set ack timeout to one min
                     + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
                     + "&negativeAckRedeliveryDelayMicros=1000000" // 1 second
                     + "&negativeAckRedeliveryBackoff=#negativeAckRedeliveryBackoff")
