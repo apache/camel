@@ -218,7 +218,7 @@ public class KameletComponent extends DefaultComponent {
 
             //
             // Add a custom converter to convert a RouteTemplateDefinition to a RouteDefinition
-            // and make sure consumerU URIs are unique.
+            // and make sure consumer URIs are unique.
             //
             getCamelContext().adapt(ModelCamelContext.class).addRouteTemplateDefinitionConverter(
                     templateId,
