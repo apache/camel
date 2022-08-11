@@ -298,9 +298,10 @@ public class KafkaProducer extends DefaultAsyncProducer {
     private String evaluateTopic(Message message) {
         // must remove header so it's not propagated.
         Object overrideTopic = message.removeHeader(KafkaConstants.OVERRIDE_TOPIC);
-        if (overrideTopic != null) {
-            LOG.debug("Using override topic: {}", overrideTopic);
-            return overrideTopic.toString();
+        String overrideTopicString = endpoint.getCamelContext().getTypeConverter().tryConvertTo(String.class, overrideTopic);
+        if (overrideTopicString != null) {
+            LOG.debug("Using override topic: {}", overrideTopicString);
+            return overrideTopicString;
         }
 
         String topic = configuration.getTopic();
