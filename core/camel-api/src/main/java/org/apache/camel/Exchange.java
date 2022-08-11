@@ -254,6 +254,7 @@ public interface Exchange {
     String TRACING_HEADER_FORMAT = "CamelTracingHeaderFormat";
     @Deprecated
     String TRACING_OUTPUT_FORMAT = "CamelTracingOutputFormat";
+    String TRANSACTION_CONTEXT_DATA = "CamelTransactionContextData";
     String TRY_ROUTE_BLOCK = "TryRouteBlock";
     String TRANSFER_ENCODING = "Transfer-Encoding";
 
