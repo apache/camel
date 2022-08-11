@@ -21,24 +21,24 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  *
  */
-public class FromTextToBytesMessageTest extends CamelTestSupport {
+public class FromTextToBytesMessageTest extends AbstractJMSTest {
 
     @Test
     public void testTextToBytes() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:bar");
         mock.expectedMessageCount(1);
 
-        template.sendBody("activemq:queue:foo", "3");
+        template.sendBody("activemq:queue:text2bytes", "3");
 
         assertMockEndpointsSatisfied();
 
@@ -52,7 +52,7 @@ public class FromTextToBytesMessageTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:bar");
         mock.expectedMessageCount(1);
 
-        template.sendBody("activemq:queue:header", "3");
+        template.sendBody("activemq:queue:text2bytesHeader", "3");
 
         assertMockEndpointsSatisfied();
 
@@ -66,7 +66,7 @@ public class FromTextToBytesMessageTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:bar");
         mock.expectedMessageCount(1);
 
-        template.sendBody("activemq:queue:text", "Hello");
+        template.sendBody("activemq:queue:text2text", "Hello");
 
         assertMockEndpointsSatisfied();
 
@@ -79,7 +79,8 @@ public class FromTextToBytesMessageTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
@@ -90,17 +91,17 @@ public class FromTextToBytesMessageTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo?jmsMessageType=Text")
-                        .to("activemq:queue:bar?jmsMessageType=Bytes");
+                from("activemq:queue:text2bytes?jmsMessageType=Text")
+                        .to("activemq:queue:destQFTTB?jmsMessageType=Bytes");
 
-                from("activemq:queue:header?jmsMessageType=Text")
+                from("activemq:queue:text2bytesHeader?jmsMessageType=Text")
                         .setHeader("myHeader", constant("123"))
-                        .to("activemq:queue:bar?jmsMessageType=Bytes");
+                        .to("activemq:queue:destQFTTB?jmsMessageType=Bytes");
 
-                from("activemq:queue:text?jmsMessageType=Text")
-                        .to("activemq:queue:bar?jmsMessageType=Text");
+                from("activemq:queue:text2text?jmsMessageType=Text")
+                        .to("activemq:queue:destQFTTB?jmsMessageType=Text");
 
-                from("activemq:queue:bar")
+                from("activemq:queue:destQFTTB")
                         .to("mock:bar");
             }
         };

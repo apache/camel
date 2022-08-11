@@ -20,29 +20,30 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 
-public class JmsConsumerRestartPickupConfigurationChangesTest extends CamelTestSupport {
+public class JmsConsumerRestartPickupConfigurationChangesTest extends AbstractJMSTest {
 
     @Test
     public void testRestartJmsConsumerPickupChanges() throws Exception {
-        JmsEndpoint endpoint = context.getEndpoint("activemq:queue:foo", JmsEndpoint.class);
+        JmsEndpoint endpoint = context.getEndpoint("activemq:queue:JmsConsumerRestartPickupConfigurationChangesTest.Request",
+                JmsEndpoint.class);
         JmsConsumer consumer = endpoint.createConsumer(exchange -> template.send("mock:result", exchange));
 
         consumer.start();
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Hello World");
-        template.sendBody("activemq:queue:foo", "Hello World");
+        template.sendBody("activemq:queue:JmsConsumerRestartPickupConfigurationChangesTest.Request", "Hello World");
         assertMockEndpointsSatisfied();
 
         consumer.stop();
 
         // change to listen on another queue
-        endpoint.setDestinationName("bar");
+        endpoint.setDestinationName("JmsConsumerRestartPickupConfigurationChangesTest.Destination");
         endpoint.setConcurrentConsumers(2);
 
         // restart it
@@ -50,7 +51,7 @@ public class JmsConsumerRestartPickupConfigurationChangesTest extends CamelTestS
 
         result.reset();
         result.expectedBodiesReceived("Bye World");
-        template.sendBody("activemq:queue:bar", "Bye World");
+        template.sendBody("activemq:queue:JmsConsumerRestartPickupConfigurationChangesTest.Destination", "Bye World");
         assertMockEndpointsSatisfied();
 
         consumer.stop();
@@ -60,7 +61,8 @@ public class JmsConsumerRestartPickupConfigurationChangesTest extends CamelTestS
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;

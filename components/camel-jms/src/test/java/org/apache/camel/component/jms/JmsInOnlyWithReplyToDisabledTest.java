@@ -20,12 +20,12 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 
-public class JmsInOnlyWithReplyToDisabledTest extends CamelTestSupport {
+public class JmsInOnlyWithReplyToDisabledTest extends AbstractJMSTest {
 
     @Test
     public void testSendInOnlyWithReplyTo() throws Exception {
@@ -41,7 +41,8 @@ public class JmsInOnlyWithReplyToDisabledTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
         return camelContext;
     }
@@ -52,14 +53,14 @@ public class JmsInOnlyWithReplyToDisabledTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("activemq:queue:foo?replyTo=queue:bar&disableReplyTo=true")
+                        .to("activemq:queue:JmsInOnlyWithReplyToDisabledTestRequest?replyTo=queue:JmsInOnlyWithReplyToDisabledTestReply&disableReplyTo=true")
                         .to("mock:done");
 
-                from("activemq:queue:foo")
+                from("activemq:queue:JmsInOnlyWithReplyToDisabledTestRequest")
                         .to("mock:foo")
                         .transform(body().prepend("Bye "));
 
-                from("activemq:queue:bar")
+                from("activemq:queue:JmsInOnlyWithReplyToDisabledTestReply")
                         .to("mock:bar");
             }
         };

@@ -21,12 +21,12 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 
-public class JmsTransactedRouteTest extends CamelTestSupport {
+public class JmsTransactedRouteTest extends AbstractJMSTest {
 
     @Test
     public void testJmsRouteWithTextMessage() throws Exception {
@@ -37,8 +37,8 @@ public class JmsTransactedRouteTest extends CamelTestSupport {
         resultEndpoint.expectedBodiesReceived(expectedBody, expectedBody2);
         resultEndpoint.message(0).header("cheese").isEqualTo(123);
 
-        template.sendBodyAndHeader("activemq:test.a", expectedBody, "cheese", 123);
-        template.sendBodyAndHeader("activemq:test.a", expectedBody2, "cheese", 124);
+        template.sendBodyAndHeader("activemq:test.a.JmsTransactedRouteTest", expectedBody, "cheese", 123);
+        template.sendBodyAndHeader("activemq:test.a.JmsTransactedRouteTest", expectedBody2, "cheese", 124);
 
         resultEndpoint.assertIsSatisfied();
     }
@@ -47,7 +47,8 @@ public class JmsTransactedRouteTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         JmsComponent component = jmsComponentTransacted(connectionFactory);
         camelContext.addComponent("activemq", component);
         return camelContext;
@@ -57,8 +58,8 @@ public class JmsTransactedRouteTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:test.a").to("activemq:test.b");
-                from("activemq:test.b").to("log:result", "mock:result");
+                from("activemq:test.a.JmsTransactedRouteTest").to("activemq:test.b.JmsTransactedRouteTest");
+                from("activemq:test.b.JmsTransactedRouteTest").to("log:result", "mock:result");
             }
         };
     }

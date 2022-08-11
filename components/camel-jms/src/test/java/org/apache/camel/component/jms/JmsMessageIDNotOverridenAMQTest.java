@@ -25,10 +25,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  *
  */
-public class JmsMessageIDNotOverridenAMQTest extends CamelTestSupport {
+public class JmsMessageIDNotOverridenAMQTest extends AbstractJMSTest {
 
     @Test
     public void testJmsInOnlyIncludeSentJMSMessageID() throws Exception {
@@ -60,7 +60,8 @@ public class JmsMessageIDNotOverridenAMQTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         JmsComponent jms = camelContext.getComponent("activemq", JmsComponent.class);

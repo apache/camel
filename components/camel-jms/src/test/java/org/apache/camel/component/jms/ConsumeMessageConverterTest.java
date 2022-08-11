@@ -27,14 +27,14 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
 import org.junit.jupiter.api.Test;
 import org.springframework.jms.support.converter.MessageConversionException;
 import org.springframework.jms.support.converter.MessageConverter;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-public class ConsumeMessageConverterTest extends CamelTestSupport {
+public class ConsumeMessageConverterTest extends AbstractJMSTest {
 
     @BindToRegistry("myMessageConverter")
     private final MyMessageConverter conv = new MyMessageConverter();
@@ -43,7 +43,7 @@ public class ConsumeMessageConverterTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
@@ -55,7 +55,7 @@ public class ConsumeMessageConverterTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(TextMessage.class);
 
-        template.sendBody("activemq:queue:hello", "Hello World");
+        template.sendBody("activemq:queue:ConsumeMessageConverterTest", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -66,7 +66,7 @@ public class ConsumeMessageConverterTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(BytesMessage.class);
 
-        template.sendBody("activemq:queue:hello", "Hello World".getBytes());
+        template.sendBody("activemq:queue:ConsumeMessageConverterTest", "Hello World".getBytes());
 
         assertMockEndpointsSatisfied();
     }
@@ -75,7 +75,7 @@ public class ConsumeMessageConverterTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:hello?messageConverter=#myMessageConverter").to("mock:result");
+                from("activemq:queue:ConsumeMessageConverterTest?messageConverter=#myMessageConverter").to("mock:result");
             }
         };
     }

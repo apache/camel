@@ -21,18 +21,19 @@ import javax.jms.DeliveryMode;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JmsInOutNonPersistentTest extends CamelTestSupport {
+public class JmsInOutNonPersistentTest extends AbstractJMSTest {
 
     @Test
     public void testInOutNonPersistent() throws Exception {
-        getMockEndpoint("mock:foo").expectedBodiesReceived("World");
-        getMockEndpoint("mock:foo").expectedHeaderReceived("JMSDeliveryMode", DeliveryMode.NON_PERSISTENT);
+        getMockEndpoint("mock:JmsInOutNonPersistentTest.foo").expectedBodiesReceived("World");
+        getMockEndpoint("mock:JmsInOutNonPersistentTest.foo").expectedHeaderReceived("JMSDeliveryMode",
+                DeliveryMode.NON_PERSISTENT);
         getMockEndpoint("mock:done").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:done").expectedHeaderReceived("JMSDeliveryMode", DeliveryMode.NON_PERSISTENT);
 
@@ -45,7 +46,8 @@ public class JmsInOutNonPersistentTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
         return camelContext;
     }
@@ -56,11 +58,11 @@ public class JmsInOutNonPersistentTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("activemq:queue:foo?replyTo=queue:bar&deliveryPersistent=false")
+                        .to("activemq:queue:JmsInOutNonPersistentTest.foo?replyTo=queue:JmsInOutNonPersistentTest.bar&deliveryPersistent=false")
                         .to("log:done?showAll=true", "mock:done");
 
-                from("activemq:queue:foo?replyToDeliveryPersistent=false&preserveMessageQos=true")
-                        .to("log:foo?showAll=true", "mock:foo")
+                from("activemq:queue:JmsInOutNonPersistentTest.foo?replyToDeliveryPersistent=false&preserveMessageQos=true")
+                        .to("log:JmsInOutNonPersistentTest.foo?showAll=true", "mock:JmsInOutNonPersistentTest.foo")
                         .transform(body().prepend("Bye "));
             }
         };

@@ -22,14 +22,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 
-public class JmsRequestReplyProcessRepliesConcurrentUsingThreadsTest extends CamelTestSupport {
+public class JmsRequestReplyProcessRepliesConcurrentUsingThreadsTest extends AbstractJMSTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsRequestReplyProcessRepliesConcurrentUsingThreadsTest.class);
 
@@ -55,7 +55,8 @@ public class JmsRequestReplyProcessRepliesConcurrentUsingThreadsTest extends Cam
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;

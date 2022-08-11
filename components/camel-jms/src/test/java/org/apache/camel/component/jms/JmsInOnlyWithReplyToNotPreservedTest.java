@@ -20,32 +20,32 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class JmsInOnlyWithReplyToNotPreservedTest extends CamelTestSupport {
+public class JmsInOnlyWithReplyToNotPreservedTest extends AbstractJMSTest {
 
     @Test
     public void testSendInOnlyWithReplyTo() throws Exception {
-        getMockEndpoint("mock:foo").expectedBodiesReceived("World");
+        getMockEndpoint("mock:JmsInOnlyWithReplyToNotPreservedTest.Request").expectedBodiesReceived("World");
         getMockEndpoint("mock:done").expectedBodiesReceived("World");
 
-        template.sendBody("direct:start", "World");
+        template.sendBody("direct:JmsInOnlyWithReplyToNotPreservedTest", "World");
 
         assertMockEndpointsSatisfied();
 
-        // there should be no messages on the bar queue
-        Object msg = consumer.receiveBody("activemq:queue:bar", 1000);
-        assertNull(msg, "Should be no message on bar queue");
+        // there should be no messages on the JmsInOnlyWithReplyToNotPreservedTest.Reply queue
+        Object msg = consumer.receiveBody("activemq:queue:JmsInOnlyWithReplyToNotPreservedTest.Reply", 1000);
+        assertNull(msg, "Should be no message on JmsInOnlyWithReplyToNotPreservedTest.Reply queue");
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
         return camelContext;
     }
@@ -55,12 +55,13 @@ public class JmsInOnlyWithReplyToNotPreservedTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("activemq:queue:foo?replyTo=queue:bar")
+                from("direct:JmsInOnlyWithReplyToNotPreservedTest")
+                        .to("activemq:queue:JmsInOnlyWithReplyToNotPreservedTest.Request?replyTo=queue:JmsInOnlyWithReplyToNotPreservedTest.Reply")
                         .to("mock:done");
 
-                from("activemq:queue:foo")
-                        .to("log:foo?showAll=true", "mock:foo")
+                from("activemq:queue:JmsInOnlyWithReplyToNotPreservedTest.Request")
+                        .to("log:JmsInOnlyWithReplyToNotPreservedTest.Request?showAll=true",
+                                "mock:JmsInOnlyWithReplyToNotPreservedTest.Request")
                         .transform(body().prepend("Bye "));
             }
         };

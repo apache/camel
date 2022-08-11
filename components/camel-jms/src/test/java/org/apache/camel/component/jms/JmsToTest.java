@@ -20,21 +20,21 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 
-public class JmsToTest extends CamelTestSupport {
+public class JmsToTest extends AbstractJMSTest {
 
     @Test
     public void testTo() throws Exception {
-        getMockEndpoint("mock:bar").expectedMessageCount(0);
-        getMockEndpoint("mock:beer").expectedMessageCount(0);
+        getMockEndpoint("mock:JmsToTest.bar").expectedMessageCount(0);
+        getMockEndpoint("mock:JmsToTest.beer").expectedMessageCount(0);
         getMockEndpoint("mock:where").expectedMessageCount(2);
 
-        template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar");
-        template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
+        template.sendBodyAndHeader("direct:start", "Hello bar", "where", "JmsToTest.bar");
+        template.sendBodyAndHeader("direct:start", "Hello beer", "where", "JmsToTest.beer");
 
         assertMockEndpointsSatisfied();
     }
@@ -43,7 +43,8 @@ public class JmsToTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
@@ -57,8 +58,8 @@ public class JmsToTest extends CamelTestSupport {
                 // wrongly using to instead of toD
                 from("direct:start").to("activemq:queue:${header.where}");
 
-                from("activemq:queue:bar").to("mock:bar");
-                from("activemq:queue:beer").to("mock:beer");
+                from("activemq:queue:JmsToTest.bar").to("mock:JmsToTest.bar");
+                from("activemq:queue:JmsToTest.beer").to("mock:JmsToTest.beer");
 
                 // and all the messages goes here
                 from("activemq:queue:${header.where}").to("mock:where");

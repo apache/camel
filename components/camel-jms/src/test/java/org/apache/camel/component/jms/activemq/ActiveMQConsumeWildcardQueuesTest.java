@@ -20,16 +20,16 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.CamelJmsTestHelper;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.jms.AbstractJMSTest;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 
 /**
  * ActiveMQ specific unit test
  */
-public class ActiveMQConsumeWildcardQueuesTest extends CamelTestSupport {
+public class ActiveMQConsumeWildcardQueuesTest extends AbstractJMSTest {
 
     @Test
     public void testWildcard() throws Exception {
@@ -49,7 +49,8 @@ public class ActiveMQConsumeWildcardQueuesTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;

@@ -27,7 +27,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +38,7 @@ import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.jms.listener.SimpleMessageListenerContainer;
 import org.springframework.jms.support.converter.SimpleMessageConverter;
 
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -48,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class JmsEndpointConfigurationTest extends CamelTestSupport {
+public class JmsEndpointConfigurationTest extends AbstractJMSTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConsumeJmsMapMessageTest.class);
 
@@ -56,32 +56,37 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
     private final ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("vm:myBroker");
     private final Processor failProcessor = exchange -> fail("Should not be reached");
 
-    private final Processor dummyProcessor = exchange -> LOG.info("Received: " + exchange);
+    private final Processor dummyProcessor = exchange -> LOG.info("Received: {}", exchange);
 
     @Test
     public void testDurableSubscriberConfiguredWithDoubleSlash() throws Exception {
         JmsEndpoint endpoint
-                = resolveMandatoryEndpoint("jms://topic:Foo.Bar?durableSubscriptionName=James&clientId=ABC", JmsEndpoint.class);
+                = resolveMandatoryEndpoint(
+                        "jms://topic:Foo.Bar.JmsEndpointConfigurationTest?durableSubscriptionName=James&clientId=ABC",
+                        JmsEndpoint.class);
         assertDurableSubscriberEndpointIsValid(endpoint);
     }
 
     @Test
     public void testDurableSubscriberConfiguredWithNoSlashes() throws Exception {
         JmsEndpoint endpoint
-                = resolveMandatoryEndpoint("jms:topic:Foo.Bar?durableSubscriptionName=James&clientId=ABC", JmsEndpoint.class);
+                = resolveMandatoryEndpoint(
+                        "jms:topic:Foo.Bar.JmsEndpointConfigurationTest?durableSubscriptionName=James&clientId=ABC",
+                        JmsEndpoint.class);
         assertDurableSubscriberEndpointIsValid(endpoint);
     }
 
     @Test
     public void testDurableSharedSubscriber() throws Exception {
         JmsEndpoint endpoint = resolveMandatoryEndpoint(
-                "jms:topic:Foo.Bar?subscriptionDurable=true&subscriptionShared=true&subscriptionName=James", JmsEndpoint.class);
+                "jms:topic:Foo.Bar.JmsEndpointConfigurationTest?subscriptionDurable=true&subscriptionShared=true&subscriptionName=James",
+                JmsEndpoint.class);
         JmsConfiguration configuration = endpoint.getConfiguration();
         assertTrue(configuration.isSubscriptionDurable(), "isSubscriptionDurable()");
         assertTrue(configuration.isSubscriptionShared(), "isSubscriptionShared()");
         assertEquals("James", configuration.getSubscriptionName(), "getSubscriptionName()");
 
-        JmsConsumer consumer = endpoint.createConsumer(exchange -> LOG.info("Received: " + exchange));
+        JmsConsumer consumer = endpoint.createConsumer(exchange -> LOG.info("Received: {}", exchange));
         AbstractMessageListenerContainer listenerContainer = consumer.getListenerContainer();
         assertTrue(listenerContainer.isSubscriptionDurable(), "isSubscriptionDurable()");
         assertTrue(listenerContainer.isSubscriptionShared(), "isSubscriptionShared()");
@@ -90,14 +95,15 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
 
     @Test
     public void testNonDurableSharedSubscriber() throws Exception {
-        JmsEndpoint endpoint = resolveMandatoryEndpoint("jms:topic:Foo.Bar?subscriptionShared=true&subscriptionName=James",
+        JmsEndpoint endpoint = resolveMandatoryEndpoint(
+                "jms:topic:Foo.Bar.JmsEndpointConfigurationTest?subscriptionShared=true&subscriptionName=James",
                 JmsEndpoint.class);
         JmsConfiguration configuration = endpoint.getConfiguration();
         assertFalse(configuration.isSubscriptionDurable(), "isSubscriptionDurable()");
         assertTrue(configuration.isSubscriptionShared(), "isSubscriptionShared()");
         assertEquals("James", configuration.getSubscriptionName(), "getSubscriptionName()");
 
-        JmsConsumer consumer = endpoint.createConsumer(exchange -> LOG.info("Received: " + exchange));
+        JmsConsumer consumer = endpoint.createConsumer(exchange -> LOG.info("Received: {}", exchange));
         AbstractMessageListenerContainer listenerContainer = consumer.getListenerContainer();
         assertFalse(listenerContainer.isSubscriptionDurable(), "isSubscriptionDurable()");
         assertTrue(listenerContainer.isSubscriptionShared(), "isSubscriptionShared()");
@@ -106,7 +112,8 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
 
     @Test
     public void testSetUsernameAndPassword() {
-        JmsEndpoint endpoint = resolveMandatoryEndpoint("jms:topic:Foo.Bar?username=James&password=ABC", JmsEndpoint.class);
+        JmsEndpoint endpoint = resolveMandatoryEndpoint(
+                "jms:topic:Foo.Bar.JmsEndpointConfigurationTest?username=James&password=ABC", JmsEndpoint.class);
         ConnectionFactory cf = endpoint.getConfiguration().getConnectionFactory();
         assertNotNull(cf, "The connectionFactory should not be null");
         assertTrue(cf instanceof UserCredentialsConnectionFactoryAdapter,
@@ -116,7 +123,8 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
     @Test
     public void testSetConnectionFactoryAndUsernameAndPassword() {
         JmsEndpoint endpoint = resolveMandatoryEndpoint(
-                "jms:topic:Foo.Bar?connectionFactory=#myConnectionFactory&username=James&password=ABC", JmsEndpoint.class);
+                "jms:topic:Foo.Bar.JmsEndpointConfigurationTest?connectionFactory=#myConnectionFactory&username=James&password=ABC",
+                JmsEndpoint.class);
         ConnectionFactory cf = endpoint.getConfiguration().getConnectionFactory();
         assertNotNull(cf, "The connectionFactory should not be null");
         assertTrue(cf instanceof UserCredentialsConnectionFactoryAdapter,
@@ -126,14 +134,14 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
     @Test
     public void testNotSetUsernameOrPassword() {
         try {
-            resolveMandatoryEndpoint("jms:topic:Foo.Bar?username=James");
+            resolveMandatoryEndpoint("jms:topic:Foo.Bar.JmsEndpointConfigurationTest?username=James");
             fail("Expect the exception here");
         } catch (ResolveEndpointFailedException refe) {
             // expected
         }
 
         try {
-            resolveMandatoryEndpoint("jms:topic:Foo.Bar?password=ABC");
+            resolveMandatoryEndpoint("jms:topic:Foo.Bar.JmsEndpointConfigurationTest?password=ABC");
             fail("Expect the exception here");
         } catch (ResolveEndpointFailedException refe) {
             // expected
@@ -142,7 +150,8 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
 
     @Test
     public void testSelector() throws Exception {
-        JmsEndpoint endpoint = resolveMandatoryEndpoint("jms:Foo.Bar?selector=foo%3D'ABC'", JmsEndpoint.class);
+        JmsEndpoint endpoint
+                = resolveMandatoryEndpoint("jms:Foo.JmsEndpointConfigurationTest?selector=foo%3D'ABC'", JmsEndpoint.class);
         JmsConsumer consumer = endpoint.createConsumer(dummyProcessor);
 
         AbstractMessageListenerContainer container = consumer.getListenerContainer();
@@ -184,13 +193,13 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
 
     @Test
     public void testCacheConsumerEnabledForTopic() throws Exception {
-        JmsEndpoint endpoint = resolveMandatoryEndpoint("jms:topic:Foo.Bar", JmsEndpoint.class);
+        JmsEndpoint endpoint = resolveMandatoryEndpoint("jms:topic:Foo.Bar.JmsEndpointConfigurationTest", JmsEndpoint.class);
         assertCacheLevel(endpoint, DefaultMessageListenerContainer.CACHE_AUTO);
     }
 
     @Test
     public void testReplyToPesistentDelivery() throws Exception {
-        JmsEndpoint endpoint = resolveMandatoryEndpoint("jms:queue:Foo", JmsEndpoint.class);
+        JmsEndpoint endpoint = resolveMandatoryEndpoint("jms:queue:Foo.JmsEndpointConfigurationTest", JmsEndpoint.class);
         endpoint.getConfiguration().setDeliveryPersistent(true);
         endpoint.getConfiguration().setReplyToDeliveryPersistent(false);
         Producer producer = endpoint.createProducer();
@@ -205,21 +214,26 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
 
     @Test
     public void testMaxConcurrentConsumers() {
-        JmsEndpoint endpoint = resolveMandatoryEndpoint("jms:queue:Foo?maxConcurrentConsumers=5", JmsEndpoint.class);
+        JmsEndpoint endpoint = resolveMandatoryEndpoint("jms:queue:Foo.JmsEndpointConfigurationTest?maxConcurrentConsumers=5",
+                JmsEndpoint.class);
         assertEquals(5, endpoint.getMaxConcurrentConsumers());
     }
 
     @Test
     public void testMaxConcurrentConsumersForSimpleConsumer() {
         JmsEndpoint endpoint
-                = resolveMandatoryEndpoint("jms:queue:Foo?maxConcurrentConsumers=5&consumerType=Simple", JmsEndpoint.class);
+                = resolveMandatoryEndpoint(
+                        "jms:queue:Foo.JmsEndpointConfigurationTest?maxConcurrentConsumers=5&consumerType=Simple",
+                        JmsEndpoint.class);
         assertEquals(5, endpoint.getMaxConcurrentConsumers());
     }
 
     @Test
     public void testInvalidMaxConcurrentConsumers() throws Exception {
         JmsEndpoint endpoint
-                = resolveMandatoryEndpoint("jms:queue:Foo?concurrentConsumers=5&maxConcurrentConsumers=2", JmsEndpoint.class);
+                = resolveMandatoryEndpoint(
+                        "jms:queue:Foo.JmsEndpointConfigurationTest?concurrentConsumers=5&maxConcurrentConsumers=2",
+                        JmsEndpoint.class);
         try {
             endpoint.createConsumer(failProcessor);
             fail("Should have thrown exception");
@@ -231,7 +245,8 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
     @Test
     public void testInvalidMaxConcurrentConsumersForSimpleConsumer() throws Exception {
         JmsEndpoint endpoint = resolveMandatoryEndpoint(
-                "jms:queue:Foo?concurrentConsumers=5&maxConcurrentConsumers=2&consumerType=Simple", JmsEndpoint.class);
+                "jms:queue:Foo.JmsEndpointConfigurationTest?concurrentConsumers=5&maxConcurrentConsumers=2&consumerType=Simple",
+                JmsEndpoint.class);
 
         try {
             endpoint.createConsumer(failProcessor);
@@ -243,14 +258,15 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
 
     @Test
     public void testSessionTransacted() throws Exception {
-        JmsEndpoint endpoint = resolveMandatoryEndpoint("jms:queue:Foo?transacted=true&lazyCreateTransactionManager=false",
+        JmsEndpoint endpoint = resolveMandatoryEndpoint(
+                "jms:queue:Foo.JmsEndpointConfigurationTest?transacted=true&lazyCreateTransactionManager=false",
                 JmsEndpoint.class);
         AbstractMessageListenerContainer container = endpoint.createConsumer(dummyProcessor).getListenerContainer();
         assertTrue(container.isSessionTransacted(), "The JMS sessions will not be transactional!");
         assertFalse(endpoint.isLazyCreateTransactionManager(), "The transactionManager gets lazily generated!");
         assertNull(endpoint.getTransactionManager(), "The endpoint has an injected TransactionManager!");
 
-        endpoint = resolveMandatoryEndpoint("jms:queue:Foo?transacted=true", JmsEndpoint.class);
+        endpoint = resolveMandatoryEndpoint("jms:queue:Foo.JmsEndpointConfigurationTest?transacted=true", JmsEndpoint.class);
         container = endpoint.createConsumer(dummyProcessor).getListenerContainer();
         assertTrue(container.isSessionTransacted(), "The JMS sessions will not be transactional!");
         assertTrue(endpoint.isLazyCreateTransactionManager(), "The transactionManager doesn't get lazily generated!");
@@ -259,48 +275,55 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
 
     @Test
     public void testConcurrentConsumers() {
-        JmsEndpoint endpoint = resolveMandatoryEndpoint("jms:queue:Foo?concurrentConsumers=4", JmsEndpoint.class);
+        JmsEndpoint endpoint = resolveMandatoryEndpoint("jms:queue:Foo.JmsEndpointConfigurationTest?concurrentConsumers=4",
+                JmsEndpoint.class);
         assertEquals(4, endpoint.getConcurrentConsumers());
     }
 
     @Test
     public void testConcurrentConsumersForSimpleConsumer() {
         JmsEndpoint endpoint
-                = resolveMandatoryEndpoint("jms:queue:Foo?concurrentConsumers=4&consumerType=Simple", JmsEndpoint.class);
+                = resolveMandatoryEndpoint(
+                        "jms:queue:Foo.JmsEndpointConfigurationTest?concurrentConsumers=4&consumerType=Simple",
+                        JmsEndpoint.class);
         assertEquals(4, endpoint.getConcurrentConsumers());
     }
 
     @Test
     public void testPubSubNoLocalForSimpleConsumer() {
         JmsEndpoint endpoint
-                = resolveMandatoryEndpoint("jms:queue:Foo?pubSubNoLocal=true&consumerType=Simple", JmsEndpoint.class);
+                = resolveMandatoryEndpoint("jms:queue:Foo.JmsEndpointConfigurationTest?pubSubNoLocal=true&consumerType=Simple",
+                        JmsEndpoint.class);
         assertTrue(endpoint.isPubSubNoLocal(), "PubSubNoLocal should be true");
     }
 
     @Test
     public void testIdleTaskExecutionLimit() {
-        JmsEndpoint endpoint = resolveMandatoryEndpoint("jms:queue:Foo?idleTaskExecutionLimit=50", JmsEndpoint.class);
+        JmsEndpoint endpoint = resolveMandatoryEndpoint("jms:queue:Foo.JmsEndpointConfigurationTest?idleTaskExecutionLimit=50",
+                JmsEndpoint.class);
         assertEquals(50, endpoint.getIdleTaskExecutionLimit());
         assertTrue(endpoint.isAutoStartup());
     }
 
     @Test
     public void testIdleConsumerLimit() {
-        JmsEndpoint endpoint = resolveMandatoryEndpoint("jms:queue:Foo?idleConsumerLimit=51", JmsEndpoint.class);
+        JmsEndpoint endpoint = resolveMandatoryEndpoint("jms:queue:Foo.JmsEndpointConfigurationTest?idleConsumerLimit=51",
+                JmsEndpoint.class);
         assertEquals(51, endpoint.getIdleConsumerLimit());
         assertTrue(endpoint.isAutoStartup());
-        assertEquals("Foo", endpoint.getEndpointConfiguredDestinationName());
+        assertEquals("Foo.JmsEndpointConfigurationTest", endpoint.getEndpointConfiguredDestinationName());
     }
 
     @Test
     public void testLazyCreateTransactionManager() {
-        JmsEndpoint endpoint = resolveMandatoryEndpoint("jms:queue:Foo?lazyCreateTransactionManager=true", JmsEndpoint.class);
+        JmsEndpoint endpoint = resolveMandatoryEndpoint(
+                "jms:queue:Foo.JmsEndpointConfigurationTest?lazyCreateTransactionManager=true", JmsEndpoint.class);
         assertTrue(endpoint.getConfiguration().isLazyCreateTransactionManager());
     }
 
     @Test
     public void testDefaultEndpointOptions() {
-        JmsEndpoint endpoint = resolveMandatoryEndpoint("jms:queue:Foo", JmsEndpoint.class);
+        JmsEndpoint endpoint = resolveMandatoryEndpoint("jms:queue:Foo.JmsEndpointConfigurationTest.New", JmsEndpoint.class);
 
         assertNotNull(endpoint.getBinding());
         assertNotNull(endpoint.getCamelContext());
@@ -308,7 +331,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getMessageListenerContainerFactory());
         assertEquals(5000, endpoint.getRecoveryInterval());
         assertEquals(1000, endpoint.getReceiveTimeout());
-        assertEquals("JmsConsumer[Foo]", endpoint.getThreadName());
+        assertEquals("JmsConsumer[Foo.JmsEndpointConfigurationTest.New]", endpoint.getThreadName());
         assertEquals(-1, endpoint.getTimeToLive());
         assertEquals(-1, endpoint.getTransactionTimeout());
         assertEquals(1, endpoint.getAcknowledgementMode());
@@ -320,11 +343,11 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertNotNull(endpoint.getConnectionFactory());
         assertEquals(1, endpoint.getConcurrentConsumers());
         assertNull(endpoint.getDeliveryMode());
-        assertEquals("Foo", endpoint.getDestinationName());
+        assertEquals("Foo.JmsEndpointConfigurationTest.New", endpoint.getDestinationName());
         assertNull(endpoint.getDestinationResolver());
         assertNull(endpoint.getDurableSubscriptionName());
-        assertEquals("jms://queue:Foo", endpoint.getEndpointKey());
-        assertEquals("jms://queue:Foo", endpoint.getEndpointUri());
+        assertEquals("jms://queue:Foo.JmsEndpointConfigurationTest.New", endpoint.getEndpointKey());
+        assertEquals("jms://queue:Foo.JmsEndpointConfigurationTest.New", endpoint.getEndpointUri());
         assertNull(endpoint.getExceptionListener());
         assertNull(endpoint.getErrorHandler());
         assertEquals(LoggingLevel.WARN, endpoint.getErrorHandlerLoggingLevel());
@@ -356,7 +379,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getTemplateConnectionFactory());
         assertNotNull(endpoint.getConfiguration().getOrCreateTemplateConnectionFactory());
         assertNull(endpoint.getTransactionManager());
-        assertEquals("Foo", endpoint.getEndpointConfiguredDestinationName());
+        assertEquals("Foo.JmsEndpointConfigurationTest.New", endpoint.getEndpointConfiguredDestinationName());
 
         assertFalse(endpoint.isAcceptMessagesWhileStopping());
         assertFalse(endpoint.isAllowReplyManagerQuickStop());
@@ -397,7 +420,8 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
 
     @Test
     public void testSettingEndpointOptions() {
-        JmsEndpoint endpoint = resolveMandatoryEndpoint("jms:queue:Foo", JmsEndpoint.class);
+        JmsEndpoint endpoint
+                = resolveMandatoryEndpoint("jms:queue:Foo.JmsEndpointConfigurationTest.NonCached", JmsEndpoint.class);
 
         endpoint.setAcceptMessagesWhileStopping(true);
         assertTrue(endpoint.isAcceptMessagesWhileStopping());
@@ -542,7 +566,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertEquals("ABC", configuration.getClientId(), "getClientId()");
         assertTrue(configuration.isDeliveryPersistent(), "isDeliveryPersistent()");
 
-        JmsConsumer consumer = endpoint.createConsumer(exchange -> LOG.info("Received: " + exchange));
+        JmsConsumer consumer = endpoint.createConsumer(exchange -> LOG.info("Received: {}", exchange));
         AbstractMessageListenerContainer listenerContainer = consumer.getListenerContainer();
         assertEquals("James", listenerContainer.getDurableSubscriptionName(), "getDurableSubscriptionName()");
         assertEquals("ABC", listenerContainer.getClientId(), "getClientId()");
@@ -553,7 +577,8 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent("jms", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;

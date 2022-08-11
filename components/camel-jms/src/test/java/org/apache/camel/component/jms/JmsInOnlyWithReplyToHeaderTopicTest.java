@@ -21,24 +21,23 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-public class JmsInOnlyWithReplyToHeaderTopicTest extends CamelTestSupport {
+public class JmsInOnlyWithReplyToHeaderTopicTest extends AbstractJMSTest {
 
     @Test
     public void testJmsInOnlyWithReplyToHeader() throws Exception {
-        getMockEndpoint("mock:bar").expectedMessageCount(1);
+        getMockEndpoint("mock:JmsInOnlyWithReplyToHeaderTopicTest.bar").expectedMessageCount(1);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
-        mock.expectedHeaderReceived("JMSReplyTo", "topic://bar");
+        mock.expectedHeaderReceived("JMSReplyTo", "topic://JmsInOnlyWithReplyToHeaderTopicTest.bar");
 
-        template.send("activemq:queue:foo?preserveMessageQos=true", exchange -> {
+        template.send("activemq:queue:JmsInOnlyWithReplyToHeaderTopicTest.foo?preserveMessageQos=true", exchange -> {
             exchange.getIn().setBody("World");
-            exchange.getIn().setHeader("JMSReplyTo", "topic:bar");
+            exchange.getIn().setHeader("JMSReplyTo", "topic:JmsInOnlyWithReplyToHeaderTopicTest.bar");
         });
 
         assertMockEndpointsSatisfied();
@@ -47,7 +46,8 @@ public class JmsInOnlyWithReplyToHeaderTopicTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
         return camelContext;
     }
@@ -57,16 +57,16 @@ public class JmsInOnlyWithReplyToHeaderTopicTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo")
+                from("activemq:queue:JmsInOnlyWithReplyToHeaderTopicTest.foo")
                         .transform(body().prepend("Hello "))
                         .to("log:result")
                         .to("mock:result");
 
                 // we should disable reply to to avoid sending the message back to our self
                 // after we have consumed it
-                from("activemq:topic:bar?disableReplyTo=true")
-                        .to("log:bar")
-                        .to("mock:bar");
+                from("activemq:topic:JmsInOnlyWithReplyToHeaderTopicTest.bar?disableReplyTo=true")
+                        .to("log:JmsInOnlyWithReplyToHeaderTopicTest.bar")
+                        .to("mock:JmsInOnlyWithReplyToHeaderTopicTest.bar");
             }
         };
     }

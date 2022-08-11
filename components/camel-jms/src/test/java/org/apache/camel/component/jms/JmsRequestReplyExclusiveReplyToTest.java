@@ -22,11 +22,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Using exclusive fixed replyTo queues should be faster as there is no need for JMSMessage selectors.
  */
-public class JmsRequestReplyExclusiveReplyToTest extends CamelTestSupport {
+public class JmsRequestReplyExclusiveReplyToTest extends AbstractJMSTest {
 
     @Test
     public void testJmsRequestReplyExclusiveFixedReplyTo() {
@@ -67,7 +67,8 @@ public class JmsRequestReplyExclusiveReplyToTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
         return camelContext;
     }

@@ -21,25 +21,27 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 
 /**
  * Testing with async stop listener
  */
-public class JmsAsyncStopListenerTest extends CamelTestSupport {
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
+public class JmsAsyncStopListenerTest extends AbstractJMSTest {
 
     protected String componentName = "activemq";
 
     @Test
     public void testAsyncStopListener() throws Exception {
-        MockEndpoint result = getMockEndpoint("mock:result");
+        MockEndpoint result = getMockEndpoint("mock:JmsAsyncStopListenerTest");
         result.expectedMessageCount(2);
 
-        template.sendBody("activemq:queue:hello2", "Hello World");
-        template.sendBody("activemq:queue:hello2", "Gooday World");
+        template.sendBody("activemq:queue:JmsAsyncStopListenerTest", "Hello World");
+        template.sendBody("activemq:queue:JmsAsyncStopListenerTest", "Gooday World");
 
         result.assertIsSatisfied();
     }
@@ -48,7 +50,7 @@ public class JmsAsyncStopListenerTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory = createConnectionFactory(service);
         JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
         jms.getConfiguration().setAsyncStopListener(true);
         camelContext.addComponent(componentName, jms);
@@ -60,7 +62,7 @@ public class JmsAsyncStopListenerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:hello2").to("mock:result");
+                from("activemq:queue:JmsAsyncStopListenerTest").to("mock:JmsAsyncStopListenerTest");
             }
         };
     }

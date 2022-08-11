@@ -21,34 +21,35 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 /**
  *
  */
-public class FileRouteJmsPreMoveTest extends CamelTestSupport {
+public class FileRouteJmsPreMoveTest extends AbstractJMSTest {
 
     protected String componentName = "activemq";
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        deleteDirectory("target/inbox");
-        deleteDirectory("target/outbox");
+        deleteDirectory("target/FileRouteJmsPreMoveTest/inbox");
+        deleteDirectory("target/FileRouteJmsPreMoveTest/outbox");
         super.setUp();
     }
 
     @Test
     public void testPreMove() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
-        getMockEndpoint("mock:result").expectedFileExists("target/outbox/hello.txt", "Hello World");
+        getMockEndpoint("mock:result").expectedFileExists("target/FileRouteJmsPreMoveTest/outbox/hello.txt", "Hello World");
 
-        template.sendBodyAndHeader("file://target/inbox", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/FileRouteJmsPreMoveTest/inbox", "Hello World", Exchange.FILE_NAME,
+                "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -57,7 +58,8 @@ public class FileRouteJmsPreMoveTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
@@ -67,11 +69,11 @@ public class FileRouteJmsPreMoveTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("file://target/inbox?preMove=transfer").to("activemq:queue:hello");
+                from("file://target/FileRouteJmsPreMoveTest/inbox?preMove=transfer").to("activemq:queue:hello");
 
                 from("activemq:queue:hello")
                         .to("log:outbox")
-                        .to("file://target/outbox")
+                        .to("file://target/FileRouteJmsPreMoveTest/outbox")
                         .to("mock:result");
             }
         };

@@ -24,17 +24,17 @@ import javax.jms.Session;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.jms.support.destination.DestinationResolutionException;
 import org.springframework.jms.support.destination.DestinationResolver;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 
 /**
  *
  */
-public class JmsInOnlyInvalidDestinationTest extends CamelTestSupport {
+public class JmsInOnlyInvalidDestinationTest extends AbstractJMSTest {
 
     @BindToRegistry("myResolver")
     private final MyDestinationResolver resolver = new MyDestinationResolver();
@@ -51,7 +51,8 @@ public class JmsInOnlyInvalidDestinationTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
         return camelContext;
     }

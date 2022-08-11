@@ -23,15 +23,15 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.CamelJmsTestHelper;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.jms.AbstractJMSTest;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class NoClassDefFoundErrorWrapExceptionTest extends CamelTestSupport {
+public class NoClassDefFoundErrorWrapExceptionTest extends AbstractJMSTest {
 
     @Test
     public void testNoClassDef() {
@@ -66,7 +66,8 @@ public class NoClassDefFoundErrorWrapExceptionTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
         return camelContext;
     }

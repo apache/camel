@@ -21,13 +21,13 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.CamelJmsTestHelper;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.jms.AbstractJMSTest;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 
-public class JmsInOutRoutingSlipTest extends CamelTestSupport {
+public class JmsInOutRoutingSlipTest extends AbstractJMSTest {
 
     @Test
     public void testJmsInOutRoutingSlip() throws Exception {
@@ -43,7 +43,8 @@ public class JmsInOutRoutingSlipTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
         return camelContext;
     }

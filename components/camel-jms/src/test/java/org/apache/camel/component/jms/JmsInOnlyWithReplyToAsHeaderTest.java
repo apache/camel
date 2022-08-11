@@ -20,12 +20,12 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 
-public class JmsInOnlyWithReplyToAsHeaderTest extends CamelTestSupport {
+public class JmsInOnlyWithReplyToAsHeaderTest extends AbstractJMSTest {
 
     @Test
     public void testSendInOnlyWithReplyTo() throws Exception {
@@ -33,7 +33,7 @@ public class JmsInOnlyWithReplyToAsHeaderTest extends CamelTestSupport {
         getMockEndpoint("mock:bar").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:done").expectedBodiesReceived("World");
 
-        template.sendBodyAndHeader("direct:start", "World", "JMSReplyTo", "queue:bar");
+        template.sendBodyAndHeader("direct:start", "World", "JMSReplyTo", "queue:barJmsInOnlyWithReplyToAsHeaderTest");
 
         assertMockEndpointsSatisfied();
     }
@@ -41,7 +41,8 @@ public class JmsInOnlyWithReplyToAsHeaderTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
         return camelContext;
     }
@@ -53,16 +54,16 @@ public class JmsInOnlyWithReplyToAsHeaderTest extends CamelTestSupport {
             public void configure() {
                 from("direct:start")
                         // must enable preserveMessageQos to force Camel to use the JMSReplyTo header
-                        .to("activemq:queue:foo?preserveMessageQos=true")
+                        .to("activemq:queue:fooJmsInOnlyWithReplyToAsHeaderTest?preserveMessageQos=true")
                         .to("mock:done");
 
-                from("activemq:queue:foo")
+                from("activemq:queue:fooJmsInOnlyWithReplyToAsHeaderTest")
                         .to("log:foo?showAll=true", "mock:foo")
                         .transform(body().prepend("Bye "));
 
-                // we should disable reply to to avoid sending the message back to our self
+                // we should disable reply to avoid sending the message back to our self
                 // after we have consumed it
-                from("activemq:queue:bar?disableReplyTo=true")
+                from("activemq:queue:barJmsInOnlyWithReplyToAsHeaderTest?disableReplyTo=true")
                         .to("log:bar?showAll=true", "mock:bar");
             }
         };

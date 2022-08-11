@@ -20,16 +20,16 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Using exclusive fixed replyTo queues should be faster as there is no need for JMSMessage selectors.
  */
-public class SimpleJmsRequestReplyExclusiveReplyToTest extends CamelTestSupport {
+public class SimpleJmsRequestReplyExclusiveReplyToTest extends AbstractJMSTest {
 
     @Test
     public void testJmsRequestReplyExclusiveFixedReplyTo() {
@@ -48,7 +48,8 @@ public class SimpleJmsRequestReplyExclusiveReplyToTest extends CamelTestSupport 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
         return camelContext;
     }

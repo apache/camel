@@ -26,7 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ExchangeHelper;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -34,11 +33,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jms.core.JmsTemplate;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ConsumeJmsBytesMessageTest extends CamelTestSupport {
+public class ConsumeJmsBytesMessageTest extends AbstractJMSTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConsumeJmsBytesMessageTest.class);
 
@@ -50,7 +50,7 @@ public class ConsumeJmsBytesMessageTest extends CamelTestSupport {
         endpoint.expectedMessageCount(1);
 
         jmsTemplate.setPubSubDomain(false);
-        jmsTemplate.send("test.bytes", session -> {
+        jmsTemplate.send("ConsumeJmsBytesMessageTest.bytes", session -> {
             BytesMessage bytesMessage = session.createBytesMessage();
             bytesMessage.writeByte((byte) 1);
             bytesMessage.writeByte((byte) 2);
@@ -102,7 +102,7 @@ public class ConsumeJmsBytesMessageTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory = createConnectionFactory(service);
         jmsTemplate = new JmsTemplate(connectionFactory);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
@@ -113,8 +113,8 @@ public class ConsumeJmsBytesMessageTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:test.bytes").to("mock:result");
-                from("direct:test").to("activemq:test.bytes");
+                from("activemq:ConsumeJmsBytesMessageTest.bytes").to("mock:result");
+                from("direct:test").to("activemq:ConsumeJmsBytesMessageTest.bytes");
             }
         };
     }

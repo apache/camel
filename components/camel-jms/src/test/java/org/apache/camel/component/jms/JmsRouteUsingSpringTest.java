@@ -20,8 +20,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class JmsRouteUsingSpringTest extends JmsRouteTest {
     private ClassPathXmlApplicationContext applicationContext;
 

@@ -23,14 +23,14 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class JmsFormatDateHeadersToIso8601Test extends CamelTestSupport {
+public class JmsFormatDateHeadersToIso8601Test extends AbstractJMSTest {
 
     private static final Date DATE = Date.from(Instant.ofEpochMilli(1519672338000L));
 
@@ -49,7 +49,8 @@ public class JmsFormatDateHeadersToIso8601Test extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
         jms.getConfiguration().setFormatDateHeadersToIso8601(true);
         camelContext.addComponent("activemq", jms);

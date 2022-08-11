@@ -29,20 +29,20 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.CamelJmsTestHelper;
+import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.mock.AssertionClause;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ActiveMQPropagateSerializableHeadersTest extends CamelTestSupport {
+public class ActiveMQPropagateSerializableHeadersTest extends AbstractJMSTest {
 
     protected Object expectedBody = "<time>" + new Date() + "</time>";
-    protected ActiveMQQueue replyQueue = new ActiveMQQueue("test.reply.queue");
+    protected ActiveMQQueue replyQueue = new ActiveMQQueue("ActiveMQPropagateSerializableHeadersTest.reply.queue");
     protected String correlationID = "ABC-123";
     protected String messageType = getClass().getName();
     private Calendar calValue;
@@ -66,7 +66,7 @@ public class ActiveMQPropagateSerializableHeadersTest extends CamelTestSupport {
         firstMessageExpectations.header("myCal").isEqualTo(calValue);
         firstMessageExpectations.header("myMap").isEqualTo(mapValue);
 
-        template.sendBody("activemq:test.a", expectedBody);
+        template.sendBody("activemq:ActiveMQPropagateSerializableHeadersTest.a", expectedBody);
 
         resultEndpoint.assertIsSatisfied();
 
@@ -91,7 +91,8 @@ public class ActiveMQPropagateSerializableHeadersTest extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
 
         // START SNIPPET: example
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
         // END SNIPPET: example
 
@@ -105,15 +106,15 @@ public class ActiveMQPropagateSerializableHeadersTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:test.a").process(exchange -> {
+                from("activemq:ActiveMQPropagateSerializableHeadersTest.a").process(exchange -> {
                     // set the JMS headers
                     Message in = exchange.getIn();
                     in.setHeader("myString", "stringValue");
                     in.setHeader("myMap", mapValue);
                     in.setHeader("myCal", calValue);
-                }).to("activemq:test.b?transferExchange=true&allowSerializedHeaders=true");
+                }).to("activemq:ActiveMQPropagateSerializableHeadersTest.b?transferExchange=true&allowSerializedHeaders=true");
 
-                from("activemq:test.b").to("mock:result");
+                from("activemq:ActiveMQPropagateSerializableHeadersTest.b").to("mock:result");
             }
         };
     }

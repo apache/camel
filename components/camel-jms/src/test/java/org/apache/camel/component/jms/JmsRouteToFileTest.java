@@ -24,10 +24,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Unit test that we can consume JMS message and store it as file (to avoid regression bug)
  */
-public class JmsRouteToFileTest extends CamelTestSupport {
+public class JmsRouteToFileTest extends AbstractJMSTest {
 
     protected String componentName = "activemq";
 
@@ -64,7 +64,8 @@ public class JmsRouteToFileTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;

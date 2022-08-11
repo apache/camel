@@ -20,11 +20,14 @@ package org.apache.camel.test.infra.activemq.services;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
+import javax.jms.ConnectionFactory;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
+import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.jmx.DestinationViewMBean;
+import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -33,7 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class ActiveMQEmbeddedService implements ActiveMQService, BeforeEachCallback, AfterEachCallback {
+public class ActiveMQEmbeddedService implements ActiveMQService, ConnectionFactoryAware, BeforeEachCallback, AfterEachCallback {
     private static final Logger LOG = LoggerFactory.getLogger(ActiveMQEmbeddedService.class);
     private final BrokerService brokerService;
     private final boolean recycle;
@@ -169,5 +172,16 @@ public class ActiveMQEmbeddedService implements ActiveMQService, BeforeEachCallb
                         domain, destinationType, destinationName));
         return (DestinationViewMBean) brokerService.getManagementContext().newProxyInstance(name,
                 DestinationViewMBean.class, true);
+    }
+
+    @Deprecated
+    public ConnectionFactory createConnectionFactory() {
+        return createConnectionFactory(null);
+    }
+
+    @Deprecated
+    public ConnectionFactory createConnectionFactory(Integer maximumRedeliveries) {
+        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(getVmURL());
+        return ConnectionFactoryHelper.createConnectionFactory(connectionFactory, maximumRedeliveries);
     }
 }

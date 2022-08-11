@@ -38,7 +38,13 @@ public class SingletonService<T extends TestService> implements ExtensionContext
     }
 
     protected void addToStore(ExtensionContext extensionContext) {
-        extensionContext.getRoot().getStore(ExtensionContext.Namespace.GLOBAL).getOrComputeIfAbsent(name, s -> {
+        final ExtensionContext root = extensionContext.getRoot();
+        LOG.debug("Using root: {}", root);
+
+        final ExtensionContext.Store store = root.getStore(ExtensionContext.Namespace.GLOBAL);
+        LOG.debug("Using store: {}", store);
+
+        store.getOrComputeIfAbsent(name, s -> {
             LOG.debug("Registering singleton service {}", name);
             service.initialize();
             return this;

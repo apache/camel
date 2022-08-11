@@ -22,14 +22,14 @@ import javax.jms.Session;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class JmsClientAckTest extends CamelTestSupport {
+public class JmsClientAckTest extends AbstractJMSTest {
 
     protected String componentName = "activemq";
 
@@ -38,7 +38,7 @@ public class JmsClientAckTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBody("activemq:queue:foo", "Hello World");
+        template.sendBody("activemq:queue:JmsClientAckTest", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -47,7 +47,8 @@ public class JmsClientAckTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent(componentName, jmsComponentClientAcknowledge(connectionFactory));
 
         return camelContext;
@@ -58,7 +59,7 @@ public class JmsClientAckTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo")
+                from("activemq:queue:JmsClientAckTest")
                         .process(exchange -> {
                             JmsMessage jms = exchange.getIn(JmsMessage.class);
                             assertNotNull(jms);

@@ -23,15 +23,15 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BrowsableQueueTest extends CamelTestSupport {
+public class BrowsableQueueTest extends AbstractJMSTest {
     private static final Logger LOG = LoggerFactory.getLogger(BrowsableQueueTest.class);
 
     protected String componentName = "activemq";
@@ -39,14 +39,15 @@ public class BrowsableQueueTest extends CamelTestSupport {
 
     @Test
     public void testSendMessagesThenBrowseQueue() {
+        final String queueName = queueNameForClass("activemq:test.b", this.getClass());
         // send some messages
         for (int i = 0; i < expectedBodies.length; i++) {
             Object expectedBody = expectedBodies[i];
-            template.sendBodyAndHeader("activemq:test.b", expectedBody, "counter", i);
+            template.sendBodyAndHeader(queueName, expectedBody, "counter", i);
         }
 
         // now lets browse the queue
-        JmsQueueEndpoint endpoint = getMandatoryEndpoint("activemq:test.b?maximumBrowseSize=6", JmsQueueEndpoint.class);
+        JmsQueueEndpoint endpoint = getMandatoryEndpoint(queueName + "?maximumBrowseSize=6", JmsQueueEndpoint.class);
         assertEquals(6, endpoint.getMaximumBrowseSize());
         List<Exchange> list = endpoint.getExchanges();
         LOG.debug("Received: " + list);
@@ -64,23 +65,25 @@ public class BrowsableQueueTest extends CamelTestSupport {
 
     @Test
     public void testSendMessagesThenBrowseQueueLimitNotHit() {
+        final String queueName = queueNameForClass("activemq:test.c", this.getClass());
+
         // send some messages
         for (int i = 0; i < expectedBodies.length; i++) {
             Object expectedBody = expectedBodies[i];
-            template.sendBodyAndHeader("activemq:test.b", expectedBody, "counter", i);
+            template.sendBodyAndHeader(queueName, expectedBody, "counter", i);
         }
 
         // now lets browse the queue
-        JmsQueueEndpoint endpoint = getMandatoryEndpoint("activemq:test.b?maximumBrowseSize=10", JmsQueueEndpoint.class);
+        JmsQueueEndpoint endpoint = getMandatoryEndpoint(queueName + "?maximumBrowseSize=10", JmsQueueEndpoint.class);
         assertEquals(10, endpoint.getMaximumBrowseSize());
         List<Exchange> list = endpoint.getExchanges();
-        LOG.debug("Received: " + list);
+        LOG.debug("Received: {}", list);
         assertEquals(8, endpoint.getExchanges().size(), "Size of list");
 
         int index = -1;
         for (Exchange exchange : list) {
             String actual = exchange.getIn().getBody(String.class);
-            LOG.debug("Received body: " + actual);
+            LOG.debug("Received body: {}", actual);
 
             Object expected = expectedBodies[++index];
             assertEquals(expected, actual, "Body: " + index);
@@ -89,14 +92,16 @@ public class BrowsableQueueTest extends CamelTestSupport {
 
     @Test
     public void testSendMessagesThenBrowseQueueNoMax() {
+        final String queueName = queueNameForClass("activemq:test.b", this.getClass());
+
         // send some messages
         for (int i = 0; i < expectedBodies.length; i++) {
             Object expectedBody = expectedBodies[i];
-            template.sendBodyAndHeader("activemq:test.b", expectedBody, "counter", i);
+            template.sendBodyAndHeader(queueName, expectedBody, "counter", i);
         }
 
         // now lets browse the queue
-        JmsQueueEndpoint endpoint = getMandatoryEndpoint("activemq:test.b", JmsQueueEndpoint.class);
+        JmsQueueEndpoint endpoint = getMandatoryEndpoint(queueName, JmsQueueEndpoint.class);
         assertEquals(-1, endpoint.getMaximumBrowseSize());
         List<Exchange> list = endpoint.getExchanges();
         LOG.debug("Received: " + list);
@@ -116,7 +121,7 @@ public class BrowsableQueueTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory = createConnectionFactory(service);
         camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
@@ -125,8 +130,11 @@ public class BrowsableQueueTest extends CamelTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
+            final String queueNameA = queueNameForClass("activemq:test.a", this.getClass());
+            final String queueNameB = queueNameForClass("activemq:test.b", this.getClass());
+
             public void configure() {
-                from("activemq:test.a").to("activemq:test.b");
+                from(queueNameA).to(queueNameB);
             }
         };
     }

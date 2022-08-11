@@ -26,20 +26,20 @@ import javax.jms.TextMessage;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.CamelJmsTestHelper;
+import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.jms.core.JmsTemplate;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test using a fixed replyTo specified on the JMS endpoint
  */
-public class JmsJMSReplyToEndpointUsingInOutTest extends CamelTestSupport {
+public class JmsJMSReplyToEndpointUsingInOutTest extends AbstractJMSTest {
     private JmsComponent amq;
 
     @Test
@@ -103,7 +103,8 @@ public class JmsJMSReplyToEndpointUsingInOutTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
         amq = camelContext.getComponent("activemq", JmsComponent.class);
         return camelContext;

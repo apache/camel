@@ -22,16 +22,16 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 /**
  * Unit test that we can produce JMS message from files
  */
-public class FileRouteToJmsTest extends CamelTestSupport {
+public class FileRouteToJmsTest extends AbstractJMSTest {
 
     protected String componentName = "activemq";
 
@@ -52,7 +52,8 @@ public class FileRouteToJmsTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
@@ -62,9 +63,9 @@ public class FileRouteToJmsTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("file://target/routefromfile").to("activemq:queue:hello");
+                from("file://target/routefromfile").to("activemq:queue:FileRouteToJmsTest");
 
-                from("activemq:queue:hello").to("mock:result");
+                from("activemq:queue:FileRouteToJmsTest").to("mock:result");
             }
         };
     }

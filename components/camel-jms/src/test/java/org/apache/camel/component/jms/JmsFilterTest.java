@@ -24,14 +24,15 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 
 /**
  * Tests filtering using Camel Test
  */
 // START SNIPPET: example
-public class JmsFilterTest extends CamelTestSupport {
+public class JmsFilterTest extends AbstractJMSTest {
 
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
@@ -63,7 +64,7 @@ public class JmsFilterTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory = createConnectionFactory(service);
         camelContext.addComponent("jms", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;

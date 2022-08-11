@@ -16,110 +16,172 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class JmsPollingConsumerTest extends CamelTestSupport {
+public class JmsPollingConsumerTest extends AbstractJMSTest {
 
-    @Test
-    public void testJmsPollingConsumerWait() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello Claus");
+    @Nested
+    class ConsumerWaitTest {
 
-        // use another thread for polling consumer to demonstrate that we can wait before
-        // the message is sent to the queue
-        Executors.newSingleThreadExecutor().execute(() -> {
-            String body = consumer.receiveBody("activemq:queue.start", String.class);
-            template.sendBody("activemq:queue.foo", body + " Claus");
-        });
+        private CountDownLatch latch = new CountDownLatch(1);
 
-        // wait a little to demonstrate we can start poll before we have a msg on the queue
-        Thread.sleep(500);
+        @BeforeEach
+        void setupConsumer() {
+            // use another thread for polling consumer to demonstrate that we can wait before
+            // the message is sent to the queue
+            Executors.newSingleThreadExecutor().execute(() -> {
+                String body = consumer.receiveBody("activemq:queue.JmsPollingConsumerTest.start", String.class);
+                template.sendBody("activemq:queue.JmsPollingConsumerTest.foo", body + " Claus");
+                latch.countDown();
+            });
+        }
 
-        template.sendBody("direct:start", "Hello");
+        @Test
+        void testJmsPollingConsumerWait() throws Exception {
+            MockEndpoint mock = getMockEndpoint("mock:result");
+            mock.expectedBodiesReceived("Hello Claus");
 
-        assertMockEndpointsSatisfied();
+            /* Wait a little to demonstrate we can start poll before we have a msg on the queue. Also,
+            because expect no message to be received, the latch should timeout. That is why we test for
+            false.
+             */
+            assertFalse(latch.await(1, TimeUnit.SECONDS));
+
+            template.sendBody("direct:start", "Hello");
+
+            assertMockEndpointsSatisfied();
+        }
     }
 
-    @Test
-    public void testJmsPollingConsumerNoWait() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello Claus");
+    @Nested
+    class ConsumerNoWaitTest {
+        private CountDownLatch latch = new CountDownLatch(1);
+        private volatile String body;
 
-        // use another thread for polling consumer to demonstrate that we can wait before
-        // the message is sent to the queue
-        Executors.newSingleThreadExecutor().execute(() -> {
-            String body = consumer.receiveBodyNoWait("activemq:queue.start", String.class);
-            assertNull(body, "Should be null");
+        @BeforeEach
+        void setupConsumer() {
+            // use another thread for polling consumer to demonstrate that we can wait before
+            // the message is sent to the queue
+            Executors.newSingleThreadExecutor().execute(() -> {
+                try {
+                    body = consumer.receiveBodyNoWait("activemq:queue.JmsPollingConsumerTest.start", String.class);
+                    template.sendBody("activemq:queue.JmsPollingConsumerTest.foo", "Hello Claus");
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
 
-            template.sendBody("activemq:queue.foo", "Hello Claus");
-        });
+        @Test
+        public void testJmsPollingConsumerNoWait() throws Exception {
+            MockEndpoint mock = getMockEndpoint("mock:result");
+            mock.expectedBodiesReceived("Hello Claus");
 
-        // wait a little to demonstrate we can start poll before we have a msg on the queue
-        Thread.sleep(500);
+            // wait a little to demonstrate we can start poll before we have a msg on the queue
+            assertTrue(latch.await(500, TimeUnit.MILLISECONDS));
+            assertNull(body, "Message body should be null because there was no message and the polling consumer is 'no wait'");
 
-        template.sendBody("direct:start", "Hello");
+            template.sendBody("direct:start", "Hello");
 
-        assertMockEndpointsSatisfied();
+            assertMockEndpointsSatisfied();
+        }
     }
 
-    @Test
-    public void testJmsPollingConsumerLowTimeout() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello Claus");
+    @Nested
+    class LowTimeoutTest {
+        private CountDownLatch latch = new CountDownLatch(1);
+        private volatile String body;
 
-        // use another thread for polling consumer to demonstrate that we can wait before
-        // the message is sent to the queue
-        Executors.newSingleThreadExecutor().execute(() -> {
-            String body = consumer.receiveBody("activemq:queue.start", 100, String.class);
-            assertNull(body, "Should be null");
+        @BeforeEach
+        void setupConsumer() {
+            // use another thread for polling consumer to demonstrate that we can wait before
+            // the message is sent to the queue
+            Executors.newSingleThreadExecutor().execute(() -> {
+                body = consumer.receiveBody("activemq:queue.JmsPollingConsumerTest.start", 100, String.class);
+                template.sendBody("activemq:queue.JmsPollingConsumerTest.foo", "Hello Claus");
+                latch.countDown();
+            });
+        }
 
-            template.sendBody("activemq:queue.foo", "Hello Claus");
-        });
+        @Test
+        public void testJmsPollingConsumerLowTimeout() throws Exception {
+            MockEndpoint mock = getMockEndpoint("mock:result");
+            mock.expectedBodiesReceived("Hello Claus");
 
-        // wait a little to demonstrate we can start poll before we have a msg on the queue
-        Thread.sleep(500);
+            // wait a little to demonstrate we can start poll before we have a msg on the queue
+            assertTrue(latch.await(500, TimeUnit.MILLISECONDS));
+            assertNull(body, "Message body should be null because the receive timed out");
 
-        template.sendBody("direct:start", "Hello");
+            template.sendBody("direct:start", "Hello");
 
-        assertMockEndpointsSatisfied();
+            assertMockEndpointsSatisfied();
+        }
     }
 
-    @Test
-    public void testJmsPollingConsumerHighTimeout() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello Claus");
+    @Nested
+    class HighTimeOutTest {
+        private CountDownLatch latch = new CountDownLatch(1);
 
-        // use another thread for polling consumer to demonstrate that we can wait before
-        // the message is sent to the queue
+        @BeforeEach
+        void setupConsumer() {
+            // use another thread for polling consumer to demonstrate that we can wait before
+            // the message is sent to the queue
+            Executors.newSingleThreadExecutor().execute(() -> {
+                String body = consumer.receiveBody("activemq:queue.JmsPollingConsumerTest.start", 3000, String.class);
+                template.sendBody("activemq:queue.JmsPollingConsumerTest.foo", body + " Claus");
+                latch.countDown();
+            });
+        }
+
+        @Test
+        public void testJmsPollingConsumerHighTimeout() throws Exception {
+            MockEndpoint mock = getMockEndpoint("mock:result");
+            mock.expectedBodiesReceived("Hello Claus");
+
+            // wait a little to demonstrate we can start poll before we have a msg on the queue
+            assertFalse(latch.await(500, TimeUnit.MILLISECONDS),
+                    "No message should have been received within 500 milliseconds");
+            template.sendBody("direct:start", "Hello");
+
+            assertMockEndpointsSatisfied();
+        }
+    }
+
+    @AfterEach
+    void cleanupConsumer() {
+        // We must ensure there's nothing on the queue between test executions
         Executors.newSingleThreadExecutor().execute(() -> {
-            String body = consumer.receiveBody("activemq:queue.start", 3000, String.class);
-            template.sendBody("activemq:queue.foo", body + " Claus");
+            try {
+                consumer.receiveBody("activemq:queue.JmsPollingConsumerTest.start", 200, String.class);
+            } catch (Exception e) {
+                // This is usually safe to ignore (ie.: if not connected, not started, etc after the test was run)
+            }
         });
-
-        // wait a little to demonstrate we can start poll before we have a msg on the queue
-        Thread.sleep(500);
-
-        template.sendBody("direct:start", "Hello");
-
-        assertMockEndpointsSatisfied();
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
@@ -130,9 +192,9 @@ public class JmsPollingConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("activemq:queue.start");
+                from("direct:start").to("activemq:queue.JmsPollingConsumerTest.start");
 
-                from("activemq:queue.foo").to("mock:result");
+                from("activemq:queue.JmsPollingConsumerTest.foo").to("mock:result");
             }
         };
     }

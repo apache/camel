@@ -23,15 +23,15 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JmsRequestReplyReplyToOverrideTest extends CamelTestSupport {
+public class JmsRequestReplyReplyToOverrideTest extends AbstractJMSTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsRequestReplyReplyToOverrideTest.class);
 
@@ -60,7 +60,8 @@ public class JmsRequestReplyReplyToOverrideTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         JmsComponent jmsComponent = jmsComponentAutoAcknowledge(connectionFactory);
         jmsComponent.getConfiguration().setReplyTo("baz");
         jmsComponent.getConfiguration().setReplyToOverride("bar");

@@ -21,12 +21,12 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 
-public class JmsSimpleHeaderTest extends CamelTestSupport {
+public class JmsSimpleHeaderTest extends AbstractJMSTest {
 
     protected String componentName = "activemq";
 
@@ -36,7 +36,7 @@ public class JmsSimpleHeaderTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).header("data").isEqualTo((byte) 40);
 
-        template.sendBodyAndHeader("activemq:queue:foo", "Hello World", "data", (byte) 40);
+        template.sendBodyAndHeader("activemq:queue:JmsSimpleHeaderTest", "Hello World", "data", (byte) 40);
 
         assertMockEndpointsSatisfied();
     }
@@ -47,7 +47,7 @@ public class JmsSimpleHeaderTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).header("data").isEqualTo('A');
 
-        template.sendBodyAndHeader("activemq:queue:foo", "Hello World", "data", 'A');
+        template.sendBodyAndHeader("activemq:queue:JmsSimpleHeaderTest", "Hello World", "data", 'A');
 
         assertMockEndpointsSatisfied();
     }
@@ -60,7 +60,7 @@ public class JmsSimpleHeaderTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).header("data").isEqualTo(cs);
 
-        template.sendBodyAndHeader("activemq:queue:foo", "Hello World", "data", cs);
+        template.sendBodyAndHeader("activemq:queue:JmsSimpleHeaderTest", "Hello World", "data", cs);
 
         assertMockEndpointsSatisfied();
     }
@@ -69,7 +69,8 @@ public class JmsSimpleHeaderTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
@@ -80,7 +81,7 @@ public class JmsSimpleHeaderTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo").to("mock:result");
+                from("activemq:queue:JmsSimpleHeaderTest").to("mock:result");
             }
         };
     }

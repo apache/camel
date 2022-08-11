@@ -22,22 +22,22 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JmsStreamMessageTypeNoStreamCachingTest extends CamelTestSupport {
+public class JmsStreamMessageTypeNoStreamCachingTest extends AbstractJMSTest {
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        deleteDirectory("target/nostream");
+        deleteDirectory("target/stream/JmsStreamMessageTypeNoStreamCachingTest");
         super.setUp();
     }
 
@@ -46,7 +46,7 @@ public class JmsStreamMessageTypeNoStreamCachingTest extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
         camelContext.setStreamCaching(false);
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory = createConnectionFactory(service);
         JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
         jms.getConfiguration().setStreamMessageTypeEnabled(true); // turn on streaming
         camelContext.addComponent("jms", jms);
@@ -55,14 +55,15 @@ public class JmsStreamMessageTypeNoStreamCachingTest extends CamelTestSupport {
 
     @Test
     public void testStreamType() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(1);
+        getMockEndpoint("mock:resultJmsStreamMessageTypeNoStreamCachingTest").expectedMessageCount(1);
 
         // copy the file
         FileUtil.copyFile(new File("src/test/data/message1.xml"), new File("target/stream/in/message1.xml"));
 
         assertMockEndpointsSatisfied();
 
-        Object body = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn().getBody();
+        Object body = getMockEndpoint("mock:resultJmsStreamMessageTypeNoStreamCachingTest").getReceivedExchanges().get(0)
+                .getIn().getBody();
         StreamMessageInputStream is = assertIsInstanceOf(StreamMessageInputStream.class, body);
 
         // no more bytes should be available on the inputstream
@@ -71,20 +72,22 @@ public class JmsStreamMessageTypeNoStreamCachingTest extends CamelTestSupport {
         // assert on the content of input versus output file
         String srcContent = context.getTypeConverter().mandatoryConvertTo(String.class, new File("src/test/data/message1.xml"));
         String dstContent
-                = context.getTypeConverter().mandatoryConvertTo(String.class, new File("target/stream/out/message1.xml"));
+                = context.getTypeConverter().mandatoryConvertTo(String.class,
+                        new File("target/stream/JmsStreamMessageTypeNoStreamCachingTest/out/message1.xml"));
         assertEquals(srcContent, dstContent, "both the source and destination files should have the same content");
     }
 
     @Test
     public void testStreamTypeWithBigFile() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(1);
+        getMockEndpoint("mock:resultJmsStreamMessageTypeNoStreamCachingTest").expectedMessageCount(1);
 
         // copy the file
         FileUtil.copyFile(new File("src/test/data/message1.txt"), new File("target/stream/in/message1.txt"));
 
         assertMockEndpointsSatisfied();
 
-        Object body = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn().getBody();
+        Object body = getMockEndpoint("mock:resultJmsStreamMessageTypeNoStreamCachingTest").getReceivedExchanges().get(0)
+                .getIn().getBody();
         StreamMessageInputStream is = assertIsInstanceOf(StreamMessageInputStream.class, body);
 
         // no more bytes should be available on the inputstream
@@ -93,7 +96,8 @@ public class JmsStreamMessageTypeNoStreamCachingTest extends CamelTestSupport {
         // assert on the content of input versus output file
         String srcContent = context.getTypeConverter().mandatoryConvertTo(String.class, new File("src/test/data/message1.txt"));
         String dstContent
-                = context.getTypeConverter().mandatoryConvertTo(String.class, new File("target/stream/out/message1.txt"));
+                = context.getTypeConverter().mandatoryConvertTo(String.class,
+                        new File("target/stream/JmsStreamMessageTypeNoStreamCachingTest/out/message1.txt"));
         assertEquals(srcContent, dstContent, "both the source and destination files should have the same content");
     }
 
@@ -102,9 +106,11 @@ public class JmsStreamMessageTypeNoStreamCachingTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("file:target/stream/in").to("jms:queue:foo");
+                from("file:target/stream/in").to("jms:queue:JmsStreamMessageTypeNoStreamCachingTest");
 
-                from("jms:queue:foo").to("file:target/stream/out").to("mock:result");
+                from("jms:queue:JmsStreamMessageTypeNoStreamCachingTest")
+                        .to("file:target/stream/JmsStreamMessageTypeNoStreamCachingTest/out")
+                        .to("mock:resultJmsStreamMessageTypeNoStreamCachingTest");
             }
         };
     }

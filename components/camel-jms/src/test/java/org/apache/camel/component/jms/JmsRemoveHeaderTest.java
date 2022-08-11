@@ -24,12 +24,12 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 
-public class JmsRemoveHeaderTest extends CamelTestSupport {
+public class JmsRemoveHeaderTest extends AbstractJMSTest {
 
     @Test
     public void testRemoveHeader() throws Exception {
@@ -44,7 +44,7 @@ public class JmsRemoveHeaderTest extends CamelTestSupport {
         headers.put("foo", "cheese");
         headers.put("bar", 123);
 
-        template.sendBodyAndHeaders("activemq:queue:foo", "Hello World", headers);
+        template.sendBodyAndHeaders("activemq:queue:fooJmsRemoveHeaderTest", "Hello World", headers);
 
         assertMockEndpointsSatisfied();
     }
@@ -53,7 +53,8 @@ public class JmsRemoveHeaderTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
@@ -64,9 +65,9 @@ public class JmsRemoveHeaderTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo").removeHeader("foo").to("activemq:queue:bar");
+                from("activemq:queue:fooJmsRemoveHeaderTest").removeHeader("foo").to("activemq:queue:barJmsRemoveHeaderTest");
 
-                from("activemq:queue:bar").to("mock:result");
+                from("activemq:queue:barJmsRemoveHeaderTest").to("mock:result");
             }
         };
     }

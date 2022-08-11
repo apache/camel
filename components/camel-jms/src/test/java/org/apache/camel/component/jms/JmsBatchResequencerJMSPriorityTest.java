@@ -21,15 +21,15 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 
 /**
  * JMSPriority being ordered using the resequencer in batch mode.
  */
-public class JmsBatchResequencerJMSPriorityTest extends CamelTestSupport {
+public class JmsBatchResequencerJMSPriorityTest extends AbstractJMSTest {
 
     @Test
     public void testBatchResequencerJMSPriority() throws Exception {
@@ -37,14 +37,22 @@ public class JmsBatchResequencerJMSPriorityTest extends CamelTestSupport {
         mock.expectedBodiesReceived("G", "A", "B", "E", "H", "C", "D", "F");
 
         // must use preserveMessageQos=true to be able to specify the JMSPriority to be used
-        template.sendBodyAndHeader("jms:queue:foo?preserveMessageQos=true", "A", "JMSPriority", 6);
-        template.sendBodyAndHeader("jms:queue:foo?preserveMessageQos=true", "B", "JMSPriority", 6);
-        template.sendBodyAndHeader("jms:queue:foo?preserveMessageQos=true", "C", "JMSPriority", 4);
-        template.sendBodyAndHeader("jms:queue:foo?preserveMessageQos=true", "D", "JMSPriority", 4);
-        template.sendBodyAndHeader("jms:queue:foo?preserveMessageQos=true", "E", "JMSPriority", 6);
-        template.sendBodyAndHeader("jms:queue:foo?preserveMessageQos=true", "F", "JMSPriority", 4);
-        template.sendBodyAndHeader("jms:queue:foo?preserveMessageQos=true", "G", "JMSPriority", 8);
-        template.sendBodyAndHeader("jms:queue:foo?preserveMessageQos=true", "H", "JMSPriority", 6);
+        template.sendBodyAndHeader("jms:queue:JmsBatchResequencerJMSPriorityTest?preserveMessageQos=true", "A", "JMSPriority",
+                6);
+        template.sendBodyAndHeader("jms:queue:JmsBatchResequencerJMSPriorityTest?preserveMessageQos=true", "B", "JMSPriority",
+                6);
+        template.sendBodyAndHeader("jms:queue:JmsBatchResequencerJMSPriorityTest?preserveMessageQos=true", "C", "JMSPriority",
+                4);
+        template.sendBodyAndHeader("jms:queue:JmsBatchResequencerJMSPriorityTest?preserveMessageQos=true", "D", "JMSPriority",
+                4);
+        template.sendBodyAndHeader("jms:queue:JmsBatchResequencerJMSPriorityTest?preserveMessageQos=true", "E", "JMSPriority",
+                6);
+        template.sendBodyAndHeader("jms:queue:JmsBatchResequencerJMSPriorityTest?preserveMessageQos=true", "F", "JMSPriority",
+                4);
+        template.sendBodyAndHeader("jms:queue:JmsBatchResequencerJMSPriorityTest?preserveMessageQos=true", "G", "JMSPriority",
+                8);
+        template.sendBodyAndHeader("jms:queue:JmsBatchResequencerJMSPriorityTest?preserveMessageQos=true", "H", "JMSPriority",
+                6);
 
         assertMockEndpointsSatisfied();
     }
@@ -53,7 +61,8 @@ public class JmsBatchResequencerJMSPriorityTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent("jms", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
@@ -65,7 +74,7 @@ public class JmsBatchResequencerJMSPriorityTest extends CamelTestSupport {
             @Override
             public void configure() {
                 // START SNIPPET: e1
-                from("jms:queue:foo")
+                from("jms:queue:JmsBatchResequencerJMSPriorityTest")
                         // sort by JMSPriority by allowing duplicates (message can have same JMSPriority)
                         // and use reverse ordering so 9 is first output (most important), and 0 is last
                         // use batch mode and fire every 3rd second

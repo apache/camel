@@ -25,17 +25,17 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
  */
-public class ManagedJmsEndpointTopicTest extends CamelTestSupport {
+public class ManagedJmsEndpointTopicTest extends AbstractJMSTest {
 
     @Override
     protected boolean useJmx() {
@@ -46,7 +46,8 @@ public class ManagedJmsEndpointTopicTest extends CamelTestSupport {
     protected CamelContext createCamelContext() {
         CamelContext context = new DefaultCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         context.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return context;

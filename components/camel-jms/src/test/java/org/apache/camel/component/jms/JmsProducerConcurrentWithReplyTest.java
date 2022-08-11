@@ -26,14 +26,14 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.apache.camel.test.junit5.TestSupport.body;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JmsProduerConcurrentWithReplyTest extends CamelTestSupport {
+public class JmsProducerConcurrentWithReplyTest extends AbstractJMSTest {
 
     @Test
     public void testNoConcurrentProducers() throws Exception {
@@ -70,7 +70,8 @@ public class JmsProduerConcurrentWithReplyTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent("jms", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
@@ -81,9 +82,10 @@ public class JmsProduerConcurrentWithReplyTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("jms:queue:foo");
+                from("direct:start").to("jms:queue:JmsProducerConcurrentWithReplyTest");
 
-                from("jms:queue:foo?concurrentConsumers=5").transform(simple("Bye ${in.body}")).to("mock:result");
+                from("jms:queue:JmsProducerConcurrentWithReplyTest?concurrentConsumers=5").transform(simple("Bye ${in.body}"))
+                        .to("mock:result");
             }
         };
     }

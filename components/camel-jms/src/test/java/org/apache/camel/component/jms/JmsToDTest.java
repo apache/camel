@@ -20,20 +20,20 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 
-public class JmsToDTest extends CamelTestSupport {
+public class JmsToDTest extends AbstractJMSTest {
 
     @Test
     public void testToD() throws Exception {
-        getMockEndpoint("mock:bar").expectedBodiesReceived("Hello bar");
-        getMockEndpoint("mock:beer").expectedBodiesReceived("Hello beer");
+        getMockEndpoint("mock:JmsToDTest.bar").expectedBodiesReceived("Hello bar");
+        getMockEndpoint("mock:JmsToDTest.beer").expectedBodiesReceived("Hello beer");
 
-        template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar");
-        template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
+        template.sendBodyAndHeader("direct:start", "Hello bar", "where", "JmsToDTest.bar");
+        template.sendBodyAndHeader("direct:start", "Hello beer", "where", "JmsToDTest.beer");
 
         assertMockEndpointsSatisfied();
     }
@@ -42,7 +42,8 @@ public class JmsToDTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
@@ -56,8 +57,8 @@ public class JmsToDTest extends CamelTestSupport {
                 // route message dynamic using toD
                 from("direct:start").toD("activemq:queue:${header.where}");
 
-                from("activemq:queue:bar").to("mock:bar");
-                from("activemq:queue:beer").to("mock:beer");
+                from("activemq:queue:JmsToDTest.bar").to("mock:JmsToDTest.bar");
+                from("activemq:queue:JmsToDTest.beer").to("mock:JmsToDTest.beer");
             }
         };
     }

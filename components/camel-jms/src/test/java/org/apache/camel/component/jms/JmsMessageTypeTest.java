@@ -28,20 +28,21 @@ import org.apache.camel.TypeConversionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.TypeConverterSupport;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.component.jms.JmsConstants.JMS_MESSAGE_TYPE;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JmsMessageTypeTest extends CamelTestSupport {
+public class JmsMessageTypeTest extends AbstractJMSTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent("jms", jmsComponentAutoAcknowledge(connectionFactory));
 
         camelContext.getTypeConverterRegistry().addTypeConverter(byte[].class, MyFooBean.class, new MyFooBean());
@@ -206,14 +207,14 @@ public class JmsMessageTypeTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:text").to("jms:queue:foo?jmsMessageType=Text");
-                from("direct:bytes").to("jms:queue:foo?jmsMessageType=Bytes");
-                from("direct:map").to("jms:queue:foo?jmsMessageType=Map");
-                from("direct:object").to("jms:queue:foo?jmsMessageType=Object");
+                from("direct:text").to("jms:queue:fooJmsMessageTypeTest?jmsMessageType=Text");
+                from("direct:bytes").to("jms:queue:fooJmsMessageTypeTest?jmsMessageType=Bytes");
+                from("direct:map").to("jms:queue:fooJmsMessageTypeTest?jmsMessageType=Map");
+                from("direct:object").to("jms:queue:fooJmsMessageTypeTest?jmsMessageType=Object");
 
-                from("direct:foo").to("jms:queue:foo");
+                from("direct:foo").to("jms:queue:fooJmsMessageTypeTest");
 
-                from("jms:queue:foo").to("mock:result");
+                from("jms:queue:fooJmsMessageTypeTest").to("mock:result");
             }
         };
     }

@@ -27,16 +27,18 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.PooledExchangeFactory;
 import org.apache.camel.impl.engine.PooledProcessorExchangeFactory;
 import org.apache.camel.spi.PooledObjectFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JmsInOnlyPooledExchangeTest extends CamelTestSupport {
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
+public class JmsInOnlyPooledExchangeTest extends AbstractJMSTest {
 
-    private static final String JMS_QUEUE_NAME = "activemq:queue:foo";
+    private static final String JMS_QUEUE_NAME = "activemq:queue:JmsInOnlyPooledExchangeTest";
     private static final String MOCK_RESULT = "mock:result";
 
     @Test
@@ -89,7 +91,8 @@ public class JmsInOnlyPooledExchangeTest extends CamelTestSupport {
         ecc.getExchangeFactory().setStatisticsEnabled(true);
         ecc.getProcessorExchangeFactory().setStatisticsEnabled(true);
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         ecc.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return ecc;

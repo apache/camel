@@ -17,8 +17,54 @@
 package org.apache.camel.test.infra.activemq.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
 public final class ActiveMQServiceFactory {
+
+    public static class SingletonActiveMQService extends SingletonService<ActiveMQService> implements ActiveMQService {
+        public SingletonActiveMQService(ActiveMQService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public String serviceAddress() {
+            return getService().serviceAddress();
+        }
+
+        @Override
+        public String userName() {
+            return getService().userName();
+        }
+
+        @Override
+        public String password() {
+            return getService().password();
+        }
+
+        @Override
+        public void beforeAll(ExtensionContext extensionContext) {
+            addToStore(extensionContext);
+        }
+
+        @Override
+        public void afterAll(ExtensionContext extensionContext) {
+            // NO-OP
+        }
+
+        @Override
+        public void restart() {
+            getService().restart();
+        }
+
+        @Override
+        public ActiveMQService getService() {
+            return super.getService();
+        }
+    }
+
+    private static SimpleTestServiceBuilder<ActiveMQService> instance;
+    private static ActiveMQService service;
 
     private ActiveMQServiceFactory() {
 
@@ -33,5 +79,35 @@ public final class ActiveMQServiceFactory {
                 .addLocalMapping(ActiveMQEmbeddedService::new)
                 .addRemoteMapping(ActiveMQRemoteService::new)
                 .build();
+    }
+
+    public static synchronized ActiveMQService createEmbeddedService() {
+        return createSingletonEmbeddedService();
+    }
+
+    public static synchronized ActiveMQService createEmbeddedServiceInstance() {
+        if (service == null) {
+            if (instance == null) {
+                instance = new SimpleTestServiceBuilder<>("activemq");
+
+                instance.addLocalMapping(() -> new SingletonActiveMQService(new ActiveMQVMService(), "activemq"));
+            }
+        }
+
+        return instance.build();
+    }
+
+    public static synchronized ActiveMQService createSingletonEmbeddedService() {
+        if (service == null) {
+            if (instance == null) {
+                instance = new SimpleTestServiceBuilder<>("activemq");
+
+                instance.addLocalMapping(() -> new SingletonActiveMQService(new ActiveMQVMService(), "activemq"));
+            }
+
+            service = instance.build();
+        }
+
+        return service;
     }
 }

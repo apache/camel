@@ -28,11 +28,15 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.activemq.services.ActiveMQService;
+import org.apache.camel.test.infra.activemq.services.ActiveMQServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.component.jms.JmsConstants.JMS_X_GROUP_ID;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -40,13 +44,18 @@ import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
 public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
 
+    // This one needs a different lifecycle, so we cannot extend AbstractJMSTest
+    @RegisterExtension
+    private ActiveMQService service = ActiveMQServiceFactory.createEmbeddedService();
+
     @Test
     public void testInOnlyJMSPrioritory() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.message(0).header("JMSPriority").isEqualTo(2);
 
-        template.sendBodyAndHeader("activemq:queue:foo?preserveMessageQos=true", "Hello World", "JMSPriority", "2");
+        template.sendBodyAndHeader("activemq:queue:fooJmsProducerWithJMSHeaderTest?preserveMessageQos=true", "Hello World",
+                "JMSPriority", "2");
 
         assertMockEndpointsSatisfied();
     }
@@ -57,7 +66,8 @@ public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).header("JMSPriority").isEqualTo(0);
 
-        template.sendBodyAndHeader("activemq:queue:foo?preserveMessageQos=true", "Hello World", "JMSPriority", "0");
+        template.sendBodyAndHeader("activemq:queue:fooJmsProducerWithJMSHeaderTest?preserveMessageQos=true", "Hello World",
+                "JMSPriority", "0");
 
         assertMockEndpointsSatisfied();
     }
@@ -68,7 +78,8 @@ public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).header("JMSPriority").isEqualTo(9);
 
-        template.sendBodyAndHeader("activemq:queue:foo?preserveMessageQos=true", "Hello World", "JMSPriority", "9");
+        template.sendBodyAndHeader("activemq:queue:fooJmsProducerWithJMSHeaderTest?preserveMessageQos=true", "Hello World",
+                "JMSPriority", "9");
 
         assertMockEndpointsSatisfied();
     }
@@ -81,7 +92,8 @@ public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
         // not provided as header but should use endpoint default then
         mock.message(0).header("JMSDeliveryMode").isEqualTo(2);
 
-        template.sendBodyAndHeader("activemq:queue:foo?preserveMessageQos=true", "Hello World", "JMSPriority", "2");
+        template.sendBodyAndHeader("activemq:queue:fooJmsProducerWithJMSHeaderTest?preserveMessageQos=true", "Hello World",
+                "JMSPriority", "2");
 
         assertMockEndpointsSatisfied();
     }
@@ -92,7 +104,8 @@ public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).header("JMSDeliveryMode").isEqualTo(1);
 
-        template.sendBodyAndHeader("activemq:queue:foo?preserveMessageQos=true", "Hello World", "JMSDeliveryMode", "1");
+        template.sendBodyAndHeader("activemq:queue:fooJmsProducerWithJMSHeaderTest?preserveMessageQos=true", "Hello World",
+                "JMSDeliveryMode", "1");
 
         assertMockEndpointsSatisfied();
     }
@@ -103,7 +116,8 @@ public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).header("JMSDeliveryMode").isEqualTo(1);
 
-        template.sendBodyAndHeader("activemq:queue:foo?preserveMessageQos=true", "Hello World", "JMSDeliveryMode",
+        template.sendBodyAndHeader("activemq:queue:fooJmsProducerWithJMSHeaderTest?preserveMessageQos=true", "Hello World",
+                "JMSDeliveryMode",
                 "NON_PERSISTENT");
 
         assertMockEndpointsSatisfied();
@@ -115,16 +129,17 @@ public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
 
         long ttl = System.currentTimeMillis() + 5000;
-        template.sendBodyAndHeader("activemq:queue:bar?preserveMessageQos=true", "Hello World", "JMSExpiration", ttl);
+        template.sendBodyAndHeader("activemq:queue:barJmsProducerWithJMSHeaderTest?preserveMessageQos=true", "Hello World",
+                "JMSExpiration", ttl);
 
         // sleep just a little
         Thread.sleep(2000);
 
         // use timeout in case running on slow box
-        Exchange bar = consumer.receive("activemq:queue:bar", 10000);
+        Exchange bar = consumer.receive("activemq:queue:barJmsProducerWithJMSHeaderTest", 10000);
         assertNotNull(bar, "Should be a message on queue");
 
-        template.send("activemq:queue:foo", bar);
+        template.send("activemq:queue:fooJmsProducerWithJMSHeaderTest", bar);
 
         assertMockEndpointsSatisfied();
     }
@@ -135,12 +150,14 @@ public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
 
         long ttl = System.currentTimeMillis() + 2000;
-        template.sendBodyAndHeader("activemq:queue:bar?preserveMessageQos=true", "Hello World", "JMSExpiration", ttl);
+        template.sendBodyAndHeader("activemq:queue:barJmsProducerWithJMSHeaderTest?preserveMessageQos=true", "Hello World",
+                "JMSExpiration", ttl);
 
         // sleep more so the message is expired
         await().atMost(5, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertThat(consumer.receiveNoWait("activemq:queue:bar")).isNull());
-        template.sendBody("activemq:queue:foo", "Hello World");
+                .untilAsserted(
+                        () -> assertThat(consumer.receiveNoWait("activemq:queue:barJmsProducerWithJMSHeaderTest")).isNull());
+        template.sendBody("activemq:queue:fooJmsProducerWithJMSHeaderTest", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -155,7 +172,8 @@ public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
         Map<String, Object> headers = new HashMap<>();
         headers.put("JMSPriority", 3);
         headers.put("JMSDeliveryMode", 2);
-        template.sendBodyAndHeaders("activemq:queue:foo?preserveMessageQos=true", "Hello World", headers);
+        template.sendBodyAndHeaders("activemq:queue:fooJmsProducerWithJMSHeaderTest?preserveMessageQos=true", "Hello World",
+                headers);
 
         assertMockEndpointsSatisfied();
     }
@@ -172,14 +190,15 @@ public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
         headers.put("JMSPriority", 3);
         headers.put("JMSDeliveryMode", 2);
         headers.put("JMSExpiration", ttl);
-        template.sendBodyAndHeaders("activemq:queue:bar?preserveMessageQos=true", "Hello World", headers);
+        template.sendBodyAndHeaders("activemq:queue:barJmsProducerWithJMSHeaderTest?preserveMessageQos=true", "Hello World",
+                headers);
 
         // sleep just a little
         Thread.sleep(50);
 
-        Exchange bar = consumer.receive("activemq:queue:bar", 5000);
+        Exchange bar = consumer.receive("activemq:queue:barJmsProducerWithJMSHeaderTest", 5000);
         assertNotNull(bar, "Should be a message on queue");
-        template.send("activemq:queue:foo?preserveMessageQos=true", bar);
+        template.send("activemq:queue:fooJmsProducerWithJMSHeaderTest?preserveMessageQos=true", bar);
 
         Thread.sleep(1000);
 
@@ -196,14 +215,16 @@ public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
         headers.put("JMSPriority", 3);
         headers.put("JMSDeliveryMode", 2);
         headers.put("JMSExpiration", ttl);
-        template.sendBodyAndHeaders("activemq:queue:bar?preserveMessageQos=true", "Hello World", headers);
+        template.sendBodyAndHeaders("activemq:queue:barJmsProducerWithJMSHeaderTest?preserveMessageQos=true", "Hello World",
+                headers);
 
         // sleep more so the message is expired
         await()
                 .atMost(5, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertThat(consumer.receiveNoWait("activemq:queue:bar")).isNull());
+                .untilAsserted(
+                        () -> assertThat(consumer.receiveNoWait("activemq:queue:barJmsProducerWithJMSHeaderTest")).isNull());
 
-        template.sendBody("activemq:queue:foo", "Hello World");
+        template.sendBody("activemq:queue:fooJmsProducerWithJMSHeaderTest", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -214,24 +235,25 @@ public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).header(JMS_X_GROUP_ID).isEqualTo("atom");
 
-        template.sendBodyAndHeader("activemq:queue:foo", "Hello World", JMS_X_GROUP_ID, "atom");
+        template.sendBodyAndHeader("activemq:queue:fooJmsProducerWithJMSHeaderTest", "Hello World", JMS_X_GROUP_ID, "atom");
 
         assertMockEndpointsSatisfied();
     }
 
     @Test
     public void testInOnlyJMSDestination() throws Exception {
-        Destination queue = new ActiveMQQueue("foo");
+        Destination queue = new ActiveMQQueue("fooJmsProducerWithJMSHeaderTest");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.message(0).header("JMSDestination").isNotNull();
 
-        template.sendBodyAndHeader("activemq:queue:bar", "Hello World", JmsConstants.JMS_DESTINATION, queue);
+        template.sendBodyAndHeader("activemq:queue:barJmsProducerWithJMSHeaderTest", "Hello World",
+                JmsConstants.JMS_DESTINATION, queue);
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("queue://foo",
+        assertEquals("queue://fooJmsProducerWithJMSHeaderTest",
                 mock.getReceivedExchanges().get(0).getIn().getHeader("JMSDestination", Destination.class).toString());
     }
 
@@ -241,27 +263,29 @@ public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).header("JMSDestination").isNotNull();
 
-        template.sendBodyAndHeader("activemq:queue:bar", "Hello World", JmsConstants.JMS_DESTINATION_NAME, "foo");
+        template.sendBodyAndHeader("activemq:queue:barJmsProducerWithJMSHeaderTest", "Hello World",
+                JmsConstants.JMS_DESTINATION_NAME, "fooJmsProducerWithJMSHeaderTest");
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("queue://foo",
+        assertEquals("queue://fooJmsProducerWithJMSHeaderTest",
                 mock.getReceivedExchanges().get(0).getIn().getHeader("JMSDestination", Destination.class).toString());
     }
 
     @Test
     public void testInOutJMSDestination() {
-        Destination queue = new ActiveMQQueue("reply");
+        Destination queue = new ActiveMQQueue("replyJmsProducerWithJMSHeaderTest");
 
-        String reply = (String) template.requestBodyAndHeader("activemq:queue:bar", "Hello World", JmsConstants.JMS_DESTINATION,
+        String reply = (String) template.requestBodyAndHeader("activemq:queue:barJmsProducerWithJMSHeaderTest", "Hello World",
+                JmsConstants.JMS_DESTINATION,
                 queue);
         assertEquals("Bye World", reply);
     }
 
     @Test
     public void testInOutJMSDestinationName() {
-        String reply = (String) template.requestBodyAndHeader("activemq:queue:bar", "Hello World",
-                JmsConstants.JMS_DESTINATION_NAME, "reply");
+        String reply = (String) template.requestBodyAndHeader("activemq:queue:barJmsProducerWithJMSHeaderTest", "Hello World",
+                JmsConstants.JMS_DESTINATION_NAME, "replyJmsProducerWithJMSHeaderTest");
         assertEquals("Bye World", reply);
     }
 
@@ -269,8 +293,8 @@ public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
     public void testInOnlyRouteJMSDestinationName() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:a").to("activemq:queue:b");
-                from("activemq:queue:b").to("mock:result");
+                from("activemq:queue:aJmsProducerWithJMSHeaderTest").to("activemq:queue:bJmsProducerWithJMSHeaderTest");
+                from("activemq:queue:bJmsProducerWithJMSHeaderTest").to("mock:result");
             }
         });
         context.start();
@@ -279,11 +303,12 @@ public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
         mock.expectedBodiesReceived("Hello World");
         mock.message(0).header("JMSDestination").isNotNull();
 
-        template.sendBodyAndHeader("activemq:queue:bar", "Hello World", JmsConstants.JMS_DESTINATION_NAME, "a");
+        template.sendBodyAndHeader("activemq:queue:barJmsProducerWithJMSHeaderTest", "Hello World",
+                JmsConstants.JMS_DESTINATION_NAME, "aJmsProducerWithJMSHeaderTest");
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("queue://b",
+        assertEquals("queue://bJmsProducerWithJMSHeaderTest",
                 mock.getReceivedExchanges().get(0).getIn().getHeader("JMSDestination", Destination.class).toString());
     }
 
@@ -291,7 +316,8 @@ public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
@@ -302,9 +328,9 @@ public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo").to("mock:result");
+                from("activemq:queue:fooJmsProducerWithJMSHeaderTest").to("mock:result");
 
-                from("activemq:queue:reply").transform(constant("Bye World"));
+                from("activemq:queue:replyJmsProducerWithJMSHeaderTest").transform(constant("Bye World"));
 
             }
         };
