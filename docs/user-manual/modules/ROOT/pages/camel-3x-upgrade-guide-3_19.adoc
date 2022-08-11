@@ -48,7 +48,7 @@ The URI format for consumer operations has changed. All consumer URIs now use th
 
 === camel-consul
 
-The deprecated options were removed and should be replaced by the following options
+The deprecated options were removed and should be replaced by the following options:
 
 |===
 |Deprecated |Replace with
@@ -58,5 +58,8 @@ The deprecated options were removed and should be replaced by the following opti
 
 |`readTimeoutMillis`
 |`readTimeout`
+
+|`writeTimeoutMillis`
+|`writeTimeout`
 |===
 

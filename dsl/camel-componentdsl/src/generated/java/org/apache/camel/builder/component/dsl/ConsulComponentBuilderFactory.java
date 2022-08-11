@@ -170,23 +170,6 @@ public interface ConsulComponentBuilderFactory {
             return this;
         }
         /**
-         * Write timeout for OkHttpClient. Deprecation note: Use writeTimeout
-         * instead.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param writeTimeoutMillis the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default ConsulComponentBuilder writeTimeoutMillis(
-                java.lang.Long writeTimeoutMillis) {
-            doSetProperty("writeTimeoutMillis", writeTimeoutMillis);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -515,7 +498,6 @@ public interface ConsulComponentBuilderFactory {
             case "tags": getOrCreateConfiguration((ConsulComponent) component).setTags((java.lang.String) value); return true;
             case "url": getOrCreateConfiguration((ConsulComponent) component).setUrl((java.lang.String) value); return true;
             case "writeTimeout": getOrCreateConfiguration((ConsulComponent) component).setWriteTimeout((java.time.Duration) value); return true;
-            case "writeTimeoutMillis": getOrCreateConfiguration((ConsulComponent) component).setWriteTimeoutMillis((java.lang.Long) value); return true;
             case "bridgeErrorHandler": ((ConsulComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "action": getOrCreateConfiguration((ConsulComponent) component).setAction((java.lang.String) value); return true;
             case "lazyStartProducer": ((ConsulComponent) component).setLazyStartProducer((boolean) value); return true;

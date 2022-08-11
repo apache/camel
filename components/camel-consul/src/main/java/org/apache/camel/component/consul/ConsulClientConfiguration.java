@@ -29,7 +29,6 @@ import com.orbitz.consul.Consul;
 import com.orbitz.consul.option.ConsistencyMode;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -63,10 +62,6 @@ public abstract class ConsulClientConfiguration implements Cloneable {
     private Duration connectTimeout;
     @UriParam
     private Duration readTimeout;
-    @Deprecated
-    @Metadata(deprecationNote = "Use writeTimeout instead")
-    @UriParam(javaType = "java.time.Duration")
-    private Long writeTimeoutMillis;
     @UriParam
     private Duration writeTimeout;
     @UriParam(defaultValue = "true")
@@ -244,19 +239,6 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         this.readTimeout = readTimeout;
     }
 
-    public Long getWriteTimeoutMillis() {
-        return writeTimeoutMillis;
-    }
-
-    /**
-     * Write timeout for OkHttpClient
-     *
-     * @deprecated Use writeTimeout instead.
-     */
-    public void setWriteTimeoutMillis(Long writeTimeoutMillis) {
-        this.writeTimeoutMillis = writeTimeoutMillis;
-    }
-
     public Duration getWriteTimeout() {
         return writeTimeout;
     }
@@ -339,15 +321,13 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         if (ObjectHelper.isNotEmpty(connectTimeout)) {
             builder.withConnectTimeoutMillis(connectTimeout.toMillis());
         }
-        
+
         if (ObjectHelper.isNotEmpty(readTimeout)) {
             builder.withConnectTimeoutMillis(readTimeout.toMillis());
         }
-        
+
         if (ObjectHelper.isNotEmpty(writeTimeout)) {
             builder.withConnectTimeoutMillis(writeTimeout.toMillis());
-        } else if (ObjectHelper.isNotEmpty(writeTimeoutMillis)) {
-            builder.withWriteTimeoutMillis(writeTimeoutMillis);
         }
 
         return builder.build();

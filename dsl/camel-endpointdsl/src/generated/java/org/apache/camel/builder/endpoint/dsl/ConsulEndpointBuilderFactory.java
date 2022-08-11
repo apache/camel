@@ -241,41 +241,6 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
-         * Write timeout for OkHttpClient. Deprecation note: Use writeTimeout
-         * instead.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param writeTimeoutMillis the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default ConsulEndpointConsumerBuilder writeTimeoutMillis(
-                Long writeTimeoutMillis) {
-            doSetProperty("writeTimeoutMillis", writeTimeoutMillis);
-            return this;
-        }
-        /**
-         * Write timeout for OkHttpClient. Deprecation note: Use writeTimeout
-         * instead.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param writeTimeoutMillis the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default ConsulEndpointConsumerBuilder writeTimeoutMillis(
-                String writeTimeoutMillis) {
-            doSetProperty("writeTimeoutMillis", writeTimeoutMillis);
-            return this;
-        }
-        /**
          * Sets the ACL token to be used with Consul.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -878,41 +843,6 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
-         * Write timeout for OkHttpClient. Deprecation note: Use writeTimeout
-         * instead.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param writeTimeoutMillis the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default ConsulEndpointProducerBuilder writeTimeoutMillis(
-                Long writeTimeoutMillis) {
-            doSetProperty("writeTimeoutMillis", writeTimeoutMillis);
-            return this;
-        }
-        /**
-         * Write timeout for OkHttpClient. Deprecation note: Use writeTimeout
-         * instead.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param writeTimeoutMillis the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default ConsulEndpointProducerBuilder writeTimeoutMillis(
-                String writeTimeoutMillis) {
-            doSetProperty("writeTimeoutMillis", writeTimeoutMillis);
-            return this;
-        }
-        /**
          * The default action. Can be overridden by CamelConsulAction.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1399,40 +1329,6 @@ public interface ConsulEndpointBuilderFactory {
          */
         default ConsulEndpointBuilder writeTimeout(String writeTimeout) {
             doSetProperty("writeTimeout", writeTimeout);
-            return this;
-        }
-        /**
-         * Write timeout for OkHttpClient. Deprecation note: Use writeTimeout
-         * instead.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param writeTimeoutMillis the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default ConsulEndpointBuilder writeTimeoutMillis(Long writeTimeoutMillis) {
-            doSetProperty("writeTimeoutMillis", writeTimeoutMillis);
-            return this;
-        }
-        /**
-         * Write timeout for OkHttpClient. Deprecation note: Use writeTimeout
-         * instead.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param writeTimeoutMillis the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default ConsulEndpointBuilder writeTimeoutMillis(
-                String writeTimeoutMillis) {
-            doSetProperty("writeTimeoutMillis", writeTimeoutMillis);
             return this;
         }
         /**
