@@ -29,6 +29,7 @@ import org.apache.camel.support.SimpleRegistry;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
+import org.apache.pulsar.client.api.RedeliveryBackoff;
 import org.apache.pulsar.client.api.Schema;
 import org.apache.pulsar.client.impl.ClientBuilderImpl;
 import org.apache.pulsar.client.impl.MultiplierRedeliveryBackoff;
@@ -42,7 +43,7 @@ public class PulsarConsumerNoAcknowledgementIT extends PulsarITSupport {
     @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
                     + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
                     + "&ackTimeoutMillis=1000"
-                    + "&ackTimeoutRedeliveryBackoff=#ackTimeoutRedeliveryBackoff")
+                    + "&ackTimeoutRedeliveryBackoff=#redeliveryBackoff")
     private Endpoint from;
 
     @EndpointInject("mock:result")
@@ -82,7 +83,7 @@ public class PulsarConsumerNoAcknowledgementIT extends PulsarITSupport {
 
         // Bind RedeliveryBackoff object to registry.
         // Given relevant millis=1000 redeliveries will occur at 1s + 0.1s, 1s + 1s, 1s + 10s, 1s + 100s, 1s + 100s...
-        registry.bind("ackTimeoutRedeliveryBackoff",
+        registry.bind("redeliveryBackoff", RedeliveryBackoff.class,
                 MultiplierRedeliveryBackoff.builder().minDelayMs(100L).maxDelayMs(100_000L).multiplier(10.0).build());
     }
 
