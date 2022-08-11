@@ -41,9 +41,7 @@ public class PulsarConsumerNoAcknowledgementIT extends PulsarITSupport {
     private static final String PRODUCER = "camel-producer-1";
 
     @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
-                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
-                    + "&ackTimeoutMillis=1000"
-                    + "&ackTimeoutRedeliveryBackoff=#redeliveryBackoff")
+                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer")
     private Endpoint from;
 
     @EndpointInject("mock:result")
@@ -79,12 +77,14 @@ public class PulsarConsumerNoAcknowledgementIT extends PulsarITSupport {
         comp.setPulsarClient(pulsarClient);
         comp.getConfiguration()
                 .setAllowManualAcknowledgement(true); // Set to true here instead of the endpoint query parameter.
-        registry.bind("pulsar", comp);
-
-        // Bind RedeliveryBackoff object to registry.
         // Given relevant millis=1000 redeliveries will occur at 1s + 0.1s, 1s + 1s, 1s + 10s, 1s + 100s, 1s + 100s...
-        registry.bind("redeliveryBackoff", RedeliveryBackoff.class,
-                MultiplierRedeliveryBackoff.builder().minDelayMs(100L).maxDelayMs(100_000L).multiplier(10.0).build());
+        comp.getConfiguration().setAckTimeoutMillis(1_000L);
+        comp.getConfiguration().setAckTimeoutRedeliveryBackoff(MultiplierRedeliveryBackoff.builder()
+                .minDelayMs(100L)
+                .maxDelayMs(100_000L)
+                .multiplier(10.0)
+                .build());
+        registry.bind("pulsar", comp);
     }
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {

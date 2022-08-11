@@ -43,10 +43,7 @@ public class PulsarConsumerNegativeAcknowledgementIT extends PulsarITSupport {
     private static final String PRODUCER = "camel-producer-1";
 
     @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
-                    + "&ackTimeoutMillis=60000" // set ack timeout to one min
-                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
-                    + "&negativeAckRedeliveryDelayMicros=1000000" // 1 second
-                    + "&negativeAckRedeliveryBackoff=#redeliveryBackoff")
+                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer")
     private Endpoint from;
 
     @EndpointInject("mock:result")
@@ -86,12 +83,15 @@ public class PulsarConsumerNegativeAcknowledgementIT extends PulsarITSupport {
         comp.setPulsarClient(pulsarClient);
         comp.getConfiguration()
                 .setAllowManualAcknowledgement(true); // Set to true here instead of the endpoint query parameter.
-        registry.bind("pulsar", comp);
-
-        // Bind RedeliveryBackoff object to registry.
+        comp.getConfiguration().setAckTimeoutMillis(60_000L);
         // Given relevant millis=1000 redeliveries will occur at 1s + 0.1s, 1s + 1s, 1s + 10s, 1s + 100s, 1s + 100s...
-        registry.bind("redeliveryBackoff", RedeliveryBackoff.class,
-                MultiplierRedeliveryBackoff.builder().minDelayMs(100L).maxDelayMs(100_000L).multiplier(10.0).build());
+        comp.getConfiguration().setNegativeAckRedeliveryDelayMicros(1_000_000L);
+        comp.getConfiguration().setNegativeAckRedeliveryBackoff(MultiplierRedeliveryBackoff.builder()
+                .minDelayMs(100L)
+                .maxDelayMs(100_000L)
+                .multiplier(10.0)
+                .build());
+        registry.bind("pulsar", comp);
     }
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {
