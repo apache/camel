@@ -66,23 +66,6 @@ public interface ConsulComponentBuilderFactory {
             return this;
         }
         /**
-         * Connect timeout for OkHttpClient. Deprecation note: Use
-         * connectTimeout instead.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param connectTimeoutMillis the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default ConsulComponentBuilder connectTimeoutMillis(
-                java.lang.Long connectTimeoutMillis) {
-            doSetProperty("connectTimeoutMillis", connectTimeoutMillis);
-            return this;
-        }
-        /**
          * Reference to a com.orbitz.consul.Consul in the registry.
          * 
          * The option is a: &lt;code&gt;com.orbitz.consul.Consul&lt;/code&gt;
@@ -542,7 +525,6 @@ public interface ConsulComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "connectTimeout": getOrCreateConfiguration((ConsulComponent) component).setConnectTimeout((java.time.Duration) value); return true;
-            case "connectTimeoutMillis": getOrCreateConfiguration((ConsulComponent) component).setConnectTimeoutMillis((java.lang.Long) value); return true;
             case "consulClient": getOrCreateConfiguration((ConsulComponent) component).setConsulClient((com.orbitz.consul.Consul) value); return true;
             case "key": getOrCreateConfiguration((ConsulComponent) component).setKey((java.lang.String) value); return true;
             case "pingInstance": getOrCreateConfiguration((ConsulComponent) component).setPingInstance((boolean) value); return true;

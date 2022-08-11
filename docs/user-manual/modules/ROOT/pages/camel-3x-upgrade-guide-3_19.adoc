@@ -44,3 +44,16 @@ spec:
 === camel-salesforce
 
 The URI format for consumer operations has changed. All consumer URIs now use the `subscribe` operation. E.g., `salesforce:subscribe:<topic_name>`, `salesforce:subscribe:event/<event_name>`, `salesforce:subscribe:data/ChangeEvents`.
+
+
+=== camel-consul
+
+The deprecated options were removed and should be replaced by the following options
+
+|===
+|Deprecated |Replace with
+
+|`connectTimeoutMillis`
+|`connectTimeout`
+|===
+

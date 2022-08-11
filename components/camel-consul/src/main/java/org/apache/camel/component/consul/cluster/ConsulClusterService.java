@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.consul.cluster;
 
+import java.time.Duration;
+
 import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
@@ -95,12 +97,12 @@ public final class ConsulClusterService extends AbstractCamelClusterService<Cons
         configuration.setPassword(password);
     }
 
-    public Long getConnectTimeoutMillis() {
-        return configuration.getConnectTimeoutMillis();
+    public Duration getConnectTimeout() {
+        return configuration.getConnectTimeout();
     }
 
-    public void setConnectTimeoutMillis(Long connectTimeoutMillis) {
-        configuration.setConnectTimeoutMillis(connectTimeoutMillis);
+    public void setConnectTimeout(Duration connectTimeout) {
+        configuration.setConnectTimeout(connectTimeout);
     }
 
     public Long getReadTimeoutMillis() {
