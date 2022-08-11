@@ -41,6 +41,7 @@ import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.RouteTemplateHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,6 +108,12 @@ public class KameletComponent extends DefaultComponent {
         parameters.remove(PARAM_TEMPLATE_ID);
         parameters.remove(PARAM_ROUTE_ID);
         parameters.remove(PARAM_LOCATION);
+
+        // manually need to resolve raw parameters as input to the kamelet because
+        // resolveRawParameterValues is false
+        // this ensures that parameters such as passwords are used as-is and not encoded
+        // but this requires to use RAW() syntax in the kamelet template.
+        URISupport.resolveRawParameterValues(parameters);
 
         final KameletEndpoint endpoint;
 

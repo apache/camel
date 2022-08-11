@@ -163,7 +163,7 @@ public class KameletGlobalPropertiesTest extends CamelTestSupport {
                         .templateParameter("proxyPwd")
                         .from("kamelet:source")
                         .log("info")
-                        .to("http://localhost:8080?proxyAuthUsername={{proxyUsr}}&proxyAuthPassword={{proxyPwd}}");
+                        .to("http://localhost:8080?proxyAuthUsername=RAW({{proxyUsr}})&proxyAuthPassword=RAW({{proxyPwd}})");
 
                 // template
                 routeTemplate("timer-source")
