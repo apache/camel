@@ -10,6 +10,6 @@
     "supportLevel": "Experimental",
     "groupId": "org.apache.camel",
     "artifactId": "camel-js-dsl",
-    "version": "3.18.1-SNAPSHOT"
+    "version": "3.18.2-SNAPSHOT"
   }
 }
