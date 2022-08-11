@@ -18,8 +18,54 @@
 package org.apache.camel.test.infra.couchbase.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
 public final class CouchbaseServiceFactory {
+    static class SingletonCouchbaseService extends SingletonService<CouchbaseService> implements CouchbaseService {
+        public SingletonCouchbaseService(CouchbaseService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public void beforeAll(ExtensionContext extensionContext) {
+            addToStore(extensionContext);
+        }
+
+        @Override
+        public String getConnectionString() {
+            return getService().getConnectionString();
+        }
+
+        @Override
+        public String getUsername() {
+            return getService().getUsername();
+        }
+
+        @Override
+        public String getPassword() {
+            return getService().getPassword();
+        }
+
+        @Override
+        public String getHostname() {
+            return getService().getHostname();
+        }
+
+        @Override
+        public int getPort() {
+            return getService().getPort();
+        }
+
+        @Override
+        public void afterAll(ExtensionContext extensionContext) {
+            // NO-OP
+        }
+    }
+
+    private static SimpleTestServiceBuilder<CouchbaseService> instance;
+    private static CouchbaseService service;
+
     private CouchbaseServiceFactory() {
 
     }
@@ -33,6 +79,21 @@ public final class CouchbaseServiceFactory {
                 .addLocalMapping(CouchbaseLocalContainerService::new)
                 .addRemoteMapping(CouchbaseRemoteService::new)
                 .build();
+    }
+
+    public static synchronized CouchbaseService createSingletonService() {
+        if (service == null) {
+            if (instance == null) {
+                instance = builder();
+
+                instance.addLocalMapping(() -> new SingletonCouchbaseService(new CouchbaseLocalContainerService(), "couchbase"))
+                        .addRemoteMapping(CouchbaseRemoteService::new);
+            }
+
+            service = instance.build();
+        }
+
+        return service;
     }
 
     @Deprecated
