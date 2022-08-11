@@ -340,6 +340,9 @@ public class MailBinding {
                 if (fileName != null) {
                     fileName = FileUtil.stripPath(fileName);
                 }
+                if (fileName != null) {
+                    fileName = fileName.trim();
+                }
 
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Part #{}: Disposition: {}", i, disposition);
@@ -350,8 +353,7 @@ public class MailBinding {
                     LOG.trace("Part #{}: LineCount: {}", i, part.getLineCount());
                 }
 
-                if (validDisposition(disposition, fileName)
-                        || fileName != null) {
+                if (validDisposition(disposition, fileName)) {
                     LOG.debug("Mail contains file attachment: {}", fileName);
                     if (!map.containsKey(fileName)) {
                         // Parts marked with a disposition of Part.ATTACHMENT are clearly attachments
@@ -376,8 +378,10 @@ public class MailBinding {
     }
 
     private boolean validDisposition(String disposition, String fileName) {
+        if (fileName == null || fileName.isEmpty()) {
+            return false;
+        }
         return disposition != null
-                && fileName != null
                 && (disposition.equalsIgnoreCase(Part.ATTACHMENT) || disposition.equalsIgnoreCase(Part.INLINE));
     }
 
