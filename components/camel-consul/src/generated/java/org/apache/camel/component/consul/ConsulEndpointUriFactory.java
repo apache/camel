@@ -21,14 +21,13 @@ public class ConsulEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(29);
+        Set<String> props = new HashSet<>(28);
         props.add("aclToken");
         props.add("action");
         props.add("apiEndpoint");
         props.add("blockSeconds");
         props.add("bridgeErrorHandler");
         props.add("connectTimeout");
-        props.add("connectTimeoutMillis");
         props.add("consistencyMode");
         props.add("consulClient");
         props.add("datacenter");

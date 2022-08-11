@@ -25,8 +25,8 @@ public class ConsulServiceDiscoveryFactoryConfigurer extends org.apache.camel.su
         case "AclToken": target.setAclToken(property(camelContext, java.lang.String.class, value)); return true;
         case "blockseconds":
         case "BlockSeconds": target.setBlockSeconds(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "connecttimeoutmillis":
-        case "ConnectTimeoutMillis": target.setConnectTimeoutMillis(property(camelContext, java.lang.Long.class, value)); return true;
+        case "connecttimeout":
+        case "ConnectTimeout": target.setConnectTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         case "datacenter":
         case "Datacenter": target.setDatacenter(property(camelContext, java.lang.String.class, value)); return true;
         case "password":
@@ -52,8 +52,8 @@ public class ConsulServiceDiscoveryFactoryConfigurer extends org.apache.camel.su
         case "AclToken": return java.lang.String.class;
         case "blockseconds":
         case "BlockSeconds": return java.lang.Integer.class;
-        case "connecttimeoutmillis":
-        case "ConnectTimeoutMillis": return java.lang.Long.class;
+        case "connecttimeout":
+        case "ConnectTimeout": return java.time.Duration.class;
         case "datacenter":
         case "Datacenter": return java.lang.String.class;
         case "password":
@@ -80,8 +80,8 @@ public class ConsulServiceDiscoveryFactoryConfigurer extends org.apache.camel.su
         case "AclToken": return target.getAclToken();
         case "blockseconds":
         case "BlockSeconds": return target.getBlockSeconds();
-        case "connecttimeoutmillis":
-        case "ConnectTimeoutMillis": return target.getConnectTimeoutMillis();
+        case "connecttimeout":
+        case "ConnectTimeout": return target.getConnectTimeout();
         case "datacenter":
         case "Datacenter": return target.getDatacenter();
         case "password":

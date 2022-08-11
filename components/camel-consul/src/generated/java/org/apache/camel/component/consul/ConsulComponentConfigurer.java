@@ -40,8 +40,6 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.consul.ConsulConfiguration.class, value)); return true;
         case "connecttimeout":
         case "connectTimeout": getOrCreateConfiguration(target).setConnectTimeout(property(camelContext, java.time.Duration.class, value)); return true;
-        case "connecttimeoutmillis":
-        case "connectTimeoutMillis": getOrCreateConfiguration(target).setConnectTimeoutMillis(property(camelContext, java.lang.Long.class, value)); return true;
         case "consistencymode":
         case "consistencyMode": getOrCreateConfiguration(target).setConsistencyMode(property(camelContext, com.orbitz.consul.option.ConsistencyMode.class, value)); return true;
         case "consulclient":
@@ -97,8 +95,6 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         case "configuration": return org.apache.camel.component.consul.ConsulConfiguration.class;
         case "connecttimeout":
         case "connectTimeout": return java.time.Duration.class;
-        case "connecttimeoutmillis":
-        case "connectTimeoutMillis": return java.lang.Long.class;
         case "consistencymode":
         case "consistencyMode": return com.orbitz.consul.option.ConsistencyMode.class;
         case "consulclient":
@@ -155,8 +151,6 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         case "configuration": return target.getConfiguration();
         case "connecttimeout":
         case "connectTimeout": return getOrCreateConfiguration(target).getConnectTimeout();
-        case "connecttimeoutmillis":
-        case "connectTimeoutMillis": return getOrCreateConfiguration(target).getConnectTimeoutMillis();
         case "consistencymode":
         case "consistencyMode": return getOrCreateConfiguration(target).getConsistencyMode();
         case "consulclient":

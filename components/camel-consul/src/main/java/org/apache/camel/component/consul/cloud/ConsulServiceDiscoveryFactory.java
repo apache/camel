@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.consul.cloud;
 
+import java.time.Duration;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.cloud.ServiceDiscoveryFactory;
@@ -89,12 +91,12 @@ public class ConsulServiceDiscoveryFactory implements ServiceDiscoveryFactory {
         configuration.setPassword(password);
     }
 
-    public Long getConnectTimeoutMillis() {
-        return configuration.getConnectTimeoutMillis();
+    public Duration getConnectTimeout() {
+        return configuration.getConnectTimeout();
     }
 
-    public void setConnectTimeoutMillis(Long connectTimeoutMillis) {
-        configuration.setConnectTimeoutMillis(connectTimeoutMillis);
+    public void setConnectTimeout(Duration connectTimeout) {
+        configuration.setConnectTimeout(connectTimeout);
     }
 
     public Long getReadTimeoutMillis() {

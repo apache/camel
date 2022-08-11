@@ -59,10 +59,6 @@ public abstract class ConsulClientConfiguration implements Cloneable {
     @UriParam(label = "security", secret = true)
     private String password;
 
-    @Deprecated
-    @Metadata(deprecationNote = "Use connectTimeout instead")
-    @UriParam
-    private Long connectTimeoutMillis;
     @UriParam
     private Duration connectTimeout;
     @Deprecated
@@ -230,19 +226,6 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         return ObjectHelper.isNotEmpty(userName) && ObjectHelper.isNotEmpty(password);
     }
 
-    public Long getConnectTimeoutMillis() {
-        return connectTimeoutMillis;
-    }
-
-    /**
-     * Connect timeout for OkHttpClient
-     *
-     * @deprecated use connectTimeout instead
-     */
-    public void setConnectTimeoutMillis(Long connectTimeoutMillis) {
-        this.connectTimeoutMillis = connectTimeoutMillis;
-    }
-
     public Duration getConnectTimeout() {
         return connectTimeout;
     }
@@ -372,9 +355,8 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         }
         if (ObjectHelper.isNotEmpty(connectTimeout)) {
             builder.withConnectTimeoutMillis(connectTimeout.toMillis());
-        } else if (ObjectHelper.isNotEmpty(connectTimeoutMillis)) {
-            builder.withConnectTimeoutMillis(connectTimeoutMillis);
         }
+        
         if (ObjectHelper.isNotEmpty(readTimeout)) {
             builder.withConnectTimeoutMillis(readTimeout.toMillis());
         } else if (ObjectHelper.isNotEmpty(readTimeoutMillis)) {

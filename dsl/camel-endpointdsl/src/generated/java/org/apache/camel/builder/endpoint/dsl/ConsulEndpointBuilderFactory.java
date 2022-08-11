@@ -75,41 +75,6 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
-         * Connect timeout for OkHttpClient. Deprecation note: Use
-         * connectTimeout instead.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param connectTimeoutMillis the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default ConsulEndpointConsumerBuilder connectTimeoutMillis(
-                Long connectTimeoutMillis) {
-            doSetProperty("connectTimeoutMillis", connectTimeoutMillis);
-            return this;
-        }
-        /**
-         * Connect timeout for OkHttpClient. Deprecation note: Use
-         * connectTimeout instead.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param connectTimeoutMillis the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default ConsulEndpointConsumerBuilder connectTimeoutMillis(
-                String connectTimeoutMillis) {
-            doSetProperty("connectTimeoutMillis", connectTimeoutMillis);
-            return this;
-        }
-        /**
          * Reference to a com.orbitz.consul.Consul in the registry.
          * 
          * The option is a: &lt;code&gt;com.orbitz.consul.Consul&lt;/code&gt;
@@ -782,41 +747,6 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
-         * Connect timeout for OkHttpClient. Deprecation note: Use
-         * connectTimeout instead.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param connectTimeoutMillis the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default ConsulEndpointProducerBuilder connectTimeoutMillis(
-                Long connectTimeoutMillis) {
-            doSetProperty("connectTimeoutMillis", connectTimeoutMillis);
-            return this;
-        }
-        /**
-         * Connect timeout for OkHttpClient. Deprecation note: Use
-         * connectTimeout instead.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param connectTimeoutMillis the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default ConsulEndpointProducerBuilder connectTimeoutMillis(
-                String connectTimeoutMillis) {
-            doSetProperty("connectTimeoutMillis", connectTimeoutMillis);
-            return this;
-        }
-        /**
          * Reference to a com.orbitz.consul.Consul in the registry.
          * 
          * The option is a: &lt;code&gt;com.orbitz.consul.Consul&lt;/code&gt;
@@ -1374,41 +1304,6 @@ public interface ConsulEndpointBuilderFactory {
          */
         default ConsulEndpointBuilder connectTimeout(String connectTimeout) {
             doSetProperty("connectTimeout", connectTimeout);
-            return this;
-        }
-        /**
-         * Connect timeout for OkHttpClient. Deprecation note: Use
-         * connectTimeout instead.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param connectTimeoutMillis the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default ConsulEndpointBuilder connectTimeoutMillis(
-                Long connectTimeoutMillis) {
-            doSetProperty("connectTimeoutMillis", connectTimeoutMillis);
-            return this;
-        }
-        /**
-         * Connect timeout for OkHttpClient. Deprecation note: Use
-         * connectTimeout instead.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param connectTimeoutMillis the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default ConsulEndpointBuilder connectTimeoutMillis(
-                String connectTimeoutMillis) {
-            doSetProperty("connectTimeoutMillis", connectTimeoutMillis);
             return this;
         }
         /**

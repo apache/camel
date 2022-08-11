@@ -30,8 +30,6 @@ public class ConsulEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "connecttimeout":
         case "connectTimeout": target.getConfiguration().setConnectTimeout(property(camelContext, java.time.Duration.class, value)); return true;
-        case "connecttimeoutmillis":
-        case "connectTimeoutMillis": target.getConfiguration().setConnectTimeoutMillis(property(camelContext, java.lang.Long.class, value)); return true;
         case "consistencymode":
         case "consistencyMode": target.getConfiguration().setConsistencyMode(property(camelContext, com.orbitz.consul.option.ConsistencyMode.class, value)); return true;
         case "consulclient":
@@ -86,8 +84,6 @@ public class ConsulEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "bridgeErrorHandler": return boolean.class;
         case "connecttimeout":
         case "connectTimeout": return java.time.Duration.class;
-        case "connecttimeoutmillis":
-        case "connectTimeoutMillis": return java.lang.Long.class;
         case "consistencymode":
         case "consistencyMode": return com.orbitz.consul.option.ConsistencyMode.class;
         case "consulclient":
@@ -143,8 +139,6 @@ public class ConsulEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "connecttimeout":
         case "connectTimeout": return target.getConfiguration().getConnectTimeout();
-        case "connecttimeoutmillis":
-        case "connectTimeoutMillis": return target.getConfiguration().getConnectTimeoutMillis();
         case "consistencymode":
         case "consistencyMode": return target.getConfiguration().getConsistencyMode();
         case "consulclient":
