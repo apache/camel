@@ -124,12 +124,12 @@ public class ConsulServiceRegistry extends AbstractServiceRegistry {
         configuration.setConnectTimeout(connectTimeout);
     }
 
-    public Long getReadTimeoutMillis() {
-        return configuration.getReadTimeoutMillis();
+    public Duration getReadTimeout() {
+        return configuration.getReadTimeout();
     }
 
-    public void setReadTimeoutMillis(Long readTimeoutMillis) {
-        configuration.setReadTimeoutMillis(readTimeoutMillis);
+    public void setReadTimeout(Duration readTimeout) {
+        configuration.setReadTimeout(readTimeout);
     }
 
     public Long getWriteTimeoutMillis() {

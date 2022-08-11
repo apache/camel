@@ -61,10 +61,6 @@ public abstract class ConsulClientConfiguration implements Cloneable {
 
     @UriParam
     private Duration connectTimeout;
-    @Deprecated
-    @Metadata(deprecationNote = "Use readTimeout instead")
-    @UriParam
-    private Long readTimeoutMillis;
     @UriParam
     private Duration readTimeout;
     @Deprecated
@@ -237,19 +233,6 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         this.connectTimeout = connectTimeout;
     }
 
-    public Long getReadTimeoutMillis() {
-        return readTimeoutMillis;
-    }
-
-    /**
-     * Read timeout for OkHttpClient
-     *
-     * @deprecated Use readTimeout instead.
-     */
-    public void setReadTimeoutMillis(Long readTimeoutMillis) {
-        this.readTimeoutMillis = readTimeoutMillis;
-    }
-
     public Duration getReadTimeout() {
         return readTimeout;
     }
@@ -359,9 +342,8 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         
         if (ObjectHelper.isNotEmpty(readTimeout)) {
             builder.withConnectTimeoutMillis(readTimeout.toMillis());
-        } else if (ObjectHelper.isNotEmpty(readTimeoutMillis)) {
-            builder.withReadTimeoutMillis(readTimeoutMillis);
         }
+        
         if (ObjectHelper.isNotEmpty(writeTimeout)) {
             builder.withConnectTimeoutMillis(writeTimeout.toMillis());
         } else if (ObjectHelper.isNotEmpty(writeTimeoutMillis)) {

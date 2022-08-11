@@ -183,41 +183,6 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
-         * Read timeout for OkHttpClient. Deprecation note: Use readTimeout
-         * instead.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param readTimeoutMillis the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default ConsulEndpointConsumerBuilder readTimeoutMillis(
-                Long readTimeoutMillis) {
-            doSetProperty("readTimeoutMillis", readTimeoutMillis);
-            return this;
-        }
-        /**
-         * Read timeout for OkHttpClient. Deprecation note: Use readTimeout
-         * instead.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param readTimeoutMillis the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default ConsulEndpointConsumerBuilder readTimeoutMillis(
-                String readTimeoutMillis) {
-            doSetProperty("readTimeoutMillis", readTimeoutMillis);
-            return this;
-        }
-        /**
          * Set tags. You can separate multiple tags by comma.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -855,41 +820,6 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
-         * Read timeout for OkHttpClient. Deprecation note: Use readTimeout
-         * instead.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param readTimeoutMillis the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default ConsulEndpointProducerBuilder readTimeoutMillis(
-                Long readTimeoutMillis) {
-            doSetProperty("readTimeoutMillis", readTimeoutMillis);
-            return this;
-        }
-        /**
-         * Read timeout for OkHttpClient. Deprecation note: Use readTimeout
-         * instead.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param readTimeoutMillis the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default ConsulEndpointProducerBuilder readTimeoutMillis(
-                String readTimeoutMillis) {
-            doSetProperty("readTimeoutMillis", readTimeoutMillis);
-            return this;
-        }
-        /**
          * Set tags. You can separate multiple tags by comma.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1411,39 +1341,6 @@ public interface ConsulEndpointBuilderFactory {
          */
         default ConsulEndpointBuilder readTimeout(String readTimeout) {
             doSetProperty("readTimeout", readTimeout);
-            return this;
-        }
-        /**
-         * Read timeout for OkHttpClient. Deprecation note: Use readTimeout
-         * instead.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param readTimeoutMillis the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default ConsulEndpointBuilder readTimeoutMillis(Long readTimeoutMillis) {
-            doSetProperty("readTimeoutMillis", readTimeoutMillis);
-            return this;
-        }
-        /**
-         * Read timeout for OkHttpClient. Deprecation note: Use readTimeout
-         * instead.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param readTimeoutMillis the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default ConsulEndpointBuilder readTimeoutMillis(String readTimeoutMillis) {
-            doSetProperty("readTimeoutMillis", readTimeoutMillis);
             return this;
         }
         /**

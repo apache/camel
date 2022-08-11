@@ -31,8 +31,8 @@ public class ConsulServiceDiscoveryFactoryConfigurer extends org.apache.camel.su
         case "Datacenter": target.setDatacenter(property(camelContext, java.lang.String.class, value)); return true;
         case "password":
         case "Password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "readtimeoutmillis":
-        case "ReadTimeoutMillis": target.setReadTimeoutMillis(property(camelContext, java.lang.Long.class, value)); return true;
+        case "readtimeout":
+        case "ReadTimeout": target.setReadTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         case "sslcontextparameters":
         case "SslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "url":
@@ -58,8 +58,8 @@ public class ConsulServiceDiscoveryFactoryConfigurer extends org.apache.camel.su
         case "Datacenter": return java.lang.String.class;
         case "password":
         case "Password": return java.lang.String.class;
-        case "readtimeoutmillis":
-        case "ReadTimeoutMillis": return java.lang.Long.class;
+        case "readtimeout":
+        case "ReadTimeout": return java.time.Duration.class;
         case "sslcontextparameters":
         case "SslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "url":
@@ -86,8 +86,8 @@ public class ConsulServiceDiscoveryFactoryConfigurer extends org.apache.camel.su
         case "Datacenter": return target.getDatacenter();
         case "password":
         case "Password": return target.getPassword();
-        case "readtimeoutmillis":
-        case "ReadTimeoutMillis": return target.getReadTimeoutMillis();
+        case "readtimeout":
+        case "ReadTimeout": return target.getReadTimeout();
         case "sslcontextparameters":
         case "SslContextParameters": return target.getSslContextParameters();
         case "url":

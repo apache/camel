@@ -127,23 +127,6 @@ public interface ConsulComponentBuilderFactory {
             return this;
         }
         /**
-         * Read timeout for OkHttpClient. Deprecation note: Use readTimeout
-         * instead.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param readTimeoutMillis the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default ConsulComponentBuilder readTimeoutMillis(
-                java.lang.Long readTimeoutMillis) {
-            doSetProperty("readTimeoutMillis", readTimeoutMillis);
-            return this;
-        }
-        /**
          * Set tags. You can separate multiple tags by comma.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -529,7 +512,6 @@ public interface ConsulComponentBuilderFactory {
             case "key": getOrCreateConfiguration((ConsulComponent) component).setKey((java.lang.String) value); return true;
             case "pingInstance": getOrCreateConfiguration((ConsulComponent) component).setPingInstance((boolean) value); return true;
             case "readTimeout": getOrCreateConfiguration((ConsulComponent) component).setReadTimeout((java.time.Duration) value); return true;
-            case "readTimeoutMillis": getOrCreateConfiguration((ConsulComponent) component).setReadTimeoutMillis((java.lang.Long) value); return true;
             case "tags": getOrCreateConfiguration((ConsulComponent) component).setTags((java.lang.String) value); return true;
             case "url": getOrCreateConfiguration((ConsulComponent) component).setUrl((java.lang.String) value); return true;
             case "writeTimeout": getOrCreateConfiguration((ConsulComponent) component).setWriteTimeout((java.time.Duration) value); return true;
