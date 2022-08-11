@@ -63,6 +63,6 @@ public class ZooKeeperContainer extends GenericContainer {
     }
 
     public String getConnectionString() {
-        return String.format("%s:%d", getContainerIpAddress(), getMappedPort(CLIENT_PORT));
+        return String.format("%s:%d", getHost(), getMappedPort(CLIENT_PORT));
     }
 }

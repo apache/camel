@@ -80,7 +80,7 @@ public class RedisLocalContainerService implements RedisService, ContainerServic
 
     @Override
     public String host() {
-        return container.getContainerIpAddress();
+        return container.getHost();
     }
 
     @Override
