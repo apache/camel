@@ -23,16 +23,17 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class JmsInOutDisableTimeToLiveTest extends CamelTestSupport {
+public class JmsInOutDisableTimeToLiveTest extends AbstractJMSTest {
 
-    private final String urlTimeout = "activemq:queue.in?requestTimeout=2000";
-    private final String urlTimeToLiveDisabled = "activemq:queue.in?requestTimeout=2000&disableTimeToLive=true";
+    private final String urlTimeout = "activemq:JmsInOutDisableTimeToLiveTest.in?requestTimeout=2000";
+    private final String urlTimeToLiveDisabled
+            = "activemq:JmsInOutDisableTimeToLiveTest.in?requestTimeout=2000&disableTimeToLive=true";
 
     @Test
     public void testInOutExpired() throws Exception {
@@ -81,7 +82,8 @@ public class JmsInOutDisableTimeToLiveTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
         return camelContext;
     }
@@ -98,7 +100,7 @@ public class JmsInOutDisableTimeToLiveTest extends CamelTestSupport {
                         .to(urlTimeToLiveDisabled)
                         .to("mock:result");
 
-                from("activemq:queue.out")
+                from("activemq:JmsInOutDisableTimeToLiveTest.out")
                         .to("mock:end");
             }
         };
@@ -121,7 +123,7 @@ public class JmsInOutDisableTimeToLiveTest extends CamelTestSupport {
             // loop to empty queue
             while (true) {
                 // receive the message from the queue, wait at most 2 sec
-                String msg = consumer.receiveBody("activemq:queue.in", 2000, String.class);
+                String msg = consumer.receiveBody("activemq:JmsInOutDisableTimeToLiveTest.in", 2000, String.class);
                 if (msg == null) {
                     // no more messages in queue
                     break;
@@ -131,7 +133,7 @@ public class JmsInOutDisableTimeToLiveTest extends CamelTestSupport {
                 msg = "Hello " + msg;
 
                 // send it to the next queue
-                producer.sendBodyAndHeader("activemq:queue.out", msg, "number", count++);
+                producer.sendBodyAndHeader("activemq:JmsInOutDisableTimeToLiveTest.out", msg, "number", count++);
             }
         }
     }

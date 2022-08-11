@@ -42,7 +42,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests CAMEL-5769. Camel JMS producer can block a thread under specific circumstances.
- *
  */
 public class JmsBlockedAsyncRoutingEngineTest extends CamelTestSupport {
 

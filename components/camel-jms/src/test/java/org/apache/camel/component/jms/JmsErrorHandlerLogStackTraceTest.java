@@ -22,16 +22,16 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
  */
-public class JmsErrorHandlerLogStackTraceTest extends CamelTestSupport {
+public class JmsErrorHandlerLogStackTraceTest extends AbstractJMSTest {
 
     @Test
     public void testErrorHandlerLogStackTrace() {
@@ -64,7 +64,8 @@ public class JmsErrorHandlerLogStackTraceTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         JmsComponent jms = JmsComponent.jmsComponentAutoAcknowledge(connectionFactory);
         jms.getConfiguration().setErrorHandlerLogStackTrace(false);
         jms.getConfiguration().setErrorHandlerLoggingLevel(LoggingLevel.ERROR);

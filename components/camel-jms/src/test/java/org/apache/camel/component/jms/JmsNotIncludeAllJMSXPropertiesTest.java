@@ -23,12 +23,12 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 
-public class JmsNotIncludeAllJMSXPropertiesTest extends CamelTestSupport {
+public class JmsNotIncludeAllJMSXPropertiesTest extends AbstractJMSTest {
 
     @Test
     public void testNotIncludeAll() throws Exception {
@@ -50,7 +50,8 @@ public class JmsNotIncludeAllJMSXPropertiesTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
         jms.getConfiguration().setIncludeAllJMSXProperties(false);
         camelContext.addComponent("activemq", jms);

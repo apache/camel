@@ -25,18 +25,18 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class JmsRequestReplyExclusiveReplyToConcurrentTest extends CamelTestSupport {
+public class JmsRequestReplyExclusiveReplyToConcurrentTest extends AbstractJMSTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsRequestReplyExclusiveReplyToConcurrentTest.class);
 
@@ -61,7 +61,7 @@ public class JmsRequestReplyExclusiveReplyToConcurrentTest extends CamelTestSupp
         LOG.info("Waiting to process {} messages...", size);
 
         // if any of the assertions above fails then the latch will not get decremented 
-        assertTrue(latch.await(3, TimeUnit.SECONDS), "All assertions outside the main thread above should have passed");
+        assertTrue(latch.await(10, TimeUnit.SECONDS), "All assertions outside the main thread above should have passed");
 
         long delta = watch.taken();
         LOG.info("Took {} millis", delta);
@@ -75,7 +75,8 @@ public class JmsRequestReplyExclusiveReplyToConcurrentTest extends CamelTestSupp
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
         return camelContext;
     }
@@ -86,11 +87,11 @@ public class JmsRequestReplyExclusiveReplyToConcurrentTest extends CamelTestSupp
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("activemq:queue:foo?replyTo=bar&replyToType=Exclusive&concurrentConsumers=5&maxConcurrentConsumers=10&maxMessagesPerTask=100")
+                        .to("activemq:queue:fooJmsRequestReplyExclusiveReplyToConcurrentTest?replyTo=bar&replyToType=Exclusive&concurrentConsumers=5&maxConcurrentConsumers=10&maxMessagesPerTask=100")
                         .to("log:reply")
                         .to("mock:reply");
 
-                from("activemq:queue:foo?concurrentConsumers=5&maxConcurrentConsumers=10&maxMessagesPerTask=100")
+                from("activemq:queue:fooJmsRequestReplyExclusiveReplyToConcurrentTest?concurrentConsumers=5&maxConcurrentConsumers=10&maxMessagesPerTask=100")
                         .transform(body().prepend("Hello "));
             }
         };

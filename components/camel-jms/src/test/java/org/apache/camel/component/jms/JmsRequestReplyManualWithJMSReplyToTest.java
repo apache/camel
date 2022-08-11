@@ -23,20 +23,20 @@ import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consume;
 import org.apache.camel.Header;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JmsRequestReplyManualWithJMSReplyToTest extends CamelTestSupport {
+public class JmsRequestReplyManualWithJMSReplyToTest extends AbstractJMSTest {
 
     @Override
     public boolean isUseRouteBuilder() {
         return false;
     }
 
-    @Consume("activemq:queue:foo")
+    @Consume("activemq:queue:fooJmsRequestReplyManualWithJMSReplyToTest")
     public void doSomething(@Header("JMSReplyTo") Destination jmsReplyTo, @Body String body) {
         assertEquals("Hello World", body);
 
@@ -49,12 +49,12 @@ public class JmsRequestReplyManualWithJMSReplyToTest extends CamelTestSupport {
         context.start();
 
         // send an InOnly but force Camel to pass JMSReplyTo
-        template.send("activemq:queue:foo?preserveMessageQos=true", exchange -> {
+        template.send("activemq:queue:fooJmsRequestReplyManualWithJMSReplyToTest?preserveMessageQos=true", exchange -> {
             exchange.getIn().setBody("Hello World");
-            exchange.getIn().setHeader("JMSReplyTo", "bar");
+            exchange.getIn().setHeader("JMSReplyTo", "barJmsRequestReplyManualWithJMSReplyToTest");
         });
 
-        String reply = consumer.receiveBody("activemq:queue:bar", 5000, String.class);
+        String reply = consumer.receiveBody("activemq:queue:barJmsRequestReplyManualWithJMSReplyToTest", 5000, String.class);
         assertEquals("Bye World", reply);
     }
 
@@ -62,7 +62,7 @@ public class JmsRequestReplyManualWithJMSReplyToTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;

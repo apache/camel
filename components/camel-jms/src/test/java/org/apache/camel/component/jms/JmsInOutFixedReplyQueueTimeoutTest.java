@@ -25,18 +25,16 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- *
- */
-public class JmsInOutFixedReplyQueueTimeoutTest extends CamelTestSupport {
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
+public class JmsInOutFixedReplyQueueTimeoutTest extends AbstractJMSTest {
 
     protected String componentName = "activemq";
 
@@ -44,7 +42,7 @@ public class JmsInOutFixedReplyQueueTimeoutTest extends CamelTestSupport {
     public void testOk() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye Camel");
 
-        String out = template.requestBody("direct:start", "Camel", String.class);
+        String out = template.requestBody("direct:JmsInOutFixedReplyQueueTimeoutTest", "Camel", String.class);
         assertEquals("Bye Camel", out);
 
         assertMockEndpointsSatisfied();
@@ -55,7 +53,7 @@ public class JmsInOutFixedReplyQueueTimeoutTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
         Exception ex = assertThrows(CamelExecutionException.class,
-                () -> template.requestBody("direct:start", "World", String.class),
+                () -> template.requestBody("direct:JmsInOutFixedReplyQueueTimeoutTest", "World", String.class),
                 "Should have thrown exception");
 
         assertIsInstanceOf(ExchangeTimedOutException.class, ex.getCause());
@@ -66,7 +64,8 @@ public class JmsInOutFixedReplyQueueTimeoutTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory(service);
         camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
@@ -76,14 +75,15 @@ public class JmsInOutFixedReplyQueueTimeoutTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                        .to(ExchangePattern.InOut, "activemq:queue:foo?replyTo=queue:bar&requestTimeout=2000")
+                from("direct:JmsInOutFixedReplyQueueTimeoutTest")
+                        .to(ExchangePattern.InOut,
+                                "activemq:queue:JmsInOutFixedReplyQueueTimeoutTest?replyTo=queue:JmsInOutFixedReplyQueueTimeoutTestReply&requestTimeout=2000")
                         .to("mock:result");
 
-                from("activemq:queue:foo")
+                from("activemq:queue:JmsInOutFixedReplyQueueTimeoutTest")
                         .choice().when(body().isEqualTo("World"))
-                            .log("Sleeping for 4 sec to force a timeout")
-                            .delay(Duration.ofSeconds(4).toMillis()).endChoice().end()
+                        .log("Sleeping for 4 sec to force a timeout")
+                        .delay(Duration.ofSeconds(4).toMillis()).endChoice().end()
                         .transform(body().prepend("Bye ")).to("log:reply");
             }
         };

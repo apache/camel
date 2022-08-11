@@ -25,21 +25,21 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.CamelJmsTestHelper;
+import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.apache.camel.test.junit5.TestSupport.assertMessageHeader;
 
 /**
  * Lets test that a number of headers MQSeries doesn't like to be sent are excluded when forwarding a JMS message from
  * one destination to another
  */
-public class MQSeriesHeaderTest extends CamelTestSupport {
+public class MQSeriesHeaderTest extends AbstractJMSTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(MQSeriesHeaderTest.class);
 
@@ -51,7 +51,7 @@ public class MQSeriesHeaderTest extends CamelTestSupport {
         Map<String, Object> headers = new HashMap<>();
         headers.put("JMSXAppID", "ABC");
 
-        template.sendBodyAndHeaders("activemq:test.a", "Hello World!", headers);
+        template.sendBodyAndHeaders("activemq:MQSeriesHeaderTest.a", "Hello World!", headers);
 
         endpoint.assertIsSatisfied();
 
@@ -59,14 +59,15 @@ public class MQSeriesHeaderTest extends CamelTestSupport {
         Message in = exchange.getIn();
         assertMessageHeader(in, "JMSXAppID", null);
 
-        LOG.info("Received message: " + in);
+        LOG.info("Received message: {}", in);
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
@@ -76,8 +77,8 @@ public class MQSeriesHeaderTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:test.a").to("activemq:test.b");
-                from("activemq:test.b").to("mock:result");
+                from("activemq:MQSeriesHeaderTest.a").to("activemq:MQSeriesHeaderTest.b");
+                from("activemq:MQSeriesHeaderTest.b").to("mock:result");
             }
         };
     }

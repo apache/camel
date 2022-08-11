@@ -22,17 +22,17 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.CamelJmsTestHelper;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.jms.AbstractJMSTest;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 
 /**
  * Unit test to assert that timeouts don't trigger twice when JMS InOut endpoints are chained, and the second endpoint
  * takes longer to respond than the timeout set for the first endpoint.
  */
-public class JmsChainedEndpointDelayTimeoutTest extends CamelTestSupport {
+public class JmsChainedEndpointDelayTimeoutTest extends AbstractJMSTest {
 
     @Test
     public void testTimeoutNotTriggeredTempQueue() throws Exception {
@@ -53,7 +53,8 @@ public class JmsChainedEndpointDelayTimeoutTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
         return camelContext;
     }

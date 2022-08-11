@@ -21,36 +21,37 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JmsInOnlyWithReplyToHeaderTest extends CamelTestSupport {
+public class JmsInOnlyWithReplyToHeaderTest extends AbstractJMSTest {
 
     @Test
     public void testJmsInOnlyWithReplyToHeader() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
-        mock.expectedHeaderReceived("JMSReplyTo", "queue://bar");
+        mock.expectedHeaderReceived("JMSReplyTo", "queue://JmsInOnlyWithReplyToHeaderTest.Reply");
 
-        template.send("activemq:queue:foo?preserveMessageQos=true", exchange -> {
+        template.send("activemq:queue:JmsInOnlyWithReplyToHeaderTest.Request?preserveMessageQos=true", exchange -> {
             exchange.getIn().setBody("World");
-            exchange.getIn().setHeader("JMSReplyTo", "bar");
+            exchange.getIn().setHeader("JMSReplyTo", "JmsInOnlyWithReplyToHeaderTest.Reply");
         });
 
         assertMockEndpointsSatisfied();
 
-        // reply is in bar queue so lets consume it
-        String reply = consumer.receiveBody("activemq:queue:bar", 5000, String.class);
+        // reply is in JmsInOnlyWithReplyToHeaderTest.Reply queue so lets consume it
+        String reply = consumer.receiveBody("activemq:queue:JmsInOnlyWithReplyToHeaderTest.Reply", 5000, String.class);
         assertEquals("Hello World", reply);
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
         return camelContext;
     }
@@ -60,7 +61,7 @@ public class JmsInOnlyWithReplyToHeaderTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo")
+                from("activemq:queue:JmsInOnlyWithReplyToHeaderTest.Request")
                         .transform(body().prepend("Hello "))
                         .to("mock:result");
             }

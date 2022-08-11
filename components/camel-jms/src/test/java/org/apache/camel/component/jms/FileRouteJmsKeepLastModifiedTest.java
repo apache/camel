@@ -17,46 +17,46 @@
 package org.apache.camel.component.jms;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- *
- */
-public class FileRouteJmsKeepLastModifiedTest extends CamelTestSupport {
+public class FileRouteJmsKeepLastModifiedTest extends AbstractJMSTest {
 
     protected String componentName = "activemq";
+    private final File inbox = new File("target/FileRouteJmsKeepLastModifiedTest/inbox/hello.txt");
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        deleteDirectory("target/inbox");
-        deleteDirectory("target/outbox");
+        deleteDirectory("target/FileRouteJmsKeepLastModifiedTest/inbox");
+        deleteDirectory("target/FileRouteJmsKeepLastModifiedTest/outbox");
+
         super.setUp();
+
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+        template.sendBodyAndHeader("file://target/FileRouteJmsKeepLastModifiedTest/inbox", "Hello World", Exchange.FILE_NAME,
+                "hello.txt");
     }
 
     @Test
     public void testKeepLastModified() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(1);
-
-        template.sendBodyAndHeader("file://target/inbox", "Hello World", Exchange.FILE_NAME, "hello.txt");
-
         assertMockEndpointsSatisfied();
+        Awaitility.await().atMost(5, TimeUnit.SECONDS).until(inbox::exists);
 
-        File inbox = new File("trarget/inbox/hello.txt");
-        File outbox = new File("trarget/outbox/hello.txt");
-
+        File outbox = new File("target/FileRouteJmsKeepLastModifiedTest/outbox/hello.txt");
         assertEquals(inbox.lastModified(), outbox.lastModified(), "Should keep last modified");
     }
 
@@ -64,7 +64,7 @@ public class FileRouteJmsKeepLastModifiedTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory = createConnectionFactory(service);
         camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
@@ -74,12 +74,13 @@ public class FileRouteJmsKeepLastModifiedTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("file://target/inbox?noop=true").to("activemq:queue:hello");
+                from("file://target/FileRouteJmsKeepLastModifiedTest/inbox?noop=true")
+                        .to("activemq:queue:FileRouteJmsKeepLastModifiedTest");
 
-                from("activemq:queue:hello")
+                from("activemq:queue:FileRouteJmsKeepLastModifiedTest")
                         // just a little delay so the write of the file happens later
                         .delayer(100)
-                        .to("file://target/outbox?keepLastModified=true")
+                        .to("file://target/FileRouteJmsKeepLastModifiedTest/outbox?keepLastModified=true")
                         .to("mock:result");
             }
         };

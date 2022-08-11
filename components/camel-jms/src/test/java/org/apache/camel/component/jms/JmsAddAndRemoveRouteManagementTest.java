@@ -24,16 +24,16 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test that all thread pools is removed when adding and removing a route dynamically
  */
-public class JmsAddAndRemoveRouteManagementTest extends CamelTestSupport {
+public class JmsAddAndRemoveRouteManagementTest extends AbstractJMSTest {
 
     @Override
     protected boolean useJmx() {
@@ -55,15 +55,15 @@ public class JmsAddAndRemoveRouteManagementTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:in").routeId("myNewRoute")
-                        .to("activemq:queue:foo");
+                from("activemq:queue:JmsAddAndRemoveRouteManagementTest.in").routeId("myNewRoute")
+                        .to("activemq:queue:JmsAddAndRemoveRouteManagementTest.foo");
             }
         });
 
         Set<ObjectName> during = mbeanServer.queryNames(new ObjectName("*:type=threadpools,*"), null);
         assertEquals(before.size() + 1, during.size(), "There should be one more thread pool in JMX");
 
-        template.sendBody("activemq:queue:in", "Hello World");
+        template.sendBody("activemq:queue:JmsAddAndRemoveRouteManagementTest.in", "Hello World");
 
         assertMockEndpointsSatisfied();
 
@@ -78,7 +78,7 @@ public class JmsAddAndRemoveRouteManagementTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
@@ -89,7 +89,7 @@ public class JmsAddAndRemoveRouteManagementTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo").to("mock:result");
+                from("activemq:queue:JmsAddAndRemoveRouteManagementTest.foo").to("mock:result");
             }
         };
     }

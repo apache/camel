@@ -17,8 +17,10 @@
 package org.apache.camel.component.jms;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class JmsRouteUsingSpringAndJmsNameTest extends JmsRouteUsingSpringTest {
 
     @Override

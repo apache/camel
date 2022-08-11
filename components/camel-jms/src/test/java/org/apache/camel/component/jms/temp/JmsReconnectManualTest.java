@@ -54,7 +54,7 @@ public class JmsReconnectManualTest {
 
     /**
      * TODO: Find a way to recreate the problem with ActiveMQ and fully automate the test
-     * 
+     *
      * @throws Exception
      */
     @Disabled("This test is disabled as the problem can currently not be reproduced using ActiveMQ.")

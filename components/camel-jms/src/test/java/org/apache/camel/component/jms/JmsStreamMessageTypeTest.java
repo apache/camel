@@ -23,22 +23,24 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JmsStreamMessageTypeTest extends CamelTestSupport {
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
+public class JmsStreamMessageTypeTest extends AbstractJMSTest {
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        deleteDirectory("target/stream");
+        deleteDirectory("target/stream/JmsStreamMessageTypeTest");
         super.setUp();
     }
 
@@ -46,7 +48,8 @@ public class JmsStreamMessageTypeTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
         jms.getConfiguration().setStreamMessageTypeEnabled(true); // turn on streaming
         camelContext.addComponent("jms", jms);
@@ -68,7 +71,8 @@ public class JmsStreamMessageTypeTest extends CamelTestSupport {
         // assert on the content of input versus output file
         String srcContent = context.getTypeConverter().mandatoryConvertTo(String.class, new File("src/test/data/message1.xml"));
         String dstContent
-                = context.getTypeConverter().mandatoryConvertTo(String.class, new File("target/stream/out/message1.xml"));
+                = context.getTypeConverter().mandatoryConvertTo(String.class,
+                        new File("target/stream/JmsStreamMessageTypeTest/out/message1.xml"));
         assertEquals(srcContent, dstContent, "both the source and destination files should have the same content");
     }
 
@@ -87,7 +91,8 @@ public class JmsStreamMessageTypeTest extends CamelTestSupport {
         // assert on the content of input versus output file
         String srcContent = context.getTypeConverter().mandatoryConvertTo(String.class, new File("src/test/data/message1.txt"));
         String dstContent
-                = context.getTypeConverter().mandatoryConvertTo(String.class, new File("target/stream/out/message1.txt"));
+                = context.getTypeConverter().mandatoryConvertTo(String.class,
+                        new File("target/stream/JmsStreamMessageTypeTest/out/message1.txt"));
         assertEquals(srcContent, dstContent, "both the source and destination files should have the same content");
     }
 
@@ -96,9 +101,10 @@ public class JmsStreamMessageTypeTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("file:target/stream/in").to("jms:queue:foo");
+                from("file:target/stream/in").to("jms:queue:JmsStreamMessageTypeTest");
 
-                from("jms:queue:foo").to("file:target/stream/out").to("mock:result");
+                from("jms:queue:JmsStreamMessageTypeTest").to("file:target/stream/JmsStreamMessageTypeTest/out")
+                        .to("mock:result");
             }
         };
     }

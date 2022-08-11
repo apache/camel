@@ -25,24 +25,24 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test that we can do file over JMS to file.
  */
-public class FileRouteToJmsToFileTest extends CamelTestSupport {
+public class FileRouteToJmsToFileTest extends AbstractJMSTest {
 
     protected String componentName = "activemq";
 
     @Test
     public void testRouteFileToFile() throws Exception {
         deleteDirectory("target/file2file");
-        NotifyBuilder notify = new NotifyBuilder(context).from("activemq:queue:hello").whenDone(1).create();
+        NotifyBuilder notify = new NotifyBuilder(context).from("activemq:queue:FileRouteToJmsToFileTest").whenDone(1).create();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -61,7 +61,8 @@ public class FileRouteToJmsToFileTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
@@ -71,9 +72,9 @@ public class FileRouteToJmsToFileTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("file://target/file2file/in").to("activemq:queue:hello");
+                from("file://target/file2file/in").to("activemq:queue:FileRouteToJmsToFileTest");
 
-                from("activemq:queue:hello").to("file://target/file2file/out", "mock:result");
+                from("activemq:queue:FileRouteToJmsToFileTest").to("file://target/file2file/out", "mock:result");
             }
         };
     }

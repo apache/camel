@@ -20,16 +20,16 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for Camel loadbalancer failover with JMS
  */
-public class JmsLoadBalanceFailoverTest extends CamelTestSupport {
+public class JmsLoadBalanceFailoverTest extends AbstractJMSTest {
 
     @Test
     public void testFailover() throws Exception {
@@ -50,16 +50,16 @@ public class JmsLoadBalanceFailoverTest extends CamelTestSupport {
             public void configure() {
                 from("direct:start")
                         .loadBalance().failover()
-                        .to("jms:queue:foo?transferException=true")
-                        .to("jms:queue:bar?transferException=true")
+                        .to("jms:queue:fooJmsLoadBalanceFailoverTest?transferException=true")
+                        .to("jms:queue:barJmsLoadBalanceFailoverTest?transferException=true")
                         .end()
                         .to("mock:result");
 
-                from("jms:queue:foo?transferException=true")
+                from("jms:queue:fooJmsLoadBalanceFailoverTest?transferException=true")
                         .to("mock:foo")
                         .throwException(new IllegalArgumentException("Damn"));
 
-                from("jms:queue:bar?transferException=true")
+                from("jms:queue:barJmsLoadBalanceFailoverTest?transferException=true")
                         .to("mock:bar")
                         .transform().simple("Bye World");
             }
@@ -70,7 +70,8 @@ public class JmsLoadBalanceFailoverTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent("jms", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;

@@ -20,23 +20,25 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 
-public class JmsMultipleConsumersTest extends CamelTestSupport {
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
+public class JmsMultipleConsumersTest extends AbstractJMSTest {
 
     @Test
     public void testMultipleConsumersTopic() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("jms:topic:foo").to("mock:foo");
+                from("jms:topic:JmsMultipleConsumersTest").to("mock:foo");
 
-                from("direct:start").to("mock:result");
+                from("direct:JmsMultipleConsumersTest").to("mock:result");
 
-                from("jms:topic:foo").to("mock:bar");
+                from("jms:topic:JmsMultipleConsumersTest").to("mock:bar");
             }
         });
         context.start();
@@ -45,7 +47,7 @@ public class JmsMultipleConsumersTest extends CamelTestSupport {
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        template.sendBody("jms:topic:foo", "Hello World");
+        template.sendBody("jms:topic:JmsMultipleConsumersTest", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -55,11 +57,11 @@ public class JmsMultipleConsumersTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("jms:queue:foo").to("mock:result");
+                from("jms:queue:JmsMultipleConsumersTest").to("mock:result");
 
-                from("direct:start").to("mock:result");
+                from("direct:JmsMultipleConsumersTest").to("mock:result");
 
-                from("jms:queue:foo").to("mock:result");
+                from("jms:queue:JmsMultipleConsumersTest").to("mock:result");
             }
         });
 
@@ -67,8 +69,8 @@ public class JmsMultipleConsumersTest extends CamelTestSupport {
 
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
-        template.sendBody("jms:queue:foo", "Hello World");
-        template.sendBody("jms:queue:foo", "Bye World");
+        template.sendBody("jms:queue:JmsMultipleConsumersTest", "Hello World");
+        template.sendBody("jms:queue:JmsMultipleConsumersTest", "Bye World");
 
         assertMockEndpointsSatisfied();
     }
@@ -77,7 +79,8 @@ public class JmsMultipleConsumersTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent("jms", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;

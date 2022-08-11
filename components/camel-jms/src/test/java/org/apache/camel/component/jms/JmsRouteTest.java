@@ -21,13 +21,13 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 
-public class JmsRouteTest extends CamelTestSupport {
+public class JmsRouteTest extends AbstractJMSTest {
     protected MockEndpoint resultEndpoint;
     protected String componentName = "activemq";
     protected String startEndpointUri;
@@ -63,7 +63,7 @@ public class JmsRouteTest extends CamelTestSupport {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        startEndpointUri = componentName + ":queue:test.a";
+        startEndpointUri = componentName + ":queue:test.a.JmsRouteTest";
 
         super.setUp();
 
@@ -74,7 +74,8 @@ public class JmsRouteTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
@@ -84,8 +85,8 @@ public class JmsRouteTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(startEndpointUri).to(componentName + ":queue:test.b");
-                from(componentName + ":queue:test.b").to("mock:result");
+                from(startEndpointUri).to(componentName + ":queue:test.b.JmsRouteTest");
+                from(componentName + ":queue:test.b.JmsRouteTest").to("mock:result");
             }
         };
     }

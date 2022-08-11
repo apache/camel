@@ -21,7 +21,6 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
@@ -29,7 +28,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 /**
  * Testing with async start listener
  */
-public class JmsAsyncStartStopListenerTest extends CamelTestSupport {
+public class JmsAsyncStartStopListenerTest extends AbstractJMSTest {
 
     protected String componentName = "activemq";
 

@@ -27,21 +27,21 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class JmsHeaderFilteringTest extends CamelTestSupport {
+public class JmsHeaderFilteringTest extends AbstractJMSTest {
 
     private static final String IN_FILTER_PATTERN = "(org_apache_camel)[_|a-z|A-Z|0-9]*(test)[_|a-z|A-Z|0-9]*";
 
     private final String componentName = "jms";
-    private final String testQueueEndpointA = componentName + ":queue:test.a";
-    private final String testQueueEndpointB = componentName + ":queue:test.b";
+    private final String testQueueEndpointA = componentName + ":queue:JmsHeaderFilteringTest.test..a";
+    private final String testQueueEndpointB = componentName + ":queue:JmsHeaderFilteringTest.test.b";
     private final String assertionReceiver = "mock:errors";
     private final CountDownLatch latch = new CountDownLatch(2);
 
@@ -67,7 +67,8 @@ public class JmsHeaderFilteringTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
 
         JmsComponent component = camelContext.getComponent(componentName, JmsComponent.class);

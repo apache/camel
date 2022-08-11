@@ -54,12 +54,33 @@ public final class CamelJmsTestHelper {
         return pooled;
     }
 
+    @Deprecated
     public static ConnectionFactory createConnectionFactory() {
         return createConnectionFactory(null, null);
     }
 
+    @Deprecated
     public static ConnectionFactory createConnectionFactory(String options, Integer maximumRedeliveries) {
         String url = createBrokerUrl(options);
+        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
+        // optimize AMQ to be as fast as possible so unit testing is quicker
+        connectionFactory.setCopyMessageOnSend(false);
+        connectionFactory.setOptimizeAcknowledge(true);
+        connectionFactory.setOptimizedMessageDispatch(true);
+        // When using asyncSend, producers will not be guaranteed to send in the order we
+        // have in the tests (which may be confusing for queues) so we need this set to false.
+        // Another way of guaranteeing order is to use persistent messages or transactions.
+        connectionFactory.setUseAsyncSend(false);
+        connectionFactory.setAlwaysSessionAsync(false);
+        if (maximumRedeliveries != null) {
+            connectionFactory.getRedeliveryPolicy().setMaximumRedeliveries(maximumRedeliveries);
+        }
+        connectionFactory.setTrustAllPackages(true);
+        return connectionFactory;
+    }
+
+    @Deprecated
+    public static ConnectionFactory createConnectionFactoryForURL(String url, Integer maximumRedeliveries) {
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
         // optimize AMQ to be as fast as possible so unit testing is quicker
         connectionFactory.setCopyMessageOnSend(false);
@@ -97,6 +118,7 @@ public final class CamelJmsTestHelper {
         return createBrokerUrl(null);
     }
 
+    @Deprecated
     private static String createBrokerUrl(String options) {
         // using a unique broker name improves testing when running the entire test suite in the same JVM
         int id = counter.incrementAndGet();
@@ -126,6 +148,7 @@ public final class CamelJmsTestHelper {
         return createUri("vm://test-broker-" + id, map, options);
     }
 
+    @Deprecated
     private static String createUri(String uri, Map<String, Object> map, String options) {
         try {
             map.putAll(URISupport.parseQuery(options));

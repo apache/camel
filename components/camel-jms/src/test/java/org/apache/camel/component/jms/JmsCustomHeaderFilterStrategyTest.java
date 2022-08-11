@@ -26,12 +26,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 
-public class JmsCustomHeaderFilterStrategyTest extends CamelTestSupport {
+public class JmsCustomHeaderFilterStrategyTest extends AbstractJMSTest {
 
     protected String componentName = "activemq";
 
@@ -46,7 +46,7 @@ public class JmsCustomHeaderFilterStrategyTest extends CamelTestSupport {
         headers.put("foo", "bar");
         headers.put("skipme", 123);
 
-        template.sendBodyAndHeaders("activemq:queue:foo", "Hello World", headers);
+        template.sendBodyAndHeaders("activemq:queue:JmsCustomHeaderFilterStrategyTest", "Hello World", headers);
 
         assertMockEndpointsSatisfied();
     }
@@ -55,7 +55,8 @@ public class JmsCustomHeaderFilterStrategyTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
 
         JmsComponent jms = camelContext.getComponent(componentName, JmsComponent.class);
@@ -69,7 +70,7 @@ public class JmsCustomHeaderFilterStrategyTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo?eagerLoadingOfProperties=true").to("mock:result");
+                from("activemq:queue:JmsCustomHeaderFilterStrategyTest?eagerLoadingOfProperties=true").to("mock:result");
             }
         };
     }

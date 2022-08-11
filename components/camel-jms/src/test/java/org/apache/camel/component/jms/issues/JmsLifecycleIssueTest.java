@@ -21,19 +21,21 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.CamelJmsTestHelper;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.jms.AbstractJMSTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import static org.apache.camel.ServiceStatus.Started;
 import static org.apache.camel.ServiceStatus.Stopped;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JmsLifecycleIssueTest extends CamelTestSupport {
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
+public class JmsLifecycleIssueTest extends AbstractJMSTest {
 
-    public static final String ROUTE_ID = "simpleRoute";
-    public static final String ENDPOINT_URI = "activemq:processOrder";
+    public static final String ROUTE_ID = "JmsLifecycleIssueTestRoute";
+    public static final String ENDPOINT_URI = "activemq:JmsLifecycleIssueTest.processOrder";
 
     @Test
     public void routeThatIsStoppedAndThenResumedAcceptsMessage() throws Exception {
@@ -71,7 +73,8 @@ public class JmsLifecycleIssueTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
         return camelContext;
     }

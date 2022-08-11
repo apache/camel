@@ -30,15 +30,15 @@ public class JmsInOutFixedReplyQueueTimeoutUseMessageIDAsCorrelationIDTest exten
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
+                from("direct:JmsInOutFixedReplyQueueTimeoutTest")
                         .to(ExchangePattern.InOut,
-                                "activemq:queue:foo?replyTo=queue:bar&useMessageIDAsCorrelationID=true&requestTimeout=2000")
+                                "activemq:queue:JmsInOutFixedReplyQueueTimeoutUseMessageIDAsCorrelationIDTest?replyTo=queue:JmsInOutFixedReplyQueueTimeoutUseMessageIDAsCorrelationIDTestReply&useMessageIDAsCorrelationID=true&requestTimeout=2000")
                         .to("mock:result");
 
-                from("activemq:queue:foo")
+                from("activemq:queue:JmsInOutFixedReplyQueueTimeoutUseMessageIDAsCorrelationIDTest")
                         .choice().when(body().isEqualTo("World"))
-                            .log("Sleeping for 4 sec to force a timeout")
-                            .delay(Duration.ofSeconds(4).toMillis()).endChoice().end()
+                        .log("Sleeping for 4 sec to force a timeout")
+                        .delay(Duration.ofSeconds(4).toMillis()).endChoice().end()
                         .transform(body().prepend("Bye ")).to("log:reply");
             }
         };

@@ -22,10 +22,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class JmsMessageAsOriginalMessageInDefaultUnitOfWorkTest extends CamelTestSupport {
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
+
+public class JmsMessageAsOriginalMessageInDefaultUnitOfWorkTest extends AbstractJMSTest {
 
     @EndpointInject("mock:result")
     private MockEndpoint mockResult;
@@ -39,7 +40,7 @@ public class JmsMessageAsOriginalMessageInDefaultUnitOfWorkTest extends CamelTes
                         .useOriginalMessage()
                         .to(mockResult);
 
-                from("jms:queue:foo")
+                from("jms:queue:JmsMessageAsOriginalMessageInDefaultUnitOfWorkTest")
                         .throwException(new Exception("forced exception for test"));
             }
         });
@@ -48,7 +49,8 @@ public class JmsMessageAsOriginalMessageInDefaultUnitOfWorkTest extends CamelTes
         mockResult.expectedBodiesReceived("Hello World");
         mockResult.expectedHeaderReceived("header-key", "header-value");
 
-        template.sendBodyAndHeader("jms:queue:foo", "Hello World", "header-key", "header-value");
+        template.sendBodyAndHeader("jms:queue:JmsMessageAsOriginalMessageInDefaultUnitOfWorkTest", "Hello World", "header-key",
+                "header-value");
 
         assertMockEndpointsSatisfied();
     }
@@ -57,7 +59,8 @@ public class JmsMessageAsOriginalMessageInDefaultUnitOfWorkTest extends CamelTes
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory
+                = createConnectionFactory(service);
         camelContext.addComponent("jms", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
         return camelContext;
     }
