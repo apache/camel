@@ -39,8 +39,8 @@ public class ConsulServiceDiscoveryFactoryConfigurer extends org.apache.camel.su
         case "Url": target.setUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "username":
         case "UserName": target.setUserName(property(camelContext, java.lang.String.class, value)); return true;
-        case "writetimeoutmillis":
-        case "WriteTimeoutMillis": target.setWriteTimeoutMillis(property(camelContext, java.lang.Long.class, value)); return true;
+        case "writetimeout":
+        case "WriteTimeout": target.setWriteTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         default: return false;
         }
     }
@@ -66,8 +66,8 @@ public class ConsulServiceDiscoveryFactoryConfigurer extends org.apache.camel.su
         case "Url": return java.lang.String.class;
         case "username":
         case "UserName": return java.lang.String.class;
-        case "writetimeoutmillis":
-        case "WriteTimeoutMillis": return java.lang.Long.class;
+        case "writetimeout":
+        case "WriteTimeout": return java.time.Duration.class;
         default: return null;
         }
     }
@@ -94,8 +94,8 @@ public class ConsulServiceDiscoveryFactoryConfigurer extends org.apache.camel.su
         case "Url": return target.getUrl();
         case "username":
         case "UserName": return target.getUserName();
-        case "writetimeoutmillis":
-        case "WriteTimeoutMillis": return target.getWriteTimeoutMillis();
+        case "writetimeout":
+        case "WriteTimeout": return target.getWriteTimeout();
         default: return null;
         }
     }

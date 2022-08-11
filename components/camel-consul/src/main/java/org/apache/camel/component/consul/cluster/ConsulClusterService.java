@@ -113,12 +113,12 @@ public final class ConsulClusterService extends AbstractCamelClusterService<Cons
         configuration.setReadTimeout(readTimeout);
     }
 
-    public Long getWriteTimeoutMillis() {
-        return configuration.getWriteTimeoutMillis();
+    public Duration getWriteTimeout() {
+        return configuration.getWriteTimeout();
     }
 
-    public void setWriteTimeoutMillis(Long writeTimeoutMillis) {
-        configuration.setWriteTimeoutMillis(writeTimeoutMillis);
+    public void setWriteTimeout(Duration writeTimeout) {
+        configuration.setWriteTimeout(writeTimeout);
     }
 
     public Integer getBlockSeconds() {

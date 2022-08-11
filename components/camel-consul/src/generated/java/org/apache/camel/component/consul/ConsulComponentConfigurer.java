@@ -72,8 +72,6 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         case "valueAsString": getOrCreateConfiguration(target).setValueAsString(property(camelContext, boolean.class, value)); return true;
         case "writetimeout":
         case "writeTimeout": getOrCreateConfiguration(target).setWriteTimeout(property(camelContext, java.time.Duration.class, value)); return true;
-        case "writetimeoutmillis":
-        case "writeTimeoutMillis": getOrCreateConfiguration(target).setWriteTimeoutMillis(property(camelContext, java.lang.Long.class, value)); return true;
         default: return false;
         }
     }
@@ -125,8 +123,6 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         case "valueAsString": return boolean.class;
         case "writetimeout":
         case "writeTimeout": return java.time.Duration.class;
-        case "writetimeoutmillis":
-        case "writeTimeoutMillis": return java.lang.Long.class;
         default: return null;
         }
     }
@@ -179,8 +175,6 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         case "valueAsString": return getOrCreateConfiguration(target).isValueAsString();
         case "writetimeout":
         case "writeTimeout": return getOrCreateConfiguration(target).getWriteTimeout();
-        case "writetimeoutmillis":
-        case "writeTimeoutMillis": return getOrCreateConfiguration(target).getWriteTimeoutMillis();
         default: return null;
         }
     }
