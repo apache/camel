@@ -1248,22 +1248,6 @@ public class NotifyBuilder {
      * <p/>
      * The timeout value is by default 10 seconds.
      *
-     * @return     <tt>true</tt> if matching, <tt>false</tt> otherwise due to timeout
-     * @deprecated use {@link #matchesWaitTime()} instead
-     */
-    @Deprecated
-    public boolean matchesMockWaitTime() {
-        return matchesWaitTime();
-    }
-
-    /**
-     * Does all the expressions match?
-     * <p/>
-     * This operation will wait until the match is <tt>true</tt> or otherwise a timeout occur which means <tt>false</tt>
-     * will be returned.
-     * <p/>
-     * The timeout value is by default 10 seconds.
-     *
      * @return <tt>true</tt> if matching, <tt>false</tt> otherwise due to timeout
      */
     public boolean matchesWaitTime() {

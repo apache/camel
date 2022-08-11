@@ -69,7 +69,7 @@ public class FileConsumerIdempotentLoadStoreTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
         // wait for the exchange to be done, as it only append to idempotent repo after success
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         String name = FileUtil.normalizePath(testFile("report.txt").toAbsolutePath().toString());
         assertTrue(repo.contains(name), "Should contain file: " + name);
