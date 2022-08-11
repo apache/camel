@@ -55,5 +55,8 @@ The deprecated options were removed and should be replaced by the following opti
 
 |`connectTimeoutMillis`
 |`connectTimeout`
+
+|`readTimeoutMillis`
+|`readTimeout`
 |===
 

@@ -59,8 +59,6 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         case "pingInstance": getOrCreateConfiguration(target).setPingInstance(property(camelContext, boolean.class, value)); return true;
         case "readtimeout":
         case "readTimeout": getOrCreateConfiguration(target).setReadTimeout(property(camelContext, java.time.Duration.class, value)); return true;
-        case "readtimeoutmillis":
-        case "readTimeoutMillis": getOrCreateConfiguration(target).setReadTimeoutMillis(property(camelContext, java.lang.Long.class, value)); return true;
         case "recursive": getOrCreateConfiguration(target).setRecursive(property(camelContext, boolean.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": getOrCreateConfiguration(target).setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
@@ -114,8 +112,6 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         case "pingInstance": return boolean.class;
         case "readtimeout":
         case "readTimeout": return java.time.Duration.class;
-        case "readtimeoutmillis":
-        case "readTimeoutMillis": return java.lang.Long.class;
         case "recursive": return boolean.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
@@ -170,8 +166,6 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         case "pingInstance": return getOrCreateConfiguration(target).isPingInstance();
         case "readtimeout":
         case "readTimeout": return getOrCreateConfiguration(target).getReadTimeout();
-        case "readtimeoutmillis":
-        case "readTimeoutMillis": return getOrCreateConfiguration(target).getReadTimeoutMillis();
         case "recursive": return getOrCreateConfiguration(target).isRecursive();
         case "sslcontextparameters":
         case "sslContextParameters": return getOrCreateConfiguration(target).getSslContextParameters();

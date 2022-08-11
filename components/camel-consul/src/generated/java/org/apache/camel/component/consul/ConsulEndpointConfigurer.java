@@ -53,8 +53,6 @@ public class ConsulEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "pingInstance": target.getConfiguration().setPingInstance(property(camelContext, boolean.class, value)); return true;
         case "readtimeout":
         case "readTimeout": target.getConfiguration().setReadTimeout(property(camelContext, java.time.Duration.class, value)); return true;
-        case "readtimeoutmillis":
-        case "readTimeoutMillis": target.getConfiguration().setReadTimeoutMillis(property(camelContext, java.lang.Long.class, value)); return true;
         case "recursive": target.getConfiguration().setRecursive(property(camelContext, boolean.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
@@ -107,8 +105,6 @@ public class ConsulEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "pingInstance": return boolean.class;
         case "readtimeout":
         case "readTimeout": return java.time.Duration.class;
-        case "readtimeoutmillis":
-        case "readTimeoutMillis": return java.lang.Long.class;
         case "recursive": return boolean.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
@@ -162,8 +158,6 @@ public class ConsulEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "pingInstance": return target.getConfiguration().isPingInstance();
         case "readtimeout":
         case "readTimeout": return target.getConfiguration().getReadTimeout();
-        case "readtimeoutmillis":
-        case "readTimeoutMillis": return target.getConfiguration().getReadTimeoutMillis();
         case "recursive": return target.getConfiguration().isRecursive();
         case "sslcontextparameters":
         case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
