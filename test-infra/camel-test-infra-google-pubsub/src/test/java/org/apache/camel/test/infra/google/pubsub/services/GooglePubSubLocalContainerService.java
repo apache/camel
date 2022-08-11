@@ -80,6 +80,6 @@ public class GooglePubSubLocalContainerService implements GooglePubSubService, C
 
     @Override
     public String getServiceAddress() {
-        return String.format("%s:%d", container.getContainerIpAddress(), container.getFirstMappedPort());
+        return String.format("%s:%d", container.getHost(), container.getFirstMappedPort());
     }
 }

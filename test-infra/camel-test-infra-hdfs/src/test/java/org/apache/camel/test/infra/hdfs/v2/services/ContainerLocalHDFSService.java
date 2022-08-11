@@ -50,7 +50,7 @@ public class ContainerLocalHDFSService implements HDFSService, ContainerService<
 
     @Override
     public String getHDFSHost() {
-        return nameNodeContainer.getContainerIpAddress();
+        return nameNodeContainer.getHost();
     }
 
     @Override
@@ -86,11 +86,11 @@ public class ContainerLocalHDFSService implements HDFSService, ContainerService<
     }
 
     private String getHdfsDataNodeWeb() {
-        return dataNodeContainer.getContainerIpAddress() + ":" + dataNodeContainer.getHttpPort();
+        return dataNodeContainer.getHost() + ":" + dataNodeContainer.getHttpPort();
     }
 
     private String getNameNodeWebAddress() {
-        return nameNodeContainer.getContainerIpAddress() + ":" + nameNodeContainer.getHttpPort();
+        return nameNodeContainer.getHost() + ":" + nameNodeContainer.getHttpPort();
     }
 
     @Override

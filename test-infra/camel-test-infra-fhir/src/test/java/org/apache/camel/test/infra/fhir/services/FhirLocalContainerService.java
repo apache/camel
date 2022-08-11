@@ -85,7 +85,7 @@ public class FhirLocalContainerService implements FhirService, ContainerService<
     public String getServiceBaseURL() {
         return String.format(
                 "http://%s:%d/hapi-fhir-jpaserver/fhir",
-                container.getContainerIpAddress(),
+                container.getHost(),
                 container.getMappedPort(FhirProperties.DEFAULT_SERVICE_PORT));
     }
 

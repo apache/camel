@@ -44,7 +44,7 @@ public class XmppServerContainer extends GenericContainer {
     }
 
     public String getUrl() {
-        return String.format("%s:%d", this.getContainerIpAddress(), this.getMappedPort(XmppProperties.PORT_DEFAULT));
+        return String.format("%s:%d", this.getHost(), this.getMappedPort(XmppProperties.PORT_DEFAULT));
     }
 
     public void stopXmppEndpoint() throws IOException {
@@ -57,7 +57,7 @@ public class XmppServerContainer extends GenericContainer {
 
     private void get(String urlAppendix) throws IOException {
         URL url = new URL(
-                String.format("http://%s:%d/%s", this.getContainerIpAddress(), getMappedPort(PORT_REST), urlAppendix));
+                String.format("http://%s:%d/%s", this.getHost(), getMappedPort(PORT_REST), urlAppendix));
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.getInputStream();

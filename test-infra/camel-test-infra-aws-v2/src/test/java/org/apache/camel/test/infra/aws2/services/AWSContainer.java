@@ -88,12 +88,12 @@ public class AWSContainer extends GenericContainer<AWSContainer> {
     }
 
     protected String getAmazonHost() {
-        return getContainerIpAddress() + ":" + getMappedPort(SERVICE_PORT);
+        return getHost() + ":" + getMappedPort(SERVICE_PORT);
     }
 
     public URI getServiceEndpoint() {
         try {
-            String address = String.format("http://%s:%d", getContainerIpAddress(), getMappedPort(SERVICE_PORT));
+            String address = String.format("http://%s:%d", getHost(), getMappedPort(SERVICE_PORT));
             LOG.debug("Running on service endpoint: {}", address);
 
             return new URI(address);

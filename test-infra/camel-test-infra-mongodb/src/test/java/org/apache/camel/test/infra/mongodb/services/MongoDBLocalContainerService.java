@@ -50,13 +50,13 @@ public class MongoDBLocalContainerService implements MongoDBService, ContainerSe
 
     @Override
     public String getReplicaSetUrl() {
-        return String.format("mongodb://%s:%s", container.getContainerIpAddress(),
+        return String.format("mongodb://%s:%s", container.getHost(),
                 container.getMappedPort(DEFAULT_MONGODB_PORT));
     }
 
     @Override
     public String getConnectionAddress() {
-        return container.getContainerIpAddress() + ":" + container.getMappedPort(DEFAULT_MONGODB_PORT);
+        return container.getHost() + ":" + container.getMappedPort(DEFAULT_MONGODB_PORT);
     }
 
     @Override
