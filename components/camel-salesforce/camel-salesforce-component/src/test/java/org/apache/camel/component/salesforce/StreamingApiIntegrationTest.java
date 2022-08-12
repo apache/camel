@@ -42,6 +42,12 @@ public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
         mock.expectedHeaderReceived("CamelSalesforceTopicName", "CamelTestTopic");
         mock.expectedHeaderReceived("CamelSalesforceChannel", "/topic/CamelTestTopic");
 
+        MockEndpoint oldStyleMock = getMockEndpoint("mock:CamelTestTopicOldStyle");
+        oldStyleMock.expectedMessageCount(1);
+        // assert expected static headers
+        oldStyleMock.expectedHeaderReceived("CamelSalesforceTopicName", "CamelTestTopicOldStyle");
+        oldStyleMock.expectedHeaderReceived("CamelSalesforceChannel", "/topic/CamelTestTopicOldStyle");
+
         MockEndpoint rawPayloadMock = getMockEndpoint("mock:RawPayloadCamelTestTopic");
         rawPayloadMock.expectedMessageCount(1);
         // assert expected static headers
@@ -107,16 +113,22 @@ public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
             public void configure() throws Exception {
 
                 // test topic subscription
-                from("salesforce:CamelTestTopic?notifyForFields=ALL&"
+                from("salesforce:subscribe:CamelTestTopic?notifyForFields=ALL&"
                      + "notifyForOperationCreate=true&notifyForOperationDelete=true&notifyForOperationUpdate=true&"
                      + "sObjectName=Merchandise__c&" + "updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c")
                              .to("mock:CamelTestTopic");
 
-                from("salesforce:CamelTestTopic?rawPayload=true&notifyForFields=ALL&"
+                // Old style that does not have an operation in the path
+                from("salesforce:CamelTestTopicOldStyle?notifyForFields=ALL&"
+                     + "notifyForOperationCreate=true&notifyForOperationDelete=true&notifyForOperationUpdate=true&"
+                     + "sObjectName=Merchandise__c&" + "updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c")
+                             .to("mock:CamelTestTopicOldStyle");
+
+                from("salesforce:subscribe:CamelTestTopic?rawPayload=true&notifyForFields=ALL&"
                      + "notifyForOperationCreate=true&notifyForOperationDelete=true&notifyForOperationUpdate=true&"
                      + "updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c").to("mock:RawPayloadCamelTestTopic");
 
-                from("salesforce:CamelFallbackTestTopic?notifyForFields=ALL&defaultReplayId=9999&"
+                from("salesforce:subscribe:CamelFallbackTestTopic?notifyForFields=ALL&defaultReplayId=9999&"
                      + "notifyForOperationCreate=true&notifyForOperationDelete=true&notifyForOperationUpdate=true&"
                      + "sObjectName=Merchandise__c&" + "updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c")
                              .to("mock:CamelFallbackTestTopic");

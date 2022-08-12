@@ -39,7 +39,8 @@ public class PlatformEventsConsumerIntegrationTest extends AbstractSalesforceTes
         final ExecutorService parallel = Executors.newSingleThreadExecutor();
 
         final Future<PlatformEvent> futurePlatformEvent
-                = parallel.submit(() -> consumer.receiveBody("salesforce:event/TestEvent__e?replayId=-1", PlatformEvent.class));
+                = parallel.submit(
+                        () -> consumer.receiveBody("salesforce:subscribe:event/TestEvent__e?replayId=-1", PlatformEvent.class));
 
         // it takes some time for the subscriber to subscribe, so we'll try to
         // send repeated platform events and wait until the first one is

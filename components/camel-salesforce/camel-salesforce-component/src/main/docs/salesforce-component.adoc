@@ -115,7 +115,7 @@ must contain only single certificate-private key entry.
 When used as a consumer, receiving streaming events, the URI scheme is:
 
 ----
-salesforce:topic?options
+salesforce:subscribe:topic?options
 ----
 
 When used as a producer, invoking the Salesforce REST APIs, the URI
@@ -1618,21 +1618,21 @@ Data Capture events.
 
 The URI format for consuming Push Topics is:
 ----
-salesforce:<topic_name>[?options]
+salesforce:subscribe:<topic_name>[?options]
 ----
 
 To create and subscribe to a topic
 
 [source,java]
 ----
-from("salesforce:CamelTestTopic?notifyForFields=ALL&notifyForOperations=ALL&sObjectName=Merchandise__c&updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c")...
+from("salesforce:subscribe:CamelTestTopic?notifyForFields=ALL&notifyForOperations=ALL&sObjectName=Merchandise__c&updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c")...
 ----
 
 To subscribe to an existing topic
 
 [source,java]
 ----
-from("salesforce:CamelTestTopic&sObjectName=Merchandise__c")...
+from("salesforce:subscribe:CamelTestTopic&sObjectName=Merchandise__c")...
 ----
 
 |===
@@ -1663,14 +1663,14 @@ To emit a platform event use the <<createSObject,createSObject>> operation, pass
 
 The URI format for consuming platform events is:
 ----
-salesforce:event/<event_name>
+salesforce:subscribe:event/<event_name>
 ----
 
 For example, to receive platform events use for the event type `Order_Event__e`:
 
 [source,java]
 ----
-from("salesforce:event/Order_Event__e")
+from("salesforce:subscribe:event/Order_Event__e")
 ----
 
 |===
@@ -1694,25 +1694,25 @@ The URI format to consume CDC events is as follows:
 
 All Selected Entities
 ----
-salesforce:data/ChangeEvents
+salesforce:subscribe:data/ChangeEvents
 ----
 
 Standard Objects
 ----
-salesforce:data/<Standard_Object_Name>ChangeEvent
+salesforce:subscribe:data/<Standard_Object_Name>ChangeEvent
 ----
 
 Custom Objects
 ----
-salesforce:data/<Custom_Object_Name>__ChangeEvent
+salesforce:subscribe:data/<Custom_Object_Name>__ChangeEvent
 ----
 
 Here are a few examples
 [source,java]
 ----
-from("salesforce:data/ChangeEvents?replayId=-1").log("being notified of all change events")
-from("salesforce:data/AccountChangeEvent?replayId=-1").log("being notified of change events for Account records")
-from("salesforce:data/Employee__ChangeEvent?replayId=-1").log("being notified of change events for Employee__c custom object")
+from("salesforce:subscribe:data/ChangeEvents?replayId=-1").log("being notified of all change events")
+from("salesforce:subscribe:data/AccountChangeEvent?replayId=-1").log("being notified of change events for Account records")
+from("salesforce:subscribe:data/Employee__ChangeEvent?replayId=-1").log("being notified of change events for Employee__c custom object")
 ----
 
 More details about how to use the Camel Salesforce component change data capture capabilities could be found in the https://github.com/apache/camel/tree/main/components/camel-salesforce/camel-salesforce-component/src/test/java/org/apache/camel/component/salesforce/ChangeEventsConsumerIntegrationTest.java[ChangeEventsConsumerIntegrationTest].

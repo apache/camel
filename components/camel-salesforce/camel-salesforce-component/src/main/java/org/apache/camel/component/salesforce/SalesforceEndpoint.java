@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.salesforce.internal.OperationName;
 import org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -41,7 +42,7 @@ public class SalesforceEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(SalesforceEndpoint.class);
 
     //CHECKSTYLE:OFF
-    @UriPath(label = "producer", description = "The operation to use", enums = "getVersions,"
+    @UriPath( label = "common", description = "The operation to use", enums = "getVersions,"
             + "getResources,getGlobalObjects,getBasicInfo,getDescription,getSObject,createSObject,"
             + "updateSObject,deleteSObject,getSObjectWithId,upsertSObject,deleteSObjectWithId,"
             + "getBlobField,query,queryMore,queryAll,search,apexCall,recent,createJob,getJob,"
@@ -56,7 +57,8 @@ public class SalesforceEndpoint extends DefaultEndpoint {
             + "bulk2AbortJob,bulk2DeleteJob,bulk2GetSuccessfulResults,bulk2GetFailedResults,"
             + "bulk2GetUnprocessedRecords,bulk2CreateQueryJob,bulk2GetQueryJob,"
             + "bulk2GetAllQueryJobs,bulk2GetQueryJobResults,bulk2AbortQueryJob,bulk2DeleteQueryJob,"
-            + "raw")
+            + "raw,subscribe")
+    @Metadata(required = true)
     private final OperationName operationName;
     //CHECKSTYLE:ON
     @UriPath(label = "consumer", description = "The name of the topic/channel to use")
@@ -89,13 +91,6 @@ public class SalesforceEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        // consumer requires a topicName, operation name must be the invalid
-        // topic name
-        if (topicName == null) {
-            throw new IllegalArgumentException(
-                    String.format("Invalid topic name %s, matches a producer operation name", operationName.value()));
-        }
-
         final SubscriptionHelper subscriptionHelper = getComponent().getSubscriptionHelper();
         final SalesforceConsumer consumer = new SalesforceConsumer(this, processor, subscriptionHelper);
         configureConsumer(consumer);
