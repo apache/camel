@@ -76,12 +76,12 @@ public class PulsarConsumerNoAcknowledgementIT extends PulsarITSupport {
         comp.setPulsarClient(pulsarClient);
         comp.getConfiguration()
                 .setAllowManualAcknowledgement(true); // Set to true here instead of the endpoint query parameter.
-        // Given relevant millis=1000 redeliveries will occur at 1s + 0.1s, 1s + 1s, 1s + 10s, 1s + 100s, 1s + 100s...
+        // Given relevant millis=1000 redeliveries will occur at 1s + 0.01s, 1s + 1s, 1s + 100s, 1s + 100s, 1s + 100s...
         comp.getConfiguration().setAckTimeoutMillis(1_000L);
         comp.getConfiguration().setAckTimeoutRedeliveryBackoff(MultiplierRedeliveryBackoff.builder()
-                .minDelayMs(100L)
+                .minDelayMs(10L)
                 .maxDelayMs(100_000L)
-                .multiplier(10.0)
+                .multiplier(100.0)
                 .build());
         registry.bind("pulsar", comp);
     }
@@ -100,11 +100,12 @@ public class PulsarConsumerNoAcknowledgementIT extends PulsarITSupport {
         producer.send("Hello World!");
 
         MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, to);
+
+        producer.close();
     }
 
     @Test
     public void testAMessageIsConsumedMultipleTimesWithAckTimeoutBackoff() throws Exception {
-        to.setAssertPeriod(10_000L);
         to.expectedMessageCount(3);
 
         Producer<String> producer
@@ -113,5 +114,7 @@ public class PulsarConsumerNoAcknowledgementIT extends PulsarITSupport {
         producer.send("Hello World!");
 
         MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, to);
+
+        producer.close();
     }
 }

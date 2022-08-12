@@ -38,10 +38,10 @@ import org.junit.jupiter.api.Test;
 
 public class PulsarConsumerNegativeAcknowledgementIT extends PulsarITSupport {
 
-    private static final String TOPIC_URI = "persistent://public/default/camel-topic";
+    private static final String TOPIC_URI = "persistent://public/default/camel-topic-negative-ack";
     private static final String PRODUCER = "camel-producer-1";
 
-    @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
+    @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive&batchingEnabled=false"
                     + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer")
     private Endpoint from;
 
@@ -83,12 +83,12 @@ public class PulsarConsumerNegativeAcknowledgementIT extends PulsarITSupport {
         comp.getConfiguration()
                 .setAllowManualAcknowledgement(true); // Set to true here instead of the endpoint query parameter.
         comp.getConfiguration().setAckTimeoutMillis(60_000L);
-        // Given relevant millis=1000 redeliveries will occur at 1s + 0.1s, 1s + 1s, 1s + 10s, 1s + 100s, 1s + 100s...
+        // Given relevant millis=1000 redeliveries will occur at 1s + 0.01s, 1s + 1s, 1s + 100s, 1s + 100s, 1s + 100s...
         comp.getConfiguration().setNegativeAckRedeliveryDelayMicros(1_000_000L);
         comp.getConfiguration().setNegativeAckRedeliveryBackoff(MultiplierRedeliveryBackoff.builder()
-                .minDelayMs(100L)
+                .minDelayMs(10L)
                 .maxDelayMs(100_000L)
-                .multiplier(10.0)
+                .multiplier(100.0)
                 .build());
         registry.bind("pulsar", comp);
     }
@@ -99,7 +99,6 @@ public class PulsarConsumerNegativeAcknowledgementIT extends PulsarITSupport {
 
     @Test
     public void testAMessageIsConsumedMultipleTimesWithNegativeAckBackoff() throws Exception {
-        to.setAssertPeriod(10_000L);
         to.expectedMessageCount(3);
 
         Producer<String> producer
@@ -108,5 +107,7 @@ public class PulsarConsumerNegativeAcknowledgementIT extends PulsarITSupport {
         producer.send("Hello World!");
 
         MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, to);
+
+        producer.close();
     }
 }
