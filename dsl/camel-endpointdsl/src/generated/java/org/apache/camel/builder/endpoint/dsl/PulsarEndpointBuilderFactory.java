@@ -158,6 +158,38 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
+         * RedeliveryBackoff to use for ack timeout redelivery backoff.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.pulsar.client.api.RedeliveryBackoff&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param ackTimeoutRedeliveryBackoff the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointConsumerBuilder ackTimeoutRedeliveryBackoff(
+                org.apache.pulsar.client.api.RedeliveryBackoff ackTimeoutRedeliveryBackoff) {
+            doSetProperty("ackTimeoutRedeliveryBackoff", ackTimeoutRedeliveryBackoff);
+            return this;
+        }
+        /**
+         * RedeliveryBackoff to use for ack timeout redelivery backoff.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.pulsar.client.api.RedeliveryBackoff&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param ackTimeoutRedeliveryBackoff the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointConsumerBuilder ackTimeoutRedeliveryBackoff(
+                String ackTimeoutRedeliveryBackoff) {
+            doSetProperty("ackTimeoutRedeliveryBackoff", ackTimeoutRedeliveryBackoff);
+            return this;
+        }
+        /**
          * Whether to allow manual message acknowledgements. If this option is
          * enabled, then messages are not acknowledged automatically after
          * successful route completion. Instead, an instance of
@@ -349,6 +381,38 @@ public interface PulsarEndpointBuilderFactory {
         default PulsarEndpointConsumerBuilder messageListener(
                 String messageListener) {
             doSetProperty("messageListener", messageListener);
+            return this;
+        }
+        /**
+         * RedeliveryBackoff to use for negative ack redelivery backoff.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.pulsar.client.api.RedeliveryBackoff&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param negativeAckRedeliveryBackoff the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointConsumerBuilder negativeAckRedeliveryBackoff(
+                org.apache.pulsar.client.api.RedeliveryBackoff negativeAckRedeliveryBackoff) {
+            doSetProperty("negativeAckRedeliveryBackoff", negativeAckRedeliveryBackoff);
+            return this;
+        }
+        /**
+         * RedeliveryBackoff to use for negative ack redelivery backoff.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.pulsar.client.api.RedeliveryBackoff&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param negativeAckRedeliveryBackoff the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointConsumerBuilder negativeAckRedeliveryBackoff(
+                String negativeAckRedeliveryBackoff) {
+            doSetProperty("negativeAckRedeliveryBackoff", negativeAckRedeliveryBackoff);
             return this;
         }
         /**
