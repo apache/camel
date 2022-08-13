@@ -23,7 +23,9 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.pulsar.PulsarComponent;
+import org.apache.camel.component.pulsar.PulsarMessageReceipt;
 import org.apache.camel.component.pulsar.utils.AutoConfiguration;
+import org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
 import org.apache.pulsar.client.api.Producer;
@@ -34,12 +36,12 @@ import org.apache.pulsar.client.impl.ClientBuilderImpl;
 import org.apache.pulsar.client.impl.MultiplierRedeliveryBackoff;
 import org.junit.jupiter.api.Test;
 
-public class PulsarConsumerNoAcknowledgementIT extends PulsarITSupport {
+public class PulsarConsumerNegativeAcknowledgementIT extends PulsarITSupport {
 
-    private static final String TOPIC_URI = "persistent://public/default/camel-topic";
+    private static final String TOPIC_URI = "persistent://public/default/camel-topic-negative-ack";
     private static final String PRODUCER = "camel-producer-1";
 
-    @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
+    @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive&batchingEnabled=false"
                     + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer")
     private Endpoint from;
 
@@ -51,8 +53,12 @@ public class PulsarConsumerNoAcknowledgementIT extends PulsarITSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                // Nothing in the route will ack the message.
-                from(from).to(to);
+                // This route will explicitly negative acknowledge the message.
+                from(from)
+                        .process(exchange -> exchange.getIn()
+                                .getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT, PulsarMessageReceipt.class)
+                                .negativeAcknowledge())
+                        .to(to);
             }
         };
     }
@@ -76,9 +82,10 @@ public class PulsarConsumerNoAcknowledgementIT extends PulsarITSupport {
         comp.setPulsarClient(pulsarClient);
         comp.getConfiguration()
                 .setAllowManualAcknowledgement(true); // Set to true here instead of the endpoint query parameter.
+        comp.getConfiguration().setAckTimeoutMillis(60_000L);
         // Given relevant millis=1000 redeliveries will occur at 1s + 0.01s, 1s + 1s, 1s + 100s, 1s + 100s, 1s + 100s...
-        comp.getConfiguration().setAckTimeoutMillis(1_000L);
-        comp.getConfiguration().setAckTimeoutRedeliveryBackoff(MultiplierRedeliveryBackoff.builder()
+        comp.getConfiguration().setNegativeAckRedeliveryDelayMicros(1_000_000L);
+        comp.getConfiguration().setNegativeAckRedeliveryBackoff(MultiplierRedeliveryBackoff.builder()
                 .minDelayMs(10L)
                 .maxDelayMs(100_000L)
                 .multiplier(100.0)
@@ -91,21 +98,7 @@ public class PulsarConsumerNoAcknowledgementIT extends PulsarITSupport {
     }
 
     @Test
-    public void testAMessageIsConsumedMultipleTimes() throws Exception {
-        to.expectedMinimumMessageCount(2);
-
-        Producer<String> producer
-                = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
-
-        producer.send("Hello World!");
-
-        MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, to);
-
-        producer.close();
-    }
-
-    @Test
-    public void testAMessageIsConsumedMultipleTimesWithAckTimeoutBackoff() throws Exception {
+    public void testAMessageIsConsumedMultipleTimesWithNegativeAckBackoff() throws Exception {
         to.expectedMessageCount(3);
 
         Producer<String> producer

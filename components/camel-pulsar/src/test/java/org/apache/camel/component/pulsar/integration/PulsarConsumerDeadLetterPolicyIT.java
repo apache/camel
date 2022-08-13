@@ -111,7 +111,7 @@ public class PulsarConsumerDeadLetterPolicyIT extends PulsarITSupport {
     }
 
     @Test
-    public void givenMaxRedeliverCountverifyMessageGetsSentToDefaultDeadLetterTopicAfterCountExceeded()
+    public void givenMaxRedeliverCountVerifyMessageGetsSentToDefaultDeadLetterTopicAfterCountExceeded()
             throws Exception {
         PulsarComponent component = context.getComponent("pulsar", PulsarComponent.class);
 
@@ -136,7 +136,7 @@ public class PulsarConsumerDeadLetterPolicyIT extends PulsarITSupport {
     }
 
     @Test
-    public void givenMaxRedeliverCountAndDeadLetterTopicverifyMessageGetsSentToSpecifiedDeadLetterTopicAfterCountExceeded()
+    public void givenMaxRedeliverCountAndDeadLetterTopicVerifyMessageGetsSentToSpecifiedDeadLetterTopicAfterCountExceeded()
             throws Exception {
         PulsarComponent component = context.getComponent("pulsar", PulsarComponent.class);
 
@@ -162,7 +162,7 @@ public class PulsarConsumerDeadLetterPolicyIT extends PulsarITSupport {
     }
 
     @Test
-    public void givenOnlyDeadLetterTopicverifyMessageDoesNotGetSentToSpecifiedTopic() throws Exception {
+    public void givenOnlyDeadLetterTopicVerifyMessageDoesNotGetSentToSpecifiedTopic() throws Exception {
         PulsarComponent component = context.getComponent("pulsar", PulsarComponent.class);
 
         PulsarEndpoint from = (PulsarEndpoint) component

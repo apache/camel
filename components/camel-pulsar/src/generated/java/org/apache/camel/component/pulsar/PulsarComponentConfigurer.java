@@ -32,6 +32,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "ackGroupTimeMillis": getOrCreateConfiguration(target).setAckGroupTimeMillis(property(camelContext, long.class, value)); return true;
         case "acktimeoutmillis":
         case "ackTimeoutMillis": getOrCreateConfiguration(target).setAckTimeoutMillis(property(camelContext, long.class, value)); return true;
+        case "acktimeoutredeliverybackoff":
+        case "ackTimeoutRedeliveryBackoff": getOrCreateConfiguration(target).setAckTimeoutRedeliveryBackoff(property(camelContext, org.apache.pulsar.client.api.RedeliveryBackoff.class, value)); return true;
         case "allowmanualacknowledgement":
         case "allowManualAcknowledgement": getOrCreateConfiguration(target).setAllowManualAcknowledgement(property(camelContext, boolean.class, value)); return true;
         case "authenticationclass":
@@ -81,6 +83,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "messageRouter": getOrCreateConfiguration(target).setMessageRouter(property(camelContext, org.apache.pulsar.client.api.MessageRouter.class, value)); return true;
         case "messageroutingmode":
         case "messageRoutingMode": getOrCreateConfiguration(target).setMessageRoutingMode(property(camelContext, org.apache.pulsar.client.api.MessageRoutingMode.class, value)); return true;
+        case "negativeackredeliverybackoff":
+        case "negativeAckRedeliveryBackoff": getOrCreateConfiguration(target).setNegativeAckRedeliveryBackoff(property(camelContext, org.apache.pulsar.client.api.RedeliveryBackoff.class, value)); return true;
         case "negativeackredeliverydelaymicros":
         case "negativeAckRedeliveryDelayMicros": getOrCreateConfiguration(target).setNegativeAckRedeliveryDelayMicros(property(camelContext, long.class, value)); return true;
         case "numberofconsumerthreads":
@@ -125,6 +129,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "ackGroupTimeMillis": return long.class;
         case "acktimeoutmillis":
         case "ackTimeoutMillis": return long.class;
+        case "acktimeoutredeliverybackoff":
+        case "ackTimeoutRedeliveryBackoff": return org.apache.pulsar.client.api.RedeliveryBackoff.class;
         case "allowmanualacknowledgement":
         case "allowManualAcknowledgement": return boolean.class;
         case "authenticationclass":
@@ -174,6 +180,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "messageRouter": return org.apache.pulsar.client.api.MessageRouter.class;
         case "messageroutingmode":
         case "messageRoutingMode": return org.apache.pulsar.client.api.MessageRoutingMode.class;
+        case "negativeackredeliverybackoff":
+        case "negativeAckRedeliveryBackoff": return org.apache.pulsar.client.api.RedeliveryBackoff.class;
         case "negativeackredeliverydelaymicros":
         case "negativeAckRedeliveryDelayMicros": return long.class;
         case "numberofconsumerthreads":
@@ -214,6 +222,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "ackGroupTimeMillis": return getOrCreateConfiguration(target).getAckGroupTimeMillis();
         case "acktimeoutmillis":
         case "ackTimeoutMillis": return getOrCreateConfiguration(target).getAckTimeoutMillis();
+        case "acktimeoutredeliverybackoff":
+        case "ackTimeoutRedeliveryBackoff": return getOrCreateConfiguration(target).getAckTimeoutRedeliveryBackoff();
         case "allowmanualacknowledgement":
         case "allowManualAcknowledgement": return getOrCreateConfiguration(target).isAllowManualAcknowledgement();
         case "authenticationclass":
@@ -263,6 +273,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "messageRouter": return getOrCreateConfiguration(target).getMessageRouter();
         case "messageroutingmode":
         case "messageRoutingMode": return getOrCreateConfiguration(target).getMessageRoutingMode();
+        case "negativeackredeliverybackoff":
+        case "negativeAckRedeliveryBackoff": return getOrCreateConfiguration(target).getNegativeAckRedeliveryBackoff();
         case "negativeackredeliverydelaymicros":
         case "negativeAckRedeliveryDelayMicros": return getOrCreateConfiguration(target).getNegativeAckRedeliveryDelayMicros();
         case "numberofconsumerthreads":

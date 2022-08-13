@@ -27,6 +27,7 @@ import org.apache.pulsar.client.api.BatcherBuilder;
 import org.apache.pulsar.client.api.CompressionType;
 import org.apache.pulsar.client.api.MessageRouter;
 import org.apache.pulsar.client.api.MessageRoutingMode;
+import org.apache.pulsar.client.api.RedeliveryBackoff;
 import org.apache.pulsar.client.api.RegexSubscriptionMode;
 
 import static org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition.LATEST;
@@ -65,6 +66,10 @@ public class PulsarConfiguration implements Cloneable {
     private long ackTimeoutMillis = 10000;
     @UriParam(label = "consumer", defaultValue = "60000000")
     private long negativeAckRedeliveryDelayMicros = 60000000;
+    @UriParam(label = "consumer", description = "RedeliveryBackoff to use for ack timeout redelivery backoff.")
+    private RedeliveryBackoff ackTimeoutRedeliveryBackoff;
+    @UriParam(label = "consumer", description = "RedeliveryBackoff to use for negative ack redelivery backoff.")
+    private RedeliveryBackoff negativeAckRedeliveryBackoff;
     @UriParam(label = "consumer", defaultValue = "100")
     private long ackGroupTimeMillis = 100;
     @UriParam(label = "consumer", defaultValue = "LATEST")
@@ -453,6 +458,28 @@ public class PulsarConfiguration implements Cloneable {
      */
     public void setNegativeAckRedeliveryDelayMicros(long negativeAckRedeliveryDelayMicros) {
         this.negativeAckRedeliveryDelayMicros = negativeAckRedeliveryDelayMicros;
+    }
+
+    public RedeliveryBackoff getAckTimeoutRedeliveryBackoff() {
+        return ackTimeoutRedeliveryBackoff;
+    }
+
+    /**
+     * Set a RedeliveryBackoff to use for ack timeout redelivery backoff.
+     */
+    public void setAckTimeoutRedeliveryBackoff(RedeliveryBackoff redeliveryBackoff) {
+        this.ackTimeoutRedeliveryBackoff = redeliveryBackoff;
+    }
+
+    public RedeliveryBackoff getNegativeAckRedeliveryBackoff() {
+        return negativeAckRedeliveryBackoff;
+    }
+
+    /**
+     * Set a RedeliveryBackoff to use for negative ack redelivery backoff.
+     */
+    public void setNegativeAckRedeliveryBackoff(RedeliveryBackoff redeliveryBackoff) {
+        this.negativeAckRedeliveryBackoff = redeliveryBackoff;
     }
 
     public Integer getMaxRedeliverCount() {
