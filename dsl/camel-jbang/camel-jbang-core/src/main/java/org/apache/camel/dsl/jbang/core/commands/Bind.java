@@ -50,7 +50,7 @@ class Bind extends CamelCommand {
     @CommandLine.Parameters(description = "Sink such as a Kamelet or Camel endpoint uri", arity = "1")
     private String sink;
 
-    @CommandLine.Parameters(description = "Name of binding file", arity = "1")
+    @CommandLine.Parameters(description = "Name of binding file to be saved", arity = "1")
     private String file;
 
     public Bind(CamelJBangMain main) {
@@ -94,8 +94,8 @@ class Bind extends CamelCommand {
     protected String kameletProperties(String kamelet) throws Exception {
         StringBuilder sb = new StringBuilder();
 
-        InputStream is = null;
-        String loc = null;
+        InputStream is;
+        String loc;
 
         // try local disk first before github
         Resource res = new DefaultResourceResolvers.FileResolver().resolve("file:" + kamelet + ".kamelet.yaml");
