@@ -153,6 +153,16 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
             }
         }
 
+        // must include :// in scheme to be parsable via java.net.URI
+        int colon = u.indexOf(':');
+        if (colon != -1) {
+            String before = StringHelper.before(u, ":");
+            String after = StringHelper.after(u, ":");
+            if (!after.startsWith("//")) {
+                u = before + "://" + after;
+            }
+        }
+
         // favour using java.net.URI for parsing into host, context-path and authority
         try {
             URI parse = new URI(u);
