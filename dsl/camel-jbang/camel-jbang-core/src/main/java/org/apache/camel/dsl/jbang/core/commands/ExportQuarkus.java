@@ -113,16 +113,8 @@ class ExportQuarkus extends Export {
             copyMavenWrapper();
         }
 
-        if (exportDir.equals(".")) {
-            // we export to current dir so prepare for this by cleaning up existing files
-            File target = new File(exportDir);
-            for (File f : target.listFiles()) {
-                if (!f.isHidden() && f.isDirectory()) {
-                    FileUtil.removeDir(f);
-                } else if (!f.isHidden() && f.isFile()) {
-                    f.delete();
-                }
-            }
+        if (!exportDir.equals(".")) {
+            CommandHelper.cleanExportDir(exportDir);
         }
         // copy to export dir and remove work dir
         FileUtils.copyDirectory(new File(BUILD_DIR), new File(exportDir));
