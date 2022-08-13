@@ -45,7 +45,6 @@ public class HyperledgerAriesComponent extends DefaultComponent {
     private boolean removeWalletsOnShutdown;
 
     private AriesClient adminClient;
-    private WebSocketClient adminWebSocketClient;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -68,9 +67,6 @@ public class HyperledgerAriesComponent extends DefaultComponent {
 
     @Override
     protected void doShutdown() throws Exception {
-        if (adminWebSocketClient != null) {
-            adminWebSocketClient.close();
-        }
         if (removeWalletsOnShutdown) {
             for (NessusWallet wallet : walletRegistry.getWallets()) {
                 wallet.closeAndRemove();
@@ -126,12 +122,11 @@ public class HyperledgerAriesComponent extends DefaultComponent {
         return AriesClientFactory.createClient(agentConfig, wallet);
     }
 
-    public WebSocketClient adminWebSocketClient(WebSocketListener wslistener) {
-        if (adminWebSocketClient == null) {
-            adminWebSocketClient = new WebSocketClient(agentConfig, null);
-            adminWebSocketClient.openWebSocket(wslistener);
-        }
-        return adminWebSocketClient;
+    public WebSocketClient createAdminWebSocketClient(WebSocketListener wslistener) {
+        AgentConfiguration agentConfig = getAgentConfiguration();
+        WebSocketClient wsclient = new WebSocketClient(agentConfig, null);
+        wsclient.openWebSocket(wslistener);
+        return wsclient;
     }
 
     public WebSocketClient createWebSocketClient(String walletName, WebSocketListener wslistener) {
