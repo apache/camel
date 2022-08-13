@@ -50,7 +50,7 @@ For example to create an XML route you do:
 camel init cheese.xml
 ----
 
-Which creates the file `cheese.xml` with a sample route.
+Which creates the file `cheese.xml` (in the current directory) with a sample route.
 
 To run the file, you simply do:
 
@@ -67,6 +67,17 @@ To create a new .java route, you simply do:
 ----
 camel init foo.java
 ----
+
+When using the init command then Camel will by default create the file in the current directory. However, you can use
+the `--directory` option to create the file in the specified directory. For example to create in a folder
+named _foobar_ you can do:
+
+[source,bash]
+----
+camel init foo.java --directory=foobar
+----
+
+IMPORTANT: When using `--directory` then Camel will automatically clean this directory if already exists.
 
 === Running Routes from multiple files
 
@@ -105,7 +116,7 @@ And to run everything
 camel run *
 ----
 
-TIP: The run goal can also detect files that are `properties`.
+TIP: The run goal can also detect files that are `properties`, such as `application.properties`.
 
 === Dev mode with live reload
 
@@ -363,6 +374,16 @@ The example can then be run locally with:
 camel run *
 ----
 
+You can also download to a new folder using the `--directory` option, for example to download to a folder named _myproject_,
+you would do:
+
+[source,bash]
+----
+camel init https://github.com/apache/camel-kamelets-examples/tree/main/jbang/dependency-injection --directory=myproject
+----
+
+IMPORTANT: When using `--directory` then Camel will automatically clean this directory if already exists.
+
 You can also run in dev mode, to hot-deploy on source code changes.
 
 [source,bash]
@@ -400,6 +421,17 @@ This will then download the files to local disk, which you can run afterwards:
 camel run *
 ----
 
+You can also download to a new folder using the `--directory` option, for example to download to a folder named _foobar_,
+you would do:
+
+[source,bash]
+----
+camel init https://gist.github.com/davsclaus/477ddff5cdeb1ae03619aa544ce47e92 --directory=foobar
+----
+
+IMPORTANT: When using `--directory` then Camel will automatically clean this directory if already exists.
+
+
 === Using a specific Camel version
 
 You can specify which Camel version to run as shown:
@@ -415,6 +447,7 @@ And you can also try bleeding edge development by using SNAPSHOT such as:
 ----
 jbang run -Dcamel.jbang.version=3.19.0-SNAPSHOT camel@apache/camel [command]
 ----
+
 
 === Running Camel K integrations or bindings
 
