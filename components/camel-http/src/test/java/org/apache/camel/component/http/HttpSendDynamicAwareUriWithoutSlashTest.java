@@ -17,6 +17,7 @@
 package org.apache.camel.component.http;
 
 import java.util.Map;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
@@ -40,9 +41,9 @@ public class HttpSendDynamicAwareUriWithoutSlashTest extends BaseHttpTest {
     @Override
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
-            .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-            .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
-            .registerHandler("/users/*", new BasicValidationHandler("GET", null, null, "a user")).create();
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/users/*", new BasicValidationHandler("GET", null, null, "a user")).create();
         localServer.start();
 
         super.setUp();
@@ -64,22 +65,24 @@ public class HttpSendDynamicAwareUriWithoutSlashTest extends BaseHttpTest {
             @Override
             public void configure() throws Exception {
                 from("direct:usersDrink")
-                    .toD("http://localhost:" + localServer.getLocalPort()
-                        + "/users/${exchangeProperty.user}");
+                        .toD("http://localhost:" + localServer.getLocalPort()
+                             + "/users/${exchangeProperty.user}");
 
                 from("direct:usersDrinkWithoutSlash")
-                    .toD("http:localhost:" + localServer.getLocalPort()
-                        + "/users/${exchangeProperty.user}");
+                        .toD("http:localhost:" + localServer.getLocalPort()
+                             + "/users/${exchangeProperty.user}");
             }
         };
     }
 
     @Test
     public void testDynamicAware() throws Exception {
-        Exchange out = fluentTemplate.to("direct:usersDrink").withExchange(ExchangeBuilder.anExchange(context).withProperty("user", "joes").build()).send();
+        Exchange out = fluentTemplate.to("direct:usersDrink")
+                .withExchange(ExchangeBuilder.anExchange(context).withProperty("user", "joes").build()).send();
         assertEquals("a user", out.getMessage().getBody(String.class));
 
-        out = fluentTemplate.to("direct:usersDrink").withExchange(ExchangeBuilder.anExchange(context).withProperty("user", "moes").build()).send();
+        out = fluentTemplate.to("direct:usersDrink")
+                .withExchange(ExchangeBuilder.anExchange(context).withProperty("user", "moes").build()).send();
         assertEquals("a user", out.getMessage().getBody(String.class));
 
         // and there should only be one http endpoint as they are both on same host
@@ -89,13 +92,15 @@ public class HttpSendDynamicAwareUriWithoutSlashTest extends BaseHttpTest {
         assertTrue(endpointMap.containsKey("direct://usersDrinkWithoutSlash"), "Should find direct");
         assertEquals(3, endpointMap.size());
     }
-    
+
     @Test
     public void testDynamicAwareWithoutSlash() throws Exception {
-        Exchange out = fluentTemplate.to("direct:usersDrinkWithoutSlash").withExchange(ExchangeBuilder.anExchange(context).withProperty("user", "joes").build()).send();
+        Exchange out = fluentTemplate.to("direct:usersDrinkWithoutSlash")
+                .withExchange(ExchangeBuilder.anExchange(context).withProperty("user", "joes").build()).send();
         assertEquals("a user", out.getMessage().getBody(String.class));
 
-        out = fluentTemplate.to("direct:usersDrinkWithoutSlash").withExchange(ExchangeBuilder.anExchange(context).withProperty("user", "moes").build()).send();
+        out = fluentTemplate.to("direct:usersDrinkWithoutSlash")
+                .withExchange(ExchangeBuilder.anExchange(context).withProperty("user", "moes").build()).send();
         assertEquals("a user", out.getMessage().getBody(String.class));
 
         // and there should only be one http endpoint as they are both on same host
