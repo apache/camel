@@ -158,10 +158,10 @@
     <corda-version>4.8</corda-version>
     <couchbase-client-version>3.2.7</couchbase-client-version>
     <curator-version>4.3.0</curator-version>
-    <cxf-codegen-plugin-version>3.4.5</cxf-codegen-plugin-version>
-    <cxf-version>3.4.5</cxf-version>
+    <cxf-codegen-plugin-version>3.4.8</cxf-codegen-plugin-version>
+    <cxf-version>3.4.8</cxf-version>
     <cxf-version-range>[3.4,3.5)</cxf-version-range>
-    <cxf-xjc-plugin-version>3.3.1</cxf-xjc-plugin-version>
+    <cxf-xjc-plugin-version>3.3.2</cxf-xjc-plugin-version>
     <cxf-xjc-utils-version>3.3.1</cxf-xjc-utils-version>
     <cxf.codegen.jvmArgs></cxf.codegen.jvmArgs>
     <cxf.codegenplugin.forkmode>once</cxf.codegenplugin.forkmode>
@@ -169,7 +169,7 @@
     <datasonnet-mapper-version>2.1.4</datasonnet-mapper-version>
     <debezium-mysql-connector-version>8.0.27</debezium-mysql-connector-version>
     <debezium-version>1.7.1.Final</debezium-version>
-    <deltaspike-version>1.9.4</deltaspike-version>
+    <deltaspike-version>1.9.5</deltaspike-version>
     <depends-maven-plugin-version>1.4.0</depends-maven-plugin-version>
     <derby-version>10.14.2.0</derby-version>
     <digitalocean-api-client-version>2.17</digitalocean-api-client-version>
@@ -432,7 +432,7 @@
     <nessus-ipfs-version>1.0.0.Beta4</nessus-ipfs-version>
     <nessus-weka-version>1.0.1</nessus-weka-version>
     <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
-    <netty-version>4.1.77.Final</netty-version>
+    <netty-version>4.1.79.Final</netty-version>
     <networknt-json-schema-validator-version>1.0.64</networknt-json-schema-validator-version>
     <nimbus-jose-jwt>8.9</nimbus-jose-jwt>
     <nitrite-version>3.4.3</nitrite-version>
@@ -517,14 +517,14 @@
     <spock-version>2.0-M4-groovy-3.0</spock-version>
     <spring-batch-version>4.3.6</spring-batch-version>
     <spring-data-redis-version>2.5.6</spring-data-redis-version>
-    <spring-integration-version>5.5.12</spring-integration-version>
+    <spring-integration-version>5.5.14</spring-integration-version>
     <spring-ldap-version>2.3.8.RELEASE</spring-ldap-version>
     <spring-rabbitmq-version>2.4.2</spring-rabbitmq-version>
     <spring-security-version>5.6.5</spring-security-version>
     <spring-version>${spring5-version}</spring-version>
     <spring-version-range>[5,6)</spring-version-range>
     <spring-ws-version>3.1.3</spring-ws-version>
-    <spring5-version>5.3.20</spring5-version>
+    <spring5-version>5.3.22</spring5-version>
     <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
     <squareup-okhttp-version>3.14.7</squareup-okhttp-version>
     <squareup-okio-version>1.17.2</squareup-okio-version>
@@ -533,9 +533,9 @@
     <stompjms-version>1.19</stompjms-version>
     <stringtemplate-version>4.3</stringtemplate-version>
     <swagger-java-guava-version>27.1-jre</swagger-java-guava-version>
-    <swagger-java-parser-version>1.0.51</swagger-java-parser-version>
-    <swagger-java-version>1.6.2</swagger-java-version>
-    <swagger-openapi3-version>2.1.11</swagger-openapi3-version>
+    <swagger-java-parser-version>1.0.56</swagger-java-parser-version>
+    <swagger-java-version>1.6.4</swagger-java-version>
+    <swagger-openapi3-version>2.1.13</swagger-openapi3-version>
     <tagsoup-version>1.2.1</tagsoup-version>
     <templating-maven-plugin-version>1.0.0</templating-maven-plugin-version>
     <testcontainers-version>1.16.2</testcontainers-version>
@@ -549,7 +549,7 @@
     <vavr-version>0.10.2</vavr-version>
     <velocity-tools-version>3.1</velocity-tools-version>
     <velocity-version>2.3</velocity-version>
-    <vertx-version>4.1.6</vertx-version>
+    <vertx-version>4.1.8</vertx-version>
     <vysper-version>0.7</vysper-version>
     <web3j-quorum-version>0.8.0</web3j-quorum-version>
     <web3j-version>3.6.0</web3j-version>
