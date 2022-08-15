@@ -205,7 +205,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
                 private int index;
                 private boolean closed;
 
-                private final Map<String, Object> data = new ConcurrentHashMap<>();
+                private Map<String, Object> txData;
 
                 public boolean hasNext() {
                     if (closed) {
@@ -233,10 +233,13 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
                         // and do not share the unit of work
                         Exchange newExchange = processorExchangeFactory.createCorrelatedCopy(copy, false);
                         newExchange.adapt(ExtendedExchange.class).setTransacted(original.isTransacted());
-                        // If we are in a transaction, set TRANSACTION_CONTEXT_DATA property for new exchanges to share data
+                        // If we are in a transaction, set TRANSACTION_CONTEXT_DATA property for new exchanges to share txData
                         // during the transaction.
                         if (original.isTransacted() && newExchange.getProperty(Exchange.TRANSACTION_CONTEXT_DATA) == null) {
-                            newExchange.setProperty(Exchange.TRANSACTION_CONTEXT_DATA, data);
+                            if (txData == null) {
+                                txData = new ConcurrentHashMap<>();
+                            }
+                            newExchange.setProperty(Exchange.TRANSACTION_CONTEXT_DATA, txData);
                         }
                         // If the splitter has an aggregation strategy
                         // then the StreamCache created by the child routes must not be
