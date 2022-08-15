@@ -950,15 +950,21 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     public Bus getBus() {
         if (bus == null) {
             CamelContext context = getCamelContext();
-            if (context.getClass().getName().endsWith("SpringCamelContext")) {
+            if (context.getClass().getName().endsWith("SpringCamelContext") || 
+                context.getClass().getName().endsWith("SpringBootCamelContext")) {
                 try {
                     Class<?> cxfSpringEndpintUtilClazz
                             = Class.forName("org.apache.camel.component.cxf.spring.jaxws.CxfSpringEndpointUtils");
                     Method method = cxfSpringEndpintUtilClazz.getMethod("createBus", CamelContext.class);
                     bus = (Bus) method.invoke(null, context);
                 } catch (Exception ex) {
-                    LOG.warn("Error creating Cxf Bus from SpringCamelContext: {} This exception will be ignored.",
+                    if (context.getClass().getName().endsWith("SpringCamelContext")) {
+                        LOG.warn("Error creating Cxf Bus from SpringCamelContext: {} This exception will be ignored.",
                             ex.getMessage(), ex);
+                    } else {
+                        LOG.warn("Error creating Cxf Bus from SpringBootCamelContext: {} This exception will be ignored.",
+                            ex.getMessage(), ex);
+                    }
                     bus = CxfEndpointUtils.createBus(getCamelContext());
                 }
             } else {
