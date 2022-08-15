@@ -108,12 +108,18 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
             Job job = bigquery.create(JobInfo.of(queryJobId, queryJobConfiguration)).waitFor();
             JobStatistics.QueryStatistics statistics = job.getStatistics();
             TableResult result = job.getQueryResults();
-            long numAffectedRows = statistics.getNumDmlAffectedRows();
+            Long numAffectedRows = statistics.getNumDmlAffectedRows();
 
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Query {} - Affected rows {} - Result {}", translatedQuery, numAffectedRows, result);
             }
-            return numAffectedRows;
+
+            //numAffectedRows is present only for DML statements INSERT, UPDATE or DELETE.
+            if (numAffectedRows != null) {
+                return numAffectedRows;
+            }
+            //in other cases (SELECT), the number of affected rows is returned
+            return result.getTotalRows();
         } catch (JobException e) {
             throw new Exception("Query " + translatedQuery + " failed: " + e.getErrors(), e);
         } catch (BigQueryException e) {
