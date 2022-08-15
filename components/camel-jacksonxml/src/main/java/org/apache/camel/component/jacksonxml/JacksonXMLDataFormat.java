@@ -33,6 +33,7 @@ import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -456,6 +457,14 @@ public class JacksonXMLDataFormat extends ServiceSupport
         }
     }
 
+    public void enableFeature(FromXmlParser.Feature feature) {
+        if (enableFeatures == null) {
+            enableFeatures = feature.name();
+        } else {
+            enableFeatures += "," + feature.name();
+        }
+    }
+
     public void disableFeature(SerializationFeature feature) {
         if (disableFeatures == null) {
             disableFeatures = feature.name();
@@ -473,6 +482,14 @@ public class JacksonXMLDataFormat extends ServiceSupport
     }
 
     public void disableFeature(MapperFeature feature) {
+        if (disableFeatures == null) {
+            disableFeatures = feature.name();
+        } else {
+            disableFeatures += "," + feature.name();
+        }
+    }
+
+    public void disableFeature(FromXmlParser.Feature feature) {
         if (disableFeatures == null) {
             disableFeatures = feature.name();
         } else {
@@ -540,9 +557,15 @@ public class JacksonXMLDataFormat extends ServiceSupport
                     xmlMapper.enable(mf);
                     continue;
                 }
+                FromXmlParser.Feature pf
+                        = getCamelContext().getTypeConverter().tryConvertTo(FromXmlParser.Feature.class, enable);
+                if (pf != null) {
+                    xmlMapper.enable(pf);
+                    continue;
+                }
                 throw new IllegalArgumentException(
                         "Enable feature: " + enable
-                                                   + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature]");
+                                                   + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature,FromXmlParser.Feature]");
             }
         }
         if (disableFeatures != null) {
@@ -567,9 +590,15 @@ public class JacksonXMLDataFormat extends ServiceSupport
                     xmlMapper.disable(mf);
                     continue;
                 }
+                FromXmlParser.Feature pf
+                        = getCamelContext().getTypeConverter().tryConvertTo(FromXmlParser.Feature.class, disable);
+                if (pf != null) {
+                    xmlMapper.disable(pf);
+                    continue;
+                }
                 throw new IllegalArgumentException(
                         "Disable feature: " + disable
-                                                   + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature]");
+                                                   + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature,FromXmlParser.Feature]");
             }
         }
 

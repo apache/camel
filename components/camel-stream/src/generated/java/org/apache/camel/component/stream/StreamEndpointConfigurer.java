@@ -43,6 +43,10 @@ public class StreamEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "groupLines": target.setGroupLines(property(camelContext, int.class, value)); return true;
         case "groupstrategy":
         case "groupStrategy": target.setGroupStrategy(property(camelContext, org.apache.camel.component.stream.GroupStrategy.class, value)); return true;
+        case "httpheaders":
+        case "httpHeaders": target.setHttpHeaders(property(camelContext, java.lang.String.class, value)); return true;
+        case "httpurl":
+        case "httpUrl": target.setHttpUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "initialpromptdelay":
         case "initialPromptDelay": target.setInitialPromptDelay(property(camelContext, long.class, value)); return true;
         case "lazystartproducer":
@@ -89,6 +93,10 @@ public class StreamEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "groupLines": return int.class;
         case "groupstrategy":
         case "groupStrategy": return org.apache.camel.component.stream.GroupStrategy.class;
+        case "httpheaders":
+        case "httpHeaders": return java.lang.String.class;
+        case "httpurl":
+        case "httpUrl": return java.lang.String.class;
         case "initialpromptdelay":
         case "initialPromptDelay": return long.class;
         case "lazystartproducer":
@@ -136,6 +144,10 @@ public class StreamEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "groupLines": return target.getGroupLines();
         case "groupstrategy":
         case "groupStrategy": return target.getGroupStrategy();
+        case "httpheaders":
+        case "httpHeaders": return target.getHttpHeaders();
+        case "httpurl":
+        case "httpUrl": return target.getHttpUrl();
         case "initialpromptdelay":
         case "initialPromptDelay": return target.getInitialPromptDelay();
         case "lazystartproducer":

@@ -54,6 +54,14 @@ abstract class ExportBaseCommand extends CamelCommand {
             "camel.jbang.classpathFiles"
     };
 
+    @CommandLine.Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "application",
+                        description = "Profile to use, which refers to loading properties file with the given profile name. By default application.properties is loaded.")
+    protected String profile;
+
+    @CommandLine.Option(names = {
+            "--dep", "--deps" }, description = "Add additional dependencies (Use commas to separate multiple dependencies).")
+    protected String dependencies;
+
     @CommandLine.Option(names = { "--runtime" }, description = "Runtime (spring-boot, quarkus, or camel-main)")
     protected String runtime;
 
@@ -73,7 +81,7 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String kameletsVersion;
 
     @CommandLine.Option(names = { "--spring-boot-version" }, description = "Spring Boot version",
-                        defaultValue = "2.7.0")
+                        defaultValue = "2.7.2")
     protected String springBootVersion;
 
     @CommandLine.Option(names = { "--quarkus-group-id" }, description = "Quarkus Platform Maven groupId",
@@ -85,7 +93,7 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String quarkusArtifactId;
 
     @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-                        defaultValue = "2.10.0.Final")
+                        defaultValue = "2.11.2.Final")
     protected String quarkusVersion;
 
     @CommandLine.Option(names = { "--maven-wrapper" }, defaultValue = "true",
@@ -122,6 +130,10 @@ abstract class ExportBaseCommand extends CamelCommand {
         return export();
     }
 
+    public String getProfile() {
+        return profile;
+    }
+
     protected abstract Integer export() throws Exception;
 
     protected static String getScheme(String name) {
@@ -134,6 +146,8 @@ abstract class ExportBaseCommand extends CamelCommand {
 
     protected Integer runSilently() throws Exception {
         Run run = new Run(getMain());
+        // need to declare the profile to use for run
+        run.profile = profile;
         Integer code = run.runSilent();
         return code;
     }
@@ -150,6 +164,14 @@ abstract class ExportBaseCommand extends CamelCommand {
             }
             return o1.compareTo(o2);
         });
+
+        // custom dependencies
+        if (dependencies != null) {
+            for (String d : dependencies.split(",")) {
+                answer.add(d.trim());
+            }
+        }
+
         List<String> lines = Files.readAllLines(settings.toPath());
         for (String line : lines) {
             if (line.startsWith("dependency=")) {
@@ -163,13 +185,19 @@ abstract class ExportBaseCommand extends CamelCommand {
                     answer.add(v);
                 }
                 if (v != null && v.contains("org.apache.camel:camel-kamelet")) {
-                    // include kamelet catalog if we use kamelets
+                    // include yaml-dsl and kamelet catalog if we use kamelets
+                    answer.add("camel:yaml-dsl");
                     answer.add("org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
                 }
             } else if (line.startsWith("camel.jbang.dependencies=")) {
                 String deps = StringHelper.after(line, "camel.jbang.dependencies=");
                 for (String d : deps.split(",")) {
                     answer.add(d.trim());
+                    if (d.contains("org.apache.camel:camel-kamelet")) {
+                        // include yaml-dsl and kamelet catalog if we use kamelets
+                        answer.add("camel:yaml-dsl");
+                        answer.add("org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
+                    }
                 }
             } else if (line.startsWith("camel.main.routesIncludePattern=")) {
                 String routes = StringHelper.after(line, "camel.main.routesIncludePattern=");

@@ -36,18 +36,20 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jetty.BaseJettyTest.SSL_SYSPROPS;
-import static org.apache.camel.test.junit5.TestSupport.isPlatform;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @ResourceLock(SSL_SYSPROPS)
+@DisabledOnOs(OS.WINDOWS)
 public class HttpsAsyncRouteTest extends HttpsRouteTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpsAsyncRouteTest.class);
@@ -93,11 +95,6 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
     @Override
     @Test
     public void testEndpoint() throws Exception {
-        // these tests does not run well on Windows
-        if (isPlatform("windows")) {
-            return;
-        }
-
         MockEndpoint mockEndpointA = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
         mockEndpointA.expectedBodiesReceived(expectedBody);
         MockEndpoint mockEndpointB = resolveMandatoryEndpoint("mock:b", MockEndpoint.class);
@@ -124,11 +121,6 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
     @Override
     @Test
     public void testEndpointWithoutHttps() {
-        // these tests does not run well on Windows
-        if (isPlatform("windows")) {
-            return;
-        }
-
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
         try {
             template.sendBodyAndHeader("http://localhost:" + port1 + "/test", expectedBody, "Content-Type", "application/xml");
@@ -141,11 +133,6 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
     @Override
     @Test
     public void testHelloEndpoint() throws Exception {
-        // these tests does not run well on Windows
-        if (isPlatform("windows")) {
-            return;
-        }
-
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         URL url = new URL("https://localhost:" + port1 + "/hello");
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
@@ -165,11 +152,6 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
     @Override
     @Test
     public void testHelloEndpointWithoutHttps() throws Exception {
-        // these tests does not run well on Windows
-        if (isPlatform("windows")) {
-            return;
-        }
-
         try {
             new URL("http://localhost:" + port1 + "/hello").openStream();
             fail("expected SocketException on use ot http");
@@ -193,7 +175,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
                 componentJetty.setSslPassword(pwd);
                 componentJetty.setSslKeyPassword(pwd);
                 URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.p12");
-                componentJetty.setKeystore(keyStoreUrl.toURI().getPath());
+                componentJetty.setKeystore("file://" + keyStoreUrl.toURI().getPath());
 
                 from("jetty:https://localhost:" + port1 + "/test?async=true&useContinuation=false").to("mock:a");
 

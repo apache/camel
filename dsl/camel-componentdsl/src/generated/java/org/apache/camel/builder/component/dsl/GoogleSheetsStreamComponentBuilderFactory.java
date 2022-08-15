@@ -320,21 +320,6 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
             return this;
         }
         /**
-         * Sets .json file with credentials for Service account.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param keyResource the value to set
-         * @return the dsl builder
-         */
-        default GoogleSheetsStreamComponentBuilder keyResource(
-                java.lang.String keyResource) {
-            doSetProperty("keyResource", keyResource);
-            return this;
-        }
-        /**
          * OAuth 2 refresh token. Using this, the Google Calendar component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
@@ -349,6 +334,21 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
         default GoogleSheetsStreamComponentBuilder refreshToken(
                 java.lang.String refreshToken) {
             doSetProperty("refreshToken", refreshToken);
+            return this;
+        }
+        /**
+         * Sets .json file with credentials for Service account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param serviceAccountKey the value to set
+         * @return the dsl builder
+         */
+        default GoogleSheetsStreamComponentBuilder serviceAccountKey(
+                java.lang.String serviceAccountKey) {
+            doSetProperty("serviceAccountKey", serviceAccountKey);
             return this;
         }
     }
@@ -391,8 +391,8 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
             case "clientFactory": ((GoogleSheetsStreamComponent) component).setClientFactory((org.apache.camel.component.google.sheets.GoogleSheetsClientFactory) value); return true;
             case "accessToken": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setAccessToken((java.lang.String) value); return true;
             case "clientSecret": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setClientSecret((java.lang.String) value); return true;
-            case "keyResource": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setKeyResource((java.lang.String) value); return true;
             case "refreshToken": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setRefreshToken((java.lang.String) value); return true;
+            case "serviceAccountKey": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setServiceAccountKey((java.lang.String) value); return true;
             default: return false;
             }
         }

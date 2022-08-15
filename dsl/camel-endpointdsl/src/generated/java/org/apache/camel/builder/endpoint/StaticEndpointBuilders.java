@@ -1535,6 +1535,49 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * AWS Cloudtrail (camel-aws-cloudtrail)
+     * Consume events from Amazon Cloudtrail using AWS SDK version 2.x.
+     * 
+     * Category: cloud,eventbus
+     * Since: 3.19
+     * Maven coordinates: org.apache.camel:camel-aws-cloudtrail
+     * 
+     * Syntax: <code>aws-cloudtrail:label</code>
+     * 
+     * Path parameter: label (required)
+     * A label for indexing cloudtrail endpoints
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.CloudtrailEndpointBuilderFactory.CloudtrailEndpointBuilder awsCloudtrail(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.CloudtrailEndpointBuilderFactory.endpointBuilder("aws-cloudtrail", path);
+    }
+    /**
+     * AWS Cloudtrail (camel-aws-cloudtrail)
+     * Consume events from Amazon Cloudtrail using AWS SDK version 2.x.
+     * 
+     * Category: cloud,eventbus
+     * Since: 3.19
+     * Maven coordinates: org.apache.camel:camel-aws-cloudtrail
+     * 
+     * Syntax: <code>aws-cloudtrail:label</code>
+     * 
+     * Path parameter: label (required)
+     * A label for indexing cloudtrail endpoints
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.CloudtrailEndpointBuilderFactory.CloudtrailEndpointBuilder awsCloudtrail(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.CloudtrailEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * AWS Secrets Manager (camel-aws-secrets-manager)
      * Manage AWS Secrets Manager services using AWS SDK version 2.x.
      * 
@@ -6833,6 +6876,49 @@ public class StaticEndpointBuilders {
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.SimpleNotificationEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Hyperledger Aries (camel-hyperledger-aries)
+     * Camel support for Hyperledger Aries
+     * 
+     * Category: blockchain,identity
+     * Since: 3.19
+     * Maven coordinates: org.apache.camel:camel-hyperledger-aries
+     * 
+     * Syntax: <code>hyperledger-aries:walletName</code>
+     * 
+     * Path parameter: walletName (required)
+     * The wallet to connect to
+     * 
+     * @param path walletName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.HyperledgerAriesEndpointBuilderFactory.HyperledgerAriesEndpointBuilder hyperledgerAries(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.HyperledgerAriesEndpointBuilderFactory.endpointBuilder("hyperledger-aries", path);
+    }
+    /**
+     * Hyperledger Aries (camel-hyperledger-aries)
+     * Camel support for Hyperledger Aries
+     * 
+     * Category: blockchain,identity
+     * Since: 3.19
+     * Maven coordinates: org.apache.camel:camel-hyperledger-aries
+     * 
+     * Syntax: <code>hyperledger-aries:walletName</code>
+     * 
+     * Path parameter: walletName (required)
+     * The wallet to connect to
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path walletName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.HyperledgerAriesEndpointBuilderFactory.HyperledgerAriesEndpointBuilder hyperledgerAries(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.HyperledgerAriesEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * IEC 60870 Client (camel-iec60870)
@@ -12551,9 +12637,9 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>salesforce:operationName:topicName</code>
      * 
-     * Path parameter: operationName
+     * Path parameter: operationName (required)
      * The operation to use
-     * There are 65 enums and the value can be one of: getVersions,
+     * There are 66 enums and the value can be one of: getVersions,
      * getResources, getGlobalObjects, getBasicInfo, getDescription, getSObject,
      * createSObject, updateSObject, deleteSObject, getSObjectWithId,
      * upsertSObject, deleteSObjectWithId, getBlobField, query, queryMore,
@@ -12570,7 +12656,7 @@ public class StaticEndpointBuilders {
      * bulk2DeleteJob, bulk2GetSuccessfulResults, bulk2GetFailedResults,
      * bulk2GetUnprocessedRecords, bulk2CreateQueryJob, bulk2GetQueryJob,
      * bulk2GetAllQueryJobs, bulk2GetQueryJobResults, bulk2AbortQueryJob,
-     * bulk2DeleteQueryJob, raw
+     * bulk2DeleteQueryJob, raw, subscribe
      * 
      * Path parameter: topicName
      * The name of the topic/channel to use
@@ -12592,9 +12678,9 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>salesforce:operationName:topicName</code>
      * 
-     * Path parameter: operationName
+     * Path parameter: operationName (required)
      * The operation to use
-     * There are 65 enums and the value can be one of: getVersions,
+     * There are 66 enums and the value can be one of: getVersions,
      * getResources, getGlobalObjects, getBasicInfo, getDescription, getSObject,
      * createSObject, updateSObject, deleteSObject, getSObjectWithId,
      * upsertSObject, deleteSObjectWithId, getBlobField, query, queryMore,
@@ -12611,7 +12697,7 @@ public class StaticEndpointBuilders {
      * bulk2DeleteJob, bulk2GetSuccessfulResults, bulk2GetFailedResults,
      * bulk2GetUnprocessedRecords, bulk2CreateQueryJob, bulk2GetQueryJob,
      * bulk2GetAllQueryJobs, bulk2GetQueryJobResults, bulk2AbortQueryJob,
-     * bulk2DeleteQueryJob, raw
+     * bulk2DeleteQueryJob, raw, subscribe
      * 
      * Path parameter: topicName
      * The name of the topic/channel to use
@@ -13457,10 +13543,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>splunk-hec:splunkURL/token</code>
      * 
      * Path parameter: splunkURL (required)
-     * Splunk Host URL
+     * Splunk Host and Port (example: my_splunk_server:8089)
      * 
      * Path parameter: token (required)
-     * Splunk authorization token
+     * Splunk HEC token (this is the token created for HEC and not the user's
+     * token)
      * 
      * @param path splunkURL/token
      * @return the dsl builder
@@ -13481,10 +13568,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>splunk-hec:splunkURL/token</code>
      * 
      * Path parameter: splunkURL (required)
-     * Splunk Host URL
+     * Splunk Host and Port (example: my_splunk_server:8089)
      * 
      * Path parameter: token (required)
-     * Splunk authorization token
+     * Splunk HEC token (this is the token created for HEC and not the user's
+     * token)
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -14199,8 +14287,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>stream:kind</code>
      * 
      * Path parameter: kind (required)
-     * Kind of stream to use such as System.in or System.out.
-     * There are 5 enums and the value can be one of: in, out, err, header, file
+     * Kind of stream to use such as System.in, System.out, a file, or a http
+     * url.
+     * There are 6 enums and the value can be one of: in, out, err, header,
+     * file, http
      * 
      * @param path kind
      * @return the dsl builder
@@ -14220,8 +14310,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>stream:kind</code>
      * 
      * Path parameter: kind (required)
-     * Kind of stream to use such as System.in or System.out.
-     * There are 5 enums and the value can be one of: in, out, err, header, file
+     * Kind of stream to use such as System.in, System.out, a file, or a http
+     * url.
+     * There are 6 enums and the value can be one of: in, out, err, header,
+     * file, http
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -15430,6 +15522,49 @@ public class StaticEndpointBuilders {
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.WekaEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * WhatsApp (camel-whatsapp)
+     * Send messages.
+     * 
+     * Category: cloud,api,chat
+     * Since: 3.18
+     * Maven coordinates: org.apache.camel:camel-whatsapp
+     * 
+     * Syntax: <code>whatsapp:phoneNumberId</code>
+     * 
+     * Path parameter: phoneNumberId (required)
+     * The phone number ID taken from whatsapp-business dashboard.
+     * 
+     * @param path phoneNumberId
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.WhatsAppEndpointBuilderFactory.WhatsAppEndpointBuilder whatsapp(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.WhatsAppEndpointBuilderFactory.endpointBuilder("whatsapp", path);
+    }
+    /**
+     * WhatsApp (camel-whatsapp)
+     * Send messages.
+     * 
+     * Category: cloud,api,chat
+     * Since: 3.18
+     * Maven coordinates: org.apache.camel:camel-whatsapp
+     * 
+     * Syntax: <code>whatsapp:phoneNumberId</code>
+     * 
+     * Path parameter: phoneNumberId (required)
+     * The phone number ID taken from whatsapp-business dashboard.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path phoneNumberId
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.WhatsAppEndpointBuilderFactory.WhatsAppEndpointBuilder whatsapp(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.WhatsAppEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Wordpress (camel-wordpress)

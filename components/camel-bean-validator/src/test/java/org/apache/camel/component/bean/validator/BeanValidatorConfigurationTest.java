@@ -37,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.condition.OS.AIX;
 
+@DisabledOnOs(AIX)
 public class BeanValidatorConfigurationTest extends CamelTestSupport {
 
     @BindToRegistry("myMessageInterpolator")
@@ -56,14 +57,12 @@ public class BeanValidatorConfigurationTest extends CamelTestSupport {
         super.setUp();
     }
 
-    @DisabledOnOs(AIX)
     @Test
     void configureWithDefaults() {
         BeanValidatorEndpoint endpoint = context.getEndpoint("bean-validator://x", BeanValidatorEndpoint.class);
         assertNull(endpoint.getGroup());
     }
 
-    @DisabledOnOs(AIX)
     @Test
     void configureBeanValidator() {
         BeanValidatorEndpoint endpoint = context

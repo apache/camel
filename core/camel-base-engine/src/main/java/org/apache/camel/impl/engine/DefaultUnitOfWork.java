@@ -210,14 +210,19 @@ public class DefaultUnitOfWork implements UnitOfWork {
             Synchronization synchronization = it.next();
 
             boolean handover = true;
+            SynchronizationVetoable veto = null;
             if (synchronization instanceof SynchronizationVetoable) {
-                SynchronizationVetoable veto = (SynchronizationVetoable) synchronization;
+                veto = (SynchronizationVetoable) synchronization;
                 handover = veto.allowHandover();
             }
 
             if (handover && (filter == null || filter.test(synchronization))) {
                 log.trace("Handover synchronization {} to: {}", synchronization, target);
                 target.adapt(ExtendedExchange.class).addOnCompletion(synchronization);
+                // Allow the synchronization to do housekeeping before transfer
+                if (veto != null) {
+                    veto.beforeHandover(target);
+                }
                 // remove it if its handed over
                 it.remove();
             } else {
@@ -356,8 +361,8 @@ public class DefaultUnitOfWork implements UnitOfWork {
 
     @Override
     public AsyncCallback beforeProcess(Processor processor, Exchange exchange, AsyncCallback callback) {
-        // no wrapping needed
-        return callback;
+        // CAMEL-18255: support running afterProcess from the async callback
+        return isBeforeAfterProcess() ? new UnitOfWorkCallback(callback, processor) : callback;
     }
 
     @Override
@@ -376,5 +381,27 @@ public class DefaultUnitOfWork implements UnitOfWork {
     @Override
     public String toString() {
         return "DefaultUnitOfWork";
+    }
+
+    private final class UnitOfWorkCallback implements AsyncCallback {
+
+        private final AsyncCallback delegate;
+        private final Processor processor;
+
+        private UnitOfWorkCallback(AsyncCallback delegate, Processor processor) {
+            this.delegate = delegate;
+            this.processor = processor;
+        }
+
+        @Override
+        public void done(boolean doneSync) {
+            delegate.done(doneSync);
+            afterProcess(processor, exchange, delegate, doneSync);
+        }
+
+        @Override
+        public String toString() {
+            return delegate.toString();
+        }
     }
 }

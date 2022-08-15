@@ -24,7 +24,7 @@ import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
 import org.apache.camel.component.kafka.integration.BaseManualCommitTestSupport;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -35,7 +35,7 @@ public class KafkaConsumerNoopCommitIT extends BaseManualCommitTestSupport {
     public static final String TOPIC = "testManualNoopCommitTest";
 
     @EndpointInject("kafka:" + TOPIC
-                    + "?groupId=group1&sessionTimeoutMs=30000&autoCommitEnable=false"
+                    + "?groupId=KafkaConsumerNoopCommitIT&pollTimeoutMs=1000&autoCommitEnable=false"
                     + "&allowManualCommit=true&autoOffsetReset=earliest&metadataMaxAgeMs=1000")
     private Endpoint from;
 
@@ -60,7 +60,7 @@ public class KafkaConsumerNoopCommitIT extends BaseManualCommitTestSupport {
         };
     }
 
-    @RepeatedTest(1)
+    @Test
     public void kafkaAutoCommitDisabledDuringRebalance() throws Exception {
         to.expectedMessageCount(1);
         String firstMessage = "message-0";
@@ -100,7 +100,7 @@ public class KafkaConsumerNoopCommitIT extends BaseManualCommitTestSupport {
         to.assertIsSatisfied(3000);
     }
 
-    @RepeatedTest(1)
+    @Test
     public void kafkaManualCommit() throws Exception {
         kafkaManualCommitTest(TOPIC);
     }

@@ -40,7 +40,6 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
-import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -56,6 +55,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
 
     private EntityManagerFactory entityManagerFactory;
     private PlatformTransactionManager transactionManager;
+    private TransactionStrategy transactionStrategy;
     private Expression producerExpression;
 
     @UriPath(description = "Entity class name")
@@ -236,7 +236,13 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
 
     public PlatformTransactionManager getTransactionManager() {
         if (transactionManager == null) {
-            transactionManager = createTransactionManager();
+            if (transactionStrategy == null) {
+                DefaultTransactionStrategy defaultTransactionStrategy = createTransactionStrategy();
+                transactionStrategy = defaultTransactionStrategy;
+                transactionManager = defaultTransactionStrategy.getTransactionManager();
+            } else if (transactionStrategy instanceof DefaultTransactionStrategy) {
+                transactionManager = ((DefaultTransactionStrategy) transactionStrategy).getTransactionManager();
+            }
         }
         return transactionManager;
     }
@@ -246,6 +252,17 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
      */
     public void setTransactionManager(PlatformTransactionManager transactionManager) {
         this.transactionManager = transactionManager;
+    }
+
+    public TransactionStrategy getTransactionStrategy() {
+        if (transactionStrategy == null) {
+            transactionStrategy = createTransactionStrategy();
+        }
+        return transactionStrategy;
+    }
+
+    public void setTransactionStrategy(TransactionStrategy transactionStrategy) {
+        this.transactionStrategy = transactionStrategy;
     }
 
     /**
@@ -542,12 +559,6 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         return emfBean.getObject();
     }
 
-    protected PlatformTransactionManager createTransactionManager() {
-        JpaTransactionManager tm = new JpaTransactionManager(getEntityManagerFactory());
-        tm.afterPropertiesSet();
-        return tm;
-    }
-
     /**
      * @deprecated use {@link #getEntityManagerFactory()} to get hold of factory and create an entity manager using the
      *             factory.
@@ -566,6 +577,10 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
         transactionTemplate.afterPropertiesSet();
         return transactionTemplate;
+    }
+
+    protected DefaultTransactionStrategy createTransactionStrategy() {
+        return new DefaultTransactionStrategy(transactionManager, getEntityManagerFactory());
     }
 
     protected Expression createProducerExpression() {
@@ -596,6 +611,9 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
 
         if (entityManagerFactory == null && getComponent() != null) {
             entityManagerFactory = getComponent().getEntityManagerFactory();
+        }
+        if (transactionStrategy == null && getComponent() != null) {
+            transactionStrategy = getComponent().getTransactionStrategy();
         }
         if (transactionManager == null && getComponent() != null) {
             transactionManager = getComponent().getTransactionManager();

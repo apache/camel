@@ -112,6 +112,6 @@ public class OpenldapLocalContainerService implements OpenldapService, Container
 
     @Override
     public String getHost() {
-        return container.getContainerIpAddress();
+        return container.getHost();
     }
 }

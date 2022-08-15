@@ -855,6 +855,21 @@ public interface SplunkEndpointBuilderFactory {
             return this;
         }
         /**
+         * User's token for Splunk. This takes precedence over password when
+         * both are set.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param token the value to set
+         * @return the dsl builder
+         */
+        default SplunkEndpointConsumerBuilder token(String token) {
+            doSetProperty("token", token);
+            return this;
+        }
+        /**
          * Username for Splunk.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1400,6 +1415,21 @@ public interface SplunkEndpointBuilderFactory {
             return this;
         }
         /**
+         * User's token for Splunk. This takes precedence over password when
+         * both are set.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param token the value to set
+         * @return the dsl builder
+         */
+        default SplunkEndpointProducerBuilder token(String token) {
+            doSetProperty("token", token);
+            return this;
+        }
+        /**
          * Username for Splunk.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1685,6 +1715,21 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointBuilder sslProtocol(String sslProtocol) {
             doSetProperty("sslProtocol", sslProtocol);
+            return this;
+        }
+        /**
+         * User's token for Splunk. This takes precedence over password when
+         * both are set.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param token the value to set
+         * @return the dsl builder
+         */
+        default SplunkEndpointBuilder token(String token) {
+            doSetProperty("token", token);
             return this;
         }
         /**

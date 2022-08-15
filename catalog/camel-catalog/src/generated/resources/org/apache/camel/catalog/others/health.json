@@ -6,7 +6,7 @@
     "description": "Camel Health Support",
     "deprecated": false,
     "firstVersion": "3.4.0",
-    "label": "core",
+    "label": "core,monitoring",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-health",

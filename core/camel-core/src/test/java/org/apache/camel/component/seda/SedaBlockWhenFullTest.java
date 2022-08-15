@@ -37,7 +37,7 @@ public class SedaBlockWhenFullTest extends ContextTestSupport {
     private static final String SEDA_WITH_OFFER_TIMEOUT_URI
             = "seda:blockingFoo" + String.format(SIZE_PARAM, QUEUE_SIZE) + "&blockWhenFull=true&offerTimeout=200";
     private static final String BLOCK_WHEN_FULL_URI
-            = "seda:blockingBar" + String.format(SIZE_PARAM, QUEUE_SIZE) + "&blockWhenFull=true&timeout=0&offerTimeout=300";
+            = "seda:blockingBar" + String.format(SIZE_PARAM, QUEUE_SIZE) + "&blockWhenFull=true&timeout=0&offerTimeout=1000";
     private static final String DEFAULT_URI = "seda:foo" + String.format(SIZE_PARAM, QUEUE_SIZE);
 
     @Override

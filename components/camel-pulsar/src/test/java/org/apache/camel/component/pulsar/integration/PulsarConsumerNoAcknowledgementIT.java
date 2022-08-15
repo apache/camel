@@ -31,6 +31,7 @@ import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.api.Schema;
 import org.apache.pulsar.client.impl.ClientBuilderImpl;
+import org.apache.pulsar.client.impl.MultiplierRedeliveryBackoff;
 import org.junit.jupiter.api.Test;
 
 public class PulsarConsumerNoAcknowledgementIT extends PulsarITSupport {
@@ -39,8 +40,7 @@ public class PulsarConsumerNoAcknowledgementIT extends PulsarITSupport {
     private static final String PRODUCER = "camel-producer-1";
 
     @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
-                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
-                    + "&ackTimeoutMillis=1000")
+                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer")
     private Endpoint from;
 
     @EndpointInject("mock:result")
@@ -74,7 +74,15 @@ public class PulsarConsumerNoAcknowledgementIT extends PulsarITSupport {
         PulsarComponent comp = new PulsarComponent(context);
         comp.setAutoConfiguration(autoConfiguration);
         comp.setPulsarClient(pulsarClient);
-        comp.getConfiguration().setAllowManualAcknowledgement(true); // Set to true here instead of the endpoint query parameter.
+        comp.getConfiguration()
+                .setAllowManualAcknowledgement(true); // Set to true here instead of the endpoint query parameter.
+        // Given relevant millis=1000 redeliveries will occur at 1s + 0.01s, 1s + 1s, 1s + 100s, 1s + 100s, 1s + 100s...
+        comp.getConfiguration().setAckTimeoutMillis(1_000L);
+        comp.getConfiguration().setAckTimeoutRedeliveryBackoff(MultiplierRedeliveryBackoff.builder()
+                .minDelayMs(10L)
+                .maxDelayMs(100_000L)
+                .multiplier(100.0)
+                .build());
         registry.bind("pulsar", comp);
     }
 
@@ -92,6 +100,21 @@ public class PulsarConsumerNoAcknowledgementIT extends PulsarITSupport {
         producer.send("Hello World!");
 
         MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, to);
+
+        producer.close();
     }
 
+    @Test
+    public void testAMessageIsConsumedMultipleTimesWithAckTimeoutBackoff() throws Exception {
+        to.expectedMessageCount(3);
+
+        Producer<String> producer
+                = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
+
+        producer.send("Hello World!");
+
+        MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, to);
+
+        producer.close();
+    }
 }

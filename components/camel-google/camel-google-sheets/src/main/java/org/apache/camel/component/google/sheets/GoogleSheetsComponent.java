@@ -59,12 +59,12 @@ public class GoogleSheetsComponent
                 client = getClientFactory().makeClient(config.getClientId(),
                         config.getClientSecret(), config.getScopes(),
                         config.getApplicationName(), config.getRefreshToken(), config.getAccessToken());
-            } else if (config.getKeyResource() != null && !config.getKeyResource().isBlank()) {
-                client = getClientFactory().makeClient(getCamelContext(), config.getKeyResource(),
+            } else if (config.getServiceAccountKey() != null && !config.getServiceAccountKey().isBlank()) {
+                client = getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(),
                         config.getScopes(), config.getApplicationName(), config.getDelegate());
             } else {
                 throw new IllegalArgumentException(
-                        "(clientId and clientSecret) or keyResource are required to create Google Sheets client");
+                        "(clientId and clientSecret) or serviceAccountKey are required to create Google Sheets client");
             }
         }
         return client;

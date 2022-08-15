@@ -29,10 +29,10 @@ public class SheetsSpreadsheetsEndpointConfigurationConfigurer extends org.apach
         map.put("Content", com.google.api.services.sheets.v4.model.Spreadsheet.class);
         map.put("Delegate", java.lang.String.class);
         map.put("GetSpreadsheetByDataFilterRequest", com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest.class);
-        map.put("KeyResource", java.lang.String.class);
         map.put("MethodName", java.lang.String.class);
         map.put("RefreshToken", java.lang.String.class);
         map.put("Scopes", java.util.Collection.class);
+        map.put("ServiceAccountKey", java.lang.String.class);
         map.put("SplitResult", boolean.class);
         map.put("SpreadsheetId", java.lang.String.class);
         ALL_OPTIONS = map;
@@ -60,14 +60,14 @@ public class SheetsSpreadsheetsEndpointConfigurationConfigurer extends org.apach
         case "Delegate": target.setDelegate(property(camelContext, java.lang.String.class, value)); return true;
         case "getspreadsheetbydatafilterrequest":
         case "GetSpreadsheetByDataFilterRequest": target.setGetSpreadsheetByDataFilterRequest(property(camelContext, com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest.class, value)); return true;
-        case "keyresource":
-        case "KeyResource": target.setKeyResource(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
         case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "RefreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "scopes":
         case "Scopes": target.setScopes(property(camelContext, java.util.Collection.class, value)); return true;
+        case "serviceaccountkey":
+        case "ServiceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "splitresult":
         case "SplitResult": target.setSplitResult(property(camelContext, boolean.class, value)); return true;
         case "spreadsheetid":
@@ -102,14 +102,14 @@ public class SheetsSpreadsheetsEndpointConfigurationConfigurer extends org.apach
         case "Delegate": return java.lang.String.class;
         case "getspreadsheetbydatafilterrequest":
         case "GetSpreadsheetByDataFilterRequest": return com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest.class;
-        case "keyresource":
-        case "KeyResource": return java.lang.String.class;
         case "methodname":
         case "MethodName": return java.lang.String.class;
         case "refreshtoken":
         case "RefreshToken": return java.lang.String.class;
         case "scopes":
         case "Scopes": return java.util.Collection.class;
+        case "serviceaccountkey":
+        case "ServiceAccountKey": return java.lang.String.class;
         case "splitresult":
         case "SplitResult": return boolean.class;
         case "spreadsheetid":
@@ -140,14 +140,14 @@ public class SheetsSpreadsheetsEndpointConfigurationConfigurer extends org.apach
         case "Delegate": return target.getDelegate();
         case "getspreadsheetbydatafilterrequest":
         case "GetSpreadsheetByDataFilterRequest": return target.getGetSpreadsheetByDataFilterRequest();
-        case "keyresource":
-        case "KeyResource": return target.getKeyResource();
         case "methodname":
         case "MethodName": return target.getMethodName();
         case "refreshtoken":
         case "RefreshToken": return target.getRefreshToken();
         case "scopes":
         case "Scopes": return target.getScopes();
+        case "serviceaccountkey":
+        case "ServiceAccountKey": return target.getServiceAccountKey();
         case "splitresult":
         case "SplitResult": return target.isSplitResult();
         case "spreadsheetid":

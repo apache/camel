@@ -111,6 +111,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-aws-cloudtrail</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-aws-secrets-manager</artifactId>
 		</dependency>
 		<dependency>
@@ -676,6 +680,10 @@
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-huaweicloud-smn</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-hyperledger-aries</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
@@ -1480,6 +1488,10 @@
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-weka</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-whatsapp</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>

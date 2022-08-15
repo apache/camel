@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.support.ExchangeHelper;
 import org.jsmpp.bean.Address;
 import org.jsmpp.bean.DataCodings;
 import org.jsmpp.bean.ESMClass;
@@ -113,7 +114,7 @@ public class SmppSubmitMultiCommand extends SmppSmCommand {
             messageIDs.add(result.getMessageId());
         }
 
-        Message message = getResponseMessage(exchange);
+        Message message = ExchangeHelper.getResultMessage(exchange);
         message.setHeader(SmppConstants.ID, messageIDs);
         message.setHeader(SmppConstants.SENT_MESSAGE_COUNT, messageIDs.size());
         if (!errors.isEmpty()) {

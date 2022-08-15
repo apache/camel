@@ -105,7 +105,8 @@ public interface SplunkHECEndpointBuilderFactory {
             return this;
         }
         /**
-         * Splunk host.
+         * Splunk host field of the event message. This is not the Splunk host
+         * to connect to.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -345,10 +346,11 @@ public interface SplunkHECEndpointBuilderFactory {
          * Syntax: <code>splunk-hec:splunkURL/token</code>
          * 
          * Path parameter: splunkURL (required)
-         * Splunk Host URL
+         * Splunk Host and Port (example: my_splunk_server:8089)
          * 
          * Path parameter: token (required)
-         * Splunk authorization token
+         * Splunk HEC token (this is the token created for HEC and not the
+         * user's token)
          * 
          * @param path splunkURL/token
          * @return the dsl builder
@@ -368,10 +370,11 @@ public interface SplunkHECEndpointBuilderFactory {
          * Syntax: <code>splunk-hec:splunkURL/token</code>
          * 
          * Path parameter: splunkURL (required)
-         * Splunk Host URL
+         * Splunk Host and Port (example: my_splunk_server:8089)
          * 
          * Path parameter: token (required)
-         * Splunk authorization token
+         * Splunk HEC token (this is the token created for HEC and not the
+         * user's token)
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

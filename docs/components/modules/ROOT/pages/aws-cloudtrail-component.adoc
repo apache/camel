@@ -1,0 +1,1 @@
+../../../../../components/camel-aws/camel-aws-cloudtrail/src/main/docs/aws-cloudtrail-component.adoc

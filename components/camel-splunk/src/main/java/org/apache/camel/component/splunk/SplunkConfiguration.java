@@ -48,6 +48,8 @@ public class SplunkConfiguration {
     private String username;
     @UriParam(label = "security", secret = true)
     private String password;
+    @UriParam(label = "security", secret = true)
+    private String token;
     @UriParam(defaultValue = "5000")
     private int connectionTimeout = 5000;
     @UriParam(label = "security")
@@ -314,6 +316,17 @@ public class SplunkConfiguration {
         this.password = password;
     }
 
+    public String getToken() {
+        return token;
+    }
+
+    /**
+     * User's token for Splunk. This takes precedence over password when both are set
+     */
+    public void setToken(String token) {
+        this.token = token;
+    }
+
     public boolean isStreaming() {
         return streaming;
     }
@@ -384,6 +397,7 @@ public class SplunkConfiguration {
         splunkConnectionFactory.setScheme(getScheme());
         splunkConnectionFactory.setUseSunHttpsHandler(isUseSunHttpsHandler());
         splunkConnectionFactory.setSslProtocol(getSslProtocol());
+        splunkConnectionFactory.setToken(getToken());
         return splunkConnectionFactory;
     }
 

@@ -54,7 +54,7 @@ public class DispatchRouterContainer extends GenericContainer<DispatchRouterCont
      * @return the end point URL as a string
      */
     public String getAMQPEndpoint() {
-        return String.format("amqp://%s:%d", getContainerIpAddress(), getAMQPPort());
+        return String.format("amqp://%s:%d", getHost(), getAMQPPort());
     }
 
     @Override

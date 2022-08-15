@@ -101,7 +101,7 @@ public class ChangeEventsConsumerIntegrationTest extends AbstractSalesforceTestB
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("salesforce:data/ChangeEvents?replayId=-1").to(capturedChangeEvents);
+                from("salesforce:subscribe:data/ChangeEvents?replayId=-1").to(capturedChangeEvents);
             }
         };
     }

@@ -250,7 +250,6 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
         answer.setEndpointPath(endpointPath);
         answer.setFile(file);
         answer.setFileNameOnly(file.getName());
-        answer.setFileLength(file.length());
         answer.setDirectory(file.isDirectory());
         // must use FileUtil.isAbsolute to have consistent check for whether the
         // file is
@@ -263,7 +262,10 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
         // to return a consistent answer for all OS platforms.
         answer.setAbsolute(FileUtil.isAbsolute(file));
         answer.setAbsoluteFilePath(file.getAbsolutePath());
-        answer.setLastModified(file.lastModified());
+
+        // file length and last modified are loaded lazily
+        answer.setFileLengthSupplier(file::length);
+        answer.setLastModifiedSupplier(file::lastModified);
 
         // compute the file path as relative to the starting directory
         File path;
@@ -338,4 +340,8 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
         this.resumeStrategy = resumeStrategy;
     }
 
+    @Override
+    public String adapterFactoryService() {
+        return "file-adapter-factory";
+    }
 }

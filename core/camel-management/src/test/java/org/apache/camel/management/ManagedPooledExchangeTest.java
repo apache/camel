@@ -58,11 +58,6 @@ public class ManagedPooledExchangeTest extends ManagementTestSupport {
 
     @Test
     public void testSameExchange() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
-
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(3);
         mock.expectedPropertyValuesReceivedInAnyOrder("myprop", 1, 3, 5);

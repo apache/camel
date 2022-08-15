@@ -18,6 +18,7 @@ package org.apache.camel.component.smpp;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.support.ExchangeHelper;
 import org.jsmpp.bean.CancelSm;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.TypeOfNumber;
@@ -57,7 +58,7 @@ public class SmppCancelSmCommand extends AbstractSmppCommand {
                     exchange.getExchangeId(), cancelSm.getMessageId());
         }
 
-        Message message = getResponseMessage(exchange);
+        Message message = ExchangeHelper.getResultMessage(exchange);
         message.setHeader(SmppConstants.ID, cancelSm.getMessageId());
     }
 

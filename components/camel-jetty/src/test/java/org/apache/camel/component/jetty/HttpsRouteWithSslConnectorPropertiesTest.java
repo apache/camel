@@ -32,7 +32,7 @@ public class HttpsRouteWithSslConnectorPropertiesTest extends HttpsRouteTest {
                 // START SNIPPET: e1
                 // keystore path
                 URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.p12");
-                String path = keyStoreUrl.toURI().getPath();
+                String path = "file://" + keyStoreUrl.toURI().getPath();
 
                 JettyHttpComponent jetty = getContext().getComponent("jetty", JettyHttpComponent.class);
                 setSSLProps(jetty, path, pwd, pwd);

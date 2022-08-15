@@ -35,4 +35,16 @@ public interface ResumeAware<T extends ResumeStrategy> {
      * @return the resume strategy
      */
     T getResumeStrategy();
+
+    /**
+     * Allows the implementation to provide custom adapter factories. It binds the service name provided in the
+     * {@link org.apache.camel.spi.annotations.JdkService} annotation in the adapter with the resume aware class. This
+     * allows the adapter to be resolved automatically in runtime while also allowing fallback to reusable adapters when
+     * available.
+     *
+     * @return
+     */
+    default String adapterFactoryService() {
+        return ResumeAdapter.RESUME_ADAPTER_FACTORY;
+    }
 }

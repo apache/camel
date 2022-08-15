@@ -111,7 +111,8 @@ class EventHubsComponentTest extends CamelTestSupport {
     public void testCreateEndpointWithConfig() {
         final String uri = "azure-eventhubs:namespace/hubName?sharedAccessName=DummyAccessKeyName"
                            + "&sharedAccessKey=DummyKey"
-                           + "&consumerGroupName=testConsumer&prefetchCount=100";
+                           + "&consumerGroupName=testConsumer&prefetchCount=100"
+                           + "&checkpointBatchSize=100&checkpointBatchTimeout=1000";
 
         final EventHubsEndpoint endpoint = (EventHubsEndpoint) context.getEndpoint(uri);
 
@@ -121,6 +122,8 @@ class EventHubsComponentTest extends CamelTestSupport {
         assertEquals("DummyAccessKeyName", endpoint.getConfiguration().getSharedAccessName());
         assertEquals("DummyKey", endpoint.getConfiguration().getSharedAccessKey());
         assertEquals(100, endpoint.getConfiguration().getPrefetchCount());
+        assertEquals(100, endpoint.getConfiguration().getCheckpointBatchSize());
+        assertEquals(1000, endpoint.getConfiguration().getCheckpointBatchTimeout());
     }
 
     private String getErrorMessage(final String uri) {

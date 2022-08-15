@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jslt;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -39,6 +40,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.ValidationException;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -159,22 +161,30 @@ public class JsltEndpoint extends ResourceEndpoint {
         if (isMapBigDecimalAsFloats()) {
             objectMapper.enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS);
         }
-        if (exchange.getIn().getBody() instanceof String) {
-            input = objectMapper.readTree(exchange.getIn().getBody(String.class));
-        } else if (exchange.getIn().getBody() instanceof InputStream) {
-            input = objectMapper.readTree(exchange.getIn().getBody(InputStream.class));
+
+        Object body = exchange.getIn().getBody();
+        if (body instanceof WrappedFile) {
+            body = ((WrappedFile<?>) body).getFile();
+        }
+        if (body instanceof String) {
+            input = objectMapper.readTree((String) body);
+        } else if (body instanceof Reader) {
+            input = objectMapper.readTree((Reader) body);
+        } else if (body instanceof File) {
+            input = objectMapper.readTree((File) body);
+        } else if (body instanceof byte[]) {
+            input = objectMapper.readTree((byte[]) body);
+        } else if (body instanceof InputStream) {
+            input = objectMapper.readTree((InputStream) body);
         } else {
-            log.debug("Body content is not String neither InputStream.");
-            throw new ValidationException(exchange, "Allowed body types are String or InputStream.");
+            throw new ValidationException(exchange, "Allowed body types are String, Reader, File, byte[] or InputStream.");
         }
 
         Map<String, JsonNode> variables = extractVariables(exchange);
-
         JsonNode output = getTransform(exchange.getMessage()).apply(variables, input);
 
-        Message out = exchange.getMessage();
-        out.setBody(isPrettyPrint() ? output.toPrettyString() : output.toString());
-        out.setHeaders(exchange.getIn().getHeaders());
+        String result = isPrettyPrint() ? output.toPrettyString() : output.toString();
+        ExchangeHelper.setInOutBodyPatternAware(exchange, result);
     }
 
     /**

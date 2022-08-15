@@ -31,6 +31,8 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "DefaultCredentialsProvider": target.setDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "gcpvaultconfiguration":
         case "GcpVaultConfiguration": target.setGcpVaultConfiguration(property(camelContext, org.apache.camel.vault.GcpVaultConfiguration.class, value)); return true;
+        case "hashicorpvaultconfiguration":
+        case "HashicorpVaultConfiguration": target.setHashicorpVaultConfiguration(property(camelContext, org.apache.camel.vault.HashicorpVaultConfiguration.class, value)); return true;
         case "region":
         case "Region": target.setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
@@ -52,6 +54,8 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "DefaultCredentialsProvider": return boolean.class;
         case "gcpvaultconfiguration":
         case "GcpVaultConfiguration": return org.apache.camel.vault.GcpVaultConfiguration.class;
+        case "hashicorpvaultconfiguration":
+        case "HashicorpVaultConfiguration": return org.apache.camel.vault.HashicorpVaultConfiguration.class;
         case "region":
         case "Region": return java.lang.String.class;
         case "secretkey":
@@ -74,6 +78,8 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "DefaultCredentialsProvider": return target.isDefaultCredentialsProvider();
         case "gcpvaultconfiguration":
         case "GcpVaultConfiguration": return target.getGcpVaultConfiguration();
+        case "hashicorpvaultconfiguration":
+        case "HashicorpVaultConfiguration": return target.getHashicorpVaultConfiguration();
         case "region":
         case "Region": return target.getRegion();
         case "secretkey":

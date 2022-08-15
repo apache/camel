@@ -42,16 +42,14 @@ public class CustomResolver implements YamlDeserializerResolver {
             case "routeConfiguration":
             case "org.apache.camel.model.RouteConfigurationDefinition":
                 return new RouteConfigurationDefinitionDeserializer();
-            case "template":
+            case "route-template":
+            case "routeTemplate":
             case "org.apache.camel.model.RouteTemplateDefinition":
                 return new RouteTemplateDefinitionDeserializer();
             case "templated-route":
             case "templatedRoute":
             case "org.apache.camel.model.TemplatedRouteDefinition":
                 return new TemplatedRouteDefinitionDeserializer();
-            // TODO: backwards compatible with kamelets 0.7.x
-            case "tod":
-                return new ModelDeserializers.ToDynamicDefinitionDeserializer();
             case "org.apache.camel.model.RouteTemplateBeanDefinition":
                 return new RouteTemplateBeanDefinitionDeserializer();
             case "org.apache.camel.model.TemplatedRouteBeanDefinition":

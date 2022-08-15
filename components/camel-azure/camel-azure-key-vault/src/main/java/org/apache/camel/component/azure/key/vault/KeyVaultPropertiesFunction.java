@@ -128,21 +128,41 @@ public class KeyVaultPropertiesFunction extends ServiceSupport implements Proper
         String subkey = null;
         String returnValue = null;
         String defaultValue = null;
+        String version = null;
         if (remainder.contains("/")) {
             key = StringHelper.before(remainder, "/");
             subkey = StringHelper.after(remainder, "/");
             defaultValue = StringHelper.after(subkey, ":");
+            if (ObjectHelper.isNotEmpty(defaultValue)) {
+                if (defaultValue.contains("@")) {
+                    version = StringHelper.after(defaultValue, "@");
+                    defaultValue = StringHelper.before(defaultValue, "@");
+                }
+            }
             if (subkey.contains(":")) {
                 subkey = StringHelper.before(subkey, ":");
+            }
+            if (subkey.contains("@")) {
+                version = StringHelper.after(subkey, "@");
+                subkey = StringHelper.before(subkey, "@");
             }
         } else if (remainder.contains(":")) {
             key = StringHelper.before(remainder, ":");
             defaultValue = StringHelper.after(remainder, ":");
+            if (remainder.contains("@")) {
+                version = StringHelper.after(remainder, "@");
+                defaultValue = StringHelper.before(defaultValue, "@");
+            }
+        } else {
+            if (remainder.contains("@")) {
+                key = StringHelper.before(remainder, "@");
+                version = StringHelper.after(remainder, "@");
+            }
         }
 
         if (key != null) {
             try {
-                returnValue = getSecretFromSource(key, subkey, defaultValue);
+                returnValue = getSecretFromSource(key, subkey, defaultValue, version);
             } catch (JsonProcessingException e) {
                 throw new RuntimeCamelException("Something went wrong while recovering " + key + " from vault");
             }
@@ -152,11 +172,11 @@ public class KeyVaultPropertiesFunction extends ServiceSupport implements Proper
     }
 
     private String getSecretFromSource(
-            String key, String subkey, String defaultValue)
+            String key, String subkey, String defaultValue, String version)
             throws JsonProcessingException {
         String returnValue;
         try {
-            KeyVaultSecret secret = client.getSecret(key);
+            KeyVaultSecret secret = client.getSecret(key, ObjectHelper.isNotEmpty(version) ? version : "");
             returnValue = secret.getValue();
             if (ObjectHelper.isNotEmpty(subkey)) {
                 ObjectMapper mapper = new ObjectMapper();

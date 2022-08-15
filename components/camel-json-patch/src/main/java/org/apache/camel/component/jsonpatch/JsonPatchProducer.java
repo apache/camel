@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ResourceHelper;
 
 public class JsonPatchProducer extends DefaultProducer {
@@ -48,7 +49,8 @@ public class JsonPatchProducer extends DefaultProducer {
                 JsonPatch.class);
         JsonNode input = objectMapper.readTree(exchange.getIn().getBody(String.class));
         JsonNode result = patch.apply(input);
-        exchange.getMessage().setBody(result.toString());
+
+        ExchangeHelper.setInOutBodyPatternAware(exchange, result.toString());
     }
 
 }

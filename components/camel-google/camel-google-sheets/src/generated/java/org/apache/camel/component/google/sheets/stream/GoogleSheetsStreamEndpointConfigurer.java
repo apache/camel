@@ -48,8 +48,6 @@ public class GoogleSheetsStreamEndpointConfigurer extends PropertyConfigurerSupp
         case "includeGridData": target.getConfiguration().setIncludeGridData(property(camelContext, boolean.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "keyresource":
-        case "keyResource": target.getConfiguration().setKeyResource(property(camelContext, java.lang.String.class, value)); return true;
         case "majordimension":
         case "majorDimension": target.getConfiguration().setMajorDimension(property(camelContext, java.lang.String.class, value)); return true;
         case "maxresults":
@@ -71,6 +69,8 @@ public class GoogleSheetsStreamEndpointConfigurer extends PropertyConfigurerSupp
         case "scopes": target.getConfiguration().setScopes(property(camelContext, java.util.List.class, value)); return true;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
+        case "serviceaccountkey":
+        case "serviceAccountKey": target.getConfiguration().setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "splitresults":
         case "splitResults": target.getConfiguration().setSplitResults(property(camelContext, boolean.class, value)); return true;
         case "startscheduler":
@@ -115,8 +115,6 @@ public class GoogleSheetsStreamEndpointConfigurer extends PropertyConfigurerSupp
         case "includeGridData": return boolean.class;
         case "initialdelay":
         case "initialDelay": return long.class;
-        case "keyresource":
-        case "keyResource": return java.lang.String.class;
         case "majordimension":
         case "majorDimension": return java.lang.String.class;
         case "maxresults":
@@ -138,6 +136,8 @@ public class GoogleSheetsStreamEndpointConfigurer extends PropertyConfigurerSupp
         case "scopes": return java.util.List.class;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return boolean.class;
+        case "serviceaccountkey":
+        case "serviceAccountKey": return java.lang.String.class;
         case "splitresults":
         case "splitResults": return boolean.class;
         case "startscheduler":
@@ -183,8 +183,6 @@ public class GoogleSheetsStreamEndpointConfigurer extends PropertyConfigurerSupp
         case "includeGridData": return target.getConfiguration().isIncludeGridData();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
-        case "keyresource":
-        case "keyResource": return target.getConfiguration().getKeyResource();
         case "majordimension":
         case "majorDimension": return target.getConfiguration().getMajorDimension();
         case "maxresults":
@@ -206,6 +204,8 @@ public class GoogleSheetsStreamEndpointConfigurer extends PropertyConfigurerSupp
         case "scopes": return target.getConfiguration().getScopes();
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
+        case "serviceaccountkey":
+        case "serviceAccountKey": return target.getConfiguration().getServiceAccountKey();
         case "splitresults":
         case "splitResults": return target.getConfiguration().isSplitResults();
         case "startscheduler":

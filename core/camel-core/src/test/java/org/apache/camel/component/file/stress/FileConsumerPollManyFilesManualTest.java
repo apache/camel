@@ -23,10 +23,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 @Disabled("Manual test")
+@DisabledOnOs(OS.WINDOWS)
 public class FileConsumerPollManyFilesManualTest extends ContextTestSupport {
 
     private static final int FILES = 200;
@@ -34,9 +35,6 @@ public class FileConsumerPollManyFilesManualTest extends ContextTestSupport {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        // do not test on windows
-        assumeFalse(isPlatform("windows"));
-
         super.setUp();
 
         // create files
@@ -52,9 +50,6 @@ public class FileConsumerPollManyFilesManualTest extends ContextTestSupport {
 
     @Test
     public void testPollManyFiles() throws Exception {
-        // do not test on windows
-        assumeFalse(isPlatform("windows"));
-
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {

@@ -97,8 +97,7 @@ public class XPathRouteConcurrentBigTest extends ContextTestSupport {
                                + "//messageType = 'AAP' or " + "//messageType = 'AAQ' or " + "//messageType = 'AAR' or "
                                + "//messageType = 'AAS' or " + "//messageType = 'AAT' or "
                                + "//messageType = 'AAU' or " + "//messageType = 'AAV' or " + "//messageType = 'AAW' or "
-                               + "//messageType = 'AAX' or " + "//messageType = 'AAY' or "
-                               + "//messageType = 'AAZ'")
+                               + "//messageType = 'AAX' or " + "//messageType = 'AAY'")
                         .to("mock:result").otherwise().to("mock:other").end();
             }
         };

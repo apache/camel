@@ -22,6 +22,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,7 +49,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
 
     private static final Logger LOG = LoggerFactory.getLogger(StreamConsumer.class);
 
-    private static final String TYPES = "in,file,url";
+    private static final String TYPES = "in,file,http";
     private static final String INVALID_URI = "Invalid uri, valid form: 'stream:{" + TYPES + "}'";
     private static final List<String> TYPES_LIST = Arrays.asList(TYPES.split(","));
     private ExecutorService executor;
@@ -54,6 +57,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     private volatile boolean watchFileChanged;
     private volatile InputStream inputStream = System.in;
     private volatile InputStream inputStreamToClose;
+    private volatile URLConnection urlConnectionToClose;
     private volatile File file;
     private StreamEndpoint endpoint;
     private String uri;
@@ -111,8 +115,11 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         ServiceHelper.stopAndShutdownService(fileWatcher);
         lines.clear();
 
-        // do not close regular inputStream as it may be System.in etc.
         IOHelper.close(inputStreamToClose);
+        if (urlConnectionToClose != null) {
+            closeURLConnection(urlConnectionToClose);
+            urlConnectionToClose = null;
+        }
         super.doStop();
     }
 
@@ -134,6 +141,9 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     private BufferedReader initializeStreamLineMode() throws Exception {
         // close old stream, before obtaining a new stream
         IOHelper.close(inputStreamToClose);
+        if (urlConnectionToClose != null) {
+            closeURLConnection(urlConnectionToClose);
+        }
 
         if ("in".equals(uri)) {
             inputStream = System.in;
@@ -141,11 +151,19 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         } else if ("file".equals(uri)) {
             inputStream = resolveStreamFromFile();
             inputStreamToClose = inputStream;
+        } else if ("http".equals(uri)) {
+            inputStream = resolveStreamFromUrl();
+            inputStreamToClose = inputStream;
         }
 
         if (inputStream != null) {
-            Charset charset = endpoint.getCharset();
-            return IOHelper.buffered(new InputStreamReader(inputStream, charset));
+            if ("http".equals(uri)) {
+                // read as-is
+                return IOHelper.buffered(new InputStreamReader(inputStream));
+            } else {
+                Charset charset = endpoint.getCharset();
+                return IOHelper.buffered(new InputStreamReader(inputStream, charset));
+            }
         } else {
             return null;
         }
@@ -154,12 +172,19 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     private InputStream initializeStreamRawMode() throws Exception {
         // close old stream, before obtaining a new stream
         IOHelper.close(inputStreamToClose);
+        if (urlConnectionToClose != null) {
+            closeURLConnection(urlConnectionToClose);
+        }
 
         if ("in".equals(uri)) {
             inputStream = System.in;
+            // do not close regular inputStream as it may be System.in etc.
             inputStreamToClose = null;
         } else if ("file".equals(uri)) {
             inputStream = resolveStreamFromFile();
+            inputStreamToClose = inputStream;
+        } else if ("http".equals(uri)) {
+            inputStream = resolveStreamFromUrl();
             inputStreamToClose = inputStream;
         }
 
@@ -405,6 +430,39 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         return fileStream;
     }
 
+    private InputStream resolveStreamFromUrl() throws IOException {
+        String url = endpoint.getHttpUrl();
+        StringHelper.notEmpty(url, "httpUrl");
+
+        urlConnectionToClose = new URL(url).openConnection();
+        urlConnectionToClose.setUseCaches(false);
+        String headers = endpoint.getHttpHeaders();
+        if (headers != null) {
+            for (String h : headers.split(",")) {
+                String k = StringHelper.before(h, "=");
+                String v = StringHelper.after(h, "=");
+                if (k != null && v != null) {
+                    urlConnectionToClose.setRequestProperty(k, v);
+                }
+            }
+        }
+
+        InputStream is;
+
+        try {
+            is = urlConnectionToClose.getInputStream();
+        } catch (IOException e) {
+            // close the http connection to avoid
+            // leaking gaps in case of an exception
+            if (urlConnectionToClose instanceof HttpURLConnection) {
+                ((HttpURLConnection) urlConnectionToClose).disconnect();
+            }
+            throw e;
+        }
+
+        return is;
+    }
+
     private void validateUri(String uri) throws IllegalArgumentException {
         String[] s = uri.split(":");
         if (s.length < 2) {
@@ -432,6 +490,16 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         exchange.getIn().setHeader(StreamConstants.STREAM_INDEX, index);
         exchange.getIn().setHeader(StreamConstants.STREAM_COMPLETE, last);
         return exchange;
+    }
+
+    private static void closeURLConnection(URLConnection con) {
+        if (con instanceof HttpURLConnection) {
+            try {
+                ((HttpURLConnection) con).disconnect();
+            } catch (Exception e) {
+                // ignore
+            }
+        }
     }
 
 }

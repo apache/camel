@@ -22,6 +22,7 @@ import java.net.SocketAddress;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
@@ -182,24 +183,32 @@ public class MinaConsumer extends DefaultConsumer {
         // acceptor connectorConfig
         configureCodecFactory("MinaConsumer", acceptor, configuration);
         ((NioSocketAcceptor) acceptor).setReuseAddress(true);
-        acceptor.setCloseOnDeactivation(true);
-
-        if (configuration.isOrderedThreadPoolExecutor()) {
-            workerPool = new OrderedThreadPoolExecutor(configuration.getMaximumPoolSize());
-        } else {
-            workerPool = new UnorderedThreadPoolExecutor(configuration.getMaximumPoolSize());
-        }
-        acceptor.getFilterChain().addLast("threadPool", new ExecutorFilter(workerPool));
-        if (minaLogger) {
-            acceptor.getFilterChain().addLast("logger", new LoggingFilter());
-        }
-        appendIoFiltersToChain(filters, acceptor.getFilterChain());
+        setupNioSocketAcceptor(configuration, minaLogger, filters);
         if (configuration.getSslContextParameters() != null) {
             SslFilter filter = new SslFilter(
                     configuration.getSslContextParameters().createSSLContext(getEndpoint().getCamelContext()),
                     configuration.isAutoStartTls());
             filter.setUseClientMode(false);
             acceptor.getFilterChain().addFirst("sslFilter", filter);
+        }
+    }
+
+    private void setupNioSocketAcceptor(MinaConfiguration configuration, boolean minaLogger, List<IoFilter> filters) {
+        acceptor.setCloseOnDeactivation(true);
+
+        workerPool = createThreadPool(configuration);
+        acceptor.getFilterChain().addLast("threadPool", new ExecutorFilter(workerPool));
+        if (minaLogger) {
+            acceptor.getFilterChain().addLast("logger", new LoggingFilter());
+        }
+        appendIoFiltersToChain(filters, acceptor.getFilterChain());
+    }
+
+    private ThreadPoolExecutor createThreadPool(MinaConfiguration configuration) {
+        if (configuration.isOrderedThreadPoolExecutor()) {
+            return new OrderedThreadPoolExecutor(configuration.getMaximumPoolSize());
+        } else {
+            return new UnorderedThreadPoolExecutor(configuration.getMaximumPoolSize());
         }
     }
 
@@ -213,11 +222,7 @@ public class MinaConsumer extends DefaultConsumer {
         final int processorCount = Runtime.getRuntime().availableProcessors() + 1;
         connector = new NioSocketConnector(processorCount);
 
-        if (configuration.isOrderedThreadPoolExecutor()) {
-            workerPool = new OrderedThreadPoolExecutor(configuration.getMaximumPoolSize());
-        } else {
-            workerPool = new UnorderedThreadPoolExecutor(configuration.getMaximumPoolSize());
-        }
+        workerPool = createThreadPool(configuration);
         connector.getFilterChain().addLast("threadPool", new ExecutorFilter(workerPool));
         if (minaLogger) {
             connector.getFilterChain().addLast("logger", new LoggingFilter());
@@ -276,18 +281,7 @@ public class MinaConsumer extends DefaultConsumer {
 
         // acceptor connectorConfig
         configureDataGramCodecFactory("MinaConsumer", acceptor, configuration);
-        acceptor.setCloseOnDeactivation(true);
-        // reuse address is default true for datagram
-        if (configuration.isOrderedThreadPoolExecutor()) {
-            workerPool = new OrderedThreadPoolExecutor(configuration.getMaximumPoolSize());
-        } else {
-            workerPool = new UnorderedThreadPoolExecutor(configuration.getMaximumPoolSize());
-        }
-        acceptor.getFilterChain().addLast("threadPool", new ExecutorFilter(workerPool));
-        if (minaLogger) {
-            acceptor.getFilterChain().addLast("logger", new LoggingFilter());
-        }
-        appendIoFiltersToChain(filters, acceptor.getFilterChain());
+        setupNioSocketAcceptor(configuration, minaLogger, filters);
         if (configuration.getSslContextParameters() != null) {
             LOG.warn("Using datagram protocol, {}, but an SSLContextParameters instance was provided. "
                      + "SSLContextParameters is only supported on the TCP protocol.",

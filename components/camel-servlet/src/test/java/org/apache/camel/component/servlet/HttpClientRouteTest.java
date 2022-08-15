@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
 
@@ -113,10 +114,7 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
 
     @Test
     public void testCreateSerlvetEndpointProducer() throws Exception {
-        if (!startCamelContext) {
-            // don't test it with web.xml configure
-            return;
-        }
+        assumeTrue(startCamelContext, "don't test it with web.xml configure");
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override

@@ -27,7 +27,6 @@ import java.util.Properties;
 import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -244,8 +243,6 @@ public class VelocityEndpoint extends ResourceEndpoint {
         engine.evaluate(velocityContext, buffer, logTag, reader);
 
         // now lets output the results to the exchange
-        Message out = exchange.getMessage();
-        out.setBody(buffer.toString());
-        out.setHeaders(exchange.getIn().getHeaders());
+        ExchangeHelper.setInOutBodyPatternAware(exchange, buffer.toString());
     }
 }

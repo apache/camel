@@ -23,11 +23,13 @@ import org.apache.camel.impl.engine.DefaultAsyncProcessorAwaitManager;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 
+@Isolated
 public class DefaultAsyncProcessorAwaitManagerTest {
 
     private DefaultAsyncProcessorAwaitManager defaultAsyncProcessorAwaitManager;

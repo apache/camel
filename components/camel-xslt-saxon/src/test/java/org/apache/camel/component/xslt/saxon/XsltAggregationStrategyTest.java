@@ -61,7 +61,6 @@ public class XsltAggregationStrategyTest extends CamelTestSupport {
                         .aggregate(new XsltSaxonAggregationStrategy("org/apache/camel/util/toolbox/aggregate.xsl"))
                         .constant(true)
                         .completionFromBatchConsumer()
-                        .log("after aggregate body: ${body}")
                         .to("mock:transformed");
 
                 from("file:src/test/resources/org/apache/camel/util/toolbox?noop=true&sortBy=file:name&antInclude=*.xml")

@@ -2749,7 +2749,16 @@ public class ModelParser extends BaseParser {
                 default: return expressionDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
-        }, noElementHandler(), expressionDefinitionValueHandler());
+        }, namespaceAwareExpressionElementHandler(), expressionDefinitionValueHandler());
+    }
+    protected <T extends NamespaceAwareExpression> ElementHandler<T> namespaceAwareExpressionElementHandler() {
+        return (def, key) -> {
+            if ("namespace".equals(key)) {
+                doAdd(doParsePropertyDefinition(), def.getNamespace(), def::setNamespace);
+                return true;
+            }
+            return false;
+        };
     }
     protected XPathExpression doParseXPathExpression() throws IOException, XmlPullParserException {
         return doParse(new XPathExpression(), (def, key, val) -> {
@@ -2766,7 +2775,7 @@ public class ModelParser extends BaseParser {
                 default: return expressionDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
-        }, noElementHandler(), expressionDefinitionValueHandler());
+        }, namespaceAwareExpressionElementHandler(), expressionDefinitionValueHandler());
     }
     protected XQueryExpression doParseXQueryExpression() throws IOException, XmlPullParserException {
         return doParse(new XQueryExpression(), (def, key, val) -> {
@@ -2777,7 +2786,7 @@ public class ModelParser extends BaseParser {
                 default: return expressionDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
-        }, noElementHandler(), expressionDefinitionValueHandler());
+        }, namespaceAwareExpressionElementHandler(), expressionDefinitionValueHandler());
     }
     protected CustomLoadBalancerDefinition doParseCustomLoadBalancerDefinition() throws IOException, XmlPullParserException {
         return doParse(new CustomLoadBalancerDefinition(), (def, key, val) -> {

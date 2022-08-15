@@ -200,6 +200,74 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the batch size between each checkpoint updates. Works jointly
+         * with checkpointBatchTimeout.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 500
+         * Group: consumer
+         * 
+         * @param checkpointBatchSize the value to set
+         * @return the dsl builder
+         */
+        default EventHubsEndpointConsumerBuilder checkpointBatchSize(
+                int checkpointBatchSize) {
+            doSetProperty("checkpointBatchSize", checkpointBatchSize);
+            return this;
+        }
+        /**
+         * Sets the batch size between each checkpoint updates. Works jointly
+         * with checkpointBatchTimeout.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 500
+         * Group: consumer
+         * 
+         * @param checkpointBatchSize the value to set
+         * @return the dsl builder
+         */
+        default EventHubsEndpointConsumerBuilder checkpointBatchSize(
+                String checkpointBatchSize) {
+            doSetProperty("checkpointBatchSize", checkpointBatchSize);
+            return this;
+        }
+        /**
+         * Sets the batch timeout between each checkpoint updates. Works jointly
+         * with checkpointBatchSize.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 5000
+         * Group: consumer
+         * 
+         * @param checkpointBatchTimeout the value to set
+         * @return the dsl builder
+         */
+        default EventHubsEndpointConsumerBuilder checkpointBatchTimeout(
+                int checkpointBatchTimeout) {
+            doSetProperty("checkpointBatchTimeout", checkpointBatchTimeout);
+            return this;
+        }
+        /**
+         * Sets the batch timeout between each checkpoint updates. Works jointly
+         * with checkpointBatchSize.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 5000
+         * Group: consumer
+         * 
+         * @param checkpointBatchTimeout the value to set
+         * @return the dsl builder
+         */
+        default EventHubsEndpointConsumerBuilder checkpointBatchTimeout(
+                String checkpointBatchTimeout) {
+            doSetProperty("checkpointBatchTimeout", checkpointBatchTimeout);
+            return this;
+        }
+        /**
          * Sets the CheckpointStore the EventProcessorClient will use for
          * storing partition ownership and checkpoint information. Users can,
          * optionally, provide their own implementation of CheckpointStore which
@@ -1116,6 +1184,21 @@ public interface EventHubsEndpointBuilderFactory {
          */
         public String messageTimestamp() {
             return "MessageTimestamp";
+        }
+
+        /**
+         * It sets the reason for the checkpoint to have been updated. This is
+         * only present on a received EventData.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code
+         * AzureEventHubsCheckpointUpdatedBy}.
+         */
+        public String azureEventHubsCheckpointUpdatedBy() {
+            return "AzureEventHubsCheckpointUpdatedBy";
         }
     }
     static EventHubsEndpointBuilder endpointBuilder(

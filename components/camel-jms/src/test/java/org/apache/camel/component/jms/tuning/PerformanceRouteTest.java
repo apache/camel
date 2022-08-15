@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 @Disabled
 public class PerformanceRouteTest extends CamelTestSupport {
@@ -36,9 +37,7 @@ public class PerformanceRouteTest extends CamelTestSupport {
 
     @Test
     public void testPerformance() throws Exception {
-        if (!canRunOnThisPlatform()) {
-            return;
-        }
+        assumeTrue(canRunOnThisPlatform(), "Test is not intended for this platform");
 
         long start = System.currentTimeMillis();
 

@@ -22,11 +22,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
-import static org.apache.camel.test.junit5.TestSupport.isPlatform;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
-
+@DisabledOnOs(OS.AIX)
 public class SpringQuartzPersistentStoreRestartRouteTest extends CamelSpringTestSupport {
 
     @Override
@@ -36,9 +36,6 @@ public class SpringQuartzPersistentStoreRestartRouteTest extends CamelSpringTest
 
     @Test
     public void testQuartzPersistentStore() throws Exception {
-        // skip testing on aix
-        assumeFalse(isPlatform("aix"));
-
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
 

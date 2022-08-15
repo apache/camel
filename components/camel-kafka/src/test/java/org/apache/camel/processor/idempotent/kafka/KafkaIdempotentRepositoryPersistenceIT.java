@@ -68,13 +68,13 @@ public class KafkaIdempotentRepositoryPersistenceIT extends BaseEmbeddedKafkaTes
     @Override
     protected RoutesBuilder createRouteBuilder() {
         kafkaIdempotentRepository = new KafkaIdempotentRepository("TEST_PERSISTENCE", getBootstrapServers());
-        context.getRegistry().bind("kafkaIdempotentRepository", kafkaIdempotentRepository);
+        context.getRegistry().bind("kafkaIdempotentRepositoryPersistence", kafkaIdempotentRepository);
 
         return new RouteBuilder() {
             @Override
             public void configure() {
                 from("direct:in").to("mock:before").idempotentConsumer(header("id"))
-                        .idempotentRepository("kafkaIdempotentRepository").to("mock:out").end();
+                        .idempotentRepository("kafkaIdempotentRepositoryPersistence").to("mock:out").end();
             }
         };
     }

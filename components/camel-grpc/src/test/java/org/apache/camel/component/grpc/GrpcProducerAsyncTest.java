@@ -82,7 +82,7 @@ public class GrpcProducerAsyncTest extends CamelTestSupport {
                 latch.countDown();
             }
         });
-        latch.await(1, TimeUnit.SECONDS);
+        assertTrue(latch.await(1, TimeUnit.SECONDS));
 
         assertNotNull(asyncPongResponse);
         assertTrue(asyncPongResponse instanceof List);
@@ -110,7 +110,7 @@ public class GrpcProducerAsyncTest extends CamelTestSupport {
                 latch.countDown();
             }
         });
-        latch.await(1, TimeUnit.SECONDS);
+        assertTrue(latch.await(1, TimeUnit.SECONDS));
 
         assertNotNull(asyncPongResponse);
         assertTrue(asyncPongResponse instanceof List);
@@ -139,7 +139,7 @@ public class GrpcProducerAsyncTest extends CamelTestSupport {
                 latch.countDown();
             }
         });
-        latch.await(1, TimeUnit.SECONDS);
+        assertTrue(latch.await(1, TimeUnit.SECONDS));
 
         assertNotNull(asyncPongResponse);
         assertTrue(asyncPongResponse instanceof List);
@@ -167,7 +167,7 @@ public class GrpcProducerAsyncTest extends CamelTestSupport {
                 latch.countDown();
             }
         });
-        latch.await(1, TimeUnit.SECONDS);
+        assertTrue(latch.await(1, TimeUnit.SECONDS));
 
         assertNotNull(asyncPongResponse);
         assertTrue(asyncPongResponse instanceof List);
@@ -225,7 +225,7 @@ public class GrpcProducerAsyncTest extends CamelTestSupport {
 
         @Override
         public StreamObserver<PingRequest> pingAsyncSync(StreamObserver<PongResponse> responseObserver) {
-            StreamObserver<PingRequest> requestObserver = new StreamObserver<PingRequest>() {
+            return new StreamObserver<>() {
 
                 @Override
                 public void onNext(PingRequest request) {
@@ -244,12 +244,11 @@ public class GrpcProducerAsyncTest extends CamelTestSupport {
                     responseObserver.onCompleted();
                 }
             };
-            return requestObserver;
         }
 
         @Override
         public StreamObserver<PingRequest> pingAsyncAsync(StreamObserver<PongResponse> responseObserver) {
-            StreamObserver<PingRequest> requestObserver = new StreamObserver<PingRequest>() {
+            return new StreamObserver<>() {
 
                 @Override
                 public void onNext(PingRequest request) {
@@ -268,7 +267,6 @@ public class GrpcProducerAsyncTest extends CamelTestSupport {
                     responseObserver.onCompleted();
                 }
             };
-            return requestObserver;
         }
     }
 }

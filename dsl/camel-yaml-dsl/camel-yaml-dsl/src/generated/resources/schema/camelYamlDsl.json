@@ -249,6 +249,12 @@
       "org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition" : {
         "type" : "object",
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
           "parameters" : {
             "type" : "object"
           },
@@ -270,6 +276,12 @@
           "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition"
         } ],
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
           "parameters" : {
             "type" : "object"
           },
@@ -905,6 +917,12 @@
       "org.apache.camel.model.FromDefinition" : {
         "type" : "object",
         "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
           "parameters" : {
             "type" : "object"
           },
@@ -2307,13 +2325,28 @@
           "id" : {
             "type" : "string"
           },
+          "logMask" : {
+            "type" : "boolean"
+          },
+          "messageHistory" : {
+            "type" : "boolean"
+          },
           "precondition" : {
             "type" : "string"
           },
           "routeConfigurationId" : {
             "type" : "string"
           },
+          "routePolicy" : {
+            "type" : "string"
+          },
+          "startupOrder" : {
+            "type" : "number"
+          },
           "streamCaching" : {
+            "type" : "boolean"
+          },
+          "trace" : {
             "type" : "boolean"
           }
         },
@@ -2366,9 +2399,12 @@
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.RouteTemplateParameterDefinition"
             }
+          },
+          "route" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.RouteDefinition"
           }
         },
-        "required" : [ "from", "id" ]
+        "required" : [ "id" ]
       },
       "org.apache.camel.model.RouteTemplateParameterDefinition" : {
         "type" : "object",
@@ -6306,6 +6342,12 @@
               "type" : "string",
               "enum" : [ "i", "w", "u", "t" ]
             },
+            "namespace" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
+              }
+            },
             "trim" : {
               "type" : "boolean"
             }
@@ -6335,6 +6377,12 @@
             },
             "logNamespaces" : {
               "type" : "boolean"
+            },
+            "namespace" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
+              }
             },
             "objectModel" : {
               "type" : "string"
@@ -6376,6 +6424,12 @@
             },
             "id" : {
               "type" : "string"
+            },
+            "namespace" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
+              }
             },
             "trim" : {
               "type" : "boolean"

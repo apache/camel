@@ -45,6 +45,26 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
+== Restoring Deprecated Key Types and Algorithms
+
+As of Camel 3.17.0, key types and algorithms that use SHA1 have been deprecated. These can be restored, if necessary, by setting JSch configuration directly. E.g.:
+
+[source,java]
+----
+JSch.setConfig("server_host_key",  JSch.getConfig("server_host_key") + ",ssh-rsa");
+JSch.setConfig("PubkeyAcceptedAlgorithms", JSch.getConfig("PubkeyAcceptedAlgorithms") + ",ssh-rsa");
+JSch.setConfig("kex", JSch.getConfig("kex") + ",diffie-hellman-group1-sha1,diffie-hellman-group14-sha1");
+----
+
+Note that the key types and algorithms your server supports may differ than the above example. You can use the following
+command to inspect your server's configuration:
+
+----
+ssh -vvv <server_address>
+----
+
+As of Camel 3.18.1, these values can also be set on SFTP endpoints by setting the corresponding URI parameters.
+
 == More Information
 
 For more information you can look at xref:ftp-component.adoc[FTP component]

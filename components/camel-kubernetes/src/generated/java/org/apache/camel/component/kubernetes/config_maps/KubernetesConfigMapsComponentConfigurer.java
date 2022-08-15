@@ -23,6 +23,8 @@ public class KubernetesConfigMapsComponentConfigurer extends PropertyConfigurerS
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "kubernetesclient":
         case "kubernetesClient": target.setKubernetesClient(property(camelContext, io.fabric8.kubernetes.client.KubernetesClient.class, value)); return true;
         case "lazystartproducer":
@@ -41,6 +43,8 @@ public class KubernetesConfigMapsComponentConfigurer extends PropertyConfigurerS
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
         case "kubernetesclient":
         case "kubernetesClient": return io.fabric8.kubernetes.client.KubernetesClient.class;
         case "lazystartproducer":
@@ -55,6 +59,8 @@ public class KubernetesConfigMapsComponentConfigurer extends PropertyConfigurerS
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "kubernetesclient":
         case "kubernetesClient": return target.getKubernetesClient();
         case "lazystartproducer":

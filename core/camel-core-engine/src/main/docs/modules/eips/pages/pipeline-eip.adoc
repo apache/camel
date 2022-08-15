@@ -55,7 +55,6 @@ multiple outputs in Camel. Therefore, it's much more common to see this with Cam
 [source,java]
 ----
 from("activemq:SomeQueue")
-    .pipeline()
     .to("bean:foo")
     .to("bean:bar")
     .to("acitvemq:OutputQueueu");

@@ -460,6 +460,51 @@ public interface QuartzEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to ignore quartz cannot schedule a trigger because the
+         * trigger will never fire in the future. This can happen when using a
+         * cron trigger that are configured to only run in the past. By default,
+         * Quartz will fail to schedule the trigger and therefore fail to start
+         * the Camel route. You can set this to true which then logs a WARN and
+         * then ignore the problem, meaning that the route will never fire in
+         * the future.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param ignoreExpiredNextFireTime the value to set
+         * @return the dsl builder
+         */
+        default AdvancedQuartzEndpointBuilder ignoreExpiredNextFireTime(
+                boolean ignoreExpiredNextFireTime) {
+            doSetProperty("ignoreExpiredNextFireTime", ignoreExpiredNextFireTime);
+            return this;
+        }
+        /**
+         * Whether to ignore quartz cannot schedule a trigger because the
+         * trigger will never fire in the future. This can happen when using a
+         * cron trigger that are configured to only run in the past. By default,
+         * Quartz will fail to schedule the trigger and therefore fail to start
+         * the Camel route. You can set this to true which then logs a WARN and
+         * then ignore the problem, meaning that the route will never fire in
+         * the future.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param ignoreExpiredNextFireTime the value to set
+         * @return the dsl builder
+         */
+        default AdvancedQuartzEndpointBuilder ignoreExpiredNextFireTime(
+                String ignoreExpiredNextFireTime) {
+            doSetProperty("ignoreExpiredNextFireTime", ignoreExpiredNextFireTime);
+            return this;
+        }
+        /**
          * To configure additional options on the job.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,

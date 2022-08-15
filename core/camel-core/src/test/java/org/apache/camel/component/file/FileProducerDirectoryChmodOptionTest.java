@@ -28,30 +28,26 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
+@DisabledOnOs(OS.WINDOWS)
 public class FileProducerDirectoryChmodOptionTest extends ContextTestSupport {
 
     @Test
     public void testWriteValidNoDir() throws Exception {
-        assumeFalse(isPlatform("windows"));
-
         runChmodCheck("NoDir", null, "rwxr-xr-x");
     }
 
     @Test
     public void testWriteValidChmod0755() throws Exception {
-        assumeFalse(isPlatform("windows"));
-
         runChmodCheck("0755", "rwxrwxrwx", "rwxr-xr-x");
     }
 
     @Test
     public void testWriteValidChmod666() throws Exception {
-        assumeFalse(isPlatform("windows"));
-
         runChmodCheck("666", "rwxrwxrwx", "rw-rw-rw-");
     }
 

@@ -46,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.test.junit5.TestSupport.isJavaVendor;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * Test for the ECDSA algorithms
@@ -178,9 +179,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
 
     @Test
     public void testECDSASHA1() throws Exception {
-        if (!canTest) {
-            return;
-        }
+        assumeTrue(canTest, "Test preconditions failed: canTest=" + canTest);
         setupMock();
         sendBody("direct:ecdsa_sha1", payload);
         assertMockEndpointsSatisfied();
@@ -188,9 +187,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
 
     @Test
     public void testECDSASHA224() throws Exception {
-        if (!canTest) {
-            return;
-        }
+        assumeTrue(canTest, "Test preconditions failed: canTest=" + canTest);
         setupMock();
         sendBody("direct:ecdsa_sha224", payload);
         assertMockEndpointsSatisfied();
@@ -198,9 +195,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
 
     @Test
     public void testECDSASHA256() throws Exception {
-        if (!canTest) {
-            return;
-        }
+        assumeTrue(canTest, "Test preconditions failed: canTest=" + canTest);
         setupMock();
         sendBody("direct:ecdsa_sha256", payload);
         assertMockEndpointsSatisfied();
@@ -208,9 +203,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
 
     @Test
     public void testECDSASHA384() throws Exception {
-        if (!canTest) {
-            return;
-        }
+        assumeTrue(canTest, "Test preconditions failed: canTest=" + canTest);
         setupMock();
         sendBody("direct:ecdsa_sha384", payload);
         assertMockEndpointsSatisfied();
@@ -218,9 +211,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
 
     @Test
     public void testECDSASHA512() throws Exception {
-        if (!canTest) {
-            return;
-        }
+        assumeTrue(canTest, "Test preconditions failed: canTest=" + canTest);
         setupMock();
         sendBody("direct:ecdsa_sha512", payload);
         assertMockEndpointsSatisfied();
@@ -228,9 +219,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
 
     @Test
     public void testECDSARIPEMD160() throws Exception {
-        if (!canTest) {
-            return;
-        }
+        assumeTrue(canTest, "Test preconditions failed: canTest=" + canTest);
         setupMock();
         sendBody("direct:ecdsa_ripemd160", payload);
         assertMockEndpointsSatisfied();

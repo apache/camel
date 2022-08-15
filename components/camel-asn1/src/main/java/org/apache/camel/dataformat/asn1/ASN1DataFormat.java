@@ -24,7 +24,7 @@ import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import com.beanit.jasn1.ber.ReverseByteArrayOutputStream;
+import com.beanit.asn1bean.ber.ReverseByteArrayOutputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;

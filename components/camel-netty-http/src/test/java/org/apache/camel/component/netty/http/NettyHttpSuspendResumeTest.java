@@ -20,24 +20,22 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
-import static org.apache.camel.test.junit5.TestSupport.isPlatform;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
+@DisabledOnOs(OS.WINDOWS)
 public class NettyHttpSuspendResumeTest extends BaseNettyTest {
 
     private String serverUri = "netty-http:http://localhost:" + getPort() + "/cool?disconnect=true&send503whenSuspended=false";
 
     @Test
     public void testNettySuspendResume() throws Exception {
-        // these tests does not run well on Windows
-        assumeFalse(isPlatform("windows"));
-
         context.getShutdownStrategy().setTimeout(50);
 
         String reply = template.requestBody(serverUri, "World", String.class);

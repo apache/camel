@@ -34,6 +34,7 @@
 
     <properties>
         <firstVersion>3.0.0</firstVersion>
+        <label>core,management</label>
         <camel.surefire.parallel>false</camel.surefire.parallel>
         <camel.surefire.forkCount>4</camel.surefire.forkCount>
         <camel.surefire.forkTimeout>3000</camel.surefire.forkTimeout>
@@ -316,6 +317,22 @@
                     <scope>test</scope>
                 </dependency>
             </dependencies>
+        </profile>
+        <profile>
+            <id>jdk17-build</id>
+            <activation>
+                <jdk>[17,)</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <argLine>--add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 </project>

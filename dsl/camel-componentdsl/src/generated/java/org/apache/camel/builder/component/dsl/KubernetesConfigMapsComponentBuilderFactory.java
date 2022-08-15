@@ -58,7 +58,7 @@ public interface KubernetesConfigMapsComponentBuilderFactory {
          * The option is a:
          * &lt;code&gt;io.fabric8.kubernetes.client.KubernetesClient&lt;/code&gt; type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param kubernetesClient the value to set
          * @return the dsl builder
@@ -66,6 +66,28 @@ public interface KubernetesConfigMapsComponentBuilderFactory {
         default KubernetesConfigMapsComponentBuilder kubernetesClient(
                 io.fabric8.kubernetes.client.KubernetesClient kubernetesClient) {
             doSetProperty("kubernetesClient", kubernetesClient);
+            return this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
+         */
+        default KubernetesConfigMapsComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -131,6 +153,7 @@ public interface KubernetesConfigMapsComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "kubernetesClient": ((KubernetesConfigMapsComponent) component).setKubernetesClient((io.fabric8.kubernetes.client.KubernetesClient) value); return true;
+            case "bridgeErrorHandler": ((KubernetesConfigMapsComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((KubernetesConfigMapsComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((KubernetesConfigMapsComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;

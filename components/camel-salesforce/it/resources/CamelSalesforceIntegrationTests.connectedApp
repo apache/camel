@@ -16,7 +16,7 @@
   limitations under the License.
 -->
 <ConnectedApp xmlns="http://soap.sforce.com/2006/04/metadata">
-    <contactEmail>cbactrianus@gmail.com</contactEmail>
+    <contactEmail>changeme@example.com</contactEmail>
     <label>CamelSalesforceIntegrationTests</label>
     <oauthConfig>
         <callbackUrl>https://login.salesforce.com/services/oauth2/success</callbackUrl>

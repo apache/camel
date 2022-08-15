@@ -30,7 +30,7 @@ generating a long-lived refreshToken is
 the https://developers.google.com/oauthplayground[OAuth playground].
 
 In the case of a https://developers.google.com/identity/protocols/oauth2#serviceaccount[service account],
-credentials comprise of a JSON-file (keyResource). You can also use
+credentials comprise of a JSON-file (serviceAccountKey). You can also use
 https://developers.google.com/identity/protocols/oauth2/service-account#delegatingauthority[delegation domain-wide authority]
 (delegate) and one, several, or all possible
 https://developers.google.com/gmail/api/auth/scopes[GMail API Auth Scopes] (scopes).

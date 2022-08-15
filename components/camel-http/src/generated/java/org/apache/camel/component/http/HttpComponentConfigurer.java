@@ -51,6 +51,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "copyHeaders": target.setCopyHeaders(property(camelContext, boolean.class, value)); return true;
         case "defaultuseragentdisabled":
         case "defaultUserAgentDisabled": target.setDefaultUserAgentDisabled(property(camelContext, boolean.class, value)); return true;
+        case "followredirects":
+        case "followRedirects": target.setFollowRedirects(property(camelContext, boolean.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "httpbinding":
@@ -132,6 +134,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "copyHeaders": return boolean.class;
         case "defaultuseragentdisabled":
         case "defaultUserAgentDisabled": return boolean.class;
+        case "followredirects":
+        case "followRedirects": return boolean.class;
         case "headerfilterstrategy":
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "httpbinding":
@@ -214,6 +218,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "copyHeaders": return target.isCopyHeaders();
         case "defaultuseragentdisabled":
         case "defaultUserAgentDisabled": return target.isDefaultUserAgentDisabled();
+        case "followredirects":
+        case "followRedirects": return target.isFollowRedirects();
         case "headerfilterstrategy":
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "httpbinding":

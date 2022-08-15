@@ -754,8 +754,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             } catch (Exception e) {
                 // Do nothing here
             }
-            parserContext.registerBeanComponent(new BeanComponentDefinition(definition, id));
+            parserContext.registerComponent(new BeanComponentDefinition(definition, id));
         }
     }
-
 }

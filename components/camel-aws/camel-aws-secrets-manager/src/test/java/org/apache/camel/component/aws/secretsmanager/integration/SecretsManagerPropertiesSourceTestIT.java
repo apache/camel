@@ -339,4 +339,122 @@ public class SecretsManagerPropertiesSourceTestIT extends CamelTestSupport {
         template.sendBody("direct:password", "Hello World");
         assertMockEndpointsSatisfied();
     }
+
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_ACCESS_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_SECRET_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
+    @Test
+    public void testPropertiesWithVersionFunction() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:version").setBody(simple("{{aws:test/id@e8d0e680-a504-4b70-a9b2-acf5efe0ba23}}")).to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("27");
+
+        template.sendBody("direct:version", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
+
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_ACCESS_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_SECRET_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
+    @Test
+    public void testPropertiesWithVersionAndNoFieldFunction() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:version").setBody(simple("{{aws:test@e8d0e680-a504-4b70-a9b2-acf5efe0ba23}}")).to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("{\"id\":\"27\"}");
+
+        template.sendBody("direct:version", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
+
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_ACCESS_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_SECRET_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
+    @Test
+    public void testPropertiesWithVersionNoFieldAndDefaultValueFunction() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:version").setBody(simple("{{aws:test:pippo@e8d0e680-a504-4b70-a9b2-acf5efe0ba23}}"))
+                        .to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("{\"id\":\"27\"}");
+
+        template.sendBody("direct:version", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
+
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_ACCESS_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_SECRET_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
+    @Test
+    public void testPropertiesWithVersionNoFieldDefaultValueNotExistentSecretFunction() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:version").setBody(simple("{{aws:test1:pippo@e8d0e680-a504-4b70-a9b2-acf5efe0ba23}}"))
+                        .to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("pippo");
+
+        template.sendBody("direct:version", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
+
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_ACCESS_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_SECRET_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
+    @Test
+    public void testPropertiesWithVersionNoFieldDefaultValueNotExistentVersionFunction() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:version").setBody(simple("{{aws:test1:pippo@e8d0e680-a504-4b70-a9b2-acf5efe0ba29}}"))
+                        .to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("pippo");
+
+        template.sendBody("direct:version", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
+
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_ACCESS_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_SECRET_KEY", matches = ".*")
+    @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AWS_REGION", matches = ".*")
+    @Test
+    public void testPropertiesWithVersionFieldAndDefaultValueFunction() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:version").setBody(simple("{{aws:test/id:pippo@e8d0e680-a504-4b70-a9b2-acf5efe0ba23}}"))
+                        .to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("27");
+
+        template.sendBody("direct:version", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
 }

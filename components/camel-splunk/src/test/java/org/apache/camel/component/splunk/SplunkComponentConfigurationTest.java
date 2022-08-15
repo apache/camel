@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -49,6 +50,15 @@ public class SplunkComponentConfigurationTest extends CamelTestSupport {
         SplunkComponent component = context.getComponent("splunk", SplunkComponent.class);
         assertThrows(IllegalArgumentException.class,
                 () -> component.createEndpoint("splunk://test"));
+    }
+
+    @Test
+    public void createProducerWithPasswordAndToken() throws Exception {
+        SplunkComponent component = context.getComponent("splunk", SplunkComponent.class);
+        SplunkEndpoint endpoint
+                = (SplunkEndpoint) component.createEndpoint("splunk://test?username=test&password=pw&token=myToken");
+        assertNull(endpoint.getConfiguration().getPassword());
+        assertEquals("myToken", endpoint.getConfiguration().getToken());
     }
 
     @Test

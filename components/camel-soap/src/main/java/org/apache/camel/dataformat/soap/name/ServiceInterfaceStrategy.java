@@ -83,7 +83,7 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
             } else {
                 throw new IllegalArgumentException(
                         "Result type of method " + method.getName()
-                                                   + " is not annotated with WebParam. This is not yet supported");
+                                                   + " is not annotated with WebResult. This is not yet supported");
             }
         }
     }

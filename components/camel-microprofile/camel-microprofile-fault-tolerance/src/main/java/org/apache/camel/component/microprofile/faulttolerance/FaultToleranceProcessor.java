@@ -231,34 +231,36 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
         exchange.setProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK, true);
 
         CircuitBreakerFallbackTask fallbackTask = null;
-        CircuitBreakerTask task = (CircuitBreakerTask) taskFactory.acquire(exchange, callback);
-
-        // circuit breaker
-        FaultToleranceStrategy target = circuitBreaker;
-
-        // 1. bulkhead
-        if (config.isBulkheadEnabled()) {
-            target = new FutureThreadPoolBulkhead(
-                    target, "bulkhead", config.getBulkheadMaxConcurrentCalls(),
-                    config.getBulkheadWaitingTaskQueue());
-        }
-        // 2. timeout
-        if (config.isTimeoutEnabled()) {
-            TimeoutWatcher watcher = new ScheduledExecutorTimeoutWatcher(scheduledExecutorService);
-            target = new Timeout(target, "timeout", config.getTimeoutDuration(), watcher);
-        }
-        // 3. fallback
-        if (fallbackProcessor != null) {
-            fallbackTask = (CircuitBreakerFallbackTask) fallbackTaskFactory.acquire(exchange, callback);
-            final CircuitBreakerFallbackTask fFallbackTask = fallbackTask;
-            target = new Fallback(target, "fallback", fallbackContext -> {
-                exchange.setException(fallbackContext.failure);
-                return fFallbackTask.call();
-            }, ExceptionDecision.ALWAYS_FAILURE);
-        }
-
+        CircuitBreakerTask task = null;
         try {
+            task = (CircuitBreakerTask) taskFactory.acquire(exchange, callback);
+
+            // circuit breaker
+            FaultToleranceStrategy target = circuitBreaker;
+
+            // 1. bulkhead
+            if (config.isBulkheadEnabled()) {
+                target = new FutureThreadPoolBulkhead(
+                        target, "bulkhead", config.getBulkheadMaxConcurrentCalls(),
+                        config.getBulkheadWaitingTaskQueue());
+            }
+            // 2. timeout
+            if (config.isTimeoutEnabled()) {
+                TimeoutWatcher watcher = new ScheduledExecutorTimeoutWatcher(scheduledExecutorService);
+                target = new Timeout(target, "timeout", config.getTimeoutDuration(), watcher);
+            }
+            // 3. fallback
+            if (fallbackProcessor != null) {
+                fallbackTask = (CircuitBreakerFallbackTask) fallbackTaskFactory.acquire(exchange, callback);
+                final CircuitBreakerFallbackTask fFallbackTask = fallbackTask;
+                target = new Fallback(target, "fallback", fallbackContext -> {
+                    exchange.setException(fallbackContext.failure);
+                    return fFallbackTask.call();
+                }, ExceptionDecision.ALWAYS_FAILURE);
+            }
+
             target.apply(new InvocationContext(task));
+
         } catch (CircuitBreakerOpenException e) {
             // the circuit breaker triggered a call rejected
             exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, false);
@@ -269,7 +271,9 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
             // some other kind of exception
             exchange.setException(e);
         } finally {
-            taskFactory.release(task);
+            if (task != null) {
+                taskFactory.release(task);
+            }
             if (fallbackTask != null) {
                 fallbackTaskFactory.release(fallbackTask);
             }

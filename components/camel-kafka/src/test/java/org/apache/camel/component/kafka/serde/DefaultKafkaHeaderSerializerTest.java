@@ -19,6 +19,8 @@ package org.apache.camel.component.kafka.serde;
 import java.util.Arrays;
 import java.util.Collection;
 
+import com.fasterxml.jackson.databind.node.TextNode;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -26,11 +28,12 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 public class DefaultKafkaHeaderSerializerTest {
 
-    private KafkaHeaderSerializer serializer = new DefaultKafkaHeaderSerializer();
+    private DefaultKafkaHeaderSerializer serializer = new DefaultKafkaHeaderSerializer();
 
     @ParameterizedTest
     @MethodSource("primeNumbers")
     public void serialize(Object value, byte[] expectedResult) {
+        serializer.setCamelContext(new DefaultCamelContext());
         byte[] result = serializer.serialize("someKey", value);
 
         assertArrayEquals(expectedResult, result);
@@ -44,6 +47,7 @@ public class DefaultKafkaHeaderSerializerTest {
                 { 22.0D, new byte[] { 64, 54, 0, 0, 0, 0, 0, 0 } }, // double
                 { "someValue", "someValue".getBytes() }, // string
                 { new byte[] { 0, 2, -43 }, new byte[] { 0, 2, -43 } }, // byte[]
+                { new TextNode("foo"), "foo".getBytes() }, // jackson TextNode
                 { null, null }, // null
                 { new Object(), null } // unknown
                                       // type

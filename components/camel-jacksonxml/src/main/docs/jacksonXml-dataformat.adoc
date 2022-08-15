@@ -255,8 +255,8 @@ Multiple modules can be specified separated by comma, such as `moduleRefs="myJac
 
 == Enabling or disable features using Jackson
 
-Jackson has a number of features you can enable or disable, which its
-ObjectMapper uses. For example to disable failing on unknown properties
+Jackson XML has a number of features you can enable or disable, which its
+XmlMapper uses. For example to disable failing on unknown properties
 when marshalling, you can configure this using the disableFeatures:
 
 [source,xml]
@@ -273,6 +273,7 @@ from the following enum classes:
 * `com.fasterxml.jackson.databind.SerializationFeature`
 * `com.fasterxml.jackson.databind.DeserializationFeature`
 * `com.fasterxml.jackson.databind.MapperFeature`
+* `com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser.Feature`
 
 To enable a feature use the enableFeatures options instead.
 
@@ -288,7 +289,7 @@ df.disableFeature(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES);
 
 == Converting Maps to POJO using Jackson
 
-Jackson `ObjectMapper` can be used to convert maps to POJO objects.
+Jackson `XmlMapper` can be used to convert maps to POJO objects.
 Jackson component comes with the data converter that can be used to
 convert `java.util.Map` instance to non-String, non-primitive and
 non-Number objects.
@@ -303,7 +304,7 @@ producerTemplate.sendBody("direct:mapToInvoice", invoiceData);
 Invoice invoice = exchange.getIn().getBody(Invoice.class);
 ----------------------------------------------------------------
 
-If there is a single `ObjectMapper` instance available in the Camel
+If there is a single `XmlMapper` instance available in the Camel
 registry, it will used by the converter to perform the conversion.
 Otherwise the default mapper will be used.  
 

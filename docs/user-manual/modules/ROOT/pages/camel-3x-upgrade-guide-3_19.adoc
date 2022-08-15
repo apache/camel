@@ -1,0 +1,65 @@
+= Apache Camel 3.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
+from both 3.0 to 3.1 and 3.1 to 3.2.
+
+== Upgrading Camel 3.18 to 3.19
+
+=== camel-api
+
+Added `addClassLoader` method to `org.apache.camel.spi.ClassResolver`.
+
+=== camel-yaml-dsl
+
+Removed using `template` as a custom alias for `routeTemplate` or `route-template`.
+
+Removed the `tod` custom alias for `toD` or `to-d`.
+
+A route template can now also define a `route` which allows specifying route
+options that otherwise is not possible when using `from`.
+
+For example, you can now disable stream-caching, as shown in the snippet below that are from a Kamelet:
+
+[source,yaml]
+----
+spec:
+  template:
+    route:
+      stream-caching: false
+      message-history: true
+      from:
+        uri: timer:tick
+        parameters:
+          period: "{{period}}"
+        steps:
+          - set-body:
+              constant: "{{message}}"
+          - set-header:
+              name: "Content-Type"
+              constant: "{{contentType}}"
+          - to: kamelet:sink
+----
+
+=== camel-salesforce
+
+The URI format for consumer operations has changed. All consumer URIs now use the `subscribe` operation. E.g., `salesforce:subscribe:<topic_name>`, `salesforce:subscribe:event/<event_name>`, `salesforce:subscribe:data/ChangeEvents`.
+
+
+=== camel-consul
+
+The deprecated options were removed and should be replaced by the following options:
+
+|===
+|Deprecated |Replace with
+
+|`connectTimeoutMillis`
+|`connectTimeout`
+
+|`readTimeoutMillis`
+|`readTimeout`
+
+|`writeTimeoutMillis`
+|`writeTimeout`
+|===
+

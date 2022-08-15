@@ -40,7 +40,7 @@ public class GsonDataFormatTest {
     private Message message;
 
     @BeforeEach
-    private void setup() {
+    public void setup() {
         when(message.getHeader(Exchange.CHARSET_NAME, String.class)).thenReturn(StandardCharsets.UTF_8.name());
         when(exchange.getIn()).thenReturn(message);
     }

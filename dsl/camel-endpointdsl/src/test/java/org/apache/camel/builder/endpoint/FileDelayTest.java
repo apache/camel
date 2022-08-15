@@ -27,14 +27,15 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 public class FileDelayTest extends BaseEndpointDslTest {
+    private static final String TEST_DATA_DIR = BaseEndpointDslTest.generateUniquePath(BaseEndpointDslTest.class);
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        deleteDirectory("target/data/files");
+        deleteDirectory(TEST_DATA_DIR);
         super.setUp();
-        template.sendBodyAndHeader("file://target/data/files", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/data/files", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader("file://" + TEST_DATA_DIR, "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://" + TEST_DATA_DIR, "Bye World", Exchange.FILE_NAME, "bye.txt");
     }
 
     @Test
@@ -50,7 +51,7 @@ public class FileDelayTest extends BaseEndpointDslTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new EndpointRouteBuilder() {
             public void configure() throws Exception {
-                from(file("target/data/files/").delay(2).timeUnit(TimeUnit.SECONDS).delete(true).maxMessagesPerPoll(1))
+                from(file(TEST_DATA_DIR).delay(2).timeUnit(TimeUnit.SECONDS).delete(true).maxMessagesPerPoll(1))
                         .convertBodyTo(String.class)
                         .to(mock("result"));
             }

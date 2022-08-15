@@ -560,7 +560,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             List<Source> elements) {
         BindingOperationInfo boi = exchange.getBindingOperationInfo();
 
-        if (boi.isUnwrapped()) {
+        if (boi != null && boi.isUnwrapped()) {
             boi = boi.getWrappedOperation();
             exchange.put(BindingOperationInfo.class, boi);
         }
@@ -568,7 +568,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         MessageContentsList answer = new MessageContentsList();
 
         int i = 0;
-        if (boi.getOutput() != null) {
+        if (boi != null && boi.getOutput() != null) {
             for (MessagePartInfo partInfo : boi.getOutput().getMessageParts()) {
                 if (elements != null && elements.size() > i) {
                     answer.put(partInfo, elements.get(i++));

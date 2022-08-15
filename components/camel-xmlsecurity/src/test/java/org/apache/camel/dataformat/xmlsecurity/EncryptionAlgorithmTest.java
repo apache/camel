@@ -32,6 +32,8 @@ import org.apache.xml.security.encryption.XMLCipher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+
 /**
  * Test all available encryption algorithms
  */
@@ -113,9 +115,8 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
 
     @Test
     public void testAES192() throws Exception {
-        if (!TestHelper.UNRESTRICTED_POLICIES_INSTALLED) {
-            return;
-        }
+        assumeTrue(TestHelper.UNRESTRICTED_POLICIES_INSTALLED,
+                "Test preconditions failed: UNRESTRICTED_POLICIES_INSTALLED=" + TestHelper.UNRESTRICTED_POLICIES_INSTALLED);
 
         // Set up the Key
         KeyGenerator keygen = KeyGenerator.getInstance("AES");
@@ -141,9 +142,8 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
 
     @Test
     public void testAES192GCM() throws Exception {
-        if (!TestHelper.UNRESTRICTED_POLICIES_INSTALLED) {
-            return;
-        }
+        assumeTrue(TestHelper.UNRESTRICTED_POLICIES_INSTALLED,
+                "Test preconditions failed: UNRESTRICTED_POLICIES_INSTALLED=" + TestHelper.UNRESTRICTED_POLICIES_INSTALLED);
 
         // Set up the Key
         KeyGenerator keygen = KeyGenerator.getInstance("AES");
@@ -169,9 +169,8 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
 
     @Test
     public void testAES256() throws Exception {
-        if (!TestHelper.UNRESTRICTED_POLICIES_INSTALLED) {
-            return;
-        }
+        assumeTrue(TestHelper.UNRESTRICTED_POLICIES_INSTALLED,
+                "Test preconditions failed: UNRESTRICTED_POLICIES_INSTALLED=" + TestHelper.UNRESTRICTED_POLICIES_INSTALLED);
 
         // Set up the Key
         KeyGenerator keygen = KeyGenerator.getInstance("AES");
@@ -197,9 +196,8 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
 
     @Test
     public void testAES256GCM() throws Exception {
-        if (!TestHelper.UNRESTRICTED_POLICIES_INSTALLED) {
-            return;
-        }
+        assumeTrue(TestHelper.UNRESTRICTED_POLICIES_INSTALLED,
+                "Test preconditions failed: UNRESTRICTED_POLICIES_INSTALLED=" + TestHelper.UNRESTRICTED_POLICIES_INSTALLED);
 
         // Set up the Key
         KeyGenerator keygen = KeyGenerator.getInstance("AES");
@@ -297,9 +295,8 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
 
     @Test
     public void testCAMELLIA192() throws Exception {
-        if (!TestHelper.UNRESTRICTED_POLICIES_INSTALLED) {
-            return;
-        }
+        assumeTrue(TestHelper.UNRESTRICTED_POLICIES_INSTALLED,
+                "Test preconditions failed: UNRESTRICTED_POLICIES_INSTALLED=" + TestHelper.UNRESTRICTED_POLICIES_INSTALLED);
 
         // Set up the Key
         KeyGenerator keygen = KeyGenerator.getInstance("CAMELLIA");
@@ -325,9 +322,8 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
 
     @Test
     public void testCAMELLIA256() throws Exception {
-        if (!TestHelper.UNRESTRICTED_POLICIES_INSTALLED) {
-            return;
-        }
+        assumeTrue(TestHelper.UNRESTRICTED_POLICIES_INSTALLED,
+                "Test preconditions failed: UNRESTRICTED_POLICIES_INSTALLED=" + TestHelper.UNRESTRICTED_POLICIES_INSTALLED);
 
         // Set up the Key
         KeyGenerator keygen = KeyGenerator.getInstance("CAMELLIA");

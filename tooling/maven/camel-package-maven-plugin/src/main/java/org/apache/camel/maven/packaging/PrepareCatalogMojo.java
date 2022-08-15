@@ -262,7 +262,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                                     OtherModel om = (OtherModel) m;
                                     if (!project.getVersion().equals(om.getVersion())) {
                                         // update version in model and file because we prepare catalog before we build DSL
-                                        // so their previous generated model files may use previous version (eg 3.18.0-SNAPSHOT -> 3.15.0)
+                                        // so their previous generated model files may use previous version (eg 3.19.0-SNAPSHOT -> 3.15.0)
                                         try {
                                             String s = Files.readString(p);
                                             s = s.replaceAll(om.getVersion(), project.getVersion());

@@ -31,6 +31,8 @@ public class AzureVaultConfigurationPropertiesConfigurer extends org.apache.came
         case "ClientSecret": target.setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "gcpvaultconfiguration":
         case "GcpVaultConfiguration": target.setGcpVaultConfiguration(property(camelContext, org.apache.camel.vault.GcpVaultConfiguration.class, value)); return true;
+        case "hashicorpvaultconfiguration":
+        case "HashicorpVaultConfiguration": target.setHashicorpVaultConfiguration(property(camelContext, org.apache.camel.vault.HashicorpVaultConfiguration.class, value)); return true;
         case "tenantid":
         case "TenantId": target.setTenantId(property(camelContext, java.lang.String.class, value)); return true;
         case "vaultname":
@@ -52,6 +54,8 @@ public class AzureVaultConfigurationPropertiesConfigurer extends org.apache.came
         case "ClientSecret": return java.lang.String.class;
         case "gcpvaultconfiguration":
         case "GcpVaultConfiguration": return org.apache.camel.vault.GcpVaultConfiguration.class;
+        case "hashicorpvaultconfiguration":
+        case "HashicorpVaultConfiguration": return org.apache.camel.vault.HashicorpVaultConfiguration.class;
         case "tenantid":
         case "TenantId": return java.lang.String.class;
         case "vaultname":
@@ -74,6 +78,8 @@ public class AzureVaultConfigurationPropertiesConfigurer extends org.apache.came
         case "ClientSecret": return target.getClientSecret();
         case "gcpvaultconfiguration":
         case "GcpVaultConfiguration": return target.getGcpVaultConfiguration();
+        case "hashicorpvaultconfiguration":
+        case "HashicorpVaultConfiguration": return target.getHashicorpVaultConfiguration();
         case "tenantid":
         case "TenantId": return target.getTenantId();
         case "vaultname":

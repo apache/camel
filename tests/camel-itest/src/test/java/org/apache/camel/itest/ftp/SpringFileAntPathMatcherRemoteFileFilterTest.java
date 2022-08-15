@@ -36,6 +36,7 @@ import org.springframework.test.context.ContextConfiguration;
  */
 @CamelSpringTest
 @ContextConfiguration
+@DisabledOnOs({ OS.AIX, OS.WINDOWS, OS.SOLARIS })
 public class SpringFileAntPathMatcherRemoteFileFilterTest {
     @RegisterExtension
     public static FtpServiceExtension ftpServiceExtension
@@ -51,7 +52,6 @@ public class SpringFileAntPathMatcherRemoteFileFilterTest {
     @EndpointInject("mock:result")
     protected MockEndpoint result;
 
-    @DisabledOnOs({ OS.AIX, OS.WINDOWS, OS.SOLARIS })
     @Test
     void testAntPatchMatherFilter() throws Exception {
 

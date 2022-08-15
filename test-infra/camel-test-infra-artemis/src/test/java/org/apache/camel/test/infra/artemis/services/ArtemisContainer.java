@@ -58,7 +58,7 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
      * @return the end point URL as a string
      */
     public String amqpEndpoint() {
-        return String.format("amqp://%s:%d", getContainerIpAddress(), amqpPort());
+        return String.format("amqp://%s:%d", getHost(), amqpPort());
     }
 
     /**
@@ -76,7 +76,7 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
      * @return the end point URL as a string
      */
     public String mqttEndpoint() {
-        return String.format("tcp://%s:%d", getContainerIpAddress(), mqttPort());
+        return String.format("tcp://%s:%d", getHost(), mqttPort());
     }
 
     /**
@@ -94,7 +94,7 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
      * @return the admin URL as a string
      */
     public String adminURL() {
-        return String.format("http://%s:%d", getContainerIpAddress(), adminPort());
+        return String.format("http://%s:%d", getHost(), adminPort());
     }
 
     /**
@@ -112,7 +112,7 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
      * @return the end point URL as a string
      */
     public String defaultEndpoint() {
-        return String.format("tcp://%s:%d", getContainerIpAddress(), defaultAcceptorPort());
+        return String.format("tcp://%s:%d", getHost(), defaultAcceptorPort());
     }
 
     /**
@@ -130,6 +130,6 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
      * @return the end point URL as a string
      */
     public String getOpenwireEndpoint() {
-        return String.format("tcp://%s:%d", getContainerIpAddress(), openwirePort());
+        return String.format("tcp://%s:%d", getHost(), openwirePort());
     }
 }

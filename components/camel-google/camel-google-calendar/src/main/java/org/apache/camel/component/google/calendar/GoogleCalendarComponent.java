@@ -61,7 +61,7 @@ public class GoogleCalendarComponent
                         config.getApplicationName(), config.getDelegate());
             } else {
                 throw new IllegalArgumentException(
-                        "(clientId and clientSecret) or keyResource are required to create Google Calendar client");
+                        "(clientId and clientSecret) or serviceAccountKey are required to create Google Calendar client");
             }
         }
         return client;

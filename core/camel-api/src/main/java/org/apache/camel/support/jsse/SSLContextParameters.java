@@ -257,7 +257,9 @@ public class SSLContextParameters extends BaseSSLContextParameters {
 
         LOG.trace("Creating SSLContext from SSLContextParameters [{}].", this);
 
-        LOG.info("Available providers: {}.", Security.getProviders());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Available Security providers: {}.", Security.getProviders());
+        }
 
         KeyManager[] keyManagers = this.keyManagers == null ? null : this.keyManagers.createKeyManagers();
         TrustManager[] trustManagers = this.trustManagers == null ? null : this.trustManagers.createTrustManagers();
@@ -276,7 +278,7 @@ public class SSLContextParameters extends BaseSSLContextParameters {
                 if (keyManagers[idx] instanceof X509KeyManager) {
                     try {
                         keyManagers[idx] = new AliasedX509ExtendedKeyManager(
-                                this.getCertAlias(),
+                                this.parsePropertyValue(this.getCertAlias()),
                                 (X509KeyManager) keyManagers[idx]);
                     } catch (Exception e) {
                         throw new GeneralSecurityException(e);

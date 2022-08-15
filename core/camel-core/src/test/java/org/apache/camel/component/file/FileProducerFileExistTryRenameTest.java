@@ -21,16 +21,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
+@DisabledOnOs(OS.WINDOWS)
 public class FileProducerFileExistTryRenameTest extends ContextTestSupport {
 
     @Test
     public void testIgnore() throws Exception {
-        // Does not work on Windows
-        if (isPlatform("windows")) {
-            return;
-        }
-
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
         mock.expectedFileExists(testFile("hello.txt"), "Bye World");

@@ -4,12 +4,27 @@ A JBang-based Camel app for easily running Camel routes.
 
 == Installation
 
-It is not necessary to install Camel JBang. However, if you prefer to do so, JBang makes it easy for us by providing an installation feature that works with GitHub. If you have JBang installed on your system, then you can run the following command to install Camel JBang:
+First you must install https://www.jbang.dev/[JBang] which is used for launching Camel.
+See instructions on https://www.jbang.dev/download/[JBang] how to download and install.
+
+After JBang is installed you can verify JBang is working by executing the following command from a command shell:
+
+[source,bash]
+----
+jbang version
+----
+
+Which should output the version of JBang.
+
+To make it easier to use Camel JBang then install the following:
 
 [source,bash]
 ----
 jbang app install camel@apache/camel
 ----
+
+This will install Apache Camel as the `camel` command within JBang, meaning that you can run Camel from the command line
+by just executing `camel` (see more next).
 
 == Using Camel JBang
 
@@ -17,29 +32,12 @@ The Camel JBang supports multiple commands. Running the command below, will prin
 
 [source,bash]
 ----
-jbang camel@apache/camel --help
+camel --help
 ----
 
 TIP: The first time you run this command, it may cause dependencies to be cached, therefore taking a few extra seconds to run.
 
 All the commands support the `--help` and will display the appropriate help if that flag is provided.
-
-
-=== Using a specific Camel version
-
-You can specify which Camel version to run as shown:
-
-[source,bash]
-----
-jbang run -Dcamel.jbang.version=3.17.0 camel@apache/camel [command]
-----
-
-And you can also try bleeding edge development by using SNAPSHOT such as:
-
-[source,bash]
-----
-jbang run -Dcamel.jbang.version=3.18.0-SNAPSHOT camel@apache/camel [command]
-----
 
 == Creating and running Camel routes
 
@@ -52,7 +50,7 @@ For example to create an XML route you do:
 camel init cheese.xml
 ----
 
-Which creates the file `cheese.xml` with a sample route.
+Which creates the file `cheese.xml` (in the current directory) with a sample route.
 
 To run the file, you simply do:
 
@@ -63,12 +61,23 @@ camel run cheese.xml
 
 NOTE: You can create and run any of the supported xref:dsl.adoc[DSLs] in Camel such as YAML, XML, Java, Groovy.
 
-To create a new .java integration, you simply do:
+To create a new .java route, you simply do:
 
 [source,bash]
 ----
 camel init foo.java
 ----
+
+When using the init command then Camel will by default create the file in the current directory. However, you can use
+the `--directory` option to create the file in the specified directory. For example to create in a folder
+named _foobar_ you can do:
+
+[source,bash]
+----
+camel init foo.java --directory=foobar
+----
+
+IMPORTANT: When using `--directory` then Camel will automatically clean this directory if already exists.
 
 === Running Routes from multiple files
 
@@ -100,7 +109,14 @@ Or you can run all files starting with foo*
 camel run foo*
 ----
 
-TIP: The run goal can also detect files that are `properties`.
+And to run everything
+
+[source,bash]
+----
+camel run *
+----
+
+TIP: The run goal can also detect files that are `properties`, such as `application.properties`.
 
 === Dev mode with live reload
 
@@ -109,13 +125,53 @@ using the `--dev` options as shown:
 
 [source,bash]
 ----
-camel run jms-amqp-10-sink-binding.yaml --dev
+camel run foo.yaml --dev
 ----
 
 Then while the Camel application is running, you can update the YAML route and update when saving.
 
+This works for all DLS even java, so you can do:
+
+[source,bash]
+----
+camel run hello.java --dev
+----
+
 NOTE: The live reload is meant for development purposes, and if you encounter problems with reloading
 such as JVM class loading issues, then you may need to restart the application.
+
+=== Developer Console
+
+You can enable the developer console, which presents a variety of information to the developer.
+
+[source,bash]
+----
+camel run hello.java --console
+----
+
+The console is then accessible from a web browser at: http://localhost:8080/q/dev (by default).
+The link is also shown in the log when Camel is starting up.
+
+The console can give you insights into your running Camel application, such as reporting the top
+routes that takes the longest time to process messages. You can then drill down to pin-point, exactly
+which individual EIPs in these routes are the slowest.
+
+The developer console can also output the data in JSon format, which for example can be used by 3rd-party tooling
+to scrape the information.
+
+For example to output the top routes via curl, you can execute:
+
+[source,bash]
+----
+curl -s -H "Accept: application/json"  http://0.0.0.0:8080/q/dev/top/
+----
+
+And if you have `jq` installed which can format and output the JSon data in colour, then do:
+
+[source,bash]
+----
+curl -s -H "Accept: application/json"  http://0.0.0.0:8080/q/dev/top/ | jq
+----
 
 === Using profiles
 
@@ -318,6 +374,16 @@ The example can then be run locally with:
 camel run *
 ----
 
+You can also download to a new folder using the `--directory` option, for example to download to a folder named _myproject_,
+you would do:
+
+[source,bash]
+----
+camel init https://github.com/apache/camel-kamelets-examples/tree/main/jbang/dependency-injection --directory=myproject
+----
+
+IMPORTANT: When using `--directory` then Camel will automatically clean this directory if already exists.
+
 You can also run in dev mode, to hot-deploy on source code changes.
 
 [source,bash]
@@ -354,6 +420,34 @@ This will then download the files to local disk, which you can run afterwards:
 ----
 camel run *
 ----
+
+You can also download to a new folder using the `--directory` option, for example to download to a folder named _foobar_,
+you would do:
+
+[source,bash]
+----
+camel init https://gist.github.com/davsclaus/477ddff5cdeb1ae03619aa544ce47e92 --directory=foobar
+----
+
+IMPORTANT: When using `--directory` then Camel will automatically clean this directory if already exists.
+
+
+=== Using a specific Camel version
+
+You can specify which Camel version to run as shown:
+
+[source,bash]
+----
+jbang run -Dcamel.jbang.version=3.17.0 camel@apache/camel [command]
+----
+
+And you can also try bleeding edge development by using SNAPSHOT such as:
+
+[source,bash]
+----
+jbang run -Dcamel.jbang.version=3.19.0-SNAPSHOT camel@apache/camel [command]
+----
+
 
 === Running Camel K integrations or bindings
 
@@ -531,7 +625,7 @@ There is basic support for including regular Java source files together with Cam
 and let Camel JBang runtime compile the Java source. This means you can include smaller utility
 classes, POJOs, Camel Processors and whatnot that the application needs.
 
-NOTE: The Java source files cannot use package names. This may change in the future.
+IMPORTANT: The Java source files cannot use package names. This may change in the future.
 
 === Dependency Injection in Java classes
 
@@ -543,29 +637,29 @@ based dependency injection in Java classes.
 
 You can use the following Camel annotations (they work on all runtimes):
 
-- `@BindToRegistry` on class level to create an instance of the class and register in the xref:registry.adoc[Registry].
-- `@BeanInject` to dependency inject a bean on a class field.
-- `@PropertyInject` to inject a xref:using-propertyplaceholder.adoc[property placeholder]. Such as a property defined in `application.properties`.
-- `@BindToRegistry` on a method to create a bean by invoking the method.
-- `@Converter` on class level to auto-register the xref:type-converter.adoc[type converters] from the class.
+- `@org.apache.camel.BindToRegistry` on class level to create an instance of the class and register in the xref:registry.adoc[Registry].
+- `@org.apache.camel.BeanInject` to dependency inject a bean on a class field.
+- `@org.apache.camel.PropertyInject` to inject a xref:using-propertyplaceholder.adoc[property placeholder]. Such as a property defined in `application.properties`.
+- `@org.apache.camel.BindToRegistry` on a method to create a bean by invoking the method.
+- `@org.apache.camel.Converter` on class level to auto-register the xref:type-converter.adoc[type converters] from the class.
 
 ==== Using Spring Boot dependency injection
 
 You can use the following Spring Boot annotations:
 
-- `@Component` or `@Service` on class level to create an instance of the class and register in the xref:registry.adoc[Registry].
-- `@Autowired` to dependency inject a bean on a class field. `@Qualifier` can be used to specify the bean id.
-- `@Value` to inject a xref:using-propertyplaceholder.adoc[property placeholder]. Such as a property defined in `application.properties`.
-- `@Bean` on a method to create a bean by invoking the method.
+- `@org.springframework.stereotype.Component` or `@org.springframework.stereotype.Service` on class level to create an instance of the class and register in the xref:registry.adoc[Registry].
+- `@org.springframework.beans.factory.annotation.Autowired` to dependency inject a bean on a class field. `@org.springframework.beans.factory.annotation.Qualifier` can be used to specify the bean id.
+- `@org.springframework.beans.factory.annotation.Value` to inject a xref:using-propertyplaceholder.adoc[property placeholder]. Such as a property defined in `application.properties`.
+- `@org.springframework.context.annotation.Bean` on a method to create a bean by invoking the method.
 
 ==== Using Quarkus injection
 
 You can use the following Quarkus annotations:
 
-- `@ApplicationScoped` or `@Singleton` on class level to create an instance of the class and register in the xref:registry.adoc[Registry]. `@Named` can be used to specify the bean id.
-- `@Inject` to dependency inject an bean on a class field. `@Named` can be used to specify the bean id.
-- `@ConfigProperty` to inject a xref:using-propertyplaceholder.adoc[property placeholder]. Such as a property defined in `application.properties`.
-- `@Produces` on a method to create a bean by invoking the method. `@Named` can be used to specify the bean id.
+- `@javax.enterprise.context.ApplicationScoped` or `@javax.inject.Singleton` on class level to create an instance of the class and register in the xref:registry.adoc[Registry]. `@javax.inject.Named` can be used to specify the bean id.
+- `@javax.inject.Inject` to dependency inject a bean on a class field. `@javax.inject.Named` can be used to specify the bean id.
+- `@org.eclipse.microprofile.config.inject.ConfigProperty` to inject a xref:using-propertyplaceholder.adoc[property placeholder]. Such as a property defined in `application.properties`.
+- `@javax.enterprise.inject.Produces` on a method to create a bean by invoking the method. `@javax.inject.Named` can be used to specify the bean id.
 
 === Debugging
 
@@ -683,6 +777,16 @@ camel export --runtime=camel-main --gav=com.foo:acme:1.0-SNAPSHOT --dir=../mypro
 ----
 
 TIP: See the possible options by running: `camel export --help` for more details.
+
+=== Exporting with JMX management included
+
+Usually when exporting to Spring Boot, Quarkus or Camel Main, then JMX management is not included out of the box.
+To include JMX, you need to add `camel:management` in the `--deps` option, as shown below:
+
+[source,bash]
+----
+camel export --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT --deps=camel:management --dir=../myproject
+----
 
 == Troubleshooting
 

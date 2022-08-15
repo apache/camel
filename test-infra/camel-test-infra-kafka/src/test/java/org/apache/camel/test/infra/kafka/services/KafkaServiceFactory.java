@@ -43,6 +43,9 @@ public final class KafkaServiceFactory {
         }
     }
 
+    private static SimpleTestServiceBuilder<KafkaService> instance;
+    private static KafkaService kafkaService;
+
     private KafkaServiceFactory() {
 
     }
@@ -52,22 +55,37 @@ public final class KafkaServiceFactory {
     }
 
     public static KafkaService createService() {
-        return builder()
-                .addLocalMapping(ContainerLocalKafkaService::new)
+        SimpleTestServiceBuilder<KafkaService> builder = new SimpleTestServiceBuilder<>("kafka");
+
+        return builder.addLocalMapping(ContainerLocalKafkaService::kafka3Container)
                 .addMapping("local-strimzi-container", StrimziService::new)
                 .addRemoteMapping(RemoteKafkaService::new)
                 .addMapping("local-kafka3-container", ContainerLocalKafkaService::kafka3Container)
+                .addMapping("local-kafka2-container", ContainerLocalKafkaService::new)
                 .build();
     }
 
-    public static KafkaService createSingletonService() {
-        return builder()
-                .addLocalMapping(() -> new SingletonKafkaService(new ContainerLocalKafkaService(), "kafka"))
-                .addRemoteMapping(RemoteKafkaService::new)
-                .addMapping("local-kafka3-container",
-                        () -> new SingletonKafkaService(ContainerLocalKafkaService.kafka3Container(), "kafka3"))
-                .addMapping("local-strimzi-container", () -> new SingletonKafkaService(new StrimziService(), "strimzi"))
-                .build();
+    public static synchronized KafkaService createSingletonService() {
+        if (kafkaService == null) {
+            if (instance == null) {
+                instance = builder();
+
+                instance.addLocalMapping(
+                        () -> new SingletonKafkaService(ContainerLocalKafkaService.kafka3Container(), "kafka"))
+                        .addRemoteMapping(RemoteKafkaService::new)
+                        .addMapping("local-kafka3-container",
+                                () -> new SingletonKafkaService(ContainerLocalKafkaService.kafka3Container(), "kafka3"))
+                        .addMapping("local-kafka2-container",
+                                () -> new SingletonKafkaService(new ContainerLocalKafkaService(), "kafka2"))
+                        .addMapping("local-strimzi-container",
+                                () -> new SingletonKafkaService(new StrimziService(), "strimzi"));
+
+            }
+
+            kafkaService = instance.build();
+        }
+
+        return kafkaService;
     }
 
 }

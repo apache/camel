@@ -701,8 +701,9 @@ public class CxfRsProducer extends DefaultAsyncProducer {
                 exchange.getMessage().getHeaders().putAll(binding.bindResponseHeadersToCamelHeaders(response, exchange));
 
                 if (genericType != null && !genericType.equals(Void.TYPE)) {
-                    GenericType genericType = new GenericType(this.genericType);
-                    exchange.getMessage().setBody(binding.bindResponseToCamelBody(response.readEntity(genericType), exchange));
+                    GenericType genericTypeClone = new GenericType(this.genericType);
+                    exchange.getMessage()
+                            .setBody(binding.bindResponseToCamelBody(response.readEntity(genericTypeClone), exchange));
                 } else if (responseClass != null && !responseClass.equals(Void.TYPE)) {
                     exchange.getMessage()
                             .setBody(binding.bindResponseToCamelBody(response.readEntity(responseClass), exchange));

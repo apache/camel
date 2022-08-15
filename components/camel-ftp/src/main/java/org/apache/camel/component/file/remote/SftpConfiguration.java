@@ -77,6 +77,10 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     private String keyExchangeProtocols;
     @UriParam(label = "producer,advanced")
     private String chmodDirectory;
+    @UriParam(label = "security")
+    private String serverHostKeys;
+    @UriParam(label = "security")
+    private String publicKeyAcceptedAlgorithms;
 
     public SftpConfiguration() {
         setProtocol("sftp");
@@ -361,5 +365,31 @@ public class SftpConfiguration extends RemoteFileConfiguration {
      */
     public void setKeyExchangeProtocols(String keyExchangeProtocols) {
         this.keyExchangeProtocols = keyExchangeProtocols;
+    }
+
+    public String getServerHostKeys() {
+        return serverHostKeys;
+    }
+
+    /**
+     * Set a comma separated list of algorithms supported for the server host key. Some examples include:
+     * ssh-ed25519,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,rsa-sha2-512,rsa-sha2-256 If not
+     * specified the default list from JSCH will be used.
+     */
+    public void setServerHostKeys(String serverHostKeys) {
+        this.serverHostKeys = serverHostKeys;
+    }
+
+    public String getPublicKeyAcceptedAlgorithms() {
+        return publicKeyAcceptedAlgorithms;
+    }
+
+    /**
+     * Set a comma separated list of public key accepted algorithms. Some examples include:
+     * ssh-ed25519,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,rsa-sha2-512,rsa-sha2-256 If not
+     * specified the default list from JSCH will be used.
+     */
+    public void setPublicKeyAcceptedAlgorithms(String publicKeyAcceptedAlgorithms) {
+        this.publicKeyAcceptedAlgorithms = publicKeyAcceptedAlgorithms;
     }
 }

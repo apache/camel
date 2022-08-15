@@ -63,4 +63,9 @@ public class SynchronizationAdapter implements SynchronizationVetoable, Ordered,
     public void onAfterRoute(Route route, Exchange exchange) {
         // noop
     }
+
+    @Override
+    public void beforeHandover(Exchange target) {
+        // noop
+    }
 }

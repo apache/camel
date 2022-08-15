@@ -330,4 +330,122 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
         template.sendBody("direct:password", "Hello World");
         assertMockEndpointsSatisfied();
     }
+
+    @Test
+    public void testPropertiesWithVersionFunction() throws Exception {
+        context.getVaultConfiguration().aws().setAccessKey(System.getProperty("camel.vault.aws.accessKey"));
+        context.getVaultConfiguration().aws().setSecretKey(System.getProperty("camel.vault.aws.secretKey"));
+        context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:version").setBody(simple("{{aws:test/id@e8d0e680-a504-4b70-a9b2-acf5efe0ba23}}")).to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("27");
+
+        template.sendBody("direct:version", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testPropertiesWithVersionAndNoFieldFunction() throws Exception {
+        context.getVaultConfiguration().aws().setAccessKey(System.getProperty("camel.vault.aws.accessKey"));
+        context.getVaultConfiguration().aws().setSecretKey(System.getProperty("camel.vault.aws.secretKey"));
+        context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:version").setBody(simple("{{aws:test@e8d0e680-a504-4b70-a9b2-acf5efe0ba23}}")).to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("{\"id\":\"27\"}");
+
+        template.sendBody("direct:version", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testPropertiesWithVersionNoFieldAndDefaultValueFunction() throws Exception {
+        context.getVaultConfiguration().aws().setAccessKey(System.getProperty("camel.vault.aws.accessKey"));
+        context.getVaultConfiguration().aws().setSecretKey(System.getProperty("camel.vault.aws.secretKey"));
+        context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:version").setBody(simple("{{aws:test:pippo@e8d0e680-a504-4b70-a9b2-acf5efe0ba23}}"))
+                        .to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("{\"id\":\"27\"}");
+
+        template.sendBody("direct:version", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testPropertiesWithVersionNoFieldDefaultValueNotExistentSecretFunction() throws Exception {
+        context.getVaultConfiguration().aws().setAccessKey(System.getProperty("camel.vault.aws.accessKey"));
+        context.getVaultConfiguration().aws().setSecretKey(System.getProperty("camel.vault.aws.secretKey"));
+        context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:version").setBody(simple("{{aws:test1:pippo@e8d0e680-a504-4b70-a9b2-acf5efe0ba23}}"))
+                        .to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("pippo");
+
+        template.sendBody("direct:version", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testPropertiesWithVersionNoFieldDefaultValueNotExistentVersionFunction() throws Exception {
+        context.getVaultConfiguration().aws().setAccessKey(System.getProperty("camel.vault.aws.accessKey"));
+        context.getVaultConfiguration().aws().setSecretKey(System.getProperty("camel.vault.aws.secretKey"));
+        context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:version").setBody(simple("{{aws:test1:pippo@e8d0e680-a504-4b70-a9b2-acf5efe0ba29}}"))
+                        .to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("pippo");
+
+        template.sendBody("direct:version", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testPropertiesWithVersionFieldAndDefaultValueFunction() throws Exception {
+        context.getVaultConfiguration().aws().setAccessKey(System.getProperty("camel.vault.aws.accessKey"));
+        context.getVaultConfiguration().aws().setSecretKey(System.getProperty("camel.vault.aws.secretKey"));
+        context.getVaultConfiguration().aws().setRegion(System.getProperty("camel.vault.aws.region"));
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:version").setBody(simple("{{aws:test/id:pippo@e8d0e680-a504-4b70-a9b2-acf5efe0ba23}}"))
+                        .to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("27");
+
+        template.sendBody("direct:version", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
 }

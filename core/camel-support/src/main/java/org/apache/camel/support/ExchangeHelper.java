@@ -574,17 +574,11 @@ public final class ExchangeHelper {
     public static void prepareAggregation(Exchange oldExchange, Exchange newExchange) {
         // move body/header from OUT to IN
         if (oldExchange != null) {
-            if (oldExchange.hasOut()) {
-                oldExchange.setIn(oldExchange.getOut());
-                oldExchange.setOut(null);
-            }
+            ExchangeHelper.prepareOutToIn(oldExchange);
         }
 
         if (newExchange != null) {
-            if (newExchange.hasOut()) {
-                newExchange.setIn(newExchange.getOut());
-                newExchange.setOut(null);
-            }
+            ExchangeHelper.prepareOutToIn(newExchange);
         }
     }
 
@@ -1059,5 +1053,35 @@ public final class ExchangeHelper {
     public static Route getRoute(Exchange exchange) {
         UnitOfWork uow = exchange.getUnitOfWork();
         return uow != null ? uow.getRoute() : null;
+    }
+
+    /**
+     * Sets the body in message in the exchange taking the exchange pattern into consideration. If the pattern is out
+     * capable, then the body is set outbound message. Otherwise it is set on the inbound message.
+     * 
+     * @param exchange the exchange containing the message to set the body
+     * @param body     the body to set
+     */
+    public static void setInOutBodyPatternAware(Exchange exchange, Object body) {
+        if (exchange.getPattern().isOutCapable()) {
+            exchange.getOut().copyFrom(exchange.getIn());
+            exchange.getOut().setBody(body);
+        } else {
+            exchange.getIn().setBody(body);
+        }
+    }
+
+    /**
+     * Sets the body in message in the exchange taking the exchange pattern into consideration. If the pattern is out
+     * capable, then the body is set outbound message. Otherwise nothing is done.
+     * 
+     * @param exchange the exchange containing the message to set the body
+     * @param body     the body to set
+     */
+    public static void setOutBodyPatternAware(Exchange exchange, Object body) {
+        if (exchange.getPattern().isOutCapable()) {
+            exchange.getOut().copyFrom(exchange.getIn());
+            exchange.getOut().setBody(body);
+        }
     }
 }

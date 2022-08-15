@@ -31,10 +31,10 @@ import com.bazaarvoice.jolt.Transform;
 import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -206,13 +206,11 @@ public class JoltEndpoint extends ResourceEndpoint {
         }
 
         // now lets output the results to the exchange
-        Message message = exchange.getMessage();
+        Object body = output;
         if (getOutputType() == JoltInputOutputType.JsonString) {
-            message.setBody(JsonUtils.toJsonString(output));
-        } else {
-            message.setBody(output);
+            body = JsonUtils.toJsonString(output);
         }
-        message.setHeaders(exchange.getIn().getHeaders());
+        ExchangeHelper.setInOutBodyPatternAware(exchange, body);
     }
 
 }

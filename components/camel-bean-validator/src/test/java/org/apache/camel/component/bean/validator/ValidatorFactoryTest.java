@@ -24,9 +24,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.condition.OS.AIX;
 
+@DisabledOnOs(AIX)
 public class ValidatorFactoryTest extends CamelTestSupport {
 
-    @DisabledOnOs(AIX)
     @Test
     void configureValidatorFactory() throws Exception {
 

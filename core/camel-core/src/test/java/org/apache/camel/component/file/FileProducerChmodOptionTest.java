@@ -31,25 +31,23 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
+@DisabledOnOs(OS.WINDOWS)
 public class FileProducerChmodOptionTest extends ContextTestSupport {
 
     @Test
     public void testWriteValidChmod0755() throws Exception {
-        assumeFalse(isPlatform("windows"));
-
         runChmodCheck("0755", "rwxr-xr-x");
     }
 
     @Test
     public void testWriteValidChmod666() throws Exception {
-        assumeFalse(isPlatform("windows"));
-
         runChmodCheck("666", "rw-rw-rw-");
     }
 
@@ -71,8 +69,6 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
 
     @Test
     public void testInvalidChmod() throws Exception {
-        assumeFalse(isPlatform("windows"));
-
         try {
             context.addRoutes(new RouteBuilder() {
 
@@ -98,8 +94,6 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
      */
     @Test
     public void testWriteNoChmod() throws Exception {
-        assumeFalse(isPlatform("windows"));
-
         MockEndpoint mock = getMockEndpoint("mock:noChmod");
         mock.expectedMessageCount(1);
         String testFileName = "noChmod.txt";

@@ -17,6 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -30,6 +31,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
@@ -37,6 +39,7 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceAware;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.PatternHelper;
+import org.apache.camel.util.OrderedLocationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -252,10 +255,29 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
             List<RouteConfigurationDefinition> globalConfigurations
                     = getCamelContext().adapt(ModelCamelContext.class).getRouteConfigurationDefinitions();
             if (globalConfigurations != null) {
+                String[] ids;
+                if (route.getRouteConfigurationId() != null) {
+                    // if the RouteConfigurationId was configured with property placeholder it should be resolved first
+                    // and include properties sources from the template parameters
+                    if (route.getTemplateParameters() != null && route.getRouteConfigurationId().startsWith("{{")) {
+                        OrderedLocationProperties props = new OrderedLocationProperties();
+                        props.putAll("TemplateProperties", new HashMap<>(route.getTemplateParameters()));
+                        camelContext.getPropertiesComponent().setLocalProperties(props);
+                        try {
+                            ids = camelContext.adapt(ExtendedCamelContext.class)
+                                    .resolvePropertyPlaceholders(route.getRouteConfigurationId(), true)
+                                    .split(",");
+                        } finally {
+                            camelContext.getPropertiesComponent().setLocalProperties(null);
+                        }
+                    } else {
+                        ids = route.getRouteConfigurationId().split(",");
+                    }
+                } else {
+                    ids = new String[] { "*" };
+                }
 
                 // if there are multiple ids configured then we should apply in that same order
-                String[] ids = route.getRouteConfigurationId() != null
-                        ? route.getRouteConfigurationId().split(",") : new String[] { "*" };
                 for (String id : ids) {
                     // sort according to ordered
                     globalConfigurations.stream().sorted(OrderedComparator.get())

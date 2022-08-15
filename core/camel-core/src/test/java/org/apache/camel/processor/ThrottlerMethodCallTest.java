@@ -25,17 +25,15 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledOnOs(OS.WINDOWS)
 public class ThrottlerMethodCallTest extends ContextTestSupport {
     private static final int INTERVAL = 100;
     protected int messageCount = 10;
-
-    protected boolean canTest() {
-        // skip test on windows as it does not run well there
-        return !isPlatform("windows");
-    }
 
     @Override
     protected Registry createRegistry() throws Exception {
@@ -50,10 +48,6 @@ public class ThrottlerMethodCallTest extends ContextTestSupport {
 
     @Test
     public void testConfigurationWithMethodCallExpression() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(messageCount);
 

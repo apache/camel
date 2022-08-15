@@ -1320,6 +1320,41 @@ public interface ResteasyEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to the HTTP request should follow redirects. By default the
+         * HTTP request does not follow redirects.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param followRedirects the value to set
+         * @return the dsl builder
+         */
+        default AdvancedResteasyEndpointProducerBuilder followRedirects(
+                boolean followRedirects) {
+            doSetProperty("followRedirects", followRedirects);
+            return this;
+        }
+        /**
+         * Whether to the HTTP request should follow redirects. By default the
+         * HTTP request does not follow redirects.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param followRedirects the value to set
+         * @return the dsl builder
+         */
+        default AdvancedResteasyEndpointProducerBuilder followRedirects(
+                String followRedirects) {
+            doSetProperty("followRedirects", followRedirects);
+            return this;
+        }
+        /**
          * Whether the HTTP GET should include the message body or not. By
          * default HTTP GET do not include any HTTP body. However in some rare
          * cases users may need to be able to include the message body.

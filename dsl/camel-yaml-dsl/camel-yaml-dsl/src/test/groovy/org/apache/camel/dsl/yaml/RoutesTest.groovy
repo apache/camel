@@ -42,6 +42,30 @@ class RoutesTest extends YamlTestSupport {
             }
     }
 
+    def "load from description"() {
+        when:
+        loadRoutes '''
+                - from:
+                    id: from-demo
+                    description: from something cool
+                    uri: "direct:info"
+                    steps:
+                      - log: "message"
+            '''
+        then:
+        context.routeDefinitions.size() == 1
+
+        with(context.routeDefinitions[0], RouteDefinition) {
+            input.id == 'from-demo'
+            input.description.text == 'from something cool'
+            input.endpointUri == 'direct:info'
+
+            with (outputs[0], LogDefinition) {
+                message == 'message'
+            }
+        }
+    }
+
     def "load from with parameters"() {
         when:
             loadRoutes '''
@@ -146,6 +170,8 @@ class RoutesTest extends YamlTestSupport {
                     id: demo-route
                     stream-caching: true
                     auto-startup: false
+                    startup-order: 123
+                    route-policy: "myPolicy"
                     from:
                       uri: "direct:info"
                       steps:
@@ -158,6 +184,8 @@ class RoutesTest extends YamlTestSupport {
             routeId == 'demo-route'
             streamCache == 'true'
             autoStartup == 'false'
+            startupOrder == 123
+            routePolicyRef == 'myPolicy'
             input.endpointUri == 'direct:info'
 
             with (outputs[0], LogDefinition) {
@@ -217,4 +245,35 @@ class RoutesTest extends YamlTestSupport {
             }
         }
     }
+
+    def "load route with from description"() {
+        when:
+        loadRoutes '''
+                - route:
+                    id: demo-route
+                    description: something cool
+                    from:
+                      id: from-demo
+                      description: from something cool
+                      uri: "direct:info"
+                      steps:
+                        - log: "message"
+            '''
+        then:
+        context.routeDefinitions.size() == 1
+
+        with(context.routeDefinitions[0], RouteDefinition) {
+            routeId == 'demo-route'
+            description.text == 'something cool'
+
+            input.id == 'from-demo'
+            input.description.text == 'from something cool'
+            input.endpointUri == 'direct:info'
+
+            with (outputs[0], LogDefinition) {
+                message == 'message'
+            }
+        }
+    }
+
 }

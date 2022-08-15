@@ -42,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.condition.OS.AIX;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@DisabledOnOs(AIX)
 class BeanValidatorRouteTest extends CamelTestSupport {
     private Locale origLocale;
 
@@ -56,7 +57,6 @@ class BeanValidatorRouteTest extends CamelTestSupport {
         Locale.setDefault(origLocale);
     }
 
-    @DisabledOnOs(AIX)
     @ParameterizedTest
     @MethodSource("provideValidCars")
     void validateShouldSuccessWithImpliciteDefaultGroup(Object cars) {
@@ -70,7 +70,6 @@ class BeanValidatorRouteTest extends CamelTestSupport {
         assertNotNull(exchange);
     }
 
-    @DisabledOnOs(AIX)
     @ParameterizedTest
     @MethodSource("provideValidCars")
     void validateShouldSuccessWithExpliciteDefaultGroup(Object cars) {
@@ -84,7 +83,6 @@ class BeanValidatorRouteTest extends CamelTestSupport {
         assertNotNull(exchange);
     }
 
-    @DisabledOnOs(AIX)
     @ParameterizedTest
     @MethodSource("provideInvalidCarsWithoutLicensePlate")
     void validateShouldFailWithImpliciteDefaultGroup(Object cars, int numberOfViolations) {
@@ -119,7 +117,6 @@ class BeanValidatorRouteTest extends CamelTestSupport {
         assertNotNull(exchange);
     }
 
-    @DisabledOnOs(AIX)
     @ParameterizedTest
     @MethodSource("provideInvalidCarsWithoutLicensePlate")
     void validateShouldFailWithExpliciteDefaultGroup(Object cars, int numberOfViolations) {
@@ -154,7 +151,6 @@ class BeanValidatorRouteTest extends CamelTestSupport {
         assertNotNull(exchange);
     }
 
-    @DisabledOnOs(AIX)
     @ParameterizedTest
     @MethodSource("provideInvalidCarsWithShortLicensePlate")
     void validateShouldFailWithOptionalChecksGroup(Object cars, int numberOfViolations) {
@@ -189,7 +185,6 @@ class BeanValidatorRouteTest extends CamelTestSupport {
         assertNotNull(exchange);
     }
 
-    @DisabledOnOs(AIX)
     @ParameterizedTest
     @MethodSource("provideInvalidCarsWithoutManufacturer")
     void validateShouldFailWithOrderedChecksGroup(Object cars, int numberOfViolations) {
@@ -243,7 +238,6 @@ class BeanValidatorRouteTest extends CamelTestSupport {
         assertNotNull(exchange);
     }
 
-    @DisabledOnOs(AIX)
     @ParameterizedTest
     @MethodSource("provideCarsWithRedefinedDefaultGroup")
     void validateShouldSuccessWithRedefinedDefaultGroup(Object cars) {
@@ -259,7 +253,6 @@ class BeanValidatorRouteTest extends CamelTestSupport {
         assertNotNull(exchange);
     }
 
-    @DisabledOnOs(AIX)
     @ParameterizedTest
     @MethodSource("provideCarsWithRedefinedDefaultGroupAndShortLicencePlate")
     void validateShouldFailWithRedefinedDefaultGroup(Object cars, int numberOfViolations) {

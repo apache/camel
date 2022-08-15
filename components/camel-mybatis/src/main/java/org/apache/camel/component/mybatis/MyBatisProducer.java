@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.mybatis;
 
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -125,8 +127,13 @@ public class MyBatisProducer extends DefaultProducer {
         Object result;
         Object in = getInput(exchange);
         if (in != null) {
-            // lets handle arrays or collections of objects
-            Iterator<?> iter = ObjectHelper.createIterator(in);
+            Iterator<?> iter;
+            if (in instanceof Map) {
+                // we want the map as-is
+                iter = Collections.singletonList(in).iterator();
+            } else {
+                iter = ObjectHelper.createIterator(in);
+            }
             while (iter.hasNext()) {
                 Object value = iter.next();
                 LOG.trace("Inserting: {} using statement: {}", value, statement);
@@ -159,8 +166,13 @@ public class MyBatisProducer extends DefaultProducer {
         Object result;
         Object in = getInput(exchange);
         if (in != null) {
-            // lets handle arrays or collections of objects
-            Iterator<?> iter = ObjectHelper.createIterator(in);
+            Iterator<?> iter;
+            if (in instanceof Map) {
+                // we want the map as-is
+                iter = Collections.singletonList(in).iterator();
+            } else {
+                iter = ObjectHelper.createIterator(in);
+            }
             while (iter.hasNext()) {
                 Object value = iter.next();
                 LOG.trace("Updating: {} using statement: {}", value, statement);
@@ -193,8 +205,13 @@ public class MyBatisProducer extends DefaultProducer {
         Object result;
         Object in = getInput(exchange);
         if (in != null) {
-            // lets handle arrays or collections of objects
-            Iterator<?> iter = ObjectHelper.createIterator(in);
+            Iterator<?> iter;
+            if (in instanceof Map) {
+                // we want the map as-is
+                iter = Collections.singletonList(in).iterator();
+            } else {
+                iter = ObjectHelper.createIterator(in);
+            }
             while (iter.hasNext()) {
                 Object value = iter.next();
                 LOG.trace("Deleting: {} using statement: {}", value, statement);

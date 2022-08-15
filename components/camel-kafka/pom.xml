@@ -17,7 +17,8 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -72,6 +73,12 @@
             <artifactId>camel-test-infra-kafka</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jackson</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -132,22 +139,50 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>kafka-3</id>
-                        <configuration>
-                            <systemPropertyVariables>
-                                <kafka.instance.type>local-kafka3-container</kafka.instance.type>
-                            </systemPropertyVariables>
-                            <reportNameSuffix>kafka-3</reportNameSuffix>
-                        </configuration>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <configuration>
+                    <reuseForks>true</reuseForks>
+                </configuration>
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>arm</id>
+            <activation>
+                <os>
+                    <arch>!aarch64</arch>
+                </os>
+            </activation>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <reuseForks>true</reuseForks>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>kafka-2</id>
+                                <configuration>
+                                    <skipITs>${isKafkaCompatible}</skipITs>
+                                    <systemPropertyVariables>
+                                        <kafka.instance.type>local-kafka2-container</kafka.instance.type>
+                                    </systemPropertyVariables>
+                                    <reuseForks>true</reuseForks>
+                                    <reportNameSuffix>kafka-2</reportNameSuffix>
+                                </configuration>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

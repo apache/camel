@@ -34,12 +34,19 @@ public class CamelCaseOrderedPropertiesTest {
         assertEquals(2, prop.size());
 
         Iterator it = prop.keySet().iterator();
-        assertEquals("helloWorld", it.next());
-        assertEquals("camel.main.streamCachingEnabled", it.next());
+        assertEquals("hello-world", it.next());
+        assertEquals("camel.main.stream-caching-enabled", it.next());
 
         it = prop.values().iterator();
         assertEquals("Hi Camel", it.next());
         assertEquals("true", it.next());
+
+        assertEquals("Hi Camel", prop.getProperty("hello-world"));
+        assertEquals("Hi Camel", prop.getProperty("helloWorld"));
+        assertEquals("true", prop.getProperty("camel.main.stream-caching-enabled"));
+        assertEquals("true", prop.getProperty("camel.main.streamCachingEnabled"));
+
+        assertEquals("Davs", prop.getProperty("bye-world", "Davs"));
     }
 
     @Test
@@ -51,7 +58,7 @@ public class CamelCaseOrderedPropertiesTest {
 
         Iterator it = prop.keySet().iterator();
         assertEquals("hello", it.next());
-        assertEquals("camel.component.seda.concurrentConsumers", it.next());
+        assertEquals("camel.component.seda.concurrent-consumers", it.next());
         assertEquals("camel.component.seda.queueSize", it.next());
         assertEquals("camel.component.direct.timeout", it.next());
 
@@ -61,6 +68,13 @@ public class CamelCaseOrderedPropertiesTest {
         assertEquals("2", it.next());
         assertEquals("500", it.next());
         assertEquals("1234", it.next());
+
+        assertEquals("World", prop.getProperty("hello", "MyDefault"));
+        assertEquals("2", prop.getProperty("camel.component.seda.concurrent-consumers", "MyDefault"));
+        assertEquals("2", prop.getProperty("camel.component.seda.concurrentConsumers", "MyDefault"));
+        assertEquals("500", prop.getProperty("camel.component.seda.queue-size", "MyDefault"));
+        assertEquals("500", prop.getProperty("camel.component.seda.queueSize", "MyDefault"));
+        assertEquals("1234", prop.getProperty("camel.component.direct.timeout", "MyDefault"));
     }
 
 }

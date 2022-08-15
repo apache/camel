@@ -289,8 +289,7 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
 
         if (context instanceof SpringCamelContext) {
             SpringCamelContext springCamelContext = (SpringCamelContext) context;
-            ApplicationContext applicationContext = springCamelContext.getApplicationContext();
-            busFactory = new SpringBusFactory(applicationContext);
+            busFactory = new SpringBusFactory(springCamelContext.getApplicationContext());
         }
         return busFactory.createBus();
     }

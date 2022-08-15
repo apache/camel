@@ -40,13 +40,11 @@
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-json_1.1_spec</artifactId>
             <version>${geronimo-json-spec-version}</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-jsonb_1.0_spec</artifactId>
             <version>${geronimo-jsonb-spec-version}</version>
-            <scope>compile</scope>
         </dependency>
 
         <!-- testing -->

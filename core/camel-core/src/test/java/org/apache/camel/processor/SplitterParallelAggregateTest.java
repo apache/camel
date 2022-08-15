@@ -31,6 +31,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+
 public class SplitterParallelAggregateTest extends ContextTestSupport {
 
     // run this test manually as it takes some time to process, but shows that
@@ -56,27 +58,21 @@ public class SplitterParallelAggregateTest extends ContextTestSupport {
 
     @Test
     public void test1() throws Exception {
-        if (!enabled) {
-            return;
-        }
+        assumeTrue(enabled);
         int numberOfRequests = 1;
         timeSplitRoutes(numberOfRequests);
     }
 
     @Test
     public void test2() throws Exception {
-        if (!enabled) {
-            return;
-        }
+        assumeTrue(enabled);
         int numberOfRequests = 2;
         timeSplitRoutes(numberOfRequests);
     }
 
     @Test
     public void test4() throws Exception {
-        if (!enabled) {
-            return;
-        }
+        assumeTrue(enabled);
         int numberOfRequests = 4;
         timeSplitRoutes(numberOfRequests);
     }

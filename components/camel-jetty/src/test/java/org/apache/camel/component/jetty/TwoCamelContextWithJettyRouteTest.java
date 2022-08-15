@@ -16,17 +16,18 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.io.IOException;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.http.NoHttpResponseException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TwoCamelContextWithJettyRouteTest extends BaseJettyTest {
 
@@ -60,7 +61,7 @@ public class TwoCamelContextWithJettyRouteTest extends BaseJettyTest {
 
         Exception ex = assertThrows(Exception.class,
                 () -> template.requestBody("direct:b", "Moon", String.class));
-        assertTrue(ex.getCause() instanceof NoHttpResponseException, "Should get the ConnectException");
+        assertInstanceOf(IOException.class, ex.getCause(), "Should get the IOException");
     }
 
     @Override

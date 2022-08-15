@@ -24,6 +24,7 @@ public class VaultConfiguration {
     private AwsVaultConfiguration aws;
     private GcpVaultConfiguration gcp;
     private AzureVaultConfiguration azure;
+    private HashicorpVaultConfiguration hashicorp;
 
     /**
      * AWS Vault Configuration
@@ -55,6 +56,16 @@ public class VaultConfiguration {
         return azure;
     }
 
+    /**
+     * Hashicorp Vault Configuration
+     */
+    public HashicorpVaultConfiguration hashicorp() {
+        if (hashicorp == null) {
+            hashicorp = new HashicorpVaultConfiguration();
+        }
+        return hashicorp;
+    }
+
     public AwsVaultConfiguration getAwsVaultConfiguration() {
         return aws;
     }
@@ -77,5 +88,13 @@ public class VaultConfiguration {
 
     public void setAzureVaultConfiguration(AzureVaultConfiguration azure) {
         this.azure = azure;
+    }
+
+    public HashicorpVaultConfiguration getHashicorpVaultConfiguration() {
+        return hashicorp;
+    }
+
+    public void setHashicorpVaultConfiguration(HashicorpVaultConfiguration hashicorp) {
+        this.hashicorp = hashicorp;
     }
 }

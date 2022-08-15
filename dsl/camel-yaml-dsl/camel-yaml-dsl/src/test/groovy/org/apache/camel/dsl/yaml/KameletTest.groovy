@@ -250,7 +250,7 @@ class KameletTest extends YamlTestSupport {
     def "kamelet (definition with local bean)"() {
         setup:
             loadRoutes """
-                - template:
+                - routeTemplate:
                     id: "myTemplate"
                     beans:
                       - name: "myProcessor"
@@ -283,7 +283,7 @@ class KameletTest extends YamlTestSupport {
     def "kamelet (definition with local bean and properties)"() {
         setup:
             loadRoutes """
-                - template:
+                - routeTemplate:
                     id: "myTemplate"
                     beans:
                       - name: "myProcessor"
@@ -318,7 +318,7 @@ class KameletTest extends YamlTestSupport {
     def "kamelet (definition with local bean and property)"() {
         setup:
             loadRoutes """
-                - template:
+                - routeTemplate:
                     id: "myTemplate"
                     beans:
                       - name: "myProcessor"
@@ -354,7 +354,7 @@ class KameletTest extends YamlTestSupport {
     def "kamelet (definition with default parameters)"() {
         setup:
             loadRoutes """
-                - template:
+                - routeTemplate:
                     id: "myTemplate"  
                     parameters:
                       - name: "myParameter"
@@ -387,7 +387,7 @@ class KameletTest extends YamlTestSupport {
     def "kamelet (definition with parameters)"() {
         setup:
             loadRoutes """
-                - template:
+                - routeTemplate:
                     id: "myTemplate"  
                     parameters:
                       - name: "myParameter"

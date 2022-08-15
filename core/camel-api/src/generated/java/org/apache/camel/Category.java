@@ -52,6 +52,7 @@ public enum Category {
     HCM("hcm"),
     HL7("hl7"),
     HTTP("http"),
+    IDENTITY("identity"),
     IOT("iot"),
     IPFS("ipfs"),
     JAVA("java"),

@@ -46,8 +46,6 @@ public class GoogleSheetsStreamComponentConfigurer extends PropertyConfigurerSup
         case "delegate": getOrCreateConfiguration(target).setDelegate(property(camelContext, java.lang.String.class, value)); return true;
         case "includegriddata":
         case "includeGridData": getOrCreateConfiguration(target).setIncludeGridData(property(camelContext, boolean.class, value)); return true;
-        case "keyresource":
-        case "keyResource": getOrCreateConfiguration(target).setKeyResource(property(camelContext, java.lang.String.class, value)); return true;
         case "majordimension":
         case "majorDimension": getOrCreateConfiguration(target).setMajorDimension(property(camelContext, java.lang.String.class, value)); return true;
         case "maxresults":
@@ -56,6 +54,8 @@ public class GoogleSheetsStreamComponentConfigurer extends PropertyConfigurerSup
         case "refreshtoken":
         case "refreshToken": getOrCreateConfiguration(target).setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "scopes": getOrCreateConfiguration(target).setScopes(property(camelContext, java.util.List.class, value)); return true;
+        case "serviceaccountkey":
+        case "serviceAccountKey": getOrCreateConfiguration(target).setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
         case "splitresults":
         case "splitResults": getOrCreateConfiguration(target).setSplitResults(property(camelContext, boolean.class, value)); return true;
         case "valuerenderoption":
@@ -85,8 +85,6 @@ public class GoogleSheetsStreamComponentConfigurer extends PropertyConfigurerSup
         case "delegate": return java.lang.String.class;
         case "includegriddata":
         case "includeGridData": return boolean.class;
-        case "keyresource":
-        case "keyResource": return java.lang.String.class;
         case "majordimension":
         case "majorDimension": return java.lang.String.class;
         case "maxresults":
@@ -95,6 +93,8 @@ public class GoogleSheetsStreamComponentConfigurer extends PropertyConfigurerSup
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
         case "scopes": return java.util.List.class;
+        case "serviceaccountkey":
+        case "serviceAccountKey": return java.lang.String.class;
         case "splitresults":
         case "splitResults": return boolean.class;
         case "valuerenderoption":
@@ -125,8 +125,6 @@ public class GoogleSheetsStreamComponentConfigurer extends PropertyConfigurerSup
         case "delegate": return getOrCreateConfiguration(target).getDelegate();
         case "includegriddata":
         case "includeGridData": return getOrCreateConfiguration(target).isIncludeGridData();
-        case "keyresource":
-        case "keyResource": return getOrCreateConfiguration(target).getKeyResource();
         case "majordimension":
         case "majorDimension": return getOrCreateConfiguration(target).getMajorDimension();
         case "maxresults":
@@ -135,6 +133,8 @@ public class GoogleSheetsStreamComponentConfigurer extends PropertyConfigurerSup
         case "refreshtoken":
         case "refreshToken": return getOrCreateConfiguration(target).getRefreshToken();
         case "scopes": return getOrCreateConfiguration(target).getScopes();
+        case "serviceaccountkey":
+        case "serviceAccountKey": return getOrCreateConfiguration(target).getServiceAccountKey();
         case "splitresults":
         case "splitResults": return getOrCreateConfiguration(target).isSplitResults();
         case "valuerenderoption":

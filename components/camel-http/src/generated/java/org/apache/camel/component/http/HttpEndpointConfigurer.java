@@ -59,6 +59,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "deleteWithBody": target.setDeleteWithBody(property(camelContext, boolean.class, value)); return true;
         case "disablestreamcache":
         case "disableStreamCache": target.setDisableStreamCache(property(camelContext, boolean.class, value)); return true;
+        case "followredirects":
+        case "followRedirects": target.setFollowRedirects(property(camelContext, boolean.class, value)); return true;
         case "getwithbody":
         case "getWithBody": target.setGetWithBody(property(camelContext, boolean.class, value)); return true;
         case "headerfilterstrategy":
@@ -162,6 +164,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "deleteWithBody": return boolean.class;
         case "disablestreamcache":
         case "disableStreamCache": return boolean.class;
+        case "followredirects":
+        case "followRedirects": return boolean.class;
         case "getwithbody":
         case "getWithBody": return boolean.class;
         case "headerfilterstrategy":
@@ -266,6 +270,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "deleteWithBody": return target.isDeleteWithBody();
         case "disablestreamcache":
         case "disableStreamCache": return target.isDisableStreamCache();
+        case "followredirects":
+        case "followRedirects": return target.isFollowRedirects();
         case "getwithbody":
         case "getWithBody": return target.isGetWithBody();
         case "headerfilterstrategy":

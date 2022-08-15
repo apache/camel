@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder.endpoint;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.junit5.CamelTestSupport;
 
@@ -27,5 +29,9 @@ public abstract class BaseEndpointDslTest extends CamelTestSupport {
         // do not use JMX while testing
         context.disableJMX();
         return context;
+    }
+
+    protected static String generateUniquePath(Class<?> clazz) {
+        return "target/data/files" + clazz.getSimpleName() + ThreadLocalRandom.current().nextInt(0, 100);
     }
 }

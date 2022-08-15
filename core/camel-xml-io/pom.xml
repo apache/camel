@@ -32,6 +32,7 @@
 
     <properties>
         <firstVersion>3.1.0</firstVersion>
+        <label>dsl</label>
         <camel-generate-xml-parser>true</camel-generate-xml-parser>
     </properties>
 

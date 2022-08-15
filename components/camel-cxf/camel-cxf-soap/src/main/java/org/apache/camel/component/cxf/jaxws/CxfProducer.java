@@ -389,13 +389,13 @@ public class CxfProducer extends DefaultAsyncProducer {
      * <ul>
      */
     private BindingOperationInfo getBindingOperationInfo(Exchange ex) {
-        CxfEndpoint endpoint = (CxfEndpoint) this.getEndpoint();
+        CxfEndpoint cxfEndpoint = (CxfEndpoint) this.getEndpoint();
         BindingOperationInfo answer = null;
         String lp = ex.getIn().getHeader(CxfConstants.OPERATION_NAME, String.class);
         if (lp == null) {
             LOG.debug("CxfProducer cannot find the {} from message header, trying with defaultOperationName",
                     CxfConstants.OPERATION_NAME);
-            lp = endpoint.getDefaultOperationName();
+            lp = cxfEndpoint.getDefaultOperationName();
         }
         if (lp == null) {
             LOG.debug(
@@ -411,7 +411,7 @@ public class CxfProducer extends DefaultAsyncProducer {
         } else {
             String ns = ex.getIn().getHeader(CxfConstants.OPERATION_NAMESPACE, String.class);
             if (ns == null) {
-                ns = endpoint.getDefaultOperationNamespace();
+                ns = cxfEndpoint.getDefaultOperationNamespace();
             }
             if (ns == null) {
                 ns = client.getEndpoint().getService().getName().getNamespaceURI();

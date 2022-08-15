@@ -80,7 +80,7 @@ public class CouchDbLocalContainerService implements CouchDbService, ContainerSe
 
     @Override
     public String host() {
-        return container.getContainerIpAddress();
+        return container.getHost();
     }
 
     @Override

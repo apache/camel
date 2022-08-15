@@ -25,7 +25,7 @@ import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 
 public class ContainerLocalKafkaService implements KafkaService, ContainerService<KafkaContainer> {
-    public static final String KAFKA3_IMAGE_NAME = "confluentinc/cp-kafka:7.0.1";
+    public static final String KAFKA3_IMAGE_NAME = "confluentinc/cp-kafka:7.2.1";
 
     private static final Logger LOG = LoggerFactory.getLogger(ContainerLocalKafkaService.class);
     private final KafkaContainer kafka;

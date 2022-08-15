@@ -218,6 +218,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AvroComponentBuilderFactory.avro();
     }
     /**
+     * AWS Cloudtrail (camel-aws-cloudtrail)
+     * Consume events from Amazon Cloudtrail using AWS SDK version 2.x.
+     * 
+     * Category: cloud,eventbus
+     * Since: 3.19
+     * Maven coordinates: org.apache.camel:camel-aws-cloudtrail
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.AwsCloudtrailComponentBuilderFactory.AwsCloudtrailComponentBuilder awsCloudtrail() {
+        return org.apache.camel.builder.component.dsl.AwsCloudtrailComponentBuilderFactory.awsCloudtrail();
+    }
+    /**
      * AWS Secrets Manager (camel-aws-secrets-manager)
      * Manage AWS Secrets Manager services using AWS SDK version 2.x.
      * 
@@ -2024,6 +2037,19 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.HwcloudSmnComponentBuilderFactory.HwcloudSmnComponentBuilder hwcloudSmn() {
         return org.apache.camel.builder.component.dsl.HwcloudSmnComponentBuilderFactory.hwcloudSmn();
+    }
+    /**
+     * Hyperledger Aries (camel-hyperledger-aries)
+     * Camel support for Hyperledger Aries
+     * 
+     * Category: blockchain,identity
+     * Since: 3.19
+     * Maven coordinates: org.apache.camel:camel-hyperledger-aries
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.HyperledgerAriesComponentBuilderFactory.HyperledgerAriesComponentBuilder hyperledgerAries() {
+        return org.apache.camel.builder.component.dsl.HyperledgerAriesComponentBuilderFactory.hyperledgerAries();
     }
     /**
      * IEC 60870 Client (camel-iec60870)
@@ -4459,6 +4485,19 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.WekaComponentBuilderFactory.WekaComponentBuilder weka() {
         return org.apache.camel.builder.component.dsl.WekaComponentBuilderFactory.weka();
+    }
+    /**
+     * WhatsApp (camel-whatsapp)
+     * Send messages.
+     * 
+     * Category: cloud,api,chat
+     * Since: 3.18
+     * Maven coordinates: org.apache.camel:camel-whatsapp
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.WhatsappComponentBuilderFactory.WhatsappComponentBuilder whatsapp() {
+        return org.apache.camel.builder.component.dsl.WhatsappComponentBuilderFactory.whatsapp();
     }
     /**
      * Wordpress (camel-wordpress)

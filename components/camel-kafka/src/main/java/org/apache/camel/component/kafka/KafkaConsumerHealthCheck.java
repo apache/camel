@@ -59,8 +59,13 @@ public class KafkaConsumerHealthCheck extends AbstractHealthCheck {
 
                 KafkaConfiguration cfg = kafkaConsumer.getEndpoint().getConfiguration();
 
-                builder.detail("bootstrap.servers", healthState.getBootstrapServers());
-                builder.detail("client.id", healthState.getClientId());
+                if (healthState.getBootstrapServers() != null) {
+                    builder.detail("bootstrap.servers", healthState.getBootstrapServers());
+                }
+                if (healthState.getClientId() != null) {
+                    builder.detail("client.id", healthState.getClientId());
+                }
+
                 String gid = healthState.getGroupId();
                 if (gid != null) {
                     builder.detail("group.id", gid);

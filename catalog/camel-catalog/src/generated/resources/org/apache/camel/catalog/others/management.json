@@ -6,6 +6,7 @@
     "description": "Camel Management",
     "deprecated": false,
     "firstVersion": "3.0.0",
+    "label": "core,management",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-management",

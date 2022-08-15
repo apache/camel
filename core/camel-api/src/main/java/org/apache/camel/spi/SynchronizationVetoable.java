@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import org.apache.camel.Exchange;
+
 /**
  * A vetoable {@link org.apache.camel.spi.Synchronization}.
  * <p/>
@@ -40,4 +42,11 @@ public interface SynchronizationVetoable extends Synchronization {
      * @return <tt>true</tt> to allow handover, <tt>false</tt> to deny.
      */
     boolean allowHandover();
+
+    /**
+     * A method to perform optional housekeeping when a Synchronization is being handed over.
+     * 
+     * @param target The Exchange to which the synchronizations are being transferred.
+     */
+    void beforeHandover(Exchange target);
 }

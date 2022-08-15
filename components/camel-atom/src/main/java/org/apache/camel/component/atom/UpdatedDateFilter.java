@@ -20,6 +20,8 @@ import java.util.Date;
 
 import org.apache.abdera.model.Entry;
 import org.apache.camel.component.feed.EntryFilter;
+import org.apache.camel.resume.ResumeAdapter;
+import org.apache.camel.spi.annotations.JdkService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +29,7 @@ import org.slf4j.LoggerFactory;
  * Filters out all entries which occur before the last time of the entry we saw (assuming entries arrive sorted in
  * order).
  */
+@JdkService(ResumeAdapter.RESUME_ADAPTER_FACTORY)
 public class UpdatedDateFilter implements EntryFilter<Entry> {
 
     private static final Logger LOG = LoggerFactory.getLogger(UpdatedDateFilter.class);

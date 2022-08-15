@@ -44,6 +44,10 @@ public class EventHubsComponentConfigurer extends PropertyConfigurerSupport impl
         case "blobStorageSharedKeyCredential": getOrCreateConfiguration(target).setBlobStorageSharedKeyCredential(property(camelContext, com.azure.storage.common.StorageSharedKeyCredential.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "checkpointbatchsize":
+        case "checkpointBatchSize": getOrCreateConfiguration(target).setCheckpointBatchSize(property(camelContext, int.class, value)); return true;
+        case "checkpointbatchtimeout":
+        case "checkpointBatchTimeout": getOrCreateConfiguration(target).setCheckpointBatchTimeout(property(camelContext, int.class, value)); return true;
         case "checkpointstore":
         case "checkpointStore": getOrCreateConfiguration(target).setCheckpointStore(property(camelContext, com.azure.messaging.eventhubs.CheckpointStore.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.azure.eventhubs.EventHubsConfiguration.class, value)); return true;
@@ -95,6 +99,10 @@ public class EventHubsComponentConfigurer extends PropertyConfigurerSupport impl
         case "blobStorageSharedKeyCredential": return com.azure.storage.common.StorageSharedKeyCredential.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "checkpointbatchsize":
+        case "checkpointBatchSize": return int.class;
+        case "checkpointbatchtimeout":
+        case "checkpointBatchTimeout": return int.class;
         case "checkpointstore":
         case "checkpointStore": return com.azure.messaging.eventhubs.CheckpointStore.class;
         case "configuration": return org.apache.camel.component.azure.eventhubs.EventHubsConfiguration.class;
@@ -142,6 +150,10 @@ public class EventHubsComponentConfigurer extends PropertyConfigurerSupport impl
         case "blobStorageSharedKeyCredential": return getOrCreateConfiguration(target).getBlobStorageSharedKeyCredential();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "checkpointbatchsize":
+        case "checkpointBatchSize": return getOrCreateConfiguration(target).getCheckpointBatchSize();
+        case "checkpointbatchtimeout":
+        case "checkpointBatchTimeout": return getOrCreateConfiguration(target).getCheckpointBatchTimeout();
         case "checkpointstore":
         case "checkpointStore": return getOrCreateConfiguration(target).getCheckpointStore();
         case "configuration": return target.getConfiguration();

@@ -21,7 +21,7 @@ public class QuartzEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(18);
+        Set<String> props = new HashSet<>(19);
         props.add("autoStartScheduler");
         props.add("bridgeErrorHandler");
         props.add("cron");
@@ -31,6 +31,7 @@ public class QuartzEndpointUriFactory extends org.apache.camel.support.component
         props.add("exceptionHandler");
         props.add("exchangePattern");
         props.add("groupName");
+        props.add("ignoreExpiredNextFireTime");
         props.add("jobParameters");
         props.add("pauseJob");
         props.add("prefixJobNameWithEndpointId");

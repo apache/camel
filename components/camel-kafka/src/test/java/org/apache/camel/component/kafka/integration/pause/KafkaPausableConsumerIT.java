@@ -79,9 +79,9 @@ public class KafkaPausableConsumerIT extends BaseEmbeddedKafkaTestSupport {
     private LongAdder count = new LongAdder();
 
     @EndpointInject("kafka:" + SOURCE_TOPIC
-                    + "?groupId=group1&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                    + "?groupId=KafkaPausableConsumerIT&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
                     + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                    + "&autoCommitIntervalMs=1000&sessionTimeoutMs=30000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
+                    + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
     private Endpoint from;
 
     @EndpointInject("direct:intermediate")

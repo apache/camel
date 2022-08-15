@@ -3358,12 +3358,14 @@ public abstract class AbstractCamelContext extends BaseService
             doDumpRoutes();
         }
 
-        // invoke this logic to warmup the routes and if possible also start the routes
-        StartupStep subStep = startupStepRecorder.beginStep(CamelContext.class, getName(), "Start Routes");
-        EventHelper.notifyCamelContextRoutesStarting(this);
-        internalRouteStartupManager.doStartOrResumeRoutes(routeServices, true, !doNotStartRoutesOnFirstStart, false, true);
-        EventHelper.notifyCamelContextRoutesStarted(this);
-        startupStepRecorder.endStep(subStep);
+        if (!getRouteController().isSupervising()) {
+            // invoke this logic to warmup the routes and if possible also start the routes (using default route controller)
+            StartupStep subStep = startupStepRecorder.beginStep(CamelContext.class, getName(), "Start Routes");
+            EventHelper.notifyCamelContextRoutesStarting(this);
+            internalRouteStartupManager.doStartOrResumeRoutes(routeServices, true, !doNotStartRoutesOnFirstStart, false, true);
+            EventHelper.notifyCamelContextRoutesStarted(this);
+            startupStepRecorder.endStep(subStep);
+        }
 
         long cacheCounter = beanIntrospection != null ? beanIntrospection.getCachedClassesCounter() : 0;
         if (cacheCounter > 0) {

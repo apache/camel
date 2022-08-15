@@ -66,23 +66,6 @@ public interface ConsulComponentBuilderFactory {
             return this;
         }
         /**
-         * Connect timeout for OkHttpClient. Deprecation note: Use
-         * connectTimeout instead.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param connectTimeoutMillis the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default ConsulComponentBuilder connectTimeoutMillis(
-                java.lang.Long connectTimeoutMillis) {
-            doSetProperty("connectTimeoutMillis", connectTimeoutMillis);
-            return this;
-        }
-        /**
          * Reference to a com.orbitz.consul.Consul in the registry.
          * 
          * The option is a: &lt;code&gt;com.orbitz.consul.Consul&lt;/code&gt;
@@ -144,23 +127,6 @@ public interface ConsulComponentBuilderFactory {
             return this;
         }
         /**
-         * Read timeout for OkHttpClient. Deprecation note: Use readTimeout
-         * instead.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param readTimeoutMillis the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default ConsulComponentBuilder readTimeoutMillis(
-                java.lang.Long readTimeoutMillis) {
-            doSetProperty("readTimeoutMillis", readTimeoutMillis);
-            return this;
-        }
-        /**
          * Set tags. You can separate multiple tags by comma.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -201,23 +167,6 @@ public interface ConsulComponentBuilderFactory {
         default ConsulComponentBuilder writeTimeout(
                 java.time.Duration writeTimeout) {
             doSetProperty("writeTimeout", writeTimeout);
-            return this;
-        }
-        /**
-         * Write timeout for OkHttpClient. Deprecation note: Use writeTimeout
-         * instead.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param writeTimeoutMillis the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default ConsulComponentBuilder writeTimeoutMillis(
-                java.lang.Long writeTimeoutMillis) {
-            doSetProperty("writeTimeoutMillis", writeTimeoutMillis);
             return this;
         }
         /**
@@ -542,16 +491,13 @@ public interface ConsulComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "connectTimeout": getOrCreateConfiguration((ConsulComponent) component).setConnectTimeout((java.time.Duration) value); return true;
-            case "connectTimeoutMillis": getOrCreateConfiguration((ConsulComponent) component).setConnectTimeoutMillis((java.lang.Long) value); return true;
             case "consulClient": getOrCreateConfiguration((ConsulComponent) component).setConsulClient((com.orbitz.consul.Consul) value); return true;
             case "key": getOrCreateConfiguration((ConsulComponent) component).setKey((java.lang.String) value); return true;
             case "pingInstance": getOrCreateConfiguration((ConsulComponent) component).setPingInstance((boolean) value); return true;
             case "readTimeout": getOrCreateConfiguration((ConsulComponent) component).setReadTimeout((java.time.Duration) value); return true;
-            case "readTimeoutMillis": getOrCreateConfiguration((ConsulComponent) component).setReadTimeoutMillis((java.lang.Long) value); return true;
             case "tags": getOrCreateConfiguration((ConsulComponent) component).setTags((java.lang.String) value); return true;
             case "url": getOrCreateConfiguration((ConsulComponent) component).setUrl((java.lang.String) value); return true;
             case "writeTimeout": getOrCreateConfiguration((ConsulComponent) component).setWriteTimeout((java.time.Duration) value); return true;
-            case "writeTimeoutMillis": getOrCreateConfiguration((ConsulComponent) component).setWriteTimeoutMillis((java.lang.Long) value); return true;
             case "bridgeErrorHandler": ((ConsulComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "action": getOrCreateConfiguration((ConsulComponent) component).setAction((java.lang.String) value); return true;
             case "lazyStartProducer": ((ConsulComponent) component).setLazyStartProducer((boolean) value); return true;

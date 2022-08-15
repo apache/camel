@@ -86,6 +86,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.vault.AwsVaultConfiguration;
 import org.apache.camel.vault.AzureVaultConfiguration;
 import org.apache.camel.vault.GcpVaultConfiguration;
+import org.apache.camel.vault.HashicorpVaultConfiguration;
 import org.apache.camel.vault.VaultConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -561,11 +562,15 @@ public final class DefaultConfigurationConfigurer {
             vault.setGcpVaultConfiguration(gcp);
         }
         AzureVaultConfiguration azure = getSingleBeanOfType(registry, AzureVaultConfiguration.class);
-        if (gcp != null) {
+        if (azure != null) {
             VaultConfiguration vault = camelContext.getVaultConfiguration();
             vault.setAzureVaultConfiguration(azure);
         }
-
+        HashicorpVaultConfiguration hashicorp = getSingleBeanOfType(registry, HashicorpVaultConfiguration.class);
+        if (hashicorp != null) {
+            VaultConfiguration vault = camelContext.getVaultConfiguration();
+            vault.setHashicorpVaultConfiguration(hashicorp);
+        }
         // set the default thread pool profile if defined
         initThreadPoolProfiles(registry, camelContext);
     }

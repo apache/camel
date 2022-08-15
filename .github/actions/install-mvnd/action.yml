@@ -21,7 +21,7 @@ inputs:
   version:
     description: 'The version of the maven daemon to install'
     required: true
-    default: '0.7.1'
+    default: '0.8.0'
 outputs:
   mvnd-dir:
     description: "The directory where the command mvnd is located"
@@ -29,9 +29,9 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - run: curl -fsSL -o mvnd.zip https://github.com/apache/maven-mvnd/releases/download/${{ inputs.version }}/mvnd-${{ inputs.version }}-linux-amd64.zip
+    - run: curl -fsSL -o mvnd.zip https://dlcdn.apache.org/maven/mvnd/${{ inputs.version }}/maven-mvnd-${{ inputs.version }}-linux-amd64.zip
       shell: bash
-    - run: curl -fsSL -o mvnd.zip.sha256 https://github.com/apache/maven-mvnd/releases/download/${{ inputs.version }}/mvnd-${{ inputs.version }}-linux-amd64.zip.sha256
+    - run: curl -fsSL -o mvnd.zip.sha256 https://dlcdn.apache.org/maven/mvnd/${{ inputs.version }}/maven-mvnd-${{ inputs.version }}-linux-amd64.zip.sha256
       shell: bash
     - id: integrity-check
       run: echo "$(cat mvnd.zip.sha256) mvnd.zip" | sha256sum --check

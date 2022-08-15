@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jslt;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -69,6 +70,24 @@ public class JsltBasicTest extends CamelTestSupport {
         sendBody("direct://start",
                 IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(
                         context, "org/apache/camel/component/jslt/demoPlayground/input.json")));
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testJsltAsByteArray() throws Exception {
+        getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
+        getMockEndpoint("mock:result").expectedBodiesReceived(
+                IOHelper.loadText(
+                        ResourceHelper.resolveMandatoryResourceAsInputStream(
+                                context, "org/apache/camel/component/jslt/demoPlayground/output.json"))
+                        .trim() // Remove the last newline added by IOHelper.loadText()
+        );
+
+        String text = IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(
+                context, "org/apache/camel/component/jslt/demoPlayground/input.json"));
+
+        sendBody("direct://start", text.getBytes(StandardCharsets.UTF_8));
 
         assertMockEndpointsSatisfied();
     }

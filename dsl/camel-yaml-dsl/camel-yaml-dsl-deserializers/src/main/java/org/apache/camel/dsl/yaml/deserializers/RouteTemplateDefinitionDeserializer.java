@@ -19,6 +19,7 @@ package org.apache.camel.dsl.yaml.deserializers;
 import java.util.List;
 
 import org.apache.camel.dsl.yaml.common.YamlDeserializerBase;
+import org.apache.camel.dsl.yaml.common.exception.InvalidRouteException;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateBeanDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
@@ -37,9 +38,10 @@ import org.snakeyaml.engine.v2.nodes.Node;
                   @YamlProperty(name = "id",
                                 type = "string",
                                 required = true),
+                  @YamlProperty(name = "route",
+                                type = "object:org.apache.camel.model.RouteDefinition"),
                   @YamlProperty(name = "from",
-                                type = "object:org.apache.camel.model.FromDefinition",
-                                required = true),
+                                type = "object:org.apache.camel.model.FromDefinition"),
                   @YamlProperty(name = "parameters",
                                 type = "array:org.apache.camel.model.RouteTemplateParameterDefinition"),
                   @YamlProperty(name = "beans",
@@ -62,6 +64,11 @@ public class RouteTemplateDefinitionDeserializer extends YamlDeserializerBase<Ro
         switch (propertyKey) {
             case "id": {
                 target.setId(asText(node));
+                break;
+            }
+            case "route": {
+                RouteDefinition route = asType(node, RouteDefinition.class);
+                target.setRoute(route);
                 break;
             }
             case "from": {
@@ -87,5 +94,16 @@ public class RouteTemplateDefinitionDeserializer extends YamlDeserializerBase<Ro
             }
         }
         return true;
+    }
+
+    @Override
+    protected void afterPropertiesSet(RouteTemplateDefinition target, Node node) {
+        // either from or route must be set
+        if (target.getRoute() == null) {
+            throw new InvalidRouteException(node, "RouteTemplate must have route or from set");
+        }
+        if (target.getRoute().getInput() == null) {
+            throw new InvalidRouteException(node, "RouteTemplate must have from set");
+        }
     }
 }

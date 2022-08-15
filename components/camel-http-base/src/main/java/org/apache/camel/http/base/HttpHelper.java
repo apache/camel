@@ -20,6 +20,7 @@ import java.net.ProtocolException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
@@ -180,6 +181,46 @@ public final class HttpHelper {
             }
         }
         return false;
+    }
+
+    /**
+     * In the endpoint the user may have defined rest {} placeholders. This helper method map those placeholders with
+     * data from the incoming request context path
+     * 
+     * @param headersMap   a Map instance containing the headers
+     * @param path         the URL path
+     * @param consumerPath the consumer path
+     */
+    public static void evalPlaceholders(Map<String, Object> headersMap, String path, String consumerPath) {
+        evalPlaceholders(headersMap::put, path, consumerPath);
+    }
+
+    /**
+     * In the endpoint the user may have defined rest {} placeholders. This helper method map those placeholders with
+     * data from the incoming request context path
+     * 
+     * @param keyPairConsumer a consumer for the placeholder key pair
+     * @param path            the URL path
+     * @param consumerPath    the consumer path
+     */
+    public static void evalPlaceholders(BiConsumer<String, Object> keyPairConsumer, String path, String consumerPath) {
+        // split using single char / is optimized in the jdk
+        final String[] paths = path.split("/");
+        final String[] consumerPaths = consumerPath.split("/");
+
+        for (int i = 0; i < consumerPaths.length; i++) {
+            if (paths.length < i) {
+                break;
+            }
+            final String p1 = consumerPaths[i];
+            if (p1.startsWith("{") && p1.endsWith("}")) {
+                final String key = p1.substring(1, p1.length() - 1);
+                final String value = paths[i];
+                if (value != null) {
+                    keyPairConsumer.accept(key, value);
+                }
+            }
+        }
     }
 
 }

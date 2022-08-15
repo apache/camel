@@ -44,9 +44,9 @@ import org.apache.camel.component.salesforce.api.dto.approval.ApprovalResult;
 import org.apache.camel.component.salesforce.api.dto.approval.Approvals;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 
-public class JsonRestProcessor extends AbstractRestProcessor {
+import static org.apache.camel.component.salesforce.SalesforceConstants.HEADER_SALESFORCE_QUERY_RESULT_TOTAL_SIZE;
 
-    public static final String HEADER_SALESFORCE_QUERY_RESULT_TOTAL_SIZE = "CamelSalesforceQueryResultTotalSize";
+public class JsonRestProcessor extends AbstractRestProcessor {
 
     // it is ok to use a single thread safe ObjectMapper
     private final ObjectMapper objectMapper;

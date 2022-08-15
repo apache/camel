@@ -46,8 +46,8 @@
         </dependency>
         <dependency>
             <groupId>com.beanit</groupId>
-            <artifactId>jasn1</artifactId>
-            <version>${jasn1-version}</version>
+            <artifactId>asn1bean</artifactId>
+            <version>${asn1bean-version}</version>
         </dependency>
 
         <!-- test dependencies -->
@@ -82,8 +82,8 @@
              compile and runtime dependencies -->
         <dependency>
             <groupId>com.beanit</groupId>
-            <artifactId>jasn1-compiler</artifactId>
-            <version>${jasn1-version}</version>
+            <artifactId>asn1bean-compiler</artifactId>
+            <version>${asn1bean-version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -111,19 +111,18 @@
                             <arguments>
                                 <argument>-classpath</argument>
                                 <classpath>
-                                    <dependency>com.beanit:jasn1-compiler</dependency>
-                                    <dependency>com.beanit:jasn1</dependency>
+                                    <dependency>com.beanit:asn1bean-compiler</dependency>
+                                    <dependency>com.beanit:asn1bean</dependency>
                                     <dependency>antlr:antlr</dependency>
                                     <dependency>javax.xml.bind:jaxb-api</dependency>
                                 </classpath>
-                                <argument>com.beanit.jasn1.compiler.Compiler</argument>
+                                <argument>com.beanit.asn1bean.compiler.Compiler</argument>
                                 <argument>-o</argument>
                                 <argument>${basedir}/target/generated/src/test/java</argument>
                                 <argument>-p</argument>
                                 <argument>org.apache.camel.dataformat.asn1.model</argument>
                                 <argument>-f</argument>
                                 <argument>${basedir}/src/test/resources/asn1_structure/TestSMSCBerCdr.asn1</argument>
-                                <argument>-il</argument>
                             </arguments>
                             <testSourceRoot>${basedir}/target/generated/src/test/java</testSourceRoot>
                             <longModulepath>false</longModulepath>

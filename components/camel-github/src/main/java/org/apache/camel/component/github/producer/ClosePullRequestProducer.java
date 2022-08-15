@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.github.GitHubConstants;
 import org.apache.camel.component.github.GitHubEndpoint;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.support.ExchangeHelper;
 import org.eclipse.egit.github.core.PullRequest;
 import org.eclipse.egit.github.core.service.PullRequestService;
 
@@ -55,11 +56,7 @@ public class ClosePullRequestProducer extends AbstractGitHubProducer {
         pullRequest = pullRequestService.editPullRequest(getRepository(), pullRequest);
 
         // support InOut
-        if (exchange.getPattern().isOutCapable()) {
-            // copy the header of in message to the out message
-            exchange.getOut().copyFrom(exchange.getIn());
-            exchange.getOut().setBody(pullRequest);
-        }
+        ExchangeHelper.setOutBodyPatternAware(exchange, pullRequest);
     }
 
 }

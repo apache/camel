@@ -82,6 +82,7 @@ Camel-AWS2-Eventbridge component provides the following operation on the produce
 - describeRule
 - listTargetsByRule
 - listRuleNamesByTarget
+- putEvent
 
 - PutRule: this operation create a rule related to an eventbus
 
@@ -260,6 +261,26 @@ this operation will return a list of targets associated with the firstrule rule.
 --------------------------------------------------------------------------------
 
 this operation will return a list of rule associated with a target.
+
+- PutEvent: this operation will send an event to the Servicebus
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+                    
+      @Override
+      public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(EventbridgeConstants.EVENT_RESOURCES_ARN, "arn:aws:sqs:eu-west-1:780410022472:camel-connector-test");
+                exchange.getIn().setHeader(EventbridgeConstants.EVENT_SOURCE, "com.pippo");
+                exchange.getIn().setHeader(EventbridgeConstants.EVENT_DETAIL_TYPE, "peppe");
+                exchange.getIn().setBody("Test Event");
+      }
+  })
+  .to("aws2-eventbridge://test?operation=putEvent")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+this operation will return a list of entries with related ID sent to servicebus.
 
 == Updating the rule
 

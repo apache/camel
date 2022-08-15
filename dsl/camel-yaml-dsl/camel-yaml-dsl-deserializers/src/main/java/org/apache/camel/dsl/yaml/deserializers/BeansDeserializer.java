@@ -60,8 +60,11 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
                 @Override
                 public void configure(CamelContext camelContext) {
                     try {
+                        // to support hot reloading of beans then we need to unbind old existing first
+                        String name = bean.getName();
+                        camelContext.getRegistry().unbind(name);
                         camelContext.getRegistry().bind(
-                                bean.getName(),
+                                name,
                                 bean.newInstance(camelContext));
                     } catch (Exception e) {
                         throw new RuntimeException(e);

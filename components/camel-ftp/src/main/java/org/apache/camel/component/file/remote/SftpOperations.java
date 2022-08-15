@@ -331,6 +331,18 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             session.setConfig("PreferredAuthentications", sftpConfig.getPreferredAuthentications());
         }
 
+        // set the ServerHostKeys
+        if (sftpConfig.getServerHostKeys() != null) {
+            LOG.debug("Using ServerHostKeys: {}", sftpConfig.getServerHostKeys());
+            session.setConfig("server_host_key", sftpConfig.getServerHostKeys());
+        }
+
+        // set the PublicKeyAcceptedAlgorithms
+        if (sftpConfig.getPublicKeyAcceptedAlgorithms() != null) {
+            LOG.debug("Using PublicKeyAcceptedAlgorithms: {}", sftpConfig.getPublicKeyAcceptedAlgorithms());
+            session.setConfig("PubkeyAcceptedAlgorithms", sftpConfig.getPublicKeyAcceptedAlgorithms());
+        }
+
         // set user information
         session.setUserInfo(new ExtendedUserInfo() {
             public String getPassphrase() {

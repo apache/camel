@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GrpcConsumerAggregationTest extends CamelTestSupport {
 
@@ -107,7 +108,7 @@ public class GrpcConsumerAggregationTest extends CamelTestSupport {
         PongResponseStreamObserver responseObserver = new PongResponseStreamObserver(latch);
 
         nonBlockingStub.pingSyncSync(pingRequest, responseObserver);
-        latch.await(5, TimeUnit.SECONDS);
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
 
         PongResponse pongResponse = responseObserver.getPongResponse();
 
@@ -125,7 +126,7 @@ public class GrpcConsumerAggregationTest extends CamelTestSupport {
         PongResponseStreamObserver responseObserver = new PongResponseStreamObserver(latch);
 
         nonBlockingStub.pingSyncAsync(pingRequest, responseObserver);
-        latch.await(5, TimeUnit.SECONDS);
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
 
         PongResponse pongResponse = responseObserver.getPongResponse();
 
@@ -146,7 +147,7 @@ public class GrpcConsumerAggregationTest extends CamelTestSupport {
         requestObserver.onNext(pingRequest);
         requestObserver.onNext(pingRequest);
         requestObserver.onCompleted();
-        latch.await(5, TimeUnit.SECONDS);
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
 
         PongResponse pongResponse = responseObserver.getPongResponse();
 
@@ -167,7 +168,7 @@ public class GrpcConsumerAggregationTest extends CamelTestSupport {
         requestObserver.onNext(pingRequest);
         requestObserver.onNext(pingRequest);
         requestObserver.onCompleted();
-        latch.await(5, TimeUnit.SECONDS);
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
 
         PongResponse pongResponse = responseObserver.getPongResponse();
 

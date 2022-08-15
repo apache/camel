@@ -26,7 +26,6 @@ import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -180,9 +179,7 @@ public class FreemarkerEndpoint extends ResourceEndpoint {
         template.process(dataModel, buffer);
         buffer.flush();
 
-        // now lets output the results to the exchange
-        Message out = exchange.getOut();
-        out.setBody(buffer.toString());
-        out.setHeaders(exchange.getIn().getHeaders());
+        // now lets store the result
+        ExchangeHelper.setInOutBodyPatternAware(exchange, buffer.toString());
     }
 }

@@ -72,27 +72,27 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
     protected Server createServer() throws Exception {
         ServerFactoryBean svrBean = cxfEndpoint.createServerFactoryBean();
         svrBean.setInvoker(new CxfConsumerInvoker(cxfEndpoint));
-        Server server = svrBean.create();
+        final Server ret = svrBean.create();
         // Apply the server configurer if it is possible
         if (cxfEndpoint.getCxfConfigurer() != null) {
-            cxfEndpoint.getCxfConfigurer().configureServer(server);
+            cxfEndpoint.getCxfConfigurer().configureServer(ret);
         }
-        server.getEndpoint().getEndpointInfo().setProperty("serviceClass", cxfEndpoint.getServiceClass());
+        ret.getEndpoint().getEndpointInfo().setProperty("serviceClass", cxfEndpoint.getServiceClass());
         if (ObjectHelper.isNotEmpty(cxfEndpoint.getPublishedEndpointUrl())) {
-            server.getEndpoint().getEndpointInfo().setProperty("publishedEndpointUrl", cxfEndpoint.getPublishedEndpointUrl());
+            ret.getEndpoint().getEndpointInfo().setProperty("publishedEndpointUrl", cxfEndpoint.getPublishedEndpointUrl());
         }
 
-        final MessageObserver originalOutFaultObserver = server.getEndpoint().getOutFaultObserver();
-        server.getEndpoint().setOutFaultObserver(message -> {
+        final MessageObserver originalOutFaultObserver = ret.getEndpoint().getOutFaultObserver();
+        ret.getEndpoint().setOutFaultObserver(message -> {
             originalOutFaultObserver.onMessage(message);
         });
 
         // setup the UnitOfWorkCloserInterceptor for OneWayMessageProcessor
-        server.getEndpoint().getInInterceptors().add(new UnitOfWorkCloserInterceptor(Phase.POST_INVOKE, true));
+        ret.getEndpoint().getInInterceptors().add(new UnitOfWorkCloserInterceptor(Phase.POST_INVOKE, true));
         // close the UnitOfWork normally
-        server.getEndpoint().getOutInterceptors().add(new UnitOfWorkCloserInterceptor());
+        ret.getEndpoint().getOutInterceptors().add(new UnitOfWorkCloserInterceptor());
 
-        return server;
+        return ret;
     }
 
     public Server getServer() {

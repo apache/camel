@@ -65,6 +65,7 @@ import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.ssl.SSLContexts;
@@ -183,6 +184,12 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
                             + " If there are no data needed from HTTP headers then this can avoid parsing overhead"
                             + " with many object allocations for the JVM garbage collector.")
     protected boolean skipResponseHeaders;
+
+    @Metadata(label = "producer,advanced", defaultValue = "false",
+              description = "Whether to the HTTP request should follow redirects."
+                            + " By default the HTTP request does not follow redirects ")
+    protected boolean followRedirects;
+
     @UriParam(label = "producer,advanced", description = "To set a custom HTTP User-Agent request header")
     protected String userAgent;
 
@@ -307,7 +314,11 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
             sslContextParameters = getSslContextParameters();
         }
         if (sslContextParameters == null) {
-            sslContextParameters = retrieveGlobalSslContextParameters();
+            // only secure (https) should use global SSL
+            boolean secure = HttpHelper.isSecureConnection(uri);
+            if (secure) {
+                sslContextParameters = retrieveGlobalSslContextParameters();
+            }
         }
 
         String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
@@ -476,6 +487,9 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         }
         if (defaultUserAgentDisabled) {
             clientBuilder.disableDefaultUserAgent();
+        }
+        if (followRedirects) {
+            clientBuilder.setRedirectStrategy(new LaxRedirectStrategy());
         }
 
         return clientBuilder;
@@ -914,6 +928,14 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
 
     public void setSkipResponseHeaders(boolean skipResponseHeaders) {
         this.skipResponseHeaders = skipResponseHeaders;
+    }
+
+    public boolean isFollowRedirects() {
+        return followRedirects;
+    }
+
+    public void setFollowRedirects(boolean followRedirects) {
+        this.followRedirects = followRedirects;
     }
 
     public String getUserAgent() {

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.StringJoiner;
@@ -40,12 +41,17 @@ import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.fetchGithubUrl
 @Command(name = "init", description = "Initialize empty Camel integration")
 class Init extends CamelCommand {
 
-    @CommandLine.Parameters(description = "Name of integration file", arity = "1")
+    @CommandLine.Parameters(description = "Name of integration file (or a github link)", arity = "1")
     private String file;
 
     @Option(names = { "--integration" },
             description = "When creating a yaml file should it be created as a Camel K Integration CRD")
     private boolean integration;
+
+    @CommandLine.Option(names = {
+            "-dir",
+            "--directory" }, description = "Directory where the project will be saved", defaultValue = ".")
+    private String directory;
 
     public Init(CamelJBangMain main) {
         super(main);
@@ -76,8 +82,15 @@ class Init extends CamelCommand {
         String context = IOHelper.loadText(is);
         IOHelper.close(is);
 
+        if (!directory.equals(".")) {
+            File dir = new File(directory);
+            CommandHelper.cleanExportDir(directory);
+            // ensure target dir is created after clean
+            dir.mkdirs();
+        }
+        File target = new File(directory, file);
         context = context.replaceFirst("\\{\\{ \\.Name }}", name);
-        IOHelper.writeText(context, new FileOutputStream(file, false));
+        IOHelper.writeText(context, new FileOutputStream(target, false));
         return 0;
     }
 
@@ -95,6 +108,14 @@ class Init extends CamelCommand {
         }
 
         if (all.length() > 0) {
+            // okay we downloaded something so prepare export dir
+            if (!directory.equals(".")) {
+                File dir = new File(directory);
+                CommandHelper.cleanExportDir(directory);
+                // ensure target dir is created after clean
+                dir.mkdirs();
+            }
+
             CamelContext tiny = new LightweightCamelContext();
             GitHubResourceResolver resolver = new GitHubResourceResolver();
             resolver.setCamelContext(tiny);
@@ -103,11 +124,10 @@ class Init extends CamelCommand {
                 if (!resource.exists()) {
                     throw new ResourceDoesNotExist(resource);
                 }
-
                 String loc = resource.getLocation();
                 String name = FileUtil.stripPath(loc);
-
-                try (FileOutputStream fo = new FileOutputStream(name)) {
+                File target = new File(directory, name);
+                try (FileOutputStream fo = new FileOutputStream(target)) {
                     IOUtils.copy(resource.getInputStream(), fo);
                 }
             }
@@ -122,6 +142,14 @@ class Init extends CamelCommand {
         fetchGistUrls(file, all);
 
         if (all.length() > 0) {
+            // okay we downloaded something so prepare export dir
+            if (!directory.equals(".")) {
+                File dir = new File(directory);
+                CommandHelper.cleanExportDir(directory);
+                // ensure target dir is created after clean
+                dir.mkdirs();
+            }
+
             CamelContext tiny = new LightweightCamelContext();
             GistResourceResolver resolver = new GistResourceResolver();
             resolver.setCamelContext(tiny);
@@ -130,11 +158,10 @@ class Init extends CamelCommand {
                 if (!resource.exists()) {
                     throw new ResourceDoesNotExist(resource);
                 }
-
                 String loc = resource.getLocation();
                 String name = FileUtil.stripPath(loc);
-
-                try (FileOutputStream fo = new FileOutputStream(name)) {
+                File target = new File(directory, name);
+                try (FileOutputStream fo = new FileOutputStream(target)) {
                     IOUtils.copy(resource.getInputStream(), fo);
                 }
             }

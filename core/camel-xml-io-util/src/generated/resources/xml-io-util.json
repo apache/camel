@@ -6,6 +6,7 @@
     "description": "Camel XML IO Utilities",
     "deprecated": false,
     "firstVersion": "3.10.0",
+    "label": "core,xml",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-xml-io-util",

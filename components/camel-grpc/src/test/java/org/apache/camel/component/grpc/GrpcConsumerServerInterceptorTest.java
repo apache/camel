@@ -17,12 +17,10 @@
 package org.apache.camel.component.grpc;
 
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.Server;
-import io.grpc.stub.StreamObserver;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -116,46 +114,17 @@ public class GrpcConsumerServerInterceptorTest extends CamelTestSupport {
             public void configure() {
                 from("grpc://localhost:" + GRPC_REQUEST_INTERCEPT_TEST_PORT
                      + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION")
-                             .bean(new GrpcConsumerServerInterceptorTest.GrpcMessageBuilder(), "buildPongResponse");
+                             .bean(new GrpcMessageBuilder(), "buildPongResponse");
 
                 from("grpc://localhost:" + GRPC_REQUEST_NO_INTERCEPT_TEST_PORT
                      + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION"
                      + "&autoDiscoverServerInterceptors=false")
-                             .bean(new GrpcConsumerServerInterceptorTest.GrpcMessageBuilder(), "buildPongResponse");
+                             .bean(new GrpcMessageBuilder(), "buildPongResponse");
             }
         };
     }
 
-    public class PongResponseStreamObserver implements StreamObserver<PongResponse> {
-        private PongResponse pongResponse;
-        private final CountDownLatch latch;
-
-        public PongResponseStreamObserver(CountDownLatch latch) {
-            this.latch = latch;
-        }
-
-        public PongResponse getPongResponse() {
-            return pongResponse;
-        }
-
-        @Override
-        public void onNext(PongResponse value) {
-            pongResponse = value;
-        }
-
-        @Override
-        public void onError(Throwable t) {
-            LOG.info("Exception", t);
-            latch.countDown();
-        }
-
-        @Override
-        public void onCompleted() {
-            latch.countDown();
-        }
-    }
-
-    public class GrpcMessageBuilder {
+    static class GrpcMessageBuilder {
         public PongResponse buildPongResponse(PingRequest pingRequest) {
             return PongResponse.newBuilder().setPongName(pingRequest.getPingName() + GRPC_TEST_PONG_VALUE)
                     .setPongId(pingRequest.getPingId()).build();

@@ -93,6 +93,19 @@ public class TaskHealthState {
             msg += " (recovery in progress using " + time + " intervals).";
         }
 
+        if (lastError != null) {
+            msg += " - Error: " + extractRootCause(lastError).getMessage();
+        }
+
         return msg;
     }
+
+    private Throwable extractRootCause(Throwable throwable) {
+        Throwable rootCause = throwable;
+        while (rootCause.getCause() != null && rootCause.getCause() != rootCause) {
+            rootCause = rootCause.getCause();
+        }
+        return rootCause;
+    }
+
 }

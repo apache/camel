@@ -23,12 +23,15 @@ import org.apache.camel.resume.Cacheable;
 import org.apache.camel.resume.Deserializable;
 import org.apache.camel.resume.Offset;
 import org.apache.camel.resume.OffsetKey;
+import org.apache.camel.resume.ResumeAdapter;
 import org.apache.camel.resume.cache.ResumeCache;
+import org.apache.camel.spi.annotations.JdkService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.kinesis.model.GetShardIteratorRequest;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 
+@JdkService(ResumeAdapter.RESUME_ADAPTER_FACTORY)
 public class KinesisDefaultResumeAdapter implements KinesisResumeAdapter, Cacheable, Deserializable {
     private static final Logger LOG = LoggerFactory.getLogger(KinesisDefaultResumeAdapter.class);
 

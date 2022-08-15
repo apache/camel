@@ -22,7 +22,7 @@ public class StubComponentConfigurer extends VmComponentConfigurer implements Ge
         StubComponent target = (StubComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "shadow": target.setShadow(property(camelContext, boolean.class, value)); return true;
-        default: return super.configure(camelContext, obj, name, value, ignoreCase);
+        default: return true;
         }
     }
 

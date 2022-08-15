@@ -27,6 +27,8 @@ public class GcpVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "AzureVaultConfiguration": target.setAzureVaultConfiguration(property(camelContext, org.apache.camel.vault.AzureVaultConfiguration.class, value)); return true;
         case "gcpvaultconfiguration":
         case "GcpVaultConfiguration": target.setGcpVaultConfiguration(property(camelContext, org.apache.camel.vault.GcpVaultConfiguration.class, value)); return true;
+        case "hashicorpvaultconfiguration":
+        case "HashicorpVaultConfiguration": target.setHashicorpVaultConfiguration(property(camelContext, org.apache.camel.vault.HashicorpVaultConfiguration.class, value)); return true;
         case "projectid":
         case "ProjectId": target.setProjectId(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceaccountkey":
@@ -46,6 +48,8 @@ public class GcpVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "AzureVaultConfiguration": return org.apache.camel.vault.AzureVaultConfiguration.class;
         case "gcpvaultconfiguration":
         case "GcpVaultConfiguration": return org.apache.camel.vault.GcpVaultConfiguration.class;
+        case "hashicorpvaultconfiguration":
+        case "HashicorpVaultConfiguration": return org.apache.camel.vault.HashicorpVaultConfiguration.class;
         case "projectid":
         case "ProjectId": return java.lang.String.class;
         case "serviceaccountkey":
@@ -66,6 +70,8 @@ public class GcpVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "AzureVaultConfiguration": return target.getAzureVaultConfiguration();
         case "gcpvaultconfiguration":
         case "GcpVaultConfiguration": return target.getGcpVaultConfiguration();
+        case "hashicorpvaultconfiguration":
+        case "HashicorpVaultConfiguration": return target.getHashicorpVaultConfiguration();
         case "projectid":
         case "ProjectId": return target.getProjectId();
         case "serviceaccountkey":

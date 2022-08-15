@@ -105,7 +105,7 @@ public class BatchGoogleCalendarClientFactory implements GoogleCalendarClientFac
             CamelContext camelContext, String serviceAccountKey, Collection<String> scopes, String applicationName,
             String delegate) {
         if (serviceAccountKey == null) {
-            throw new IllegalArgumentException("keyResource is required to create Google Calendar client.");
+            throw new IllegalArgumentException("serviceAccountKey is required to create Google Calendar client.");
         }
         try {
             Credential credential = authorizeServiceAccount(camelContext, serviceAccountKey, delegate, scopes);

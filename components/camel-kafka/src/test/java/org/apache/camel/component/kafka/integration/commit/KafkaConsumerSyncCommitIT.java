@@ -34,7 +34,7 @@ public class KafkaConsumerSyncCommitIT extends BaseManualCommitTestSupport {
     public static final String TOPIC = "testManualCommitSyncTest";
 
     @EndpointInject("kafka:" + TOPIC
-                    + "?groupId=group1&sessionTimeoutMs=30000&autoCommitEnable=false"
+                    + "?groupId=KafkaConsumerSyncCommitIT&pollTimeoutMs=1000&autoCommitEnable=false"
                     + "&allowManualCommit=true&autoOffsetReset=earliest&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory")
     private Endpoint from;
 

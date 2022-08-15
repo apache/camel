@@ -25,22 +25,22 @@ public class ConsulServiceDiscoveryFactoryConfigurer extends org.apache.camel.su
         case "AclToken": target.setAclToken(property(camelContext, java.lang.String.class, value)); return true;
         case "blockseconds":
         case "BlockSeconds": target.setBlockSeconds(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "connecttimeoutmillis":
-        case "ConnectTimeoutMillis": target.setConnectTimeoutMillis(property(camelContext, java.lang.Long.class, value)); return true;
+        case "connecttimeout":
+        case "ConnectTimeout": target.setConnectTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         case "datacenter":
         case "Datacenter": target.setDatacenter(property(camelContext, java.lang.String.class, value)); return true;
         case "password":
         case "Password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "readtimeoutmillis":
-        case "ReadTimeoutMillis": target.setReadTimeoutMillis(property(camelContext, java.lang.Long.class, value)); return true;
+        case "readtimeout":
+        case "ReadTimeout": target.setReadTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         case "sslcontextparameters":
         case "SslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "url":
         case "Url": target.setUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "username":
         case "UserName": target.setUserName(property(camelContext, java.lang.String.class, value)); return true;
-        case "writetimeoutmillis":
-        case "WriteTimeoutMillis": target.setWriteTimeoutMillis(property(camelContext, java.lang.Long.class, value)); return true;
+        case "writetimeout":
+        case "WriteTimeout": target.setWriteTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         default: return false;
         }
     }
@@ -52,22 +52,22 @@ public class ConsulServiceDiscoveryFactoryConfigurer extends org.apache.camel.su
         case "AclToken": return java.lang.String.class;
         case "blockseconds":
         case "BlockSeconds": return java.lang.Integer.class;
-        case "connecttimeoutmillis":
-        case "ConnectTimeoutMillis": return java.lang.Long.class;
+        case "connecttimeout":
+        case "ConnectTimeout": return java.time.Duration.class;
         case "datacenter":
         case "Datacenter": return java.lang.String.class;
         case "password":
         case "Password": return java.lang.String.class;
-        case "readtimeoutmillis":
-        case "ReadTimeoutMillis": return java.lang.Long.class;
+        case "readtimeout":
+        case "ReadTimeout": return java.time.Duration.class;
         case "sslcontextparameters":
         case "SslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "url":
         case "Url": return java.lang.String.class;
         case "username":
         case "UserName": return java.lang.String.class;
-        case "writetimeoutmillis":
-        case "WriteTimeoutMillis": return java.lang.Long.class;
+        case "writetimeout":
+        case "WriteTimeout": return java.time.Duration.class;
         default: return null;
         }
     }
@@ -80,22 +80,22 @@ public class ConsulServiceDiscoveryFactoryConfigurer extends org.apache.camel.su
         case "AclToken": return target.getAclToken();
         case "blockseconds":
         case "BlockSeconds": return target.getBlockSeconds();
-        case "connecttimeoutmillis":
-        case "ConnectTimeoutMillis": return target.getConnectTimeoutMillis();
+        case "connecttimeout":
+        case "ConnectTimeout": return target.getConnectTimeout();
         case "datacenter":
         case "Datacenter": return target.getDatacenter();
         case "password":
         case "Password": return target.getPassword();
-        case "readtimeoutmillis":
-        case "ReadTimeoutMillis": return target.getReadTimeoutMillis();
+        case "readtimeout":
+        case "ReadTimeout": return target.getReadTimeout();
         case "sslcontextparameters":
         case "SslContextParameters": return target.getSslContextParameters();
         case "url":
         case "Url": return target.getUrl();
         case "username":
         case "UserName": return target.getUserName();
-        case "writetimeoutmillis":
-        case "WriteTimeoutMillis": return target.getWriteTimeoutMillis();
+        case "writetimeout":
+        case "WriteTimeout": return target.getWriteTimeout();
         default: return null;
         }
     }

@@ -75,7 +75,7 @@ in the `<configuration>` tag.
 | `indent` | `"&nbsp;&nbsp;&nbsp;&nbsp;"` | What identing character(s) to use, by default four spaces, you can use `\t` to signify tab character
 | `outputDirectory` | `generated-sources/restdsl-openapi` | Where to place the generated source file, by default `generated-sources/restdsl-openapi` within the project directory
 | `destinationGenerator` | | Fully qualified class name of the class that implements `org.apache.camel.generator.openapi.DestinationGenerator` interface for customizing destination endpoint
-| `destinationToSyntax` | `direct:${operationId}` | The default to syntax for the to uri, which is to use the direct component. |
+| `destinationToSyntax` | `direct:${operationId}` | The default to syntax for the to uri, which is to use the direct component.
 | `restConfiguration` | `true` | Whether to include generation of the rest configuration with detected rest component to be used. 
 | `apiContextPath` | | Define openapi endpoint path if `restConfiguration` is set to `true`.
 | `clientRequestValidation` | `false` | Whether to enable request validation.

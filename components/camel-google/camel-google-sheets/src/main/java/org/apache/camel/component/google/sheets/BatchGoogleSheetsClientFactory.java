@@ -105,12 +105,13 @@ public class BatchGoogleSheetsClientFactory implements GoogleSheetsClientFactory
 
     @Override
     public Sheets makeClient(
-            CamelContext camelContext, String keyResource, Collection<String> scopes, String applicationName, String delegate) {
-        if (keyResource == null) {
-            throw new IllegalArgumentException("keyResource is required to create Google Sheets client.");
+            CamelContext camelContext, String serviceAccountKey, Collection<String> scopes, String applicationName,
+            String delegate) {
+        if (serviceAccountKey == null) {
+            throw new IllegalArgumentException("serviceAccountKey is required to create Google Sheets client.");
         }
         try {
-            Credential credential = authorizeServiceAccount(camelContext, keyResource, delegate, scopes);
+            Credential credential = authorizeServiceAccount(camelContext, serviceAccountKey, delegate, scopes);
             return new Sheets.Builder(transport, jsonFactory, credential).setApplicationName(applicationName).build();
         } catch (Exception e) {
             throw new RuntimeCamelException("Could not create Google Sheets client.", e);
@@ -118,11 +119,12 @@ public class BatchGoogleSheetsClientFactory implements GoogleSheetsClientFactory
     }
 
     private Credential authorizeServiceAccount(
-            CamelContext camelContext, String keyResource, String delegate, Collection<String> scopes) {
+            CamelContext camelContext, String serviceAccountKey, String delegate, Collection<String> scopes) {
         // authorize
         try {
             GoogleCredential cred = GoogleCredential
-                    .fromStream(ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, keyResource), transport,
+                    .fromStream(ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, serviceAccountKey),
+                            transport,
                             jsonFactory)
                     .createScoped(scopes != null && scopes.size() != 0 ? scopes : null)
                     .createDelegated(delegate);

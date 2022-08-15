@@ -125,6 +125,7 @@ that you won't miss any messages. For this kind of need, you have to set either 
 In case the environment variable and the system property are both set, the value of the environment variable is used.
 
 Several 3rd party tooling are using it:
+
 * https://hawt.io/[hawtio] uses this for its web based debugging functionality
 * https://marketplace.visualstudio.com/items?itemName=redhat.vscode-debug-adapter-apache-camel[VS Code Debug Adapter for Camel]
 * http://marketplace.eclipse.org/content/textual-debugging-apache-camel[Eclipse Desktop Debug Adapter for Camel]

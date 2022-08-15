@@ -88,6 +88,11 @@ public abstract class FeedEntryPollingConsumer<E> extends FeedPollingConsumer im
         return resumeStrategy;
     }
 
+    @Override
+    public String adapterFactoryService() {
+        return "atom-adapter-factory";
+    }
+
     protected abstract void resetList();
 
     protected abstract void populateList(Object feed) throws Exception;

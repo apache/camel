@@ -37,7 +37,7 @@ public class StrimziContainer extends GenericContainer<StrimziContainer> {
 
         withEnv("LOG_DIR", "/tmp/logs");
         withExposedPorts(KAFKA_PORT);
-        withEnv("KAFKA_ADVERTISED_LISTENERS", String.format("PLAINTEXT://%s:9092", getContainerIpAddress()));
+        withEnv("KAFKA_ADVERTISED_LISTENERS", String.format("PLAINTEXT://%s:9092", getHost()));
         withEnv("KAFKA_LISTENERS", "PLAINTEXT://0.0.0.0:9092");
         withEnv("KAFKA_ZOOKEEPER_CONNECT", zookeeperInstanceName + ":2181");
         withNetwork(network);

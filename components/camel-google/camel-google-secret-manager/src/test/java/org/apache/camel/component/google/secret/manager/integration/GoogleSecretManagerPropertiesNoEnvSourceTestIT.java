@@ -195,4 +195,116 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
         template.sendBody("direct:password", "Hello World");
         assertMockEndpointsSatisfied();
     }
+
+    @Test
+    public void testPropertiesWithVersionFunction() throws Exception {
+        context.getVaultConfiguration().gcp().setServiceAccountKey(System.getProperty("camel.vault.gcp.serviceAccountKey"));
+        context.getVaultConfiguration().gcp().setProjectId(System.getProperty("camel.vault.gcp.projectId"));
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:version").setBody(simple("{{gcp:hello@1}}")).to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("\"id\":\"23\"");
+
+        template.sendBody("direct:version", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testPropertiesWithVersionAndNoFieldFunction() throws Exception {
+        context.getVaultConfiguration().gcp().setServiceAccountKey(System.getProperty("camel.vault.gcp.serviceAccountKey"));
+        context.getVaultConfiguration().gcp().setProjectId(System.getProperty("camel.vault.gcp.projectId"));
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:version").setBody(simple("{{gcp:hello}}")).to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("{\"id\":\"23\"}");
+
+        template.sendBody("direct:version", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testPropertiesWithVersionNoFieldAndDefaultValueFunction() throws Exception {
+        context.getVaultConfiguration().gcp().setServiceAccountKey(System.getProperty("camel.vault.gcp.serviceAccountKey"));
+        context.getVaultConfiguration().gcp().setProjectId(System.getProperty("camel.vault.gcp.projectId"));
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:version").setBody(simple("{{gcp:hello:pippo@2}}"))
+                        .to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("hello");
+
+        template.sendBody("direct:version", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testPropertiesWithVersionNoFieldDefaultValueNotExistentSecretFunction() throws Exception {
+        context.getVaultConfiguration().gcp().setServiceAccountKey(System.getProperty("camel.vault.gcp.serviceAccountKey"));
+        context.getVaultConfiguration().gcp().setProjectId(System.getProperty("camel.vault.gcp.projectId"));
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:version").setBody(simple("{{gcp:test1:pippo@e8d0e680-a504-4b70-a9b2-acf5efe0ba23}}"))
+                        .to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("pippo");
+
+        template.sendBody("direct:version", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testPropertiesWithVersionNoFieldDefaultValueNotExistentVersionFunction() throws Exception {
+        context.getVaultConfiguration().gcp().setServiceAccountKey(System.getProperty("camel.vault.gcp.serviceAccountKey"));
+        context.getVaultConfiguration().gcp().setProjectId(System.getProperty("camel.vault.gcp.projectId"));
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:version").setBody(simple("{{gcp:test1:pippo@e8d0e680-a504-4b70-a9b2-acf5efe0ba29}}"))
+                        .to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("pippo");
+
+        template.sendBody("direct:version", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testPropertiesWithVersionFieldAndDefaultValueFunction() throws Exception {
+        context.getVaultConfiguration().gcp().setServiceAccountKey(System.getProperty("camel.vault.gcp.serviceAccountKey"));
+        context.getVaultConfiguration().gcp().setProjectId(System.getProperty("camel.vault.gcp.projectId"));
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:version").setBody(simple("{{gcp:hello/id@3}}"))
+                        .to("mock:bar");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:bar").expectedBodiesReceived("23");
+
+        template.sendBody("direct:version", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
 }

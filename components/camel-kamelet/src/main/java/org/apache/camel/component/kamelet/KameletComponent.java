@@ -29,6 +29,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
@@ -40,6 +41,7 @@ import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.RouteTemplateHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,6 +108,12 @@ public class KameletComponent extends DefaultComponent {
         parameters.remove(PARAM_TEMPLATE_ID);
         parameters.remove(PARAM_ROUTE_ID);
         parameters.remove(PARAM_LOCATION);
+
+        // manually need to resolve raw parameters as input to the kamelet because
+        // resolveRawParameterValues is false
+        // this ensures that parameters such as passwords are used as-is and not encoded
+        // but this requires to use RAW() syntax in the kamelet template.
+        URISupport.resolveRawParameterValues(parameters);
 
         final KameletEndpoint endpoint;
 
@@ -217,7 +225,7 @@ public class KameletComponent extends DefaultComponent {
 
             //
             // Add a custom converter to convert a RouteTemplateDefinition to a RouteDefinition
-            // and make sure consumerU URIs are unique.
+            // and make sure consumer URIs are unique.
             //
             getCamelContext().adapt(ModelCamelContext.class).addRouteTemplateDefinitionConverter(
                     templateId,
@@ -401,7 +409,10 @@ public class KameletComponent extends DefaultComponent {
                 String id = context.addRouteFromTemplate(routeId, templateId, endpoint.getKameletProperties());
                 RouteDefinition def = context.getRouteDefinition(id);
 
-                if (!def.isPrepared()) {
+                // start the route if not already started
+                ServiceStatus status = context.getRouteController().getRouteStatus(id);
+                boolean started = status != null && status.isStarted();
+                if (!started) {
                     context.startRouteDefinitions(Collections.singletonList(def));
                 }
 

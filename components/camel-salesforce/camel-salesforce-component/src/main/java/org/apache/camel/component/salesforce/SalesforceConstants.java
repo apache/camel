@@ -57,6 +57,9 @@ public final class SalesforceConstants {
     @Metadata(label = "consumer", description = "The client id.", javaType = "String")
     public static final String HEADER_SALESFORCE_CLIENT_ID = "CamelSalesforceClientId";
 
+    @Metadata(label = "producer", description = "Total number of records matching a query.", javaType = "int")
+    public static final String HEADER_SALESFORCE_QUERY_RESULT_TOTAL_SIZE = "CamelSalesforceQueryResultTotalSize";
+
     private SalesforceConstants() {
 
     }
