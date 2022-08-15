@@ -15,5 +15,5 @@
 -- limitations under the License.
 --
 
-insert into test.test_sql_table (col1, col2)
+insert into test_dataset.test_sql_table (col1, col2)
 values (@col1, @col2)

@@ -15,4 +15,4 @@
 -- limitations under the License.
 --
 
-delete from test.test_sql_table where id = :id
+delete from test_dataset.test_sql_table where id = :id
