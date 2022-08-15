@@ -63,9 +63,7 @@ Here is an example of a simple DataSonnet expression as a transformation EIP. Th
 [source,java]
 ------------------------------------------------------------------------------------------------
 from("queue:foo")
-    .transform(datasonnet("ds.filter(body.lineItems, function(item) item > 100)", String.class)
-        .bodyMediaType("application/xml").outputMediaType("application/json")
-    )
+    .transform(datasonnet("ds.filter(body.lineItems, function(item) item > 100)", String.class, "application/xml", "application/json"))
     .to("queue:bar")
 ------------------------------------------------------------------------------------------------
 
@@ -123,7 +121,7 @@ media types without the need for a Header, this is useful if the transformation 
 The DataSonnet expression will look for a body media type in the following order:
 
 1. If the body is a `Document` it will use the metadata in the object
-2. If the convenience bodyMediaType method was used, it will use its value
+2. If the bodyMediaType parameter was provided in the DSL, it will use its value
 3. A "CamelDatasonnetBodyMediaType" exchange property
 4. A "Content-Type" message header
 5. The DataSonnet Header payload media type directive
@@ -131,7 +129,7 @@ The DataSonnet expression will look for a body media type in the following order
 
 And for output media type:
 
-1. If the convenience outputMediaType method was used, it will use its value
+1. If the outputMediaType parameter was provided in the DSL, it will use its value
 2. A "CamelDatasonnetOutputMediaType" exchange property
 3. A "CamelDatasonnetOutputMediaType" message header
 4. The DataSonnet Header output media type directive
