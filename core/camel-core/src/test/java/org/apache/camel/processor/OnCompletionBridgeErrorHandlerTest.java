@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class OnCompletionBridgeErrorHandler extends ContextTestSupport {
+public class OnCompletionBridgeErrorHandlerTest extends ContextTestSupport {
 
     protected final CountDownLatch latch = new CountDownLatch(1);
 

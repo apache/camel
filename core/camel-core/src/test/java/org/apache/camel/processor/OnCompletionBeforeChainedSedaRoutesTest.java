@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-public class OnCompletionBeforeChainedSedaRoutes extends ContextTestSupport {
+public class OnCompletionBeforeChainedSedaRoutesTest extends ContextTestSupport {
 
     @Test
     public void testOnCompletionChained() throws Exception {
