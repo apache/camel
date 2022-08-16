@@ -29,7 +29,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class AbstractJMSTest extends CamelTestSupport {
     @RegisterExtension
-    public static ActiveMQService service = ActiveMQServiceFactory.createEmbeddedService();
+    public static ActiveMQService service = ActiveMQServiceFactory.createVMService();
 
     public static String queueNameForClass(String desiredName, Class<?> requestingClass) {
         return desiredName + "." + requestingClass.getSimpleName();
