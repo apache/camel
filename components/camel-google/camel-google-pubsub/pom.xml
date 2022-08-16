@@ -36,6 +36,7 @@
         <schemeName>google-pubsub</schemeName>
         <componentName>GooglePubSub</componentName>
         <componentPackage>org.apache.camel.component.google.pubsub</componentPackage>
+        <camel.osgi.import>com.google.common*;version="${google-cloud-guava-version-prefix}",*</camel.osgi.import>
     </properties>
 
     <dependencyManagement>
