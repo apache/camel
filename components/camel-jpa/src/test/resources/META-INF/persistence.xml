@@ -63,6 +63,23 @@
     </properties>
   </persistence-unit>
 
+  <persistence-unit name="pooling" transaction-type="RESOURCE_LOCAL">
+    <class>org.apache.camel.examples.SendEmail</class>
+
+    <properties>
+      <property name="openjpa.ConnectionProperties"
+                value="DriverClassName=org.apache.derby.jdbc.EmbeddedDriver,
+                   Url=jdbc:derby:target/custom;create=true,
+                   MaxTotal=1,
+                   MaxWaitMillis=10000,
+                   TestOnBorrow=true"/>
+      <property name="openjpa.ConnectionDriverName" value="org.apache.commons.dbcp2.BasicDataSource"/>
+      <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema"/>
+      <property name="openjpa.Log" value="DefaultLevel=WARN, Tool=INFO"/>
+      <property name="openjpa.Multithreaded" value="true"/>
+    </properties>
+  </persistence-unit>
+
   <!-- START SNIPPET: e1 -->
   <persistence-unit name="idempotentDb" transaction-type="RESOURCE_LOCAL">
     <class>org.apache.camel.processor.idempotent.jpa.MessageProcessed</class>
