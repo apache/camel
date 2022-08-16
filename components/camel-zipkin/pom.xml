@@ -24,7 +24,7 @@
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>3.14.5</version>
+        <version>3.14.6-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-zipkin</artifactId>

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>init</artifactId>
-        <version>3.14.5</version>
+        <version>3.14.6-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
