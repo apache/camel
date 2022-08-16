@@ -38,6 +38,11 @@ public class JpaTransactedTest extends AbstractJpaTest {
         template.sendBody("direct:multicast", new SendEmail("test@example.org"));
     }
 
+    @Test
+    public void testTransactedRecipientList() throws Exception {
+        template.sendBody("direct:recipient", new SendEmail("test@example.org"));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -51,6 +56,11 @@ public class JpaTransactedTest extends AbstractJpaTest {
                 from("direct:multicast")
                         .transacted().multicast()
                         .to("jpa://" + SendEmail.class.getName(), "jpa://" + SendEmail.class.getName());
+
+                from("direct:recipient")
+                        .transacted().recipientList(
+                                constant("jpa://" + SendEmail.class.getName() + "," + "jpa://" + SendEmail.class.getName())
+                        );
             }
         };
     }
