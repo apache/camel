@@ -92,7 +92,7 @@ public final class JpaHelper {
     public static void copyEntityManagers(Exchange target, Exchange source) {
         if (target != null && source != null && target.getProperty(JpaConstants.ENTITY_MANAGER) == null) {
             Map<String, EntityManager> entityManagers = source.getProperty(JpaConstants.ENTITY_MANAGER, Map.class);
-            if(entityManagers != null) {
+            if (entityManagers != null) {
                 target.setProperty(JpaConstants.ENTITY_MANAGER, entityManagers);
             }
         }

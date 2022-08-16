@@ -17,18 +17,13 @@
 package org.apache.camel.processor.jpa;
 
 import java.util.Arrays;
-import java.util.Map;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jpa.JpaConstants;
 import org.apache.camel.component.jpa.JpaHelper;
 import org.apache.camel.examples.SendEmail;
-import org.apache.camel.support.ExchangeHelper;
 import org.junit.jupiter.api.Test;
-
-import javax.persistence.EntityManager;
 
 public class JpaTransactedTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";
@@ -72,8 +67,7 @@ public class JpaTransactedTest extends AbstractJpaTest {
 
                 from("direct:recipient")
                         .transacted().recipientList(
-                                constant("jpa://" + SendEmail.class.getName() + "," + "jpa://" + SendEmail.class.getName())
-                        );
+                                constant("jpa://" + SendEmail.class.getName() + "," + "jpa://" + SendEmail.class.getName()));
 
                 from("direct:enrich")
                         .transacted().enrich("jpa://" + SendEmail.class.getName(), new AggregationStrategy() {
