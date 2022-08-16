@@ -603,20 +603,6 @@ public class ActiveMQEmbeddedServiceBuilder {
         return defaultBroker(ActiveMQEmbeddedServiceBuilder.class.getSimpleName());
     }
 
-    /*
-    public static ConnectionFactory createPersistentConnectionFactory(String options) {
-        String url = createPersistentBrokerUrl(options);
-        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
-        // optimize AMQ to be as fast as possible so unit testing is quicker
-        connectionFactory.setCopyMessageOnSend(false);
-        connectionFactory.setOptimizeAcknowledge(true);
-        connectionFactory.setOptimizedMessageDispatch(true);
-        connectionFactory.setAlwaysSessionAsync(false);
-        connectionFactory.setTrustAllPackages(true);
-        return connectionFactory;
-    }
-     */
-
     public static ActiveMQEmbeddedServiceBuilder defaultBroker(String name) {
         return new ActiveMQEmbeddedServiceBuilder()
                 .withDeleteAllMessagesOnStartup(true)
