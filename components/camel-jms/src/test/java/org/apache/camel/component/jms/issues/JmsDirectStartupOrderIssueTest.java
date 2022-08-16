@@ -22,10 +22,10 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.CamelJmsTestHelper;
+import org.apache.camel.component.jms.AbstractPersistentJMSTest;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.RouteStartupOrder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  *
  */
-public class JmsDirectStartupOrderIssueTest extends CamelTestSupport {
+public class JmsDirectStartupOrderIssueTest extends AbstractPersistentJMSTest {
 
     @Test
     public void testJmsDirectStartupOrderIssue() throws Exception {
@@ -63,7 +63,7 @@ public class JmsDirectStartupOrderIssueTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
+        ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;

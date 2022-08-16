@@ -20,13 +20,14 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TwoConsumerOnSameQueueTest extends CamelTestSupport {
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
+public class TwoConsumerOnSameQueueTest extends AbstractPersistentJMSTest {
 
     @Test
     public void testTwoConsumerOnSameQueue() throws Exception {
@@ -46,8 +47,8 @@ public class TwoConsumerOnSameQueueTest extends CamelTestSupport {
         getMockEndpoint("mock:a").expectedMessageCount(0);
         getMockEndpoint("mock:b").expectedBodiesReceived("Bye World", "Bye World");
 
-        template.sendBody("activemq:queue:foo", "Bye World");
-        template.sendBody("activemq:queue:foo", "Bye World");
+        template.sendBody("activemq:queue:TwoConsumerOnSameQueueTest", "Bye World");
+        template.sendBody("activemq:queue:TwoConsumerOnSameQueueTest", "Bye World");
 
         assertMockEndpointsSatisfied();
 
@@ -74,8 +75,8 @@ public class TwoConsumerOnSameQueueTest extends CamelTestSupport {
         getMockEndpoint("mock:a").expectedMessageCount(0);
         getMockEndpoint("mock:b").expectedBodiesReceived("Bye World", "Bye World");
 
-        template.sendBody("activemq:queue:foo", "Bye World");
-        template.sendBody("activemq:queue:foo", "Bye World");
+        template.sendBody("activemq:queue:TwoConsumerOnSameQueueTest", "Bye World");
+        template.sendBody("activemq:queue:TwoConsumerOnSameQueueTest", "Bye World");
 
         assertMockEndpointsSatisfied();
     }
@@ -84,8 +85,8 @@ public class TwoConsumerOnSameQueueTest extends CamelTestSupport {
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");
 
-        template.sendBody("activemq:queue:foo", "Hello World");
-        template.sendBody("activemq:queue:foo", "Hello World");
+        template.sendBody("activemq:queue:TwoConsumerOnSameQueueTest", "Hello World");
+        template.sendBody("activemq:queue:TwoConsumerOnSameQueueTest", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -105,10 +106,10 @@ public class TwoConsumerOnSameQueueTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo").routeId("a")
+                from("activemq:queue:TwoConsumerOnSameQueueTest").routeId("a")
                         .to("log:a", "mock:a");
 
-                from("activemq:queue:foo").routeId("b")
+                from("activemq:queue:TwoConsumerOnSameQueueTest").routeId("b")
                         .to("log:b", "mock:b");
             }
         };

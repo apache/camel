@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 
 import javax.management.ObjectName;
@@ -610,6 +611,23 @@ public class ActiveMQEmbeddedServiceBuilder {
                 .withAdvisorySupport(false)
                 .withUseJmx(false)
                 .withDataDirectory(ActiveMQEmbeddedServiceBuilder.class.getResource("/").getFile());
+    }
+
+    public static ActiveMQEmbeddedServiceBuilder persistentBroker() {
+        final String name = ActiveMQEmbeddedServiceBuilder.class.getSimpleName() + ThreadLocalRandom.current().nextInt(1000);
+        return persistentBroker(name);
+    }
+
+    public static ActiveMQEmbeddedServiceBuilder persistentBroker(String name) {
+        final String dataDirectory = ActiveMQEmbeddedServiceBuilder.class.getResource("/").getFile() + File.separator + name;
+
+        return new ActiveMQEmbeddedServiceBuilder()
+                .withDeleteAllMessagesOnStartup(true)
+                .withBrokerName(name)
+                .withAdvisorySupport(false)
+                .withUseJmx(false)
+                .withPersistent(true)
+                .withDataDirectory(dataDirectory);
     }
 
 }

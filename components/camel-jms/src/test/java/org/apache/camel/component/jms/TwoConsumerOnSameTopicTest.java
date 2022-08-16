@@ -20,13 +20,15 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TwoConsumerOnSameTopicTest extends CamelTestSupport {
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
+public class TwoConsumerOnSameTopicTest extends AbstractPersistentJMSTest {
 
     @Test
     public void testTwoConsumerOnSameTopic() throws Exception {
@@ -41,10 +43,10 @@ public class TwoConsumerOnSameTopicTest extends CamelTestSupport {
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello Camel 1", "Hello Camel 2", "Hello Camel 3", "Hello Camel 4");
         getMockEndpoint("mock:b").expectedBodiesReceived("Hello Camel 1", "Hello Camel 2", "Hello Camel 3", "Hello Camel 4");
 
-        template.sendBody("activemq:topic:foo", "Hello Camel 1");
-        template.sendBody("activemq:topic:foo", "Hello Camel 2");
-        template.sendBody("activemq:topic:foo", "Hello Camel 3");
-        template.sendBody("activemq:topic:foo", "Hello Camel 4");
+        template.sendBody("activemq:topic:TwoConsumerOnSameTopicTest", "Hello Camel 1");
+        template.sendBody("activemq:topic:TwoConsumerOnSameTopicTest", "Hello Camel 2");
+        template.sendBody("activemq:topic:TwoConsumerOnSameTopicTest", "Hello Camel 3");
+        template.sendBody("activemq:topic:TwoConsumerOnSameTopicTest", "Hello Camel 4");
 
         assertMockEndpointsSatisfied();
     }
@@ -62,7 +64,7 @@ public class TwoConsumerOnSameTopicTest extends CamelTestSupport {
         getMockEndpoint("mock:a").expectedMessageCount(0);
         getMockEndpoint("mock:b").expectedBodiesReceived("Bye World");
 
-        template.sendBody("activemq:topic:foo", "Bye World");
+        template.sendBody("activemq:topic:TwoConsumerOnSameTopicTest", "Bye World");
 
         assertMockEndpointsSatisfied();
 
@@ -89,7 +91,7 @@ public class TwoConsumerOnSameTopicTest extends CamelTestSupport {
         getMockEndpoint("mock:a").expectedMessageCount(0);
         getMockEndpoint("mock:b").expectedBodiesReceived("Bye World");
 
-        template.sendBody("activemq:topic:foo", "Bye World");
+        template.sendBody("activemq:topic:TwoConsumerOnSameTopicTest", "Bye World");
 
         assertMockEndpointsSatisfied();
     }
@@ -101,7 +103,7 @@ public class TwoConsumerOnSameTopicTest extends CamelTestSupport {
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");
 
-        template.sendBody("activemq:topic:foo", "Hello World");
+        template.sendBody("activemq:topic:TwoConsumerOnSameTopicTest", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -111,7 +113,7 @@ public class TwoConsumerOnSameTopicTest extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
 
         // must be persistent to remember the messages
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
+        ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
@@ -122,10 +124,10 @@ public class TwoConsumerOnSameTopicTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:topic:foo").routeId("a")
+                from("activemq:topic:TwoConsumerOnSameTopicTest").routeId("a")
                         .to("log:a", "mock:a");
 
-                from("activemq:topic:foo").routeId("b")
+                from("activemq:topic:TwoConsumerOnSameTopicTest").routeId("b")
                         .to("log:b", "mock:b");
             }
         };

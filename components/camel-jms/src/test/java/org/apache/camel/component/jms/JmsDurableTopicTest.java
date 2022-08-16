@@ -23,13 +23,12 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-public class JmsDurableTopicTest extends CamelTestSupport {
+public class JmsDurableTopicTest extends AbstractPersistentJMSTest {
 
     @Test
     public void testDurableTopic() {
@@ -41,7 +40,7 @@ public class JmsDurableTopicTest extends CamelTestSupport {
 
         Awaitility.await().atMost(2, TimeUnit.SECONDS)
                 .untilAsserted(() -> {
-                    template.sendBody("activemq:topic:foo", "Hello World");
+                    template.sendBody("activemq:topic:JmsDurableTopicTest", "Hello World");
                     assertMockEndpointsSatisfied();
                 });
     }
@@ -59,10 +58,10 @@ public class JmsDurableTopicTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:topic:foo?clientId=123&durableSubscriptionName=bar")
+                from("activemq:topic:JmsDurableTopicTest?clientId=123&durableSubscriptionName=bar")
                         .to("mock:result");
 
-                from("activemq:topic:foo?clientId=456&durableSubscriptionName=bar")
+                from("activemq:topic:JmsDurableTopicTest?clientId=456&durableSubscriptionName=bar")
                         .to("mock:result2");
             }
         };

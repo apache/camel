@@ -21,6 +21,7 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
@@ -28,7 +29,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 /**
  * Testing with async start listener
  */
-public class JmsAsyncStartStopListenerTest extends AbstractJMSTest {
+public class JmsAsyncStartStopListenerTest extends AbstractPersistentJMSTest {
 
     protected String componentName = "activemq";
 
@@ -49,7 +50,7 @@ public class JmsAsyncStartStopListenerTest extends AbstractJMSTest {
 
         // use a persistent queue as the consumer is started asynchronously
         // so we need a persistent store in case no active consumers when we send the messages
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
+        ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(service);
         JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
         jms.getConfiguration().setAsyncStartListener(true);
         jms.getConfiguration().setAsyncStopListener(true);
