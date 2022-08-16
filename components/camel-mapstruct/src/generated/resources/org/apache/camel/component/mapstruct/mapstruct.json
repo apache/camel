@@ -1,0 +1,35 @@
+{
+  "component": {
+    "kind": "component",
+    "name": "mapstruct",
+    "title": "MapStruct",
+    "description": "Type Conversion using Mapstruct",
+    "deprecated": false,
+    "firstVersion": "3.19.0",
+    "label": "transformation",
+    "javaType": "org.apache.camel.component.mapstruct.MapstructComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-mapstruct",
+    "version": "3.19.0-SNAPSHOT",
+    "scheme": "mapstruct",
+    "extendsScheme": "",
+    "syntax": "mapstruct:className",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false
+  },
+  "componentProperties": {
+    "lazyStartProducer": { "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "mapperPackageName": { "kind": "property", "displayName": "Mapper Package Name", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Package name(s) where Camel should discover Mapstruct mapping classes. Multiple package names can be separated by comma." },
+    "autowiredEnabled": { "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." },
+    "mapStructConverter": { "kind": "property", "displayName": "Map Struct Converter", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "org.apache.camel.component.mapstruct.MapStructMapperFinder", "deprecated": false, "autowired": true, "secret": false, "description": "To use a custom MapStructConverter such as adapting to a special runtime." }
+  },
+  "properties": {
+    "className": { "kind": "path", "displayName": "Class Name", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The fully qualified class name of the POJO that mapstruct should convert to (target)" },
+    "mandatory": { "kind": "parameter", "displayName": "Mandatory", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether there must exist a mapstruct converter to convert to the POJO." },
+    "lazyStartProducer": { "kind": "parameter", "displayName": "Lazy Start Producer", "group": "producer (advanced)", "label": "producer,advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." }
+  }
+}

@@ -4745,6 +4745,28 @@
     "producerOnly": false,
     "lenientProperties": false
   },
+  "MapstructComponentBuilderFactory": {
+    "kind": "component",
+    "name": "mapstruct",
+    "title": "MapStruct",
+    "description": "Type Conversion using Mapstruct",
+    "deprecated": false,
+    "firstVersion": "3.19.0",
+    "label": "transformation",
+    "javaType": "org.apache.camel.component.mapstruct.MapstructComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-mapstruct",
+    "version": "3.19.0-SNAPSHOT",
+    "scheme": "mapstruct",
+    "extendsScheme": "",
+    "syntax": "mapstruct:className",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false
+  },
   "MasterComponentBuilderFactory": {
     "kind": "component",
     "name": "master",

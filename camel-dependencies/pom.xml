@@ -380,6 +380,7 @@
     <logback-version>1.2.11</logback-version>
     <lucene-version>8.11.1</lucene-version>
     <lucene-version-range>[8,9)</lucene-version-range>
+    <mapstruct-version>1.5.2.Final</mapstruct-version>
     <maven-antrun-plugin-version>1.6</maven-antrun-plugin-version>
     <maven-archetype-packaging-version>2.3</maven-archetype-packaging-version>
     <maven-archetype-plugin-version>3.2.0</maven-archetype-plugin-version>

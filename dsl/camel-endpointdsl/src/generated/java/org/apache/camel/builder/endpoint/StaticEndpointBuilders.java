@@ -9867,6 +9867,51 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.LumberjackEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * MapStruct (camel-mapstruct)
+     * Type Conversion using Mapstruct
+     * 
+     * Category: transformation
+     * Since: 3.19
+     * Maven coordinates: org.apache.camel:camel-mapstruct
+     * 
+     * Syntax: <code>mapstruct:className</code>
+     * 
+     * Path parameter: className (required)
+     * The fully qualified class name of the POJO that mapstruct should convert
+     * to (target)
+     * 
+     * @param path className
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.MapstructEndpointBuilderFactory.MapstructEndpointBuilder mapstruct(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.MapstructEndpointBuilderFactory.endpointBuilder("mapstruct", path);
+    }
+    /**
+     * MapStruct (camel-mapstruct)
+     * Type Conversion using Mapstruct
+     * 
+     * Category: transformation
+     * Since: 3.19
+     * Maven coordinates: org.apache.camel:camel-mapstruct
+     * 
+     * Syntax: <code>mapstruct:className</code>
+     * 
+     * Path parameter: className (required)
+     * The fully qualified class name of the POJO that mapstruct should convert
+     * to (target)
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path className
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.MapstructEndpointBuilderFactory.MapstructEndpointBuilder mapstruct(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.MapstructEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Master (camel-master)
      * Have only a single consumer in a cluster consuming from a given endpoint;
      * with automatic failover if the JVM dies.

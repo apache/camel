@@ -220,6 +220,7 @@
         <module>camel-lumberjack</module>
         <module>camel-lzf</module>
         <module>camel-mail</module>
+        <module>camel-mapstruct</module>
         <module>camel-metrics</module>
         <module>camel-micrometer</module>
         <module>camel-microprofile</module>

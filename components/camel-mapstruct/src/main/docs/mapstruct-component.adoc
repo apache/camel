@@ -1,0 +1,76 @@
+= MapStruct Component
+:doctitle: MapStruct
+:shortname: mapstruct
+:artifactid: camel-mapstruct
+:description: Type Conversion using Mapstruct
+:since: 3.19
+:supportlevel: Preview
+:component-header: Only producer is supported
+//Manually maintained attributes
+:camel-spring-boot-name: mapstruct
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The camel-mapstruct component is used for converting POJOs using https://mapstruct.org/[MapStruct].
+
+== URI format
+
+----
+mapstruct:className[?options]
+----
+
+Where `className` is the fully qualified class name of the POJO to convert to.
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+== Setting up MapStruct
+
+The camel-mapstruct component must be configured with one or more package names, for classpath scanning MapStruct _Mapper_ classes.
+This is needed because the _Mapper_ classes are to be used for converting POJOs with MapStruct.
+
+For example to set up two packages you can do as following:
+
+[source,java]
+----
+MapstructComponent mc = context.getComponent("mapstruct", MapstructComponent.class);
+mc.setMapperPackageName("com.foo.mapper,com.bar.mapper");
+----
+
+This can also be configured in `application.properties`:
+
+[source,properties]
+----
+camel.component.mapstruct.mapper-package-name = com.foo.mapper,com.bar.mapper
+----
+
+Camel will on startup scan these packages for classes which names ends with _Mapper_. These classes
+are then introspected to discover the mapping methods. These mapping methods are then registered
+into the Camel xref:manual::type-converter.adoc[Type Converter] registry. This means that you can
+also use type converter to convert the POJOs with MapStruct, such as:
+
+[source,java]
+----
+from("direct:foo")
+  .convertBodyTo(MyFooDto.class);
+----
+
+Where `MyFooDto` is a POJO that MapStruct is able to convert to/from.
+
+
+include::spring-boot:partial$starter.adoc[]

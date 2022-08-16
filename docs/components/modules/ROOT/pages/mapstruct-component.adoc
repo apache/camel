@@ -1,0 +1,1 @@
+../../../../../components/camel-mapstruct/src/main/docs/mapstruct-component.adoc

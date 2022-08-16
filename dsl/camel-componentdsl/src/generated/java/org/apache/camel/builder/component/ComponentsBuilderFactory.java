@@ -2891,6 +2891,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.LumberjackComponentBuilderFactory.lumberjack();
     }
     /**
+     * MapStruct (camel-mapstruct)
+     * Type Conversion using Mapstruct
+     * 
+     * Category: transformation
+     * Since: 3.19
+     * Maven coordinates: org.apache.camel:camel-mapstruct
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.MapstructComponentBuilderFactory.MapstructComponentBuilder mapstruct() {
+        return org.apache.camel.builder.component.dsl.MapstructComponentBuilderFactory.mapstruct();
+    }
+    /**
      * Master (camel-master)
      * Have only a single consumer in a cluster consuming from a given endpoint;
      * with automatic failover if the JVM dies.

@@ -364,6 +364,7 @@
         <lucene-version>8.11.1</lucene-version>
         <lucene-version-range>[8,9)</lucene-version-range>
         <lightcouch-version>0.2.0</lightcouch-version>
+        <mapstruct-version>1.5.2.Final</mapstruct-version>
         <!-- needed from tooling/archetypes -->
         <!-- use antrun 1.6 as 1.7 fails with finding tools.jar on java on some platforms -->
         <maven-antrun-plugin-version>1.6</maven-antrun-plugin-version>
@@ -1974,6 +1975,11 @@
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-mail</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-mapstruct</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

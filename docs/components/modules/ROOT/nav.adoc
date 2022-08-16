@@ -221,6 +221,7 @@
 ** xref:lucene-component.adoc[Lucene]
 ** xref:lumberjack-component.adoc[Lumberjack]
 ** xref:mail-component.adoc[Mail]
+** xref:mapstruct-component.adoc[MapStruct]
 ** xref:master-component.adoc[Master]
 ** xref:metrics-component.adoc[Metrics]
 ** xref:micrometer-component.adoc[Micrometer]
