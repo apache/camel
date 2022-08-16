@@ -81,11 +81,11 @@ public final class ActiveMQServiceFactory {
                 .build();
     }
 
-    public static synchronized ActiveMQService createEmbeddedService() {
-        return createSingletonEmbeddedService();
+    public static synchronized ActiveMQService createVMService() {
+        return createSingletonVMService();
     }
 
-    public static synchronized ActiveMQService createEmbeddedServiceInstance() {
+    public static synchronized ActiveMQService createVMServiceInstance() {
         if (service == null) {
             if (instance == null) {
                 instance = new SimpleTestServiceBuilder<>("activemq");
@@ -97,15 +97,9 @@ public final class ActiveMQServiceFactory {
         return instance.build();
     }
 
-    public static synchronized ActiveMQService createSingletonEmbeddedService() {
+    public static synchronized ActiveMQService createSingletonVMService() {
         if (service == null) {
-            if (instance == null) {
-                instance = new SimpleTestServiceBuilder<>("activemq");
-
-                instance.addLocalMapping(() -> new SingletonActiveMQService(new ActiveMQVMService(), "activemq"));
-            }
-
-            service = instance.build();
+            service = createVMServiceInstance();
         }
 
         return service;

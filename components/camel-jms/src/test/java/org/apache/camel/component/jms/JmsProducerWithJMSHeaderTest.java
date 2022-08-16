@@ -46,7 +46,7 @@ public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
 
     // This one needs a different lifecycle, so we cannot extend AbstractJMSTest
     @RegisterExtension
-    private ActiveMQService service = ActiveMQServiceFactory.createEmbeddedService();
+    private ActiveMQService service = ActiveMQServiceFactory.createVMService();
 
     @Test
     public void testInOnlyJMSPrioritory() throws Exception {
