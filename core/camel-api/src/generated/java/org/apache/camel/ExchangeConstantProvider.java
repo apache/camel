@@ -11,7 +11,7 @@ public class ExchangeConstantProvider {
 
     private static final Map<String, String> MAP;
     static {
-        Map<String, String> map = new HashMap<>(154);
+        Map<String, String> map = new HashMap<>(155);
         map.put("ACCEPT_CONTENT_TYPE", "CamelAcceptContentType");
         map.put("AGGREGATED_COLLECTION_GUARD", "CamelAggregatedCollectionGuard");
         map.put("AGGREGATED_COMPLETED_BY", "CamelAggregatedCompletedBy");
@@ -159,6 +159,7 @@ public class ExchangeConstantProvider {
         map.put("TRACE_EVENT_TIMESTAMP", "CamelTraceEventTimestamp");
         map.put("TRACING_HEADER_FORMAT", "CamelTracingHeaderFormat");
         map.put("TRACING_OUTPUT_FORMAT", "CamelTracingOutputFormat");
+        map.put("TRANSACTION_CONTEXT_DATA", "CamelTransactionContextData");
         map.put("TRANSFER_ENCODING", "Transfer-Encoding");
         map.put("TRY_ROUTE_BLOCK", "TryRouteBlock");
         map.put("UNIT_OF_WORK_EXHAUSTED", "CamelUnitOfWorkExhausted");
