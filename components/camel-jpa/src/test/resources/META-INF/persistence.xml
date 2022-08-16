@@ -71,7 +71,7 @@
                 value="DriverClassName=org.apache.derby.jdbc.EmbeddedDriver,
                    Url=jdbc:derby:target/custom;create=true,
                    MaxTotal=1,
-                   MaxWaitMillis=10000,
+                   MaxWaitMillis=1000,
                    TestOnBorrow=true"/>
       <property name="openjpa.ConnectionDriverName" value="org.apache.commons.dbcp2.BasicDataSource"/>
       <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema"/>

@@ -22,17 +22,20 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.examples.SendEmail;
 import org.junit.jupiter.api.Test;
 
-public class JpaTransactedSplitTest extends AbstractJpaTest {
+public class JpaTransactedTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";
 
     @Test
-    public void testTransacted() throws Exception {
+    public void testTransactedSplit() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(2);
-
         template.sendBody("direct:split", Arrays.asList(
                 new SendEmail("test1@example.org"), new SendEmail("test2@example.org")));
-
         assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testTransactedMulticast() throws Exception {
+        template.sendBody("direct:multicast", new SendEmail("test@example.org"));
     }
 
     @Override
@@ -44,6 +47,10 @@ public class JpaTransactedSplitTest extends AbstractJpaTest {
                         .transacted().split().body()
                         .to("jpa://" + SendEmail.class.getName())
                         .to("mock:result");
+
+                from("direct:multicast")
+                        .transacted().multicast()
+                        .to("jpa://" + SendEmail.class.getName(), "jpa://" + SendEmail.class.getName());
             }
         };
     }
