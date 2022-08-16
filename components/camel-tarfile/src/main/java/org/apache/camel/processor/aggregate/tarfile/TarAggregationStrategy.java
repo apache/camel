@@ -172,9 +172,6 @@ public class TarAggregationStrategy implements AggregationStrategy {
                             ? newExchange.getIn().getHeader(Exchange.FILE_NAME, String.class)
                             : newExchange.getIn().getMessageId();
                     addFileToTar(tarFile, appendFile, this.preserveFolderStructure ? entryName : null);
-                    GenericFile<File> genericFile = FileConsumer.asGenericFile(
-                            tarFile.getParent(), tarFile, Charset.defaultCharset().toString(), false);
-                    genericFile.bindToExchange(answer);
                 }
             } catch (Exception e) {
                 throw new GenericFileOperationFailedException(e.getMessage(), e);
@@ -189,14 +186,14 @@ public class TarAggregationStrategy implements AggregationStrategy {
                             ? newExchange.getIn().getHeader(Exchange.FILE_NAME, String.class)
                             : newExchange.getIn().getMessageId();
                     addEntryToTar(tarFile, entryName, buffer, buffer.length);
-                    GenericFile<File> genericFile = FileConsumer.asGenericFile(
-                            tarFile.getParent(), tarFile, Charset.defaultCharset().toString(), false);
-                    genericFile.bindToExchange(answer);
                 }
             } catch (Exception e) {
                 throw new GenericFileOperationFailedException(e.getMessage(), e);
             }
         }
+        GenericFile<File> genericFile = FileConsumer.asGenericFile(
+                tarFile.getParent(), tarFile, Charset.defaultCharset().toString(), false);
+        genericFile.bindToExchange(answer);
         return answer;
     }
 
