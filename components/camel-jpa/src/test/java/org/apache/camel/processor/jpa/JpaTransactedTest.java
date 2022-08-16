@@ -17,10 +17,18 @@
 package org.apache.camel.processor.jpa;
 
 import java.util.Arrays;
+import java.util.Map;
 
+import org.apache.camel.AggregationStrategy;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jpa.JpaConstants;
+import org.apache.camel.component.jpa.JpaHelper;
 import org.apache.camel.examples.SendEmail;
+import org.apache.camel.support.ExchangeHelper;
 import org.junit.jupiter.api.Test;
+
+import javax.persistence.EntityManager;
 
 public class JpaTransactedTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";
@@ -43,6 +51,11 @@ public class JpaTransactedTest extends AbstractJpaTest {
         template.sendBody("direct:recipient", new SendEmail("test@example.org"));
     }
 
+    @Test
+    public void testTransactedEnrich() throws Exception {
+        template.sendBody("direct:enrich", new SendEmail("test@example.org"));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -61,6 +74,16 @@ public class JpaTransactedTest extends AbstractJpaTest {
                         .transacted().recipientList(
                                 constant("jpa://" + SendEmail.class.getName() + "," + "jpa://" + SendEmail.class.getName())
                         );
+
+                from("direct:enrich")
+                        .transacted().enrich("jpa://" + SendEmail.class.getName(), new AggregationStrategy() {
+                            @Override
+                            public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                                JpaHelper.copyEntityManagers(oldExchange, newExchange);
+                                return oldExchange;
+                            }
+                        })
+                        .to("jpa://" + SendEmail.class.getName());
             }
         };
     }
