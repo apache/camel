@@ -23,6 +23,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.AggregationStrategy;
@@ -203,6 +205,8 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
                 private int index;
                 private boolean closed;
 
+                private Map<String, Object> txData;
+
                 public boolean hasNext() {
                     if (closed) {
                         return false;
@@ -229,6 +233,14 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
                         // and do not share the unit of work
                         Exchange newExchange = processorExchangeFactory.createCorrelatedCopy(copy, false);
                         newExchange.adapt(ExtendedExchange.class).setTransacted(original.isTransacted());
+                        // If we are in a transaction, set TRANSACTION_CONTEXT_DATA property for new exchanges to share txData
+                        // during the transaction.
+                        if (original.isTransacted() && newExchange.getProperty(Exchange.TRANSACTION_CONTEXT_DATA) == null) {
+                            if (txData == null) {
+                                txData = new ConcurrentHashMap<>();
+                            }
+                            newExchange.setProperty(Exchange.TRANSACTION_CONTEXT_DATA, txData);
+                        }
                         // If the splitter has an aggregation strategy
                         // then the StreamCache created by the child routes must not be
                         // closed by the unit of work of the child route, but by the unit of
