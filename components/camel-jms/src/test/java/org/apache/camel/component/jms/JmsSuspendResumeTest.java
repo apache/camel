@@ -23,23 +23,22 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-public class JmsSuspendResumeTest extends CamelTestSupport {
+public class JmsSuspendResumeTest extends AbstractPersistentJMSTest {
 
     @Test
     public void testSuspendResume() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:foo");
+        MockEndpoint mock = getMockEndpoint("mock:JmsSuspendResumeTest");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBody("activemq:queue:foo", "Hello World");
+        template.sendBody("activemq:queue:JmsSuspendResumeTest", "Hello World");
 
         assertMockEndpointsSatisfied();
 
-        context.getRouteController().suspendRoute("foo");
+        context.getRouteController().suspendRoute("JmsSuspendResumeTest");
 
         resetMocks();
         mock.expectedMessageCount(0);
@@ -47,14 +46,14 @@ public class JmsSuspendResumeTest extends CamelTestSupport {
         // sleep a bit to ensure its properly suspended
         Thread.sleep(2000);
 
-        template.sendBody("activemq:queue:foo", "Bye World");
+        template.sendBody("activemq:queue:JmsSuspendResumeTest", "Bye World");
 
         assertMockEndpointsSatisfied(1, TimeUnit.SECONDS);
 
         resetMocks();
         mock.expectedBodiesReceived("Bye World");
 
-        context.getRouteController().resumeRoute("foo");
+        context.getRouteController().resumeRoute("JmsSuspendResumeTest");
 
         assertMockEndpointsSatisfied();
     }
@@ -74,7 +73,7 @@ public class JmsSuspendResumeTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:foo").routeId("foo").to("mock:foo");
+                from("activemq:queue:JmsSuspendResumeTest").routeId("JmsSuspendResumeTest").to("mock:JmsSuspendResumeTest");
             }
         };
     }

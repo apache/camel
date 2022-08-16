@@ -24,14 +24,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Service;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class JmsAutoStartupTest extends CamelTestSupport {
+public class JmsAutoStartupTest extends AbstractPersistentJMSTest {
 
     private JmsEndpoint endpoint;
 
@@ -77,7 +77,7 @@ public class JmsAutoStartupTest extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
 
         // must use persistent so the message is not lost
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
+        ConnectionFactory connectionFactory = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;

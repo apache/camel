@@ -20,18 +20,18 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JmsSetBodyNullErrorHandlerUseOriginalMessageTest extends CamelTestSupport {
+public class JmsSetBodyNullErrorHandlerUseOriginalMessageTest extends AbstractPersistentJMSTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
+        ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
         return camelContext;
     }
@@ -42,7 +42,7 @@ public class JmsSetBodyNullErrorHandlerUseOriginalMessageTest extends CamelTestS
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         getMockEndpoint("mock:bar").message(0).body().isNull();
 
-        template.sendBody("activemq:queue:foo", "Hello World");
+        template.sendBody("activemq:queue:JmsSetBodyNullErrorHandlerUseOriginalMessageTest", "Hello World");
 
         assertMockEndpointsSatisfied();
 
@@ -57,7 +57,7 @@ public class JmsSetBodyNullErrorHandlerUseOriginalMessageTest extends CamelTestS
             public void configure() {
                 errorHandler(deadLetterChannel("activemq:queue:dead").useOriginalMessage());
 
-                from("activemq:queue:foo")
+                from("activemq:queue:JmsSetBodyNullErrorHandlerUseOriginalMessageTest")
                         .to("mock:foo")
                         .process(exchange -> {
                             // an end user may set the message body explicit to null

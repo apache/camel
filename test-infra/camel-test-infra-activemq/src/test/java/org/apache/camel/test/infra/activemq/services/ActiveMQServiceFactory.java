@@ -104,4 +104,28 @@ public final class ActiveMQServiceFactory {
 
         return service;
     }
+
+    public static synchronized ActiveMQService createPersistentVMService() {
+        return createSingletonPersistentVMService();
+    }
+
+    public static synchronized ActiveMQService createPersistentVMServiceInstance() {
+        if (service == null) {
+            if (instance == null) {
+                instance = new SimpleTestServiceBuilder<>("activemq");
+
+                instance.addLocalMapping(() -> new SingletonActiveMQService(new ActiveMQPersistentVMService(), "activemq"));
+            }
+        }
+
+        return instance.build();
+    }
+
+    public static synchronized ActiveMQService createSingletonPersistentVMService() {
+        if (service == null) {
+            service = createVMServiceInstance();
+        }
+
+        return service;
+    }
 }

@@ -40,8 +40,8 @@ public class AsyncConsumerInOutTest extends AbstractJMSTest {
         // process the 2nd message on the queue
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Bye Camel");
 
-        template.sendBody("activemq:queue:start", "Hello Camel");
-        template.sendBody("activemq:queue:start", "Hello World");
+        template.sendBody("activemq:queue:AsyncConsumerInOutTest.start", "Hello Camel");
+        template.sendBody("activemq:queue:AsyncConsumerInOutTest.start", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -52,8 +52,7 @@ public class AsyncConsumerInOutTest extends AbstractJMSTest {
 
         camelContext.addComponent("async", new MyAsyncComponent());
 
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
+        ConnectionFactory connectionFactory = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
@@ -65,17 +64,17 @@ public class AsyncConsumerInOutTest extends AbstractJMSTest {
             @Override
             public void configure() {
                 // enable async in only mode on the consumer
-                from("activemq:queue:start?asyncConsumer=true")
+                from("activemq:queue:AsyncConsumerInOutTest.start?asyncConsumer=true")
                         .choice()
                         .when(body().contains("Camel"))
                         .to("async:camel?delay=2000")
-                        .to(ExchangePattern.InOut, "activemq:queue:camel")
+                        .to(ExchangePattern.InOut, "activemq:queue:AsyncConsumerInOutTest.camel")
                         .to("mock:result")
                         .otherwise()
                         .to("log:other")
                         .to("mock:result");
 
-                from("activemq:queue:camel")
+                from("activemq:queue:AsyncConsumerInOutTest.camel")
                         .to("log:camel")
                         .transform(constant("Bye Camel"));
             }

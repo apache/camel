@@ -19,13 +19,13 @@ package org.apache.camel.component.jms;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ConsumerTemplateJmsSelectorTest extends CamelTestSupport {
+public class ConsumerTemplateJmsSelectorTest extends AbstractPersistentJMSTest {
 
     @Test
     public void testJmsSelector() {
@@ -46,8 +46,8 @@ public class ConsumerTemplateJmsSelectorTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        // must be persistent to rember the messages
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
+        // must be persistent to remember the messages
+        ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(service);
         JmsComponent component = jmsComponentTransacted(connectionFactory);
         camelContext.addComponent("activemq", component);
         return camelContext;

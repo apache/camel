@@ -21,13 +21,13 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
 import org.apache.camel.throttling.ThrottlingInflightRoutePolicy;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
 
-public class JmsThrottlingInflightRoutePolicyTest extends CamelTestSupport {
+public class JmsThrottlingInflightRoutePolicyTest extends AbstractPersistentJMSTest {
 
     @Test
     public void testJmsThrottlingInflightRoutePolicy() throws Exception {
@@ -63,7 +63,7 @@ public class JmsThrottlingInflightRoutePolicyTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
+        ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentTransacted(connectionFactory));
 
         // and use another component for sender

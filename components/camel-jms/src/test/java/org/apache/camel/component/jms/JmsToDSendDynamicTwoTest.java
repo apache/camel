@@ -20,21 +20,20 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JmsToDSendDynamicTwoTest extends CamelTestSupport {
+public class JmsToDSendDynamicTwoTest extends AbstractPersistentJMSTest {
 
     @Test
     public void testToD() {
-        template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar");
-        template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
-        template.sendBodyAndHeader("direct:start", "Hello gin", "where", "gin");
+        template.sendBodyAndHeader("direct:start", "Hello bar", "where", "JmsToDSendDynamicTwoTest.bar");
+        template.sendBodyAndHeader("direct:start", "Hello beer", "where", "JmsToDSendDynamicTwoTest.beer");
+        template.sendBodyAndHeader("direct:start", "Hello gin", "where", "JmsToDSendDynamicTwoTest.gin");
 
-        template.sendBodyAndHeader("direct:start2", "Hello beer", "where2", "beer");
+        template.sendBodyAndHeader("direct:start2", "Hello beer", "where2", "JmsToDSendDynamicTwoTest.beer");
         template.sendBodyAndHeader("direct:start2", "Hello whiskey", "where2", "whiskey");
 
         // there should be 2 activemq endpoint
