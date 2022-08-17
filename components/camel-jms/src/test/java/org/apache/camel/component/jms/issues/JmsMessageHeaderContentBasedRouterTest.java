@@ -38,7 +38,7 @@ public class JmsMessageHeaderContentBasedRouterTest extends AbstractJMSTest {
         getMockEndpoint("mock:a").expectedMessageCount(0);
         getMockEndpoint("mock:b").expectedMessageCount(1);
 
-        template.sendBody("activemq:queue:start", "Hello World");
+        template.sendBody("activemq:queue:JmsInOutRoutingSlipTest.start", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -60,7 +60,7 @@ public class JmsMessageHeaderContentBasedRouterTest extends AbstractJMSTest {
                 Predicate isA = header("route").isEqualTo("a");
                 Predicate isB = header("route").isEqualTo("b");
 
-                from("activemq:queue:start")
+                from("activemq:queue:JmsInOutRoutingSlipTest.start")
                         .bean(MyPreProcessorBean.class, "determineRouting")
                         .choice()
                         .when(isA).to("mock:a")

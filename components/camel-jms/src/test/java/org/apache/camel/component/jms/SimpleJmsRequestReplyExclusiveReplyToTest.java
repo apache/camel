@@ -34,22 +34,31 @@ public class SimpleJmsRequestReplyExclusiveReplyToTest extends AbstractJMSTest {
     @Test
     public void testJmsRequestReplyExclusiveFixedReplyTo() {
         assertEquals("Hello A",
-                template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Exclusive&replyToConsumerType=Simple", "A"));
+                template.requestBody(
+                        "activemq:queue:SimpleJmsRequestReplyExclusiveReplyToTest.foo?replyTo=queue:SimpleJmsRequestReplyExclusiveReplyToTest.bar&replyToType=Exclusive&replyToConsumerType=Simple",
+                        "A"));
         assertEquals("Hello B",
-                template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Exclusive&replyToConsumerType=Simple", "B"));
+                template.requestBody(
+                        "activemq:queue:SimpleJmsRequestReplyExclusiveReplyToTest.foo?replyTo=queue:SimpleJmsRequestReplyExclusiveReplyToTest.bar&replyToType=Exclusive&replyToConsumerType=Simple",
+                        "B"));
         assertEquals("Hello C",
-                template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Exclusive&replyToConsumerType=Simple", "C"));
+                template.requestBody(
+                        "activemq:queue:SimpleJmsRequestReplyExclusiveReplyToTest.foo?replyTo=queue:SimpleJmsRequestReplyExclusiveReplyToTest.bar&replyToType=Exclusive&replyToConsumerType=Simple",
+                        "C"));
         assertEquals("Hello D",
-                template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Exclusive&replyToConsumerType=Simple", "D"));
+                template.requestBody(
+                        "activemq:queue:SimpleJmsRequestReplyExclusiveReplyToTest.foo?replyTo=queue:SimpleJmsRequestReplyExclusiveReplyToTest.bar&replyToType=Exclusive&replyToConsumerType=Simple",
+                        "D"));
         assertEquals("Hello E",
-                template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Exclusive&replyToConsumerType=Simple", "E"));
+                template.requestBody(
+                        "activemq:queue:SimpleJmsRequestReplyExclusiveReplyToTest.foo?replyTo=queue:SimpleJmsRequestReplyExclusiveReplyToTest.bar&replyToType=Exclusive&replyToConsumerType=Simple",
+                        "E"));
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
+        ConnectionFactory connectionFactory = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
         return camelContext;
     }
@@ -59,7 +68,7 @@ public class SimpleJmsRequestReplyExclusiveReplyToTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo")
+                from("activemq:queue:SimpleJmsRequestReplyExclusiveReplyToTest.foo")
                         .transform(body().prepend("Hello "));
             }
         };

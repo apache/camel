@@ -42,7 +42,7 @@ public class JmsRoutingSlipInOutTest extends AbstractJMSTest {
     public void testInOutRoutingSlip() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Result-Done-B-A-Hello");
 
-        template.sendBody("activemq:queue:start", "Hello");
+        template.sendBody("activemq:queue:JmsRoutingSlipInOutTest.start", "Hello");
 
         assertMockEndpointsSatisfied();
     }
@@ -63,15 +63,16 @@ public class JmsRoutingSlipInOutTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:start").to("direct:start").to("bean:myBean?method=doResult").to("mock:result");
+                from("activemq:queue:JmsRoutingSlipInOutTest.start").to("direct:start").to("bean:myBean?method=doResult")
+                        .to("mock:result");
 
                 from("direct:start").to("bean:myBean?method=createSlip").setExchangePattern(ExchangePattern.InOut)
                         .routingSlip(header("mySlip"))
                         .to("bean:myBean?method=backFromSlip");
 
-                from("activemq:queue:a").to("bean:myBean?method=doA");
+                from("activemq:queue:JmsRoutingSlipInOutTest.a").to("bean:myBean?method=doA");
 
-                from("activemq:queue:b").to("bean:myBean?method=doB");
+                from("activemq:queue:JmsRoutingSlipInOutTest.b").to("bean:myBean?method=doB");
             }
         };
     }
@@ -79,7 +80,7 @@ public class JmsRoutingSlipInOutTest extends AbstractJMSTest {
     public static final class MyBean {
 
         public void createSlip(@Headers Map<String, Object> headers) {
-            headers.put("mySlip", "activemq:queue:a,activemq:queue:b");
+            headers.put("mySlip", "activemq:queue:JmsRoutingSlipInOutTest.a,activemq:queue:JmsRoutingSlipInOutTest.b");
         }
 
         public String backFromSlip(String body) {

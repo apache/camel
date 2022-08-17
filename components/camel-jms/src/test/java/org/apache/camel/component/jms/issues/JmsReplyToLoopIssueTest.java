@@ -37,7 +37,7 @@ public class JmsReplyToLoopIssueTest extends AbstractJMSTest {
         getMockEndpoint("mock:bar").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:done").expectedBodiesReceived("World");
 
-        template.sendBodyAndHeader("direct:start", "World", "JMSReplyTo", "queue:bar");
+        template.sendBodyAndHeader("direct:start", "World", "JMSReplyTo", "queue:JmsReplyToLoopIssueTest.bar");
 
         // sleep a little to ensure we do not do endless loop
         Awaitility.await().atMost(250, TimeUnit.MILLISECONDS).untilAsserted(this::assertMockEndpointsSatisfied);
@@ -46,8 +46,7 @@ public class JmsReplyToLoopIssueTest extends AbstractJMSTest {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
+        ConnectionFactory connectionFactory = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
         return camelContext;
     }
@@ -59,14 +58,14 @@ public class JmsReplyToLoopIssueTest extends AbstractJMSTest {
             public void configure() {
                 from("direct:start")
                         // must enable preserveMessageQos to force Camel to use the JMSReplyTo header
-                        .to("activemq:queue:foo?preserveMessageQos=true")
+                        .to("activemq:queue:JmsReplyToLoopIssueTest.foo?preserveMessageQos=true")
                         .to("mock:done");
 
-                from("activemq:queue:foo")
+                from("activemq:queue:JmsReplyToLoopIssueTest.foo")
                         .to("log:foo?showAll=true", "mock:foo")
                         .transform(body().prepend("Bye "));
 
-                from("activemq:queue:bar")
+                from("activemq:queue:JmsReplyToLoopIssueTest.bar")
                         .to("log:bar?showAll=true", "mock:bar");
             }
         };

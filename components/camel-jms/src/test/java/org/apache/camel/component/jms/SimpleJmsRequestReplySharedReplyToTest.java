@@ -31,27 +31,26 @@ public class SimpleJmsRequestReplySharedReplyToTest extends AbstractJMSTest {
     @Test
     public void testJmsRequestReplySharedReplyTo() {
         assertEquals("Hello A", template.requestBody(
-                "activemq:queue:foo?replyTo=bar&replyToType=Shared&replyToDestinationSelectorName=mySelector&replyToConsumerType=Simple",
+                "activemq:queue:queue:SimpleJmsRequestReplySharedReplyToTest.foo?replyTo=queue:SimpleJmsRequestReplySharedReplyToTest.bar&replyToType=Shared&replyToDestinationSelectorName=mySelector&replyToConsumerType=Simple",
                 "A"));
         assertEquals("Hello B", template.requestBody(
-                "activemq:queue:foo?replyTo=bar&replyToType=Shared&replyToDestinationSelectorName=mySelector&replyToConsumerType=Simple",
+                "activemq:queue:queue:SimpleJmsRequestReplySharedReplyToTest.foo?replyTo=queue:SimpleJmsRequestReplySharedReplyToTest.bar&replyToType=Shared&replyToDestinationSelectorName=mySelector&replyToConsumerType=Simple",
                 "B"));
         assertEquals("Hello C", template.requestBody(
-                "activemq:queue:foo?replyTo=bar&replyToType=Shared&replyToDestinationSelectorName=mySelector&replyToConsumerType=Simple",
+                "activemq:queue:queue:SimpleJmsRequestReplySharedReplyToTest.foo?replyTo=queue:SimpleJmsRequestReplySharedReplyToTest.bar&replyToType=Shared&replyToDestinationSelectorName=mySelector&replyToConsumerType=Simple",
                 "C"));
         assertEquals("Hello D", template.requestBody(
-                "activemq:queue:foo?replyTo=bar&replyToType=Shared&replyToDestinationSelectorName=mySelector&replyToConsumerType=Simple",
+                "activemq:queue:queue:SimpleJmsRequestReplySharedReplyToTest.foo?replyTo=queue:SimpleJmsRequestReplySharedReplyToTest.bar&replyToType=Shared&replyToDestinationSelectorName=mySelector&replyToConsumerType=Simple",
                 "D"));
         assertEquals("Hello E", template.requestBody(
-                "activemq:queue:foo?replyTo=bar&replyToType=Shared&replyToDestinationSelectorName=mySelector&replyToConsumerType=Simple",
+                "activemq:queue:queue:SimpleJmsRequestReplySharedReplyToTest.foo?replyTo=queue:SimpleJmsRequestReplySharedReplyToTest.bar&replyToType=Shared&replyToDestinationSelectorName=mySelector&replyToConsumerType=Simple",
                 "E"));
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
+        ConnectionFactory connectionFactory = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
         return camelContext;
     }
@@ -61,7 +60,7 @@ public class SimpleJmsRequestReplySharedReplyToTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo")
+                from("activemq:queue:queue:SimpleJmsRequestReplySharedReplyToTest.foo")
                         .transform(body().prepend("Hello "));
             }
         };

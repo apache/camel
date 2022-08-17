@@ -34,7 +34,9 @@ public class AsyncConsumerInOutTwoTest extends AbstractJMSTest {
 
     @Test
     public void testAsyncJmsConsumer() {
-        String out = template.requestBody("activemq:queue:start?replyTo=bar", "Hello World", String.class);
+        String out = template.requestBody(
+                "activemq:queue:AsyncConsumerInOutTwoTest.start?replyTo=AsyncConsumerInOutTwoTest.bar", "Hello World",
+                String.class);
         assertEquals("Bye World", out);
     }
 
@@ -57,7 +59,7 @@ public class AsyncConsumerInOutTwoTest extends AbstractJMSTest {
             @Override
             public void configure() {
                 // enable async in only mode on the consumer
-                from("activemq:queue:start?asyncConsumer=true")
+                from("activemq:queue:AsyncConsumerInOutTwoTest.start?asyncConsumer=true")
                         .to("async:camel?delay=2000")
                         .transform(constant("Bye World"));
             }

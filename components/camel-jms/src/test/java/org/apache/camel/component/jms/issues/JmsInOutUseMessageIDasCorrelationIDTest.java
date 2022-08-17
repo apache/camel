@@ -32,13 +32,17 @@ public class JmsInOutUseMessageIDasCorrelationIDTest extends AbstractJMSTest {
 
     @Test
     public void testInOutWithMsgIdAsCorrId() {
-        String reply = template.requestBody("activemq:queue:in?useMessageIDAsCorrelationID=true", "Hello World", String.class);
+        String reply = template.requestBody(
+                "activemq:queue:JmsInOutUseMessageIDasCorrelationIDTest.in?useMessageIDAsCorrelationID=true", "Hello World",
+                String.class);
         assertEquals("Bye World", reply);
     }
 
     @Test
     public void testInOutFixedReplyToAndWithMsgIdAsCorrId() {
-        String reply = template.requestBody("activemq:queue:in?replyTo=bar&useMessageIDAsCorrelationID=true", "Hello World",
+        String reply = template.requestBody(
+                "activemq:queue:JmsInOutUseMessageIDasCorrelationIDTest.in?replyTo=queue:JmsInOutUseMessageIDasCorrelationIDTest.bar&useMessageIDAsCorrelationID=true",
+                "Hello World",
                 String.class);
         assertEquals("Bye World", reply);
     }
@@ -46,8 +50,7 @@ public class JmsInOutUseMessageIDasCorrelationIDTest extends AbstractJMSTest {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
+        ConnectionFactory connectionFactory = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
         return camelContext;
     }
@@ -56,12 +59,13 @@ public class JmsInOutUseMessageIDasCorrelationIDTest extends AbstractJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:in?useMessageIDAsCorrelationID=true").process(exchange -> {
-                    String id = exchange.getIn().getHeader("JMSCorrelationID", String.class);
-                    assertNull(id, "JMSCorrelationID should be null");
+                from("activemq:queue:JmsInOutUseMessageIDasCorrelationIDTest.in?useMessageIDAsCorrelationID=true")
+                        .process(exchange -> {
+                            String id = exchange.getIn().getHeader("JMSCorrelationID", String.class);
+                            assertNull(id, "JMSCorrelationID should be null");
 
-                    exchange.getMessage().setBody("Bye World");
-                });
+                            exchange.getMessage().setBody("Bye World");
+                        });
             }
         };
     }
