@@ -18,6 +18,7 @@ package org.apache.camel.builder;
 
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
@@ -665,7 +666,11 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
                         camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerFactory());
             }
 
-            for (RouteBuilderLifecycleStrategy interceptor : lifecycleInterceptors) {
+            List<RouteBuilderLifecycleStrategy> strategies = new ArrayList<>(lifecycleInterceptors);
+            strategies.addAll(camelContext.getRegistry().findByType(RouteBuilderLifecycleStrategy.class));
+            strategies.sort(Comparator.comparing(Ordered::getOrder));
+
+            for (RouteBuilderLifecycleStrategy interceptor : strategies) {
                 interceptor.beforeConfigure(this);
             }
 
@@ -679,7 +684,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
                 getRouteCollection().prepareRoute(route);
             }
 
-            for (RouteBuilderLifecycleStrategy interceptor : lifecycleInterceptors) {
+            for (RouteBuilderLifecycleStrategy interceptor : strategies) {
                 interceptor.afterConfigure(this);
             }
         }
