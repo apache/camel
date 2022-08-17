@@ -702,6 +702,7 @@ public class NotifyBuilderTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:assert");
         mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World", "Hi World");
 
+        // TODO: CAMEL-18396
         NotifyBuilder notify = new NotifyBuilder(context).from("direct:foo").whenDoneSatisfied(mock).create();
 
         assertEquals(false, notify.matches());
