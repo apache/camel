@@ -68,4 +68,18 @@ public final class ConnectionFactoryHelper {
         connectionFactory.setTrustAllPackages(true);
         return connectionFactory;
     }
+
+    public static ConnectionFactory createPersistentConnectionFactory(String url) {
+        return createPersistentConnectionFactory(new ActiveMQConnectionFactory(url));
+
+    }
+
+    public static ConnectionFactory createPersistentConnectionFactory(ActiveMQConnectionFactory connectionFactory) {
+        connectionFactory.setCopyMessageOnSend(false);
+        connectionFactory.setOptimizeAcknowledge(true);
+        connectionFactory.setOptimizedMessageDispatch(true);
+        connectionFactory.setAlwaysSessionAsync(false);
+        connectionFactory.setTrustAllPackages(true);
+        return connectionFactory;
+    }
 }

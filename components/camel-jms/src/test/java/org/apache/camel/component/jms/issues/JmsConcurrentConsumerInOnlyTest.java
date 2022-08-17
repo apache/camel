@@ -21,8 +21,11 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
+import org.apache.camel.test.infra.activemq.services.ActiveMQService;
+import org.apache.camel.test.infra.activemq.services.ActiveMQServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -30,13 +33,15 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
  * Concurrent consumer with InOnly test.
  */
 public class JmsConcurrentConsumerInOnlyTest extends CamelTestSupport {
+    @RegisterExtension
+    public static ActiveMQService service = ActiveMQServiceFactory.createVMService();
 
     @Test
     public void testConcurrentConsumers() throws Exception {
         // send messages to queue before processing
         int size = 2000;
         for (int i = 0; i < size; i++) {
-            template.sendBody("activemq:foo", "Hello " + i);
+            template.sendBody("activemq:JmsConcurrentConsumerInOnlyTest", "Hello " + i);
         }
 
         // start route and process the messages
@@ -51,7 +56,8 @@ public class JmsConcurrentConsumerInOnlyTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPooledPersistentConnectionFactory();
+        ConnectionFactory connectionFactory
+                = CamelJmsTestHelper.createPooledPersistentConnectionFactory(service.serviceAddress());
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
@@ -61,7 +67,8 @@ public class JmsConcurrentConsumerInOnlyTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:foo?concurrentConsumers=2&maxConcurrentConsumers=5").routeId("foo").noAutoStartup()
+                from("activemq:JmsConcurrentConsumerInOnlyTest?concurrentConsumers=2&maxConcurrentConsumers=5").routeId("foo")
+                        .noAutoStartup()
                         .log("${threadName} got ${body}")
                         .delay(simple("${random(0,10)}"))
                         .to("mock:foo");

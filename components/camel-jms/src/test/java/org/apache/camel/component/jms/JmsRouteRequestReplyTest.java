@@ -36,6 +36,7 @@ import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
 import org.apache.camel.test.infra.activemq.services.LegacyEmbeddedBroker;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
@@ -142,9 +143,8 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
     public static class ContextBuilderMessageID implements ContextBuilder {
         @Override
         public CamelContext buildContext(CamelContext context) {
-            //            final String brokerUrl = LegacyEmbeddedBroker.createBrokerUrl();
-            //            ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(brokerUrl, null);
-            ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+            final String brokerUrl = LegacyEmbeddedBroker.createBrokerUrl();
+            ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(brokerUrl, null);
 
             JmsComponent jmsComponent = jmsComponentAutoAcknowledge(connectionFactory);
             jmsComponent.getConfiguration().setUseMessageIDAsCorrelationID(true);

@@ -35,7 +35,7 @@ public class JmsMessageBodySetNullTest extends AbstractJMSTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("jms:queue:foo")
+                from("jms:queue:JmsMessageBodySetNullTest")
                         .to("mock:foo")
                         .process(exchange -> exchange.getIn().setBody(null))
                         .to("mock:bar");
@@ -47,7 +47,7 @@ public class JmsMessageBodySetNullTest extends AbstractJMSTest {
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         getMockEndpoint("mock:bar").message(0).body().isNull();
 
-        template.sendBody("jms:queue:foo", "Hello World");
+        template.sendBody("jms:queue:JmsMessageBodySetNullTest", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -57,7 +57,7 @@ public class JmsMessageBodySetNullTest extends AbstractJMSTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("jms:queue:foo")
+                from("jms:queue:JmsMessageBodySetNullTest")
                         .to("mock:foo")
                         .process(exchange -> exchange.getIn().setBody(null))
                         .to("mock:bar");
@@ -71,7 +71,7 @@ public class JmsMessageBodySetNullTest extends AbstractJMSTest {
         getMockEndpoint("mock:bar").message(0).body().isNull();
         getMockEndpoint("mock:bar").expectedHeaderReceived("code", 123);
 
-        template.sendBodyAndHeader("jms:queue:foo", "Hello World", "code", 123);
+        template.sendBodyAndHeader("jms:queue:JmsMessageBodySetNullTest", "Hello World", "code", 123);
 
         assertMockEndpointsSatisfied();
     }
@@ -81,7 +81,7 @@ public class JmsMessageBodySetNullTest extends AbstractJMSTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("jms:queue:foo")
+                from("jms:queue:JmsMessageBodySetNullTest")
                         .to("mock:foo")
                         .setBody(simple("${null}"))
                         .to("mock:bar");
@@ -93,7 +93,7 @@ public class JmsMessageBodySetNullTest extends AbstractJMSTest {
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         getMockEndpoint("mock:bar").message(0).body().isNull();
 
-        template.sendBody("jms:queue:foo", "Hello World");
+        template.sendBody("jms:queue:JmsMessageBodySetNullTest", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -103,7 +103,7 @@ public class JmsMessageBodySetNullTest extends AbstractJMSTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("jms:queue:foo")
+                from("jms:queue:JmsMessageBodySetNullTest")
                         .to("mock:foo")
                         .setBody(simple("${null}"))
                         .to("mock:bar");
@@ -117,7 +117,7 @@ public class JmsMessageBodySetNullTest extends AbstractJMSTest {
         getMockEndpoint("mock:bar").message(0).body().isNull();
         getMockEndpoint("mock:bar").expectedHeaderReceived("code", 123);
 
-        template.sendBodyAndHeader("jms:queue:foo", "Hello World", "code", 123);
+        template.sendBodyAndHeader("jms:queue:JmsMessageBodySetNullTest", "Hello World", "code", 123);
 
         assertMockEndpointsSatisfied();
     }
