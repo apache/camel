@@ -39,7 +39,7 @@
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
 
         <route>
-            <from uri="activemq:queue:start"/>
+            <from uri="activemq:queue:SpringJmsRoutingSlipInOutTest.start"/>
             <to uri="direct:start"/>
             <to uri="bean:myBean?method=doResult"/>
             <to uri="mock:result"/>
@@ -56,12 +56,12 @@
         </route>
 
         <route>
-            <from uri="activemq:queue:a"/>
+            <from uri="activemq:queue:SpringJmsRoutingSlipInOutTest.a"/>
             <to uri="bean:myBean?method=doA"/>
         </route>
 
         <route>
-            <from uri="activemq:queue:b"/>
+            <from uri="activemq:queue:SpringJmsRoutingSlipInOutTest.b"/>
             <to uri="bean:myBean?method=doB"/>
         </route>
 

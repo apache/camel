@@ -35,7 +35,7 @@ public class SpringJmsRoutingSlipInOutTest extends CamelSpringTestSupport {
     public void testInOutRoutingSlip() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Result-Done-B-A-Hello");
 
-        template.sendBody("activemq:queue:start", "Hello");
+        template.sendBody("activemq:queue:SpringJmsRoutingSlipInOutTest.start", "Hello");
 
         assertMockEndpointsSatisfied();
     }

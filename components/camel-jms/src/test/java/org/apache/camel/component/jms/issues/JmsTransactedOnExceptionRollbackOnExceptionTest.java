@@ -23,15 +23,20 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Handler;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.jms.JmsComponent;
+import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
+import org.apache.camel.test.infra.activemq.services.ActiveMQService;
+import org.apache.camel.test.infra.activemq.services.ActiveMQServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsTransactedOnExceptionRollbackOnExceptionTest extends CamelTestSupport {
+    @RegisterExtension
+    public static ActiveMQService service = ActiveMQServiceFactory.createVMService();
 
     public static class BadErrorHandler {
 
@@ -73,7 +78,8 @@ public class JmsTransactedOnExceptionRollbackOnExceptionTest extends CamelTestSu
         CamelContext camelContext = super.createCamelContext();
 
         // no redeliveries
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory(null, 0);
+        ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(service, 0);
+
         JmsComponent component = jmsComponentTransacted(connectionFactory);
         camelContext.addComponent("activemq", component);
         return camelContext;

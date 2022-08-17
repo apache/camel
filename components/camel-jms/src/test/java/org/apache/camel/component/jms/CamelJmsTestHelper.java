@@ -16,142 +16,36 @@
  */
 package org.apache.camel.component.jms;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import javax.jms.ConnectionFactory;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.pool.PooledConnectionFactory;
-import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.URISupport;
+import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
+import org.apache.camel.test.infra.activemq.services.LegacyEmbeddedBroker;
 
 /**
  * A helper for unit testing with Apache ActiveMQ as embedded JMS broker.
  */
 public final class CamelJmsTestHelper {
 
-    private static AtomicInteger counter = new AtomicInteger();
-
     private CamelJmsTestHelper() {
     }
 
+    @Deprecated
     public static PooledConnectionFactory createPooledConnectionFactory() {
-        ConnectionFactory cf = createConnectionFactory(null, null);
+        final String brokerUrl = LegacyEmbeddedBroker.createBrokerUrl();
+        ConnectionFactory cf = ConnectionFactoryHelper.createConnectionFactory(brokerUrl, null);
+
         PooledConnectionFactory pooled = new PooledConnectionFactory();
         pooled.setConnectionFactory(cf);
         pooled.setMaxConnections(8);
         return pooled;
     }
 
-    public static PooledConnectionFactory createPooledPersistentConnectionFactory() {
-        ConnectionFactory cf = createPersistentConnectionFactory();
+    public static PooledConnectionFactory createPooledPersistentConnectionFactory(String brokerUrl) {
+        ConnectionFactory cf = ConnectionFactoryHelper.createPersistentConnectionFactory(brokerUrl);
         PooledConnectionFactory pooled = new PooledConnectionFactory();
         pooled.setConnectionFactory(cf);
         pooled.setMaxConnections(8);
         return pooled;
     }
-
-    @Deprecated
-    public static ConnectionFactory createConnectionFactory() {
-        return createConnectionFactory(null, null);
-    }
-
-    @Deprecated
-    public static ConnectionFactory createConnectionFactory(String options, Integer maximumRedeliveries) {
-        String url = createBrokerUrl(options);
-        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
-        // optimize AMQ to be as fast as possible so unit testing is quicker
-        connectionFactory.setCopyMessageOnSend(false);
-        connectionFactory.setOptimizeAcknowledge(true);
-        connectionFactory.setOptimizedMessageDispatch(true);
-        // When using asyncSend, producers will not be guaranteed to send in the order we
-        // have in the tests (which may be confusing for queues) so we need this set to false.
-        // Another way of guaranteeing order is to use persistent messages or transactions.
-        connectionFactory.setUseAsyncSend(false);
-        connectionFactory.setAlwaysSessionAsync(false);
-        if (maximumRedeliveries != null) {
-            connectionFactory.getRedeliveryPolicy().setMaximumRedeliveries(maximumRedeliveries);
-        }
-        connectionFactory.setTrustAllPackages(true);
-        return connectionFactory;
-    }
-
-    @Deprecated
-    public static ConnectionFactory createConnectionFactoryForURL(String url, Integer maximumRedeliveries) {
-        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
-        // optimize AMQ to be as fast as possible so unit testing is quicker
-        connectionFactory.setCopyMessageOnSend(false);
-        connectionFactory.setOptimizeAcknowledge(true);
-        connectionFactory.setOptimizedMessageDispatch(true);
-        // When using asyncSend, producers will not be guaranteed to send in the order we
-        // have in the tests (which may be confusing for queues) so we need this set to false.
-        // Another way of guaranteeing order is to use persistent messages or transactions.
-        connectionFactory.setUseAsyncSend(false);
-        connectionFactory.setAlwaysSessionAsync(false);
-        if (maximumRedeliveries != null) {
-            connectionFactory.getRedeliveryPolicy().setMaximumRedeliveries(maximumRedeliveries);
-        }
-        connectionFactory.setTrustAllPackages(true);
-        return connectionFactory;
-    }
-
-    public static ConnectionFactory createPersistentConnectionFactory() {
-        return createPersistentConnectionFactory(null);
-    }
-
-    public static ConnectionFactory createPersistentConnectionFactory(String options) {
-        String url = createPersistentBrokerUrl(options);
-        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
-        // optimize AMQ to be as fast as possible so unit testing is quicker
-        connectionFactory.setCopyMessageOnSend(false);
-        connectionFactory.setOptimizeAcknowledge(true);
-        connectionFactory.setOptimizedMessageDispatch(true);
-        connectionFactory.setAlwaysSessionAsync(false);
-        connectionFactory.setTrustAllPackages(true);
-        return connectionFactory;
-    }
-
-    @Deprecated
-    private static String createBrokerUrl(String options) {
-        // using a unique broker name improves testing when running the entire test suite in the same JVM
-        int id = counter.incrementAndGet();
-        Map<String, Object> map = new HashMap<>();
-        map.put("broker.useJmx", false);
-        map.put("broker.persistent", false);
-        return createUri("vm://test-broker-" + id, map, options);
-    }
-
-    public static String createPersistentBrokerUrl() {
-        return createPersistentBrokerUrl(null);
-    }
-
-    public static String createPersistentBrokerUrl(String options) {
-        // using a unique broker name improves testing when running the entire test suite in the same JVM
-        int id = counter.incrementAndGet();
-
-        // use an unique data directory in target
-        String dir = "target/activemq-data-" + id;
-        // remove dir so its empty on startup
-        FileUtil.removeDir(new File(dir));
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("broker.useJmx", false);
-        map.put("broker.persistent", true);
-        map.put("broker.dataDirectory", dir);
-        return createUri("vm://test-broker-" + id, map, options);
-    }
-
-    @Deprecated
-    private static String createUri(String uri, Map<String, Object> map, String options) {
-        try {
-            map.putAll(URISupport.parseQuery(options));
-            return URISupport.appendParametersToURI(uri, map);
-        } catch (Exception e) {
-            throw new IllegalArgumentException(e);
-        }
-    }
-
 }
