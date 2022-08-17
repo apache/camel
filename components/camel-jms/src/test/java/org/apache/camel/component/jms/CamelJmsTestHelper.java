@@ -114,10 +114,6 @@ public final class CamelJmsTestHelper {
         return connectionFactory;
     }
 
-    public static String createBrokerUrl() {
-        return createBrokerUrl(null);
-    }
-
     @Deprecated
     private static String createBrokerUrl(String options) {
         // using a unique broker name improves testing when running the entire test suite in the same JVM

@@ -41,7 +41,7 @@
 
   <bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
     <property name="brokerURL">
-      <bean class="org.apache.camel.component.jms.CamelJmsTestHelper" factory-method="createBrokerUrl"/>
+      <bean class="org.apache.camel.test.infra.activemq.services.LegacyEmbeddedBroker" factory-method="createBrokerUrl"/>
     </property>
   </bean>
 
