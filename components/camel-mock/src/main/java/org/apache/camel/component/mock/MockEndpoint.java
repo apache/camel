@@ -1341,6 +1341,24 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
     @Override
     public boolean notifyBuilderMatches() {
+        if (failFastAssertionError != null) {
+            // the test failed so we do not match
+            return false;
+        }
+
+        for (Runnable test : tests) {
+            // skip tasks which we have already been running in fail fast mode
+            boolean skip = failFast && test instanceof AssertionTask;
+            if (!skip) {
+                try {
+                    test.run();
+                } catch (Throwable e) {
+                    // the test failed so we do not match
+                    return false;
+                }
+            }
+        }
+
         if (latch != null) {
             try {
                 return latch.await(0, TimeUnit.SECONDS);
