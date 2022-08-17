@@ -46,12 +46,14 @@ public class ManagedJmsEndpointTest extends AbstractPersistentJMSTest {
         MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> objectNames = mbeanServer.queryNames(
-                new ObjectName("org.apache.camel:context=camel-*,type=endpoints,name=\"activemq://queue:start\""), null);
+                new ObjectName(
+                        "org.apache.camel:context=camel-*,type=endpoints,name=\"activemq://queue:ManagedJmsEndpointTest\""),
+                null);
         assertEquals(1, objectNames.size());
         ObjectName name = objectNames.iterator().next();
 
         String uri = (String) mbeanServer.getAttribute(name, "EndpointUri");
-        assertEquals("activemq://queue:start", uri);
+        assertEquals("activemq://queue:ManagedJmsEndpointTest", uri);
 
         Boolean singleton = (Boolean) mbeanServer.getAttribute(name, "Singleton");
         assertTrue(singleton);
@@ -64,8 +66,8 @@ public class ManagedJmsEndpointTest extends AbstractPersistentJMSTest {
 
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
-        template.sendBody("activemq:queue:start", "Hello World");
-        template.sendBody("activemq:queue:start", "Bye World");
+        template.sendBody("activemq:queue:ManagedJmsEndpointTest", "Hello World");
+        template.sendBody("activemq:queue:ManagedJmsEndpointTest", "Bye World");
 
         assertMockEndpointsSatisfied();
 
@@ -73,7 +75,7 @@ public class ManagedJmsEndpointTest extends AbstractPersistentJMSTest {
         context.getRouteController().stopRoute("foo");
 
         // send a message to queue
-        template.sendBody("activemq:queue:start", "Hi World");
+        template.sendBody("activemq:queue:ManagedJmsEndpointTest", "Hi World");
 
         size = (Long) mbeanServer.invoke(name, "queueSize", null, null);
         assertEquals(1, size.intValue());
@@ -88,7 +90,7 @@ public class ManagedJmsEndpointTest extends AbstractPersistentJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:start").routeId("foo").to("log:foo").to("mock:result");
+                from("activemq:queue:ManagedJmsEndpointTest").routeId("foo").to("log:foo").to("mock:result");
             }
         };
     }

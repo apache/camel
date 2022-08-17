@@ -40,7 +40,7 @@ public class JmsOnCompletionAndInterceptAndOnExceptionTest extends AbstractJMSTe
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
 
-        template.sendBody("activemq:queue:start", "Hello World");
+        template.sendBody("activemq:queue:JmsOnCompletionAndInterceptAndOnExceptionTest.start", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -55,7 +55,7 @@ public class JmsOnCompletionAndInterceptAndOnExceptionTest extends AbstractJMSTe
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        template.sendBody("activemq:queue:start", "Kabom");
+        template.sendBody("activemq:queue:JmsOnCompletionAndInterceptAndOnExceptionTest.start", "Kabom");
 
         assertMockEndpointsSatisfied();
     }
@@ -73,7 +73,7 @@ public class JmsOnCompletionAndInterceptAndOnExceptionTest extends AbstractJMSTe
                 // define an on exception
                 onException(Exception.class).to("mock:exception");
 
-                from("activemq:queue:start")
+                from("activemq:queue:JmsOnCompletionAndInterceptAndOnExceptionTest.start")
                         .process(new MyProcessor())
                         .to("mock:result");
             }

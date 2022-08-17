@@ -36,8 +36,8 @@ public class AsyncConsumerFalseTest extends AbstractJMSTest {
         // async is disabled (so we should receive in same order)
         getMockEndpoint("mock:result").expectedBodiesReceived("Camel", "Hello World");
 
-        template.sendBody("activemq:queue:start", "Hello Camel");
-        template.sendBody("activemq:queue:start", "Hello World");
+        template.sendBody("activemq:queue:AsyncConsumerFalseTest.start", "Hello Camel");
+        template.sendBody("activemq:queue:AsyncConsumerFalseTest.start", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -61,7 +61,7 @@ public class AsyncConsumerFalseTest extends AbstractJMSTest {
             @Override
             public void configure() {
                 // disable async in only mode on the consumer
-                from("activemq:queue:start?asyncConsumer=false")
+                from("activemq:queue:AsyncConsumerFalseTest.start?asyncConsumer=false")
                         .choice()
                         .when(body().contains("Camel"))
                         .to("async:camel?delay=2000")

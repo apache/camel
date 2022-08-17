@@ -35,7 +35,8 @@ public class JmsInOutRoutingSlipTest extends AbstractJMSTest {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:end").expectedBodiesReceived("Bye World");
 
-        template.sendBodyAndHeader("activemq:queue:start", "World", "slip", "activemq:queue:foo,activemq:queue:result");
+        template.sendBodyAndHeader("activemq:queue:JmsInOutRoutingSlipTest.start", "World", "slip",
+                "activemq:queue:foo,activemq:queue:result");
 
         assertMockEndpointsSatisfied();
     }
@@ -54,7 +55,7 @@ public class JmsInOutRoutingSlipTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:start")
+                from("activemq:queue:JmsInOutRoutingSlipTest.start")
                         .setExchangePattern(ExchangePattern.InOut)
                         .routingSlip(header("slip"))
                         .to("log:end")

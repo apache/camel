@@ -41,7 +41,7 @@ public class JmsOnCompletionTest extends AbstractJMSTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
 
-        template.sendBody("activemq:queue:start", "Hello World");
+        template.sendBody("activemq:queue:JmsOnCompletionTest.start", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -54,7 +54,7 @@ public class JmsOnCompletionTest extends AbstractJMSTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        template.sendBody("activemq:queue:start", "Kabom");
+        template.sendBody("activemq:queue:JmsOnCompletionTest.start", "Kabom");
 
         assertMockEndpointsSatisfied();
     }
@@ -65,7 +65,7 @@ public class JmsOnCompletionTest extends AbstractJMSTest {
             @Override
             public void configure() {
                 // START SNIPPET: e1
-                from("activemq:queue:start")
+                from("activemq:queue:JmsOnCompletionTest.start")
                         .onCompletion()
                         // this route is only invoked when the original route is complete as a kind
                         // of completion callback

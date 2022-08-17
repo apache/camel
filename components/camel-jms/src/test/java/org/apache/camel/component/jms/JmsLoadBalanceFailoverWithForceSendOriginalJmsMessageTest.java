@@ -49,7 +49,8 @@ public class JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest extends A
         resultMock.expectedMessageCount(1);
         resultMock.expectedHeaderReceived("foo", "bar");
 
-        String out = template.requestBodyAndHeader("jms:queue:start", "Hello World", "foo", "bar", String.class);
+        String out = template.requestBodyAndHeader("jms:queue:JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest.start",
+                "Hello World", "foo", "bar", String.class);
         assertEquals("Hello Back", out);
 
         assertMockEndpointsSatisfied();
@@ -78,7 +79,8 @@ public class JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest extends A
         resultMock.expectedMessageCount(1);
         resultMock.expectedHeaderReceived("foo", "bar");
 
-        out = template.requestBodyAndHeader("jms:queue:start", "Hello World", "foo", "bar", String.class);
+        out = template.requestBodyAndHeader("jms:queue:JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest.start",
+                "Hello World", "foo", "bar", String.class);
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();
@@ -93,23 +95,23 @@ public class JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest extends A
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("jms:queue:start?mapJmsMessage=false")
+                from("jms:queue:JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest.start?mapJmsMessage=false")
                         .loadBalance().failover(-1, false, true)
-                        .to("jms:queue:one?forceSendOriginalMessage=" + forceSendOriginalMessage)
-                        .to("jms:queue:two?forceSendOriginalMessage=" + forceSendOriginalMessage)
-                        .to("jms:queue:three?forceSendOriginalMessage=" + forceSendOriginalMessage)
+                        .to("jms:queue:JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest.one?forceSendOriginalMessage=" + forceSendOriginalMessage)
+                        .to("jms:queue:JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest.two?forceSendOriginalMessage=" + forceSendOriginalMessage)
+                        .to("jms:queue:JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest.three?forceSendOriginalMessage=" + forceSendOriginalMessage)
                         .end()
                         .to("mock:result");
 
-                from("jms:queue:one?mapJmsMessage=false")
+                from("jms:queue:JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest.one?mapJmsMessage=false")
                         .to("mock:one")
                         .throwException(new IllegalArgumentException("Damn"));
 
-                from("jms:queue:two?mapJmsMessage=false")
+                from("jms:queue:JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest.two?mapJmsMessage=false")
                         .to("mock:two")
                         .transform().simple("Hello Back");
 
-                from("jms:queue:three?mapJmsMessage=false")
+                from("jms:queue:JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest.three?mapJmsMessage=false")
                         .to("mock:three")
                         .transform().simple("Bye World");
             }

@@ -50,8 +50,7 @@ public class ReplyToDestinationSelectorNameTest extends AbstractJMSTest {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
+        ConnectionFactory connectionFactory = createConnectionFactory(service);
         JmsComponent component = jmsComponentAutoAcknowledge(connectionFactory);
         camelContext.addComponent("activemq", component);
         return camelContext;
@@ -63,10 +62,10 @@ public class ReplyToDestinationSelectorNameTest extends AbstractJMSTest {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("activemq:queue:foo?replyTo=queue:bar&replyToDestinationSelectorName=replyId")
+                        .to("activemq:queue:ReplyToDestinationSelectorNameTest.foo?replyTo=queue:ReplyToDestinationSelectorNameTest.bar&replyToDestinationSelectorName=replyId")
                         .to("mock:result");
 
-                from("activemq:queue:foo")
+                from("activemq:queue:ReplyToDestinationSelectorNameTest.foo")
                         .log("Using header named replyId with value as correlation - ${header.replyId}")
                         .transform(body().prepend("Bye "));
             }

@@ -38,8 +38,8 @@ public class AsyncConsumerTest extends AbstractJMSTest {
         // process the 2nd message on the queue
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Camel");
 
-        template.sendBody("activemq:queue:start", "Hello Camel");
-        template.sendBody("activemq:queue:start", "Hello World");
+        template.sendBody("activemq:queue:AsyncConsumerTest.start", "Hello Camel");
+        template.sendBody("activemq:queue:AsyncConsumerTest.start", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -63,7 +63,7 @@ public class AsyncConsumerTest extends AbstractJMSTest {
             @Override
             public void configure() {
                 // enable async in only mode on the consumer
-                from("activemq:queue:start?asyncConsumer=true")
+                from("activemq:queue:AsyncConsumerTest.start?asyncConsumer=true")
                         .choice()
                         .when(body().contains("Camel"))
                         .to("async:camel?delay=2000")
