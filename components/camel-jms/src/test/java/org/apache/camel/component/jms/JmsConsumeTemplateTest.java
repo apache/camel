@@ -16,12 +16,8 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.camel.CamelContext;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsConsumeTemplateTest extends AbstractPersistentJMSTest {
@@ -36,18 +32,6 @@ public class JmsConsumeTemplateTest extends AbstractPersistentJMSTest {
 
         Object out = consumer.receiveBody(url, 5000);
         assertEquals("Hello World", out);
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        // must be persistent so the consumer can receive the message as we receive AFTER the message
-        // has been published
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
     }
 
     @Override

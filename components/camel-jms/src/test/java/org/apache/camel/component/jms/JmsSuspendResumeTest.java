@@ -18,14 +18,9 @@ package org.apache.camel.component.jms;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 public class JmsSuspendResumeTest extends AbstractPersistentJMSTest {
 
@@ -56,17 +51,6 @@ public class JmsSuspendResumeTest extends AbstractPersistentJMSTest {
         context.getRouteController().resumeRoute("JmsSuspendResumeTest");
 
         assertMockEndpointsSatisfied();
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        // must use persistent so the message is not lost
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
     }
 
     @Override

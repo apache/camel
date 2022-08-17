@@ -45,9 +45,7 @@ public class JmsAsyncStartStopListenerTest extends AbstractPersistentJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
+    protected void createConnectionFactory(CamelContext camelContext) {
         // use a persistent queue as the consumer is started asynchronously
         // so we need a persistent store in case no active consumers when we send the messages
         ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(service);
@@ -55,8 +53,6 @@ public class JmsAsyncStartStopListenerTest extends AbstractPersistentJMSTest {
         jms.getConfiguration().setAsyncStartListener(true);
         jms.getConfiguration().setAsyncStopListener(true);
         camelContext.addComponent(componentName, jms);
-
-        return camelContext;
     }
 
     @Override

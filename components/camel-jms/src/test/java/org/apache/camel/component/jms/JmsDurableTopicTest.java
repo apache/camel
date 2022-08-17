@@ -18,15 +18,10 @@ package org.apache.camel.component.jms;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 public class JmsDurableTopicTest extends AbstractPersistentJMSTest {
 
@@ -43,14 +38,6 @@ public class JmsDurableTopicTest extends AbstractPersistentJMSTest {
                     template.sendBody("activemq:topic:JmsDurableTopicTest", "Hello World");
                     assertMockEndpointsSatisfied();
                 });
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        return camelContext;
     }
 
     @Override

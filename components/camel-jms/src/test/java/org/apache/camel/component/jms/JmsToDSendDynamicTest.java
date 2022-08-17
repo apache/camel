@@ -16,13 +16,9 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsToDSendDynamicTest extends AbstractPersistentJMSTest {
@@ -48,16 +44,6 @@ public class JmsToDSendDynamicTest extends AbstractPersistentJMSTest {
         template.sendBodyAndHeader("direct:startSlashed", "Hello bar", "where", "JmsToDSendDynamicTest.bar");
         String out = consumer.receiveBody("activemq://JmsToDSendDynamicTest.bar", 2000, String.class);
         assertEquals("Hello bar", out);
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
     }
 
     @Override

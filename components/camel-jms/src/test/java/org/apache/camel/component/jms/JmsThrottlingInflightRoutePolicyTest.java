@@ -60,16 +60,11 @@ public class JmsThrottlingInflightRoutePolicyTest extends AbstractPersistentJMST
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
+    protected void createConnectionFactory(CamelContext camelContext) {
         ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentTransacted(connectionFactory));
 
         // and use another component for sender
         camelContext.addComponent("activemq-sender", jmsComponentTransacted(connectionFactory));
-
-        return camelContext;
     }
-
 }
