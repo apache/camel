@@ -16,14 +16,10 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
@@ -89,16 +85,6 @@ public class TwoConsumerOnSameQueueTest extends AbstractPersistentJMSTest {
         template.sendBody("activemq:queue:TwoConsumerOnSameQueueTest", "Hello World");
 
         assertMockEndpointsSatisfied();
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
     }
 
     @Override

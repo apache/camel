@@ -16,16 +16,11 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -43,18 +38,6 @@ public class JmsDeadLetterChannelInOutTest extends AbstractPersistentJMSTest {
         // should be in DLQ
         Object dead = consumer.receiveBody("activemq:queue:error", 5000);
         assertEquals("Hello World", dead);
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        // must be persistent so the consumer can receive the message as we receive AFTER the message
-        // has been published
-        ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(service);
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
     }
 
     @Override

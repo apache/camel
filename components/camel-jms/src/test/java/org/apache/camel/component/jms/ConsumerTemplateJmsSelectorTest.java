@@ -43,14 +43,10 @@ public class ConsumerTemplateJmsSelectorTest extends AbstractPersistentJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        // must be persistent to remember the messages
+    protected void createConnectionFactory(CamelContext camelContext) {
         ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(service);
         JmsComponent component = jmsComponentTransacted(connectionFactory);
         camelContext.addComponent("activemq", component);
-        return camelContext;
     }
 
     @Override
