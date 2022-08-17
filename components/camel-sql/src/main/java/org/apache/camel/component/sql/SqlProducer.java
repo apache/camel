@@ -245,7 +245,8 @@ public class SqlProducer extends DefaultProducer {
 
     private void populateStatement(PreparedStatement ps, Exchange exchange, String sql, String preparedQuery)
             throws SQLException {
-        int expected = parametersCount > 0 ? parametersCount : ps.getParameterMetaData().getParameterCount();
+        int psParametersCount = ps.getParameterMetaData() != null ? ps.getParameterMetaData().getParameterCount() : 0;
+        int expected = parametersCount > 0 ? parametersCount : psParametersCount;
 
         // only populate if really needed
         if (alwaysPopulateStatement || expected > 0) {
