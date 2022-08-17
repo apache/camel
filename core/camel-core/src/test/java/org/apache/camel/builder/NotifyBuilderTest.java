@@ -722,6 +722,34 @@ public class NotifyBuilderTest extends ContextTestSupport {
     }
 
     @Test
+    public void testWhenReceivedSatisfiedFalse() throws Exception {
+        // lets use a mock to set the expressions as it got many great
+        // assertions for that
+        // notice we use mock:assert which does NOT exist in the route, its just
+        // a pseudo name
+        MockEndpoint mock = getMockEndpoint("mock:assert");
+        mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World", "Does not happen", "Hi World");
+
+        NotifyBuilder notify = new NotifyBuilder(context).from("direct:foo").whenDoneSatisfied(mock).create();
+
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:foo", "Bye World");
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:foo", "Hello World");
+        assertEquals(false, notify.matches());
+
+        // the notify is based on direct:foo so sending to bar should not
+        // trigger match
+        template.sendBody("direct:bar", "Hi World");
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:foo", "Hi World");
+        assertEquals(false, notify.matches());
+    }
+
+    @Test
     public void testWhenReceivedNotSatisfied() throws Exception {
         // lets use a mock to set the expressions as it got many great
         // assertions for that
