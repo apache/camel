@@ -26,7 +26,7 @@ import picocli.CommandLine.Command;
 class ListProcess extends CamelCommand {
 
     @CommandLine.Option(names = { "--sort" },
-            description = "Sort by pid, name or age", defaultValue = "pid")
+                        description = "Sort by pid, name or age", defaultValue = "pid")
     private String sort;
 
     public ListProcess(CamelJBangMain main) {
@@ -53,12 +53,12 @@ class ListProcess extends CamelCommand {
                     return answer;
                 })
                 .forEach(ph -> {
-            String name = extractName(ph);
-            if (ObjectHelper.isNotEmpty(name)) {
-                String ago = TimeUtils.printSince(extractSince(ph));
-                System.out.println(ph.pid() + " camel run " + name + " (age: " + ago + ")");
-            }
-        });
+                    String name = extractName(ph);
+                    if (ObjectHelper.isNotEmpty(name)) {
+                        String ago = TimeUtils.printSince(extractSince(ph));
+                        System.out.println(ph.pid() + " camel run " + name + " (age: " + ago + ")");
+                    }
+                });
         return 0;
     }
 
