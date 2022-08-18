@@ -46,7 +46,7 @@ public class JMSTransactionThrottlingRoutePolicyTest extends CamelSpringTestSupp
         mock.expectedMinimumMessageCount(size);
 
         for (int i = 0; i < size; i++) {
-            template.sendBody("activemq-sender:queue:foo", "Message " + i);
+            template.sendBody("activemq-sender:queue:JMSTransactionThrottlingRoutePolicyTest", "Message " + i);
         }
 
         assertMockEndpointsSatisfied();

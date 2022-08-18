@@ -34,10 +34,10 @@ public class JmsDirectStartupOrderIssueTest extends AbstractPersistentJMSTest {
     @Test
     public void testJmsDirectStartupOrderIssue() throws Exception {
         // send messages to queue so there is messages on the queue before we start the route
-        template.sendBody("activemq:queue:foo", "Hello World");
-        template.sendBody("activemq:queue:foo", "Hello Camel");
-        template.sendBody("activemq:queue:foo", "Bye World");
-        template.sendBody("activemq:queue:foo", "Bye Camel");
+        template.sendBody("activemq:queue:JmsDirectStartupOrderIssueTest", "Hello World");
+        template.sendBody("activemq:queue:JmsDirectStartupOrderIssueTest", "Hello Camel");
+        template.sendBody("activemq:queue:JmsDirectStartupOrderIssueTest", "Bye World");
+        template.sendBody("activemq:queue:JmsDirectStartupOrderIssueTest", "Bye Camel");
 
         context.getRouteController().startRoute("amq");
 
@@ -58,10 +58,10 @@ public class JmsDirectStartupOrderIssueTest extends AbstractPersistentJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:foo").routeId("amq").startupOrder(100).autoStartup(false)
-                        .to("direct:foo");
+                from("activemq:queue:JmsDirectStartupOrderIssueTest").routeId("amq").startupOrder(100).autoStartup(false)
+                        .to("direct:JmsDirectStartupOrderIssueTest");
 
-                from("direct:foo").routeId("direct").startupOrder(1)
+                from("direct:JmsDirectStartupOrderIssueTest").routeId("direct").startupOrder(1)
                         .to("mock:result");
             }
         };

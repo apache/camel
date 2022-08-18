@@ -35,13 +35,13 @@ public class BruceHandlingBeanExceptionTest extends AbstractJMSTest {
 
     @Test
     public void testSendOK() {
-        Object out = template.requestBody("activemq:queue:ok", "Hello World");
+        Object out = template.requestBody("activemq:queue:BruceHandlingBeanExceptionTest.ok", "Hello World");
         assertEquals("Bye World", out);
     }
 
     @Test
     public void testSendError() {
-        Object out = template.requestBody("activemq:queue:error", "Hello World");
+        Object out = template.requestBody("activemq:queue:BruceHandlingBeanExceptionTest.error", "Hello World");
         IllegalArgumentException e = assertIsInstanceOf(IllegalArgumentException.class, out);
         assertEquals("Forced exception by unit test", e.getMessage());
     }
@@ -61,9 +61,9 @@ public class BruceHandlingBeanExceptionTest extends AbstractJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:ok").transform(constant("Bye World"));
+                from("activemq:queue:BruceHandlingBeanExceptionTest.ok").transform(constant("Bye World"));
 
-                from("activemq:queue:error?transferException=true").bean(MyExceptionBean.class);
+                from("activemq:queue:BruceHandlingBeanExceptionTest.error?transferException=true").bean(MyExceptionBean.class);
             }
         };
     }

@@ -40,15 +40,15 @@ public class QueueToQueueTransactionWithoutDefineTransactionManagerTest extends 
             @Override
             public void configure() {
                 errorHandler(noErrorHandler());
-                from("activemq:queue:foo?transacted=false").process(new ConditionalExceptionProcessor())
-                        .to("activemq:queue:bar?transacted=false");
+                from("activemq:queue:AbstractTransactionTest?transacted=false").process(new ConditionalExceptionProcessor())
+                        .to("activemq:queue:AbstractTransactionTest.dest?transacted=false");
 
             }
         });
 
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
 
-        template.sendBody("activemq:queue:foo", "blah");
+        template.sendBody("activemq:queue:AbstractTransactionTest", "blah");
 
         notify.matchesWaitTime();
 

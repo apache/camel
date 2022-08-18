@@ -67,13 +67,13 @@ public class JmsRequestReplyProcessRepliesConcurrentUsingThreadsTest extends Abs
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo")
+                from("activemq:queue:JmsRequestReplyProcessRepliesConcurrentUsingThreadsTest")
                         .log("request - ${body}")
                         .transform(body().prepend("Bye "));
 
                 from("seda:start")
                         .setExchangePattern(ExchangePattern.InOut)
-                        .to("activemq:queue:foo")
+                        .to("activemq:queue:JmsRequestReplyProcessRepliesConcurrentUsingThreadsTest")
                         .log("reply   - ${body}")
                         .threads(5)
                         .log("delay   - ${body}")

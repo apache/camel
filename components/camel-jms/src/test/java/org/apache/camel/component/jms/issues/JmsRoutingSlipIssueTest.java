@@ -31,12 +31,13 @@ public class JmsRoutingSlipIssueTest extends AbstractJMSTest {
 
     @Test
     public void testJmsRoutingSlip() throws Exception {
-        getMockEndpoint("mock:a").expectedBodiesReceived("Hello");
-        getMockEndpoint("mock:b").expectedBodiesReceived("HelloA");
-        getMockEndpoint("mock:c").expectedBodiesReceived("HelloAB");
+        getMockEndpoint("mock:JmsRoutingSlipIssueTest.a").expectedBodiesReceived("Hello");
+        getMockEndpoint("mock:JmsRoutingSlipIssueTest.b").expectedBodiesReceived("HelloA");
+        getMockEndpoint("mock:JmsRoutingSlipIssueTest.c").expectedBodiesReceived("HelloAB");
         getMockEndpoint("mock:result").expectedBodiesReceived("HelloABC");
 
-        String slip = "activemq:queue:a,activemq:queue:b,activemq:queue:c";
+        String slip
+                = "activemq:queue:JmsRoutingSlipIssueTest.a,activemq:queue:JmsRoutingSlipIssueTest.b,activemq:queue:JmsRoutingSlipIssueTest.c";
         template.sendBodyAndHeader("direct:start", "Hello", "mySlip", slip);
 
         assertMockEndpointsSatisfied();
@@ -62,16 +63,16 @@ public class JmsRoutingSlipIssueTest extends AbstractJMSTest {
                         .routingSlip(header("mySlip"))
                         .to("mock:result");
 
-                from("activemq:queue:a")
-                        .to("mock:a")
+                from("activemq:queue:JmsRoutingSlipIssueTest.a")
+                        .to("mock:JmsRoutingSlipIssueTest.a")
                         .transform(body().append("A"));
 
-                from("activemq:queue:b")
-                        .to("mock:b")
+                from("activemq:queue:JmsRoutingSlipIssueTest.b")
+                        .to("mock:JmsRoutingSlipIssueTest.b")
                         .transform(body().append("B"));
 
-                from("activemq:queue:c")
-                        .to("mock:c")
+                from("activemq:queue:JmsRoutingSlipIssueTest.c")
+                        .to("mock:JmsRoutingSlipIssueTest.c")
                         .transform(body().append("C"));
             }
         };

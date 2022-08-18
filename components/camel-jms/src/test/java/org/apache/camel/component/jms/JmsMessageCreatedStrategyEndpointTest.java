@@ -46,7 +46,8 @@ public class JmsMessageCreatedStrategyEndpointTest extends AbstractJMSTest {
 
         // must remember to use this on the producer side as its in use when
         // sending
-        template.sendBody("activemq:queue:foo?messageCreatedStrategy=#myStrategy", "Hello World");
+        template.sendBody("activemq:queue:JmsMessageCreatedStrategyEndpointTest?messageCreatedStrategy=#myStrategy",
+                "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -67,7 +68,7 @@ public class JmsMessageCreatedStrategyEndpointTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo").to("mock:result");
+                from("activemq:queue:JmsMessageCreatedStrategyEndpointTest").to("mock:result");
             }
         };
     }

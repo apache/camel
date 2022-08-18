@@ -26,11 +26,13 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Isolated
 public class JmsInOutIssueTest extends AbstractJMSTest {
 
     @Test

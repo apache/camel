@@ -35,7 +35,7 @@ public class JmsTransferExceptionTest extends AbstractJMSTest {
     private static int counter;
 
     protected String getUri() {
-        return "activemq:queue:foo?transferException=true";
+        return "activemq:queue:JmsTransferExceptionTest?transferException=true";
     }
 
     @Override

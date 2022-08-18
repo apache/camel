@@ -38,7 +38,7 @@ public class JmsChainedEndpointDelayTimeoutTest extends AbstractJMSTest {
     public void testTimeoutNotTriggeredTempQueue() throws Exception {
         getMockEndpoint("mock:exception").expectedMessageCount(0);
         getMockEndpoint("mock:ping").expectedMessageCount(1);
-        template.requestBody("activemq:test", "<hello />");
+        template.requestBody("activemq:JmsChainedEndpointDelayTimeoutTest.test", "<hello />");
         assertMockEndpointsSatisfied();
     }
 
@@ -46,7 +46,7 @@ public class JmsChainedEndpointDelayTimeoutTest extends AbstractJMSTest {
     public void testTimeoutNotTriggeredFixedQueue() throws Exception {
         getMockEndpoint("mock:exception").expectedMessageCount(0);
         getMockEndpoint("mock:ping").expectedMessageCount(1);
-        template.requestBody("activemq:testReplyFixedQueue", "<hello />");
+        template.requestBody("activemq:JmsChainedEndpointDelayTimeoutTest.fixed", "<hello />");
         assertMockEndpointsSatisfied();
     }
 
@@ -69,15 +69,16 @@ public class JmsChainedEndpointDelayTimeoutTest extends AbstractJMSTest {
                         .handled(true)
                         .to("mock:exception");
 
-                from("activemq:test")
-                        .to(ExchangePattern.InOut, "activemq:ping?requestTimeout=500")
+                from("activemq:JmsChainedEndpointDelayTimeoutTest.test")
+                        .to(ExchangePattern.InOut, "activemq:JmsChainedEndpointDelayTimeoutTest.ping?requestTimeout=500")
                         .delay(constant(1000));
 
-                from("activemq:testReplyFixedQueue")
-                        .to(ExchangePattern.InOut, "activemq:ping?requestTimeout=500&replyToType=Exclusive&replyTo=reply")
+                from("activemq:JmsChainedEndpointDelayTimeoutTest.fixed")
+                        .to(ExchangePattern.InOut,
+                                "activemq:JmsChainedEndpointDelayTimeoutTest.ping?requestTimeout=500&replyToType=Exclusive&replyTo=JmsChainedEndpointDelayTimeoutTest.reply")
                         .delay(constant(1000));
 
-                from("activemq:ping")
+                from("activemq:JmsChainedEndpointDelayTimeoutTest.ping")
                         .to("mock:ping")
                         .log("pong");
 

@@ -40,7 +40,7 @@ public class JmsMessageCreatedStrategyComponentTest extends AbstractJMSTest {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived("beer", "Carlsberg");
 
-        template.sendBody("activemq:queue:foo", "Hello World");
+        template.sendBody("activemq:queue:JmsMessageCreatedStrategyComponentTest", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -64,7 +64,7 @@ public class JmsMessageCreatedStrategyComponentTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo")
+                from("activemq:queue:JmsMessageCreatedStrategyComponentTest")
                         .to("mock:result");
             }
         };

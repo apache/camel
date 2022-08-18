@@ -30,11 +30,16 @@ public class SimpleJmsRequestReplyTest extends AbstractJMSTest {
 
     @Test
     public void testJmsRequestReply() {
-        assertEquals("Hello A", template.requestBody("activemq:queue:foo?replyToConsumerType=Simple", "A"));
-        assertEquals("Hello B", template.requestBody("activemq:queue:foo?replyToConsumerType=Simple", "B"));
-        assertEquals("Hello C", template.requestBody("activemq:queue:foo?replyToConsumerType=Simple", "C"));
-        assertEquals("Hello D", template.requestBody("activemq:queue:foo?replyToConsumerType=Simple", "D"));
-        assertEquals("Hello E", template.requestBody("activemq:queue:foo?replyToConsumerType=Simple", "E"));
+        assertEquals("Hello A",
+                template.requestBody("activemq:queue:SimpleJmsRequestReplyTest?replyToConsumerType=Simple", "A"));
+        assertEquals("Hello B",
+                template.requestBody("activemq:queue:SimpleJmsRequestReplyTest?replyToConsumerType=Simple", "B"));
+        assertEquals("Hello C",
+                template.requestBody("activemq:queue:SimpleJmsRequestReplyTest?replyToConsumerType=Simple", "C"));
+        assertEquals("Hello D",
+                template.requestBody("activemq:queue:SimpleJmsRequestReplyTest?replyToConsumerType=Simple", "D"));
+        assertEquals("Hello E",
+                template.requestBody("activemq:queue:SimpleJmsRequestReplyTest?replyToConsumerType=Simple", "E"));
     }
 
     @Override
@@ -51,7 +56,7 @@ public class SimpleJmsRequestReplyTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo")
+                from("activemq:queue:SimpleJmsRequestReplyTest")
                         .transform(body().prepend("Hello "));
             }
         };

@@ -35,7 +35,7 @@ public class JmsEagerLoadingPropertiesTest extends AbstractJMSTest {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived("name", "Claus");
 
-        template.sendBodyAndHeader("activemq:queue:foo", "Hello World", "name", "Claus");
+        template.sendBodyAndHeader("activemq:queue:JmsEagerLoadingPropertiesTest", "Hello World", "name", "Claus");
 
         assertMockEndpointsSatisfied();
     }
@@ -56,7 +56,7 @@ public class JmsEagerLoadingPropertiesTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo?eagerLoadingOfProperties=true").process(exchange -> {
+                from("activemq:queue:JmsEagerLoadingPropertiesTest?eagerLoadingOfProperties=true").process(exchange -> {
                     String name = exchange.getIn().getHeader("name", String.class);
                     assertEquals("Claus", name);
                 }).to("mock:result");

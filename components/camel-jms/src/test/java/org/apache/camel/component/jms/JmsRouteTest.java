@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
@@ -31,6 +33,9 @@ public class JmsRouteTest extends AbstractJMSTest {
     protected MockEndpoint resultEndpoint;
     protected String componentName = "activemq";
     protected String startEndpointUri;
+    protected String endEndpointUri;
+
+    private final int endpointNum = ThreadLocalRandom.current().nextInt(10000);
 
     @Test
     public void testSendAndReceiveMessage() throws Exception {
@@ -63,7 +68,8 @@ public class JmsRouteTest extends AbstractJMSTest {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        startEndpointUri = componentName + ":queue:test.a.JmsRouteTest";
+        startEndpointUri = componentName + ":queue:test.a.JmsRouteTest" + endpointNum;
+        endEndpointUri = componentName + ":queue:test.b.JmsRouteTest" + endpointNum;
 
         super.setUp();
 
@@ -85,8 +91,8 @@ public class JmsRouteTest extends AbstractJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(startEndpointUri).to(componentName + ":queue:test.b.JmsRouteTest");
-                from(componentName + ":queue:test.b.JmsRouteTest").to("mock:result");
+                from(startEndpointUri).to(endEndpointUri);
+                from(endEndpointUri).to("mock:result");
             }
         };
     }

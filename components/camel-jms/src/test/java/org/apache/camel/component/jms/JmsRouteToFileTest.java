@@ -46,7 +46,7 @@ public class JmsRouteToFileTest extends AbstractJMSTest {
 
         deleteDirectory("target/routetofile");
 
-        template.sendBody("activemq:queue:hello", "Hello World");
+        template.sendBody("activemq:queue:JmsRouteToFileTest", "Hello World");
 
         // pause to let file producer save the file
         result.assertIsSatisfied();
@@ -77,7 +77,7 @@ public class JmsRouteToFileTest extends AbstractJMSTest {
             public void configure() {
                 // using mock endpoint here purely for testing. You would normally write this route as
                 // from("activemq:queue:hello").to("file://target/routetofile");
-                from("activemq:queue:hello").to("file://target/routetofile").to("mock:result");
+                from("activemq:queue:JmsRouteToFileTest").to("file://target/routetofile").to("mock:result");
             }
         };
     }

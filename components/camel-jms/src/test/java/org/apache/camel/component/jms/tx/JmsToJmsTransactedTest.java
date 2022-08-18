@@ -36,14 +36,14 @@ public class JmsToJmsTransactedTest extends CamelSpringTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo")
+                from("activemq:queue:JmsToJmsTransactedTest")
                         .transacted()
                         .to("activemq:queue:bar");
             }
         });
         context.start();
 
-        template.sendBody("activemq:queue:foo", "Hello World");
+        template.sendBody("activemq:queue:JmsToJmsTransactedTest", "Hello World");
 
         String reply = consumer.receiveBody("activemq:queue:bar", 5000, String.class);
         assertEquals("Hello World", reply);
@@ -54,7 +54,7 @@ public class JmsToJmsTransactedTest extends CamelSpringTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo")
+                from("activemq:queue:JmsToJmsTransactedTest")
                         .transacted()
                         .to("mock:start")
                         .to("activemq:queue:bar")
@@ -71,7 +71,7 @@ public class JmsToJmsTransactedTest extends CamelSpringTestSupport {
         MockEndpoint start = getMockEndpoint("mock:start");
         start.expectedMessageCount(7); // default number of redeliveries by AMQ is 6 so we get 6+1
 
-        template.sendBody("activemq:queue:foo", "Hello World");
+        template.sendBody("activemq:queue:JmsToJmsTransactedTest", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -81,7 +81,7 @@ public class JmsToJmsTransactedTest extends CamelSpringTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo")
+                from("activemq:queue:JmsToJmsTransactedTest")
                         .transacted()
                         .to("mock:start")
                         .to("activemq:queue:bar")
@@ -98,7 +98,7 @@ public class JmsToJmsTransactedTest extends CamelSpringTestSupport {
         MockEndpoint start = getMockEndpoint("mock:start");
         start.expectedMessageCount(7); // default number of redeliveries by AMQ is 6 so we get 6+1
 
-        template.sendBody("activemq:queue:foo", "Hello World");
+        template.sendBody("activemq:queue:JmsToJmsTransactedTest", "Hello World");
 
         assertMockEndpointsSatisfied();
 
@@ -112,7 +112,7 @@ public class JmsToJmsTransactedTest extends CamelSpringTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo")
+                from("activemq:queue:JmsToJmsTransactedTest")
                         .transacted()
                         .to("mock:start")
                         .to("activemq:queue:bar")
@@ -129,7 +129,7 @@ public class JmsToJmsTransactedTest extends CamelSpringTestSupport {
         MockEndpoint start = getMockEndpoint("mock:start");
         start.expectedMessageCount(7); // default number of redeliveries by AMQ is 6 so we get 6+1
 
-        template.sendBody("activemq:queue:foo", "Hello World");
+        template.sendBody("activemq:queue:JmsToJmsTransactedTest", "Hello World");
 
         assertMockEndpointsSatisfied();
     }

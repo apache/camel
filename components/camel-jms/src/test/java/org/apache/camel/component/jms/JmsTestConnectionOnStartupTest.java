@@ -38,7 +38,7 @@ public class JmsTestConnectionOnStartupTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo?testConnectionOnStartup=true").to("mock:foo");
+                from("activemq:queue:JmsTestConnectionOnStartupTest?testConnectionOnStartup=true").to("mock:foo");
             }
         });
 
@@ -46,8 +46,9 @@ public class JmsTestConnectionOnStartupTest extends CamelTestSupport {
             context.start();
             fail("Should have thrown an exception");
         } catch (Exception e) {
-            assertEquals("Failed to create Consumer for endpoint: activemq://queue:foo?testConnectionOnStartup=true. "
-                         + "Reason: Cannot get JMS Connection on startup for destination foo",
+            assertEquals(
+                    "Failed to create Consumer for endpoint: activemq://queue:JmsTestConnectionOnStartupTest?testConnectionOnStartup=true. "
+                         + "Reason: Cannot get JMS Connection on startup for destination JmsTestConnectionOnStartupTest",
                     e.getMessage());
         }
     }
@@ -57,7 +58,7 @@ public class JmsTestConnectionOnStartupTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("activemq:queue:foo?testConnectionOnStartup=true");
+                from("direct:start").to("activemq:queue:JmsTestConnectionOnStartupTest?testConnectionOnStartup=true");
             }
         });
 
@@ -67,7 +68,8 @@ public class JmsTestConnectionOnStartupTest extends CamelTestSupport {
         } catch (Exception ex) {
             FailedToCreateProducerException e = assertIsInstanceOf(FailedToCreateProducerException.class, ex.getCause());
             assertTrue(e.getMessage()
-                    .startsWith("Failed to create Producer for endpoint: activemq://queue:foo?testConnectionOnStartup=true."));
+                    .startsWith(
+                            "Failed to create Producer for endpoint: activemq://queue:JmsTestConnectionOnStartupTest?testConnectionOnStartup=true."));
             assertTrue(e.getMessage().contains("java.net.ConnectException"));
         }
     }

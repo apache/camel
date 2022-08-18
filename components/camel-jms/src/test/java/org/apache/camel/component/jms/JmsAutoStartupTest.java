@@ -41,7 +41,7 @@ public class JmsAutoStartupTest extends AbstractPersistentJMSTest {
         // should be stopped by default
         mock.expectedMessageCount(0);
 
-        template.sendBody("activemq:queue:foo", "Hello World");
+        template.sendBody("activemq:queue:JmsAutoStartupTest", "Hello World");
 
         Awaitility.await().atMost(2, TimeUnit.SECONDS)
                 .untilAsserted(this::assertMockEndpointsSatisfied);
@@ -60,7 +60,7 @@ public class JmsAutoStartupTest extends AbstractPersistentJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                endpoint = context.getEndpoint("activemq:queue:foo?autoStartup=false", JmsEndpoint.class);
+                endpoint = context.getEndpoint("activemq:queue:JmsAutoStartupTest?autoStartup=false", JmsEndpoint.class);
 
                 from(endpoint).to("mock:result");
             }

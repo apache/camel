@@ -47,7 +47,7 @@ public class MapJmsMessageTest extends AbstractJMSTest {
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(TextMessage.class);
 
-        template.sendBody("activemq:queue:hello", "Hello World");
+        template.sendBody("activemq:queue:MapJmsMessageTest", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -58,7 +58,7 @@ public class MapJmsMessageTest extends AbstractJMSTest {
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(BytesMessage.class);
 
-        template.sendBody("activemq:queue:hello", "Hello World".getBytes());
+        template.sendBody("activemq:queue:MapJmsMessageTest", "Hello World".getBytes());
 
         assertMockEndpointsSatisfied();
     }
@@ -67,7 +67,7 @@ public class MapJmsMessageTest extends AbstractJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:hello?mapJmsMessage=false").to("mock:result");
+                from("activemq:queue:MapJmsMessageTest?mapJmsMessage=false").to("mock:result");
             }
         };
     }

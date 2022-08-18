@@ -23,6 +23,6 @@ public class JmsRouteWithPassThroughKeyFormatStrategyTest extends JmsRouteWithDe
 
     @Override
     protected String getUri() {
-        return "activemq:queue:foo?jmsKeyFormatStrategy=passthrough";
+        return "activemq:queue:JmsRouteWithPassThroughKeyFormatStrategyTest?jmsKeyFormatStrategy=passthrough";
     }
 }

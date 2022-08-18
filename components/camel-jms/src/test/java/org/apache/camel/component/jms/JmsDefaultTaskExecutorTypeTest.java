@@ -48,8 +48,8 @@ public class JmsDefaultTaskExecutorTypeTest extends AbstractJMSTest {
         context.getRouteController().startRoute("threadPool");
         Long beforeThreadCount = currentThreadCount();
         getMockEndpoint("mock:result.threadPool").expectedMessageCount(1000);
-        doSendMessages("foo.threadPool", 500, 5, DefaultTaskExecutorType.ThreadPool);
-        doSendMessages("foo.threadPool", 500, 5, DefaultTaskExecutorType.ThreadPool);
+        doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.threadPool", 500, 5, DefaultTaskExecutorType.ThreadPool);
+        doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.threadPool", 500, 5, DefaultTaskExecutorType.ThreadPool);
         assertMockEndpointsSatisfied();
         Long numberThreadsCreated = currentThreadCount() - beforeThreadCount;
         LOG.info("Number of threads created, testThreadPoolTaskExecutor: " + numberThreadsCreated);
@@ -62,8 +62,8 @@ public class JmsDefaultTaskExecutorTypeTest extends AbstractJMSTest {
         context.getRouteController().startRoute("simpleAsync");
         Long beforeThreadCount = currentThreadCount();
         getMockEndpoint("mock:result.simpleAsync").expectedMessageCount(1000);
-        doSendMessages("foo.simpleAsync", 500, 5, DefaultTaskExecutorType.SimpleAsync);
-        doSendMessages("foo.simpleAsync", 500, 5, DefaultTaskExecutorType.SimpleAsync);
+        doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.simpleAsync", 500, 5, DefaultTaskExecutorType.SimpleAsync);
+        doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.simpleAsync", 500, 5, DefaultTaskExecutorType.SimpleAsync);
         assertMockEndpointsSatisfied();
         Long numberThreadsCreated = currentThreadCount() - beforeThreadCount;
         LOG.info("Number of threads created, testSimpleAsyncTaskExecutor: " + numberThreadsCreated);
@@ -76,8 +76,8 @@ public class JmsDefaultTaskExecutorTypeTest extends AbstractJMSTest {
         context.getRouteController().startRoute("default");
         Long beforeThreadCount = currentThreadCount();
         getMockEndpoint("mock:result.default").expectedMessageCount(1000);
-        doSendMessages("foo.default", 500, 5, null);
-        doSendMessages("foo.default", 500, 5, null);
+        doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.default", 500, 5, null);
+        doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.default", 500, 5, null);
         assertMockEndpointsSatisfied();
         Long numberThreadsCreated = currentThreadCount() - beforeThreadCount;
         LOG.info("Number of threads created, testDefaultTaskExecutor: " + numberThreadsCreated);
@@ -94,8 +94,8 @@ public class JmsDefaultTaskExecutorTypeTest extends AbstractJMSTest {
         context.getRouteController().startRoute("default");
         Long beforeThreadCount = currentThreadCount();
         getMockEndpoint("mock:result.default").expectedMessageCount(1000);
-        doSendMessages("foo.default", 500, 5, DefaultTaskExecutorType.ThreadPool);
-        doSendMessages("foo.default", 500, 5, DefaultTaskExecutorType.ThreadPool);
+        doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.default", 500, 5, DefaultTaskExecutorType.ThreadPool);
+        doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.default", 500, 5, DefaultTaskExecutorType.ThreadPool);
         assertMockEndpointsSatisfied();
         Long numberThreadsCreated = currentThreadCount() - beforeThreadCount;
         LOG.info("Number of threads created, testDefaultTaskExecutorThreadPoolAtComponentConfig: " + numberThreadsCreated);
@@ -165,16 +165,18 @@ public class JmsDefaultTaskExecutorTypeTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo.simpleAsync?defaultTaskExecutorType=SimpleAsync").routeId("simpleAsync")
+                from("activemq:queue:foo.JmsDefaultTaskExecutorTypeTest.simpleAsync?defaultTaskExecutorType=SimpleAsync")
+                        .routeId("simpleAsync")
                         .noAutoStartup()
                         .to("mock:result.simpleAsync")
                         .setBody(constant("Reply"));
 
-                from("activemq:queue:foo.threadPool?defaultTaskExecutorType=ThreadPool").routeId("threadPool").noAutoStartup()
+                from("activemq:queue:foo.JmsDefaultTaskExecutorTypeTest.threadPool?defaultTaskExecutorType=ThreadPool")
+                        .routeId("threadPool").noAutoStartup()
                         .to("mock:result.threadPool")
                         .setBody(constant("Reply"));
 
-                from("activemq:queue:foo.default").routeId("default").noAutoStartup()
+                from("activemq:queue:foo.JmsDefaultTaskExecutorTypeTest.default").routeId("default").noAutoStartup()
                         .to("mock:result.default")
                         .setBody(constant("Reply"));
             }

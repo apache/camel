@@ -39,7 +39,7 @@ public class JmsRouteTimeoutCheckerIntervalTest extends AbstractJMSTest {
     public void testTimeout() {
         try {
             // send a in-out with a timeout for 1 sec 
-            template.requestBody("activemq:queue:slow?requestTimeout=1000", "Hello World");
+            template.requestBody("activemq:queue:JmsRouteTimeoutCheckerIntervalTest.slow?requestTimeout=1000", "Hello World");
             fail("Should have timed out with an exception");
         } catch (RuntimeCamelException e) {
             assertTrue(e.getCause() instanceof ExchangeTimedOutException, "Should have timed out with an exception");
@@ -50,7 +50,8 @@ public class JmsRouteTimeoutCheckerIntervalTest extends AbstractJMSTest {
     public void testNoTimeout() {
         // START SNIPPET: e1
         // send a in-out with a timeout for 5 sec
-        Object out = template.requestBody("activemq:queue:slow?requestTimeout=5000", "Hello World");
+        Object out = template.requestBody("activemq:queue:JmsRouteTimeoutCheckerIntervalTest.slow?requestTimeout=5000",
+                "Hello World");
         // END SNIPPET: e1
         assertEquals("Bye World", out);
     }
@@ -73,7 +74,7 @@ public class JmsRouteTimeoutCheckerIntervalTest extends AbstractJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:slow").delay(3000).transform(constant("Bye World"));
+                from("activemq:queue:JmsRouteTimeoutCheckerIntervalTest.slow").delay(3000).transform(constant("Bye World"));
             }
         };
     }

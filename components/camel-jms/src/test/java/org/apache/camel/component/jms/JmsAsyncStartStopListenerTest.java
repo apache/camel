@@ -38,8 +38,8 @@ public class JmsAsyncStartStopListenerTest extends AbstractPersistentJMSTest {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(2);
 
-        template.requestBody("activemq:queue:hello", "Hello World");
-        template.requestBody("activemq:queue:hello", "Gooday World");
+        template.requestBody("activemq:queue:JmsAsyncStartStopListenerTest", "Hello World");
+        template.requestBody("activemq:queue:JmsAsyncStartStopListenerTest", "Gooday World");
 
         result.assertIsSatisfied();
     }
@@ -59,7 +59,8 @@ public class JmsAsyncStartStopListenerTest extends AbstractPersistentJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:hello").process(exchange -> exchange.getIn().setBody("Bye World")).to("mock:result");
+                from("activemq:queue:JmsAsyncStartStopListenerTest").process(exchange -> exchange.getIn().setBody("Bye World"))
+                        .to("mock:result");
             }
         };
     }

@@ -31,12 +31,12 @@ public class JmsInOutRoutingSlipTest extends AbstractJMSTest {
 
     @Test
     public void testJmsInOutRoutingSlip() throws Exception {
-        getMockEndpoint("mock:foo").expectedBodiesReceived("World");
-        getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
+        getMockEndpoint("mock:JmsInOutRoutingSlipTest.foo").expectedBodiesReceived("World");
+        getMockEndpoint("mock:JmsInOutRoutingSlipTest.result").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:end").expectedBodiesReceived("Bye World");
 
         template.sendBodyAndHeader("activemq:queue:JmsInOutRoutingSlipTest.start", "World", "slip",
-                "activemq:queue:foo,activemq:queue:result");
+                "activemq:queue:JmsInOutRoutingSlipTest.foo,activemq:queue:JmsInOutRoutingSlipTest.result");
 
         assertMockEndpointsSatisfied();
     }
@@ -61,14 +61,14 @@ public class JmsInOutRoutingSlipTest extends AbstractJMSTest {
                         .to("log:end")
                         .to("mock:end");
 
-                from("activemq:queue:foo")
-                        .to("mock:foo")
-                        .to("log:foo")
+                from("activemq:queue:JmsInOutRoutingSlipTest.foo")
+                        .to("mock:JmsInOutRoutingSlipTest.foo")
+                        .to("log:JmsInOutRoutingSlipTest.foo")
                         .transform(body().prepend("Bye "));
 
-                from("activemq:queue:result")
-                        .to("log:result")
-                        .to("mock:result");
+                from("activemq:queue:JmsInOutRoutingSlipTest.result")
+                        .to("log:JmsInOutRoutingSlipTest.result")
+                        .to("mock:JmsInOutRoutingSlipTest.result");
             }
         };
     }

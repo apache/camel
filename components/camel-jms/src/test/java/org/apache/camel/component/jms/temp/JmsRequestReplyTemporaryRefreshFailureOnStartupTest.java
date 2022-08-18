@@ -54,10 +54,12 @@ public class JmsRequestReplyTemporaryRefreshFailureOnStartupTest extends CamelTe
             @Override
             public void configure() {
                 from("direct:start")
-                        .to(ExchangePattern.InOut, "jms:queue:foo?recoveryInterval=" + recoveryInterval)
+                        .to(ExchangePattern.InOut,
+                                "jms:queue:JmsRequestReplyTemporaryRefreshFailureOnStartupTest?recoveryInterval="
+                                                   + recoveryInterval)
                         .to("mock:result");
 
-                from("jms:queue:foo")
+                from("jms:queue:JmsRequestReplyTemporaryRefreshFailureOnStartupTest")
                         .setBody(simple("pong"));
             }
         };

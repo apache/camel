@@ -28,11 +28,11 @@ public class TwoEmbeddedActiveMQBrokersTest extends CamelSpringTestSupport {
 
     @Test
     public void sendToTwoEmbeddedBrokers() throws Exception {
-        getMockEndpoint("mock:foo").expectedMessageCount(1);
-        getMockEndpoint("mock:bar").expectedMessageCount(1);
+        getMockEndpoint("mock:JmsTransferExchangeFromSplitterTest1").expectedMessageCount(1);
+        getMockEndpoint("mock:JmsTransferExchangeFromSplitterTest2").expectedMessageCount(1);
 
-        template.sendBody("activemq1:queue:foo", "foo");
-        template.sendBody("activemq2:queue:bar", "bar");
+        template.sendBody("activemq1:queue:JmsTransferExchangeFromSplitterTest1", "foo");
+        template.sendBody("activemq2:queue:JmsTransferExchangeFromSplitterTest2", "bar");
 
         assertMockEndpointsSatisfied();
     }

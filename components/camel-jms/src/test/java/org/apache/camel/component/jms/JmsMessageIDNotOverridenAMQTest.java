@@ -76,7 +76,7 @@ public class JmsMessageIDNotOverridenAMQTest extends AbstractJMSTest {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("activemq:queue:foo?includeSentJMSMessageID=true")
+                        .to("activemq:queue:JmsMessageIDNotOverridenAMQTest?includeSentJMSMessageID=true")
                         .to("mock:done");
             }
         };

@@ -47,7 +47,7 @@ public class JmsRequestReplyManualReplyTest extends AbstractJMSTest {
         return false;
     }
 
-    @Consume("activemq:queue:foo")
+    @Consume("activemq:queue:JmsRequestReplyManualReplyTest")
     public void doSomething(@Header("JMSReplyTo") Destination jmsReplyTo, @Body String body) {
         assertEquals("Hello World", body);
 
@@ -65,7 +65,7 @@ public class JmsRequestReplyManualReplyTest extends AbstractJMSTest {
         context.start();
 
         // send using pure JMS API to set a custom JMSReplyTo
-        jms.send(new ActiveMQQueue("foo"), session -> {
+        jms.send(new ActiveMQQueue("JmsRequestReplyManualReplyTest"), session -> {
             TextMessage msg = session.createTextMessage("Hello World");
             msg.setJMSReplyTo(new ActiveMQQueue("bar"));
             return msg;

@@ -35,7 +35,7 @@ public class RequestReplyWithProducerIssueTest extends AbstractJMSTest {
 
     @Test
     public void testInOut() throws Exception {
-        Endpoint endpoint = context.getEndpoint("activemq:queue:foo");
+        Endpoint endpoint = context.getEndpoint("activemq:queue:RequestReplyWithProducerIssueTest");
         Producer producer = endpoint.createProducer();
         producer.start();
 
@@ -63,7 +63,7 @@ public class RequestReplyWithProducerIssueTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo")
+                from("activemq:queue:RequestReplyWithProducerIssueTest")
                         .process(exchange -> exchange.getMessage().setBody("Bye World"));
             }
         };

@@ -54,7 +54,7 @@ public class JmsRouteUsingDifferentHeadersTest extends AbstractJMSTest {
         mock.message(0).header("g").isInstanceOf(Short.class);
         mock.message(0).header("h").isInstanceOf(String.class);
 
-        template.sendBodyAndHeaders("activemq:queue:foo", "Hello World", headers);
+        template.sendBodyAndHeaders("activemq:queue:JmsRouteUsingDifferentHeadersTest", "Hello World", headers);
 
         assertMockEndpointsSatisfied();
     }
@@ -75,7 +75,7 @@ public class JmsRouteUsingDifferentHeadersTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo").to("mock:result");
+                from("activemq:queue:JmsRouteUsingDifferentHeadersTest").to("mock:result");
             }
         };
     }

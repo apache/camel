@@ -26,7 +26,7 @@ http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/came
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring" autoStartup="false">
         <jmxAgent id="agent" disabled="true"/>
         <route id="foo">
-            <from uri="activemq:queue:foo"/>
+            <from uri="activemq:queue:JmsInOutWithSpringRestartIssueTest"/>
             <transform><simple>Bye ${body}</simple></transform>
         </route>
     </camelContext>

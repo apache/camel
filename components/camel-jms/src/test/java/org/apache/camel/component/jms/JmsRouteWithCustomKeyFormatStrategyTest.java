@@ -30,7 +30,7 @@ public class JmsRouteWithCustomKeyFormatStrategyTest extends JmsRouteWithDefault
 
     @Override
     protected String getUri() {
-        return "activemq:queue:foo?jmsKeyFormatStrategy=#myJmsKeyStrategy";
+        return "activemq:queue:JmsRouteWithCustomKeyFormatStrategyTest?jmsKeyFormatStrategy=#myJmsKeyStrategy";
     }
 
     @Override

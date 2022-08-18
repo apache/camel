@@ -62,9 +62,10 @@ public class JmsFormatDateHeadersToIso8601Test extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start-isoformat").to("activemq:queue:foo");
-                from("direct:start-nonisoformat").to("activemq:queue:foo?formatDateHeadersToIso8601=false");
-                from("activemq:queue:foo").setBody(simple("${in.header.date}"));
+                from("direct:start-isoformat").to("activemq:queue:JmsFormatDateHeadersToIso8601Test");
+                from("direct:start-nonisoformat")
+                        .to("activemq:queue:JmsFormatDateHeadersToIso8601Test?formatDateHeadersToIso8601=false");
+                from("activemq:queue:JmsFormatDateHeadersToIso8601Test").setBody(simple("${in.header.date}"));
             }
         };
     }

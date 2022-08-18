@@ -39,7 +39,7 @@ public class JmsInOutWithSpringRestartIssueTest extends CamelSpringTestSupport {
         ProducerTemplate producer = context.createProducerTemplate();
         producer.start();
 
-        Object out = producer.requestBody("activemq:queue:foo", "Foo");
+        Object out = producer.requestBody("activemq:queue:JmsInOutWithSpringRestartIssueTest", "Foo");
         assertEquals("Bye Foo", out);
 
         // on purpose forget to stop the producer and it should still work
@@ -47,7 +47,7 @@ public class JmsInOutWithSpringRestartIssueTest extends CamelSpringTestSupport {
         context.getRouteController().stopRoute("foo");
         context.getRouteController().startRoute("foo");
 
-        out = producer.requestBody("activemq:queue:foo", "Bar");
+        out = producer.requestBody("activemq:queue:JmsInOutWithSpringRestartIssueTest", "Bar");
         assertEquals("Bye Bar", out);
     }
 

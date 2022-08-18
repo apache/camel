@@ -68,7 +68,7 @@ public class JmsInOnlyIncludeSentJMSMessageIDTest extends AbstractJMSTest {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("activemq:queue:foo?includeSentJMSMessageID=true")
+                        .to("activemq:queue:JmsInOnlyIncludeSentJMSMessageIDTest?includeSentJMSMessageID=true")
                         .to("mock:done");
             }
         };

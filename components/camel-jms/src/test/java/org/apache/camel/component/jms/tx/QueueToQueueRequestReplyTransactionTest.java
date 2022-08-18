@@ -43,9 +43,10 @@ public class QueueToQueueRequestReplyTransactionTest extends AbstractTransaction
                 Policy required = context().getRegistry().lookupByNameAndType("PROPAGATION_REQUIRED_POLICY",
                         SpringTransactionPolicy.class);
 
-                from("activemq:queue:foo").policy(required).process(cp).to("activemq-1:queue:bar?replyTo=queue:bar.reply");
+                from("activemq:queue:AbstractTransactionTest").policy(required).process(cp)
+                        .to("activemq-1:queue:AbstractTransactionTest.bar?replyTo=queue:AbstractTransactionTest.bar.reply");
 
-                from("activemq-1:queue:bar").process(e -> {
+                from("activemq-1:queue:AbstractTransactionTest.bar").process(e -> {
                     String request = e.getIn().getBody(String.class);
                     Message out = e.getMessage();
                     String selectorValue = e.getIn().getHeader("camelProvider", String.class);
@@ -58,7 +59,7 @@ public class QueueToQueueRequestReplyTransactionTest extends AbstractTransaction
         });
 
         for (int i = 0; i < 5; ++i) {
-            Object reply = template.requestBody("activemq:queue:foo", "blah" + i);
+            Object reply = template.requestBody("activemq:queue:AbstractTransactionTest", "blah" + i);
             assertEquals("Re: blah" + i, reply, "Received unexpected reply at item " + i);
             assertNull(cp.getErrorMessage(), cp.getErrorMessage());
         }

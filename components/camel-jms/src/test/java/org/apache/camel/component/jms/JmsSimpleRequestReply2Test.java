@@ -71,10 +71,10 @@ public class JmsSimpleRequestReply2Test extends AbstractJMSTest {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to(ExchangePattern.InOut, "activemq:queue:foo")
+                        .to(ExchangePattern.InOut, "activemq:queue:JmsSimpleRequestReply2Test")
                         .to("mock:result");
 
-                from("activemq:queue:foo")
+                from("activemq:queue:JmsSimpleRequestReply2Test")
                         .transform(body().prepend("Hello "));
             }
         };

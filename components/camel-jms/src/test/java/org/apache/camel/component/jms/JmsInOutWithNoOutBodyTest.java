@@ -52,11 +52,11 @@ public class JmsInOutWithNoOutBodyTest extends AbstractJMSTest {
             public void configure() {
                 from("direct:start")
                         .to("log:before")
-                        .to("activemq:request")
+                        .to("activemq:JmsInOutWithNoOutBodyTest")
                         .to("log:after")
                         .to("mock:result");
 
-                from("activemq:request")
+                from("activemq:JmsInOutWithNoOutBodyTest")
                         .to("log:receivedRequest");
             }
         };

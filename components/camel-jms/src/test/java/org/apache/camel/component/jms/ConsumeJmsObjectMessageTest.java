@@ -45,7 +45,7 @@ public class ConsumeJmsObjectMessageTest extends AbstractJMSTest {
         endpoint.expectedMessageCount(1);
 
         jmsTemplate.setPubSubDomain(false);
-        jmsTemplate.send("test.object", session -> {
+        jmsTemplate.send("ConsumeJmsObjectMessageTest", session -> {
             ObjectMessage msg = session.createObjectMessage();
 
             MyUser user = new MyUser();
@@ -106,8 +106,8 @@ public class ConsumeJmsObjectMessageTest extends AbstractJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:test.object").to("mock:result");
-                from("direct:test").to("activemq:test.object");
+                from("activemq:ConsumeJmsObjectMessageTest").to("mock:result");
+                from("direct:test").to("activemq:ConsumeJmsObjectMessageTest");
             }
         };
     }

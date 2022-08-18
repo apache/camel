@@ -36,7 +36,7 @@ public class RouteIdTransactedTest extends CamelSpringTestSupport {
         getMockEndpoint("mock:error").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        template.sendBody("activemq:queue:foo", "Hello World");
+        template.sendBody("activemq:queue:RouteIdTransactedTest", "Hello World");
 
         assertMockEndpointsSatisfied();
 
@@ -49,7 +49,7 @@ public class RouteIdTransactedTest extends CamelSpringTestSupport {
         getMockEndpoint("mock:error").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        template.sendBody("activemq:queue:foo", "Kabom");
+        template.sendBody("activemq:queue:RouteIdTransactedTest", "Kabom");
 
         assertMockEndpointsSatisfied();
 
@@ -62,7 +62,7 @@ public class RouteIdTransactedTest extends CamelSpringTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo?transacted=true").id("myCoolRoute")
+                from("activemq:queue:RouteIdTransactedTest?transacted=true").id("myCoolRoute")
                         .onException(IllegalArgumentException.class).handled(true).to("log:bar").to("mock:error").end()
                         .transacted()
                         .choice()

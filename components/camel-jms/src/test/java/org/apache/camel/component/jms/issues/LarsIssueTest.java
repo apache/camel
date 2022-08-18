@@ -44,8 +44,8 @@ public class LarsIssueTest extends AbstractJMSTest {
         String body2 = "Goodbye world!";
         endpoint.expectedBodiesReceived(body1, body2);
 
-        template.sendBody("activemq:queue:foo.bar", body1);
-        template.sendBody("activemq:queue:foo.bar", body2);
+        template.sendBody("activemq:queue:LarsIssueTest.bar", body1);
+        template.sendBody("activemq:queue:LarsIssueTest.bar", body2);
 
         assertMockEndpointsSatisfied();
     }
@@ -69,7 +69,7 @@ public class LarsIssueTest extends AbstractJMSTest {
 
                 // lets enable CACHE_CONSUMER so that the consumer stays around in JMX
                 // as the default due to the spring bug means we keep creating & closing consumers
-                from("activemq:queue:foo.bar?cacheLevelName=CACHE_CONSUMER")
+                from("activemq:queue:LarsIssueTest.bar?cacheLevelName=CACHE_CONSUMER")
                         .process(myProcessor)
                         .to("mock:results");
             }

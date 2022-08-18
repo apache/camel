@@ -25,13 +25,13 @@
       <jmxAgent id="agent" disabled="true" />
 
       <route>
-         <from uri="activemq1:queue:foo" />
-         <to uri="mock:foo" />
+         <from uri="activemq1:queue:JmsTransferExchangeFromSplitterTest1" />
+         <to uri="mock:JmsTransferExchangeFromSplitterTest1" />
       </route>
 
       <route>
-         <from uri="activemq2:queue:bar" />
-         <to uri="mock:bar" />
+         <from uri="activemq2:queue:JmsTransferExchangeFromSplitterTest2" />
+         <to uri="mock:JmsTransferExchangeFromSplitterTest2" />
       </route>
 
    </camelContext>

@@ -76,7 +76,8 @@ public class JmsBeanMethodHeaderTest extends AbstractJMSTest {
         MockEndpoint mock = getMockEndpoint("mock:approve");
         mock.expectedBodiesReceived("Yes");
 
-        template.sendBodyAndHeader("activemq:approve", ExchangePattern.InOut, "James", Exchange.BEAN_METHOD_NAME,
+        template.sendBodyAndHeader("activemq:JmsBeanMethodHeaderTest.approve", ExchangePattern.InOut, "James",
+                Exchange.BEAN_METHOD_NAME,
                 "approveLoan");
 
         mock.assertIsSatisfied();
@@ -89,7 +90,8 @@ public class JmsBeanMethodHeaderTest extends AbstractJMSTest {
         MockEndpoint mock = getMockEndpoint("mock:approve");
         mock.expectedBodiesReceived("No");
 
-        template.sendBodyAndHeader("activemq:queue", ExchangePattern.InOut, "James", Exchange.BEAN_METHOD_NAME,
+        template.sendBodyAndHeader("activemq:JmsBeanMethodHeaderTest.queue", ExchangePattern.InOut, "James",
+                Exchange.BEAN_METHOD_NAME,
                 "approveSuperLoan");
 
         mock.assertIsSatisfied();
@@ -110,12 +112,12 @@ public class JmsBeanMethodHeaderTest extends AbstractJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:in").to("activemq:test.a");
-                from("activemq:test.a").to("mock:result");
+                from("direct:in").to("activemq:JmsBeanMethodHeaderTest.a");
+                from("activemq:JmsBeanMethodHeaderTest.a").to("mock:result");
 
-                from("activemq:queue").to("activemq:approve");
+                from("activemq:JmsBeanMethodHeaderTest.queue").to("activemq:JmsBeanMethodHeaderTest.approve");
 
-                from("activemq:approve").to("direct:approve");
+                from("activemq:JmsBeanMethodHeaderTest.approve").to("direct:approve");
 
                 from("direct:approve").to("bean:approveService").to("mock:approve");
             }

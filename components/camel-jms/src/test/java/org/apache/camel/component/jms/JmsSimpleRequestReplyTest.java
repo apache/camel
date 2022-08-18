@@ -42,7 +42,7 @@ public class JmsSimpleRequestReplyTest extends AbstractJMSTest {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
 
-        Exchange out = template.send("activemq:queue:hello", ExchangePattern.InOut, exchange -> {
+        Exchange out = template.send("activemq:queue:JmsSimpleRequestReplyTest", ExchangePattern.InOut, exchange -> {
             exchange.getIn().setBody("Hello World");
             exchange.getIn().setHeader("foo", 123);
         });
@@ -60,8 +60,8 @@ public class JmsSimpleRequestReplyTest extends AbstractJMSTest {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(2);
 
-        template.requestBody("activemq:queue:hello", "Hello World");
-        template.requestBody("activemq:queue:hello", "Gooday World");
+        template.requestBody("activemq:queue:JmsSimpleRequestReplyTest", "Hello World");
+        template.requestBody("activemq:queue:JmsSimpleRequestReplyTest", "Gooday World");
 
         result.assertIsSatisfied();
     }
@@ -81,7 +81,7 @@ public class JmsSimpleRequestReplyTest extends AbstractJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:hello").process(exchange -> {
+                from("activemq:queue:JmsSimpleRequestReplyTest").process(exchange -> {
                     exchange.getIn().setBody("Bye World");
                     assertNotNull(exchange.getIn().getHeader("JMSReplyTo"));
                 }).to("mock:result");

@@ -69,9 +69,10 @@ public class FileRouteJmsPreMoveTest extends AbstractJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("file://target/FileRouteJmsPreMoveTest/inbox?preMove=transfer").to("activemq:queue:hello");
+                from("file://target/FileRouteJmsPreMoveTest/inbox?preMove=transfer")
+                        .to("activemq:queue:FileRouteJmsPreMoveTest");
 
-                from("activemq:queue:hello")
+                from("activemq:queue:FileRouteJmsPreMoveTest")
                         .to("log:outbox")
                         .to("file://target/FileRouteJmsPreMoveTest/outbox")
                         .to("mock:result");
