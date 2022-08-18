@@ -70,7 +70,7 @@ import static org.apache.camel.dsl.jbang.core.common.GistHelper.fetchGistUrls;
 import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.asGithubSingleUrl;
 import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.fetchGithubUrls;
 
-@Command(name = "run", description = "Run as local Camel application")
+@Command(name = "run", description = "Run as local Camel integration")
 class Run extends CamelCommand {
 
     public static final String WORK_DIR = ".camel-jbang";
@@ -159,8 +159,8 @@ class Run extends CamelCommand {
     String[] property;
 
     @Option(names = { "--file-lock" },
-            description = "Whether to create a temporary file lock, which upon deleting triggers this process to terminate")
-    boolean fileLock;
+            description = "Whether to create a temporary file lock, which upon deleting triggers this process to terminate", defaultValue = "true")
+    boolean fileLock = true;
 
     @Option(names = { "--jfr" },
             description = "Enables Java Flight Recorder saving recording to disk on exit")
@@ -238,21 +238,9 @@ class Run extends CamelCommand {
     }
 
     private int stop() {
-        File currentDir = new File(".");
-
-        File[] lockFiles = currentDir.listFiles(f -> f.getName().endsWith(".camel.lock"));
-
-        for (File lockFile : lockFiles) {
-            if (logging) {
-                System.out.println("Removing file " + lockFile);
-            }
-            if (!lockFile.delete()) {
-                if (logging) {
-                    System.err.println("Failed to remove lock file " + lockFile);
-                }
-            }
+        if (lockFile != null) {
+            FileUtil.deleteFile(lockFile);
         }
-
         return 0;
     }
 
@@ -413,10 +401,6 @@ class Run extends CamelCommand {
 
         if (fileLock) {
             lockFile = createLockFile();
-            if (!lockFile.exists()) {
-                throw new IllegalStateException("Lock file does not exists: " + lockFile);
-            }
-
             // to trigger shutdown on file lock deletion
             executor = Executors.newSingleThreadScheduledExecutor();
             executor.scheduleWithFixedDelay(() -> {
@@ -704,15 +688,30 @@ class Run extends CamelCommand {
     }
 
     public File createLockFile() throws IOException {
-        File lockFile = File.createTempFile(".run", ".camel.lock", new File("."));
-
-        if (logging) {
-            System.out.printf("A new lock file was created, delete the file to stop running:%n%s%n",
-                    lockFile.getAbsolutePath());
+        File answer = null;
+        String pid = getPid();
+        if (pid != null) {
+            File dir = new File(System.getProperty("user.home"), ".camel");
+            try {
+                dir.mkdirs();
+                answer = new File(dir, pid);
+                if (!answer.exists()) {
+                    answer.createNewFile();
+                }
+                answer.deleteOnExit();
+            } catch (Exception e) {
+                answer = null;
+            }
         }
-        lockFile.deleteOnExit();
+        return answer;
+    }
 
-        return lockFile;
+    private static String getPid() {
+        try {
+            return "" + ProcessHandle.current().pid();
+        } catch (Throwable e) {
+            return null;
+        }
     }
 
     private boolean knownFile(String file) throws Exception {

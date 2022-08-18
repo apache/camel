@@ -32,6 +32,7 @@ public class CamelJBangMain implements Callable<Integer> {
         commandLine = new CommandLine(main)
                 .addSubcommand("run", new CommandLine(new Run(main)))
                 .addSubcommand("ps", new CommandLine(new ListProcess(main)))
+                .addSubcommand("stop", new CommandLine(new StopProcess(main)))
                 .addSubcommand("init", new CommandLine(new Init(main)))
                 .addSubcommand("bind", new CommandLine(new Bind(main)))
                 .addSubcommand("pipe", new CommandLine(new Pipe(main)))
