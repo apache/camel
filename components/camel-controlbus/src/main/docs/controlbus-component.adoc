@@ -134,7 +134,7 @@ the route status you can do:
 
 [source,java]
 ----
-String status = template.requestBody("controlbus:language:simple", "${camelContext.getRouteStatus('myRoute')}", String.class);
+String status = template.requestBody("controlbus:language:simple", "${camelContext.getRouteController().getRouteStatus('myRoute')}", String.class);
 ----
 
 It's easier to use the `route` command to control lifecycle of
