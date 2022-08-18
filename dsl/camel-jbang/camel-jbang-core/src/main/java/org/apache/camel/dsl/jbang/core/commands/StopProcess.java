@@ -29,8 +29,12 @@ import picocli.CommandLine.Command;
 @Command(name = "stop", description = "Stop a running Camel integration")
 class StopProcess extends CamelCommand {
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "1")
+    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     private String name;
+
+    @CommandLine.Option(names = { "--all" },
+                        description = "To stop all running Camel integrations")
+    private boolean all;
 
     public StopProcess(CamelJBangMain main) {
         super(main);
@@ -38,11 +42,21 @@ class StopProcess extends CamelCommand {
 
     @Override
     public Integer call() throws Exception {
+        if (!all && name == null) {
+            return 0;
+        } else if (all) {
+            name = "*";
+        }
+
         // we need to know the pids of the running camel integrations
         List<Long> pids;
         if (name.matches("\\d+")) {
             pids = List.of(Long.parseLong(name));
         } else {
+            // lets be open and match all that starts with this pattern
+            if (!name.endsWith("*")) {
+                name = name + "*";
+            }
             pids = findPids(name);
         }
 
@@ -74,9 +88,9 @@ class StopProcess extends CamelCommand {
         ProcessHandle.allProcesses()
                 .forEach(ph -> {
                     String name = extractName(ph);
-                    // ignore file extension so it is easier to match by name
+                    // ignore file extension, so it is easier to match by name
                     name = FileUtil.onlyName(name);
-                    if (PatternHelper.matchPattern(name, pattern)) {
+                    if (!name.isEmpty() && PatternHelper.matchPattern(name, pattern)) {
                         pids.add(ph.pid());
                     }
                 });

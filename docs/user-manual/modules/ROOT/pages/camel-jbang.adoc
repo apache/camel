@@ -548,6 +548,18 @@ camel stop 44805
 Stopping running Camel integration (pid: 44805)
 ----
 
+TIP: You do not have to type the full name, as the stop command will match using integrations
+that starts with the input, for example you can do `camel stop d` to stop all integrations
+starting with d.
+
+To stop all integrations then you need to use the `--all` option as follows:
+
+[source,bash]
+----
+camel stop --all
+Stopping running Camel integration (pid: 42171)
+Stopping running Camel integration (pid: 44805)
+----
 
 === Scripting from terminal using pipes
 
