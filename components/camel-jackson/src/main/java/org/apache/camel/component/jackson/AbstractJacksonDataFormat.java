@@ -413,7 +413,7 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
     }
 
     /**
-     * If set to true then Jackson will lookup for an objectMapper into the registry
+     * If set to true and useDefaultObjectMapper is true, then Jackson will look for an objectMapper in the registry.
      */
     public void setAutoDiscoverObjectMapper(boolean autoDiscoverObjectMapper) {
         this.autoDiscoverObjectMapper = autoDiscoverObjectMapper;
