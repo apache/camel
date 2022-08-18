@@ -20,33 +20,26 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 
 import org.apache.activemq.command.ActiveMQQueue;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.infra.activemq.services.ActiveMQService;
-import org.apache.camel.test.infra.activemq.services.ActiveMQServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Timeout;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.component.jms.JmsConstants.JMS_X_GROUP_ID;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
-public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
-
-    // This one needs a different lifecycle, so we cannot extend AbstractJMSTest
-    @RegisterExtension
-    private ActiveMQService service = ActiveMQServiceFactory.createVMService();
+@Tags({ @Tag("slow") })
+@Timeout(60)
+public class JmsProducerWithJMSHeaderTest extends AbstractJMSTest {
 
     @Test
     public void testInOnlyJMSPrioritory() throws Exception {
@@ -313,14 +306,8 @@ public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override

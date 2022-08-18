@@ -16,17 +16,12 @@
  */
 package org.apache.camel.component.jms.issues;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -39,45 +34,44 @@ public class JmsInOutPipelineWithBeanTest extends AbstractJMSTest {
 
     @Test
     public void testA() {
-        Object response = template.requestBody("activemq:testA", "Hello World");
+        Object response = template.requestBody("activemq:JmsInOutPipelineWithBeanTest.A", "Hello World");
         assertEquals("Hello World,From Bean,From A,From B", response, "Reply");
     }
 
     @Test
     public void testB() {
-        Object response = template.requestBody("activemq:testB", "Hello World");
+        Object response = template.requestBody("activemq:JmsInOutPipelineWithBeanTest.B", "Hello World");
         assertEquals("Hello World,From A,From Bean,From B", response, "Reply");
     }
 
     @Test
     public void testC() {
-        Object response = template.requestBody("activemq:testC", "Hello World");
+        Object response = template.requestBody("activemq:JmsInOutPipelineWithBeanTest.C", "Hello World");
         assertEquals("Hello World,From A,From B,From Bean", response, "Reply");
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:testA").to("bean:dummyBean").to("activemq:a").to("activemq:b");
-                from("activemq:testB").to("activemq:a").to("bean:dummyBean").to("activemq:b");
-                from("activemq:testC").to("activemq:a").to("activemq:b").to("bean:dummyBean");
+                from("activemq:JmsInOutPipelineWithBeanTest.A").to("bean:dummyBean")
+                        .to("activemq:JmsInOutPipelineWithBeanTest.dest.a").to("activemq:JmsInOutPipelineWithBeanTest.dest.b");
+                from("activemq:JmsInOutPipelineWithBeanTest.B").to("activemq:JmsInOutPipelineWithBeanTest.dest.a")
+                        .to("bean:dummyBean").to("activemq:JmsInOutPipelineWithBeanTest.dest.b");
+                from("activemq:JmsInOutPipelineWithBeanTest.C").to("activemq:JmsInOutPipelineWithBeanTest.dest.a")
+                        .to("activemq:JmsInOutPipelineWithBeanTest.dest.b").to("bean:dummyBean");
 
-                from("activemq:a").process(exchange -> {
+                from("activemq:JmsInOutPipelineWithBeanTest.dest.a").process(exchange -> {
                     String body = exchange.getIn().getBody(String.class);
                     exchange.getMessage().setBody(body + ",From A");
                 });
 
-                from("activemq:b").process(exchange -> {
+                from("activemq:JmsInOutPipelineWithBeanTest.dest.b").process(exchange -> {
                     String body = exchange.getIn().getBody(String.class);
                     exchange.getMessage().setBody(body + ",From B");
                 });

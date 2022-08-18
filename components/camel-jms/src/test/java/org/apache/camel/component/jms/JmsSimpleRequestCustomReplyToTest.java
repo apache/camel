@@ -18,8 +18,6 @@ package org.apache.camel.component.jms;
 
 import java.util.concurrent.CountDownLatch;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -27,12 +25,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.activemq.services.ActiveMQService;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -108,17 +105,17 @@ public class JmsSimpleRequestCustomReplyToTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
+    protected String getComponentName() {
+        return "activemq";
+    }
 
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        JmsComponent jms = camelContext.getComponent("activemq", JmsComponent.class);
-        // as this is a unit test I dont want to wait 20 sec before timeout occurs, so we use 10
-        jms.getConfiguration().setRequestTimeout(10000);
+    @Override
+    protected JmsComponent setupComponent(CamelContext camelContext, ActiveMQService service, String componentName) {
+        final JmsComponent component = super.setupComponent(camelContext, service, componentName);
 
-        return camelContext;
+        // as this is a unit test I don't want to wait 20 sec before timeout occurs, so we use 10
+        component.getConfiguration().setRequestTimeout(10000);
+        return component;
     }
 
     @Override
@@ -129,7 +126,7 @@ public class JmsSimpleRequestCustomReplyToTest extends AbstractJMSTest {
                     assertEquals("Hello World", exchange.getIn().getBody());
 
                     myReplyTo = exchange.getIn().getHeader("MyReplyQeueue", String.class);
-                    LOG.debug("ReplyTo: " + myReplyTo);
+                    LOG.debug("ReplyTo: {}", myReplyTo);
 
                     LOG.debug("Ahh I cannot send a reply. Someone else must do it.");
                     latch.countDown();

@@ -17,22 +17,17 @@
 package org.apache.camel.component.jms;
 
 import javax.jms.BytesMessage;
-import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
 import org.junit.jupiter.api.Test;
 import org.springframework.jms.support.converter.MessageConversionException;
 import org.springframework.jms.support.converter.MessageConverter;
-
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 public class ConsumeMessageConverterTest extends AbstractJMSTest {
 
@@ -40,13 +35,8 @@ public class ConsumeMessageConverterTest extends AbstractJMSTest {
     private final MyMessageConverter conv = new MyMessageConverter();
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(service);
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Test

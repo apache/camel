@@ -16,42 +16,36 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.Timeout;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Timeout(60)
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class JmsNoRequestTimeoutTest extends AbstractJMSTest {
 
     protected String componentName = "activemq";
 
     @Test
     public void testNoRequestTimeout() {
-        String reply = template.requestBody("activemq:queue:hello?requestTimeout=0", "Hello World", String.class);
+        String reply
+                = template.requestBody("activemq:queue:JmsNoRequestTimeoutTest?requestTimeout=0", "Hello World", String.class);
         assertEquals("Bye World", reply);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    public String getComponentName() {
+        return componentName;
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:hello").transform(constant("Bye World"));
+                from("activemq:queue:JmsNoRequestTimeoutTest").transform(constant("Bye World"));
             }
         };
     }

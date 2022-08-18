@@ -38,14 +38,14 @@ public class JmsToJmsTransactedTest extends CamelSpringTestSupport {
             public void configure() {
                 from("activemq:queue:JmsToJmsTransactedTest")
                         .transacted()
-                        .to("activemq:queue:bar");
+                        .to("activemq:queue:JmsToJmsTransactedTest.reply");
             }
         });
         context.start();
 
         template.sendBody("activemq:queue:JmsToJmsTransactedTest", "Hello World");
 
-        String reply = consumer.receiveBody("activemq:queue:bar", 5000, String.class);
+        String reply = consumer.receiveBody("activemq:queue:JmsToJmsTransactedTest.reply", 5000, String.class);
         assertEquals("Hello World", reply);
     }
 
@@ -57,10 +57,10 @@ public class JmsToJmsTransactedTest extends CamelSpringTestSupport {
                 from("activemq:queue:JmsToJmsTransactedTest")
                         .transacted()
                         .to("mock:start")
-                        .to("activemq:queue:bar")
+                        .to("activemq:queue:JmsToJmsTransactedTest.reply")
                         .throwException(new IllegalArgumentException("Damn"));
 
-                from("activemq:queue:bar").to("log:bar").to("mock:bar");
+                from("activemq:queue:JmsToJmsTransactedTest.reply").to("log:bar").to("mock:bar");
             }
         });
         context.start();
@@ -84,10 +84,10 @@ public class JmsToJmsTransactedTest extends CamelSpringTestSupport {
                 from("activemq:queue:JmsToJmsTransactedTest")
                         .transacted()
                         .to("mock:start")
-                        .to("activemq:queue:bar")
+                        .to("activemq:queue:JmsToJmsTransactedTest.reply")
                         .rollback();
 
-                from("activemq:queue:bar").to("log:bar").to("mock:bar");
+                from("activemq:queue:JmsToJmsTransactedTest.reply").to("log:bar").to("mock:bar");
             }
         });
         context.start();
@@ -115,10 +115,10 @@ public class JmsToJmsTransactedTest extends CamelSpringTestSupport {
                 from("activemq:queue:JmsToJmsTransactedTest")
                         .transacted()
                         .to("mock:start")
-                        .to("activemq:queue:bar")
+                        .to("activemq:queue:JmsToJmsTransactedTest.reply")
                         .markRollbackOnly();
 
-                from("activemq:queue:bar").to("log:bar").to("mock:bar");
+                from("activemq:queue:JmsToJmsTransactedTest.reply").to("log:bar").to("mock:bar");
             }
         });
         context.start();

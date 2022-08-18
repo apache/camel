@@ -20,9 +20,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.AfterEach;
@@ -30,8 +27,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -48,7 +43,7 @@ public class JmsPollingConsumerTest extends AbstractJMSTest {
             // use another thread for polling consumer to demonstrate that we can wait before
             // the message is sent to the queue
             Executors.newSingleThreadExecutor().execute(() -> {
-                String body = consumer.receiveBody("activemq:queue.JmsPollingConsumerTest.start", String.class);
+                String body = consumer.receiveBody("activemq:queue.JmsPollingConsumerTest.start.wait", String.class);
                 template.sendBody("activemq:queue.JmsPollingConsumerTest.foo", body + " Claus");
                 latch.countDown();
             });
@@ -65,7 +60,7 @@ public class JmsPollingConsumerTest extends AbstractJMSTest {
              */
             assertFalse(latch.await(1, TimeUnit.SECONDS));
 
-            template.sendBody("direct:start", "Hello");
+            template.sendBody("direct:start.wait", "Hello");
 
             assertMockEndpointsSatisfied();
         }
@@ -178,13 +173,8 @@ public class JmsPollingConsumerTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = createConnectionFactory(service);
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
@@ -193,6 +183,8 @@ public class JmsPollingConsumerTest extends AbstractJMSTest {
             @Override
             public void configure() {
                 from("direct:start").to("activemq:queue.JmsPollingConsumerTest.start");
+
+                from("direct:start.wait").to("activemq:queue.JmsPollingConsumerTest.start.wait");
 
                 from("activemq:queue.JmsPollingConsumerTest.foo").to("mock:result");
             }

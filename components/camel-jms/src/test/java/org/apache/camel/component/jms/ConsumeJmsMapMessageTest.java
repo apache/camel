@@ -27,14 +27,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ExchangeHelper;
-import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.core.JmsTemplate;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -70,7 +68,7 @@ public class ConsumeJmsMapMessageTest extends AbstractJMSTest {
         assertNotNull(in);
 
         Map<?, ?> map = exchange.getIn().getBody(Map.class);
-        LOG.info("Received map: " + map);
+        LOG.info("Received map: {}", map);
 
         assertNotNull(map, "Should have received a map message!");
         assertIsInstanceOf(MapMessage.class, in.getJmsMessage());
@@ -102,14 +100,16 @@ public class ConsumeJmsMapMessageTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
+    protected String getComponentName() {
+        return "activemq";
+    }
 
-        ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(service);
+    @Override
+    protected JmsComponent setupComponent(
+            CamelContext camelContext, ConnectionFactory connectionFactory, String componentName) {
         jmsTemplate = new JmsTemplate(connectionFactory);
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
-        return camelContext;
+        return super.setupComponent(camelContext, connectionFactory, componentName);
     }
 
     @Override

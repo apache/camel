@@ -16,17 +16,14 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.infra.activemq.services.ActiveMQService;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -61,18 +58,15 @@ public class RequestReplyCorrelatedWithCustomHeaderTest extends AbstractJMSTest 
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        final CamelContext camelContext = super.createCamelContext();
+    protected String getComponentName() {
+        return "activemq";
+    }
 
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-
-        final JmsComponent activeMq = jmsComponentAutoAcknowledge(connectionFactory);
-        activeMq.getConfiguration().setCorrelationProperty("CustomCorrelation");
-
-        camelContext.addComponent("activemq", activeMq);
-
-        return camelContext;
+    @Override
+    protected JmsComponent setupComponent(CamelContext camelContext, ActiveMQService service, String componentName) {
+        final JmsComponent component = super.setupComponent(camelContext, service, componentName);
+        component.getConfiguration().setCorrelationProperty("CustomCorrelation");
+        return component;
     }
 
     @Override

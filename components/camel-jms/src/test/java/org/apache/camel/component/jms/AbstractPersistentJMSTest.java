@@ -26,16 +26,14 @@ import org.apache.camel.test.infra.activemq.services.ActiveMQServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 @Tags({ @Tag("jms") })
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class AbstractPersistentJMSTest extends CamelTestSupport {
     @RegisterExtension
-    public static ActiveMQService service = ActiveMQServiceFactory.createPersistentVMService();
+    public ActiveMQService service = ActiveMQServiceFactory.createPersistentVMService();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

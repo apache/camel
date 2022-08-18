@@ -18,17 +18,12 @@ package org.apache.camel.component.jms;
 
 import java.util.Set;
 
-import javax.jms.ConnectionFactory;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -43,14 +38,8 @@ public class ManagedJmsEndpointTopicTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() {
-        CamelContext context = new DefaultCamelContext();
-
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        context.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return context;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     protected MBeanServer getMBeanServer() {

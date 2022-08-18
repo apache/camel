@@ -16,16 +16,10 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 
 public class JmsMessageTimestampTest extends AbstractJMSTest {
 
@@ -37,27 +31,21 @@ public class JmsMessageTimestampTest extends AbstractJMSTest {
         result.expectedMessageCount(1);
         result.message(0).header(Exchange.MESSAGE_TIMESTAMP).isGreaterThan(0);
 
-        template.sendBody("activemq:queue:hello", "Hello World");
+        template.sendBody("activemq:queue:JmsMessageTimestampTest", "Hello World");
 
         result.assertIsSatisfied();
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    public String getComponentName() {
+        return componentName;
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:hello").to("mock:result");
+                from("activemq:queue:JmsMessageTimestampTest").to("mock:result");
             }
         };
     }

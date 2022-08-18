@@ -18,8 +18,6 @@ package org.apache.camel.component.jms;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,8 +29,6 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
@@ -83,6 +79,11 @@ public class JmsInOnlyPooledExchangeTest extends AbstractJMSTest {
     }
 
     @Override
+    protected String getComponentName() {
+        return "activemq";
+    }
+
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         ExtendedCamelContext ecc = (ExtendedCamelContext) super.createCamelContext();
 
@@ -90,10 +91,6 @@ public class JmsInOnlyPooledExchangeTest extends AbstractJMSTest {
         ecc.setProcessorExchangeFactory(new PooledProcessorExchangeFactory());
         ecc.getExchangeFactory().setStatisticsEnabled(true);
         ecc.getProcessorExchangeFactory().setStatisticsEnabled(true);
-
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        ecc.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return ecc;
     }

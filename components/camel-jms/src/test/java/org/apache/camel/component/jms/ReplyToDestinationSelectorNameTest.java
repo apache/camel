@@ -16,15 +16,10 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -47,13 +42,8 @@ public class ReplyToDestinationSelectorNameTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = createConnectionFactory(service);
-        JmsComponent component = jmsComponentAutoAcknowledge(connectionFactory);
-        camelContext.addComponent("activemq", component);
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override

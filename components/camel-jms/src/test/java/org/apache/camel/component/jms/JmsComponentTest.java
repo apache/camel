@@ -20,26 +20,33 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
+import org.apache.camel.test.infra.activemq.services.LegacyEmbeddedBroker;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.Timeout;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@TestInstance(TestInstance.Lifecycle.PER_METHOD)
-public class JmsComponentTest extends AbstractJMSTest {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+public class JmsComponentTest extends CamelTestSupport {
 
     protected String componentName = "activemq123";
     protected JmsEndpoint endpoint;
 
     @Test
-    public void testComponentOptions() {
+    public void testComponentInOut() {
         String reply
                 = template.requestBody("activemq123:queue:JmsComponentTest?requestTimeout=5000", "Hello World", String.class);
         assertEquals("Bye World", reply);
+    }
 
+    @Timeout(10)
+    @Test
+    public void testComponentOptions() {
         assertTrue(endpoint.isAcceptMessagesWhileStopping());
         assertTrue(endpoint.isAllowReplyManagerQuickStop());
         assertTrue(endpoint.isAlwaysCopyMessage());
@@ -66,8 +73,9 @@ public class JmsComponentTest extends AbstractJMSTest {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
+        // Note: this one seems to mess with the component configuration, so we use a disposable broker
+        final String brokerUrl = LegacyEmbeddedBroker.createBrokerUrl();
+        ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(brokerUrl, 0);
         JmsComponent comp = jmsComponentAutoAcknowledge(connectionFactory);
 
         comp.setAcceptMessagesWhileStopping(true);

@@ -19,14 +19,10 @@ package org.apache.camel.component.jms;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.infra.activemq.services.ActiveMQService;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 
 public class JmsNotIncludeAllJMSXPropertiesTest extends AbstractJMSTest {
 
@@ -48,14 +44,15 @@ public class JmsNotIncludeAllJMSXPropertiesTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
+    protected String getComponentName() {
+        return "activemq";
+    }
+
+    @Override
+    protected JmsComponent setupComponent(CamelContext camelContext, ActiveMQService service, String componentName) {
+        final JmsComponent jms = super.setupComponent(camelContext, service, componentName);
         jms.getConfiguration().setIncludeAllJMSXProperties(false);
-        camelContext.addComponent("activemq", jms);
-        return camelContext;
+        return jms;
     }
 
     @Override

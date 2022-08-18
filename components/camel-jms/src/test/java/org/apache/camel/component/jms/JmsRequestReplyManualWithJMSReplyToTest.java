@@ -16,17 +16,13 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 
 import org.apache.camel.Body;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Consume;
 import org.apache.camel.Header;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsRequestReplyManualWithJMSReplyToTest extends AbstractJMSTest {
@@ -59,13 +55,8 @@ public class JmsRequestReplyManualWithJMSReplyToTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = createConnectionFactory(service);
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
 }

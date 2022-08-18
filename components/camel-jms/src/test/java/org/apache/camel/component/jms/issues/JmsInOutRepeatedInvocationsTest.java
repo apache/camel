@@ -16,17 +16,12 @@
  */
 package org.apache.camel.component.jms.issues;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsInOutRepeatedInvocationsTest extends AbstractJMSTest {
@@ -42,12 +37,8 @@ public class JmsInOutRepeatedInvocationsTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
@@ -56,13 +47,13 @@ public class JmsInOutRepeatedInvocationsTest extends AbstractJMSTest {
             public void configure() {
 
                 from("direct:test")
-                        .to(ExchangePattern.InOut, "activemq:queue:test1?requestTimeout=200")
-                        .to(ExchangePattern.InOut, "activemq:queue:test1?requestTimeout=200")
-                        .to(ExchangePattern.InOut, "activemq:queue:test1?requestTimeout=200")
+                        .to(ExchangePattern.InOut, "activemq:queue:JmsInOutRepeatedInvocationsTest?requestTimeout=200")
+                        .to(ExchangePattern.InOut, "activemq:queue:JmsInOutRepeatedInvocationsTest?requestTimeout=200")
+                        .to(ExchangePattern.InOut, "activemq:queue:JmsInOutRepeatedInvocationsTest?requestTimeout=200")
                         .to("mock:finished");
 
-                from("activemq:queue:test1")
-                        .log("Received on queue test1")
+                from("activemq:queue:JmsInOutRepeatedInvocationsTest")
+                        .log("Received on queue JmsInOutRepeatedInvocationsTest")
                         .setBody().constant("Some reply");
 
             }

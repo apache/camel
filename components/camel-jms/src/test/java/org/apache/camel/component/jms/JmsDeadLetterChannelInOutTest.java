@@ -16,27 +16,34 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@Timeout(20)
 public class JmsDeadLetterChannelInOutTest extends AbstractPersistentJMSTest {
 
     @Test
     public void testJmsDLCInOut() {
-        Exchange out = template.send("direct:start", exchange -> {
+        final CompletableFuture<Exchange> future = template.asyncSend("direct:start", exchange -> {
             // use InOut
             exchange.setPattern(ExchangePattern.InOut);
             exchange.getIn().setBody("Hello World");
         });
+
+        Exchange out = assertDoesNotThrow(() -> future.get());
         assertNotNull(out);
 
         // should be in DLQ
-        Object dead = consumer.receiveBody("activemq:queue:error", 5000);
+        Object dead = consumer.receiveBody("activemq:queue:JmsDeadLetterChannelInOutTest.error", 5000);
         assertEquals("Hello World", dead);
     }
 
@@ -45,7 +52,7 @@ public class JmsDeadLetterChannelInOutTest extends AbstractPersistentJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(deadLetterChannel("activemq:queue:error"));
+                errorHandler(deadLetterChannel("activemq:queue:JmsDeadLetterChannelInOutTest.error"));
 
                 from("direct:start").throwException(new IllegalArgumentException("Damn"));
             }

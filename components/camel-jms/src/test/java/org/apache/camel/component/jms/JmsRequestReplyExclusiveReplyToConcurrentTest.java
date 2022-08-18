@@ -21,17 +21,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -42,11 +39,24 @@ public class JmsRequestReplyExclusiveReplyToConcurrentTest extends AbstractJMSTe
 
     private final int size = 100;
     private final CountDownLatch latch = new CountDownLatch(size);
+    private ExecutorService executor;
+
+    @BeforeEach
+    void setUpExecutor() {
+        executor = Executors.newFixedThreadPool(10);
+    }
+
+    @AfterEach
+    void cleanupExecutor() throws InterruptedException {
+        // just sleep a bit before shutting down
+        Thread.sleep(1000);
+        executor.shutdownNow();
+    }
 
     @Test
     public void testJmsRequestReplyExclusiveFixedReplyTo() throws Exception {
         StopWatch watch = new StopWatch();
-        ExecutorService executor = Executors.newFixedThreadPool(10);
+
         for (int i = 0; i < size; i++) {
             final Integer num = i;
             executor.submit(() -> {
@@ -65,20 +75,11 @@ public class JmsRequestReplyExclusiveReplyToConcurrentTest extends AbstractJMSTe
 
         long delta = watch.taken();
         LOG.info("Took {} millis", delta);
-
-        // just sleep a bit before shutting down
-        Thread.sleep(1000);
-
-        executor.shutdownNow();
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override

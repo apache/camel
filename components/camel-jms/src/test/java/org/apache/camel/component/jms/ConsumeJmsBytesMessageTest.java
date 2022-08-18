@@ -32,8 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.core.JmsTemplate;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -83,7 +81,7 @@ public class ConsumeJmsBytesMessageTest extends AbstractJMSTest {
         assertNotNull(in);
 
         byte[] bytes = exchange.getIn().getBody(byte[].class);
-        LOG.info("Received bytes: " + Arrays.toString(bytes));
+        LOG.info("Received bytes: {}", Arrays.toString(bytes));
 
         assertNotNull(bytes, "Should have received a bytes message!");
         assertIsInstanceOf(BytesMessage.class, in.getJmsMessage());
@@ -99,14 +97,16 @@ public class ConsumeJmsBytesMessageTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
+    protected String getComponentName() {
+        return "activemq";
+    }
 
-        ConnectionFactory connectionFactory = createConnectionFactory(service);
+    @Override
+    protected JmsComponent setupComponent(
+            CamelContext camelContext, ConnectionFactory connectionFactory, String componentName) {
         jmsTemplate = new JmsTemplate(connectionFactory);
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
-        return camelContext;
+        return super.setupComponent(camelContext, connectionFactory, componentName);
     }
 
     @Override

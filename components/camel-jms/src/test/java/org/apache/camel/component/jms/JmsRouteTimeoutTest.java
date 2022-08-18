@@ -16,16 +16,12 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -33,13 +29,14 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Unit test for testing request timeout with a InOut exchange.
  */
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class JmsRouteTimeoutTest extends AbstractJMSTest {
 
     @Test
     public void testTimeout() {
         try {
             // send a in-out with a timeout for 1 sec 
-            template.requestBody("activemq:queue:slow?requestTimeout=1000", "Hello World");
+            template.requestBody("activemq:queue:JmsRouteTimeoutTest?requestTimeout=1000", "Hello World");
             fail("Should have timed out with an exception");
         } catch (RuntimeCamelException e) {
             assertTrue(e.getCause() instanceof ExchangeTimedOutException, "Should have timed out with an exception");
@@ -50,27 +47,21 @@ public class JmsRouteTimeoutTest extends AbstractJMSTest {
     public void testNoTimeout() {
         // START SNIPPET: e1
         // send a in-out with a timeout for 5 sec
-        Object out = template.requestBody("activemq:queue:slow?requestTimeout=5000", "Hello World");
+        Object out = template.requestBody("activemq:queue:JmsRouteTimeoutTest?requestTimeout=5000", "Hello World");
         // END SNIPPET: e1
         assertEquals("Bye World", out);
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:slow").delay(3000).transform(constant("Bye World"));
+                from("activemq:queue:JmsRouteTimeoutTest").delay(3000).transform(constant("Bye World"));
             }
         };
     }

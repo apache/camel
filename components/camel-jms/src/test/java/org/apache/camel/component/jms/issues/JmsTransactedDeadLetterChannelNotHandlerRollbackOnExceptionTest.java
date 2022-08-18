@@ -16,10 +16,14 @@
  */
 package org.apache.camel.component.jms.issues;
 
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+// This test cannot run in parallel: it reads from the default DLQ and there could be more messages there
+@Tags({ @Tag("not-parallel"), @Tag("transaction") })
 public class JmsTransactedDeadLetterChannelNotHandlerRollbackOnExceptionTest
         extends JmsTransactedDeadLetterChannelHandlerRollbackOnExceptionTest {
 

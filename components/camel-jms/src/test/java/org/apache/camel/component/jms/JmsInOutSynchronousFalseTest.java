@@ -16,38 +16,41 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.Timeout;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+@Timeout(60)
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class JmsInOutSynchronousFalseTest extends AbstractJMSTest {
 
     private static String beforeThreadName;
     private static String afterThreadName;
+
     private final String url = "activemq:queue:JmsInOutSynchronousFalseTest?synchronous=false";
 
+    private String reply;
+
+    @BeforeEach
+    public void sendMessage() {
+        reply = template.requestBody("direct:start", "Hello World", String.class);
+    }
+
+    @Timeout(30)
     @Test
     public void testSynchronous() {
-        String reply = template.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", reply);
-
         assertFalse(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should use different threads");
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override

@@ -18,21 +18,23 @@ package org.apache.camel.component.jms;
 
 import java.util.Set;
 
-import javax.jms.ConnectionFactory;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Test that all thread pools is removed when adding and removing a route dynamically
+ * Test that all thread pools is removed when adding and removing a route dynamically. This test manipulates the thread
+ * pools, so it's not a good candidate for running in parallel.
  */
+@Tags({ @Tag("not-parallel") })
+@Timeout(60)
 public class JmsAddAndRemoveRouteManagementTest extends AbstractJMSTest {
 
     @Override
@@ -76,12 +78,8 @@ public class JmsAddAndRemoveRouteManagementTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = createConnectionFactory(service);
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override

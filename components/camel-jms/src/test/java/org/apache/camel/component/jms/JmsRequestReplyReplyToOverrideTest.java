@@ -16,19 +16,17 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
+import org.apache.camel.test.infra.activemq.services.ActiveMQService;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsRequestReplyReplyToOverrideTest extends AbstractJMSTest {
@@ -59,15 +57,18 @@ public class JmsRequestReplyReplyToOverrideTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        JmsComponent jmsComponent = jmsComponentAutoAcknowledge(connectionFactory);
+    protected String getComponentName() {
+        return "jms";
+    }
+
+    @Override
+    protected JmsComponent setupComponent(CamelContext camelContext, ActiveMQService service, String componentName) {
+        final JmsComponent jmsComponent = super.setupComponent(camelContext, service, componentName);
+
         jmsComponent.getConfiguration().setReplyTo("baz");
         jmsComponent.getConfiguration().setReplyToOverride("JmsRequestReplyReplyToOverrideTest.reply");
-        camelContext.addComponent("jms", jmsComponent);
-        return camelContext;
+
+        return jmsComponent;
     }
 
     private class Responder implements Runnable {

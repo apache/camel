@@ -19,22 +19,25 @@ package org.apache.camel.component.jms;
 import java.io.File;
 import java.io.InputStream;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.infra.activemq.services.ActiveMQService;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@TestInstance(TestInstance.Lifecycle.PER_METHOD)
+/**
+ * This test cannot run in parallel: it reuses the same path for different test iterations
+ */
+@Tags({ @Tag("not-parallel") })
 public class JmsStreamMessageTypeTest extends AbstractJMSTest {
 
     @Override
@@ -45,23 +48,29 @@ public class JmsStreamMessageTypeTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
-        jms.getConfiguration().setStreamMessageTypeEnabled(true); // turn on streaming
-        camelContext.addComponent("jms", jms);
-        return camelContext;
+    protected String getComponentName() {
+        return "jms";
     }
 
-    @Test
-    public void testStreamType() throws Exception {
+    @Override
+    protected JmsComponent setupComponent(CamelContext camelContext, ActiveMQService service, String componentName) {
+        final JmsComponent component = super.setupComponent(camelContext, service, componentName);
+
+        component.getConfiguration().setStreamMessageTypeEnabled(true); // turn on streaming
+        return component;
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "message1.xml", "message1.txt" })
+    @DisplayName("Tests stream type with both a small (message1.xml) and a large file (message1.txt)")
+    public void testStreamType(String filename) throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
+        final File baseFile = new File("src/test/data", filename);
+        final File sourceFile = new File("target/stream/JmsStreamMessageTypeTest/in/", filename);
+
         // copy the file
-        FileUtil.copyFile(new File("src/test/data/message1.xml"), new File("target/stream/in/message1.xml"));
+        FileUtil.copyFile(baseFile, sourceFile);
 
         assertMockEndpointsSatisfied();
 
@@ -69,30 +78,10 @@ public class JmsStreamMessageTypeTest extends AbstractJMSTest {
         InputStream is = assertIsInstanceOf(InputStream.class, body);
 
         // assert on the content of input versus output file
-        String srcContent = context.getTypeConverter().mandatoryConvertTo(String.class, new File("src/test/data/message1.xml"));
+        String srcContent = context.getTypeConverter().mandatoryConvertTo(String.class, new File("src/test/data/", filename));
         String dstContent
                 = context.getTypeConverter().mandatoryConvertTo(String.class,
-                        new File("target/stream/JmsStreamMessageTypeTest/out/message1.xml"));
-        assertEquals(srcContent, dstContent, "both the source and destination files should have the same content");
-    }
-
-    @Test
-    public void testStreamTypeWithBigFile() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(1);
-
-        // copy the file
-        FileUtil.copyFile(new File("src/test/data/message1.txt"), new File("target/stream/in/message1.txt"));
-
-        assertMockEndpointsSatisfied();
-
-        Object body = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn().getBody();
-        InputStream is = assertIsInstanceOf(InputStream.class, body);
-
-        // assert on the content of input versus output file
-        String srcContent = context.getTypeConverter().mandatoryConvertTo(String.class, new File("src/test/data/message1.txt"));
-        String dstContent
-                = context.getTypeConverter().mandatoryConvertTo(String.class,
-                        new File("target/stream/JmsStreamMessageTypeTest/out/message1.txt"));
+                        new File("target/stream/JmsStreamMessageTypeTest/out/", filename));
         assertEquals(srcContent, dstContent, "both the source and destination files should have the same content");
     }
 
@@ -101,7 +90,7 @@ public class JmsStreamMessageTypeTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("file:target/stream/in").to("jms:queue:JmsStreamMessageTypeTest");
+                from("file:target/stream/JmsStreamMessageTypeTest/in").to("jms:queue:JmsStreamMessageTypeTest");
 
                 from("jms:queue:JmsStreamMessageTypeTest").to("file:target/stream/JmsStreamMessageTypeTest/out")
                         .to("mock:result");

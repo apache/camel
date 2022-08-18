@@ -23,22 +23,21 @@ import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.TextMessage;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.springframework.jms.core.JmsTemplate;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test using a fixed replyTo specified on the JMS endpoint
  */
+@Timeout(30)
 public class JmsJMSReplyToEndpointUsingInOutTest extends AbstractJMSTest {
     private JmsComponent amq;
 
@@ -55,7 +54,7 @@ public class JmsJMSReplyToEndpointUsingInOutTest extends AbstractJMSTest {
         executor.submit(() -> {
             JmsTemplate jms = new JmsTemplate(amq.getConfiguration().getConnectionFactory());
 
-            final TextMessage msg = (TextMessage) jms.receive("nameRequestor");
+            final TextMessage msg = (TextMessage) jms.receive("JmsJMSReplyToEndpointUsingInOutTest.namedRequestor");
             assertEquals("What's your name", msg.getText());
 
             // there should be a JMSReplyTo so we know where to send the reply
@@ -75,7 +74,7 @@ public class JmsJMSReplyToEndpointUsingInOutTest extends AbstractJMSTest {
         // now get started and send the first message that gets the ball rolling
         JmsTemplate jms = new JmsTemplate(amq.getConfiguration().getConnectionFactory());
 
-        jms.send("hello", session -> {
+        jms.send("JmsJMSReplyToEndpointUsingInOutTest", session -> {
             TextMessage msg = session.createTextMessage();
             msg.setText("Hello, I'm here");
             return msg;
@@ -90,10 +89,11 @@ public class JmsJMSReplyToEndpointUsingInOutTest extends AbstractJMSTest {
         return new RouteBuilder() {
 
             public void configure() {
-                from("activemq:queue:hello")
+                from("activemq:queue:JmsJMSReplyToEndpointUsingInOutTest")
                         .process(exchange -> exchange.getMessage().setBody("What's your name"))
                         // use in out to get a reply as well
-                        .to(ExchangePattern.InOut, "activemq:queue:nameRequestor?replyTo=queue:namedReplyQueue")
+                        .to(ExchangePattern.InOut,
+                                "activemq:queue:JmsJMSReplyToEndpointUsingInOutTest.namedRequestor?replyTo=queue:JmsJMSReplyToEndpointUsingInOutTest.namedReplyQueue")
                         // and send the reply to our mock for validation
                         .to("mock:result");
             }
@@ -101,13 +101,14 @@ public class JmsJMSReplyToEndpointUsingInOutTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        amq = camelContext.getComponent("activemq", JmsComponent.class);
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
+    @Override
+    protected JmsComponent buildComponent(ConnectionFactory connectionFactory) {
+        amq = super.buildComponent(connectionFactory);
+
+        return amq;
+    }
 }

@@ -18,28 +18,25 @@ package org.apache.camel.component.jms;
 
 import java.io.Serializable;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.infra.activemq.services.ActiveMQService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-/**
- *
- */
+@Timeout(30)
 public class JmsInOutBeanReturnNullTest extends AbstractJMSTest {
-
     @Test
     public void testReturnBean() {
         MyBean out = template.requestBody("activemq:queue:JmsInOutBeanReturnNullTest", "Camel", MyBean.class);
+
         assertNotNull(out);
         assertEquals("Camel", out.getName());
     }
@@ -56,12 +53,13 @@ public class JmsInOutBeanReturnNullTest extends AbstractJMSTest {
         assertNull(out);
     }
 
+    @SuppressWarnings("deprecated")
     @Test
     public void testReturnNullExchange() {
         Exchange reply
                 = template.request("activemq:queue:JmsInOutBeanReturnNullTest", exchange -> exchange.getIn().setBody("foo"));
         assertNotNull(reply);
-        assertNotEquals("foo", reply.getMessage().getBody(), "There shouldn't be an out message");
+        assertNotEquals("foo", reply.getOut().getBody(), "There shouldn't be an out message");
         Message out = reply.getMessage();
         assertNotNull(out);
         Object body = out.getBody();
@@ -69,12 +67,17 @@ public class JmsInOutBeanReturnNullTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory
-                = org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory(service);
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
+    }
+
+    @Override
+    protected JmsComponent setupComponent(CamelContext camelContext, ActiveMQService service, String componentName) {
+        final JmsComponent jmsComponent = super.setupComponent(camelContext, service, componentName);
+
+        jmsComponent.setRequestTimeout(5000);
+
+        return jmsComponent;
     }
 
     @Override

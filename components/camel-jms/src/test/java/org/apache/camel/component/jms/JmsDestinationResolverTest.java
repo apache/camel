@@ -16,15 +16,11 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.activemq.services.ActiveMQService;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 
 public class JmsDestinationResolverTest extends AbstractJMSTest {
 
@@ -42,16 +38,17 @@ public class JmsDestinationResolverTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
+    public String getComponentName() {
+        return componentName;
+    }
 
-        ConnectionFactory connectionFactory = createConnectionFactory(service);
-        camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
+    @Override
+    protected JmsComponent setupComponent(CamelContext camelContext, ActiveMQService service, String componentName) {
+        final JmsComponent component = super.setupComponent(camelContext, service, componentName);
 
-        JmsComponent jms = camelContext.getComponent(componentName, JmsComponent.class);
-        jms.getConfiguration().setDestinationResolver(new MyDestinationResolver());
+        component.getConfiguration().setDestinationResolver(new MyDestinationResolver());
 
-        return camelContext;
+        return component;
     }
 
     @Override

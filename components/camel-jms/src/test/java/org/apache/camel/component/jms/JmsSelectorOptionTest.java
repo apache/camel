@@ -16,17 +16,12 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -48,25 +43,25 @@ public class JmsSelectorOptionTest extends AbstractJMSTest {
         endpointC.expectedBodiesReceived("Message1", "Message2");
         endpointC.expectedMessageCount(2);
 
-        template.sendBodyAndHeader("activemq:queue:hello", "A blue car!", "color", "blue");
-        template.sendBodyAndHeader("activemq:queue:hello", "A red car!", "color", "red");
-        template.sendBodyAndHeader("activemq:queue:hello", "A blue car, again!", "color", "blue");
-        template.sendBodyAndHeader("activemq:queue:hello", "Message1", "SIZE_NUMBER", 1505);
-        template.sendBodyAndHeader("activemq:queue:hello", "Message3", "SIZE_NUMBER", 1300);
-        template.sendBodyAndHeader("activemq:queue:hello", "Message2", "SIZE_NUMBER", 1600);
+        template.sendBodyAndHeader("activemq:queue:JmsSelectorOptionTest.hello", "A blue car!", "color", "blue");
+        template.sendBodyAndHeader("activemq:queue:JmsSelectorOptionTest.hello", "A red car!", "color", "red");
+        template.sendBodyAndHeader("activemq:queue:JmsSelectorOptionTest.hello", "A blue car, again!", "color", "blue");
+        template.sendBodyAndHeader("activemq:queue:JmsSelectorOptionTest.hello", "Message1", "SIZE_NUMBER", 1505);
+        template.sendBodyAndHeader("activemq:queue:JmsSelectorOptionTest.hello", "Message3", "SIZE_NUMBER", 1300);
+        template.sendBodyAndHeader("activemq:queue:JmsSelectorOptionTest.hello", "Message2", "SIZE_NUMBER", 1600);
         assertMockEndpointsSatisfied();
     }
 
     @Test
     public void testConsumerTemplate() {
-        template.sendBodyAndHeader("activemq:queue:consumer", "Message1", "SIZE_NUMBER", 1505);
-        template.sendBodyAndHeader("activemq:queue:consumer", "Message3", "SIZE_NUMBER", 1300);
-        template.sendBodyAndHeader("activemq:queue:consumer", "Message2", "SIZE_NUMBER", 1600);
+        template.sendBodyAndHeader("activemq:queue:JmsSelectorOptionTest.consumer", "Message1", "SIZE_NUMBER", 1505);
+        template.sendBodyAndHeader("activemq:queue:JmsSelectorOptionTest.consumer", "Message3", "SIZE_NUMBER", 1300);
+        template.sendBodyAndHeader("activemq:queue:JmsSelectorOptionTest.consumer", "Message2", "SIZE_NUMBER", 1600);
 
         // process every exchange which is ready. If no exchange is left break
         // the loop
         while (true) {
-            Exchange ex = consumer.receiveNoWait("activemq:queue:consumer?selector=SIZE_NUMBER<1500");
+            Exchange ex = consumer.receiveNoWait("activemq:queue:JmsSelectorOptionTest.consumer?selector=SIZE_NUMBER<1500");
             if (ex != null) {
                 Message message = ex.getIn();
                 int size = message.getHeader("SIZE_NUMBER", int.class);
@@ -76,27 +71,20 @@ public class JmsSelectorOptionTest extends AbstractJMSTest {
                 break;
             }
         }
-
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    public String getComponentName() {
+        return componentName;
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:hello?selector=color='blue'").to("mock:a");
-                from("activemq:queue:hello?selector=color='red'").to("mock:b");
-                from("activemq:queue:hello?selector=SIZE_NUMBER>1500").to("mock:c");
+                from("activemq:queue:JmsSelectorOptionTest.hello?selector=color='blue'").to("mock:a");
+                from("activemq:queue:JmsSelectorOptionTest.hello?selector=color='red'").to("mock:b");
+                from("activemq:queue:JmsSelectorOptionTest.hello?selector=SIZE_NUMBER>1500").to("mock:c");
             }
         };
     }

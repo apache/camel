@@ -16,22 +16,21 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.Timeout;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test inspired by user forum
  */
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
+@Timeout(10)
 public class JmsRouteWithInOnlyTest extends AbstractJMSTest {
 
     protected String componentName = "activemq";
@@ -47,7 +46,7 @@ public class JmsRouteWithInOnlyTest extends AbstractJMSTest {
         MockEndpoint order = getMockEndpoint("mock:topic");
         order.expectedBodiesReceived("Camel in Action");
 
-        Object out = template.requestBody("activemq:queue:inbox", "Camel in Action");
+        Object out = template.requestBody("activemq:queue:JmsRouteWithInOnlyTest", "Camel in Action");
         assertEquals("OK: Camel in Action", out);
 
         assertMockEndpointsSatisfied();
@@ -58,14 +57,8 @@ public class JmsRouteWithInOnlyTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    public String getComponentName() {
+        return componentName;
     }
 
     @Override
@@ -73,11 +66,12 @@ public class JmsRouteWithInOnlyTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:inbox").to("mock:inbox").to(ExchangePattern.InOnly, "activemq:topic:order").bean(
-                        "orderService",
-                        "handleOrder");
+                from("activemq:queue:JmsRouteWithInOnlyTest").to("mock:inbox")
+                        .to(ExchangePattern.InOnly, "activemq:topic:JmsRouteWithInOnlyTest.order").bean(
+                                "orderService",
+                                "handleOrder");
 
-                from("activemq:topic:order").to("mock:topic");
+                from("activemq:topic:JmsRouteWithInOnlyTest.order").to("mock:topic");
             }
         };
     }

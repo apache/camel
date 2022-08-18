@@ -32,13 +32,13 @@ public class ConsumerTemplateJmsSelectorTest extends AbstractPersistentJMSTest {
         // must start CamelContext because use route builder is false
         context.start();
 
-        template.sendBodyAndHeader("activemq:foo", "Hello World", "foo", "123");
-        template.sendBodyAndHeader("activemq:foo", "Bye World", "foo", "456");
+        template.sendBodyAndHeader("activemq:ConsumerTemplateJmsSelectorTest", "Hello World", "foo", "123");
+        template.sendBodyAndHeader("activemq:ConsumerTemplateJmsSelectorTest", "Bye World", "foo", "456");
 
-        String body = consumer.receiveBody("activemq:foo?selector=foo='456'", 5000, String.class);
+        String body = consumer.receiveBody("activemq:ConsumerTemplateJmsSelectorTest?selector=foo='456'", 5000, String.class);
         assertEquals("Bye World", body);
 
-        body = consumer.receiveBody("activemq:foo", 5000, String.class);
+        body = consumer.receiveBody("activemq:ConsumerTemplateJmsSelectorTest", 5000, String.class);
         assertEquals("Hello World", body);
     }
 

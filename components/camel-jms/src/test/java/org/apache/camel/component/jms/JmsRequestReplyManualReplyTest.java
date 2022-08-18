@@ -31,8 +31,6 @@ import org.apache.camel.Header;
 import org.junit.jupiter.api.Test;
 import org.springframework.jms.core.JmsTemplate;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -77,15 +75,16 @@ public class JmsRequestReplyManualReplyTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        jms = new JmsTemplate(connectionFactory);
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
+    @Override
+    protected JmsComponent setupComponent(
+            CamelContext camelContext, ConnectionFactory connectionFactory, String componentName) {
+        final JmsComponent component = super.setupComponent(camelContext, connectionFactory, componentName);
+
+        jms = new JmsTemplate(connectionFactory);
+        return component;
+    }
 }

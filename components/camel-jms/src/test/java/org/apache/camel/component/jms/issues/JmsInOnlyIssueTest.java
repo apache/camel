@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.jms.issues;
 
-import javax.jms.ConnectionFactory;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,8 +26,7 @@ import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsInOnlyIssueTest extends AbstractJMSTest {
@@ -37,7 +36,7 @@ public class JmsInOnlyIssueTest extends AbstractJMSTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
 
-        template.sendBody("activemq:queue:in", "Hello World");
+        template.sendBody("activemq:queue:JmsInOnlyIssueTest.in", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -47,10 +46,11 @@ public class JmsInOnlyIssueTest extends AbstractJMSTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
 
-        // need a little sleep to let task exectuor be ready
-        Thread.sleep(1000);
+        // need a little sleep to let task executor be ready
 
-        template.asyncSendBody("activemq:queue:in", "Hello World");
+        final CompletableFuture<Object> future = template.asyncSendBody("activemq:queue:JmsInOnlyIssueTest.in", "Hello World");
+
+        assertDoesNotThrow(() -> future.get(1, TimeUnit.SECONDS));
 
         assertMockEndpointsSatisfied();
     }
@@ -60,7 +60,7 @@ public class JmsInOnlyIssueTest extends AbstractJMSTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
 
-        Exchange out = template.send("activemq:queue:in", ExchangePattern.InOnly,
+        Exchange out = template.send("activemq:queue:JmsInOnlyIssueTest.in", ExchangePattern.InOnly,
                 exchange -> exchange.getIn().setBody("Hello World"));
 
         assertMockEndpointsSatisfied();
@@ -76,31 +76,29 @@ public class JmsInOnlyIssueTest extends AbstractJMSTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
 
-        // need a little sleep to let task exectuor be ready
-        Thread.sleep(1000);
+        // need a little sleep to let task executor be ready
 
-        template.asyncSend("activemq:queue:in", exchange -> {
+        final CompletableFuture<Exchange> future = template.asyncSend("activemq:queue:JmsInOnlyIssueTest.in", exchange -> {
             exchange.setPattern(ExchangePattern.InOnly);
             exchange.getIn().setBody("Hello World");
         });
+
+        assertDoesNotThrow(() -> future.get(1, TimeUnit.SECONDS));
 
         assertMockEndpointsSatisfied();
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:in").process(exchange -> exchange.getIn().setBody("Bye World")).to("mock:result");
+                from("activemq:queue:JmsInOnlyIssueTest.in").process(exchange -> exchange.getIn().setBody("Bye World"))
+                        .to("mock:result");
             }
         };
     }

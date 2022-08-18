@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
@@ -25,10 +24,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.activemq.services.ActiveMQService;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 
 public class JmsMessageCreatedStrategyComponentTest extends AbstractJMSTest {
 
@@ -46,17 +43,15 @@ public class JmsMessageCreatedStrategyComponentTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
+    public String getComponentName() {
+        return componentName;
+    }
 
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
-
-        JmsComponent jms = camelContext.getComponent(componentName, JmsComponent.class);
+    @Override
+    protected JmsComponent setupComponent(CamelContext camelContext, ActiveMQService service, String componentName) {
+        final JmsComponent jms = super.setupComponent(camelContext, service, componentName);
         jms.setMessageCreatedStrategy(new MyMessageCreatedStrategy());
-
-        return camelContext;
+        return jms;
     }
 
     @Override

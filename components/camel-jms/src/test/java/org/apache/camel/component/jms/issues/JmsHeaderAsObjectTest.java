@@ -19,16 +19,10 @@ package org.apache.camel.component.jms.issues;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 
 public class JmsHeaderAsObjectTest extends AbstractJMSTest {
 
@@ -42,7 +36,7 @@ public class JmsHeaderAsObjectTest extends AbstractJMSTest {
         Map<String, Object> headers = new HashMap<>();
         headers.put("foo", "bar");
         headers.put("number", 23);
-        template.sendBodyAndHeaders("activemq:in", "Hello World", headers);
+        template.sendBodyAndHeaders("activemq:JmsHeaderAsObjectTest", "Hello World", headers);
 
         mock.assertIsSatisfied();
     }
@@ -62,25 +56,21 @@ public class JmsHeaderAsObjectTest extends AbstractJMSTest {
         Map<String, Object> headers = new HashMap<>();
         headers.put("foo", "bar");
         headers.put("order", order);
-        template.sendBodyAndHeaders("activemq:in", "Hello World", headers);
+        template.sendBodyAndHeaders("activemq:JmsHeaderAsObjectTest", "Hello World", headers);
 
         mock.assertIsSatisfied();
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:in").to("mock:result");
+                from("activemq:JmsHeaderAsObjectTest").to("mock:result");
             }
         };
     }

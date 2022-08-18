@@ -18,13 +18,11 @@ package org.apache.camel.component.jms;
 
 import javax.jms.ConnectionFactory;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 
 public class JmsTransactedRouteTest extends AbstractJMSTest {
 
@@ -44,14 +42,13 @@ public class JmsTransactedRouteTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
+    protected String getComponentName() {
+        return "activemq";
+    }
 
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        JmsComponent component = jmsComponentTransacted(connectionFactory);
-        camelContext.addComponent("activemq", component);
-        return camelContext;
+    @Override
+    protected JmsComponent buildComponent(ConnectionFactory connectionFactory) {
+        return jmsComponentTransacted(connectionFactory);
     }
 
     @Override
