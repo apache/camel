@@ -17,7 +17,8 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.apache</groupId>
@@ -85,18 +86,18 @@
     <caffeine-version>3.1.1</caffeine-version>
     <californium-version>2.6.6</californium-version>
     <camel.failsafe.forkTimeout>600</camel.failsafe.forkTimeout>
-    <camel.osgi.activator />
-    <camel.osgi.dynamic />
+    <camel.osgi.activator></camel.osgi.activator>
+    <camel.osgi.dynamic></camel.osgi.dynamic>
     <camel.osgi.exclude.dependencies>false</camel.osgi.exclude.dependencies>
     <camel.osgi.export>${camel.osgi.export.pkg};-noimport:=true;${camel.osgi.version}</camel.osgi.export>
     <camel.osgi.export.pkg>$${replace;{local-packages};;;\;}</camel.osgi.export.pkg>
     <camel.osgi.failok>false</camel.osgi.failok>
     <camel.osgi.import>${camel.osgi.import.pkg}</camel.osgi.import>
-    <camel.osgi.import.additional />
-    <camel.osgi.import.before.defaults />
+    <camel.osgi.import.additional></camel.osgi.import.additional>
+    <camel.osgi.import.before.defaults></camel.osgi.import.before.defaults>
     <camel.osgi.import.camel.version>version="[$(version;==;${camel.osgi.version.clean}),$(version;=+;${camel.osgi.version.clean}))"</camel.osgi.import.camel.version>
     <camel.osgi.import.default.version>[$(version;==;$(@)),$(version;+;$(@)))</camel.osgi.import.default.version>
-    <camel.osgi.import.defaults />
+    <camel.osgi.import.defaults></camel.osgi.import.defaults>
     <camel.osgi.import.pkg>org.apache.camel.*;${camel.osgi.import.camel.version},
             ${camel.osgi.import.before.defaults},
             ${camel.osgi.import.defaults},
@@ -105,8 +106,8 @@
     <camel.osgi.import.strict.version>version="[$(version;===;${camel.osgi.version.clean}),$(version;==+;${camel.osgi.version.clean}))"</camel.osgi.import.strict.version>
     <camel.osgi.manifest>${project.build.outputDirectory}/META-INF/MANIFEST.MF</camel.osgi.manifest>
     <camel.osgi.private.pkg>!*</camel.osgi.private.pkg>
-    <camel.osgi.provide.capability />
-    <camel.osgi.require.capability />
+    <camel.osgi.provide.capability></camel.osgi.provide.capability>
+    <camel.osgi.require.capability></camel.osgi.require.capability>
     <camel.osgi.symbolic.name>${project.groupId}.${project.artifactId}</camel.osgi.symbolic.name>
     <camel.osgi.version>version=${project.version}</camel.osgi.version>
     <camel.surefire.fork.vmargs>-XX:+ExitOnOutOfMemoryError</camel.surefire.fork.vmargs>
@@ -153,16 +154,16 @@
     <compress-lzf-version>1.1</compress-lzf-version>
     <consul-client-version>1.5.3</consul-client-version>
     <corda-version>4.8</corda-version>
-    <couchbase-client-version>3.3.2</couchbase-client-version>
+    <couchbase-client-version>3.3.3</couchbase-client-version>
     <curator-version>4.3.0</curator-version>
     <cxf-codegen-plugin-version>3.5.3</cxf-codegen-plugin-version>
     <cxf-version>3.5.3</cxf-version>
     <cxf-version-range>[3.5,3.6)</cxf-version-range>
     <cxf-xjc-plugin-version>3.3.2</cxf-xjc-plugin-version>
     <cxf-xjc-utils-version>3.3.1</cxf-xjc-utils-version>
-    <cxf.codegen.jvmArgs />
+    <cxf.codegen.jvmArgs></cxf.codegen.jvmArgs>
     <cxf.codegenplugin.forkmode>true</cxf.codegenplugin.forkmode>
-    <cxf.xjc.jvmArgs />
+    <cxf.xjc.jvmArgs></cxf.xjc.jvmArgs>
     <datasonnet-mapper-version>2.1.4</datasonnet-mapper-version>
     <debezium-mysql-connector-version>8.0.28</debezium-mysql-connector-version>
     <debezium-version>1.9.5.Final</debezium-version>
@@ -215,7 +216,7 @@
     <geronimo-jta-spec-version>1.1.1</geronimo-jta-spec-version>
     <geronimo-ws-metadata-spec-version>1.1.3</geronimo-ws-metadata-spec-version>
     <glassfish-javax-json>1.0.4</glassfish-javax-json>
-    <glassfish-jaxb-runtime-version>2.3.3</glassfish-jaxb-runtime-version>
+    <glassfish-jaxb-runtime-version>2.3.6</glassfish-jaxb-runtime-version>
     <gmavenplus-plugin-version>1.13.1</gmavenplus-plugin-version>
     <google-api-client-version>1.32.1</google-api-client-version>
     <google-api-services-calendar-version>v3-rev20211229-1.32.1</google-api-services-calendar-version>
@@ -233,14 +234,14 @@
     <google-maps-services-version>0.10.1</google-maps-services-version>
     <google-oauth-client-version>1.34.0</google-oauth-client-version>
     <graaljs-version>22.1.0</graaljs-version>
-    <graphql-java-version>18.2</graphql-java-version>
+    <graphql-java-version>18.3</graphql-java-version>
     <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
     <grpc-google-auth-library-version>1.5.3</grpc-google-auth-library-version>
     <grpc-guava-version>28.2-jre</grpc-guava-version>
-    <grpc-java-jwt-version>3.18.3</grpc-java-jwt-version>
-    <grpc-netty-tcnative-boringssl-static-version>2.0.52.Final</grpc-netty-tcnative-boringssl-static-version>
+    <grpc-java-jwt-version>3.19.2</grpc-java-jwt-version>
+    <grpc-netty-tcnative-boringssl-static-version>2.0.53.Final</grpc-netty-tcnative-boringssl-static-version>
     <grpc-version>1.45.0</grpc-version>
-    <gson-version>2.9.0</gson-version>
+    <gson-version>2.9.1</gson-version>
     <guava-eventbus-version>28.2-jre</guava-eventbus-version>
     <guice3-version>3.0</guice3-version>
     <hadoop3-guava-version>29.0-jre</hadoop3-guava-version>
@@ -254,7 +255,7 @@
     <hazelcast-version>5.1.2</hazelcast-version>
     <hbase-version>2.4.12</hbase-version>
     <hdrhistrogram-version>2.1.11</hdrhistrogram-version>
-    <hibernate-validator-version>6.2.3.Final</hibernate-validator-version>
+    <hibernate-validator-version>6.2.4.Final</hibernate-validator-version>
     <hibernate-version>5.6.10.Final</hibernate-version>
     <hk2-version>2.6.1</hk2-version>
     <hsqldb-version>2.6.1</hsqldb-version>
@@ -402,7 +403,7 @@
     <maven-surefire-report-plugin-version>3.0.0-M4</maven-surefire-report-plugin-version>
     <maven-war-plugin-version>3.3.1</maven-war-plugin-version>
     <metrics-version>4.2.9</metrics-version>
-    <micrometer-version>1.9.2</micrometer-version>
+    <micrometer-version>1.9.3</micrometer-version>
     <microprofile-config-version>2.0.1</microprofile-config-version>
     <microprofile-fault-tolerance-version>3.0</microprofile-fault-tolerance-version>
     <microprofile-metrics-version>3.0.1</microprofile-metrics-version>
@@ -506,7 +507,7 @@
     <spring-integration-version>5.5.14</spring-integration-version>
     <spring-ldap-version>2.4.1</spring-ldap-version>
     <spring-rabbitmq-version>2.4.2</spring-rabbitmq-version>
-    <spring-security-version>5.7.2</spring-security-version>
+    <spring-security-version>5.7.3</spring-security-version>
     <spring-vault-core-version>2.3.2</spring-vault-core-version>
     <spring-version>${spring5-version}</spring-version>
     <spring-version-range>[5,6)</spring-version-range>
@@ -529,7 +530,7 @@
     <trimStackTrace>false</trimStackTrace>
     <twilio-version>7.55.3</twilio-version>
     <twitter4j-version>4.0.7</twitter4j-version>
-    <undertow-version>2.2.18.Final</undertow-version>
+    <undertow-version>2.2.19.Final</undertow-version>
     <univocity-parsers-version>2.9.1</univocity-parsers-version>
     <validation-api-version>2.0.1.Final</validation-api-version>
     <vavr-version>0.10.2</vavr-version>
