@@ -24,7 +24,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <bean id="myBean" class="org.apache.camel.component.jms.JmsRoutingSlipInOutTest$MyBean"/>
+    <bean id="myBean" class="org.apache.camel.component.jms.SpringJmsRoutingSlipInOutTest$MyBean"/>
 
     <bean id="activemq" class="org.apache.camel.component.jms.JmsComponent">
         <property name="connectionFactory">
