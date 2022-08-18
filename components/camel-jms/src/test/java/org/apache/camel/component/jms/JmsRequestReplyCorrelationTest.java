@@ -30,6 +30,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.activemq.services.ActiveMQService;
 import org.apache.camel.test.infra.activemq.services.ActiveMQServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -45,6 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Tests how the correlation between request and reply is done
  */
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
+@Tags({ @Tag("not-parallel"), @Tag("exclusive") })
 public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
     @RegisterExtension
     public static ActiveMQService service = ActiveMQServiceFactory.createVMServiceInstance();

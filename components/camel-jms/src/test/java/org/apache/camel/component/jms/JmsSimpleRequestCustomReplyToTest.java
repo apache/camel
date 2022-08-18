@@ -27,6 +27,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * A simple request/reply using custom reply to header.
  */
+@Tags({ @Tag("not-parallel") })
 public class JmsSimpleRequestCustomReplyToTest extends AbstractJMSTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsSimpleRequestCustomReplyToTest.class);

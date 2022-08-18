@@ -26,6 +26,8 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
@@ -34,6 +36,7 @@ import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelpe
 /**
  * Unit test for sending the bean method name as a key over the JMS wire, that we now support this.
  */
+@Tags({ @Tag("not-parallel") })
 public class JmsBeanMethodHeaderTest extends AbstractJMSTest {
 
     @BindToRegistry("approveService")

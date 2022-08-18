@@ -23,6 +23,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.jms.JmsMessage;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
@@ -35,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * Unit test to verify that we can route a JMS message and do header lookup by name without mutating it and that it can
  * handle the default keyFormatStrategy with _HYPHEN_ in the key name
  */
+@Tags({ @Tag("not-parallel") })
 public class JmsGetHeaderKeyFormatIssueWithContentTypeHeaderTest extends AbstractJMSTest {
 
     private final String uri = "activemq:queue:hello?jmsKeyFormatStrategy=default";

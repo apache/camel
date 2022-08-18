@@ -27,6 +27,8 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
@@ -35,6 +37,7 @@ import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelpe
 /**
  * Unit test that we send payload as byte[] for certain types
  */
+@Tags({ @Tag("not-parallel") })
 public class PayloadByteArrayJmsTest extends AbstractJMSTest {
 
     protected String componentName = "activemq";

@@ -23,10 +23,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
 import org.apache.camel.throttling.ThrottlingInflightRoutePolicy;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
 
+@Tags({ @Tag("not-parallel") })
 public class JmsThrottlingInflightRoutePolicyTest extends AbstractPersistentJMSTest {
 
     @Test

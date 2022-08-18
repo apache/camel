@@ -25,6 +25,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Headers;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
@@ -33,6 +35,7 @@ import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelpe
 /**
  *
  */
+@Tags({ @Tag("not-parallel") })
 public class JmsRoutingSlipInOutTest extends AbstractJMSTest {
 
     @BindToRegistry("myBean")

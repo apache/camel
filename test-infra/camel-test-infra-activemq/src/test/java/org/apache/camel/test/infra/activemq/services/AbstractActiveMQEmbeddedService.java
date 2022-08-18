@@ -39,19 +39,13 @@ public abstract class AbstractActiveMQEmbeddedService
         implements ActiveMQService, ConnectionFactoryAware, BeforeEachCallback, AfterEachCallback {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractActiveMQEmbeddedService.class);
     private final BrokerService brokerService;
-    private final boolean recycle;
 
     public AbstractActiveMQEmbeddedService() {
         this(ActiveMQEmbeddedServiceBuilder.defaultBroker().brokerService());
     }
 
     public AbstractActiveMQEmbeddedService(BrokerService brokerService) {
-        this(brokerService, false);
-    }
-
-    public AbstractActiveMQEmbeddedService(BrokerService brokerService, boolean recycle) {
         this.brokerService = brokerService;
-        this.recycle = recycle;
     }
 
     @Override
@@ -135,17 +129,12 @@ public abstract class AbstractActiveMQEmbeddedService
 
     @Override
     public void afterEach(ExtensionContext extensionContext) {
-        if (recycle) {
-            shutdown();
-        }
-
+        shutdown();
     }
 
     @Override
     public void beforeEach(ExtensionContext extensionContext) {
-        if (recycle) {
-            initialize();
-        }
+        initialize();
     }
 
     public abstract String getVmURL();

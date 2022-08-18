@@ -27,13 +27,18 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@Tags({ @Tag("not-parallel") })
+@Timeout(60)
 public class ActiveMQOriginalDestinationTest extends AbstractJMSTest {
 
     protected String componentName = "activemq";
@@ -48,7 +53,7 @@ public class ActiveMQOriginalDestinationTest extends AbstractJMSTest {
         assertMockEndpointsSatisfied();
 
         // consume from bar
-        Exchange out = consumer.receive("activemq:queue:bar", 5000);
+        Exchange out = consumer.receive("activemq:queue:ActiveMQOriginalDestinationTest.dest", 5000);
         assertNotNull(out);
 
         // and we should have ActiveMQOriginalDestinationTest as the original destination
@@ -81,7 +86,7 @@ public class ActiveMQOriginalDestinationTest extends AbstractJMSTest {
             @Override
             public void configure() {
                 from("activemq:queue:ActiveMQOriginalDestinationTest")
-                        .to("activemq:queue:bar")
+                        .to("activemq:queue:ActiveMQOriginalDestinationTest.dest")
                         .to("mock:result");
             }
         };

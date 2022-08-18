@@ -24,6 +24,8 @@ import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.test.infra.activemq.services.ActiveMQService;
 import org.apache.camel.test.infra.activemq.services.ActiveMQServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -32,6 +34,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 /**
  * Concurrent consumer with InOnly test.
  */
+@Tags({ @Tag("not-parallel") })
 public class JmsConcurrentConsumerInOnlyTest extends CamelTestSupport {
     @RegisterExtension
     public static ActiveMQService service = ActiveMQServiceFactory.createVMService();

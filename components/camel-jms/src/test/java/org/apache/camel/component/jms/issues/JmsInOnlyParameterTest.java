@@ -22,12 +22,15 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Tags({ @Tag("not-parallel") })
 public class JmsInOnlyParameterTest extends AbstractJMSTest {
 
     @Test
@@ -76,11 +79,11 @@ public class JmsInOnlyParameterTest extends AbstractJMSTest {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("activemq:queue:in?exchangePattern=InOnly")
+                        .to("activemq:queue:JmsInOnlyParameterTest.in?exchangePattern=InOnly")
                         .transform().constant("Bye World")
                         .to("mock:result");
 
-                from("activemq:queue:in")
+                from("activemq:queue:JmsInOnlyParameterTest.in")
                         .to("mock:in");
             }
         };

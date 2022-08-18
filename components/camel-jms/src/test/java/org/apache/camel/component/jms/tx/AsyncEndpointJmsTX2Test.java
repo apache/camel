@@ -19,12 +19,15 @@ package org.apache.camel.component.jms.tx;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.async.MyAsyncComponent;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Tags({ @Tag("not-parallel") })
 public class AsyncEndpointJmsTX2Test extends CamelSpringTestSupport {
     private static String beforeThreadName;
     private static String afterThreadName;

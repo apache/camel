@@ -20,6 +20,8 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
@@ -28,6 +30,7 @@ import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelpe
 /**
  * Unit test from JMS -> routing slip
  */
+@Tags({ @Tag("not-parallel") })
 public class JmsRoutingSlipTest extends AbstractJMSTest {
 
     protected String componentName = "activemq";

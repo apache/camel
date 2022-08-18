@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsPassThroughtJmsKeyFormatStrategyUsingJmsConfigurationTest extends AbstractJMSTest {
 
-    private final String uri = "activemq:queue:hello";
+    private final String uri = "activemq:queue:JmsPassThroughtJmsKeyFormatStrategyUsingJmsConfigurationTest";
 
     @Test
     public void testSendWithHeaders() throws Exception {

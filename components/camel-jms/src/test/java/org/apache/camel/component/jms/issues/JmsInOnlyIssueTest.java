@@ -24,12 +24,15 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Tags({ @Tag("not-parallel") })
 public class JmsInOnlyIssueTest extends AbstractJMSTest {
 
     @Test
@@ -37,7 +40,7 @@ public class JmsInOnlyIssueTest extends AbstractJMSTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
 
-        template.sendBody("activemq:queue:in", "Hello World");
+        template.sendBody("activemq:queue:JmsInOnlyIssueTest.in", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -50,7 +53,7 @@ public class JmsInOnlyIssueTest extends AbstractJMSTest {
         // need a little sleep to let task exectuor be ready
         Thread.sleep(1000);
 
-        template.asyncSendBody("activemq:queue:in", "Hello World");
+        template.asyncSendBody("activemq:queue:JmsInOnlyIssueTest.in", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -60,7 +63,7 @@ public class JmsInOnlyIssueTest extends AbstractJMSTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
 
-        Exchange out = template.send("activemq:queue:in", ExchangePattern.InOnly,
+        Exchange out = template.send("activemq:queue:JmsInOnlyIssueTest.in", ExchangePattern.InOnly,
                 exchange -> exchange.getIn().setBody("Hello World"));
 
         assertMockEndpointsSatisfied();
@@ -79,7 +82,7 @@ public class JmsInOnlyIssueTest extends AbstractJMSTest {
         // need a little sleep to let task exectuor be ready
         Thread.sleep(1000);
 
-        template.asyncSend("activemq:queue:in", exchange -> {
+        template.asyncSend("activemq:queue:JmsInOnlyIssueTest.in", exchange -> {
             exchange.setPattern(ExchangePattern.InOnly);
             exchange.getIn().setBody("Hello World");
         });
@@ -100,7 +103,8 @@ public class JmsInOnlyIssueTest extends AbstractJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:in").process(exchange -> exchange.getIn().setBody("Bye World")).to("mock:result");
+                from("activemq:queue:JmsInOnlyIssueTest.in").process(exchange -> exchange.getIn().setBody("Bye World"))
+                        .to("mock:result");
             }
         };
     }

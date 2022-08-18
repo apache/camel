@@ -22,6 +22,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
@@ -33,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Unit test for testing request timeout with a InOut exchange.
  */
+@Tags({ @Tag("not-parallel") })
 public class JmsRouteTimeoutCheckerIntervalTest extends AbstractJMSTest {
 
     @Test

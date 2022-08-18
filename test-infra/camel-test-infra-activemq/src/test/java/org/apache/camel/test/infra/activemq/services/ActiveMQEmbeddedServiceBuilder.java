@@ -592,8 +592,9 @@ public class ActiveMQEmbeddedServiceBuilder {
         return new ActiveMQEmbeddedService(brokerService);
     }
 
+    @Deprecated
     public ActiveMQEmbeddedService buildWithRecycle() {
-        return new ActiveMQEmbeddedService(brokerService, true);
+        return build();
     }
 
     public static ActiveMQEmbeddedServiceBuilder bare() {

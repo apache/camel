@@ -29,6 +29,8 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
 import org.apache.camel.test.infra.activemq.services.LegacyEmbeddedBroker;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
@@ -38,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  *
  */
+@Tags({ @Tag("not-parallel") })
 public class ManagedJmsSelectorTest extends CamelTestSupport {
 
     @Override

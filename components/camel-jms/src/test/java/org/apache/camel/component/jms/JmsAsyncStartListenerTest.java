@@ -22,13 +22,18 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
  * Testing with async start listener
  */
+@Tags({ @Tag("not-parallel") })
+@Timeout(60)
 public class JmsAsyncStartListenerTest extends AbstractPersistentJMSTest {
 
     protected String componentName = "activemq";

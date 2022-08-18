@@ -20,32 +20,49 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.infra.activemq.services.ActiveMQService;
+import org.apache.camel.test.infra.activemq.services.ActiveMQServiceFactory;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class JmsInOutSynchronousTest extends AbstractJMSTest {
+@Tags({ @Tag("not-parallel") })
+@Timeout(60)
+public class JmsInOutSynchronousTest extends CamelTestSupport {
 
     private static String beforeThreadName;
     private static String afterThreadName;
+
+    @RegisterExtension
+    public ActiveMQService service = ActiveMQServiceFactory.createVMService();
+
+    private String reply;
     private final String url = "activemq:queue:JmsInOutSynchronousTest?synchronous=true";
+
+    @BeforeEach
+    public void sendMessage() {
+        reply = template.requestBody("direct:start", "Hello World", String.class);
+    }
 
     @Test
     public void testSynchronous() {
-        String reply = template.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", reply);
-
         assertTrue(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should use same threads");
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
+        ConnectionFactory connectionFactory = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
         return camelContext;
     }

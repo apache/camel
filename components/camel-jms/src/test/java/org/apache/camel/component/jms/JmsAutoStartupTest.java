@@ -22,10 +22,15 @@ import org.apache.camel.Service;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+@Tags({ @Tag("not-parallel") })
+@Timeout(60)
 public class JmsAutoStartupTest extends AbstractPersistentJMSTest {
 
     private JmsEndpoint endpoint;

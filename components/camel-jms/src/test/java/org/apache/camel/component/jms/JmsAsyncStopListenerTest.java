@@ -21,8 +21,11 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.Timeout;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
@@ -31,6 +34,8 @@ import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelpe
  * Testing with async stop listener
  */
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
+@Tags({ @Tag("not-parallel") })
+@Timeout(60)
 public class JmsAsyncStopListenerTest extends AbstractJMSTest {
 
     protected String componentName = "activemq";
@@ -41,7 +46,7 @@ public class JmsAsyncStopListenerTest extends AbstractJMSTest {
         result.expectedMessageCount(2);
 
         template.sendBody("activemq:queue:JmsAsyncStopListenerTest", "Hello World");
-        template.sendBody("activemq:queue:JmsAsyncStopListenerTest", "Gooday World");
+        template.sendBody("activemq:queue:JmsAsyncStopListenerTest", "Goodbye World");
 
         result.assertIsSatisfied();
     }

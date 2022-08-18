@@ -33,6 +33,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Tests CAMEL-5769. Camel JMS producer can block a thread under specific circumstances.
  */
+@Tags({ @Tag("not-parallel") })
 public class JmsBlockedAsyncRoutingEngineTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsBlockedAsyncRoutingEngineTest.class);

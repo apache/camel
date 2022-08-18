@@ -25,6 +25,8 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -36,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Concurrent consumer with JMSReply test.
  */
+@Tags({ @Tag("not-parallel") })
 public class JmsConcurrentConsumersTest extends AbstractJMSTest {
 
     @Test

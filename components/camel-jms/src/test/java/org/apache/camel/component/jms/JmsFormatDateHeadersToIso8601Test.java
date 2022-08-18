@@ -23,14 +23,18 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
+import org.apache.camel.test.infra.activemq.services.LegacyEmbeddedBroker;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class JmsFormatDateHeadersToIso8601Test extends AbstractJMSTest {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+public class JmsFormatDateHeadersToIso8601Test extends CamelTestSupport {
 
     private static final Date DATE = Date.from(Instant.ofEpochMilli(1519672338000L));
 
@@ -49,8 +53,11 @@ public class JmsFormatDateHeadersToIso8601Test extends AbstractJMSTest {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
+
+        // Note: this one does something strange that requires a fresh new broker
+        final String brokerUrl = LegacyEmbeddedBroker.createBrokerUrl();
+        ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(brokerUrl, 0);
+
         JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
         jms.getConfiguration().setFormatDateHeadersToIso8601(true);
         camelContext.addComponent("activemq", jms);

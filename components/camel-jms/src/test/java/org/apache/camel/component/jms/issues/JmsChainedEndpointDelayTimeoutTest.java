@@ -23,6 +23,8 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
@@ -32,6 +34,7 @@ import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelpe
  * Unit test to assert that timeouts don't trigger twice when JMS InOut endpoints are chained, and the second endpoint
  * takes longer to respond than the timeout set for the first endpoint.
  */
+@Tags({ @Tag("not-parallel") })
 public class JmsChainedEndpointDelayTimeoutTest extends AbstractJMSTest {
 
     @Test
