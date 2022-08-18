@@ -30,15 +30,13 @@ import org.apache.camel.test.infra.activemq.services.ActiveMQServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-@Isolated
 public class JmsTransactedDeadLetterChannelHandlerRollbackOnExceptionTest extends CamelTestSupport {
     @RegisterExtension
-    public static ActiveMQService service = ActiveMQServiceFactory.createVMService();
+    public ActiveMQService service = ActiveMQServiceFactory.createVMServiceInstance();
 
     public static class BadErrorHandler {
         @Handler
