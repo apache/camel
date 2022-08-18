@@ -18,17 +18,12 @@ package org.apache.camel.component.jms;
 
 import java.util.List;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BrowsableQueueTest extends AbstractJMSTest {
@@ -39,7 +34,7 @@ public class BrowsableQueueTest extends AbstractJMSTest {
 
     @Test
     public void testSendMessagesThenBrowseQueue() {
-        final String queueName = queueNameForClass("activemq:test.b", this.getClass());
+        final String queueName = queueNameForClass("activemq:BrowsableQueueTest.b", this.getClass());
         // send some messages
         for (int i = 0; i < expectedBodies.length; i++) {
             Object expectedBody = expectedBodies[i];
@@ -50,13 +45,13 @@ public class BrowsableQueueTest extends AbstractJMSTest {
         JmsQueueEndpoint endpoint = getMandatoryEndpoint(queueName + "?maximumBrowseSize=6", JmsQueueEndpoint.class);
         assertEquals(6, endpoint.getMaximumBrowseSize());
         List<Exchange> list = endpoint.getExchanges();
-        LOG.debug("Received: " + list);
+        LOG.debug("Received: {}", list);
         assertEquals(6, endpoint.getExchanges().size(), "Size of list");
 
         int index = -1;
         for (Exchange exchange : list) {
             String actual = exchange.getIn().getBody(String.class);
-            LOG.debug("Received body: " + actual);
+            LOG.debug("Received body: {}", actual);
 
             Object expected = expectedBodies[++index];
             assertEquals(expected, actual, "Body: " + index);
@@ -65,7 +60,7 @@ public class BrowsableQueueTest extends AbstractJMSTest {
 
     @Test
     public void testSendMessagesThenBrowseQueueLimitNotHit() {
-        final String queueName = queueNameForClass("activemq:test.c", this.getClass());
+        final String queueName = queueNameForClass("activemq:BrowsableQueueTest.c", this.getClass());
 
         // send some messages
         for (int i = 0; i < expectedBodies.length; i++) {
@@ -92,7 +87,7 @@ public class BrowsableQueueTest extends AbstractJMSTest {
 
     @Test
     public void testSendMessagesThenBrowseQueueNoMax() {
-        final String queueName = queueNameForClass("activemq:test.b", this.getClass());
+        final String queueName = queueNameForClass("activemq:BrowsableQueueTest.b", this.getClass());
 
         // send some messages
         for (int i = 0; i < expectedBodies.length; i++) {
@@ -110,7 +105,7 @@ public class BrowsableQueueTest extends AbstractJMSTest {
         int index = -1;
         for (Exchange exchange : list) {
             String actual = exchange.getIn().getBody(String.class);
-            LOG.debug("Received body: " + actual);
+            LOG.debug("Received body: {}", actual);
 
             Object expected = expectedBodies[++index];
             assertEquals(expected, actual, "Body: " + index);
@@ -118,20 +113,15 @@ public class BrowsableQueueTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = createConnectionFactory(service);
-        camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    protected String getComponentName() {
+        return componentName;
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            final String queueNameA = queueNameForClass("activemq:test.a", this.getClass());
-            final String queueNameB = queueNameForClass("activemq:test.b", this.getClass());
+            final String queueNameA = queueNameForClass("activemq:BrowsableQueueTest.a", this.getClass());
+            final String queueNameB = queueNameForClass("activemq:BrowsableQueueTest.b", this.getClass());
 
             public void configure() {
                 from(queueNameA).to(queueNameB);

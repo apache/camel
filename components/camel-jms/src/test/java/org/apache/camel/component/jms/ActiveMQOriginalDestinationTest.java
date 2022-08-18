@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
 import javax.jms.Message;
 import javax.jms.Session;
 
@@ -26,14 +25,15 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
+import org.apache.camel.test.infra.activemq.services.ActiveMQService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@Timeout(60)
 public class ActiveMQOriginalDestinationTest extends AbstractJMSTest {
 
     protected String componentName = "activemq";
@@ -48,7 +48,7 @@ public class ActiveMQOriginalDestinationTest extends AbstractJMSTest {
         assertMockEndpointsSatisfied();
 
         // consume from bar
-        Exchange out = consumer.receive("activemq:queue:bar", 5000);
+        Exchange out = consumer.receive("activemq:queue:ActiveMQOriginalDestinationTest.dest", 5000);
         assertNotNull(out);
 
         // and we should have ActiveMQOriginalDestinationTest as the original destination
@@ -62,17 +62,16 @@ public class ActiveMQOriginalDestinationTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
+    protected String getComponentName() {
+        return "activemq";
+    }
 
-        ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(service);
+    @Override
+    protected JmsComponent setupComponent(CamelContext camelContext, ActiveMQService service, String componentName) {
+        JmsComponent component = super.setupComponent(camelContext, service, componentName);
 
-        camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
-
-        JmsComponent jms = camelContext.getComponent(componentName, JmsComponent.class);
-        jms.setMessageCreatedStrategy(new OriginalDestinationPropagateStrategy());
-
-        return camelContext;
+        component.setMessageCreatedStrategy(new OriginalDestinationPropagateStrategy());
+        return component;
     }
 
     @Override
@@ -81,7 +80,7 @@ public class ActiveMQOriginalDestinationTest extends AbstractJMSTest {
             @Override
             public void configure() {
                 from("activemq:queue:ActiveMQOriginalDestinationTest")
-                        .to("activemq:queue:bar")
+                        .to("activemq:queue:ActiveMQOriginalDestinationTest.dest")
                         .to("mock:result");
             }
         };

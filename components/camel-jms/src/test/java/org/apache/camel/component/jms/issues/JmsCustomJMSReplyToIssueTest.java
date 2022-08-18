@@ -20,18 +20,17 @@ import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.TextMessage;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.springframework.jms.core.JmsTemplate;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Timeout(10)
 public class JmsCustomJMSReplyToIssueTest extends AbstractJMSTest {
 
     private JmsComponent amq;
@@ -44,16 +43,13 @@ public class JmsCustomJMSReplyToIssueTest extends AbstractJMSTest {
         // start a inOnly route
         template.sendBody("direct:start", "Hello World");
 
-        // now consume using something that is not Camel
-        Thread.sleep(1000);
-
         JmsTemplate jms = new JmsTemplate(amq.getConfiguration().getConnectionFactory());
-        TextMessage msg = (TextMessage) jms.receive("in");
+        TextMessage msg = (TextMessage) jms.receive("JmsCustomJMSReplyToIssueTest.in");
         assertEquals("Hello World", msg.getText());
 
         // there should be a JMSReplyTo so we know where to send the reply
         Destination replyTo = msg.getJMSReplyTo();
-        assertEquals("queue://myReplyQueue", replyTo.toString());
+        assertEquals("queue://JmsCustomJMSReplyToIssueTest.reply", replyTo.toString());
 
         // send reply
         template.sendBody("activemq:" + replyTo, "Bye World");
@@ -62,14 +58,15 @@ public class JmsCustomJMSReplyToIssueTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        amq = camelContext.getComponent("activemq", JmsComponent.class);
+    protected String getComponentName() {
+        return "activemq";
+    }
 
-        return camelContext;
+    @Override
+    protected JmsComponent buildComponent(ConnectionFactory connectionFactory) {
+        amq = super.buildComponent(connectionFactory);
+
+        return amq;
     }
 
     @Override
@@ -80,10 +77,10 @@ public class JmsCustomJMSReplyToIssueTest extends AbstractJMSTest {
                 from("direct:start").process(exchange -> {
                     exchange.getMessage().setBody("Hello World");
                     // set the JMSReplyTo to force sending the reply here
-                    exchange.getMessage().setHeader("JMSReplyTo", "myReplyQueue");
-                }).to("activemq:queue:in?preserveMessageQos=true");
+                    exchange.getMessage().setHeader("JMSReplyTo", "JmsCustomJMSReplyToIssueTest.reply");
+                }).to("activemq:queue:JmsCustomJMSReplyToIssueTest.in?preserveMessageQos=true");
 
-                from("activemq:queue:myReplyQueue").to("mock:result");
+                from("activemq:queue:JmsCustomJMSReplyToIssueTest.reply").to("mock:result");
             }
         };
     }

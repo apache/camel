@@ -16,28 +16,45 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+// This one is too flaky when running in parallel
+@Tags({ @Tag("not-parallel") })
+@Timeout(30)
 public class JmsDurableTopicTest extends AbstractPersistentJMSTest {
+    private MockEndpoint mock;
+    private MockEndpoint mock2;
+
+    @BeforeEach
+    void setUpMocks() {
+        mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
+
+        mock2 = getMockEndpoint("mock:result2");
+        mock2.expectedBodiesReceived("Hello World");
+    }
 
     @Test
     public void testDurableTopic() {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World");
 
-        MockEndpoint mock2 = getMockEndpoint("mock:result2");
-        mock2.expectedBodiesReceived("Hello World");
+        final CompletableFuture<Object> future = template.asyncSendBody("activemq:topic:JmsDurableTopicTest", "Hello World");
+        final Object request = assertDoesNotThrow(() -> future.get(5, TimeUnit.SECONDS));
+        assertNotNull(request);
 
-        Awaitility.await().atMost(2, TimeUnit.SECONDS)
-                .untilAsserted(() -> {
-                    template.sendBody("activemq:topic:JmsDurableTopicTest", "Hello World");
-                    assertMockEndpointsSatisfied();
-                });
+        Awaitility.await().atMost(6, TimeUnit.SECONDS).untilAsserted(this::assertMockEndpointsSatisfied);
     }
 
     @Override

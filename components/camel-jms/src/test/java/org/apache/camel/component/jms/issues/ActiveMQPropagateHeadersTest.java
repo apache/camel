@@ -19,10 +19,7 @@ package org.apache.camel.component.jms.issues;
 import java.util.Date;
 import java.util.List;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.activemq.command.ActiveMQQueue;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,8 +28,6 @@ import org.apache.camel.component.mock.AssertionClause;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ActiveMQPropagateHeadersTest extends AbstractJMSTest {
@@ -64,16 +59,8 @@ public class ActiveMQPropagateHeadersTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        // START SNIPPET: example
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        // END SNIPPET: example
-
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override

@@ -19,15 +19,10 @@ package org.apache.camel.component.jms.issues;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -36,7 +31,7 @@ public class NoClassDefFoundErrorWrapExceptionTest extends AbstractJMSTest {
     @Test
     public void testNoClassDef() {
         try {
-            template.requestBody("activemq:start?transferException=true", "Hello World");
+            template.requestBody("activemq:NoClassDefFoundErrorWrapExceptionTest?transferException=true", "Hello World");
             fail("Should throw exception");
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
@@ -55,7 +50,7 @@ public class NoClassDefFoundErrorWrapExceptionTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:start?transferException=true")
+                from("activemq:NoClassDefFoundErrorWrapExceptionTest?transferException=true")
                         .process(new ProcessorA())
                         .process(new ProcessorB())
                         .process(new ProcessorFail());
@@ -64,12 +59,7 @@ public class NoClassDefFoundErrorWrapExceptionTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
-
 }

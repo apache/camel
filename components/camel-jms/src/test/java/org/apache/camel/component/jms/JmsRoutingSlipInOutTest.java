@@ -18,21 +18,16 @@ package org.apache.camel.component.jms;
 
 import java.util.Map;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Headers;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.Timeout;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
-
-/**
- *
- */
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
+@Timeout(10)
 public class JmsRoutingSlipInOutTest extends AbstractJMSTest {
 
     @BindToRegistry("myBean")
@@ -48,14 +43,8 @@ public class JmsRoutingSlipInOutTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override

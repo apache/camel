@@ -27,8 +27,15 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.infra.activemq.services.ActiveMQService;
+import org.apache.camel.test.infra.activemq.services.ActiveMQServiceFactory;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.concurrent.ThreadHelper;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,11 +44,16 @@ import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelpe
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- *
+ * This test cannot run in parallel: running this test in parallel messes with the number of threads in the pools,
+ * resulting in failures.
  */
-public class JmsDefaultTaskExecutorTypeTest extends AbstractJMSTest {
-
+@Tags({ @Tag("not-parallel"), @Tag("slow") })
+@Timeout(60)
+public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(JmsDefaultTaskExecutorTypeTest.class);
+
+    @RegisterExtension
+    public ActiveMQService service = ActiveMQServiceFactory.createPersistentVMService();
 
     @Test
     public void testThreadPoolTaskExecutor() throws Exception {
@@ -52,9 +64,9 @@ public class JmsDefaultTaskExecutorTypeTest extends AbstractJMSTest {
         doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.threadPool", 500, 5, DefaultTaskExecutorType.ThreadPool);
         assertMockEndpointsSatisfied();
         Long numberThreadsCreated = currentThreadCount() - beforeThreadCount;
-        LOG.info("Number of threads created, testThreadPoolTaskExecutor: " + numberThreadsCreated);
+        LOG.info("Number of threads created, testThreadPoolTaskExecutor: {}", numberThreadsCreated);
         assertTrue(numberThreadsCreated <= 100, "Number of threads created should be equal or lower than "
-                                                + "100 with ThreadPoolTaskExecutor");
+                                                + "100 with ThreadPoolTaskExecutor: " + numberThreadsCreated);
     }
 
     @Test
@@ -68,7 +80,7 @@ public class JmsDefaultTaskExecutorTypeTest extends AbstractJMSTest {
         Long numberThreadsCreated = currentThreadCount() - beforeThreadCount;
         LOG.info("Number of threads created, testSimpleAsyncTaskExecutor: " + numberThreadsCreated);
         assertTrue(numberThreadsCreated >= 800, "Number of threads created should be equal or higher than "
-                                                + "800 with SimpleAsyncTaskExecutor");
+                                                + "800 with SimpleAsyncTaskExecutor: " + numberThreadsCreated);
     }
 
     @Test
@@ -80,9 +92,9 @@ public class JmsDefaultTaskExecutorTypeTest extends AbstractJMSTest {
         doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.default", 500, 5, null);
         assertMockEndpointsSatisfied();
         Long numberThreadsCreated = currentThreadCount() - beforeThreadCount;
-        LOG.info("Number of threads created, testDefaultTaskExecutor: " + numberThreadsCreated);
+        LOG.info("Number of threads created, testDefaultTaskExecutor: {}", numberThreadsCreated);
         assertTrue(numberThreadsCreated >= 800, "Number of threads created should be equal or higher than "
-                                                + "800 with default behaviour");
+                                                + "800 with default behaviour: " + numberThreadsCreated);
     }
 
     @Test
@@ -115,8 +127,7 @@ public class JmsDefaultTaskExecutorTypeTest extends AbstractJMSTest {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
+        ConnectionFactory connectionFactory = createConnectionFactory(service);
         JmsComponent jmsComponent = jmsComponentAutoAcknowledge(connectionFactory);
         jmsComponent.getConfiguration().setMaxMessagesPerTask(1);
         jmsComponent.getConfiguration().setIdleTaskExecutionLimit(1);

@@ -19,18 +19,15 @@ package org.apache.camel.component.jms;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.activemq.services.ActiveMQService;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -65,13 +62,13 @@ public class JmsHeaderFilteringTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
+    public String getComponentName() {
+        return componentName;
+    }
 
-        JmsComponent component = camelContext.getComponent(componentName, JmsComponent.class);
+    @Override
+    protected JmsComponent setupComponent(CamelContext camelContext, ActiveMQService service, String componentName) {
+        final JmsComponent component = super.setupComponent(camelContext, service, componentName);
 
         JmsHeaderFilterStrategy filter = new JmsHeaderFilterStrategy();
         filter.getInFilter().add("testheader");
@@ -81,7 +78,7 @@ public class JmsHeaderFilteringTest extends AbstractJMSTest {
 
         component.setHeaderFilterStrategy(filter);
 
-        return camelContext;
+        return component;
     }
 
     @Override

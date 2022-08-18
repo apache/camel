@@ -18,23 +18,20 @@ package org.apache.camel.component.jms.issues;
 
 import java.util.Map;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.jms.PassThroughJmsKeyFormatStrategy;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.activemq.services.ActiveMQService;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsPassThroughtJmsKeyFormatStrategyUsingJmsConfigurationTest extends AbstractJMSTest {
 
-    private final String uri = "activemq:queue:hello";
+    private final String uri = "activemq:queue:JmsPassThroughtJmsKeyFormatStrategyUsingJmsConfigurationTest";
 
     @Test
     public void testSendWithHeaders() throws Exception {
@@ -59,16 +56,16 @@ public class JmsPassThroughtJmsKeyFormatStrategyUsingJmsConfigurationTest extend
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
+    protected String getComponentName() {
+        return "activemq";
+    }
 
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        JmsComponent jms = camelContext.getComponent("activemq", JmsComponent.class);
-        jms.getConfiguration().setJmsKeyFormatStrategy(new PassThroughJmsKeyFormatStrategy());
+    @Override
+    protected JmsComponent setupComponent(CamelContext camelContext, ActiveMQService service, String componentName) {
+        final JmsComponent component = super.setupComponent(camelContext, service, componentName);
 
-        return camelContext;
+        component.getConfiguration().setJmsKeyFormatStrategy(new PassThroughJmsKeyFormatStrategy());
+        return component;
     }
 
     @Override

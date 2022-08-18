@@ -16,15 +16,10 @@
  */
 package org.apache.camel.component.jms.issues;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsInOutExclusiveTopicRecipientListTest extends AbstractJMSTest {
@@ -34,7 +29,7 @@ public class JmsInOutExclusiveTopicRecipientListTest extends AbstractJMSTest {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye Camel");
 
         String out = template.requestBodyAndHeader("direct:start", "Camel", "whereTo",
-                "activemq:topic:news?replyToType=Exclusive&replyTo=queue:JmsInOutExclusiveTopicRecipientListTest.reply",
+                "activemq:topic:JmsInOutExclusiveTopicRecipientListTest.news?replyToType=Exclusive&replyTo=queue:JmsInOutExclusiveTopicRecipientListTest.reply",
                 String.class);
         assertEquals("Bye Camel", out);
 
@@ -42,11 +37,8 @@ public class JmsInOutExclusiveTopicRecipientListTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = createConnectionFactory(service);
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
@@ -57,7 +49,7 @@ public class JmsInOutExclusiveTopicRecipientListTest extends AbstractJMSTest {
                         .recipientList().header("whereTo")
                         .to("mock:result");
 
-                from("activemq:topic:news?disableReplyTo=true")
+                from("activemq:topic:JmsInOutExclusiveTopicRecipientListTest.news?disableReplyTo=true")
                         .transform(body().prepend("Bye "))
                         .process(exchange -> {
                             String replyTo = exchange.getIn().getHeader("JMSReplyTo", String.class);

@@ -34,6 +34,7 @@ import org.apache.camel.spi.Synchronization;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Tests CAMEL-5769. Camel JMS producer can block a thread under specific circumstances.
  */
+@Timeout(30)
 public class JmsBlockedAsyncRoutingEngineTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsBlockedAsyncRoutingEngineTest.class);
@@ -63,7 +65,7 @@ public class JmsBlockedAsyncRoutingEngineTest extends CamelTestSupport {
     };
 
     public void startBroker() throws Exception {
-        String brokerName = "test-broker-" + System.currentTimeMillis();
+        String brokerName = "JmsBlockedAsyncRoutingEngineTest-broker-" + System.currentTimeMillis();
         String brokerUri = "vm://" + brokerName;
         broker = new BrokerService();
         broker.setBrokerName(brokerName);
@@ -89,7 +91,9 @@ public class JmsBlockedAsyncRoutingEngineTest extends CamelTestSupport {
         // 0. This message takes 2000ms to ACK from the broker due to the DelayerBrokerPlugin
         // Until then, the correlation ID doesn't get updated locally
         try {
-            template.asyncRequestBody("activemq:queue:test?requestTimeout=500&useMessageIDAsCorrelationID=true", "hello");
+            template.asyncRequestBody(
+                    "activemq:queue:JmsBlockedAsyncRoutingEngineTest?requestTimeout=500&useMessageIDAsCorrelationID=true",
+                    "hello");
         } catch (Exception e) {
         }
 
@@ -97,15 +101,20 @@ public class JmsBlockedAsyncRoutingEngineTest extends CamelTestSupport {
         Thread.sleep(3000);
 
         // 2. We send 5 messages that take 2 seconds so that they time out
-        template.asyncCallbackRequestBody("activemq:queue:test?requestTimeout=500&useMessageIDAsCorrelationID=true", "beSlow",
+        template.asyncCallbackRequestBody(
+                "activemq:queue:JmsBlockedAsyncRoutingEngineTest?requestTimeout=500&useMessageIDAsCorrelationID=true", "beSlow",
                 callback);
-        template.asyncCallbackRequestBody("activemq:queue:test?requestTimeout=500&useMessageIDAsCorrelationID=true", "beSlow",
+        template.asyncCallbackRequestBody(
+                "activemq:queue:JmsBlockedAsyncRoutingEngineTest?requestTimeout=500&useMessageIDAsCorrelationID=true", "beSlow",
                 callback);
-        template.asyncCallbackRequestBody("activemq:queue:test?requestTimeout=500&useMessageIDAsCorrelationID=true", "beSlow",
+        template.asyncCallbackRequestBody(
+                "activemq:queue:JmsBlockedAsyncRoutingEngineTest?requestTimeout=500&useMessageIDAsCorrelationID=true", "beSlow",
                 callback);
-        template.asyncCallbackRequestBody("activemq:queue:test?requestTimeout=500&useMessageIDAsCorrelationID=true", "beSlow",
+        template.asyncCallbackRequestBody(
+                "activemq:queue:JmsBlockedAsyncRoutingEngineTest?requestTimeout=500&useMessageIDAsCorrelationID=true", "beSlow",
                 callback);
-        template.asyncCallbackRequestBody("activemq:queue:test?requestTimeout=500&useMessageIDAsCorrelationID=true", "beSlow",
+        template.asyncCallbackRequestBody(
+                "activemq:queue:JmsBlockedAsyncRoutingEngineTest?requestTimeout=500&useMessageIDAsCorrelationID=true", "beSlow",
                 callback);
 
         // 3. We assert that we were notified of all timeout exceptions
@@ -114,14 +123,14 @@ public class JmsBlockedAsyncRoutingEngineTest extends CamelTestSupport {
 
     @AfterEach
     public void cleanup() {
-        LOG.info(">>>>> Latch countdown count was: " + latch.getCount());
+        LOG.info(">>>>> Latch countdown count was: {}", latch.getCount());
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:test?concurrentConsumers=5&useMessageIDAsCorrelationID=true&transacted=true")
+                from("activemq:queue:JmsBlockedAsyncRoutingEngineTest?concurrentConsumers=5&useMessageIDAsCorrelationID=true&transacted=true")
                         .filter().simple("${in.body} == 'beSlow'")
                         .delay(constant(2000))
                         .log(">>>>> Received message on test queue")
@@ -141,9 +150,9 @@ public class JmsBlockedAsyncRoutingEngineTest extends CamelTestSupport {
             LOG.info("******** Received message for destination " + destinationName);
 
             // do not intercept sends to DLQ
-            if (destinationName.toLowerCase().contains("test") && i == 0) {
+            if (destinationName.toLowerCase().contains("JmsBlockedAsyncRoutingEngineTest") && i == 0) {
                 Thread.sleep(2000);
-                LOG.info("******** Waited 2 seconds for destination: " + destinationName);
+                LOG.info("******** Waited 2 seconds for destination: {}", destinationName);
                 i++;
             }
 

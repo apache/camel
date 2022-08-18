@@ -16,17 +16,12 @@
  */
 package org.apache.camel.component.jms.issues;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsInOutParallelTest extends AbstractJMSTest {
@@ -42,11 +37,8 @@ public class JmsInOutParallelTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = createConnectionFactory(service);
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
@@ -56,18 +48,18 @@ public class JmsInOutParallelTest extends AbstractJMSTest {
 
                 from("direct:test")
                         .setBody(constant("1,2,3,4,5"))
-                        .to(ExchangePattern.InOut, "activemq:queue:test1?requestTimeout=2000")
+                        .to(ExchangePattern.InOut, "activemq:queue:JmsInOutParallelTest.1?requestTimeout=2000")
                         .split().tokenize(",").parallelProcessing()
-                        .to(ExchangePattern.InOut, "activemq:queue:test2?requestTimeout=2000")
+                        .to(ExchangePattern.InOut, "activemq:queue:JmsInOutParallelTest.2?requestTimeout=2000")
                         .to("mock:received")
                         .end()
                         .setBody(constant("Fully done"))
                         .log("Finished");
 
-                from("activemq:queue:test1")
+                from("activemq:queue:JmsInOutParallelTest.1")
                         .log("Received on queue test1");
 
-                from("activemq:queue:test2")
+                from("activemq:queue:JmsInOutParallelTest.2")
                         .log("Received on queue test2")
                         .setBody(constant("Some reply"))
                         .delay(constant(100));

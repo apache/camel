@@ -16,21 +16,19 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.activemq.services.ActiveMQService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
+import org.junit.jupiter.api.Timeout;
 
 /**
  * Testing with async stop listener
  */
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
+@Timeout(60)
 public class JmsAsyncStopListenerTest extends AbstractJMSTest {
 
     protected String componentName = "activemq";
@@ -41,21 +39,21 @@ public class JmsAsyncStopListenerTest extends AbstractJMSTest {
         result.expectedMessageCount(2);
 
         template.sendBody("activemq:queue:JmsAsyncStopListenerTest", "Hello World");
-        template.sendBody("activemq:queue:JmsAsyncStopListenerTest", "Gooday World");
+        template.sendBody("activemq:queue:JmsAsyncStopListenerTest", "Goodbye World");
 
         result.assertIsSatisfied();
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
+    public String getComponentName() {
+        return componentName;
+    }
 
-        ConnectionFactory connectionFactory = createConnectionFactory(service);
-        JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
+    @Override
+    protected JmsComponent setupComponent(CamelContext camelContext, ActiveMQService service, String componentName) {
+        JmsComponent jms = super.setupComponent(camelContext, service, componentName);
         jms.getConfiguration().setAsyncStopListener(true);
-        camelContext.addComponent(componentName, jms);
-
-        return camelContext;
+        return jms;
     }
 
     @Override

@@ -22,14 +22,25 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
+import org.apache.camel.test.infra.activemq.services.ActiveMQService;
+import org.apache.camel.test.infra.activemq.services.ActiveMQServiceFactory;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
- * Testing with async start listener
+ * Testing with async start listener. This test does not work in parallel mode.
  */
-public class JmsAsyncStartStopListenerTest extends AbstractPersistentJMSTest {
+@Tags({ @Tag("not-parallel") })
+@Timeout(30)
+public class JmsAsyncStartStopListenerTest extends CamelTestSupport {
+    @RegisterExtension
+    public ActiveMQService service = ActiveMQServiceFactory.createPersistentVMService();
 
     protected String componentName = "activemq";
 
@@ -39,12 +50,11 @@ public class JmsAsyncStartStopListenerTest extends AbstractPersistentJMSTest {
         result.expectedMessageCount(2);
 
         template.requestBody("activemq:queue:JmsAsyncStartStopListenerTest", "Hello World");
-        template.requestBody("activemq:queue:JmsAsyncStartStopListenerTest", "Gooday World");
+        template.requestBody("activemq:queue:JmsAsyncStartStopListenerTest", "Goodbye World");
 
         result.assertIsSatisfied();
     }
 
-    @Override
     protected void createConnectionFactory(CamelContext camelContext) {
         // use a persistent queue as the consumer is started asynchronously
         // so we need a persistent store in case no active consumers when we send the messages
@@ -53,6 +63,15 @@ public class JmsAsyncStartStopListenerTest extends AbstractPersistentJMSTest {
         jms.getConfiguration().setAsyncStartListener(true);
         jms.getConfiguration().setAsyncStopListener(true);
         camelContext.addComponent(componentName, jms);
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext camelContext = super.createCamelContext();
+
+        createConnectionFactory(camelContext);
+
+        return camelContext;
     }
 
     @Override

@@ -22,8 +22,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -35,8 +33,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ActiveMQPropagateSerializableHeadersTest extends AbstractJMSTest {
@@ -87,14 +83,13 @@ public class ActiveMQPropagateSerializableHeadersTest extends AbstractJMSTest {
     }
 
     @Override
+    protected String getComponentName() {
+        return "activemq";
+    }
+
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-
-        // START SNIPPET: example
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        // END SNIPPET: example
 
         // prevent java.io.NotSerializableException: org.apache.camel.support.DefaultMessageHistory
         camelContext.setMessageHistory(false);

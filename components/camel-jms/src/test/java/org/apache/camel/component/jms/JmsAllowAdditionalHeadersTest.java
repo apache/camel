@@ -16,14 +16,10 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.infra.activemq.services.ActiveMQService;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 
 public class JmsAllowAdditionalHeadersTest extends AbstractJMSTest {
 
@@ -44,19 +40,18 @@ public class JmsAllowAdditionalHeadersTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
+    protected String getComponentName() {
+        return "jms";
+    }
 
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
+    @Override
+    protected JmsComponent setupComponent(CamelContext camelContext, ActiveMQService service, String componentName) {
+        JmsComponent component = super.setupComponent(camelContext, service, componentName);
 
-        JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
         // allow any of those special IBM headers (notice we use * as wildcard)
-        jms.getConfiguration().setAllowAdditionalHeaders("JMS_IBM_MQMD*");
+        component.getConfiguration().setAllowAdditionalHeaders("JMS_IBM_MQMD*");
 
-        camelContext.addComponent("jms", jms);
-
-        return camelContext;
+        return component;
     }
 
     @Override

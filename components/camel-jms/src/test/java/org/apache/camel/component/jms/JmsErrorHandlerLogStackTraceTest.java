@@ -16,15 +16,13 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.infra.activemq.services.ActiveMQService;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -61,17 +59,17 @@ public class JmsErrorHandlerLogStackTraceTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        JmsComponent jms = JmsComponent.jmsComponentAutoAcknowledge(connectionFactory);
-        jms.getConfiguration().setErrorHandlerLogStackTrace(false);
-        jms.getConfiguration().setErrorHandlerLoggingLevel(LoggingLevel.ERROR);
-        camelContext.addComponent("jms", jms);
-
-        return camelContext;
+    protected String getComponentName() {
+        return "jms";
     }
 
+    @Override
+    protected JmsComponent setupComponent(CamelContext camelContext, ActiveMQService service, String componentName) {
+        final JmsComponent jms = super.setupComponent(camelContext, service, componentName);
+
+        jms.getConfiguration().setErrorHandlerLogStackTrace(false);
+        jms.getConfiguration().setErrorHandlerLoggingLevel(LoggingLevel.ERROR);
+
+        return jms;
+    }
 }

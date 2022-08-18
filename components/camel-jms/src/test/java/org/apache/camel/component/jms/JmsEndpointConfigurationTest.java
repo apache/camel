@@ -21,7 +21,6 @@ import javax.jms.DeliveryMode;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -38,7 +37,6 @@ import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.jms.listener.SimpleMessageListenerContainer;
 import org.springframework.jms.support.converter.SimpleMessageConverter;
 
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -57,6 +55,11 @@ public class JmsEndpointConfigurationTest extends AbstractJMSTest {
     private final Processor failProcessor = exchange -> fail("Should not be reached");
 
     private final Processor dummyProcessor = exchange -> LOG.info("Received: {}", exchange);
+
+    @Override
+    protected String getComponentName() {
+        return "jms";
+    }
 
     @Test
     public void testDurableSubscriberConfiguredWithDoubleSlash() throws Exception {
@@ -572,16 +575,4 @@ public class JmsEndpointConfigurationTest extends AbstractJMSTest {
         assertEquals("ABC", listenerContainer.getClientId(), "getClientId()");
         assertTrue(listenerContainer.isSubscriptionDurable(), "isSubscriptionDurable()");
     }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        camelContext.addComponent("jms", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
-    }
-
 }

@@ -18,18 +18,14 @@ package org.apache.camel.component.jms;
 
 import java.io.FileInputStream;
 
-import javax.jms.ConnectionFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.xml.StringSource;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -186,14 +182,8 @@ public class JmsXMLRouteTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Override
@@ -207,29 +197,29 @@ public class JmsXMLRouteTest extends AbstractJMSTest {
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0));
 
                 // no need to convert to String as JMS producer can handle XML streams now
-                from("direct:object").to("activemq:queue:object?jmsMessageType=Object");
+                from("direct:object").to("activemq:queue:JmsXMLRouteTest.object?jmsMessageType=Object");
 
                 // no need to convert to String as JMS producer can handle XML streams now
-                from("direct:bytes").to("activemq:queue:bytes?jmsMessageType=Bytes");
+                from("direct:bytes").to("activemq:queue:JmsXMLRouteTest.bytes?jmsMessageType=Bytes");
 
                 // no need to convert to String as JMS producer can handle XML streams now
-                from("direct:default").to("activemq:queue:default");
+                from("direct:default").to("activemq:queue:JmsXMLRouteTest.default");
 
-                from("activemq:queue:object")
+                from("activemq:queue:JmsXMLRouteTest.object")
                         .process(exchange -> {
                             Object body = exchange.getIn().getBody();
                             // should preserve the object as Source
                             assertIsInstanceOf(Source.class, body);
                         }).to("seda:choice");
 
-                from("activemq:queue:bytes")
+                from("activemq:queue:JmsXMLRouteTest.bytes")
                         .process(exchange -> {
                             Object body = exchange.getIn().getBody();
                             // should be a byte array by default
                             assertIsInstanceOf(byte[].class, body);
                         }).to("seda:choice");
 
-                from("activemq:queue:default")
+                from("activemq:queue:JmsXMLRouteTest.default")
                         .to("seda:choice");
 
                 from("seda:choice")

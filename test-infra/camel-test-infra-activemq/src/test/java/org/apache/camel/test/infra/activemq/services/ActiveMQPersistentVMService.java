@@ -34,11 +34,7 @@ public class ActiveMQPersistentVMService extends AbstractActiveMQEmbeddedService
     }
 
     public ActiveMQPersistentVMService(BrokerService brokerService) {
-        this(brokerService, true);
-    }
-
-    public ActiveMQPersistentVMService(BrokerService brokerService, boolean recycle) {
-        super(brokerService, recycle);
+        super(brokerService);
     }
 
     @Override

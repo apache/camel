@@ -16,21 +16,20 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.activemq.command.ActiveMQTextMessage;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.activemq.services.ActiveMQService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for Camel loadbalancer failover with JMS
  */
+@Timeout(10)
 public class JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest extends AbstractJMSTest {
     private final boolean forceSendOriginalMessage = true;
 
@@ -119,18 +118,17 @@ public class JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest extends A
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
+    protected String getComponentName() {
+        return "jms";
+    }
 
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
+    @Override
+    protected JmsComponent setupComponent(CamelContext camelContext, ActiveMQService service, String componentName) {
+        final JmsComponent jms = super.setupComponent(camelContext, service, componentName);
+
         // we want to transfer the exception
         jms.getConfiguration().setTransferException(true);
-
-        camelContext.addComponent("jms", jms);
-
-        return camelContext;
+        return jms;
     }
 
 }

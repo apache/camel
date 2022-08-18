@@ -16,14 +16,8 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 
 /**
  * Unit test from JMS -> routing slip
@@ -37,27 +31,21 @@ public class JmsRoutingSlipTest extends AbstractJMSTest {
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("activemq:queue:hello", "Hello World", "myslip", "mock:a#mock:b");
+        template.sendBodyAndHeader("activemq:queue:JmsRoutingSlipTest", "Hello World", "myslip", "mock:a#mock:b");
 
         assertMockEndpointsSatisfied();
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+    public String getComponentName() {
+        return componentName;
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:hello").routingSlip(header("myslip"), "#");
+                from("activemq:queue:JmsRoutingSlipTest").routingSlip(header("myslip"), "#");
             }
         };
     }

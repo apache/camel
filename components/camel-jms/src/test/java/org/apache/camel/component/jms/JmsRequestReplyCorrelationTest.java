@@ -27,15 +27,9 @@ import org.apache.camel.Message;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.infra.activemq.services.ActiveMQService;
-import org.apache.camel.test.infra.activemq.services.ActiveMQServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -45,10 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Tests how the correlation between request and reply is done
  */
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
-public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
-    @RegisterExtension
-    public static ActiveMQService service = ActiveMQServiceFactory.createVMServiceInstance();
-
+public class JmsRequestReplyCorrelationTest extends AbstractJMSTest {
     private static final String REPLY_BODY = "Bye World";
 
     /**
@@ -235,19 +226,21 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
+    protected String getComponentName() {
+        return "jms";
+    }
 
-        ConnectionFactory connectionFactory = createConnectionFactory(service);
-        JmsComponent jmsComponent = jmsComponentAutoAcknowledge(connectionFactory);
-        jmsComponent.getConfiguration().setUseMessageIDAsCorrelationID(false);
-        camelContext.addComponent("jms", jmsComponent);
+    @Override
+    protected JmsComponent setupComponent(
+            CamelContext camelContext, ConnectionFactory connectionFactory, String componentName) {
+        final JmsComponent component1 = super.setupComponent(camelContext, connectionFactory, componentName);
+        final JmsComponent component2 = super.setupComponent(camelContext, connectionFactory, componentName);
 
-        JmsComponent jmsComponent2 = jmsComponentAutoAcknowledge(connectionFactory);
-        jmsComponent2.getConfiguration().setUseMessageIDAsCorrelationID(true);
-        camelContext.addComponent("jms2", jmsComponent2);
+        component1.getConfiguration().setUseMessageIDAsCorrelationID(false);
+        component2.getConfiguration().setUseMessageIDAsCorrelationID(true);
+        camelContext.addComponent("jms2", component2);
 
-        return camelContext;
+        return component1;
     }
 
     @Override

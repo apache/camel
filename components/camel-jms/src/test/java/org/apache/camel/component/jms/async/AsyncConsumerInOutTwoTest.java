@@ -16,20 +16,15 @@
  */
 package org.apache.camel.component.jms.async;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- *
- */
+@Timeout(10)
 public class AsyncConsumerInOutTwoTest extends AbstractJMSTest {
 
     @Test
@@ -41,14 +36,14 @@ public class AsyncConsumerInOutTwoTest extends AbstractJMSTest {
     }
 
     @Override
+    protected String getComponentName() {
+        return "activemq";
+    }
+
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-
         camelContext.addComponent("async", new MyAsyncComponent());
-
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
     }

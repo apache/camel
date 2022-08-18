@@ -32,11 +32,7 @@ public class ActiveMQEmbeddedService extends AbstractActiveMQEmbeddedService {
     }
 
     public ActiveMQEmbeddedService(BrokerService brokerService) {
-        this(brokerService, false);
-    }
-
-    public ActiveMQEmbeddedService(BrokerService brokerService, boolean recycle) {
-        super(brokerService, recycle);
+        super(brokerService);
     }
 
     public String getVmURL() {

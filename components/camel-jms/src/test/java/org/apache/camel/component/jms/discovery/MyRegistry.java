@@ -32,7 +32,7 @@ public class MyRegistry {
 
     public void onEvent(Map<String, Object> heartbeat) {
         String key = (String) heartbeat.get("name");
-        LOG.debug(">>> event for: " + key + " details: " + heartbeat);
+        LOG.debug(">>> event for: {} details: {}", key, heartbeat);
         services.put(key, heartbeat);
     }
 

@@ -16,16 +16,14 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.infra.activemq.services.ActiveMQService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -33,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Unit test for testing request timeout with a InOut exchange.
  */
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class JmsRouteTimeoutCheckerIntervalTest extends AbstractJMSTest {
 
     @Test
@@ -57,17 +56,17 @@ public class JmsRouteTimeoutCheckerIntervalTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
+    protected String getComponentName() {
+        return "activemq";
+    }
 
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        JmsComponent activmq = jmsComponentAutoAcknowledge(connectionFactory);
+    @Override
+    protected JmsComponent setupComponent(CamelContext camelContext, ActiveMQService service, String componentName) {
+        final JmsComponent component = super.setupComponent(camelContext, service, componentName);
+
         // check 4 times per second
-        activmq.getConfiguration().setRequestTimeoutCheckerInterval(250);
-        camelContext.addComponent("activemq", activmq);
-
-        return camelContext;
+        component.getConfiguration().setRequestTimeoutCheckerInterval(250);
+        return component;
     }
 
     @Override

@@ -47,7 +47,7 @@ public class TransactionMinimalConfigurationTest extends CamelSpringTestSupport 
         mock.message(0).header(Exchange.REDELIVERED).isNull();
         mock.message(0).header(Exchange.REDELIVERY_COUNTER).isNull();
 
-        template.sendBody("activemq:queue:okay", "Hello World");
+        template.sendBody("activemq:queue:TransactionMinimalConfigurationTest", "Hello World");
 
         mock.assertIsSatisfied();
     }

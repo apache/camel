@@ -56,7 +56,7 @@ public class JmsToJmsTransactedSecurityTest extends CamelSpringTestSupport {
         // get the message that got rolled back
         Exchange exch = consumer.receive("activemq:queue:JmsToJmsTransactedSecurityTest", 250);
         if (exch != null) {
-            LOG.info("Cleaned up orphaned message: " + exch);
+            LOG.info("Cleaned up orphaned message: {}", exch);
         }
         mock.assertIsSatisfied(3000);
     }

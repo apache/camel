@@ -20,8 +20,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConversionException;
@@ -30,20 +28,19 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.TypeConverterSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.component.jms.JmsConstants.JMS_MESSAGE_TYPE;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsMessageTypeTest extends AbstractJMSTest {
 
     @Override
+    protected String getComponentName() {
+        return "jms";
+    }
+
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        camelContext.addComponent("jms", jmsComponentAutoAcknowledge(connectionFactory));
 
         camelContext.getTypeConverterRegistry().addTypeConverter(byte[].class, MyFooBean.class, new MyFooBean());
         camelContext.getTypeConverterRegistry().addTypeConverter(String.class, MyFooBean.class, new MyFooBean());

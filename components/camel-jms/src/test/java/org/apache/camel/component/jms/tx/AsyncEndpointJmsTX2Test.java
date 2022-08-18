@@ -40,7 +40,7 @@ public class AsyncEndpointJmsTX2Test extends CamelSpringTestSupport {
         getMockEndpoint("mock:after").expectedBodiesReceived("Hi Camel");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye Camel");
 
-        template.sendBody("activemq:queue:inbox", "Hello Camel");
+        template.sendBody("activemq:queue:AsyncEndpointJmsTX2Test.inbox", "Hello Camel");
 
         assertMockEndpointsSatisfied();
 
@@ -55,7 +55,7 @@ public class AsyncEndpointJmsTX2Test extends CamelSpringTestSupport {
             public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("activemq:queue:inbox")
+                from("activemq:queue:AsyncEndpointJmsTX2Test.inbox")
                         .transacted()
                         .to("mock:before")
                         .to("log:before")

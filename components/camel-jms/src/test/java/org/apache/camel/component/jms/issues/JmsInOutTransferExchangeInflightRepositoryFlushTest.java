@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.jms.issues;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
@@ -27,19 +24,13 @@ import org.apache.camel.component.jms.SerializableResponseDto;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsInOutTransferExchangeInflightRepositoryFlushTest extends AbstractJMSTest {
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Test
@@ -61,10 +52,11 @@ public class JmsInOutTransferExchangeInflightRepositoryFlushTest extends Abstrac
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to(ExchangePattern.InOut, "activemq:responseGenerator?transferExchange=true&requestTimeout=5000")
+                        .to(ExchangePattern.InOut,
+                                "activemq:JmsInOutTransferExchangeInflightRepositoryFlushTest.responseGenerator?transferExchange=true&requestTimeout=5000")
                         .to("mock:result");
 
-                from("activemq:responseGenerator?transferExchange=true")
+                from("activemq:JmsInOutTransferExchangeInflightRepositoryFlushTest.responseGenerator?transferExchange=true")
                         .process(exchange -> {
                             // there are 2 inflight (one for both routes)
                             assertEquals(2, exchange.getContext().getInflightRepository().size());

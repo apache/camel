@@ -21,19 +21,17 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.infra.activemq.services.ActiveMQService;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -91,17 +89,18 @@ public class JmsSimpleRequestLateReplyTest extends AbstractJMSTest {
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
+    protected String getComponentName() {
+        return "activemq";
+    }
 
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        activeMQComponent = camelContext.getComponent("activemq", JmsComponent.class);
+    @Override
+    protected JmsComponent setupComponent(CamelContext camelContext, ActiveMQService service, String componentName) {
+        final JmsComponent component = super.setupComponent(camelContext, service, componentName);
+
         // as this is a unit test I dont want to wait 20 sec before timeout occurs, so we use 10
-        activeMQComponent.getConfiguration().setRequestTimeout(10000);
+        component.getConfiguration().setRequestTimeout(10000);
 
-        return camelContext;
+        return component;
     }
 
     @Override
@@ -120,8 +119,8 @@ public class JmsSimpleRequestLateReplyTest extends AbstractJMSTest {
                             replyDestination = in.getHeader("JMSReplyTo", Destination.class);
                             cid = in.getHeader("JMSCorrelationID", String.class);
 
-                            LOG.info("ReplyDestination: " + replyDestination);
-                            LOG.info("JMSCorrelationID: " + cid);
+                            LOG.info("ReplyDestination: {}", replyDestination);
+                            LOG.info("JMSCorrelationID: {}", cid);
 
                             LOG.info("Ahh I cannot send a reply. Someone else must do it.");
                             // signal to the other thread to send back the reply message

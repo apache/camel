@@ -17,21 +17,51 @@
 
 package org.apache.camel.component.jms;
 
+import javax.jms.ConnectionFactory;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
 import org.apache.camel.test.infra.activemq.services.ActiveMQService;
 import org.apache.camel.test.infra.activemq.services.ActiveMQServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+
 @Tags({ @Tag("jms") })
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class AbstractJMSTest extends CamelTestSupport {
     @RegisterExtension
-    public static ActiveMQService service = ActiveMQServiceFactory.createVMService();
+    public ActiveMQService service = ActiveMQServiceFactory.createVMService();
 
     public static String queueNameForClass(String desiredName, Class<?> requestingClass) {
         return desiredName + "." + requestingClass.getSimpleName();
+    }
+
+    protected abstract String getComponentName();
+
+    protected JmsComponent buildComponent(ConnectionFactory connectionFactory) {
+        return jmsComponentAutoAcknowledge(connectionFactory);
+    }
+
+    protected JmsComponent setupComponent(
+            CamelContext camelContext, ConnectionFactory connectionFactory, String componentName) {
+        return buildComponent(connectionFactory);
+    }
+
+    protected JmsComponent setupComponent(CamelContext camelContext, ActiveMQService service, String componentName) {
+        ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(service);
+
+        return setupComponent(camelContext, connectionFactory, componentName);
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext camelContext = super.createCamelContext();
+
+        JmsComponent component = setupComponent(camelContext, service, getComponentName());
+        camelContext.addComponent(getComponentName(), component);
+        return camelContext;
     }
 }

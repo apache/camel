@@ -18,16 +18,13 @@ package org.apache.camel.component.jms;
 
 import java.io.File;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.infra.activemq.services.ActiveMQService;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,14 +39,23 @@ public class JmsStreamMessageTypeNoStreamCachingTest extends AbstractJMSTest {
     }
 
     @Override
+    protected String getComponentName() {
+        return "jms";
+    }
+
+    @Override
+    protected JmsComponent setupComponent(CamelContext camelContext, ActiveMQService service, String componentName) {
+        final JmsComponent component = super.setupComponent(camelContext, service, componentName);
+
+        component.getConfiguration().setStreamMessageTypeEnabled(true); // turn on streaming
+        return component;
+    }
+
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         camelContext.setStreamCaching(false);
 
-        ConnectionFactory connectionFactory = createConnectionFactory(service);
-        JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
-        jms.getConfiguration().setStreamMessageTypeEnabled(true); // turn on streaming
-        camelContext.addComponent("jms", jms);
         return camelContext;
     }
 
