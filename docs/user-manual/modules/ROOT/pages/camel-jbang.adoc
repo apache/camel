@@ -441,6 +441,9 @@ You can specify which Camel version to run as shown:
 jbang run -Dcamel.jbang.version=3.17.0 camel@apache/camel [command]
 ----
 
+NOTE: Older versions of Camel may not work as well with Camel JBang as the newest versions.
+Starting from Camel 3.18 onwards is the versions that are recommended to be used onwards.
+
 And you can also try bleeding edge development by using SNAPSHOT such as:
 
 [source,bash]
@@ -514,6 +517,21 @@ For example. you can copy this to your clipboard and then run it afterwards:
 ----
 camel run clipboard.xml
 ----
+
+=== Controlling local Camel applications
+
+To list the currently running Camel JBang applications you use the `ps` command:
+
+[source,bash]
+----
+camel ps
+37928 camel run foo.yaml (age: 20h18m)
+44805 camel run dude.java (age: 58s)
+----
+
+This lists the PID, the name and age of the application.
+
+NOTE: Additional commands are in the works.
 
 === Scripting from terminal using pipes
 
