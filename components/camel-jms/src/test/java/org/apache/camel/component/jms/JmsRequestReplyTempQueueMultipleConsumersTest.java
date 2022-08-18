@@ -101,7 +101,7 @@ public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupp
             @Override
             public void configure() {
                 from("direct:start").to(ExchangePattern.InOut,
-                        "jms:queue:foo?replyToConcurrentConsumers=10&replyToMaxConcurrentConsumers=20&recoveryInterval=10")
+                        "jms:queue:JmsRequestReplyTempQueueMultipleConsumersTest?replyToConcurrentConsumers=10&replyToMaxConcurrentConsumers=20&recoveryInterval=10")
                         .process(exchange -> {
                             String threadName = Thread.currentThread().getName();
                             synchronized (msgsPerThread) {
@@ -114,7 +114,8 @@ public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupp
                             }
                         }).to("mock:result");
 
-                from("jms:queue:foo?concurrentConsumers=10&recoveryInterval=10").setBody(simple("Reply >>> ${body}"));
+                from("jms:queue:JmsRequestReplyTempQueueMultipleConsumersTest?concurrentConsumers=10&recoveryInterval=10")
+                        .setBody(simple("Reply >>> ${body}"));
             }
         };
     }

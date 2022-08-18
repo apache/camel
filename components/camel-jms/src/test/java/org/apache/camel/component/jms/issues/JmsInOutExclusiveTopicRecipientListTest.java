@@ -34,7 +34,8 @@ public class JmsInOutExclusiveTopicRecipientListTest extends AbstractJMSTest {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye Camel");
 
         String out = template.requestBodyAndHeader("direct:start", "Camel", "whereTo",
-                "activemq:topic:news?replyToType=Exclusive&replyTo=queue:back", String.class);
+                "activemq:topic:news?replyToType=Exclusive&replyTo=queue:JmsInOutExclusiveTopicRecipientListTest.reply",
+                String.class);
         assertEquals("Bye Camel", out);
 
         assertMockEndpointsSatisfied();
@@ -43,8 +44,7 @@ public class JmsInOutExclusiveTopicRecipientListTest extends AbstractJMSTest {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
+        ConnectionFactory connectionFactory = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
         return camelContext;
     }

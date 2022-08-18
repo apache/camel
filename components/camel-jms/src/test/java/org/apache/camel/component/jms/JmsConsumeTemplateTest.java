@@ -27,7 +27,7 @@ public class JmsConsumeTemplateTest extends AbstractPersistentJMSTest {
         // must start CamelContext because use route builder is false
         context.start();
 
-        String url = "activemq:queue:foo";
+        String url = "activemq:queue:JmsConsumeTemplateTest";
         template.sendBody(url, "Hello World");
 
         Object out = consumer.receiveBody(url, 5000);

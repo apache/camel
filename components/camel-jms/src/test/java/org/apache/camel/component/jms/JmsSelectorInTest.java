@@ -34,14 +34,14 @@ public class JmsSelectorInTest extends AbstractJMSTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Carlsberg", "Santa Rita");
 
-        template.sendBodyAndHeader("activemq:queue:foo", "Carlsberg", "drink", "beer");
-        template.sendBodyAndHeader("activemq:queue:foo", "Coca Cola", "drink", "soft");
-        template.sendBodyAndHeader("activemq:queue:foo", "Santa Rita", "drink", "wine");
+        template.sendBodyAndHeader("activemq:queue:JmsSelectorInTest", "Carlsberg", "drink", "beer");
+        template.sendBodyAndHeader("activemq:queue:JmsSelectorInTest", "Coca Cola", "drink", "soft");
+        template.sendBodyAndHeader("activemq:queue:JmsSelectorInTest", "Santa Rita", "drink", "wine");
 
         mock.assertIsSatisfied();
 
         // and there should also only be 2 if browsing as the selector was configured in the route builder
-        JmsQueueEndpoint endpoint = context.getEndpoint("activemq:queue:foo", JmsQueueEndpoint.class);
+        JmsQueueEndpoint endpoint = context.getEndpoint("activemq:queue:JmsSelectorInTest", JmsQueueEndpoint.class);
         assertEquals(2, endpoint.getExchanges().size());
     }
 
@@ -60,7 +60,7 @@ public class JmsSelectorInTest extends AbstractJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                JmsEndpoint endpoint = context.getEndpoint("activemq:queue:foo", JmsEndpoint.class);
+                JmsEndpoint endpoint = context.getEndpoint("activemq:queue:JmsSelectorInTest", JmsEndpoint.class);
                 endpoint.setSelector("drink IN ('beer', 'wine')");
 
                 from(endpoint).to("log:drink").to("mock:result");

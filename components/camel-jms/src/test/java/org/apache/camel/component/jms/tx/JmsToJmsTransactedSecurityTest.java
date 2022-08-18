@@ -39,12 +39,12 @@ public class JmsToJmsTransactedSecurityTest extends CamelSpringTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo")
+                from("activemq:queue:JmsToJmsTransactedSecurityTest")
                         .transacted()
                         .to("log:foo")
-                        .to("activemq:queue:bar");
+                        .to("activemq:queue:JmsToJmsTransactedSecurityTest.reply");
 
-                from("activemq:queue:bar").to("mock:bar");
+                from("activemq:queue:JmsToJmsTransactedSecurityTest.reply").to("mock:bar");
             }
         });
         context.start();
@@ -52,9 +52,9 @@ public class JmsToJmsTransactedSecurityTest extends CamelSpringTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:bar");
         mock.expectedMessageCount(0);
 
-        template.sendBody("activemq:queue:foo", "Hello World");
+        template.sendBody("activemq:queue:JmsToJmsTransactedSecurityTest", "Hello World");
         // get the message that got rolled back
-        Exchange exch = consumer.receive("activemq:queue:foo", 250);
+        Exchange exch = consumer.receive("activemq:queue:JmsToJmsTransactedSecurityTest", 250);
         if (exch != null) {
             LOG.info("Cleaned up orphaned message: " + exch);
         }
@@ -68,9 +68,9 @@ public class JmsToJmsTransactedSecurityTest extends CamelSpringTestSupport {
             public void configure() {
                 from("direct:start")
                         .to("log:start")
-                        .to("activemq:queue:foo");
+                        .to("activemq:queue:JmsToJmsTransactedSecurityTest");
 
-                from("activemq:queue:foo").to("mock:foo");
+                from("activemq:queue:JmsToJmsTransactedSecurityTest").to("mock:foo");
             }
         });
         context.start();

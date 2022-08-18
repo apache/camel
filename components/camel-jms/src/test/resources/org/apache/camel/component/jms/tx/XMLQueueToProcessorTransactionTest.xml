@@ -28,7 +28,7 @@
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <jmxAgent id="agent" disabled="true"/>
         <route>
-            <from uri="activemq:queue:foo"/>
+            <from uri="activemq:queue:AbstractTransactionTest"/>
             <transacted ref="PROPAGATION_REQUIRED_POLICY"/>
             <process ref="conditionalExceptionProcessor"/>
         </route>

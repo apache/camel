@@ -87,7 +87,7 @@ public class JmsRequestReplyExclusiveReplyToConcurrentTest extends AbstractJMSTe
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("activemq:queue:fooJmsRequestReplyExclusiveReplyToConcurrentTest?replyTo=bar&replyToType=Exclusive&concurrentConsumers=5&maxConcurrentConsumers=10&maxMessagesPerTask=100")
+                        .to("activemq:queue:fooJmsRequestReplyExclusiveReplyToConcurrentTest?replyTo=JmsRequestReplyExclusiveReplyToConcurrentTest.bar&replyToType=Exclusive&concurrentConsumers=5&maxConcurrentConsumers=10&maxMessagesPerTask=100")
                         .to("log:reply")
                         .to("mock:reply");
 

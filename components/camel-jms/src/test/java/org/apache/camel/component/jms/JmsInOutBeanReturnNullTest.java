@@ -39,26 +39,27 @@ public class JmsInOutBeanReturnNullTest extends AbstractJMSTest {
 
     @Test
     public void testReturnBean() {
-        MyBean out = template.requestBody("activemq:queue:foo", "Camel", MyBean.class);
+        MyBean out = template.requestBody("activemq:queue:JmsInOutBeanReturnNullTest", "Camel", MyBean.class);
         assertNotNull(out);
         assertEquals("Camel", out.getName());
     }
 
     @Test
     public void testReturnNull() {
-        Object out = template.requestBody("activemq:queue:foo", "foo");
+        Object out = template.requestBody("activemq:queue:JmsInOutBeanReturnNullTest", "foo");
         assertNull(out);
     }
 
     @Test
     public void testReturnNullMyBean() {
-        MyBean out = template.requestBody("activemq:queue:foo", "foo", MyBean.class);
+        MyBean out = template.requestBody("activemq:queue:JmsInOutBeanReturnNullTest", "foo", MyBean.class);
         assertNull(out);
     }
 
     @Test
     public void testReturnNullExchange() {
-        Exchange reply = template.request("activemq:queue:foo", exchange -> exchange.getIn().setBody("foo"));
+        Exchange reply
+                = template.request("activemq:queue:JmsInOutBeanReturnNullTest", exchange -> exchange.getIn().setBody("foo"));
         assertNotNull(reply);
         assertNotEquals("foo", reply.getMessage().getBody(), "There shouldn't be an out message");
         Message out = reply.getMessage();
@@ -81,7 +82,7 @@ public class JmsInOutBeanReturnNullTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo")
+                from("activemq:queue:JmsInOutBeanReturnNullTest")
                         .bean(JmsInOutBeanReturnNullTest.class, "doSomething");
             }
         };

@@ -37,11 +37,21 @@ public class JmsRequestReplyExclusiveReplyToComponentTest extends AbstractJMSTes
     public void testJmsRequestReplyExclusiveFixedReplyTo() {
         StopWatch watch = new StopWatch();
 
-        assertEquals("Hello A", template.requestBody("activemq:queue:foo?replyTo=bar", "A"));
-        assertEquals("Hello B", template.requestBody("activemq:queue:foo?replyTo=bar", "B"));
-        assertEquals("Hello C", template.requestBody("activemq:queue:foo?replyTo=bar", "C"));
-        assertEquals("Hello D", template.requestBody("activemq:queue:foo?replyTo=bar", "D"));
-        assertEquals("Hello E", template.requestBody("activemq:queue:foo?replyTo=bar", "E"));
+        assertEquals("Hello A", template.requestBody(
+                "activemq:queue:JmsRequestReplyExclusiveReplyToComponentTest?replyTo=JmsRequestReplyExclusiveReplyToComponentTest.bar",
+                "A"));
+        assertEquals("Hello B", template.requestBody(
+                "activemq:queue:JmsRequestReplyExclusiveReplyToComponentTest?replyTo=JmsRequestReplyExclusiveReplyToComponentTest.bar",
+                "B"));
+        assertEquals("Hello C", template.requestBody(
+                "activemq:queue:JmsRequestReplyExclusiveReplyToComponentTest?replyTo=JmsRequestReplyExclusiveReplyToComponentTest.bar",
+                "C"));
+        assertEquals("Hello D", template.requestBody(
+                "activemq:queue:JmsRequestReplyExclusiveReplyToComponentTest?replyTo=JmsRequestReplyExclusiveReplyToComponentTest.bar",
+                "D"));
+        assertEquals("Hello E", template.requestBody(
+                "activemq:queue:JmsRequestReplyExclusiveReplyToComponentTest?replyTo=JmsRequestReplyExclusiveReplyToComponentTest.bar",
+                "E"));
 
         long delta = watch.taken();
         assertTrue(delta < 4200, "Should be faster than about 4 seconds, was: " + delta);
@@ -64,7 +74,7 @@ public class JmsRequestReplyExclusiveReplyToComponentTest extends AbstractJMSTes
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo")
+                from("activemq:queue:JmsRequestReplyExclusiveReplyToComponentTest")
                         .transform(body().prepend("Hello "));
             }
         };

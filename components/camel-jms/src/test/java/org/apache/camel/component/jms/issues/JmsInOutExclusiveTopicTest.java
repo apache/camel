@@ -53,7 +53,7 @@ public class JmsInOutExclusiveTopicTest extends AbstractJMSTest {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("activemq:topic:news?replyToType=Exclusive&replyTo=queue:back")
+                        .to("activemq:topic:news?replyToType=Exclusive&replyTo=queue:JmsInOutExclusiveTopicTest.reply")
                         .to("mock:result");
 
                 from("activemq:topic:news?disableReplyTo=true")

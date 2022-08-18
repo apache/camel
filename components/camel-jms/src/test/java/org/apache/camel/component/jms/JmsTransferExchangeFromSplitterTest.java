@@ -29,7 +29,7 @@ import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelpe
 public class JmsTransferExchangeFromSplitterTest extends AbstractJMSTest {
 
     protected String getUri() {
-        return "activemq:queue:foo?transferExchange=true";
+        return "activemq:queue:JmsTransferExchangeFromSplitterTest?transferExchange=true";
     }
 
     @Test

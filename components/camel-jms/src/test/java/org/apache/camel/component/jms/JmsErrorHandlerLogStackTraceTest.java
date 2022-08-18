@@ -41,7 +41,7 @@ public class JmsErrorHandlerLogStackTraceTest extends AbstractJMSTest {
         // should fail
         NotifyBuilder notify = new NotifyBuilder(context).whenFailed(1).create();
 
-        template.sendBody("jms:queue:foo", "Hello World");
+        template.sendBody("jms:queue:JmsErrorHandlerLogStackTraceTest", "Hello World");
 
         assertTrue(notify.matchesWaitTime());
     }
@@ -54,7 +54,7 @@ public class JmsErrorHandlerLogStackTraceTest extends AbstractJMSTest {
                 // dont log any exhausted errors
                 errorHandler(defaultErrorHandler().logExhausted(false));
 
-                from("jms:queue:foo")
+                from("jms:queue:JmsErrorHandlerLogStackTraceTest")
                         .throwException(new IllegalArgumentException("Forced"));
             }
         };

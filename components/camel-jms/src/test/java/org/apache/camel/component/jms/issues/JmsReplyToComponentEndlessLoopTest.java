@@ -50,7 +50,8 @@ public class JmsReplyToComponentEndlessLoopTest extends AbstractJMSTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo?replyTo=foo").to("mock:result");
+                from("activemq:queue:JmsReplyToComponentEndlessLoopTest?replyTo=JmsReplyToComponentEndlessLoopTest")
+                        .to("mock:result");
             }
         });
         try {
@@ -58,7 +59,8 @@ public class JmsReplyToComponentEndlessLoopTest extends AbstractJMSTest {
             fail("Should throw exception");
         } catch (Exception e) {
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertTrue(iae.getMessage().contains("ReplyTo=foo cannot be the same as the destination name"));
+            assertTrue(iae.getMessage()
+                    .contains("ReplyTo=JmsReplyToComponentEndlessLoopTest cannot be the same as the destination name"));
         }
     }
 

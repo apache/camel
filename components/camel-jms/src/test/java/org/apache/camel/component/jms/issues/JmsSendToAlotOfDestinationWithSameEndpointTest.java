@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 public class JmsSendToAlotOfDestinationWithSameEndpointTest extends CamelSpringTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsSendToAlotOfDestinationWithSameEndpointTest.class);
-    private static final String URI = "activemq:queue:foo?autoStartup=false";
+    private static final String URI = "activemq:queue:JmsSendToAlotOfDestinationWithSameEndpointTest?autoStartup=false";
 
     @Test
     public void testSendToAlotOfMessageToQueues() {
@@ -52,7 +52,8 @@ public class JmsSendToAlotOfDestinationWithSameEndpointTest extends CamelSpringT
             if (i > 0 && i % 50 == 0) {
                 LOG.info("Sent {} messages so far", i);
             }
-            template.sendBodyAndHeader(URI, ExchangePattern.InOnly, "Hello " + i, JmsConstants.JMS_DESTINATION_NAME, "foo" + i);
+            template.sendBodyAndHeader(URI, ExchangePattern.InOnly, "Hello " + i, JmsConstants.JMS_DESTINATION_NAME,
+                    "JmsSendToAlotOfDestinationWithSameEndpointTest" + i);
         }
 
         LOG.info("Send complete use jconsole to view");

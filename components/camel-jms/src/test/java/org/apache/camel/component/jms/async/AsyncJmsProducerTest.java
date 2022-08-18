@@ -67,13 +67,13 @@ public class AsyncJmsProducerTest extends AbstractJMSTest {
                         .to("mock:before")
                         .to("log:before")
                         .process(exchange -> beforeThreadName = Thread.currentThread().getName())
-                        .to("activemq:queue:foo")
+                        .to("activemq:queue:AsyncJmsProducerTest")
                         .process(exchange -> afterThreadName = Thread.currentThread().getName())
                         .to("log:after")
                         .to("mock:after")
                         .to("mock:result");
 
-                from("activemq:queue:foo")
+                from("activemq:queue:AsyncJmsProducerTest")
                         .transform(constant("Bye Camel"));
             }
         };

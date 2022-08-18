@@ -27,7 +27,7 @@ public class JmsProducerDisableReplyToTest extends AbstractPersistentJMSTest {
         // must start CamelContext because use route builder is false
         context.start();
 
-        String url = "activemq:queue:foo?disableReplyTo=true";
+        String url = "activemq:queue:JmsProducerDisableReplyToTest?disableReplyTo=true";
         template.requestBody(url, "Hello World");
 
         Object out = consumer.receiveBody(url, 5000);

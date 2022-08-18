@@ -29,7 +29,7 @@ import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelpe
 public class JmsSplitterParallelTest extends AbstractJMSTest {
 
     protected String getUri() {
-        return "activemq:queue:foo?useMessageIDAsCorrelationID=true";
+        return "activemq:queue:JmsSplitterParallelTest?useMessageIDAsCorrelationID=true";
     }
 
     @Test

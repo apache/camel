@@ -38,25 +38,25 @@
         <jmxAgent id="agent" disabled="true"/>
 
         <route>
-            <from uri="activemq:queue:in"/>
+            <from uri="activemq:queue:SpringJmsXPathHeaderTest.in"/>
             <choice>
                 <when>
                     <xpath>$foo = 'true'</xpath>
-                    <to uri="activemq:queue:true"/>
+                    <to uri="activemq:queue:SpringJmsXPathHeaderTest.true"/>
                 </when>
                 <otherwise>
-                    <to uri="activemq:queue:other"/>
+                    <to uri="activemq:queue:SpringJmsXPathHeaderTest.other"/>
                 </otherwise>
             </choice>
         </route>
 
         <route>
-            <from uri="activemq:queue:true"/>
+            <from uri="activemq:queue:SpringJmsXPathHeaderTest.true"/>
             <to uri="mock:true"/>
         </route>
 
         <route>
-            <from uri="activemq:queue:other"/>
+            <from uri="activemq:queue:SpringJmsXPathHeaderTest.other"/>
             <to uri="mock:other"/>
         </route>
 

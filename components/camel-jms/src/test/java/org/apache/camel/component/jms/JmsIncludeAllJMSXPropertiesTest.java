@@ -42,7 +42,7 @@ public class JmsIncludeAllJMSXPropertiesTest extends AbstractJMSTest {
         headers.put("JMSXUserID", "Donald");
         headers.put("JMSXAppID", "MyApp");
 
-        template.sendBodyAndHeaders("activemq:queue:in", "Hello World", headers);
+        template.sendBodyAndHeaders("activemq:queue:JmsIncludeAllJMSXPropertiesTest", "Hello World", headers);
 
         assertMockEndpointsSatisfied();
     }
@@ -62,7 +62,7 @@ public class JmsIncludeAllJMSXPropertiesTest extends AbstractJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:in")
+                from("activemq:queue:JmsIncludeAllJMSXPropertiesTest")
                         .to("mock:result");
             }
         };

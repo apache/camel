@@ -77,9 +77,10 @@ public class JmsRouteUsingJMSXGroupTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("jms:queue:foo");
+                from("direct:start").to("jms:queue:JmsRouteUsingJMSXGroupTest");
 
-                from("jms:queue:foo?concurrentConsumers=2").to("log:foo?showHeaders=false").to("mock:result");
+                from("jms:queue:JmsRouteUsingJMSXGroupTest?concurrentConsumers=2").to("log:foo?showHeaders=false")
+                        .to("mock:result");
             }
         };
     }

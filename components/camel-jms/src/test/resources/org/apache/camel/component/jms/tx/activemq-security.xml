@@ -39,8 +39,8 @@
                     <broker:authorizationMap>
                         <broker:authorizationEntries>
                             <broker:authorizationEntry queue=">" read="admin" write="admin" admin="admin"/>
-                            <broker:authorizationEntry queue="foo" read="admin,user" write="admin,user" admin="admin,user"/>
-                            <broker:authorizationEntry queue="bar" read="admin,user" write="admin" admin="admin,user"/>
+                            <broker:authorizationEntry queue="JmsToJmsTransactedSecurityTest" read="admin,user" write="admin,user" admin="admin,user"/>
+                            <broker:authorizationEntry queue="JmsToJmsTransactedSecurityTest.reply" read="admin,user" write="admin" admin="admin,user"/>
                             <broker:authorizationEntry queue="ActiveMQ.DLQ" read="admin,user" write="admin,user" admin="admin,user"/>
                             <broker:authorizationEntry topic="ActiveMQ.Advisory.>" read="admin,user" write="admin,user"
                                                        admin="admin,user"/>

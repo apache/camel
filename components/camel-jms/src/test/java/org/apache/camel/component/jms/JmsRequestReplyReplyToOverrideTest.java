@@ -37,7 +37,7 @@ public class JmsRequestReplyReplyToOverrideTest extends AbstractJMSTest {
 
     private static final String REQUEST_BODY = "Something";
     private static final String EXPECTED_REPLY_BODY = "Re: " + REQUEST_BODY;
-    private static final String EXPECTED_REPLY_HEADER = "queue://bar";
+    private static final String EXPECTED_REPLY_HEADER = "queue://JmsRequestReplyReplyToOverrideTest.reply";
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -49,11 +49,12 @@ public class JmsRequestReplyReplyToOverrideTest extends AbstractJMSTest {
         // must start CamelContext because use route builder is false
         context.start();
 
-        // send request to foo, set replyTo to bar, but actually expect reply at baz
+        // send request to JmsRequestReplyReplyToOverrideTest, set replyTo to JmsRequestReplyReplyToOverrideTest.reply, but actually expect reply at baz
         Thread sender = new Thread(new Responder());
         sender.start();
 
-        Exchange reply = template.request("jms:queue:foo", exchange -> exchange.getIn().setBody(REQUEST_BODY));
+        Exchange reply = template.request("jms:queue:JmsRequestReplyReplyToOverrideTest",
+                exchange -> exchange.getIn().setBody(REQUEST_BODY));
         assertEquals(EXPECTED_REPLY_BODY, reply.getMessage().getBody());
     }
 
@@ -64,7 +65,7 @@ public class JmsRequestReplyReplyToOverrideTest extends AbstractJMSTest {
                 = createConnectionFactory(service);
         JmsComponent jmsComponent = jmsComponentAutoAcknowledge(connectionFactory);
         jmsComponent.getConfiguration().setReplyTo("baz");
-        jmsComponent.getConfiguration().setReplyToOverride("bar");
+        jmsComponent.getConfiguration().setReplyToOverride("JmsRequestReplyReplyToOverrideTest.reply");
         camelContext.addComponent("jms", jmsComponent);
         return camelContext;
     }
@@ -75,7 +76,7 @@ public class JmsRequestReplyReplyToOverrideTest extends AbstractJMSTest {
         public void run() {
             try {
                 LOG.debug("Waiting for request");
-                Exchange request = consumer.receive("jms:queue:foo", 5000);
+                Exchange request = consumer.receive("jms:queue:JmsRequestReplyReplyToOverrideTest", 5000);
 
                 LOG.debug("Got request, sending reply");
                 final String body = request.getIn().getBody(String.class);

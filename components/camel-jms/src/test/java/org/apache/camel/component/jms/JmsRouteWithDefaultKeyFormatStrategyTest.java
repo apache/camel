@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class JmsRouteWithDefaultKeyFormatStrategyTest extends AbstractJMSTest {
 
     protected String getUri() {
-        return "activemq:queue:foo?jmsKeyFormatStrategy=default";
+        return "activemq:queue:JmsRouteWithDefaultKeyFormatStrategyTest?jmsKeyFormatStrategy=default";
     }
 
     @Test

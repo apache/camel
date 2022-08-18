@@ -59,7 +59,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <jmxAgent id="agent" disabled="true"/>
         <route routePolicyRef="myPolicy">
-            <from uri="activemq:queue:foo?concurrentConsumers=20"/>
+            <from uri="activemq:queue:JMSTransactionThrottlingRoutePolicyTest?concurrentConsumers=20"/>
             <transacted/>
             <delay><constant>100</constant></delay>
             <to uri="log:foo?groupSize=10"/>

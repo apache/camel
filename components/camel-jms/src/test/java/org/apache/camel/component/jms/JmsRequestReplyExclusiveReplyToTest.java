@@ -41,11 +41,21 @@ public class JmsRequestReplyExclusiveReplyToTest extends AbstractJMSTest {
     public void testJmsRequestReplyExclusiveFixedReplyTo() {
         StopWatch watch = new StopWatch();
 
-        assertEquals("Hello A", template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Exclusive", "A"));
-        assertEquals("Hello B", template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Exclusive", "B"));
-        assertEquals("Hello C", template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Exclusive", "C"));
-        assertEquals("Hello D", template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Exclusive", "D"));
-        assertEquals("Hello E", template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Exclusive", "E"));
+        assertEquals("Hello A", template.requestBody(
+                "activemq:queue:JmsRequestReplyExclusiveReplyToTest?replyTo=JmsRequestReplyExclusiveReplyToTest.reply&replyToType=Exclusive",
+                "A"));
+        assertEquals("Hello B", template.requestBody(
+                "activemq:queue:JmsRequestReplyExclusiveReplyToTest?replyTo=JmsRequestReplyExclusiveReplyToTest.reply&replyToType=Exclusive",
+                "B"));
+        assertEquals("Hello C", template.requestBody(
+                "activemq:queue:JmsRequestReplyExclusiveReplyToTest?replyTo=JmsRequestReplyExclusiveReplyToTest.reply&replyToType=Exclusive",
+                "C"));
+        assertEquals("Hello D", template.requestBody(
+                "activemq:queue:JmsRequestReplyExclusiveReplyToTest?replyTo=JmsRequestReplyExclusiveReplyToTest.reply&replyToType=Exclusive",
+                "D"));
+        assertEquals("Hello E", template.requestBody(
+                "activemq:queue:JmsRequestReplyExclusiveReplyToTest?replyTo=JmsRequestReplyExclusiveReplyToTest.reply&replyToType=Exclusive",
+                "E"));
 
         long delta = watch.taken();
         assertTrue(delta < 4200, "Should be faster than about 4 seconds, was: " + delta);
@@ -54,12 +64,15 @@ public class JmsRequestReplyExclusiveReplyToTest extends AbstractJMSTest {
     @Test
     public void testInvalidConfiguration() {
         try {
-            template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Temporary", "Hello World");
+            template.requestBody(
+                    "activemq:queue:JmsRequestReplyExclusiveReplyToTest?replyTo=JmsRequestReplyExclusiveReplyToTest.reply&replyToType=Temporary",
+                    "Hello World");
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(FailedToCreateProducerException.class, e.getCause());
             assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
-            assertEquals("ReplyToType Temporary is not supported when replyTo bar is also configured.",
+            assertEquals(
+                    "ReplyToType Temporary is not supported when replyTo JmsRequestReplyExclusiveReplyToTest.reply is also configured.",
                     e.getCause().getCause().getMessage());
         }
     }
@@ -78,7 +91,7 @@ public class JmsRequestReplyExclusiveReplyToTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo")
+                from("activemq:queue:JmsRequestReplyExclusiveReplyToTest")
                         .transform(body().prepend("Hello "));
             }
         };

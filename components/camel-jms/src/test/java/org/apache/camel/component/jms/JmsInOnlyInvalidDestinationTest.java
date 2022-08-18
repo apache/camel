@@ -43,7 +43,8 @@ public class JmsInOnlyInvalidDestinationTest extends AbstractJMSTest {
     public void testInvalidDestination() throws Exception {
         getMockEndpoint("mock:dead").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("direct:foo", "Hello World", "foo", "activemq:queue:foo?destinationResolver=#myResolver");
+        template.sendBodyAndHeader("direct:foo", "Hello World", "foo",
+                "activemq:queue:JmsInOnlyInvalidDestinationTest?destinationResolver=#myResolver");
 
         assertMockEndpointsSatisfied();
     }

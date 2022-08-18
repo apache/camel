@@ -31,7 +31,7 @@ public class JmsInOutSynchronousTest extends AbstractJMSTest {
 
     private static String beforeThreadName;
     private static String afterThreadName;
-    private final String url = "activemq:queue:in?synchronous=true";
+    private final String url = "activemq:queue:JmsInOutSynchronousTest?synchronous=true";
 
     @Test
     public void testSynchronous() {
@@ -62,7 +62,7 @@ public class JmsInOutSynchronousTest extends AbstractJMSTest {
                         .to("log:after")
                         .to("mock:result");
 
-                from("activemq:queue:in").process(exchange -> exchange.getMessage().setBody("Bye World"));
+                from("activemq:queue:JmsInOutSynchronousTest").process(exchange -> exchange.getMessage().setBody("Bye World"));
             }
         };
     }

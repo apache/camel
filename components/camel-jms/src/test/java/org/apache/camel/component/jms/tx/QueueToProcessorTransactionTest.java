@@ -40,7 +40,7 @@ public class QueueToProcessorTransactionTest extends AbstractTransactionTest {
             public void configure() {
                 Policy required = context().getRegistry().lookupByNameAndType("PROPAGATION_REQUIRED_POLICY",
                         SpringTransactionPolicy.class);
-                from("activemq:queue:foo").policy(required).process(new ConditionalExceptionProcessor());
+                from("activemq:queue:AbstractTransactionTest").policy(required).process(new ConditionalExceptionProcessor());
             }
         });
 

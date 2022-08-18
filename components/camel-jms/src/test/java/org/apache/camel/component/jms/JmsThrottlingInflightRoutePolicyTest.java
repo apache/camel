@@ -36,7 +36,7 @@ public class JmsThrottlingInflightRoutePolicyTest extends AbstractPersistentJMST
         mock.expectedMinimumMessageCount(size);
 
         for (int i = 0; i < size; i++) {
-            template.sendBody("activemq-sender:queue:foo", "Message " + i);
+            template.sendBody("activemq-sender:queue:JmsThrottlingInflightRoutePolicyTest", "Message " + i);
         }
 
         assertMockEndpointsSatisfied();
@@ -52,7 +52,7 @@ public class JmsThrottlingInflightRoutePolicyTest extends AbstractPersistentJMST
                 policy.setResumePercentOfMax(50);
                 policy.setScope(ThrottlingInflightRoutePolicy.ThrottlingScope.Route);
 
-                from("activemq:queue:foo?concurrentConsumers=20").routePolicy(policy)
+                from("activemq:queue:JmsThrottlingInflightRoutePolicyTest?concurrentConsumers=20").routePolicy(policy)
                         .delay(100)
                         .to("log:foo?groupSize=10").to("mock:result");
             }

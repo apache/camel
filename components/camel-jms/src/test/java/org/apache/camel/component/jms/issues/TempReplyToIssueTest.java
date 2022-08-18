@@ -39,7 +39,7 @@ public class TempReplyToIssueTest extends AbstractJMSTest {
 
     @Test
     public void testReplyToIssue() {
-        String out = template.requestBody("activemq:queue:test.queue", "World", String.class);
+        String out = template.requestBody("activemq:queue:TempReplyToIssueTest", "World", String.class);
         // we should receive that fixed reply
         assertEquals("Hello Moon", out);
     }
@@ -86,7 +86,7 @@ public class TempReplyToIssueTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:test.queue").bean(TempReplyToIssueTest.class, "handleMessage");
+                from("activemq:queue:TempReplyToIssueTest").bean(TempReplyToIssueTest.class, "handleMessage");
             }
         };
     }

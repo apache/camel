@@ -37,11 +37,21 @@ public class JmsRequestReplySharedReplyToTest extends AbstractJMSTest {
         // shared is more slower than exclusive, due it need to use a JMS Message Selector
         // and has a receiveTimeout of 1 sec per default, so it react slower to new messages
 
-        assertEquals("Hello A", template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Shared", "A"));
-        assertEquals("Hello B", template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Shared", "B"));
-        assertEquals("Hello C", template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Shared", "C"));
-        assertEquals("Hello D", template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Shared", "D"));
-        assertEquals("Hello E", template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Shared", "E"));
+        assertEquals("Hello A", template.requestBody(
+                "activemq:queue:JmsRequestReplySharedReplyToTest?replyTo=JmsRequestReplySharedReplyToTest.reply&replyToType=Shared",
+                "A"));
+        assertEquals("Hello B", template.requestBody(
+                "activemq:queue:JmsRequestReplySharedReplyToTest?replyTo=JmsRequestReplySharedReplyToTest.reply&replyToType=Shared",
+                "B"));
+        assertEquals("Hello C", template.requestBody(
+                "activemq:queue:JmsRequestReplySharedReplyToTest?replyTo=JmsRequestReplySharedReplyToTest.reply&replyToType=Shared",
+                "C"));
+        assertEquals("Hello D", template.requestBody(
+                "activemq:queue:JmsRequestReplySharedReplyToTest?replyTo=JmsRequestReplySharedReplyToTest.reply&replyToType=Shared",
+                "D"));
+        assertEquals("Hello E", template.requestBody(
+                "activemq:queue:JmsRequestReplySharedReplyToTest?replyTo=JmsRequestReplySharedReplyToTest.reply&replyToType=Shared",
+                "E"));
 
         long delta = watch.taken();
         assertTrue(delta > 2000, "Should be slower than about 2 seconds, was: " + delta);
@@ -61,7 +71,7 @@ public class JmsRequestReplySharedReplyToTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo")
+                from("activemq:queue:JmsRequestReplySharedReplyToTest")
                         .transform(body().prepend("Hello "));
             }
         };

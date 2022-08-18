@@ -21,12 +21,14 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class JmsComponentTest extends AbstractJMSTest {
 
     protected String componentName = "activemq123";
@@ -34,7 +36,8 @@ public class JmsComponentTest extends AbstractJMSTest {
 
     @Test
     public void testComponentOptions() {
-        String reply = template.requestBody("activemq123:queue:hello?requestTimeout=5000", "Hello World", String.class);
+        String reply
+                = template.requestBody("activemq123:queue:JmsComponentTest?requestTimeout=5000", "Hello World", String.class);
         assertEquals("Bye World", reply);
 
         assertTrue(endpoint.isAcceptMessagesWhileStopping());
@@ -90,7 +93,7 @@ public class JmsComponentTest extends AbstractJMSTest {
 
         camelContext.addComponent(componentName, comp);
 
-        endpoint = (JmsEndpoint) comp.createEndpoint("queue:hello");
+        endpoint = (JmsEndpoint) comp.createEndpoint("queue:JmsComponentTest");
 
         return camelContext;
     }

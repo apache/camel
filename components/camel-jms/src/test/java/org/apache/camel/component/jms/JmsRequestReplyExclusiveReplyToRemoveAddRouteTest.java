@@ -41,7 +41,7 @@ public class JmsRequestReplyExclusiveReplyToRemoveAddRouteTest extends AbstractJ
             @Override
             public void configure() {
                 from("direct:start2").routeId("start2")
-                        .to("activemq:queue:foo?replyTo=bar&replyToType=Exclusive")
+                        .to("activemq:queue:JmsRequestReplyExclusiveReplyToRemoveAddRouteTest?replyTo=JmsRequestReplyExclusiveReplyToRemoveAddRouteTest.reply&replyToType=Exclusive")
                         .to("log:start2");
             }
         });
@@ -68,10 +68,10 @@ public class JmsRequestReplyExclusiveReplyToRemoveAddRouteTest extends AbstractJ
             @Override
             public void configure() {
                 from("direct:start").routeId("start")
-                        .to("activemq:queue:foo?replyTo=bar&replyToType=Exclusive")
+                        .to("activemq:queue:JmsRequestReplyExclusiveReplyToRemoveAddRouteTest?replyTo=JmsRequestReplyExclusiveReplyToRemoveAddRouteTest.reply&replyToType=Exclusive")
                         .to("log:start");
 
-                from("activemq:queue:foo").routeId("foo")
+                from("activemq:queue:JmsRequestReplyExclusiveReplyToRemoveAddRouteTest").routeId("foo")
                         .transform(body().prepend("Hello "));
             }
         };
