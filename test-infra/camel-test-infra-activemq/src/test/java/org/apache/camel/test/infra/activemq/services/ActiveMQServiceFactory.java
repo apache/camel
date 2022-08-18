@@ -63,8 +63,11 @@ public final class ActiveMQServiceFactory {
         }
     }
 
-    private static SimpleTestServiceBuilder<ActiveMQService> instance;
-    private static ActiveMQService service;
+    private static SimpleTestServiceBuilder<ActiveMQService> nonPersistentInstanceBuilder;
+    private static ActiveMQService nonPersistentService;
+
+    private static SimpleTestServiceBuilder<ActiveMQService> persistentInstanceBuilder;
+    private static ActiveMQService persistentService;
 
     private ActiveMQServiceFactory() {
 
@@ -81,51 +84,87 @@ public final class ActiveMQServiceFactory {
                 .build();
     }
 
+    /**
+     * Creates a new instance of an embedded ActiveMQ
+     * 
+     * @return a new instance of an embedded ActiveMQ
+     */
     public static synchronized ActiveMQService createVMService() {
         return createSingletonVMService();
     }
 
+    /**
+     * Creates a new instance of an embedded ActiveMQ. It may use a single instance if possible/supported.
+     * 
+     * @return a new instance of an embedded ActiveMQ
+     */
     public static synchronized ActiveMQService createVMServiceInstance() {
-        if (service == null) {
-            if (instance == null) {
-                instance = new SimpleTestServiceBuilder<>("activemq");
-
-                instance.addLocalMapping(() -> new SingletonActiveMQService(new ActiveMQVMService(), "activemq"));
-            }
-        }
+        SimpleTestServiceBuilder<ActiveMQService> instance = new SimpleTestServiceBuilder<>("activemq");
+        instance.addLocalMapping(ActiveMQVMService::new);
 
         return instance.build();
     }
 
+    /**
+     * Creates or reuses a new singleton instance of an embedded ActiveMQ
+     * 
+     * @return an instance of an embedded ActiveMQ
+     */
     public static synchronized ActiveMQService createSingletonVMService() {
-        if (service == null) {
-            service = createVMServiceInstance();
+        if (nonPersistentService == null) {
+            if (nonPersistentInstanceBuilder == null) {
+                nonPersistentInstanceBuilder = new SimpleTestServiceBuilder<>("activemq");
+
+                nonPersistentInstanceBuilder
+                        .addLocalMapping(() -> new SingletonActiveMQService(new ActiveMQVMService(), "activemq"));
+            }
+
+            nonPersistentService = nonPersistentInstanceBuilder.build();
         }
 
-        return service;
+        return nonPersistentService;
     }
 
+    /**
+     * Creates a new instance of a persistent embedded ActiveMQ. It may use a single instance if possible/supported.
+     * 
+     * @return a new instance of a persistent embedded ActiveMQ
+     */
     public static synchronized ActiveMQService createPersistentVMService() {
         return createSingletonPersistentVMService();
     }
 
+    /**
+     * Creates a new instance of a persistent embedded ActiveMQ
+     * 
+     * @return a new instance of a persistent embedded ActiveMQ
+     */
     public static synchronized ActiveMQService createPersistentVMServiceInstance() {
-        if (service == null) {
-            if (instance == null) {
-                instance = new SimpleTestServiceBuilder<>("activemq");
+        SimpleTestServiceBuilder<ActiveMQService> instance = new SimpleTestServiceBuilder<>("activemq");
 
-                instance.addLocalMapping(() -> new SingletonActiveMQService(new ActiveMQPersistentVMService(), "activemq"));
-            }
-        }
+        instance.addLocalMapping(ActiveMQPersistentVMService::new);
 
         return instance.build();
     }
 
+    /**
+     * Creates or reuses a new singleton instance of a persistent embedded ActiveMQ
+     * 
+     * @return an instance of a persistent embedded ActiveMQ
+     */
     public static synchronized ActiveMQService createSingletonPersistentVMService() {
-        if (service == null) {
-            service = createVMServiceInstance();
+        if (persistentService == null) {
+            if (persistentInstanceBuilder == null) {
+                persistentInstanceBuilder = new SimpleTestServiceBuilder<>("activemq");
+
+                persistentInstanceBuilder
+                        .addLocalMapping(
+                                () -> new SingletonActiveMQService(new ActiveMQPersistentVMService(), "activemq-persistent"));
+            }
+
+            persistentService = persistentInstanceBuilder.build();
         }
 
-        return service;
+        return persistentService;
     }
 }
