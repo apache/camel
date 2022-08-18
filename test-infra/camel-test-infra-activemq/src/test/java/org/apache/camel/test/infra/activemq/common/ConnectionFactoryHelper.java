@@ -20,9 +20,9 @@ package org.apache.camel.test.infra.activemq.common;
 import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.camel.test.infra.activemq.services.AbstractActiveMQEmbeddedService;
 import org.apache.camel.test.infra.activemq.services.ActiveMQService;
 import org.apache.camel.test.infra.activemq.services.ActiveMQServiceFactory;
-import org.apache.camel.test.infra.activemq.services.ActiveMQVMService;
 import org.apache.camel.test.infra.activemq.services.ConnectionFactoryAware;
 
 public final class ConnectionFactoryHelper {
@@ -35,7 +35,7 @@ public final class ConnectionFactoryHelper {
 
     public static ConnectionFactory createConnectionFactory(ActiveMQService service, Integer maximumRedeliveries) {
         if (service instanceof ConnectionFactoryAware) {
-            return createConnectionFactory(((ActiveMQVMService) service).getVmURL(), maximumRedeliveries);
+            return createConnectionFactory(((AbstractActiveMQEmbeddedService) service).getVmURL(), maximumRedeliveries);
         }
 
         if (service instanceof ActiveMQServiceFactory.SingletonActiveMQService) {
