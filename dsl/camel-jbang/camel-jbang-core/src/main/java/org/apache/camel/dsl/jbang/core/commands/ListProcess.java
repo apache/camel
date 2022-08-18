@@ -26,7 +26,7 @@ import picocli.CommandLine.Command;
 class ListProcess extends CamelCommand {
 
     @CommandLine.Option(names = { "--sort" },
-            description = "Sort by pid, name or age", defaultValue = "pid")
+                        description = "Sort by pid, name or age", defaultValue = "pid")
     private String sort;
 
     public ListProcess(CamelJBangMain main) {
@@ -37,28 +37,25 @@ class ListProcess extends CamelCommand {
     public Integer call() throws Exception {
         ProcessHandle.allProcesses()
                 .sorted((o1, o2) -> {
-                    int answer = 0;
                     switch (sort) {
                         case "pid":
-                            answer = Long.compare(o1.pid(), o2.pid());
-                            break;
+                            return Long.compare(o1.pid(), o2.pid());
                         case "name":
-                            answer = extractName(o1).compareTo(extractName(o2));
-                            break;
+                            return extractName(o1).compareTo(extractName(o2));
                         case "age":
                             // we want newest in top
-                            answer = Long.compare(extractSince(o1), extractSince(o2)) * -1;
-                            break;
+                            return Long.compare(extractSince(o1), extractSince(o2)) * -1;
+                        default:
+                            return 0;
                     }
-                    return answer;
                 })
                 .forEach(ph -> {
-            String name = extractName(ph);
-            if (ObjectHelper.isNotEmpty(name)) {
-                String ago = TimeUtils.printSince(extractSince(ph));
-                System.out.println(ph.pid() + " camel run " + name + " (age: " + ago + ")");
-            }
-        });
+                    String name = extractName(ph);
+                    if (ObjectHelper.isNotEmpty(name)) {
+                        String ago = TimeUtils.printSince(extractSince(ph));
+                        System.out.println(ph.pid() + " camel run " + name + " (age: " + ago + ")");
+                    }
+                });
         return 0;
     }
 
