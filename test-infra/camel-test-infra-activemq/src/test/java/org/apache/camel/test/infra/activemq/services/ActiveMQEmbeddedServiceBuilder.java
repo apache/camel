@@ -600,17 +600,23 @@ public class ActiveMQEmbeddedServiceBuilder {
         return new ActiveMQEmbeddedServiceBuilder();
     }
 
+    private static String generateDataDirectoryPathForInstance(String name) {
+        return ActiveMQEmbeddedServiceBuilder.class.getResource("/").getFile() + name
+               + ThreadLocalRandom.current().nextInt(1000);
+    }
+
     public static ActiveMQEmbeddedServiceBuilder defaultBroker() {
         return defaultBroker(ActiveMQEmbeddedServiceBuilder.class.getSimpleName());
     }
 
     public static ActiveMQEmbeddedServiceBuilder defaultBroker(String name) {
+        final String dataDirectoryPath = generateDataDirectoryPathForInstance(name);
         return new ActiveMQEmbeddedServiceBuilder()
                 .withDeleteAllMessagesOnStartup(true)
                 .withBrokerName(name)
                 .withAdvisorySupport(false)
                 .withUseJmx(false)
-                .withDataDirectory(ActiveMQEmbeddedServiceBuilder.class.getResource("/").getFile());
+                .withDataDirectory(dataDirectoryPath);
     }
 
     public static ActiveMQEmbeddedServiceBuilder persistentBroker() {
@@ -619,7 +625,7 @@ public class ActiveMQEmbeddedServiceBuilder {
     }
 
     public static ActiveMQEmbeddedServiceBuilder persistentBroker(String name) {
-        final String dataDirectory = ActiveMQEmbeddedServiceBuilder.class.getResource("/").getFile() + File.separator + name;
+        final String dataDirectoryPath = generateDataDirectoryPathForInstance(name);
 
         return new ActiveMQEmbeddedServiceBuilder()
                 .withDeleteAllMessagesOnStartup(true)
@@ -627,7 +633,7 @@ public class ActiveMQEmbeddedServiceBuilder {
                 .withAdvisorySupport(false)
                 .withUseJmx(false)
                 .withPersistent(true)
-                .withDataDirectory(dataDirectory);
+                .withDataDirectory(dataDirectoryPath);
     }
 
 }
