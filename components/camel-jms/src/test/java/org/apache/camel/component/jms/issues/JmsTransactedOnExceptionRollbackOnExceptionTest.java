@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsTransactedOnExceptionRollbackOnExceptionTest extends CamelTestSupport {
     @RegisterExtension
-    public static ActiveMQService service = ActiveMQServiceFactory.createVMService();
+    public static ActiveMQService service = ActiveMQServiceFactory.createVMServiceInstance();
 
     public static class BadErrorHandler {
 
