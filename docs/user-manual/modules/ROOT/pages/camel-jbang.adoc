@@ -520,7 +520,7 @@ camel run clipboard.xml
 
 === Controlling local Camel applications
 
-To list the currently running Camel JBang applications you use the `ps` command:
+To list the currently running Camel JBang integrations you use the `ps` command:
 
 [source,bash]
 ----
@@ -531,7 +531,23 @@ camel ps
 
 This lists the PID, the name and age of the application.
 
-NOTE: Additional commands are in the works.
+You can use the `stop` command to stop any of these running Camel integrations.
+For example to stop dude, you can do
+
+[source,bash]
+----
+camel stop dude
+Stopping running Camel integration (pid: 44805)
+----
+
+You can also stop by the PID:
+
+[source,bash]
+----
+camel stop 44805
+Stopping running Camel integration (pid: 44805)
+----
+
 
 === Scripting from terminal using pipes
 
