@@ -28,14 +28,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ActiveMQOriginalDestinationTest extends AbstractJMSTest {
 
     protected String componentName = "activemq";
@@ -45,7 +43,7 @@ public class ActiveMQOriginalDestinationTest extends AbstractJMSTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBody("activemq:queue:foo", "Hello World");
+        template.sendBody("activemq:queue:ActiveMQOriginalDestinationTest", "Hello World");
 
         assertMockEndpointsSatisfied();
 
@@ -53,13 +51,13 @@ public class ActiveMQOriginalDestinationTest extends AbstractJMSTest {
         Exchange out = consumer.receive("activemq:queue:bar", 5000);
         assertNotNull(out);
 
-        // and we should have foo as the original destination
+        // and we should have ActiveMQOriginalDestinationTest as the original destination
         JmsMessage msg = out.getIn(JmsMessage.class);
         Message jms = msg.getJmsMessage();
         ActiveMQMessage amq = assertIsInstanceOf(ActiveMQMessage.class, jms);
         ActiveMQDestination original = amq.getOriginalDestination();
         assertNotNull(original);
-        assertEquals("foo", original.getPhysicalName());
+        assertEquals("ActiveMQOriginalDestinationTest", original.getPhysicalName());
         assertEquals("Queue", original.getDestinationTypeAsString());
     }
 
@@ -82,7 +80,7 @@ public class ActiveMQOriginalDestinationTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo")
+                from("activemq:queue:ActiveMQOriginalDestinationTest")
                         .to("activemq:queue:bar")
                         .to("mock:result");
             }

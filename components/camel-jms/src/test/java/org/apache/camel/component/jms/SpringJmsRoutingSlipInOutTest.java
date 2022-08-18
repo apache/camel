@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.Map;
+
+import org.apache.camel.Headers;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -38,6 +41,30 @@ public class SpringJmsRoutingSlipInOutTest extends CamelSpringTestSupport {
         template.sendBody("activemq:queue:SpringJmsRoutingSlipInOutTest.start", "Hello");
 
         assertMockEndpointsSatisfied();
+    }
+
+    public static final class MyBean {
+
+        public void createSlip(@Headers Map<String, Object> headers) {
+            headers.put("mySlip",
+                    "activemq:queue:SpringJmsRoutingSlipInOutTest.a,activemq:queue:SpringJmsRoutingSlipInOutTest.b");
+        }
+
+        public String backFromSlip(String body) {
+            return "Done-" + body;
+        }
+
+        public String doA(String body) {
+            return "A-" + body;
+        }
+
+        public String doB(String body) {
+            return "B-" + body;
+        }
+
+        public String doResult(String body) {
+            return "Result-" + body;
+        }
     }
 
 }
