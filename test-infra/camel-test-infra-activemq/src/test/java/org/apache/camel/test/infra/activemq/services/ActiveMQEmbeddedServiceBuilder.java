@@ -620,7 +620,7 @@ public class ActiveMQEmbeddedServiceBuilder {
     }
 
     public static ActiveMQEmbeddedServiceBuilder persistentBroker() {
-        final String name = ActiveMQEmbeddedServiceBuilder.class.getSimpleName() + ThreadLocalRandom.current().nextInt(1000);
+        final String name = "persistent" + ActiveMQEmbeddedServiceBuilder.class.getSimpleName() + ThreadLocalRandom.current().nextInt(1000);
         return persistentBroker(name);
     }
 
