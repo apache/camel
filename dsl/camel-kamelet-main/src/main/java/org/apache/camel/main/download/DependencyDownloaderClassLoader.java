@@ -40,6 +40,11 @@ public class DependencyDownloaderClassLoader extends URLClassLoader {
         }
     }
 
+    @Override
+    public Class<?> loadClass(String name) throws ClassNotFoundException {
+        return super.loadClass(name);
+    }
+
     public List<String> getDownloaded() {
         return Arrays.stream(getURLs()).map(URL::getFile).collect(Collectors.toList());
     }

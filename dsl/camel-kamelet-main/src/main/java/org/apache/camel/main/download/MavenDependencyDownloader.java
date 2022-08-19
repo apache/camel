@@ -45,6 +45,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
 
     private String[] bootClasspath;
     private DownloadThreadPool threadPool;
+    private ClassLoader classLoader;
     private CamelContext camelContext;
     private final Set<DownloadListener> downloadListeners = new LinkedHashSet<>();
     private String repos;
@@ -58,6 +59,14 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    public ClassLoader getClassLoader() {
+        return classLoader;
+    }
+
+    public void setClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
     }
 
     @Override
@@ -153,15 +162,15 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                     = MavenDependencyResolver.resolveDependenciesViaAether(deps, mavenRepos, false, fresh, transitively);
             LOG.debug("Resolved {} -> [{}]", gav, artifacts);
 
-            DependencyDownloaderClassLoader classLoader
-                    = (DependencyDownloaderClassLoader) camelContext.getApplicationContextClassLoader();
-
             for (MavenArtifact a : artifacts) {
                 File file = a.getFile();
                 // only add to classpath if not already present (do not trigger listener)
                 if (!alreadyOnClasspath(a.getGav().getGroupId(), a.getGav().getArtifactId(),
                         a.getGav().getVersion(), false)) {
-                    classLoader.addFile(file);
+                    if (classLoader instanceof DependencyDownloaderClassLoader) {
+                        DependencyDownloaderClassLoader ddc = (DependencyDownloaderClassLoader) classLoader;
+                        ddc.addFile(file);
+                    }
                     LOG.trace("Added classpath: {}", a.getGav());
                 }
             }
@@ -234,22 +243,19 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
             }
         }
 
-        if (camelContext.getApplicationContextClassLoader() != null) {
-            ClassLoader cl = camelContext.getApplicationContextClassLoader();
-            if (cl instanceof URLClassLoader) {
-                URLClassLoader ucl = (URLClassLoader) cl;
-                for (URL u : ucl.getURLs()) {
-                    String s = u.toString();
-                    if (s.contains(target)) {
-                        // trigger listener
-                        if (listener) {
-                            for (DownloadListener dl : downloadListeners) {
-                                dl.onDownloadDependency(groupId, artifactId, version);
-                            }
+        if (classLoader instanceof URLClassLoader) {
+            URLClassLoader ucl = (URLClassLoader) classLoader;
+            for (URL u : ucl.getURLs()) {
+                String s = u.toString();
+                if (s.contains(target)) {
+                    // trigger listener
+                    if (listener) {
+                        for (DownloadListener dl : downloadListeners) {
+                            dl.onDownloadDependency(groupId, artifactId, version);
                         }
-                        // already on classpath
-                        return true;
                     }
+                    // already on classpath
+                    return true;
                 }
             }
         }
@@ -258,6 +264,9 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
 
     @Override
     protected void doBuild() throws Exception {
+        if (classLoader == null && camelContext != null) {
+            classLoader = camelContext.getApplicationContextClassLoader();
+        }
         threadPool = new DownloadThreadPool();
         threadPool.setCamelContext(camelContext);
         ServiceHelper.buildService(threadPool);

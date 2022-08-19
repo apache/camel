@@ -561,6 +561,57 @@ Stopping running Camel integration (pid: 42171)
 Stopping running Camel integration (pid: 44805)
 ----
 
+=== Using Jolokia and Hawtio
+
+The https://hawt.io/[Hawtio] web console allows inspecting running Camel applications, such
+as all the JMX management information, and not but least to visualize the Camel routes
+with live performance metrics. Hawtio is a handy tool for many years, and we have made it
+easy to use Hawtio with Camel JBang.
+
+To let Hawtio able to inspect the Camel integrations, then at first you need to attach
+the Jolokia JVM Agent in the running integration, this can be done as follows:
+
+[source,bash]
+----
+camel ps
+37928 camel run foo.yaml (age: 20h18m)
+44805 camel run dude.java (age: 58s)
+----
+
+With the PID you can then attach Jolokia:
+
+[source,bash]
+----
+camel jolokia 37928
+Started Jolokia for PID 37928
+http://127.0.0.1:8778/jolokia/
+----
+
+Then you can launch https://hawt.io/[Hawtio] using Camel JBang:
+
+[source,bash]
+----
+camel hawtio
+----
+
+This will automatically download and start Hawtio, and open in web browser.
+
+TIP: See `camel hawtio --help` for options.
+
+And when Hawtio launches in the web browser, click the _Discover_ tab which should
+list all the local available Jolokia Agents (yes you can use `camel jolokia PID` to connect
+to multiple different Camel integrations and from this list select which to load).
+
+Click the green _lightning_ icon to connect to running Camel integration (of choice).
+
+You can uninstall the Jolokia JVM Agent in a running Camel application when no longer needed:
+
+[source,bash]
+----
+camel jolokia 37928 --stop
+Stopped Jolokia for PID 37928
+----
+
 === Scripting from terminal using pipes
 
 You can also execute a Camel JBang file as a script that can be used for terminal scripting with pipes and filters.

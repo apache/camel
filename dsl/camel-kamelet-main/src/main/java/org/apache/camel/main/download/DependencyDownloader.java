@@ -25,6 +25,16 @@ import org.apache.camel.StaticService;
 public interface DependencyDownloader extends CamelContextAware, StaticService {
 
     /**
+     * Classloader able to load from downloaded dependencies.
+     */
+    ClassLoader getClassLoader();
+
+    /**
+     * Sets the classloader to use that will be able to load from downloaded dependencies
+     */
+    void setClassLoader(ClassLoader classLoader);
+
+    /**
      * Adds a listener to capture download activity
      */
     void addDownloadListener(DownloadListener downloadListener);

@@ -20,6 +20,8 @@ import java.util.concurrent.Callable;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.commands.jolokia.Hawtio;
+import org.apache.camel.dsl.jbang.core.commands.jolokia.Jolokia;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -35,6 +37,8 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("stop", new CommandLine(new StopProcess(main)))
                 .addSubcommand("init", new CommandLine(new Init(main)))
                 .addSubcommand("bind", new CommandLine(new Bind(main)))
+                .addSubcommand("jolokia", new CommandLine(new Jolokia(main)))
+                .addSubcommand("hawtio", new CommandLine(new Hawtio(main)))
                 .addSubcommand("pipe", new CommandLine(new Pipe(main)))
                 .addSubcommand("generate", new CommandLine(new CodeGenerator(main))
                         .addSubcommand("rest", new CommandLine(new CodeRestGenerator(main))))

@@ -20,7 +20,7 @@ import java.util.concurrent.Callable;
 
 import picocli.CommandLine;
 
-abstract class CamelCommand implements Callable<Integer> {
+public abstract class CamelCommand implements Callable<Integer> {
 
     public static final String PID_DIR = "${sys:user.home}/.camel";
 

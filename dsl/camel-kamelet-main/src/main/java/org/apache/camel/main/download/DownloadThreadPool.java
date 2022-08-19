@@ -17,6 +17,7 @@
 package org.apache.camel.main.download;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -83,13 +84,19 @@ class DownloadThreadPool extends ServiceSupport implements CamelContextAware {
 
     @Override
     protected void doBuild() throws Exception {
-        executorService = camelContext.getExecutorServiceManager().newCachedThreadPool(this, "MavenDownload");
+        if (camelContext != null) {
+            executorService = camelContext.getExecutorServiceManager().newCachedThreadPool(this, "MavenDownload");
+        } else {
+            executorService = Executors.newCachedThreadPool();
+        }
     }
 
     @Override
     protected void doShutdown() throws Exception {
-        if (executorService != null) {
+        if (executorService != null && camelContext != null) {
             camelContext.getExecutorServiceManager().shutdown(executorService);
+        } else if (executorService != null) {
+            executorService.shutdown();
         }
     }
 }

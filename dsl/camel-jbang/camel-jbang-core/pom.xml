@@ -58,6 +58,7 @@
             <artifactId>camel-resourceresolver-github</artifactId>
         </dependency>
 
+        <!-- cli -->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
@@ -65,6 +66,20 @@
         <dependency>
             <groupId>info.picocli</groupId>
             <artifactId>picocli</artifactId>
+        </dependency>
+
+        <!-- jolokia -->
+        <dependency>
+            <groupId>org.jolokia</groupId>
+            <artifactId>jolokia-jvm</artifactId>
+            <version>1.7.1</version>
+        </dependency>
+        <!-- servlet for launching hawtio -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${javax-servlet-api-version}</version>
+            <scope>optional</scope>
         </dependency>
 
         <!-- logging -->
