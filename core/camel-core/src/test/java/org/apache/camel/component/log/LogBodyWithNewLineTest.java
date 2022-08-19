@@ -25,7 +25,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.WriterAppender;
+import org.apache.logging.log4j.core.config.AppenderRef;
 import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,13 +51,22 @@ public class LogBodyWithNewLineTest extends ContextTestSupport {
                 .setLayout(PatternLayout.newBuilder().withPattern(PatternLayout.SIMPLE_CONVERSION_PATTERN).build())
                 .setTarget(writer)
                 .setName("Writer").build();
-
         appender.start();
 
-        config.addAppender(appender);
-        config.getRootLogger().removeAppender("Writer");
-        config.getRootLogger().addAppender(appender, Level.INFO, null);
+        final String loggerName = "logger_name";
 
+        config.removeLogger(loggerName);
+        LoggerConfig loggerConfig = LoggerConfig.newBuilder()
+                .withIncludeLocation("true")
+                .withLoggerName(loggerName)
+                .withLevel(Level.INFO)
+                .withAdditivity(true)
+                .withConfig(config)
+                .withRefs(new AppenderRef[] { AppenderRef.createAppenderRef("Writer", null, null) })
+                .build();
+
+        loggerConfig.addAppender(appender, Level.INFO, null);
+        config.addLogger(loggerName, loggerConfig);
         ctx.updateLoggers();
     }
 
