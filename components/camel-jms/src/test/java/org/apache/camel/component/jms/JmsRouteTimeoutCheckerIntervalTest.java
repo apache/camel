@@ -22,9 +22,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
@@ -35,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Unit test for testing request timeout with a InOut exchange.
  */
-@Tags({ @Tag("not-parallel") })
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class JmsRouteTimeoutCheckerIntervalTest extends AbstractJMSTest {
 
     @Test
@@ -63,8 +62,7 @@ public class JmsRouteTimeoutCheckerIntervalTest extends AbstractJMSTest {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
+        ConnectionFactory connectionFactory = createConnectionFactory(service);
         JmsComponent activmq = jmsComponentAutoAcknowledge(connectionFactory);
         // check 4 times per second
         activmq.getConfiguration().setRequestTimeoutCheckerInterval(250);

@@ -207,29 +207,29 @@ public class JmsXMLRouteTest extends AbstractJMSTest {
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0));
 
                 // no need to convert to String as JMS producer can handle XML streams now
-                from("direct:object").to("activemq:queue:object?jmsMessageType=Object");
+                from("direct:object").to("activemq:queue:JmsXMLRouteTest.object?jmsMessageType=Object");
 
                 // no need to convert to String as JMS producer can handle XML streams now
-                from("direct:bytes").to("activemq:queue:bytes?jmsMessageType=Bytes");
+                from("direct:bytes").to("activemq:queue:JmsXMLRouteTest.bytes?jmsMessageType=Bytes");
 
                 // no need to convert to String as JMS producer can handle XML streams now
-                from("direct:default").to("activemq:queue:default");
+                from("direct:default").to("activemq:queue:JmsXMLRouteTest.default");
 
-                from("activemq:queue:object")
+                from("activemq:queue:JmsXMLRouteTest.object")
                         .process(exchange -> {
                             Object body = exchange.getIn().getBody();
                             // should preserve the object as Source
                             assertIsInstanceOf(Source.class, body);
                         }).to("seda:choice");
 
-                from("activemq:queue:bytes")
+                from("activemq:queue:JmsXMLRouteTest.bytes")
                         .process(exchange -> {
                             Object body = exchange.getIn().getBody();
                             // should be a byte array by default
                             assertIsInstanceOf(byte[].class, body);
                         }).to("seda:choice");
 
-                from("activemq:queue:default")
+                from("activemq:queue:JmsXMLRouteTest.default")
                         .to("seda:choice");
 
                 from("seda:choice")

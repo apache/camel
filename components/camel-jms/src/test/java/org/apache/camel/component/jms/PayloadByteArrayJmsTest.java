@@ -27,8 +27,6 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
@@ -37,7 +35,6 @@ import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelpe
 /**
  * Unit test that we send payload as byte[] for certain types
  */
-@Tags({ @Tag("not-parallel") })
 public class PayloadByteArrayJmsTest extends AbstractJMSTest {
 
     protected String componentName = "activemq";
@@ -51,7 +48,7 @@ public class PayloadByteArrayJmsTest extends AbstractJMSTest {
 
         Reader body = new StringReader("Hello World");
 
-        template.sendBody("activemq:queue:hello", body);
+        template.sendBody("activemq:queue:PayloadByteArrayJmsTest", body);
 
         assertMockEndpointsSatisfied();
     }
@@ -65,7 +62,7 @@ public class PayloadByteArrayJmsTest extends AbstractJMSTest {
 
         InputStream body = new ByteArrayInputStream("Hello World".getBytes());
 
-        template.sendBody("activemq:queue:hello", body);
+        template.sendBody("activemq:queue:PayloadByteArrayJmsTest", body);
 
         assertMockEndpointsSatisfied();
     }
@@ -79,7 +76,7 @@ public class PayloadByteArrayJmsTest extends AbstractJMSTest {
 
         ByteBuffer body = ByteBuffer.wrap("Hello World".getBytes());
 
-        template.sendBody("activemq:queue:hello", body);
+        template.sendBody("activemq:queue:PayloadByteArrayJmsTest", body);
 
         assertMockEndpointsSatisfied();
     }
@@ -99,7 +96,7 @@ public class PayloadByteArrayJmsTest extends AbstractJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:hello").to("mock:result");
+                from("activemq:queue:PayloadByteArrayJmsTest").to("mock:result");
             }
         };
     }

@@ -41,8 +41,6 @@ import org.apache.camel.test.infra.activemq.services.LegacyEmbeddedBroker;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 
@@ -54,7 +52,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-@Tags({ @Tag("not-parallel"), @Tag("exclusive"), @Tag("slow") })
 public class JmsRouteRequestReplyTest extends CamelTestSupport {
 
     protected static final String REPLY_TO_DESTINATION_SELECTOR_NAME = "camelProducer";

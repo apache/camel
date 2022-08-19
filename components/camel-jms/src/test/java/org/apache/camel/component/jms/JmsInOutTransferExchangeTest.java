@@ -32,8 +32,6 @@ import org.apache.camel.support.DefaultExchangeHolder;
 import org.apache.camel.test.infra.activemq.services.ActiveMQService;
 import org.apache.camel.test.infra.activemq.services.ActiveMQServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -44,7 +42,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Tags({ @Tag("not-parallel"), @Tag("exclusive") })
 @Timeout(60)
 public class JmsInOutTransferExchangeTest extends CamelTestSupport {
 

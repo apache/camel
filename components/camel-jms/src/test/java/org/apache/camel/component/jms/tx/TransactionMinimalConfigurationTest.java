@@ -20,15 +20,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * To demonstrate transacted with minimal configuration.
  */
-@Tags({ @Tag("not-parallel") })
 public class TransactionMinimalConfigurationTest extends CamelSpringTestSupport {
 
     @Override
@@ -50,7 +47,7 @@ public class TransactionMinimalConfigurationTest extends CamelSpringTestSupport 
         mock.message(0).header(Exchange.REDELIVERED).isNull();
         mock.message(0).header(Exchange.REDELIVERY_COUNTER).isNull();
 
-        template.sendBody("activemq:queue:okay", "Hello World");
+        template.sendBody("activemq:queue:TransactionMinimalConfigurationTest", "Hello World");
 
         mock.assertIsSatisfied();
     }

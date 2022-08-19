@@ -23,9 +23,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.Timeout;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
@@ -35,7 +35,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * A simple request / reply test
  */
-@Tags({ @Tag("not-parallel") })
+@Timeout(30)
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class JmsSimpleRequestReplyTest extends AbstractJMSTest {
 
     protected String componentName = "activemq";
@@ -73,8 +74,7 @@ public class JmsSimpleRequestReplyTest extends AbstractJMSTest {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
+        ConnectionFactory connectionFactory = createConnectionFactory(service);
         camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;

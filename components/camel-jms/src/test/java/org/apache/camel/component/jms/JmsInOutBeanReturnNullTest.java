@@ -28,8 +28,6 @@ import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
 import org.apache.camel.test.infra.activemq.services.ActiveMQService;
 import org.apache.camel.test.infra.activemq.services.ActiveMQServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.Timeout;
@@ -42,7 +40,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Tags({ @Tag("not-parallel"), @Tag("exclusive") })
 @Timeout(30)
 public class JmsInOutBeanReturnNullTest extends CamelTestSupport {
 

@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Unit test for Camel loadbalancer failover with JMS
  */
 @Tags({ @Tag("not-parallel") })
-@Timeout(60)
+@Timeout(10)
 public class JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest extends CamelTestSupport {
     @RegisterExtension
     public ActiveMQService service = ActiveMQServiceFactory.createVMService();

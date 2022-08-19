@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
-@Tags({ @Tag("not-parallel"), @Tag("exclusive"), @Tag("slow") })
+@Tags({ @Tag("not-parallel"), @Tag("slow") })
 @Timeout(60)
 public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
 

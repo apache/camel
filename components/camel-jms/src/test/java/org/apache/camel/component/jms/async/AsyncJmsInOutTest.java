@@ -26,8 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.StopWatch;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +34,6 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.apache.camel.test.junit5.TestSupport.body;
 
-@Tags({ @Tag("not-parallel") })
 public class AsyncJmsInOutTest extends AbstractJMSTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(AsyncJmsInOutTest.class);

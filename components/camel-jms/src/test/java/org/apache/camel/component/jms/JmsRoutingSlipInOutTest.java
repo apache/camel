@@ -28,14 +28,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.Timeout;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 
-/**
- *
- */
 @Tags({ @Tag("not-parallel") })
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
+@Timeout(10)
 public class JmsRoutingSlipInOutTest extends AbstractJMSTest {
 
     @BindToRegistry("myBean")

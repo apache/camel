@@ -25,8 +25,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
@@ -36,7 +34,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Unit test for sending the filename for file producer over the JMS wire.
  */
-@Tags({ @Tag("not-parallel") })
 public class JmsFilenameHeaderTest extends AbstractJMSTest {
 
     @Test
@@ -57,8 +54,7 @@ public class JmsFilenameHeaderTest extends AbstractJMSTest {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
+        ConnectionFactory connectionFactory = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
@@ -68,8 +64,8 @@ public class JmsFilenameHeaderTest extends AbstractJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:in").to("activemq:test.a");
-                from("activemq:test.a").to("direct:save");
+                from("direct:in").to("activemq:JmsFilenameHeaderTest");
+                from("activemq:JmsFilenameHeaderTest").to("direct:save");
 
                 from("direct:save").to("file://target?fileExist=Override", "mock:result");
             }

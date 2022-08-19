@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  *
  */
-@Tags({ @Tag("not-parallel"), @Tag("exclusive"), @Tag("slow") })
+@Tags({ @Tag("not-parallel"), @Tag("slow") })
 @Timeout(60)
 public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(JmsDefaultTaskExecutorTypeTest.class);

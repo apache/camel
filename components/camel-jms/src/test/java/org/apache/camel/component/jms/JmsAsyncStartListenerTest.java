@@ -22,8 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
@@ -32,7 +30,6 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 /**
  * Testing with async start listener
  */
-@Tags({ @Tag("not-parallel") })
 @Timeout(60)
 public class JmsAsyncStartListenerTest extends AbstractPersistentJMSTest {
 
@@ -43,8 +40,8 @@ public class JmsAsyncStartListenerTest extends AbstractPersistentJMSTest {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(2);
 
-        template.sendBody("activemq:queue:hello", "Hello World");
-        template.sendBody("activemq:queue:hello", "Gooday World");
+        template.sendBody("activemq:queue:JmsAsyncStartListenerTest", "Hello World");
+        template.sendBody("activemq:queue:JmsAsyncStartListenerTest", "Gooday World");
 
         result.assertIsSatisfied();
     }
@@ -63,7 +60,7 @@ public class JmsAsyncStartListenerTest extends AbstractPersistentJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:hello").to("mock:result");
+                from("activemq:queue:JmsAsyncStartListenerTest").to("mock:result");
             }
         };
     }

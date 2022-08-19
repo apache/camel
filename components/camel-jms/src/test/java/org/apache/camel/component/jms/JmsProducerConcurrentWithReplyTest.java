@@ -29,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.Timeout;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
@@ -38,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Tags({ @Tag("not-parallel") })
 @Timeout(60)
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class JmsProducerConcurrentWithReplyTest extends AbstractJMSTest {
 
     @Test
@@ -75,8 +77,7 @@ public class JmsProducerConcurrentWithReplyTest extends AbstractJMSTest {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
+        ConnectionFactory connectionFactory = createConnectionFactory(service);
         camelContext.addComponent("jms", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;

@@ -23,15 +23,16 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.Timeout;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Tags({ @Tag("not-parallel") })
+@Timeout(10)
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class JmsRouteWithInOnlyAndMultipleAcksTest extends AbstractJMSTest {
 
     protected String componentName = "amq";
@@ -58,7 +59,8 @@ public class JmsRouteWithInOnlyAndMultipleAcksTest extends AbstractJMSTest {
         notifCollector.expectedHeaderReceived("JMSCorrelationID", orderId);
         notifCollector.setResultWaitTime(10000);
 
-        Object out = template.requestBodyAndHeader("amq:queue:inbox", "Camel in Action", "JMSCorrelationID", orderId);
+        Object out = template.requestBodyAndHeader("amq:queue:JmsRouteWithInOnlyAndMultipleAcksTest", "Camel in Action",
+                "JMSCorrelationID", orderId);
         assertEquals("OK: Camel in Action", out);
 
         assertMockEndpointsSatisfied();
@@ -85,9 +87,10 @@ public class JmsRouteWithInOnlyAndMultipleAcksTest extends AbstractJMSTest {
                 // topic subscribers, lets a bean handle
                 // the order and then delivers a reply back to
                 // the original order request initiator
-                from("amq:queue:inbox").to("mock:inbox").to(ExchangePattern.InOnly, "amq:topic:orderServiceNotification").bean(
-                        "orderService",
-                        "handleOrder");
+                from("amq:queue:JmsRouteWithInOnlyAndMultipleAcksTest").to("mock:inbox")
+                        .to(ExchangePattern.InOnly, "amq:topic:orderServiceNotification").bean(
+                                "orderService",
+                                "handleOrder");
 
                 // this route collects an order request notification
                 // and sends back an acknowledgment back to a queue

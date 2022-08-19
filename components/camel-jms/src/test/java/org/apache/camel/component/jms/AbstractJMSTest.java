@@ -27,7 +27,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 @Tags({ @Tag("jms") })
 public abstract class AbstractJMSTest extends CamelTestSupport {
     @RegisterExtension
-    public static ActiveMQService service = ActiveMQServiceFactory.createVMService();
+    public ActiveMQService service = ActiveMQServiceFactory.createVMService();
 
     public static String queueNameForClass(String desiredName, Class<?> requestingClass) {
         return desiredName + "." + requestingClass.getSimpleName();

@@ -20,15 +20,12 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.infra.activemq.services.ActiveMQService;
-import org.apache.camel.test.infra.activemq.services.ActiveMQServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.Timeout;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
@@ -37,13 +34,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @Tags({ @Tag("not-parallel") })
 @Timeout(60)
-public class JmsInOutSynchronousFalseTest extends CamelTestSupport {
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
+public class JmsInOutSynchronousFalseTest extends AbstractJMSTest {
 
     private static String beforeThreadName;
     private static String afterThreadName;
-
-    @RegisterExtension
-    public ActiveMQService service = ActiveMQServiceFactory.createVMService();
 
     private final String url = "activemq:queue:JmsInOutSynchronousFalseTest?synchronous=false";
 

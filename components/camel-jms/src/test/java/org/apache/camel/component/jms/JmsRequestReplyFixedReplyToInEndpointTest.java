@@ -24,6 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.Timeout;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
@@ -33,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tags({ @Tag("not-parallel") })
 @Timeout(60)
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class JmsRequestReplyFixedReplyToInEndpointTest extends AbstractJMSTest {
 
     @Test
@@ -40,6 +42,7 @@ public class JmsRequestReplyFixedReplyToInEndpointTest extends AbstractJMSTest {
         Exchange reply = template.request("activemq:queue:JmsRequestReplyFixedReplyToInEndpointTest",
                 exchange -> exchange.getIn().setBody("World"));
         assertEquals("Hello World", reply.getMessage().getBody());
+
         assertTrue(reply.getMessage().hasHeaders(), "Should have headers");
         String replyTo = reply.getMessage().getHeader("JMSReplyTo", String.class);
         assertTrue(replyTo.startsWith("temp-queue"), "Should be a temp queue");
@@ -78,8 +81,7 @@ public class JmsRequestReplyFixedReplyToInEndpointTest extends AbstractJMSTest {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory
-                = createConnectionFactory(service);
+        ConnectionFactory connectionFactory = createConnectionFactory(service);
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
         return camelContext;
     }
