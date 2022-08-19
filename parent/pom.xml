@@ -101,7 +101,7 @@
         <brave-zipkin-version>5.13.3</brave-zipkin-version>
         <build-helper-maven-plugin-version>3.2.0</build-helper-maven-plugin-version>
         <c3p0-version>0.9.5.5</c3p0-version>
-        <caffeine-version>2.9.2</caffeine-version>
+        <caffeine-version>2.9.3</caffeine-version>
         <californium-version>2.6.5</californium-version>
         <cassandra-driver-version>4.14.0</cassandra-driver-version>
         <cassandra-version>3.11.12</cassandra-version>
@@ -237,15 +237,15 @@
         <hazelcast-version>4.2.5</hazelcast-version>
         <hbase-version>2.3.1</hbase-version>
         <hdrhistrogram-version>2.1.11</hdrhistrogram-version>
-        <hibernate-validator-version>6.2.0.Final</hibernate-validator-version>
-        <hibernate-version>5.4.32.Final</hibernate-version>
+        <hibernate-validator-version>6.2.4.Final</hibernate-validator-version>
+        <hibernate-version>5.6.10.Final</hibernate-version>
         <hk2-version>2.6.1</hk2-version>
         <hsqldb-version>2.5.1</hsqldb-version>
         <htrace-version>3.1.0-incubating</htrace-version>
         <httpunit-version>1.7</httpunit-version>
-        <httpcore4-version>4.4.14</httpcore4-version>
+        <httpcore4-version>4.4.15</httpcore4-version>
         <httpclient4-version>4.5.13</httpclient4-version>
-        <httpasyncclient-version>4.1.4</httpasyncclient-version>
+        <httpasyncclient-version>4.1.5</httpasyncclient-version>
         <huaweicloud-obs-version>3.21.4.1</huaweicloud-obs-version>
         <huaweicloud-sdk-version>3.0.59</huaweicloud-sdk-version>
         <hystrix-version>1.5.18</hystrix-version>
@@ -290,7 +290,7 @@
         <jakarta.el-version>3.0.3</jakarta.el-version>
         <jakarta-jaxb-version>2.3.3</jakarta-jaxb-version>
         <glassfish-javax-json>1.0.4</glassfish-javax-json>
-        <glassfish-jaxb-runtime-version>2.3.3</glassfish-jaxb-runtime-version>
+        <glassfish-jaxb-runtime-version>2.3.6</glassfish-jaxb-runtime-version>
         <jaxb2-maven-plugin-version>2.5.0</jaxb2-maven-plugin-version>
         <jbpm-version>7.62.0.Final</jbpm-version>
         <jboss-el-api_3.0_spec-version>2.0.0.Final</jboss-el-api_3.0_spec-version>
@@ -326,7 +326,7 @@
         <jota-version>1.0.0-beta9</jota-version>
         <jolt-version>0.1.5</jolt-version>
         <jool-version>0.9.12</jool-version>
-        <jooq-version>3.14.15</jooq-version>
+        <jooq-version>3.14.16</jooq-version>
         <joor-version>0.9.14</joor-version>
         <johnzon-version>1.2.18</johnzon-version>
         <jose4j-version>0.6.4</jose4j-version>
@@ -513,7 +513,7 @@
         <spring-version>${spring5-version}</spring-version>
         <spring5-version>5.3.22</spring5-version>
         <spring-rabbitmq-version>2.4.2</spring-rabbitmq-version>
-        <spring-security-version>5.6.5</spring-security-version>
+        <spring-security-version>5.6.7</spring-security-version>
         <spring-ws-version>3.1.3</spring-ws-version>
         <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.7</squareup-okhttp-version>
