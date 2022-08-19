@@ -32,7 +32,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 @Tags({ @Tag("jms") })
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class AbstractPersistentJMSTest extends CamelTestSupport {
     @RegisterExtension
     public static ActiveMQService service = ActiveMQServiceFactory.createPersistentVMService();
