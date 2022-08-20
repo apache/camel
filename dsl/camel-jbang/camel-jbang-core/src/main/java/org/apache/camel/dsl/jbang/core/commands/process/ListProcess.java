@@ -27,7 +27,7 @@ public class ListProcess extends ProcessBaseCommand {
 
     @CommandLine.Option(names = { "--sort" },
                         description = "Sort by pid, name or age", defaultValue = "pid")
-    private String sort;
+    String sort;
 
     public ListProcess(CamelJBangMain main) {
         super(main);

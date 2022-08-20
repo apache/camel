@@ -30,11 +30,13 @@ import picocli.CommandLine.Command;
 public class Jolokia extends ProcessBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "1")
-    private String name;
+    String name;
 
     @CommandLine.Option(names = { "--stop" },
                         description = "Stops the Jolokia JVM Agent in the running Camel integration")
-    private boolean stop;
+    boolean stop;
+
+    private volatile long pid;
 
     public Jolokia(CamelJBangMain main) {
         super(main);
@@ -51,7 +53,7 @@ public class Jolokia extends ProcessBaseCommand {
             return 0;
         }
 
-        long pid = pids.get(0);
+        this.pid = pids.get(0);
         int exitCode;
         try {
             OptionsAndArgs options;
@@ -81,4 +83,10 @@ public class Jolokia extends ProcessBaseCommand {
         return exitCode;
     }
 
+    /**
+     * The pid of the running Camel integration that was discovered and used
+     */
+    long getPid() {
+        return pid;
+    }
 }

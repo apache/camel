@@ -33,20 +33,24 @@ import picocli.CommandLine.Command;
 @Command(name = "hawtio", description = "Launch Hawtio web console")
 public class Hawtio extends CamelCommand {
 
+    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "1")
+    String name;
+
     @CommandLine.Option(names = { "--version" },
                         description = "Version of the Hawtio web console", defaultValue = "2.15.0")
-    private String version = "2.15.0";
+    String version = "2.15.0";
 
     // use port 8888 as 8080 is too commonly used
     @CommandLine.Option(names = { "--port" },
                         description = "Port number to use for Hawtio web console", defaultValue = "8888")
-    private int port = 8888;
+    int port = 8888;
 
     @CommandLine.Option(names = { "--openUrl" },
                         description = "To automatic open Hawtio web console in the web browser", defaultValue = "true")
-    private boolean openUrl = true;
+    boolean openUrl = true;
 
     private final CountDownLatch shutdownLatch = new CountDownLatch(1);
+    private volatile long pid;
 
     public Hawtio(CamelJBangMain main) {
         super(main);
@@ -54,6 +58,39 @@ public class Hawtio extends CamelCommand {
 
     @Override
     public Integer call() throws Exception {
+        int exit;
+        if (name == null) {
+            exit = callHawtio();
+        } else {
+            // attach jolokia before calling hawtio and disconnect afterwards
+            try {
+                exit = connectJolokia();
+                if (exit == 0) {
+                    exit = callHawtio();
+                }
+            } finally {
+                disconnectJolokia();
+            }
+        }
+        return exit;
+    }
+
+    protected Integer connectJolokia() throws Exception {
+        Jolokia jolokia = new Jolokia(getMain());
+        jolokia.name = name;
+        int exit = jolokia.call();
+        this.pid = jolokia.getPid();
+        return exit;
+    }
+
+    protected void disconnectJolokia() throws Exception {
+        Jolokia jolokia = new Jolokia(getMain());
+        jolokia.name = "" + pid;
+        jolokia.stop = true;
+        jolokia.call();
+    }
+
+    protected Integer callHawtio() throws Exception {
         ClassLoader cl = createClassLoader();
 
         MavenDependencyDownloader downloader = new MavenDependencyDownloader();

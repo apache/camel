@@ -28,11 +28,11 @@ import picocli.CommandLine.Command;
 public class StopProcess extends ProcessBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
-    private String name;
+    String name;
 
     @CommandLine.Option(names = { "--all" },
                         description = "To stop all running Camel integrations")
-    private boolean all;
+    boolean all;
 
     public StopProcess(CamelJBangMain main) {
         super(main);

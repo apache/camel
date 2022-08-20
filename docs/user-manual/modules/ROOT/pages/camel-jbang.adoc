@@ -568,8 +568,8 @@ as all the JMX management information, and not but least to visualize the Camel 
 with live performance metrics. Hawtio is a handy tool for many years, and we have made it
 easy to use Hawtio with Camel JBang.
 
-To let Hawtio able to inspect the Camel integrations, then at first you need to attach
-the Jolokia JVM Agent in the running integration, this can be done as follows:
+To let Hawtio able to inspect the Camel integrations, then the Jolokia JVM Agent
+must be installed in the running integration, this can be done, either explicit as follows:
 
 [source,bash]
 ----
@@ -584,6 +584,17 @@ With the PID you can then attach Jolokia:
 ----
 camel jolokia 37928
 Started Jolokia for PID 37928
+http://127.0.0.1:8778/jolokia/
+----
+
+Instead of using PID you can also attach by name pattern. In this example because the
+two Camel integrations have unique names (foo and dude), then you can also attach Jolokia
+without knowing the PID as follows:
+
+[source,bash]
+----
+camel jolokia du
+Started Jolokia for PID 44805
 http://127.0.0.1:8778/jolokia/
 ----
 
@@ -611,6 +622,18 @@ You can uninstall the Jolokia JVM Agent in a running Camel application when no l
 camel jolokia 37928 --stop
 Stopped Jolokia for PID 37928
 ----
+
+It is also possible to do this with only one command, as follows:
+
+[source,bash]
+----
+camel hawtio dude
+----
+
+Where _dude_ is the name of the running Camel integration. When you stop Hawtio (using `ctrl` + `c`)
+then Camel will attempt to uninstall the Jolokia JVM Agent, however this may not be
+able to do this always, because the JVM is being terminated which can prevent camel-jbang
+from doing JVM process communication to the running Camel integration.
 
 === Scripting from terminal using pipes
 
