@@ -14,9 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.jolokia;
+package org.apache.camel.dsl.jbang.core.commands.process;
 
-import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
+import java.util.List;
+
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.jolokia.jvmagent.client.command.CommandDispatcher;
 import org.jolokia.jvmagent.client.util.OptionsAndArgs;
@@ -26,10 +27,10 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "jolokia", description = "Attach Jolokia JVM Agent to a running Camel integration")
-public class Jolokia extends CamelCommand {
+public class Jolokia extends ProcessBaseCommand {
 
-    @CommandLine.Parameters(description = "PID of running Camel integration", arity = "1")
-    private long pid;
+    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "1")
+    private String name;
 
     @CommandLine.Option(names = { "--stop" },
                         description = "Stops the Jolokia JVM Agent in the running Camel integration")
@@ -41,8 +42,17 @@ public class Jolokia extends CamelCommand {
 
     @Override
     public Integer call() throws Exception {
-        int exitCode;
+        List<Long> pids = findPids(name);
+        if (pids.isEmpty()) {
+            return 0;
+        } else if (pids.size() > 1) {
+            System.out.println("Name or pid " + name + " matches " + pids.size()
+                               + " running Camel integrations. Specify a name or PID that matches exactly one.");
+            return 0;
+        }
 
+        long pid = pids.get(0);
+        int exitCode;
         try {
             OptionsAndArgs options;
             if (stop) {
@@ -64,7 +74,7 @@ public class Jolokia extends CamelCommand {
                 }
             }
         } catch (Exception e) {
-            System.err.println("Cannot execute jolokia command due " + e.getMessage());
+            System.err.println("Cannot execute jolokia command due: " + e.getMessage());
             exitCode = 1;
         }
 

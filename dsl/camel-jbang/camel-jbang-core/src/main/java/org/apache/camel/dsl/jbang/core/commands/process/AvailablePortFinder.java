@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.jolokia;
+package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -23,7 +23,7 @@ import java.net.ServerSocket;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class AvailablePortFinder {
+class AvailablePortFinder {
 
     private static final AvailablePortFinder INSTANCE = new AvailablePortFinder();
 

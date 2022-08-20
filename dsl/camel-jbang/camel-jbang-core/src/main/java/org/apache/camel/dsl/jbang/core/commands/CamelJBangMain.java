@@ -20,8 +20,10 @@ import java.util.concurrent.Callable;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.dsl.jbang.core.commands.jolokia.Hawtio;
-import org.apache.camel.dsl.jbang.core.commands.jolokia.Jolokia;
+import org.apache.camel.dsl.jbang.core.commands.process.Hawtio;
+import org.apache.camel.dsl.jbang.core.commands.process.Jolokia;
+import org.apache.camel.dsl.jbang.core.commands.process.ListProcess;
+import org.apache.camel.dsl.jbang.core.commands.process.StopProcess;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 

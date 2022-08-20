@@ -14,16 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands;
+package org.apache.camel.dsl.jbang.core.commands.process;
 
+import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "ps", description = "List running Camel applications")
-class ListProcess extends CamelCommand {
+public class ListProcess extends ProcessBaseCommand {
 
     @CommandLine.Option(names = { "--sort" },
                         description = "Sort by pid, name or age", defaultValue = "pid")
@@ -57,25 +57,6 @@ class ListProcess extends CamelCommand {
                     }
                 });
         return 0;
-    }
-
-    private static String extractName(ProcessHandle ph) {
-        String cl = ph.info().commandLine().orElse("");
-        String name = StringHelper.after(cl, "main.CamelJBang run");
-        if (name != null) {
-            name = name.trim();
-        } else {
-            name = "";
-        }
-        return name;
-    }
-
-    private static long extractSince(ProcessHandle ph) {
-        long since = 0;
-        if (ph.info().startInstant().isPresent()) {
-            since = ph.info().startInstant().get().toEpochMilli();
-        }
-        return since;
     }
 
 }

@@ -14,20 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands;
+package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.support.PatternHelper;
+import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "stop", description = "Stop a running Camel integration")
-class StopProcess extends CamelCommand {
+public class StopProcess extends ProcessBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     private String name;
@@ -48,17 +46,7 @@ class StopProcess extends CamelCommand {
             name = "*";
         }
 
-        // we need to know the pids of the running camel integrations
-        List<Long> pids;
-        if (name.matches("\\d+")) {
-            pids = List.of(Long.parseLong(name));
-        } else {
-            // lets be open and match all that starts with this pattern
-            if (!name.endsWith("*")) {
-                name = name + "*";
-            }
-            pids = findPids(name);
-        }
+        List<Long> pids = findPids(name);
 
         // stop by deleting the pid file
         for (Long pid : pids) {
@@ -69,32 +57,6 @@ class StopProcess extends CamelCommand {
         }
 
         return 0;
-    }
-
-    private static String extractName(ProcessHandle ph) {
-        String cl = ph.info().commandLine().orElse("");
-        String name = StringHelper.after(cl, "main.CamelJBang run");
-        if (name != null) {
-            name = name.trim();
-        } else {
-            name = "";
-        }
-        return name;
-    }
-
-    private static List<Long> findPids(String pattern) {
-        List<Long> pids = new ArrayList<>();
-
-        ProcessHandle.allProcesses()
-                .forEach(ph -> {
-                    String name = extractName(ph);
-                    // ignore file extension, so it is easier to match by name
-                    name = FileUtil.onlyName(name);
-                    if (!name.isEmpty() && PatternHelper.matchPattern(name, pattern)) {
-                        pids.add(ph.pid());
-                    }
-                });
-        return pids;
     }
 
 }
