@@ -29,13 +29,12 @@ the management of components involved in the message flow.
 In Camel you can manage and monitor using JMX, or
 by using a Java API from the `CamelContext`, or from the
 `org.apache.camel.api.management` package, +
- or use the event notifier which has an example
-here.
+ or use the event notifier.
 
 The ControlBus component provides easy management of Camel
 applications based on the xref:controlbus-component.adoc[Control Bus] EIP
 pattern. 
-For example, by sending a message to an Endpoint
+For example, by sending a message to an endpoint
 you can control the lifecycle of routes, or gather performance
 statistics.
 
