@@ -51,12 +51,12 @@ public class BulkApiV2QueryJobIntegrationTest extends AbstractSalesforceTestBase
     private static final String LAST_NAME = "CamelBulkTest";
 
     @BeforeEach
-    private void setup() {
+    void setup() {
         createContacts();
     }
 
     @AfterEach
-    private void teardown() {
+    void teardown() {
         deleteContacts();
     }
 
