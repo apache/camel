@@ -43,7 +43,6 @@ public class Athena2Component extends DefaultComponent {
 
     public Athena2Component(CamelContext context) {
         super(context);
-        registerExtension(new Athena2ComponentVerifierExtension());
     }
 
     @Override
