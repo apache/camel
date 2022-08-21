@@ -38,6 +38,7 @@ public class InflightConsole extends AbstractDevConsole {
 
         InflightRepository repo = getCamelContext().getInflightRepository();
         sb.append(String.format("\n    Inflight: %s", repo.size()));
+        sb.append(String.format("\n    InflightBrowseEnabled: %s", repo.isInflightBrowseEnabled()));
         if (repo.isInflightBrowseEnabled()) {
             for (InflightRepository.InflightExchange ie : repo.browse()) {
                 String age = TimeUtils.printDuration(ie.getDuration(), true);
@@ -55,6 +56,7 @@ public class InflightConsole extends AbstractDevConsole {
 
         InflightRepository repo = getCamelContext().getInflightRepository();
         root.put("inflight", repo.size());
+        root.put("inflightBrowseEnabled", repo.isInflightBrowseEnabled());
         if (repo.isInflightBrowseEnabled()) {
             final List<JsonObject> list = new ArrayList<>();
             for (InflightRepository.InflightExchange ie : repo.browse()) {
