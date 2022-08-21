@@ -20,14 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
-import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorHelper;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.core.exception.SdkClientException;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.S3ClientBuilder;
 
 public class AWS2S3ComponentVerifierExtension extends DefaultComponentVerifierExtension {
 
@@ -58,37 +51,4 @@ public class AWS2S3ComponentVerifierExtension extends DefaultComponentVerifierEx
         return builder.build();
     }
 
-    // *********************************
-    // Connectivity validation
-    // *********************************
-
-    @Override
-    protected Result verifyConnectivity(Map<String, Object> parameters) {
-        ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.CONNECTIVITY);
-
-        try {
-            AWS2S3Configuration configuration = setProperties(new AWS2S3Configuration(), parameters);
-            if (!S3Client.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
-                ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(
-                        VerificationError.StandardCode.ILLEGAL_PARAMETER, "The service is not supported in this region");
-                return builder.error(errorBuilder.build()).build();
-            }
-            AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
-            S3ClientBuilder clientBuilder = S3Client.builder();
-            S3Client client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred))
-                    .region(Region.of(configuration.getRegion())).build();
-            client.listBuckets();
-        } catch (SdkClientException e) {
-            ResultErrorBuilder errorBuilder
-                    = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
-                            .detail("aws_s3_exception_message", e.getMessage())
-                            .detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())
-                            .detail(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE, e);
-
-            builder.error(errorBuilder.build());
-        } catch (Exception e) {
-            builder.error(ResultErrorBuilder.withException(e).build());
-        }
-        return builder.build();
-    }
 }
