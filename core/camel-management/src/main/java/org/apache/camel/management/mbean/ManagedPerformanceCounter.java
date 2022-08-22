@@ -48,6 +48,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
     private String firstExchangeCompletedExchangeId;
     private Statistic firstExchangeFailureTimestamp;
     private String firstExchangeFailureExchangeId;
+    private Statistic lastExchangeCreatedTimestamp;
     private Statistic lastExchangeCompletedTimestamp;
     private String lastExchangeCompletedExchangeId;
     private Statistic lastExchangeFailureTimestamp;
@@ -74,6 +75,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
 
         this.firstExchangeCompletedTimestamp = new StatisticValue();
         this.firstExchangeFailureTimestamp = new StatisticValue();
+        this.lastExchangeCreatedTimestamp = new StatisticValue();
         this.lastExchangeCompletedTimestamp = new StatisticValue();
         this.lastExchangeFailureTimestamp = new StatisticValue();
     }
@@ -97,6 +99,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         firstExchangeCompletedExchangeId = null;
         firstExchangeFailureTimestamp.reset();
         firstExchangeFailureExchangeId = null;
+        lastExchangeCreatedTimestamp.reset();
         lastExchangeCompletedTimestamp.reset();
         lastExchangeCompletedExchangeId = null;
         lastExchangeFailureTimestamp.reset();
@@ -164,6 +167,12 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
     }
 
     @Override
+    public Date getLastExchangeCreatedTimestamp() {
+        long value = lastExchangeCreatedTimestamp.getValue();
+        return value > 0 ? new Date(value) : null;
+    }
+
+    @Override
     public Date getLastExchangeCompletedTimestamp() {
         long value = lastExchangeCompletedTimestamp.getValue();
         return value > 0 ? new Date(value) : null;
@@ -218,8 +227,12 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
     }
 
     @Override
-    public void processExchange(Exchange exchange) {
+    public void processExchange(Exchange exchange, String type) {
         exchangesInflight.increment();
+        if ("route".equals(type)) {
+            long now = System.currentTimeMillis();
+            lastExchangeCreatedTimestamp.updateValue(now);
+        }
     }
 
     @Override
@@ -311,6 +324,8 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
             sb.append(String.format(" firstExchangeFailureTimestamp=\"%s\"",
                     dateAsString(firstExchangeFailureTimestamp.getValue())));
             sb.append(String.format(" firstExchangeFailureExchangeId=\"%s\"", nullSafe(firstExchangeFailureExchangeId)));
+            sb.append(String.format(" lastExchangeCreatedTimestamp=\"%s\"",
+                    dateAsString(lastExchangeCreatedTimestamp.getValue())));
             sb.append(String.format(" lastExchangeCompletedTimestamp=\"%s\"",
                     dateAsString(lastExchangeCompletedTimestamp.getValue())));
             sb.append(String.format(" lastExchangeCompletedExchangeId=\"%s\"", nullSafe(lastExchangeCompletedExchangeId)));

@@ -59,6 +59,9 @@ public interface ManagedPerformanceCounterMBean extends ManagedCounterMBean {
     @ManagedAttribute(description = "Delta Processing Time [milliseconds]")
     long getDeltaProcessingTime();
 
+    @ManagedAttribute(description = "Last Exchange Created Timestamp")
+    Date getLastExchangeCreatedTimestamp();
+
     @ManagedAttribute(description = "Last Exchange Completed Timestamp")
     Date getLastExchangeCompletedTimestamp();
 

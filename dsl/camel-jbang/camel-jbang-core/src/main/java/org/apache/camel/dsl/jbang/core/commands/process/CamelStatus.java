@@ -78,6 +78,10 @@ public class CamelStatus extends ProcessBaseCommand {
                                 row.total = stats.get("exchangesTotal").toString();
                                 row.inflight = stats.get("exchangesInflight").toString();
                                 row.failed = stats.get("exchangesFailed").toString();
+                                Object last = stats.get("sinceLastExchange");
+                                if (last != null) {
+                                    row.sinceLast = last.toString();
+                                }
                             }
                         }
                         rows.add(row);
@@ -90,6 +94,7 @@ public class CamelStatus extends ProcessBaseCommand {
                     new Column().header("Name").maxColumnWidth(30).with(r -> r.name),
                     new Column().header("State").with(r -> r.state),
                     new Column().header("Age").with(r -> r.ago),
+                    new Column().header("Since Last").with(r -> r.sinceLast),
                     new Column().header("Total #").with(r -> r.total),
                     new Column().header("Failed #").with(r -> r.failed),
                     new Column().header("Inflight #").with(r -> r.inflight)
@@ -122,6 +127,7 @@ public class CamelStatus extends ProcessBaseCommand {
         String total;
         String failed;
         String inflight;
+        String sinceLast;
     }
 
 }

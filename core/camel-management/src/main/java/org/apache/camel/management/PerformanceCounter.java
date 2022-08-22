@@ -27,8 +27,9 @@ public interface PerformanceCounter {
      * Executed when an {@link org.apache.camel.Exchange} is about to be processed.
      *
      * @param exchange the exchange
+     * @param type the node type
      */
-    void processExchange(Exchange exchange);
+    void processExchange(Exchange exchange, String type);
 
     /**
      * Executed when an {@link org.apache.camel.Exchange} is complete.

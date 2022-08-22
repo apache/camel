@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl.console;
 
+import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.api.management.ManagedCamelContext;
@@ -35,7 +37,7 @@ public class ContextDevConsole extends AbstractDevConsole {
         StringBuilder sb = new StringBuilder();
 
         sb.append(String.format("Apache Camel %s %s (%s) uptime %s", getCamelContext().getVersion(),
-                getCamelContext().getStatus().statusLowerCase(), getCamelContext().getName(), getCamelContext().getUptime()));
+                getCamelContext().getStatus().name().toLowerCase(Locale.ROOT), getCamelContext().getName(), getCamelContext().getUptime()));
         sb.append("\n");
 
         ManagedCamelContext mcc = getCamelContext().getExtension(ManagedCamelContext.class);
@@ -47,6 +49,11 @@ public class ContextDevConsole extends AbstractDevConsole {
             sb.append(String.format("\n    Mean Time: %s", TimeUtils.printDuration(mb.getMeanProcessingTime(), true)));
             sb.append(String.format("\n    Max Time: %s", TimeUtils.printDuration(mb.getMaxProcessingTime(), true)));
             sb.append(String.format("\n    Min Time: %s", TimeUtils.printDuration(mb.getMinProcessingTime(), true)));
+            Date last = mb.getLastExchangeCreatedTimestamp();
+            if (last != null) {
+                String ago = TimeUtils.printSince(last.getTime());
+                sb.append(String.format("\n    Since Last: %s", ago));
+            }
             sb.append("\n");
         }
 
@@ -57,7 +64,7 @@ public class ContextDevConsole extends AbstractDevConsole {
         JsonObject root = new JsonObject();
         root.put("name", getCamelContext().getName());
         root.put("version", getCamelContext().getVersion());
-        root.put("state", getCamelContext().getStatus());
+        root.put("state", getCamelContext().getStatus().name());
         root.put("uptime", getCamelContext().getUptime());
 
         ManagedCamelContext mcc = getCamelContext().getExtension(ManagedCamelContext.class);
@@ -70,6 +77,11 @@ public class ContextDevConsole extends AbstractDevConsole {
             stats.put("meanProcessingTime", mb.getMeanProcessingTime());
             stats.put("maxProcessingTime", mb.getMaxProcessingTime());
             stats.put("minProcessingTime", mb.getMinProcessingTime());
+            Date last = mb.getLastExchangeCreatedTimestamp();
+            if (last != null) {
+                String ago = TimeUtils.printSince(last.getTime());
+                stats.put("sinceLastExchange", ago);
+            }
             root.put("statistics", stats);
         }
 
