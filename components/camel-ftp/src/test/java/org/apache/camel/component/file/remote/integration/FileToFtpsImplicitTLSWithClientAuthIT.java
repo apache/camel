@@ -25,7 +25,7 @@ import org.junit.jupiter.api.condition.EnabledIf;
 /**
  * Test the ftps component over TLS (implicit) with client authentication
  */
-@EnabledIf(value = "org.apache.camel.component.file.remote.services.FtpsEmbeddedService#hasRequiredAlgorithms")
+@EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.FtpsUtil#hasRequiredAlgorithms")
 public class FileToFtpsImplicitTLSWithClientAuthIT extends FtpsServerImplicitTLSWithClientAuthTestSupport {
 
     protected String getFtpUrl() {

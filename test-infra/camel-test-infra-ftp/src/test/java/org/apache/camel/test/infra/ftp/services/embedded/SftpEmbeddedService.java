@@ -15,8 +15,9 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.file.remote.services;
+package org.apache.camel.test.infra.ftp.services.embedded;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.file.Files;
@@ -44,9 +45,6 @@ import org.slf4j.LoggerFactory;
 
 public class SftpEmbeddedService extends AbstractTestService implements FtpService {
     private static final Logger LOG = LoggerFactory.getLogger(SftpEmbeddedService.class);
-    private static final String KNOWN_HOSTS = "[localhost]:%d ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQDdfIWeSV4o68dRrKS"
-                                              + "zFd/Bk51E65UTmmSrmW0O1ohtzi6HzsDPjXgCtlTt3FqTcfFfI92IlTr4JWqC9UK1QT1ZTeng0MkPQmv68hDANHbt5CpETZHjW5q4OOgWhV"
-                                              + "vj5IyOC2NZHtKlJBkdsMAa15ouOOJLzBvAvbqOR/yUROsEiQ==";
 
     protected SshServer sshd;
     protected final boolean rootDirMode;
@@ -54,20 +52,28 @@ public class SftpEmbeddedService extends AbstractTestService implements FtpServi
 
     private Path rootDir;
     private Path knownHosts;
+    private final EmbeddedConfiguration embeddedConfiguration;
 
     public SftpEmbeddedService() {
         this(false);
     }
 
     public SftpEmbeddedService(boolean rootDirMode) {
+        this(rootDirMode, EmbeddedConfigurationBuilder.defaultSftpConfiguration());
+    }
+
+    protected SftpEmbeddedService(boolean rootDirMode, EmbeddedConfiguration embeddedConfiguration) {
         this.rootDirMode = rootDirMode;
+        this.embeddedConfiguration = embeddedConfiguration;
     }
 
     public void setUp() throws Exception {
-        rootDir = testDirectory().resolve("res/home");
-        knownHosts = testDirectory().resolve("user-home/.ssh/known_hosts");
+        rootDir = testDirectory().resolve(embeddedConfiguration.getTestDirectory());
+        knownHosts = testDirectory().resolve(embeddedConfiguration.getKnownHostsPath());
+
         Files.createDirectories(knownHosts.getParent());
         Files.write(knownHosts, buildKnownHosts());
+
         setUpServer();
     }
 
@@ -78,14 +84,19 @@ public class SftpEmbeddedService extends AbstractTestService implements FtpServi
     public void setUpServer() throws Exception {
         sshd = SshServer.setUpDefaultServer();
         sshd.setPort(port);
-        sshd.setKeyPairProvider(new FileKeyPairProvider(Paths.get("src/test/resources/hostkey.pem")));
+
+        sshd.setKeyPairProvider(new FileKeyPairProvider(Paths.get(embeddedConfiguration.getKeyPairFile())));
         sshd.setSubsystemFactories(Collections.singletonList(new SftpSubsystemFactory()));
         sshd.setCommandFactory(new ScpCommandFactory());
         sshd.setPasswordAuthenticator((username, password, session) -> true);
         sshd.setPublickeyAuthenticator(getPublickeyAuthenticator());
 
         if (rootDirMode) {
-            sshd.setFileSystemFactory(new VirtualFileSystemFactory(testDirectory().resolve("res").toAbsolutePath()));
+            final File testDirectory = new File(embeddedConfiguration.getTestDirectory());
+
+            sshd.setFileSystemFactory(new VirtualFileSystemFactory(
+                    testDirectory().resolve(testDirectory.getParentFile().getName())
+                            .toAbsolutePath()));
         }
         List<NamedFactory<Signature>> signatureFactories = sshd.getSignatureFactories();
         signatureFactories.clear();
@@ -135,7 +146,7 @@ public class SftpEmbeddedService extends AbstractTestService implements FtpServi
     }
 
     public byte[] buildKnownHosts() {
-        return String.format(KNOWN_HOSTS, port).getBytes();
+        return String.format(embeddedConfiguration.getKnownHosts(), port).getBytes();
     }
 
     public String getKnownHostsFile() {
@@ -148,27 +159,12 @@ public class SftpEmbeddedService extends AbstractTestService implements FtpServi
 
     @Override
     protected void registerProperties(BiConsumer<String, String> store) {
-        store.accept(FtpProperties.SERVER_HOST, "localhost");
+        store.accept(FtpProperties.SERVER_HOST, embeddedConfiguration.getServerAddress());
         store.accept(FtpProperties.SERVER_PORT, String.valueOf(port));
         store.accept(FtpProperties.ROOT_DIR, rootDir.toString());
     }
 
     public int getPort() {
         return port;
-    }
-
-    public static boolean hasRequiredAlgorithms() {
-        try {
-            FileKeyPairProvider provider = new FileKeyPairProvider(Paths.get("src/test/resources/hostkey.pem"));
-
-            provider.loadKeys(null);
-            return true;
-        } catch (Exception e) {
-            String name = System.getProperty("os.name");
-            String message = e.getMessage();
-
-            LOG.warn("SunX509 is not available on this platform [{}] Testing is skipped! Real cause: {}", name, message, e);
-            return false;
-        }
     }
 }

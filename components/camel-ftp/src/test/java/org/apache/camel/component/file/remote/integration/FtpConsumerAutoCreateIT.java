@@ -18,6 +18,8 @@ package org.apache.camel.component.file.remote.integration;
 
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.remote.FtpEndpoint;
+import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
@@ -26,11 +28,16 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class FtpConsumerAutoCreateIT extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}///foo/bar/baz/xxx?password=admin";
+    }
+
+    @BeforeEach
+    void forceRemove() {
+        FileUtils.deleteQuietly(service.getFtpRootDir().toFile());
     }
 
     @Test

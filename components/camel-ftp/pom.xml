@@ -37,7 +37,7 @@
         </camel.osgi.import.before.defaults>
 
         <camel.surefire.forkCount>4</camel.surefire.forkCount>
-        <camel.surefire.forkTimeout>1800</camel.surefire.forkTimeout>
+        <camel.surefire.forkTimeout>60</camel.surefire.forkTimeout>
         <camel.surefire.parallel>false</camel.surefire.parallel>
 
         <!-- This one can run in parallel rather safely-->
@@ -112,31 +112,7 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.ftpserver</groupId>
-            <artifactId>ftpserver-core</artifactId>
-            <scope>test</scope>
-        </dependency>
 
-        <dependency>
-            <groupId>org.apache.ftpserver</groupId>
-            <artifactId>ftplet-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- for testing sftp -->
-        <dependency>
-            <groupId>org.apache.sshd</groupId>
-            <artifactId>sshd-sftp</artifactId>
-            <version>${sshd-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.sshd</groupId>
-            <artifactId>sshd-scp</artifactId>
-            <version>${sshd-version}</version>
-            <scope>test</scope>
-        </dependency>
         <!-- for testing sftp through http proxy -->
         <dependency>
             <groupId>org.littleshoot</groupId>

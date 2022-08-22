@@ -15,13 +15,9 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.file.remote.services;
+package org.apache.camel.test.infra.ftp.services.embedded;
 
 import java.io.File;
-import java.security.NoSuchAlgorithmException;
-
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.ftpserver.FtpServerFactory;
 import org.apache.ftpserver.listener.ListenerFactory;
@@ -31,15 +27,13 @@ import org.slf4j.LoggerFactory;
 
 public class FtpsEmbeddedService extends FtpEmbeddedService {
     private static final Logger LOG = LoggerFactory.getLogger(FtpsEmbeddedService.class);
-    private static final File FTPSERVER_KEYSTORE = new File("./src/test/resources/server.jks");
-    private static final String FTPSERVER_KEYSTORE_PASSWORD = "password";
 
     private boolean useImplicit;
     private String authValue;
     private boolean clientAuth;
 
     public FtpsEmbeddedService(boolean useImplicit, String authValue, boolean clientAuth) {
-        super();
+        super(EmbeddedConfigurationBuilder.defaultFtpsConfiguration());
 
         this.useImplicit = useImplicit;
         this.authValue = authValue;
@@ -67,37 +61,21 @@ public class FtpsEmbeddedService extends FtpEmbeddedService {
         SslConfigurationFactory sslConfigFactory = new SslConfigurationFactory();
         sslConfigFactory.setSslProtocol(authValue);
 
-        sslConfigFactory.setKeystoreFile(FTPSERVER_KEYSTORE);
-        sslConfigFactory.setKeystoreType("JKS");
-        sslConfigFactory.setKeystoreAlgorithm("SunX509");
-        sslConfigFactory.setKeystorePassword(FTPSERVER_KEYSTORE_PASSWORD);
-        sslConfigFactory.setKeyPassword(FTPSERVER_KEYSTORE_PASSWORD);
+        sslConfigFactory.setKeystoreFile(new File(getEmbeddedConfiguration().getKeyStore()));
+        sslConfigFactory.setKeystoreType(getEmbeddedConfiguration().getKeyStoreType());
+        sslConfigFactory.setKeystoreAlgorithm(getEmbeddedConfiguration().getKeyStoreAlgorithm());
+        sslConfigFactory.setKeystorePassword(getEmbeddedConfiguration().getKeyStorePassword());
+        sslConfigFactory.setKeyPassword(getEmbeddedConfiguration().getKeyStorePassword());
 
         sslConfigFactory.setClientAuthentication(authValue);
 
         if (clientAuth) {
-            sslConfigFactory.setTruststoreFile(FTPSERVER_KEYSTORE);
-            sslConfigFactory.setTruststoreType("JKS");
-            sslConfigFactory.setTruststoreAlgorithm("SunX509");
-            sslConfigFactory.setTruststorePassword(FTPSERVER_KEYSTORE_PASSWORD);
+            sslConfigFactory.setTruststoreFile(new File(getEmbeddedConfiguration().getKeyStore()));
+            sslConfigFactory.setTruststoreType(getEmbeddedConfiguration().getKeyStoreType());
+            sslConfigFactory.setTruststoreAlgorithm(getEmbeddedConfiguration().getKeyStoreAlgorithm());
+            sslConfigFactory.setTruststorePassword(getEmbeddedConfiguration().getKeyStorePassword());
         }
 
         return sslConfigFactory;
-    }
-
-    public static boolean hasRequiredAlgorithms() {
-        LOG.info("Checking if the system has the required algorithms for the test execution");
-        try {
-            KeyManagerFactory.getInstance("SunX509");
-            TrustManagerFactory.getInstance("SunX509");
-
-            return true;
-        } catch (NoSuchAlgorithmException e) {
-            String name = System.getProperty("os.name");
-            String message = e.getMessage();
-
-            LOG.warn("SunX509 is not available on this platform [{}] Testing is skipped! Real cause: {}", name, message, e);
-            return false;
-        }
     }
 }

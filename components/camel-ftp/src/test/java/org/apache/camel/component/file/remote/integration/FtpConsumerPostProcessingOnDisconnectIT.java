@@ -18,6 +18,7 @@ package org.apache.camel.component.file.remote.integration;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
@@ -102,7 +103,11 @@ public class FtpConsumerPostProcessingOnDisconnectIT extends FtpServerTestSuppor
     }
 
     private void createSampleFile(String fileName) throws IOException {
-        Files.write(ftpFile(fileName), SAMPLE_FILE_PAYLOAD.getBytes(SAMPLE_FILE_CHARSET));
+        final Path path = ftpFile(fileName);
+
+        path.getParent().toFile().mkdirs();
+
+        Files.write(path, SAMPLE_FILE_PAYLOAD.getBytes(SAMPLE_FILE_CHARSET));
     }
 
 }

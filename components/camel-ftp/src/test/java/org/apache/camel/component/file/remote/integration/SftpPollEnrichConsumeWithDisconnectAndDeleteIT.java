@@ -31,7 +31,7 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-@EnabledIf(value = "org.apache.camel.component.file.remote.services.SftpEmbeddedService#hasRequiredAlgorithms")
+@EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 public class SftpPollEnrichConsumeWithDisconnectAndDeleteIT extends SftpServerTestSupport {
     @Timeout(value = 30)
     @Test
