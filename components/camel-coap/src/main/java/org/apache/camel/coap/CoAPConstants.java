@@ -41,6 +41,10 @@ public interface CoAPConstants {
     /**
      * CoAP exchange header names
      */
+    @Metadata(description = "The CoAP ETag for the response.", javaType = "byte[]")
+    String COAP_ETAG = "CamelCoapETag";
+    @Metadata(description = "The CoAP Max-Age for the response body.", javaType = "java.lang.Long")
+    String COAP_MAX_AGE = "CamelCoapMaxAge";
     @Metadata(description = "The request method that the CoAP producer should use when calling the target CoAP\n" +
                             "server URI. Valid options are DELETE, GET, PING, POST & PUT.",
               javaType = "String")
