@@ -24,11 +24,9 @@ import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
 import org.apache.camel.component.kafka.integration.BaseManualCommitTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.TestInstance;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class KafkaConsumerAsyncCommitIT extends BaseManualCommitTestSupport {
 
     public static final String TOPIC = "testManualAsyncCommitTest";

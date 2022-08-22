@@ -25,11 +25,9 @@ import org.apache.camel.component.kafka.integration.BaseManualCommitTestSupport;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class KafkaConsumerNoopCommitIT extends BaseManualCommitTestSupport {
 
     public static final String TOPIC = "testManualNoopCommitTest";
