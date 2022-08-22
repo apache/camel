@@ -17,6 +17,8 @@
 package org.apache.camel;
 
 import java.util.Optional;
+import java.util.concurrent.ForkJoinPool;
+import java.util.function.Predicate;
 
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.support.hierarchical.ParallelExecutionConfiguration;
@@ -64,6 +66,17 @@ public class CamelParallelExecutionStrategy implements ParallelExecutionConfigur
         @Override
         public int getKeepAliveSeconds() {
             return 30;
+        }
+
+        @Override
+        public Predicate<? super ForkJoinPool> getSaturatePredicate() {
+            return (ForkJoinPool pool) -> {
+                LOG.info("Junit ForkJoinPool saturated: running threads={}, pool size={}, queued tasks={}",
+                        pool.getRunningThreadCount(),
+                        pool.getPoolSize(),
+                        pool.getQueuedTaskCount());
+                return true;
+            };
         }
 
     }
