@@ -67,6 +67,11 @@
             <groupId>info.picocli</groupId>
             <artifactId>picocli</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.github.freva</groupId>
+            <artifactId>ascii-table</artifactId>
+            <version>1.3.0</version>
+        </dependency>
 
         <!-- jolokia -->
         <dependency>

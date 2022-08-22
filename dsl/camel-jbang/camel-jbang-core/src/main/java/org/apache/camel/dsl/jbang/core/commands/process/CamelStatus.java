@@ -18,10 +18,14 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import com.github.freva.asciitable.AsciiTable;
+import com.github.freva.asciitable.Column;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -34,8 +38,8 @@ import picocli.CommandLine.Command;
 @Command(name = "status", description = "List status of the running Camel integrations")
 public class CamelStatus extends ProcessBaseCommand {
 
-    @CommandLine.Option(names = { "--sort" },
-                        description = "Sort by pid, name or age", defaultValue = "pid")
+    @CommandLine.Option(names = {"--sort"},
+            description = "Sort by pid, name or age", defaultValue = "pid")
     String sort;
 
     public CamelStatus(CamelJBangMain main) {
@@ -44,6 +48,8 @@ public class CamelStatus extends ProcessBaseCommand {
 
     @Override
     public Integer call() throws Exception {
+        List<Row> rows = new ArrayList<>();
+
         ProcessHandle.allProcesses()
                 .sorted((o1, o2) -> {
                     switch (sort) {
@@ -59,28 +65,37 @@ public class CamelStatus extends ProcessBaseCommand {
                     }
                 })
                 .forEach(ph -> {
-                    String name = extractName(ph);
-                    if (ObjectHelper.isNotEmpty(name)) {
-                        String ago = TimeUtils.printSince(extractSince(ph));
+                    Row row = new Row();
+                    row.name = extractName(ph);
+                    if (ObjectHelper.isNotEmpty(row.name)) {
+                        row.pid = "" + ph.pid();
+                        row.ago = TimeUtils.printSince(extractSince(ph));
                         JsonObject status = loadStatus(ph.pid());
                         if (status != null) {
-                            String state = status.getString("state").toLowerCase(Locale.ROOT);
+                            row.state = status.getString("state").toLowerCase(Locale.ROOT);
                             Map<String, ?> stats = status.getMap("statistics");
                             if (stats != null) {
-                                BigDecimal total = (BigDecimal) stats.get("exchangesTotal");
-                                BigDecimal inflight = (BigDecimal) stats.get("exchangesInflight");
-                                BigDecimal failed = (BigDecimal) stats.get("exchangesFailed");
-                                System.out.printf("%s camel run %s %s (age: %s, total: %s, inflight: %s, failed: %s)%n",
-                                        ph.pid(), name, state, ago, total, inflight, failed);
-                            } else {
-                                System.out.printf("%s camel run %s %s (age: %s)%n",
-                                        ph.pid(), name, state, ago);
+                                row.total = stats.get("exchangesTotal").toString();
+                                row.inflight = stats.get("exchangesInflight").toString();
+                                row.failed = stats.get("exchangesFailed").toString();
                             }
-                        } else {
-                            System.out.println(ph.pid() + " camel run " + name + " (age: " + ago + ")");
                         }
+                        rows.add(row);
                     }
                 });
+
+        if (!rows.isEmpty()) {
+            System.out.println(AsciiTable.getTable(AsciiTable.BASIC_ASCII_NO_DATA_SEPARATORS, rows, Arrays.asList(
+                    new Column().header("PID").with(r -> r.pid),
+                    new Column().header("Name").maxColumnWidth(30).with(r -> r.name),
+                    new Column().header("State").with(r -> r.state),
+                    new Column().header("Age").with(r -> r.ago),
+                    new Column().header("Total #").with(r -> r.total),
+                    new Column().header("Failed #").with(r -> r.failed),
+                    new Column().header("Inflight #").with(r -> r.inflight)
+            )));
+        }
+
         return 0;
     }
 
@@ -97,6 +112,16 @@ public class CamelStatus extends ProcessBaseCommand {
             // ignore
         }
         return null;
+    }
+
+    private static class Row {
+        String pid;
+        String name;
+        String ago;
+        String state;
+        String total;
+        String failed;
+        String inflight;
     }
 
 }
