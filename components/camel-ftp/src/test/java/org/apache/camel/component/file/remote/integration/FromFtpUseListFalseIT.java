@@ -39,7 +39,7 @@ public class FromFtpUseListFalseIT extends FtpServerTestSupport {
     }
 
     @BeforeEach
-    private void prepareFtpServer() throws Exception {
+    public void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating a file on the server that we want
         // to unit
         // test that we can pool and store as a local file
