@@ -51,6 +51,9 @@ class Export extends ExportBaseCommand {
             this.quarkusArtifactId = prop.getProperty("camel.jbang.quarkusArtifactId", this.quarkusArtifactId);
             this.quarkusVersion = prop.getProperty("camel.jbang.quarkusVersion", this.quarkusVersion);
             this.springBootVersion = prop.getProperty("camel.jbang.springBootVersion", this.springBootVersion);
+            this.mavenWrapper
+                    = "true".equals(prop.getProperty("camel.jbang.mavenWrapper", this.mavenWrapper ? "true" : "false"));
+            this.exportDir = prop.getProperty("camel.jbang.exportDir", this.exportDir);
         }
 
         if (runtime == null) {

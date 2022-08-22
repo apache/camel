@@ -908,6 +908,50 @@ To include JMX, you need to add `camel:management` in the `--deps` option, as sh
 camel export --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT --deps=camel:management --dir=../myproject
 ----
 
+=== Configuring exporting
+
+The export command will by default load configuration from `application.properties`
+which also can be used to specific parameters for export such as selecting the runtime and java version.
+
+The follow options related to _exporting_, can be configured in `application.properties`:
+
+|===
+|Option | Description
+
+|`camel.jbang.runtime`
+|Runtime (spring-boot, quarkus, or camel-main)
+
+|`camel.jbang.gav`
+|The Maven group:artifact:version
+
+|`camel.jbang.javaVersion`
+|Java version (11 or 17)
+
+|`camel.jbang.kameletsVersion`
+|Apache Camel Kamelets version
+
+|`camel.jbang.springBootVersion`
+|Spring Boot version
+
+|`camel.jbang.quarkusGroupId`
+|Quarkus Platform Maven groupId
+
+|`camel.jbang.quarkusArtifactId`
+|Quarkus Platform Maven artifactId
+
+|`camel.jbang.quarkusVersion`
+|Quarkus Platform version
+
+|`camel.jbang.mavenWrapper`
+|Include Maven Wrapper files in exported project
+
+|`camel.jbang.exportDir`
+|Directory where the project will be exported
+|===
+
+NOTE: These are options from the export command, so you can see mor details and default values using `camel export --help`.
+
+
 == Troubleshooting
 
 When using https://www.jbang.dev/[JBang] then JBang stores state in `~/.jbang` directory.
