@@ -34,8 +34,8 @@ public class ContextDevConsole extends AbstractDevConsole {
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(String.format("Apache Camel %s (%s) uptime %s", getCamelContext().getVersion(), getCamelContext().getName(),
-                getCamelContext().getUptime()));
+        sb.append(String.format("Apache Camel %s %s (%s) uptime %s", getCamelContext().getVersion(),
+                getCamelContext().getStatus().statusLowerCase(), getCamelContext().getName(), getCamelContext().getUptime()));
         sb.append("\n");
 
         ManagedCamelContext mcc = getCamelContext().getExtension(ManagedCamelContext.class);
@@ -57,6 +57,7 @@ public class ContextDevConsole extends AbstractDevConsole {
         JsonObject root = new JsonObject();
         root.put("name", getCamelContext().getName());
         root.put("version", getCamelContext().getVersion());
+        root.put("state", getCamelContext().getStatus());
         root.put("uptime", getCamelContext().getUptime());
 
         ManagedCamelContext mcc = getCamelContext().getExtension(ManagedCamelContext.class);

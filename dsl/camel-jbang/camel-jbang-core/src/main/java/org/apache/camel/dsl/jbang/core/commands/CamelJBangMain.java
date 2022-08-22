@@ -20,6 +20,7 @@ import java.util.concurrent.Callable;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.commands.process.CamelStatus;
 import org.apache.camel.dsl.jbang.core.commands.process.Hawtio;
 import org.apache.camel.dsl.jbang.core.commands.process.Jolokia;
 import org.apache.camel.dsl.jbang.core.commands.process.ListProcess;
@@ -37,6 +38,7 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("run", new CommandLine(new Run(main)))
                 .addSubcommand("ps", new CommandLine(new ListProcess(main)))
                 .addSubcommand("stop", new CommandLine(new StopProcess(main)))
+                .addSubcommand("status", new CommandLine(new CamelStatus(main)))
                 .addSubcommand("init", new CommandLine(new Init(main)))
                 .addSubcommand("bind", new CommandLine(new Bind(main)))
                 .addSubcommand("jolokia", new CommandLine(new Jolokia(main)))

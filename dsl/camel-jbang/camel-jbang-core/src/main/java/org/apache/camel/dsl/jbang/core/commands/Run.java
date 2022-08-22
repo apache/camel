@@ -48,6 +48,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.apicurio.datamodels.Library;
 import io.apicurio.datamodels.openapi.models.OasDocument;
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.console.DevConsole;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.generator.openapi.RestDslGenerator;
 import org.apache.camel.impl.lw.LightweightCamelContext;
@@ -59,6 +61,7 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.JsonObject;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import picocli.CommandLine;
@@ -90,6 +93,7 @@ class Run extends CamelCommand {
 
     private CamelContext context;
     private File lockFile;
+    private File statusFile;
     private ScheduledExecutorService executor;
     private boolean silentRun;
     private boolean pipeRun;
@@ -240,6 +244,9 @@ class Run extends CamelCommand {
     private int stop() {
         if (lockFile != null) {
             FileUtil.deleteFile(lockFile);
+        }
+        if (statusFile != null) {
+            FileUtil.deleteFile(statusFile);
         }
         return 0;
     }
@@ -400,13 +407,30 @@ class Run extends CamelCommand {
         writeSetting(main, profileProperties, "camel.jbang.jfr-profile", jfrProfile != null ? jfrProfile : null);
 
         if (fileLock) {
-            lockFile = createLockFile();
+            lockFile = createLockFile(getPid());
+            if (lockFile != null) {
+                statusFile = createLockFile(lockFile.getName() + "-status.json");
+            }
             // to trigger shutdown on file lock deletion
             executor = Executors.newSingleThreadScheduledExecutor();
             executor.scheduleWithFixedDelay(() -> {
                 // if the lock file is deleted then stop
                 if (!lockFile.exists()) {
                     context.stop();
+                    return;
+                }
+                // update status file with details from the context console
+                try {
+                    DevConsole dc = main.getCamelContext().adapt(ExtendedCamelContext.class)
+                            .getDevConsoleResolver().resolveDevConsole("context");
+                    if (dc != null) {
+                        JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON);
+                        if (json != null) {
+                            IOHelper.writeText(json.toJson(), statusFile);
+                        }
+                    }
+                } catch (Throwable e) {
+                    // ignore
                 }
             }, 1000, 1000, TimeUnit.MILLISECONDS);
         }
@@ -687,14 +711,13 @@ class Run extends CamelCommand {
         }
     }
 
-    public File createLockFile() throws IOException {
+    public File createLockFile(String name) {
         File answer = null;
-        String pid = getPid();
-        if (pid != null) {
+        if (name != null) {
             File dir = new File(System.getProperty("user.home"), ".camel");
             try {
                 dir.mkdirs();
-                answer = new File(dir, pid);
+                answer = new File(dir, name);
                 if (!answer.exists()) {
                     answer.createNewFile();
                 }

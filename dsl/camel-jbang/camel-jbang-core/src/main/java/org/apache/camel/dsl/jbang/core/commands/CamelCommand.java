@@ -16,15 +16,15 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.io.File;
 import java.util.concurrent.Callable;
 
 import picocli.CommandLine;
 
 public abstract class CamelCommand implements Callable<Integer> {
 
-    public static final String PID_DIR = "${sys:user.home}/.camel";
-
     private final CamelJBangMain main;
+    private File camelDir;
 
     //CHECKSTYLE:OFF
     @CommandLine.Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
@@ -37,6 +37,13 @@ public abstract class CamelCommand implements Callable<Integer> {
 
     public CamelJBangMain getMain() {
         return main;
+    }
+
+    public File getStatusFile(String pid) {
+        if (camelDir == null) {
+            camelDir = new File(System.getProperty("user.home"), ".camel");
+        }
+        return new File(camelDir, pid + "-status.json");
     }
 
 }
