@@ -397,7 +397,8 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
                                             StringHelper.limitLength(suspendedExchange.getFromEndpoint().getEndpointUri(), 100))
                             + "]";
                 }
-                long elapsed = new StopWatch(suspendedExchange.getCreated()).taken();
+
+                long elapsed = StopWatch.elapsedMillisSince(suspendedExchange.getCreated());
 
                 messageHistoryBuffer
                         .append("    <messageHistoryEntry")
