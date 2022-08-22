@@ -16,7 +16,7 @@
  */
 package org.apache.camel.util;
 
-import java.util.Date;
+import java.time.Duration;
 
 /**
  * A very simple stop watch.
@@ -31,14 +31,7 @@ public final class StopWatch {
      * Starts the stop watch
      */
     public StopWatch() {
-        this.start = System.currentTimeMillis();
-    }
-
-    /**
-     * Starts the stop watch from the given timestamp
-     */
-    public StopWatch(Date startTimestamp) {
-        start = startTimestamp.getTime();
+        this.start = System.nanoTime();
     }
 
     /**
@@ -55,7 +48,7 @@ public final class StopWatch {
      */
     public StopWatch(boolean start) {
         if (start) {
-            this.start = System.currentTimeMillis();
+            this.start = System.nanoTime();
         }
     }
 
@@ -63,7 +56,7 @@ public final class StopWatch {
      * Starts or restarts the stop watch
      */
     public void restart() {
-        start = System.currentTimeMillis();
+        start = System.nanoTime();
     }
 
     /**
@@ -73,10 +66,25 @@ public final class StopWatch {
      */
     public long taken() {
         if (start > 0) {
-            return System.currentTimeMillis() - start;
-        } else {
-            return 0;
+            long delta = System.nanoTime() - start;
+
+            return Duration.ofNanos(delta).toMillis();
         }
+
+        return 0;
+    }
+
+    /**
+     * Utility method to provide the elapsed time using milliseconds since epoch. This serves as an alternative for the
+     * former constructor based on a Date argument. This should be used only when converting old code that relies on
+     * that constructor as it can provide incorrect measurements in rare circumstances
+     * 
+     * @param  start the timestamp in milliseconds since epoch
+     * @return       the elapsed time in milliseconds
+     */
+    @Deprecated
+    public static long elapsedMillisSince(long start) {
+        return Duration.ofMillis(System.currentTimeMillis()).minusMillis(start).toMillis();
     }
 
 }
