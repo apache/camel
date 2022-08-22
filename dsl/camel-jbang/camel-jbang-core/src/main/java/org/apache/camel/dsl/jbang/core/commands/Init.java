@@ -38,7 +38,7 @@ import static org.apache.camel.dsl.jbang.core.common.GistHelper.fetchGistUrls;
 import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.asGithubSingleUrl;
 import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.fetchGithubUrls;
 
-@Command(name = "init", description = "Initialize empty Camel integration")
+@Command(name = "init", description = "Creates a new Camel integration")
 class Init extends CamelCommand {
 
     @CommandLine.Parameters(description = "Name of integration file (or a github link)", arity = "1")

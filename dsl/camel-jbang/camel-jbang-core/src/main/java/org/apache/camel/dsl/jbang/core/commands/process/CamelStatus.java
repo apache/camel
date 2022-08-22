@@ -31,7 +31,7 @@ import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "status", description = "List status of the running Camel applications")
+@Command(name = "status", description = "List status of the running Camel integrations")
 public class CamelStatus extends ProcessBaseCommand {
 
     @CommandLine.Option(names = { "--sort" },

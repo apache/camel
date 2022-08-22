@@ -24,14 +24,14 @@ import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "stop", description = "Stop a running Camel integration")
+@Command(name = "stop", description = "Shuts down a running Camel integration")
 public class StopProcess extends ProcessBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name;
 
     @CommandLine.Option(names = { "--all" },
-                        description = "To stop all running Camel integrations")
+                        description = "To shutdown all running Camel integrations")
     boolean all;
 
     public StopProcess(CamelJBangMain main) {
@@ -52,7 +52,7 @@ public class StopProcess extends ProcessBaseCommand {
         for (Long pid : pids) {
             File dir = new File(System.getProperty("user.home"), ".camel");
             File pidFile = new File(dir, "" + pid);
-            System.out.println("Stopping Camel integration (pid: " + pid + ")");
+            System.out.println("Shutting down Camel integration (pid: " + pid + ")");
             FileUtil.deleteFile(pidFile);
         }
 

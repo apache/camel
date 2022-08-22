@@ -22,7 +22,7 @@ import org.apache.camel.util.TimeUtils;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "ps", description = "List running Camel applications")
+@Command(name = "ps", description = "List running Camel integrations")
 public class ListProcess extends ProcessBaseCommand {
 
     @CommandLine.Option(names = { "--sort" },

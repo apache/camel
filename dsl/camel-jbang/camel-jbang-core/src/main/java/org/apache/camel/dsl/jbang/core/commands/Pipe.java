@@ -18,7 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "pipe", description = "Run Camel in pipe and filters mode for terminal scripting")
+@CommandLine.Command(name = "pipe", description = "Run Camel integration in pipe and filters mode for terminal scripting")
 class Pipe extends CamelCommand {
 
     @CommandLine.Parameters(description = "Name of file", arity = "1")
