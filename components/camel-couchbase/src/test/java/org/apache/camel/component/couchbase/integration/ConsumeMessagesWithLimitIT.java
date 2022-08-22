@@ -21,15 +21,20 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class ConsumeMessagesWithLimitIT extends CouchbaseIntegrationTestBase {
 
-    @Test
-    public void testQueryForBeers() throws Exception {
+    @BeforeEach
+    public void addToBucket() {
         for (int i = 0; i < 15; i++) {
             cluster.bucket(bucketName).defaultCollection().upsert("DocumentID_" + i, "message" + i);
         }
+    }
+
+    @Test
+    public void testQueryForBeers() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(10);
 

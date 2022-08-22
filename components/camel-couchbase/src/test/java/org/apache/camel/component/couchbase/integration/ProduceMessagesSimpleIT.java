@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.couchbase.integration;
 
-import java.time.Duration;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.couchbase.CouchbaseConstants;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -27,7 +25,6 @@ public class ProduceMessagesSimpleIT extends CouchbaseIntegrationTestBase {
 
     @Test
     public void testInsert() throws Exception {
-        cluster.bucket(bucketName).waitUntilReady(Duration.ofSeconds(30));
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
