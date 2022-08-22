@@ -77,7 +77,7 @@
         <dependency>
             <groupId>org.jolokia</groupId>
             <artifactId>jolokia-jvm</artifactId>
-            <version>1.7.1</version>
+            <version>${jolokia-version}</version>
         </dependency>
         <!-- servlet for launching hawtio -->
         <dependency>
