@@ -28,6 +28,7 @@ import org.apache.camel.resume.ResumeActionAware;
 import org.apache.camel.support.resume.Resumables;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_RESUME_ACTION;
@@ -53,11 +54,15 @@ public class ConsumeResumeStrategyIT extends CouchbaseIntegrationTestBase {
 
     private final TransientResumeStrategy resumeStrategy = new TransientResumeStrategy(new TestCouchbaseResumeAdapter());
 
-    @Test
-    public void testQueryForBeers() throws Exception {
+    @BeforeEach
+    public void addToBucket() {
         for (int i = 0; i < 15; i++) {
             cluster.bucket(bucketName).defaultCollection().upsert("DocumentID_" + i, "message" + i);
         }
+    }
+
+    @Test
+    public void testQueryForBeers() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(10);
 

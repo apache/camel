@@ -18,6 +18,7 @@ package org.apache.camel.component.couchbase.integration;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_DELETE;
@@ -25,12 +26,15 @@ import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_ID;
 
 public class RemoveMessagesIT extends CouchbaseIntegrationTestBase {
 
-    @Test
-    public void testDelete() throws Exception {
+    @BeforeEach
+    public void addToBucket() {
         for (int i = 0; i < 15; i++) {
             cluster.bucket(bucketName).defaultCollection().upsert("DocumentID_" + i, "message" + i);
         }
+    }
 
+    @Test
+    public void testDelete() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
 
         template.sendBodyAndHeader("direct:start", "delete the document ", HEADER_ID, "DocumentID_1");

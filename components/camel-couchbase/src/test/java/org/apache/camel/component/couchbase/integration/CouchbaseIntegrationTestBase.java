@@ -17,6 +17,7 @@
 
 package org.apache.camel.component.couchbase.integration;
 
+import java.time.Duration;
 import java.util.Collections;
 
 import com.couchbase.client.java.Bucket;
@@ -54,7 +55,7 @@ public class CouchbaseIntegrationTestBase extends CamelTestSupport {
                 bucketName,
                 Collections.singletonMap(bucketName, new View("function (doc, meta) {  emit(meta.id, doc);}")));
         cluster.bucket(bucketName).viewIndexes().upsertDesignDocument(designDoc, DesignDocumentNamespace.PRODUCTION);
-
+        cluster.bucket(bucketName).waitUntilReady(Duration.ofSeconds(30));
     }
 
     @AfterAll
