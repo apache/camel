@@ -333,7 +333,7 @@
     <jib-version>0.21.0</jib-version>
     <jira-guava-version>30.1.1-jre</jira-guava-version>
     <jira-rest-client-api-version>5.2.4</jira-rest-client-api-version>
-    <jnats-version>2.15.5</jnats-version>
+    <jnats-version>2.15.6</jnats-version>
     <jodatime2-version>2.10.11</jodatime2-version>
     <johnzon-version>1.2.18</johnzon-version>
     <jolt-version>0.1.7</jolt-version>
