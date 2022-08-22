@@ -17,6 +17,7 @@
 package org.apache.camel.coap;
 
 import java.net.URI;
+import java.util.Optional;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
@@ -41,10 +42,8 @@ public class CoAPNotifier extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        URI uri = exchange.getIn().getHeader(CoAPConstants.COAP_URI, URI.class);
-        if (uri == null) {
-            uri = endpoint.getUri();
-        }
+        URI uri = Optional.ofNullable(exchange.getIn().getHeader(CoAPConstants.COAP_URI, URI.class))
+                .orElse(endpoint.getUri());
         CamelCoapResource resource = endpoint.getCamelCoapResource(uri.getPath());
         if (resource == null) {
             throw new IllegalStateException("Resource not found: " + endpoint.getUri());
@@ -53,7 +52,21 @@ public class CoAPNotifier extends DefaultProducer {
             LOG.warn("Ignoring notification attempt for resource that is not observable: " + endpoint.getUri());
             return;
         }
-        resource.changed();
+
+        resource.changed(observeRelation -> {
+            // this implementation only supports notifying URIs with all {placeholders}
+            // replaced or with all {placeholders} intact.
+            if (uri.getPath().equals(resource.getPath() + resource.getName())) {
+                // resource path == notified path, including any {placeholder} path segments.
+                return true;
+            } else {
+                // resource path != notified path. This is true when the resource path contains
+                // {placeholders} while the notified path does not.
+                // Only notify a client if the requested path == notified uri.
+                String observedPath = observeRelation.getExchange().getRequest().getOptions().getUriPathString();
+                return uri.getPath().equals(observedPath);
+            }
+        });
     }
 
 }
