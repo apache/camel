@@ -18,7 +18,7 @@ The following tables lists all the options:
 
 // main options: START
 === Camel Main configurations
-The camel.main supports 115 options, which are listed below.
+The camel.main supports 116 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -134,6 +134,7 @@ The camel.main supports 115 options, which are listed below.
 | *camel.main.tracingLogging{zwsp}Format* | To use a custom tracing logging format. The default format (arrow, routeId, label) is: %-4.4s %-12.12s %-33.33s | %-4.4s [%-12.12s] [%-33.33s] | String
 | *camel.main.tracingPattern* | Tracing pattern to match which node EIPs to trace. For example to match all To EIP nodes, use to. The pattern matches by node and route id's Multiple patterns can be separated by comma. |  | String
 | *camel.main.tracingStandby* | Whether to set tracing on standby. If on standby then the tracer is installed and made available. Then the tracer can be enabled later at runtime via JMX or via Tracer#setEnabled(boolean) . | false | boolean
+| *camel.main.typeConverter{zwsp}StatisticsEnabled* | Sets whether type converter statistics is enabled. By default the type converter utilization statistics is disabled. Notice: If enabled then there is a slight performance impact under very heavy load. | false | boolean
 | *camel.main.useBreadcrumb* | Set whether breadcrumb is enabled. The default value is false. | false | boolean
 | *camel.main.useDataType* | Whether to enable using data type on Camel messages. Data type are automatic turned on if one ore more routes has been explicit configured with input and output types. Otherwise data type is default off. | false | boolean
 | *camel.main.useMdcLogging* | To turn on MDC logging | false | boolean

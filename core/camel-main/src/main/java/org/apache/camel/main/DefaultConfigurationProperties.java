@@ -70,6 +70,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean streamCachingStatisticsEnabled;
     private boolean debugging;
     private boolean backlogTracing;
+    private boolean typeConverterStatisticsEnabled;
     private boolean tracing;
     private boolean tracingStandby;
     private String tracingPattern;
@@ -570,6 +571,20 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setStreamCachingStatisticsEnabled(boolean streamCachingStatisticsEnabled) {
         this.streamCachingStatisticsEnabled = streamCachingStatisticsEnabled;
+    }
+
+    public boolean isTypeConverterStatisticsEnabled() {
+        return typeConverterStatisticsEnabled;
+    }
+
+    /**
+     * Sets whether type converter statistics is enabled.
+     *
+     * By default the type converter utilization statistics is disabled.
+     * Notice: If enabled then there is a slight performance impact under very heavy load.
+     */
+    public void setTypeConverterStatisticsEnabled(boolean typeConverterStatisticsEnabled) {
+        this.typeConverterStatisticsEnabled = typeConverterStatisticsEnabled;
     }
 
     public boolean isTracing() {
@@ -1852,6 +1867,17 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withStreamCachingStatisticsEnabled(boolean streamCachingStatisticsEnabled) {
         this.streamCachingStatisticsEnabled = streamCachingStatisticsEnabled;
+        return (T) this;
+    }
+
+    /**
+     * Sets whether type converter statistics is enabled.
+     *
+     * By default the type converter utilization statistics is disabled.
+     * Notice: If enabled then there is a slight performance impact under very heavy load.
+     */
+    public T withTypeConverterStatisticsEnabled(boolean typeConverterStatisticsEnabled) {
+        this.typeConverterStatisticsEnabled = typeConverterStatisticsEnabled;
         return (T) this;
     }
 

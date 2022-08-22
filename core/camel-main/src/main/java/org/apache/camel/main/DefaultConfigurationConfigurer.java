@@ -233,6 +233,7 @@ public final class DefaultConfigurationConfigurer {
         camelContext.setUseMDCLogging(config.isUseMdcLogging());
         camelContext.setMDCLoggingKeysPattern(config.getMdcLoggingKeysPattern());
         camelContext.setLoadTypeConverters(config.isLoadTypeConverters());
+        camelContext.setTypeConverterStatisticsEnabled(config.isTypeConverterStatisticsEnabled());
         camelContext.setLoadHealthChecks(config.isLoadHealthChecks());
         camelContext.setDevConsole(config.isDevConsoleEnabled());
         camelContext.setModeline(config.isModeline());

@@ -243,6 +243,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "TracingPattern": target.setTracingPattern(property(camelContext, java.lang.String.class, value)); return true;
         case "tracingstandby":
         case "TracingStandby": target.setTracingStandby(property(camelContext, boolean.class, value)); return true;
+        case "typeconverterstatisticsenabled":
+        case "TypeConverterStatisticsEnabled": target.setTypeConverterStatisticsEnabled(property(camelContext, boolean.class, value)); return true;
         case "usebreadcrumb":
         case "UseBreadcrumb": target.setUseBreadcrumb(property(camelContext, boolean.class, value)); return true;
         case "usedatatype":
@@ -480,6 +482,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "TracingPattern": return java.lang.String.class;
         case "tracingstandby":
         case "TracingStandby": return boolean.class;
+        case "typeconverterstatisticsenabled":
+        case "TypeConverterStatisticsEnabled": return boolean.class;
         case "usebreadcrumb":
         case "UseBreadcrumb": return boolean.class;
         case "usedatatype":
@@ -718,6 +722,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "TracingPattern": return target.getTracingPattern();
         case "tracingstandby":
         case "TracingStandby": return target.isTracingStandby();
+        case "typeconverterstatisticsenabled":
+        case "TypeConverterStatisticsEnabled": return target.isTypeConverterStatisticsEnabled();
         case "usebreadcrumb":
         case "UseBreadcrumb": return target.isUseBreadcrumb();
         case "usedatatype":
