@@ -274,6 +274,7 @@ class Run extends CamelCommand {
         return prop;
     }
 
+    // CHECKSTYLE:OFF
     private int run() throws Exception {
         File work = new File(WORK_DIR);
         removeDir(work);
@@ -592,6 +593,7 @@ class Run extends CamelCommand {
 
         return main.getExitCode();
     }
+    // CHECKSTYLE:ON
 
     private String evalGistSource(KameletMain main, String file) throws Exception {
         StringJoiner routes = new StringJoiner(",");

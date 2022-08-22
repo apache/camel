@@ -37,7 +37,8 @@ public class ContextDevConsole extends AbstractDevConsole {
         StringBuilder sb = new StringBuilder();
 
         sb.append(String.format("Apache Camel %s %s (%s) uptime %s", getCamelContext().getVersion(),
-                getCamelContext().getStatus().name().toLowerCase(Locale.ROOT), getCamelContext().getName(), getCamelContext().getUptime()));
+                getCamelContext().getStatus().name().toLowerCase(Locale.ROOT), getCamelContext().getName(),
+                getCamelContext().getUptime()));
         sb.append("\n");
 
         ManagedCamelContext mcc = getCamelContext().getExtension(ManagedCamelContext.class);

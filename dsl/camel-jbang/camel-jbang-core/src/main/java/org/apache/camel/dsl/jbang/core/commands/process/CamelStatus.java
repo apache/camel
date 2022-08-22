@@ -38,8 +38,8 @@ import picocli.CommandLine.Command;
 @Command(name = "status", description = "List status of the running Camel integrations")
 public class CamelStatus extends ProcessBaseCommand {
 
-    @CommandLine.Option(names = {"--sort"},
-            description = "Sort by pid, name or age", defaultValue = "pid")
+    @CommandLine.Option(names = { "--sort" },
+                        description = "Sort by pid, name or age", defaultValue = "pid")
     String sort;
 
     public CamelStatus(CamelJBangMain main) {
@@ -97,8 +97,7 @@ public class CamelStatus extends ProcessBaseCommand {
                     new Column().header("Since Last").with(r -> r.sinceLast),
                     new Column().header("Total #").with(r -> r.total),
                     new Column().header("Failed #").with(r -> r.failed),
-                    new Column().header("Inflight #").with(r -> r.inflight)
-            )));
+                    new Column().header("Inflight #").with(r -> r.inflight))));
         }
 
         return 0;
