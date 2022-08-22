@@ -580,8 +580,8 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Sets whether type converter statistics is enabled.
      *
-     * By default the type converter utilization statistics is disabled.
-     * Notice: If enabled then there is a slight performance impact under very heavy load.
+     * By default the type converter utilization statistics is disabled. Notice: If enabled then there is a slight
+     * performance impact under very heavy load.
      */
     public void setTypeConverterStatisticsEnabled(boolean typeConverterStatisticsEnabled) {
         this.typeConverterStatisticsEnabled = typeConverterStatisticsEnabled;
@@ -1873,8 +1873,8 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Sets whether type converter statistics is enabled.
      *
-     * By default the type converter utilization statistics is disabled.
-     * Notice: If enabled then there is a slight performance impact under very heavy load.
+     * By default the type converter utilization statistics is disabled. Notice: If enabled then there is a slight
+     * performance impact under very heavy load.
      */
     public T withTypeConverterStatisticsEnabled(boolean typeConverterStatisticsEnabled) {
         this.typeConverterStatisticsEnabled = typeConverterStatisticsEnabled;
