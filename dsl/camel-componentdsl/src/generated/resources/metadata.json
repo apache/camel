@@ -770,7 +770,7 @@
     "syntax": "aws-cloudtrail:label",
     "async": false,
     "api": false,
-    "consumerOnly": false,
+    "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
   },
