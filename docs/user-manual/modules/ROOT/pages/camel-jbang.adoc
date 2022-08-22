@@ -233,6 +233,7 @@ If you do not want Camel JBang to download over the internet, you can turn this 
 camel run foo.java --download=false
 ----
 
+[#_adding_custom_jars]
 === Adding custom JARs
 
 Camel JBang will automatically detect dependencies for Camel components, languages, data formats, etc. that
@@ -923,6 +924,9 @@ The follow options related to _exporting_, can be configured in `application.pro
 
 |`camel.jbang.gav`
 |The Maven group:artifact:version
+
+|`camel.jbang.dependencies`
+|Additional dependencies (Use commas to separate multiple dependencies). See more details at xref:_adding_custom_jars[].
 
 |`camel.jbang.javaVersion`
 |Java version (11 or 17)
