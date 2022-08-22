@@ -16,7 +16,6 @@
  */
 package org.apache.camel.main;
 
-import java.lang.management.ManagementFactory;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;
@@ -441,7 +440,7 @@ public class KameletMain extends MainCommandLineSupport {
 
     private static String getPid() {
         try {
-            return "" + ManagementFactory.getRuntimeMXBean().getPid();
+            return "" + ProcessHandle.current().pid();
         } catch (Throwable e) {
             return null;
         }
