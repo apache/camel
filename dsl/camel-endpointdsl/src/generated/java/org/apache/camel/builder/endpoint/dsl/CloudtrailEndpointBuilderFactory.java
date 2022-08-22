@@ -36,13 +36,13 @@ public interface CloudtrailEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint consumers for the AWS Cloudtrail component.
+     * Builder for endpoint for the AWS Cloudtrail component.
      */
-    public interface CloudtrailEndpointConsumerBuilder
+    public interface CloudtrailEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        default AdvancedCloudtrailEndpointConsumerBuilder advanced() {
-            return (AdvancedCloudtrailEndpointConsumerBuilder) this;
+        default AdvancedCloudtrailEndpointBuilder advanced() {
+            return (AdvancedCloudtrailEndpointBuilder) this;
         }
         /**
          * Amazon Cloudtrail client to use for all requests for this endpoint.
@@ -50,12 +50,12 @@ public interface CloudtrailEndpointBuilderFactory {
          * The option is a:
          * &lt;code&gt;software.amazon.awssdk.services.cloudtrail.CloudTrailClient&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: consumer
          * 
          * @param cloudTrailClient the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder cloudTrailClient(
+        default CloudtrailEndpointBuilder cloudTrailClient(
                 software.amazon.awssdk.services.cloudtrail.CloudTrailClient cloudTrailClient) {
             doSetProperty("cloudTrailClient", cloudTrailClient);
             return this;
@@ -66,12 +66,12 @@ public interface CloudtrailEndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;software.amazon.awssdk.services.cloudtrail.CloudTrailClient&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: consumer
          * 
          * @param cloudTrailClient the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder cloudTrailClient(
+        default CloudtrailEndpointBuilder cloudTrailClient(
                 String cloudTrailClient) {
             doSetProperty("cloudTrailClient", cloudTrailClient);
             return this;
@@ -81,12 +81,12 @@ public interface CloudtrailEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: consumer
          * 
          * @param eventSource the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder eventSource(String eventSource) {
+        default CloudtrailEndpointBuilder eventSource(String eventSource) {
             doSetProperty("eventSource", eventSource);
             return this;
         }
@@ -96,12 +96,12 @@ public interface CloudtrailEndpointBuilderFactory {
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
-         * Group: common
+         * Group: consumer
          * 
          * @param maxResults the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder maxResults(int maxResults) {
+        default CloudtrailEndpointBuilder maxResults(int maxResults) {
             doSetProperty("maxResults", maxResults);
             return this;
         }
@@ -111,12 +111,12 @@ public interface CloudtrailEndpointBuilderFactory {
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
-         * Group: common
+         * Group: consumer
          * 
          * @param maxResults the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder maxResults(String maxResults) {
+        default CloudtrailEndpointBuilder maxResults(String maxResults) {
             doSetProperty("maxResults", maxResults);
             return this;
         }
@@ -127,12 +127,12 @@ public interface CloudtrailEndpointBuilderFactory {
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
-         * Group: common
+         * Group: consumer
          * 
          * @param overrideEndpoint the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder overrideEndpoint(
+        default CloudtrailEndpointBuilder overrideEndpoint(
                 boolean overrideEndpoint) {
             doSetProperty("overrideEndpoint", overrideEndpoint);
             return this;
@@ -145,12 +145,12 @@ public interface CloudtrailEndpointBuilderFactory {
          * type.
          * 
          * Default: false
-         * Group: common
+         * Group: consumer
          * 
          * @param overrideEndpoint the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder overrideEndpoint(
+        default CloudtrailEndpointBuilder overrideEndpoint(
                 String overrideEndpoint) {
             doSetProperty("overrideEndpoint", overrideEndpoint);
             return this;
@@ -160,12 +160,12 @@ public interface CloudtrailEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: consumer
          * 
          * @param proxyHost the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder proxyHost(String proxyHost) {
+        default CloudtrailEndpointBuilder proxyHost(String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
             return this;
         }
@@ -174,12 +174,12 @@ public interface CloudtrailEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: consumer
          * 
          * @param proxyPort the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder proxyPort(Integer proxyPort) {
+        default CloudtrailEndpointBuilder proxyPort(Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
             return this;
         }
@@ -189,12 +189,12 @@ public interface CloudtrailEndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: consumer
          * 
          * @param proxyPort the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder proxyPort(String proxyPort) {
+        default CloudtrailEndpointBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
             return this;
         }
@@ -205,12 +205,12 @@ public interface CloudtrailEndpointBuilderFactory {
          * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
-         * Group: common
+         * Group: consumer
          * 
          * @param proxyProtocol the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder proxyProtocol(
+        default CloudtrailEndpointBuilder proxyProtocol(
                 software.amazon.awssdk.core.Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
             return this;
@@ -222,13 +222,12 @@ public interface CloudtrailEndpointBuilderFactory {
          * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
-         * Group: common
+         * Group: consumer
          * 
          * @param proxyProtocol the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder proxyProtocol(
-                String proxyProtocol) {
+        default CloudtrailEndpointBuilder proxyProtocol(String proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
@@ -240,101 +239,13 @@ public interface CloudtrailEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: consumer
          * 
          * @param region the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder region(String region) {
+        default CloudtrailEndpointBuilder region(String region) {
             doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointConsumerBuilder trustAllCertificates(
-                boolean trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointConsumerBuilder trustAllCertificates(
-                String trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
-         * Set the overriding uri endpoint. This option needs to be used in
-         * combination with overrideEndpoint option.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param uriEndpointOverride the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointConsumerBuilder uriEndpointOverride(
-                String uriEndpointOverride) {
-            doSetProperty("uriEndpointOverride", uriEndpointOverride);
-            return this;
-        }
-        /**
-         * Set whether the Cloudtrail client should expect to load credentials
-         * through a default credentials provider or to expect static
-         * credentials to be passed in.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param useDefaultCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointConsumerBuilder useDefaultCredentialsProvider(
-                boolean useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the Cloudtrail client should expect to load credentials
-         * through a default credentials provider or to expect static
-         * credentials to be passed in.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param useDefaultCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointConsumerBuilder useDefaultCredentialsProvider(
-                String useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
@@ -349,7 +260,7 @@ public interface CloudtrailEndpointBuilderFactory {
          * @param sendEmptyMessageWhenIdle the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default CloudtrailEndpointBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
             doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -367,9 +278,97 @@ public interface CloudtrailEndpointBuilderFactory {
          * @param sendEmptyMessageWhenIdle the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default CloudtrailEndpointBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
             doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default CloudtrailEndpointBuilder trustAllCertificates(
+                boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default CloudtrailEndpointBuilder trustAllCertificates(
+                String trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param uriEndpointOverride the value to set
+         * @return the dsl builder
+         */
+        default CloudtrailEndpointBuilder uriEndpointOverride(
+                String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
+            return this;
+        }
+        /**
+         * Set whether the Cloudtrail client should expect to load credentials
+         * through a default credentials provider or to expect static
+         * credentials to be passed in.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default CloudtrailEndpointBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the Cloudtrail client should expect to load credentials
+         * through a default credentials provider or to expect static
+         * credentials to be passed in.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param useDefaultCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default CloudtrailEndpointBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
@@ -383,7 +382,7 @@ public interface CloudtrailEndpointBuilderFactory {
          * @param backoffErrorThreshold the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder backoffErrorThreshold(
+        default CloudtrailEndpointBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
             doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -399,7 +398,7 @@ public interface CloudtrailEndpointBuilderFactory {
          * @param backoffErrorThreshold the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder backoffErrorThreshold(
+        default CloudtrailEndpointBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
             doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -415,7 +414,7 @@ public interface CloudtrailEndpointBuilderFactory {
          * @param backoffIdleThreshold the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder backoffIdleThreshold(
+        default CloudtrailEndpointBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
             doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -431,7 +430,7 @@ public interface CloudtrailEndpointBuilderFactory {
          * @param backoffIdleThreshold the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder backoffIdleThreshold(
+        default CloudtrailEndpointBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
             doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -451,7 +450,7 @@ public interface CloudtrailEndpointBuilderFactory {
          * @param backoffMultiplier the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder backoffMultiplier(
+        default CloudtrailEndpointBuilder backoffMultiplier(
                 int backoffMultiplier) {
             doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -471,7 +470,7 @@ public interface CloudtrailEndpointBuilderFactory {
          * @param backoffMultiplier the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder backoffMultiplier(
+        default CloudtrailEndpointBuilder backoffMultiplier(
                 String backoffMultiplier) {
             doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -487,7 +486,7 @@ public interface CloudtrailEndpointBuilderFactory {
          * @param delay the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder delay(long delay) {
+        default CloudtrailEndpointBuilder delay(long delay) {
             doSetProperty("delay", delay);
             return this;
         }
@@ -502,7 +501,7 @@ public interface CloudtrailEndpointBuilderFactory {
          * @param delay the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder delay(String delay) {
+        default CloudtrailEndpointBuilder delay(String delay) {
             doSetProperty("delay", delay);
             return this;
         }
@@ -518,7 +517,7 @@ public interface CloudtrailEndpointBuilderFactory {
          * @param greedy the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder greedy(boolean greedy) {
+        default CloudtrailEndpointBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
             return this;
         }
@@ -535,7 +534,7 @@ public interface CloudtrailEndpointBuilderFactory {
          * @param greedy the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder greedy(String greedy) {
+        default CloudtrailEndpointBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
             return this;
         }
@@ -550,7 +549,7 @@ public interface CloudtrailEndpointBuilderFactory {
          * @param initialDelay the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder initialDelay(long initialDelay) {
+        default CloudtrailEndpointBuilder initialDelay(long initialDelay) {
             doSetProperty("initialDelay", initialDelay);
             return this;
         }
@@ -565,8 +564,7 @@ public interface CloudtrailEndpointBuilderFactory {
          * @param initialDelay the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder initialDelay(
-                String initialDelay) {
+        default CloudtrailEndpointBuilder initialDelay(String initialDelay) {
             doSetProperty("initialDelay", initialDelay);
             return this;
         }
@@ -583,7 +581,7 @@ public interface CloudtrailEndpointBuilderFactory {
          * @param repeatCount the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder repeatCount(long repeatCount) {
+        default CloudtrailEndpointBuilder repeatCount(long repeatCount) {
             doSetProperty("repeatCount", repeatCount);
             return this;
         }
@@ -600,7 +598,7 @@ public interface CloudtrailEndpointBuilderFactory {
          * @param repeatCount the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder repeatCount(String repeatCount) {
+        default CloudtrailEndpointBuilder repeatCount(String repeatCount) {
             doSetProperty("repeatCount", repeatCount);
             return this;
         }
@@ -617,7 +615,7 @@ public interface CloudtrailEndpointBuilderFactory {
          * @param runLoggingLevel the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder runLoggingLevel(
+        default CloudtrailEndpointBuilder runLoggingLevel(
                 org.apache.camel.LoggingLevel runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -635,8 +633,7 @@ public interface CloudtrailEndpointBuilderFactory {
          * @param runLoggingLevel the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder runLoggingLevel(
-                String runLoggingLevel) {
+        default CloudtrailEndpointBuilder runLoggingLevel(String runLoggingLevel) {
             doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
@@ -653,7 +650,7 @@ public interface CloudtrailEndpointBuilderFactory {
          * @param scheduledExecutorService the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder scheduledExecutorService(
+        default CloudtrailEndpointBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
             doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -671,7 +668,7 @@ public interface CloudtrailEndpointBuilderFactory {
          * @param scheduledExecutorService the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder scheduledExecutorService(
+        default CloudtrailEndpointBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
             doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -688,7 +685,7 @@ public interface CloudtrailEndpointBuilderFactory {
          * @param scheduler the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder scheduler(Object scheduler) {
+        default CloudtrailEndpointBuilder scheduler(Object scheduler) {
             doSetProperty("scheduler", scheduler);
             return this;
         }
@@ -705,7 +702,7 @@ public interface CloudtrailEndpointBuilderFactory {
          * @param scheduler the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder scheduler(String scheduler) {
+        default CloudtrailEndpointBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
             return this;
         }
@@ -725,7 +722,7 @@ public interface CloudtrailEndpointBuilderFactory {
          * @param value the option value
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder schedulerProperties(
+        default CloudtrailEndpointBuilder schedulerProperties(
                 String key,
                 Object value) {
             doSetMultiValueProperty("schedulerProperties", "scheduler." + key, value);
@@ -746,7 +743,7 @@ public interface CloudtrailEndpointBuilderFactory {
          * @param values the values
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder schedulerProperties(Map values) {
+        default CloudtrailEndpointBuilder schedulerProperties(Map values) {
             doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
             return this;
         }
@@ -761,8 +758,7 @@ public interface CloudtrailEndpointBuilderFactory {
          * @param startScheduler the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder startScheduler(
-                boolean startScheduler) {
+        default CloudtrailEndpointBuilder startScheduler(boolean startScheduler) {
             doSetProperty("startScheduler", startScheduler);
             return this;
         }
@@ -778,8 +774,7 @@ public interface CloudtrailEndpointBuilderFactory {
          * @param startScheduler the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder startScheduler(
-                String startScheduler) {
+        default CloudtrailEndpointBuilder startScheduler(String startScheduler) {
             doSetProperty("startScheduler", startScheduler);
             return this;
         }
@@ -795,7 +790,7 @@ public interface CloudtrailEndpointBuilderFactory {
          * @param timeUnit the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
+        default CloudtrailEndpointBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
             return this;
         }
@@ -811,7 +806,7 @@ public interface CloudtrailEndpointBuilderFactory {
          * @param timeUnit the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder timeUnit(String timeUnit) {
+        default CloudtrailEndpointBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
             return this;
         }
@@ -827,8 +822,7 @@ public interface CloudtrailEndpointBuilderFactory {
          * @param useFixedDelay the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder useFixedDelay(
-                boolean useFixedDelay) {
+        default CloudtrailEndpointBuilder useFixedDelay(boolean useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
@@ -845,897 +839,8 @@ public interface CloudtrailEndpointBuilderFactory {
          * @param useFixedDelay the value to set
          * @return the dsl builder
          */
-        default CloudtrailEndpointConsumerBuilder useFixedDelay(
-                String useFixedDelay) {
+        default CloudtrailEndpointBuilder useFixedDelay(String useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
-            return this;
-        }
-        /**
-         * Amazon AWS Access Key.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param accessKey the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointConsumerBuilder accessKey(String accessKey) {
-            doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param secretKey the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointConsumerBuilder secretKey(String secretKey) {
-            doSetProperty("secretKey", secretKey);
-            return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint consumers for the AWS Cloudtrail component.
-     */
-    public interface AdvancedCloudtrailEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default CloudtrailEndpointConsumerBuilder basic() {
-            return (CloudtrailEndpointConsumerBuilder) this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: consumer (advanced)
-         * 
-         * @param bridgeErrorHandler the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCloudtrailEndpointConsumerBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: consumer (advanced)
-         * 
-         * @param bridgeErrorHandler the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCloudtrailEndpointConsumerBuilder bridgeErrorHandler(
-                String bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exceptionHandler the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCloudtrailEndpointConsumerBuilder exceptionHandler(
-                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exceptionHandler the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCloudtrailEndpointConsumerBuilder exceptionHandler(
-                String exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exchangePattern the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCloudtrailEndpointConsumerBuilder exchangePattern(
-                org.apache.camel.ExchangePattern exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exchangePattern the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCloudtrailEndpointConsumerBuilder exchangePattern(
-                String exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
-         * you to provide your custom implementation to control error handling
-         * usually occurred during the poll operation before an Exchange have
-         * been created and being routed in Camel.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param pollStrategy the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCloudtrailEndpointConsumerBuilder pollStrategy(
-                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
-            doSetProperty("pollStrategy", pollStrategy);
-            return this;
-        }
-        /**
-         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
-         * you to provide your custom implementation to control error handling
-         * usually occurred during the poll operation before an Exchange have
-         * been created and being routed in Camel.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param pollStrategy the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCloudtrailEndpointConsumerBuilder pollStrategy(
-                String pollStrategy) {
-            doSetProperty("pollStrategy", pollStrategy);
-            return this;
-        }
-    }
-
-    /**
-     * Builder for endpoint producers for the AWS Cloudtrail component.
-     */
-    public interface CloudtrailEndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default AdvancedCloudtrailEndpointProducerBuilder advanced() {
-            return (AdvancedCloudtrailEndpointProducerBuilder) this;
-        }
-        /**
-         * Amazon Cloudtrail client to use for all requests for this endpoint.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.cloudtrail.CloudTrailClient&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param cloudTrailClient the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointProducerBuilder cloudTrailClient(
-                software.amazon.awssdk.services.cloudtrail.CloudTrailClient cloudTrailClient) {
-            doSetProperty("cloudTrailClient", cloudTrailClient);
-            return this;
-        }
-        /**
-         * Amazon Cloudtrail client to use for all requests for this endpoint.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.cloudtrail.CloudTrailClient&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param cloudTrailClient the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointProducerBuilder cloudTrailClient(
-                String cloudTrailClient) {
-            doSetProperty("cloudTrailClient", cloudTrailClient);
-            return this;
-        }
-        /**
-         * Specify an event source to select events.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param eventSource the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointProducerBuilder eventSource(String eventSource) {
-            doSetProperty("eventSource", eventSource);
-            return this;
-        }
-        /**
-         * Maximum number of records that will be fetched in each poll.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: common
-         * 
-         * @param maxResults the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointProducerBuilder maxResults(int maxResults) {
-            doSetProperty("maxResults", maxResults);
-            return this;
-        }
-        /**
-         * Maximum number of records that will be fetched in each poll.
-         * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: common
-         * 
-         * @param maxResults the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointProducerBuilder maxResults(String maxResults) {
-            doSetProperty("maxResults", maxResults);
-            return this;
-        }
-        /**
-         * Set the need for overidding the endpoint. This option needs to be
-         * used in combination with uriEndpointOverride option.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param overrideEndpoint the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointProducerBuilder overrideEndpoint(
-                boolean overrideEndpoint) {
-            doSetProperty("overrideEndpoint", overrideEndpoint);
-            return this;
-        }
-        /**
-         * Set the need for overidding the endpoint. This option needs to be
-         * used in combination with uriEndpointOverride option.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param overrideEndpoint the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointProducerBuilder overrideEndpoint(
-                String overrideEndpoint) {
-            doSetProperty("overrideEndpoint", overrideEndpoint);
-            return this;
-        }
-        /**
-         * To define a proxy host when instantiating the Cloudtrail client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyHost the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointProducerBuilder proxyHost(String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the Cloudtrail client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointProducerBuilder proxyPort(Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the Cloudtrail client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointProducerBuilder proxyPort(String proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the Cloudtrail client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: common
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointProducerBuilder proxyProtocol(
-                software.amazon.awssdk.core.Protocol proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the Cloudtrail client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: common
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointProducerBuilder proxyProtocol(
-                String proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
-         * The region in which Cloudtrail client needs to work. When using this
-         * parameter, the configuration will expect the lowercase name of the
-         * region (for example ap-east-1) You'll need to use the name
-         * Region.EU_WEST_1.id().
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param region the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointProducerBuilder region(String region) {
-            doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointProducerBuilder trustAllCertificates(
-                boolean trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointProducerBuilder trustAllCertificates(
-                String trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
-         * Set the overriding uri endpoint. This option needs to be used in
-         * combination with overrideEndpoint option.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param uriEndpointOverride the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointProducerBuilder uriEndpointOverride(
-                String uriEndpointOverride) {
-            doSetProperty("uriEndpointOverride", uriEndpointOverride);
-            return this;
-        }
-        /**
-         * Set whether the Cloudtrail client should expect to load credentials
-         * through a default credentials provider or to expect static
-         * credentials to be passed in.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param useDefaultCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointProducerBuilder useDefaultCredentialsProvider(
-                boolean useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the Cloudtrail client should expect to load credentials
-         * through a default credentials provider or to expect static
-         * credentials to be passed in.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param useDefaultCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointProducerBuilder useDefaultCredentialsProvider(
-                String useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
-            return this;
-        }
-        /**
-         * Amazon AWS Access Key.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param accessKey the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointProducerBuilder accessKey(String accessKey) {
-            doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param secretKey the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointProducerBuilder secretKey(String secretKey) {
-            doSetProperty("secretKey", secretKey);
-            return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint producers for the AWS Cloudtrail component.
-     */
-    public interface AdvancedCloudtrailEndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default CloudtrailEndpointProducerBuilder basic() {
-            return (CloudtrailEndpointProducerBuilder) this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCloudtrailEndpointProducerBuilder lazyStartProducer(
-                boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCloudtrailEndpointProducerBuilder lazyStartProducer(
-                String lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-    }
-
-    /**
-     * Builder for endpoint for the AWS Cloudtrail component.
-     */
-    public interface CloudtrailEndpointBuilder
-            extends
-                CloudtrailEndpointConsumerBuilder,
-                CloudtrailEndpointProducerBuilder {
-        default AdvancedCloudtrailEndpointBuilder advanced() {
-            return (AdvancedCloudtrailEndpointBuilder) this;
-        }
-        /**
-         * Amazon Cloudtrail client to use for all requests for this endpoint.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.services.cloudtrail.CloudTrailClient&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param cloudTrailClient the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointBuilder cloudTrailClient(
-                software.amazon.awssdk.services.cloudtrail.CloudTrailClient cloudTrailClient) {
-            doSetProperty("cloudTrailClient", cloudTrailClient);
-            return this;
-        }
-        /**
-         * Amazon Cloudtrail client to use for all requests for this endpoint.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.services.cloudtrail.CloudTrailClient&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param cloudTrailClient the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointBuilder cloudTrailClient(
-                String cloudTrailClient) {
-            doSetProperty("cloudTrailClient", cloudTrailClient);
-            return this;
-        }
-        /**
-         * Specify an event source to select events.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param eventSource the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointBuilder eventSource(String eventSource) {
-            doSetProperty("eventSource", eventSource);
-            return this;
-        }
-        /**
-         * Maximum number of records that will be fetched in each poll.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: common
-         * 
-         * @param maxResults the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointBuilder maxResults(int maxResults) {
-            doSetProperty("maxResults", maxResults);
-            return this;
-        }
-        /**
-         * Maximum number of records that will be fetched in each poll.
-         * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: common
-         * 
-         * @param maxResults the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointBuilder maxResults(String maxResults) {
-            doSetProperty("maxResults", maxResults);
-            return this;
-        }
-        /**
-         * Set the need for overidding the endpoint. This option needs to be
-         * used in combination with uriEndpointOverride option.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param overrideEndpoint the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointBuilder overrideEndpoint(
-                boolean overrideEndpoint) {
-            doSetProperty("overrideEndpoint", overrideEndpoint);
-            return this;
-        }
-        /**
-         * Set the need for overidding the endpoint. This option needs to be
-         * used in combination with uriEndpointOverride option.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param overrideEndpoint the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointBuilder overrideEndpoint(
-                String overrideEndpoint) {
-            doSetProperty("overrideEndpoint", overrideEndpoint);
-            return this;
-        }
-        /**
-         * To define a proxy host when instantiating the Cloudtrail client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyHost the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointBuilder proxyHost(String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the Cloudtrail client.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointBuilder proxyPort(Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the Cloudtrail client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param proxyPort the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointBuilder proxyPort(String proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the Cloudtrail client.
-         * 
-         * The option is a:
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: common
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointBuilder proxyProtocol(
-                software.amazon.awssdk.core.Protocol proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the Cloudtrail client.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
-         * 
-         * Default: HTTPS
-         * Group: common
-         * 
-         * @param proxyProtocol the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointBuilder proxyProtocol(String proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
-         * The region in which Cloudtrail client needs to work. When using this
-         * parameter, the configuration will expect the lowercase name of the
-         * region (for example ap-east-1) You'll need to use the name
-         * Region.EU_WEST_1.id().
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param region the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointBuilder region(String region) {
-            doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointBuilder trustAllCertificates(
-                boolean trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
-         * If we want to trust all certificates in case of overriding the
-         * endpoint.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param trustAllCertificates the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointBuilder trustAllCertificates(
-                String trustAllCertificates) {
-            doSetProperty("trustAllCertificates", trustAllCertificates);
-            return this;
-        }
-        /**
-         * Set the overriding uri endpoint. This option needs to be used in
-         * combination with overrideEndpoint option.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param uriEndpointOverride the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointBuilder uriEndpointOverride(
-                String uriEndpointOverride) {
-            doSetProperty("uriEndpointOverride", uriEndpointOverride);
-            return this;
-        }
-        /**
-         * Set whether the Cloudtrail client should expect to load credentials
-         * through a default credentials provider or to expect static
-         * credentials to be passed in.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param useDefaultCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointBuilder useDefaultCredentialsProvider(
-                boolean useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
-            return this;
-        }
-        /**
-         * Set whether the Cloudtrail client should expect to load credentials
-         * through a default credentials provider or to expect static
-         * credentials to be passed in.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         * 
-         * @param useDefaultCredentialsProvider the value to set
-         * @return the dsl builder
-         */
-        default CloudtrailEndpointBuilder useDefaultCredentialsProvider(
-                String useDefaultCredentialsProvider) {
-            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
@@ -1773,10 +878,162 @@ public interface CloudtrailEndpointBuilderFactory {
      */
     public interface AdvancedCloudtrailEndpointBuilder
             extends
-                AdvancedCloudtrailEndpointConsumerBuilder,
-                AdvancedCloudtrailEndpointProducerBuilder {
+                EndpointConsumerBuilder {
         default CloudtrailEndpointBuilder basic() {
             return (CloudtrailEndpointBuilder) this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCloudtrailEndpointBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCloudtrailEndpointBuilder bridgeErrorHandler(
+                String bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCloudtrailEndpointBuilder exceptionHandler(
+                org.apache.camel.spi.ExceptionHandler exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCloudtrailEndpointBuilder exceptionHandler(
+                String exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCloudtrailEndpointBuilder exchangePattern(
+                org.apache.camel.ExchangePattern exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCloudtrailEndpointBuilder exchangePattern(
+                String exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
+         * you to provide your custom implementation to control error handling
+         * usually occurred during the poll operation before an Exchange have
+         * been created and being routed in Camel.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCloudtrailEndpointBuilder pollStrategy(
+                org.apache.camel.spi.PollingConsumerPollStrategy pollStrategy) {
+            doSetProperty("pollStrategy", pollStrategy);
+            return this;
+        }
+        /**
+         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
+         * you to provide your custom implementation to control error handling
+         * usually occurred during the poll operation before an Exchange have
+         * been created and being routed in Camel.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCloudtrailEndpointBuilder pollStrategy(
+                String pollStrategy) {
+            doSetProperty("pollStrategy", pollStrategy);
+            return this;
         }
     }
 
