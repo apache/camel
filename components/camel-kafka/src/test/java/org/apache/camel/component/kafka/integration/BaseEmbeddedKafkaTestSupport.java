@@ -29,12 +29,10 @@ import org.apache.kafka.clients.admin.KafkaAdminClient;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class BaseEmbeddedKafkaTestSupport extends CamelTestSupport {
     // Note: you must use Strimzi on MacOS with Apple Silicon (and possibly other ARM-based architectures)
     @RegisterExtension

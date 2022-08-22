@@ -49,7 +49,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
@@ -58,7 +57,7 @@ import org.slf4j.LoggerFactory;
 import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+
 @DisabledIfSystemProperty(named = "kafka.instance.type", matches = "local-strimzi-container",
                           disabledReason = "Test infra Kafka runs the Strimzi containers in a way that conflicts with multiple concurrent images")
 public class KafkaConsumerUnresolvableHealthCheckIT extends CamelTestSupport {
