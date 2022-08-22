@@ -23,13 +23,12 @@ import java.security.KeyPairGenerator;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-@EnabledIf(value = "org.apache.camel.component.file.remote.services.SftpEmbeddedService#hasRequiredAlgorithms")
+@EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 public class SftpKeyPairECConsumeIT extends SftpServerTestSupport {
 
     private static KeyPair keyPair;
@@ -104,10 +103,6 @@ public class SftpKeyPairECConsumeIT extends SftpServerTestSupport {
         context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
-    }
-
-    protected PublickeyAuthenticator getPublickeyAuthenticator() {
-        return (username, key, session) -> key.equals(keyPair.getPublic());
     }
 
     @Override

@@ -19,7 +19,7 @@ package org.apache.camel.component.file.remote.sftp.integration;
 import java.nio.file.Path;
 
 import org.apache.camel.component.file.remote.BaseServerTestSupport;
-import org.apache.camel.component.file.remote.services.SftpEmbeddedService;
+import org.apache.camel.test.infra.ftp.services.embedded.SftpEmbeddedService;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class SftpServerTestSupport extends BaseServerTestSupport {

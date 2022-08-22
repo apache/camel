@@ -20,12 +20,10 @@ import java.nio.file.Path;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.remote.BaseServerTestSupport;
-import org.apache.camel.component.file.remote.services.FtpEmbeddedService;
-import org.junit.jupiter.api.BeforeEach;
+import org.apache.camel.test.infra.ftp.services.embedded.FtpEmbeddedService;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.language.simple.SimpleLanguage.simple;
-import static org.apache.camel.test.junit5.TestSupport.createCleanDirectory;
 
 /**
  * Base class for unit testing using a FTPServer
@@ -35,17 +33,11 @@ public abstract class FtpServerTestSupport extends BaseServerTestSupport {
     @RegisterExtension
     static FtpEmbeddedService service = new FtpEmbeddedService();
 
-    @BeforeEach
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        createCleanDirectory(service.getFtpRootDir());
-    }
-
     public void sendFile(String url, Object body, String fileName) {
         template.sendBodyAndHeader(url, body, Exchange.FILE_NAME, simple(fileName));
     }
 
+    @Deprecated
     protected Path ftpFile(String file) {
         return service.getFtpRootDir().resolve(file);
     }

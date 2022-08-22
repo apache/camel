@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.file.remote.integration;
 
-import org.apache.camel.component.file.remote.services.FtpsEmbeddedService;
+import org.apache.camel.test.infra.ftp.services.embedded.FtpsEmbeddedService;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**

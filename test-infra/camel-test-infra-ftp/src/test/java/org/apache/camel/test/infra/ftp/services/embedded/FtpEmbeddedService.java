@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.file.remote.services;
+package org.apache.camel.test.infra.ftp.services.embedded;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -27,6 +27,7 @@ import java.util.function.BiConsumer;
 import org.apache.camel.test.infra.common.services.AbstractTestService;
 import org.apache.camel.test.infra.ftp.common.FtpProperties;
 import org.apache.camel.test.infra.ftp.services.FtpService;
+import org.apache.commons.io.FileUtils;
 import org.apache.ftpserver.ConnectionConfigFactory;
 import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;
@@ -44,8 +45,6 @@ import org.apache.ftpserver.usermanager.impl.WritePermission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.test.junit5.TestSupport.createCleanDirectory;
-
 public class FtpEmbeddedService extends AbstractTestService implements FtpService {
     protected static final String DEFAULT_LISTENER = "default";
 
@@ -56,13 +55,20 @@ public class FtpEmbeddedService extends AbstractTestService implements FtpServic
     protected int port;
 
     protected Path rootDir;
+    private final EmbeddedConfiguration embeddedConfiguration;
 
+    @Deprecated
     public FtpEmbeddedService() {
+        embeddedConfiguration = EmbeddedConfigurationBuilder.defaultConfiguration();
+    }
+
+    protected FtpEmbeddedService(EmbeddedConfiguration embeddedConfiguration) {
+        this.embeddedConfiguration = embeddedConfiguration;
     }
 
     public void setUp() throws Exception {
-        rootDir = testDirectory().resolve("res/home");
-        createCleanDirectory(rootDir);
+        rootDir = testDirectory().resolve(embeddedConfiguration.getTestDirectory());
+        FileUtils.deleteDirectory(rootDir.toFile());
 
         FtpServerFactory factory = createFtpServerFactory();
         ftpServer = factory.createServer();
@@ -72,6 +78,7 @@ public class FtpEmbeddedService extends AbstractTestService implements FtpServic
                 .map(Listener::getPort).findAny().get();
     }
 
+    @Deprecated
     private Path testDirectory() {
         return Paths.get("target", "ftp", context.getRequiredTestClass().getSimpleName());
     }
@@ -96,17 +103,17 @@ public class FtpEmbeddedService extends AbstractTestService implements FtpServic
         fsf.setCreateHome(true);
 
         PropertiesUserManagerFactory pumf = new PropertiesUserManagerFactory();
-        pumf.setAdminName("admin");
+        pumf.setAdminName(embeddedConfiguration.getAdmin().getUsername());
         pumf.setPasswordEncryptor(new ClearTextPasswordEncryptor());
         pumf.setFile(null);
+
         UserManager userMgr = pumf.createUserManager();
-        createUser(userMgr, "admin", "admin", rootDir, true);
-        createUser(userMgr, "scott", "tiger", rootDir, true);
-        createUser(userMgr, "dummy", "foo", rootDir, false);
-        createUser(userMgr, "us@r", "t%st", rootDir, true);
-        createUser(userMgr, "anonymous", null, rootDir, false);
-        createUser(userMgr, "joe", "p+%w0&r)d", rootDir, true);
-        createUser(userMgr, "jane", "%j#7%c6i", rootDir, true);
+        for (EmbeddedConfiguration.User user : embeddedConfiguration.getUsers()) {
+            final EmbeddedConfiguration.User.UserInfo userInfo = user.getUserInfo();
+            final Path homeDir = userInfo.getHome() == null ? rootDir : Path.of(userInfo.getHome());
+
+            createUser(userMgr, user.getUsername(), user.getPassword(), homeDir, userInfo.isWritePermission());
+        }
 
         ListenerFactory factory = new ListenerFactory();
         factory.setPort(port);
@@ -137,10 +144,6 @@ public class FtpEmbeddedService extends AbstractTestService implements FtpServic
         } finally {
             ftpServer = null;
         }
-
-        //        if (port != null) {
-        //            port.release();
-        //        }
     }
 
     public void disconnectAllSessions() {
@@ -156,7 +159,7 @@ public class FtpEmbeddedService extends AbstractTestService implements FtpServic
 
     @Override
     protected void registerProperties(BiConsumer<String, String> store) {
-        store.accept(FtpProperties.SERVER_HOST, "localhost");
+        store.accept(FtpProperties.SERVER_HOST, embeddedConfiguration.getServerAddress());
         store.accept(FtpProperties.SERVER_PORT, String.valueOf(getPort()));
         store.accept(FtpProperties.ROOT_DIR, rootDir.toString());
     }
@@ -189,5 +192,9 @@ public class FtpEmbeddedService extends AbstractTestService implements FtpServic
         }
 
         return count;
+    }
+
+    public EmbeddedConfiguration getEmbeddedConfiguration() {
+        return embeddedConfiguration;
     }
 }

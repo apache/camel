@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.remote.BaseServerTestSupport;
-import org.apache.camel.component.file.remote.services.FtpEmbeddedService;
+import org.apache.camel.test.infra.ftp.services.embedded.FtpEmbeddedService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 

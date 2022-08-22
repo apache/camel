@@ -32,7 +32,7 @@ import org.littleshoot.proxy.ProxyAuthenticator;
 import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@EnabledIf(value = "org.apache.camel.component.file.remote.services.SftpEmbeddedService#hasRequiredAlgorithms")
+@EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 public class SftpSimpleConsumeThroughProxyIT extends SftpServerTestSupport {
     private static HttpProxyServer proxyServer;
     private final int proxyPort = AvailablePortFinder.getNextAvailable();

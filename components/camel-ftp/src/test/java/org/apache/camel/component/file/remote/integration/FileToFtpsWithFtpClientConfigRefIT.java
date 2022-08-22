@@ -27,7 +27,7 @@ import org.junit.jupiter.api.condition.EnabledIf;
 /**
  * Test the ftps component over SSL (explicit) and without client authentication
  */
-@EnabledIf(value = "org.apache.camel.component.file.remote.services.FtpsEmbeddedService#hasRequiredAlgorithms")
+@EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.FtpsUtil#hasRequiredAlgorithms")
 public class FileToFtpsWithFtpClientConfigRefIT extends FtpsServerExplicitSSLWithoutClientAuthTestSupport {
 
     @BindToRegistry("ftpsClient")
