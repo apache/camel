@@ -21,7 +21,7 @@ public class CloudtrailEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(34);
+        Set<String> props = new HashSet<>(33);
         props.add("accessKey");
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
@@ -35,7 +35,6 @@ public class CloudtrailEndpointUriFactory extends org.apache.camel.support.compo
         props.add("greedy");
         props.add("initialDelay");
         props.add("label");
-        props.add("lazyStartProducer");
         props.add("maxResults");
         props.add("overrideEndpoint");
         props.add("pollStrategy");

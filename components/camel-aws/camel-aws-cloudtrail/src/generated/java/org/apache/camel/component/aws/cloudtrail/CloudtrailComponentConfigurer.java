@@ -39,8 +39,6 @@ public class CloudtrailComponentConfigurer extends PropertyConfigurerSupport imp
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws.cloudtrail.CloudtrailConfiguration.class, value)); return true;
         case "eventsource":
         case "eventSource": getOrCreateConfiguration(target).setEventSource(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxresults":
         case "maxResults": getOrCreateConfiguration(target).setMaxResults(property(camelContext, int.class, value)); return true;
         case "overrideendpoint":
@@ -83,8 +81,6 @@ public class CloudtrailComponentConfigurer extends PropertyConfigurerSupport imp
         case "configuration": return org.apache.camel.component.aws.cloudtrail.CloudtrailConfiguration.class;
         case "eventsource":
         case "eventSource": return java.lang.String.class;
-        case "lazystartproducer":
-        case "lazyStartProducer": return boolean.class;
         case "maxresults":
         case "maxResults": return int.class;
         case "overrideendpoint":
@@ -123,8 +119,6 @@ public class CloudtrailComponentConfigurer extends PropertyConfigurerSupport imp
         case "configuration": return target.getConfiguration();
         case "eventsource":
         case "eventSource": return getOrCreateConfiguration(target).getEventSource();
-        case "lazystartproducer":
-        case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxresults":
         case "maxResults": return getOrCreateConfiguration(target).getMaxResults();
         case "overrideendpoint":

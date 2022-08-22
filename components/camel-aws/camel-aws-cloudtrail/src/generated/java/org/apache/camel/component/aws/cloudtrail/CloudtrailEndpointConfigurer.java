@@ -43,8 +43,6 @@ public class CloudtrailEndpointConfigurer extends PropertyConfigurerSupport impl
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxresults":
         case "maxResults": target.getConfiguration().setMaxResults(property(camelContext, int.class, value)); return true;
         case "overrideendpoint":
@@ -117,8 +115,6 @@ public class CloudtrailEndpointConfigurer extends PropertyConfigurerSupport impl
         case "greedy": return boolean.class;
         case "initialdelay":
         case "initialDelay": return long.class;
-        case "lazystartproducer":
-        case "lazyStartProducer": return boolean.class;
         case "maxresults":
         case "maxResults": return int.class;
         case "overrideendpoint":
@@ -187,8 +183,6 @@ public class CloudtrailEndpointConfigurer extends PropertyConfigurerSupport impl
         case "greedy": return target.isGreedy();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
-        case "lazystartproducer":
-        case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxresults":
         case "maxResults": return target.getConfiguration().getMaxResults();
         case "overrideendpoint":
