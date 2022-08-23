@@ -509,7 +509,7 @@
     <spring-data-redis-version>2.6.2</spring-data-redis-version>
     <spring-integration-version>5.5.14</spring-integration-version>
     <spring-ldap-version>2.4.1</spring-ldap-version>
-    <spring-rabbitmq-version>2.4.2</spring-rabbitmq-version>
+    <spring-rabbitmq-version>2.4.6</spring-rabbitmq-version>
     <spring-security-version>5.7.3</spring-security-version>
     <spring-vault-core-version>2.3.2</spring-vault-core-version>
     <spring-version>${spring5-version}</spring-version>
