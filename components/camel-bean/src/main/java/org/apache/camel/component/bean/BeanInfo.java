@@ -42,7 +42,6 @@ import org.apache.camel.Header;
 import org.apache.camel.Headers;
 import org.apache.camel.Message;
 import org.apache.camel.PropertyInject;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.language.AnnotationExpressionFactory;
@@ -66,7 +65,7 @@ public class BeanInfo {
     private static final String CGLIB_METHOD_MARKER = "CGLIB$";
     private static final String BYTE_BUDDY_METHOD_MARKER = "$accessor$";
     private static final String[] EXCLUDED_METHOD_NAMES = new String[] {
-            "equals", "finalize", "getClass", "hashCode", "notify", "notifyAll", "wait", // java.lang.Object
+            "clone", "equals", "finalize", "getClass", "hashCode", "notify", "notifyAll", "wait", // java.lang.Object
             "getInvocationHandler", "getProxyClass", "isProxyClass", "newProxyInstance" // java.lang.Proxy
     };
     private final CamelContext camelContext;
@@ -100,18 +99,6 @@ public class BeanInfo {
 
     public BeanInfo(CamelContext camelContext, Class<?> type, Method explicitMethod, ParameterMappingStrategy strategy,
                     BeanComponent beanComponent) {
-
-        // use type resolver
-        BeanInfoTypeResolver typeResolver = CamelContextHelper.findByType(camelContext, BeanInfoTypeResolver.class);
-        if (typeResolver == null) {
-            // use default instance
-            typeResolver = DefaultBeanInfoTypeResolver.INSTANCE;
-        }
-        Object[] resolved = typeResolver.resolve(type, explicitMethod);
-        if (resolved != null) {
-            type = (Class<?>) resolved[0];
-            explicitMethod = (Method) resolved[1];
-        }
 
         this.camelContext = camelContext;
         this.type = type;
@@ -388,7 +375,7 @@ public class BeanInfo {
             // maybe the method overrides, and the method map keeps info of the source override we can use
             for (Map.Entry<Method, MethodInfo> methodEntry : methodMap.entrySet()) {
                 Method source = methodEntry.getKey();
-                if (org.apache.camel.util.ObjectHelper.isOverridingMethod(getType(), source, method, false)) {
+                if (isOverridingMethod(source, method)) {
                     answer = methodEntry.getValue();
                     break;
                 }
@@ -427,7 +414,7 @@ public class BeanInfo {
             Class<?> parameterType = parameterTypes[i];
             Annotation[] parameterAnnotations
                     = parametersAnnotations[i].toArray(new Annotation[parametersAnnotations[i].size()]);
-            Expression expression = createParameterUnmarshalExpression(clazz, method, parameterType, parameterAnnotations);
+            Expression expression = createParameterUnmarshalExpression(method, parameterType, parameterAnnotations);
             hasCustomAnnotation |= expression != null;
 
             ParameterInfo parameterInfo = new ParameterInfo(i, parameterType, parameterAnnotations, expression);
@@ -905,11 +892,6 @@ public class BeanInfo {
             }
         }
 
-        // special for Object where clone is not allowed to be called directly
-        if (Object.class == clazz && "clone".equals(name)) {
-            return false;
-        }
-
         // must not be a private method
         boolean privateMethod = Modifier.isPrivate(method.getModifiers());
         if (privateMethod) {
@@ -930,8 +912,9 @@ public class BeanInfo {
     }
 
     /**
-     * Gets the most specific override of a given method, if any. Indeed, overrides may have already been found while
-     * inspecting sub classes. Or the given method could override an interface extra method.
+     * Gets the most specific override of a given method, if any. Ignores overrides from synthetic classes. Indeed,
+     * overrides may have already been found while inspecting sub classes. Or the given method could override an
+     * interface extra method.
      *
      * @param  proposedMethodInfo the method for which a more specific override is searched
      * @return                    The already registered most specific override if any, otherwise <code>null</code>
@@ -941,16 +924,24 @@ public class BeanInfo {
             Method alreadyRegisteredMethod = alreadyRegisteredMethodInfo.getMethod();
             Method proposedMethod = proposedMethodInfo.getMethod();
 
-            if (org.apache.camel.util.ObjectHelper.isOverridingMethod(getType(), proposedMethod, alreadyRegisteredMethod,
-                    false)) {
+            if (!alreadyRegisteredMethod.getDeclaringClass().isSynthetic()
+                    && isOverridingMethod(proposedMethod, alreadyRegisteredMethod)) {
                 return alreadyRegisteredMethodInfo;
-            } else if (org.apache.camel.util.ObjectHelper.isOverridingMethod(getType(), alreadyRegisteredMethod, proposedMethod,
-                    false)) {
+            } else if (isOverridingMethod(alreadyRegisteredMethod, proposedMethod)) {
                 return proposedMethodInfo;
             }
         }
 
         return null;
+    }
+
+    /**
+     * Wrapper loosely checking the bean type for overrides
+     * 
+     * @see org.apache.camel.util.ObjectHelper#isOverridingMethod(Class, Method, Method, boolean)
+     */
+    private boolean isOverridingMethod(Method source, Method target) {
+        return org.apache.camel.util.ObjectHelper.isOverridingMethod(getType(), source, target, false);
     }
 
     private MethodInfo chooseMethodWithCustomAnnotations(Collection<MethodInfo> possibles) {
@@ -974,12 +965,12 @@ public class BeanInfo {
      * parameter cannot be mapped due to insufficient annotations or not fitting with the default type conventions.
      */
     private Expression createParameterUnmarshalExpression(
-            Class<?> clazz, Method method,
+            Method method,
             Class<?> parameterType, Annotation[] parameterAnnotation) {
 
         // look for a parameter annotation that converts into an expression
         for (Annotation annotation : parameterAnnotation) {
-            Expression answer = createParameterUnmarshalExpressionForAnnotation(clazz, method, parameterType, annotation);
+            Expression answer = createParameterUnmarshalExpressionForAnnotation(method, parameterType, annotation);
             if (answer != null) {
                 return answer;
             }
@@ -989,7 +980,7 @@ public class BeanInfo {
     }
 
     private Expression createParameterUnmarshalExpressionForAnnotation(
-            Class<?> clazz, Method method,
+            Method method,
             Class<?> parameterType, Annotation annotation) {
         if (annotation instanceof ExchangeProperty) {
             ExchangeProperty propertyAnnotation = (ExchangeProperty) annotation;
