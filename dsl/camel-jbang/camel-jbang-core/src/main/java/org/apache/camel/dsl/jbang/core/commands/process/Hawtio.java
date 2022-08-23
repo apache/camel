@@ -33,7 +33,7 @@ import picocli.CommandLine.Command;
 @Command(name = "hawtio", description = "Launch Hawtio web console")
 public class Hawtio extends CamelCommand {
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "1")
+    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name;
 
     @CommandLine.Option(names = { "--version" },
@@ -42,7 +42,7 @@ public class Hawtio extends CamelCommand {
 
     // use port 8888 as 8080 is too commonly used
     @CommandLine.Option(names = { "--port" },
-                        description = "Port number to use for Hawtio web console", defaultValue = "8888")
+                        description = "Port number to use for Hawtio web console (port 8888 by default)", defaultValue = "8888")
     int port = 8888;
 
     @CommandLine.Option(names = { "--openUrl" },
