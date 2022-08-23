@@ -36,15 +36,15 @@ import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "integration", aliases = {"int", "integration", "context"},
-        description = "List status of the running Camel integrations")
+@Command(name = "integration", aliases = { "int", "integration", "context" },
+         description = "List status of the running Camel integrations")
 public class CamelStatusContext extends ProcessBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = {"--sort"},
-            description = "Sort by pid, name or age", defaultValue = "pid")
+    @CommandLine.Option(names = { "--sort" },
+                        description = "Sort by pid, name or age", defaultValue = "pid")
     String sort;
 
     public CamelStatusContext(CamelJBangMain main) {
