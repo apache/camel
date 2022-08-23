@@ -31,6 +31,7 @@ import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.StartupStep;
@@ -343,8 +344,11 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
                 builder, null);
         prepareErrorHandlerAware(route, errorHandler);
 
-        // okay route has been created from the model, then the model is no longer needed, and we can de-reference
-        camelContext.adapt(ExtendedCamelContext.class).addBootstrap(route::clearRouteModel);
+        // only during startup phase
+        if (camelContext.getStatus().ordinal() < ServiceStatus.Started.ordinal()) {
+            // okay route has been created from the model, then the model is no longer needed, and we can de-reference
+            camelContext.adapt(ExtendedCamelContext.class).addBootstrap(route::clearRouteModel);
+        }
 
         return route;
     }
