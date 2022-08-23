@@ -16,31 +16,13 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.process;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import com.github.freva.asciitable.AsciiTable;
-import com.github.freva.asciitable.Column;
+import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.TimeUtils;
-import org.apache.camel.util.json.JsonObject;
-import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "status", description = "List status of the running Camel integrations")
-public class CamelStatus extends ProcessBaseCommand {
-
-    @CommandLine.Option(names = { "--sort" },
-                        description = "Sort by pid, name or age", defaultValue = "pid")
-    String sort;
+@CommandLine.Command(name = "status",
+                     description = "List status of the running Camel integrations (use --help to see sub commands)")
+public class CamelStatus extends CamelCommand {
 
     public CamelStatus(CamelJBangMain main) {
         super(main);
@@ -48,85 +30,7 @@ public class CamelStatus extends ProcessBaseCommand {
 
     @Override
     public Integer call() throws Exception {
-        List<Row> rows = new ArrayList<>();
-
-        ProcessHandle.allProcesses()
-                .sorted((o1, o2) -> {
-                    switch (sort) {
-                        case "pid":
-                            return Long.compare(o1.pid(), o2.pid());
-                        case "name":
-                            return extractName(o1).compareTo(extractName(o2));
-                        case "age":
-                            // we want newest in top
-                            return Long.compare(extractSince(o1), extractSince(o2)) * -1;
-                        default:
-                            return 0;
-                    }
-                })
-                .forEach(ph -> {
-                    Row row = new Row();
-                    row.name = extractName(ph);
-                    if (ObjectHelper.isNotEmpty(row.name)) {
-                        row.pid = "" + ph.pid();
-                        row.ago = TimeUtils.printSince(extractSince(ph));
-                        JsonObject status = loadStatus(ph.pid());
-                        if (status != null) {
-                            row.state = status.getString("state").toLowerCase(Locale.ROOT);
-                            Map<String, ?> stats = status.getMap("statistics");
-                            if (stats != null) {
-                                row.total = stats.get("exchangesTotal").toString();
-                                row.inflight = stats.get("exchangesInflight").toString();
-                                row.failed = stats.get("exchangesFailed").toString();
-                                Object last = stats.get("sinceLastExchange");
-                                if (last != null) {
-                                    row.sinceLast = last.toString();
-                                }
-                            }
-                        }
-                        rows.add(row);
-                    }
-                });
-
-        if (!rows.isEmpty()) {
-            System.out.println(AsciiTable.getTable(AsciiTable.BASIC_ASCII_NO_DATA_SEPARATORS, rows, Arrays.asList(
-                    new Column().header("PID").with(r -> r.pid),
-                    new Column().header("Name").maxColumnWidth(30).with(r -> r.name),
-                    new Column().header("State").with(r -> r.state),
-                    new Column().header("Age").with(r -> r.ago),
-                    new Column().header("Since Last").with(r -> r.sinceLast),
-                    new Column().header("Total #").with(r -> r.total),
-                    new Column().header("Failed #").with(r -> r.failed),
-                    new Column().header("Inflight #").with(r -> r.inflight))));
-        }
-
+        new CommandLine(this).execute("--help");
         return 0;
     }
-
-    private JsonObject loadStatus(long pid) {
-        try {
-            File f = getStatusFile("" + pid);
-            if (f != null) {
-                FileInputStream fis = new FileInputStream(f);
-                String text = IOHelper.loadText(fis);
-                IOHelper.close(fis);
-                return (JsonObject) Jsoner.deserialize(text);
-            }
-        } catch (Throwable e) {
-            // ignore
-        }
-        return null;
-    }
-
-    private static class Row {
-        String pid;
-        String name;
-        String ago;
-        String state;
-        String total;
-        String failed;
-        String inflight;
-        String sinceLast;
-    }
-
 }

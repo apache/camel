@@ -77,4 +77,11 @@ abstract class ProcessBaseCommand extends CamelCommand {
         return since;
     }
 
+    static String maxWidth(String text, int max) {
+        if (text == null || text.length() <= max) {
+            return text;
+        }
+        return text.substring(0, max);
+    }
+
 }

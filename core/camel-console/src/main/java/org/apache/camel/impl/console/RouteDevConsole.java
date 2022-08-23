@@ -17,6 +17,7 @@
 package org.apache.camel.impl.console;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -68,6 +69,11 @@ public class RouteDevConsole extends AbstractDevConsole {
             sb.append(String.format("\n    Mean Time: %s", TimeUtils.printDuration(mrb.getMeanProcessingTime(), true)));
             sb.append(String.format("\n    Max Time: %s", TimeUtils.printDuration(mrb.getMaxProcessingTime(), true)));
             sb.append(String.format("\n    Min Time: %s", TimeUtils.printDuration(mrb.getMinProcessingTime(), true)));
+            Date last = mrb.getLastExchangeCreatedTimestamp();
+            if (last != null) {
+                String ago = TimeUtils.printSince(last.getTime());
+                sb.append(String.format("\n    Since Last: %s", ago));
+            }
             sb.append("\n");
             return null;
         };
@@ -98,6 +104,11 @@ public class RouteDevConsole extends AbstractDevConsole {
             stats.put("meanProcessingTime", mrb.getMeanProcessingTime());
             stats.put("maxProcessingTime", mrb.getMaxProcessingTime());
             stats.put("minProcessingTime", mrb.getMinProcessingTime());
+            Date last = mrb.getLastExchangeCreatedTimestamp();
+            if (last != null) {
+                String ago = TimeUtils.printSince(last.getTime());
+                stats.put("sinceLastExchange", ago);
+            }
             jo.put("statistics", stats);
             return null;
         };

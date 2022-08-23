@@ -128,7 +128,7 @@ using the `--dev` options as shown:
 camel run foo.yaml --dev
 ----
 
-Then while the Camel application is running, you can update the YAML route and update when saving.
+Then while the Camel integration is running, you can update the YAML route and update when saving.
 
 This works for all DLS even java, so you can do:
 
@@ -138,7 +138,7 @@ camel run hello.java --dev
 ----
 
 NOTE: The live reload is meant for development purposes, and if you encounter problems with reloading
-such as JVM class loading issues, then you may need to restart the application.
+such as JVM class loading issues, then you may need to restart the integration.
 
 === Developer Console
 
@@ -152,7 +152,7 @@ camel run hello.java --console
 The console is then accessible from a web browser at: http://localhost:8080/q/dev (by default).
 The link is also shown in the log when Camel is starting up.
 
-The console can give you insights into your running Camel application, such as reporting the top
+The console can give you insights into your running Camel integration, such as reporting the top
 routes that takes the longest time to process messages. You can then drill down to pin-point, exactly
 which individual EIPs in these routes are the slowest.
 
@@ -519,7 +519,7 @@ For example. you can copy this to your clipboard and then run it afterwards:
 camel run clipboard.xml
 ----
 
-=== Controlling local Camel applications
+=== Controlling local Camel integrations
 
 To list the currently running Camel JBang integrations you use the `ps` command:
 
@@ -530,7 +530,7 @@ camel ps
 44805 camel run dude.java (age: 58s)
 ----
 
-This lists the PID, the name and age of the application.
+This lists the PID, the name and age of the integration.
 
 You can use the `stop` command to stop any of these running Camel integrations.
 For example to stop dude, you can do
@@ -562,9 +562,55 @@ Stopping running Camel integration (pid: 42171)
 Stopping running Camel integration (pid: 44805)
 ----
 
+=== Status of local Camel integrations
+
+The status command in Camel JBang is used for displaying Camel specific information
+for one or all of the running Camel integrations.
+
+To display the state of the running Camel integrations:
+
+[source,bash]
+----
+camel status integration
++------+----------+---------+-------+---------+----------+------------+------------+
+| PID  | Name     | State   | Age   | Total # | Failed # | Inflight # | Since Last |
++------+----------+---------+-------+---------+----------+------------+------------+
+| 2617 | bar.yaml | started | 1h27m |    5231 |        0 |          0 |         0s |
+| 2630 | foo.java | started | 1h27m |    1050 |        0 |          0 |         4s |
++------+----------+---------+-------+---------+----------+------------+------------+
+----
+
+TIP: You can use `camel status int` or `camel status context` as a short-hand
+command for displaying the status as above.
+
+This displays overall information for every Camel integration, where you can see
+the total number of messages processed. The column _Since Last_
+shows how long time ago the integration was active processing
+incoming messages.
+
+You can also see the status of every routes, from all the local Camel integrations:
+
+[source,bash]
+----
+camel status route
++------+------------+-----------------------+-------------------------------------+---------+--------+---------+--------+----------+--------+--------+--------+----------+
+| PID  | Name       | Route ID              | From                                | State   | Uptime |  Total  | Failed | Inflight |  Mean  |  Max   |  Min   |  Since   |
+|      |            |                       |                                     |         |        |    #    |   #    |    #     |  (ms)  |  (ms)  |  (ms)  |   Last   |
++------+------------+-----------------------+-------------------------------------+---------+--------+---------+--------+----------+--------+--------+--------+----------+
+| 2617 | bar.yaml   | route1                | timer://yaml2?period=1000           | started |  1h31m |    5483 |      0 |        0 |      0 |     59 |      0 |       0s |
+| 7313 | chuck.yaml | chuck                 | kamelet://chuck-norris-source       | started |    12s |       2 |      0 |        0 |      0 |      1 |      0 |       1s |
+|      |            | chuck-norris-source-1 | timer://chuck?period=10000          | started |    12s |       2 |      0 |        0 |    105 |    133 |     78 |       1s |
+|      |            | log-sink-2            | kamelet://source?routeId=log-sink-2 | started |    12s |       2 |      0 |        0 |      0 |      0 |      0 |       1s |
+| 2630 | foo.java   | java                  | timer://java?period=5000            | started |  1h31m |    1101 |      0 |        0 |      0 |     10 |      0 |       1s |
++------+------------+-----------------------+-------------------------------------+---------+--------+---------+--------+----------+--------+--------+--------+----------+
+----
+
+TIP: Use `camel status --help` to display all the available commands as additional will be added in upcoming releases.
+
+
 === Using Jolokia and Hawtio
 
-The https://hawt.io/[Hawtio] web console allows inspecting running Camel applications, such
+The https://hawt.io/[Hawtio] web console allows inspecting running Camel integrations, such
 as all the JMX management information, and not but least to visualize the Camel routes
 with live performance metrics. Hawtio is a handy tool for many years, and we have made it
 easy to use Hawtio with Camel JBang.
@@ -616,7 +662,7 @@ to multiple different Camel integrations and from this list select which to load
 
 Click the green _lightning_ icon to connect to running Camel integration (of choice).
 
-You can uninstall the Jolokia JVM Agent in a running Camel application when no longer needed:
+You can uninstall the Jolokia JVM Agent in a running Camel integration when no longer needed:
 
 [source,bash]
 ----
@@ -750,7 +796,7 @@ IMPORTANT: The Java source files cannot use package names. This may change in th
 
 === Dependency Injection in Java classes
 
-When running Camel applications with camel-jbang, then the runtime is `camel-main` based. This means
+When running Camel integrations with camel-jbang, then the runtime is `camel-main` based. This means
 there is no Spring Boot, or Quarkus available. However, we have added support for using annotation
 based dependency injection in Java classes.
 
@@ -821,7 +867,7 @@ See the https://github.com/apache/camel-kamelets-examples/tree/main/jbang/open-a
 
 == Creating Projects
 
-You can _export_ your Camel JBang application to a traditional Java based project such as Spring Boot or Quarkus.
+You can _export_ your Camel JBang integration to a traditional Java based project such as Spring Boot or Quarkus.
 
 You may want to do this after you have built a prototype using Camel JBang, and are in need
 of a traditional Java based project with more need for Java coding, or wanting to use the powerful

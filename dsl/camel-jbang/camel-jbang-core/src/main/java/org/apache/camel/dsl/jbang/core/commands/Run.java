@@ -274,7 +274,6 @@ class Run extends CamelCommand {
         return prop;
     }
 
-    // CHECKSTYLE:OFF
     private int run() throws Exception {
         File work = new File(WORK_DIR);
         removeDir(work);
@@ -408,32 +407,7 @@ class Run extends CamelCommand {
         writeSetting(main, profileProperties, "camel.jbang.jfr-profile", jfrProfile != null ? jfrProfile : null);
 
         if (fileLock) {
-            lockFile = createLockFile(getPid());
-            if (lockFile != null) {
-                statusFile = createLockFile(lockFile.getName() + "-status.json");
-            }
-            // to trigger shutdown on file lock deletion
-            executor = Executors.newSingleThreadScheduledExecutor();
-            executor.scheduleWithFixedDelay(() -> {
-                // if the lock file is deleted then stop
-                if (!lockFile.exists()) {
-                    context.stop();
-                    return;
-                }
-                // update status file with details from the context console
-                try {
-                    DevConsole dc = main.getCamelContext().adapt(ExtendedCamelContext.class)
-                            .getDevConsoleResolver().resolveDevConsole("context");
-                    if (dc != null) {
-                        JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON);
-                        if (json != null) {
-                            IOHelper.writeText(json.toJson(), statusFile);
-                        }
-                    }
-                } catch (Throwable e) {
-                    // ignore
-                }
-            }, 1000, 1000, TimeUnit.MILLISECONDS);
+            initLockFile(main);
         }
 
         StringJoiner js = new StringJoiner(",");
@@ -593,7 +567,41 @@ class Run extends CamelCommand {
 
         return main.getExitCode();
     }
-    // CHECKSTYLE:ON
+
+    private void initLockFile(KameletMain main) {
+        lockFile = createLockFile(getPid());
+        if (lockFile != null) {
+            statusFile = createLockFile(lockFile.getName() + "-status.json");
+        }
+        // to trigger shutdown on file lock deletion
+        executor = Executors.newSingleThreadScheduledExecutor();
+        executor.scheduleWithFixedDelay(() -> {
+            // if the lock file is deleted then stop
+            if (!lockFile.exists()) {
+                context.stop();
+                return;
+            }
+            // update status file with details from the context console
+            try {
+                DevConsole dc = main.getCamelContext().adapt(ExtendedCamelContext.class)
+                        .getDevConsoleResolver().resolveDevConsole("context");
+                DevConsole dc2 = main.getCamelContext().adapt(ExtendedCamelContext.class)
+                        .getDevConsoleResolver().resolveDevConsole("route");
+                if (dc != null && dc2 != null) {
+                    JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON);
+                    JsonObject json2 = (JsonObject) dc2.call(DevConsole.MediaType.JSON);
+                    if (json != null && json2 != null) {
+                        JsonObject root = new JsonObject();
+                        root.put("context", json);
+                        root.put("routes", json2.get("routes"));
+                        IOHelper.writeText(root.toJson(), statusFile);
+                    }
+                }
+            } catch (Throwable e) {
+                // ignore
+            }
+        }, 2000, 2000, TimeUnit.MILLISECONDS);
+    }
 
     private String evalGistSource(KameletMain main, String file) throws Exception {
         StringJoiner routes = new StringJoiner(",");
