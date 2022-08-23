@@ -562,16 +562,16 @@ Stopping running Camel integration (pid: 42171)
 Stopping running Camel integration (pid: 44805)
 ----
 
-=== Status of local Camel integrations
+=== Get status of Camel integrations
 
-The status command in Camel JBang is used for displaying Camel specific information
-for one or all of the running Camel integrations.
+The `get` command in Camel JBang is used for getting status for one
+or all of the running Camel integrations.
 
-To display the state of the running Camel integrations:
+To display the status of the running Camel integrations:
 
 [source,bash]
 ----
-camel status integration
+camel get integration
 +------+----------+---------+-------+---------+----------+------------+------------+
 | PID  | Name     | State   | Age   | Total # | Failed # | Inflight # | Since Last |
 +------+----------+---------+-------+---------+----------+------------+------------+
@@ -580,8 +580,8 @@ camel status integration
 +------+----------+---------+-------+---------+----------+------------+------------+
 ----
 
-TIP: You can use `camel status int` or `camel status context` as a short-hand
-command for displaying the status as above.
+TIP: You can use `camel get int` or `camel get context` as a short-hand
+command for displaying the integration status as above.
 
 This displays overall information for every Camel integration, where you can see
 the total number of messages processed. The column _Since Last_
@@ -592,7 +592,7 @@ You can also see the status of every routes, from all the local Camel integratio
 
 [source,bash]
 ----
-camel status route
+camel get route
 +------+------------+-----------------------+-------------------------------------+---------+--------+---------+--------+----------+--------+--------+--------+----------+
 | PID  | Name       | Route ID              | From                                | State   | Uptime |  Total  | Failed | Inflight |  Mean  |  Max   |  Min   |  Since   |
 |      |            |                       |                                     |         |        |    #    |   #    |    #     |  (ms)  |  (ms)  |  (ms)  |   Last   |
@@ -605,7 +605,7 @@ camel status route
 +------+------------+-----------------------+-------------------------------------+---------+--------+---------+--------+----------+--------+--------+--------+----------+
 ----
 
-TIP: Use `camel status --help` to display all the available commands as additional will be added in upcoming releases.
+TIP: Use `camel get --help` to display all the available commands as additional will be added in upcoming releases.
 
 
 === Using Jolokia and Hawtio

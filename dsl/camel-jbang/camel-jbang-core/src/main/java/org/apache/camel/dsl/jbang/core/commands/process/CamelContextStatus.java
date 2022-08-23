@@ -30,14 +30,15 @@ import com.github.freva.asciitable.HorizontalAlign;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "route", description = "List status of the running Camel routes")
-public class CamelStatusRoute extends ProcessBaseCommand {
+@Command(name = "integration", aliases = { "int", "integration", "integrations", "context" },
+         description = "Get status of Camel integrations")
+public class CamelContextStatus extends ProcessBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -46,7 +47,7 @@ public class CamelStatusRoute extends ProcessBaseCommand {
                         description = "Sort by pid, name or age", defaultValue = "pid")
     String sort;
 
-    public CamelStatusRoute(CamelJBangMain main) {
+    public CamelContextStatus(CamelJBangMain main) {
         super(main);
     }
 
@@ -71,43 +72,27 @@ public class CamelStatusRoute extends ProcessBaseCommand {
                     }
                 })
                 .forEach(ph -> {
-                    String name = extractName(ph);
-                    if (ObjectHelper.isNotEmpty(name)) {
+                    Row row = new Row();
+                    row.name = extractName(ph);
+                    if (ObjectHelper.isNotEmpty(row.name)) {
+                        row.pid = "" + ph.pid();
+                        row.ago = TimeUtils.printSince(extractSince(ph));
                         JsonObject status = loadStatus(ph.pid());
                         if (status != null) {
-                            JsonArray array = (JsonArray) status.get("routes");
-                            for (int i = 0; i < array.size(); i++) {
-                                JsonObject o = (JsonObject) array.get(i);
-                                Row row = new Row();
-                                rows.add(row);
-                                if (i == 0) {
-                                    // we only want pid/name in 1st row per camel integration (to nest sub routes)
-                                    row.pid = "" + ph.pid();
-                                    row.name = name;
-                                }
-                                row.routeId = o.getString("routeId");
-                                row.from = o.getString("from");
-                                row.source = o.getString("source");
-                                row.state = o.getString("state").toLowerCase(Locale.ROOT);
-                                row.uptime = o.getString("uptime");
-                                Map<String, ?> stats = o.getMap("statistics");
-                                if (stats != null) {
-                                    row.total = stats.get("exchangesTotal").toString();
-                                    row.inflight = stats.get("exchangesInflight").toString();
-                                    row.failed = stats.get("exchangesFailed").toString();
-                                    row.mean = stats.get("meanProcessingTime").toString();
-                                    if ("-1".equals(row.mean)) {
-                                        row.mean = null;
-                                    }
-                                    row.max = stats.get("maxProcessingTime").toString();
-                                    row.min = stats.get("minProcessingTime").toString();
-                                    Object last = stats.get("sinceLastExchange");
-                                    if (last != null) {
-                                        row.sinceLast = last.toString();
-                                    }
+                            status = (JsonObject) status.get("context");
+                            row.state = status.getString("state").toLowerCase(Locale.ROOT);
+                            Map<String, ?> stats = status.getMap("statistics");
+                            if (stats != null) {
+                                row.total = stats.get("exchangesTotal").toString();
+                                row.inflight = stats.get("exchangesInflight").toString();
+                                row.failed = stats.get("exchangesFailed").toString();
+                                Object last = stats.get("sinceLastExchange");
+                                if (last != null) {
+                                    row.sinceLast = last.toString();
                                 }
                             }
                         }
+                        rows.add(row);
                     }
                 });
 
@@ -116,21 +101,12 @@ public class CamelStatusRoute extends ProcessBaseCommand {
                     new Column().header("PID").with(r -> r.pid),
                     new Column().header("Name").dataAlign(HorizontalAlign.LEFT).maxColumnWidth(30)
                             .with(r -> maxWidth(r.name, 28)),
-                    new Column().header("Route ID").dataAlign(HorizontalAlign.LEFT).maxColumnWidth(30)
-                            .with(r -> maxWidth(r.routeId, 28)),
-                    new Column().header("From").dataAlign(HorizontalAlign.LEFT).maxColumnWidth(40)
-                            .with(r -> maxWidth(r.from, 38)),
                     new Column().header("State").with(r -> r.state),
-                    new Column().header("Uptime").with(r -> r.uptime),
-                    new Column().header("Total\n#").headerAlign(HorizontalAlign.CENTER).with(r -> r.total),
-                    new Column().header("Failed\n#").headerAlign(HorizontalAlign.CENTER).maxColumnWidth(8).with(r -> r.failed),
-                    new Column().header("Inflight\n#").headerAlign(HorizontalAlign.CENTER).maxColumnWidth(10)
-                            .with(r -> r.inflight),
-                    new Column().header("Mean\n(ms)").headerAlign(HorizontalAlign.CENTER).maxColumnWidth(8).with(r -> r.mean),
-                    new Column().header("Max\n(ms)").headerAlign(HorizontalAlign.CENTER).maxColumnWidth(8).with(r -> r.max),
-                    new Column().header("Min\n(ms)").headerAlign(HorizontalAlign.CENTER).maxColumnWidth(8).with(r -> r.min),
-                    new Column().header("Since\nLast").headerAlign(HorizontalAlign.CENTER).maxColumnWidth(10)
-                            .with(r -> r.sinceLast))));
+                    new Column().header("Uptime").with(r -> r.ago),
+                    new Column().header("Total #").with(r -> r.total),
+                    new Column().header("Failed #").with(r -> r.failed),
+                    new Column().header("Inflight #").with(r -> r.inflight),
+                    new Column().header("Since Last").with(r -> r.sinceLast))));
         }
 
         return 0;
@@ -154,17 +130,11 @@ public class CamelStatusRoute extends ProcessBaseCommand {
     private static class Row {
         String pid;
         String name;
-        String routeId;
-        String from;
-        String source;
-        String uptime;
+        String ago;
         String state;
         String total;
         String failed;
         String inflight;
-        String mean;
-        String max;
-        String min;
         String sinceLast;
     }
 

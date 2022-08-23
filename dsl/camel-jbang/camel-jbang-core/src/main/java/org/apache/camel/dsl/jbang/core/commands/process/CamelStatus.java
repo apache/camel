@@ -20,8 +20,8 @@ import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "status",
-                     description = "List status of the running Camel integrations (use --help to see sub commands)")
+@CommandLine.Command(name = "get",
+                     description = "Get status of Camel integrations (use --help to see sub commands)")
 public class CamelStatus extends CamelCommand {
 
     public CamelStatus(CamelJBangMain main) {

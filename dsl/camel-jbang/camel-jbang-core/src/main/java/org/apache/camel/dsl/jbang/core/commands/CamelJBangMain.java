@@ -20,9 +20,9 @@ import java.util.concurrent.Callable;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.commands.process.CamelContextStatus;
+import org.apache.camel.dsl.jbang.core.commands.process.CamelRouteStatus;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelStatus;
-import org.apache.camel.dsl.jbang.core.commands.process.CamelStatusContext;
-import org.apache.camel.dsl.jbang.core.commands.process.CamelStatusRoute;
 import org.apache.camel.dsl.jbang.core.commands.process.Hawtio;
 import org.apache.camel.dsl.jbang.core.commands.process.Jolokia;
 import org.apache.camel.dsl.jbang.core.commands.process.ListProcess;
@@ -41,9 +41,9 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("run", new CommandLine(new Run(main)))
                 .addSubcommand("ps", new CommandLine(new ListProcess(main)))
                 .addSubcommand("stop", new CommandLine(new StopProcess(main)))
-                .addSubcommand("status", new CommandLine(new CamelStatus(main))
-                        .addSubcommand("context", new CommandLine(new CamelStatusContext(main)))
-                        .addSubcommand("route", new CommandLine(new CamelStatusRoute(main))))
+                .addSubcommand("get", new CommandLine(new CamelStatus(main))
+                        .addSubcommand("context", new CommandLine(new CamelContextStatus(main)))
+                        .addSubcommand("route", new CommandLine(new CamelRouteStatus(main))))
                 .addSubcommand("generate", new CommandLine(new CodeGenerator(main))
                         .addSubcommand("rest", new CommandLine(new CodeRestGenerator(main))))
                 .addSubcommand("jolokia", new CommandLine(new Jolokia(main)))
