@@ -49,7 +49,7 @@
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-web-client</artifactId>
-            <version>${vertx-version}</version>
+            <version>${vertx-web-client-version}</version>
         </dependency>
         <dependency>
             <groupId>io.vertx</groupId>
