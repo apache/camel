@@ -335,7 +335,7 @@
     <jira-rest-client-api-version>5.2.4</jira-rest-client-api-version>
     <jnats-version>2.14.1</jnats-version>
     <jodatime2-version>2.10.11</jodatime2-version>
-    <johnzon-version>1.2.18</johnzon-version>
+    <johnzon-version>1.2.19</johnzon-version>
     <jolt-version>0.1.7</jolt-version>
     <jool-version>0.9.14</jool-version>
     <jooq-version>3.16.8</jooq-version>
