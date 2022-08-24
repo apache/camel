@@ -46,6 +46,14 @@ public class CamelRouteStatus extends ProcessBaseCommand {
                         description = "Sort by pid, name or age", defaultValue = "pid")
     String sort;
 
+    @CommandLine.Option(names = { "--limit" },
+            description = "Filter routes by limiting to the given number of rows")
+    int limit;
+
+    @CommandLine.Option(names = { "--filter-mean" },
+                        description = "Filter routes that must be slower than the given time (ms)")
+    long mean;
+
     public CamelRouteStatus(CamelJBangMain main) {
         super(main);
     }
@@ -79,12 +87,8 @@ public class CamelRouteStatus extends ProcessBaseCommand {
                             for (int i = 0; i < array.size(); i++) {
                                 JsonObject o = (JsonObject) array.get(i);
                                 Row row = new Row();
-                                rows.add(row);
-                                if (i == 0) {
-                                    // we only want pid/name in 1st row per camel integration (to nest sub routes)
-                                    row.pid = "" + ph.pid();
-                                    row.name = name;
-                                }
+                                row.pid = "" + ph.pid();
+                                row.name = name;
                                 row.routeId = o.getString("routeId");
                                 row.from = o.getString("from");
                                 row.source = o.getString("source");
@@ -106,10 +110,24 @@ public class CamelRouteStatus extends ProcessBaseCommand {
                                         row.sinceLast = last.toString();
                                     }
                                 }
+
+                                boolean add = true;
+                                if (mean > 0 && row.mean != null && Long.parseLong(row.mean) < mean) {
+                                    add = false;
+                                }
+                                if (limit > 0 && rows.size() >= limit) {
+                                    add = false;
+                                }
+                                if (add) {
+                                    rows.add(row);
+                                }
                             }
                         }
                     }
                 });
+
+        // sort rows
+        rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
             System.out.println(AsciiTable.getTable(AsciiTable.BASIC_ASCII_NO_DATA_SEPARATORS, rows, Arrays.asList(
@@ -151,7 +169,12 @@ public class CamelRouteStatus extends ProcessBaseCommand {
         return null;
     }
 
-    private static class Row {
+    protected int sortRow(Row o1, Row o2) {
+        // no sort by default
+        return 0;
+    }
+
+    static class Row {
         String pid;
         String name;
         String routeId;
