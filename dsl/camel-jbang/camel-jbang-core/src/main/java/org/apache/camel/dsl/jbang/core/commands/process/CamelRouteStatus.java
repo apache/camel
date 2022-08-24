@@ -47,7 +47,7 @@ public class CamelRouteStatus extends ProcessBaseCommand {
     String sort;
 
     @CommandLine.Option(names = { "--limit" },
-            description = "Filter routes by limiting to the given number of rows")
+                        description = "Filter routes by limiting to the given number of rows")
     int limit;
 
     @CommandLine.Option(names = { "--filter-mean" },
