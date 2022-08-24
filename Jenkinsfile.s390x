@@ -83,8 +83,10 @@ pipeline {
 
         stage('Test') {
             steps {
-                // Skip the test case execution of modules which are either not supported on s390x or vendor images are not available for s390x.
-                sh "./mvnw $MAVEN_PARAMS $MAVEN_TEST_PARAMS $MAVEN_TEST_LIMIT_PARAMS -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true verify -pl '!docs,!components/camel-kudu,!components/camel-djl,!components/camel-consul,!components/camel-pulsar,!components/camel-xmpp,!components/camel-google/camel-google-pubsub,!components/camel-hdfs,!components/camel-vertx/camel-vertx-kafka/camel-vertx-kafka-component,!components/camel-zookeeper,!components/camel-zookeeper-master'"
+                timeout(unit: 'HOURS', time: 7) {
+                    // Skip the test case execution of modules which are either not supported on s390x or vendor images are not available for s390x.
+                    sh "./mvnw $MAVEN_PARAMS $MAVEN_TEST_PARAMS $MAVEN_TEST_LIMIT_PARAMS -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true verify -pl '!docs,!components/camel-kudu,!components/camel-djl,!components/camel-consul,!components/camel-pulsar,!components/camel-xmpp,!components/camel-google/camel-google-pubsub,!components/camel-hdfs,!components/camel-vertx/camel-vertx-kafka/camel-vertx-kafka-component,!components/camel-zookeeper,!components/camel-zookeeper-master'"
+                }
             }
             post {
                 always {

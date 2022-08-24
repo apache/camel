@@ -72,7 +72,9 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh "./mvnw $MAVEN_PARAMS -Darchetype.test.skip -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true verify"
+                timeout(unit: 'HOURS', time: 7) {
+                    sh "./mvnw $MAVEN_PARAMS -Darchetype.test.skip -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true verify"
+                }
             }
             post {
                 always {
