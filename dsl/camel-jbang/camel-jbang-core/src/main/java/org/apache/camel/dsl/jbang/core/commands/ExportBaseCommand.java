@@ -83,7 +83,7 @@ abstract class ExportBaseCommand extends CamelCommand {
 
     @CommandLine.Option(names = { "--local-kamelet-dir" },
                         description = "Local directory for loading Kamelets (takes precedence)")
-    String localKameletDir;
+    protected String localKameletDir;
 
     @CommandLine.Option(names = { "--spring-boot-version" }, description = "Spring Boot version",
                         defaultValue = "2.7.2")
