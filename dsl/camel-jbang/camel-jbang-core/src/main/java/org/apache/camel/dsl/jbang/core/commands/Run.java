@@ -690,8 +690,8 @@ class Run extends CamelCommand {
         if (localKameletDir == null) {
             main = new KameletMain();
         } else {
-            main = new KameletMain("file://" + localKameletDir);
-            writeSettings("localKameletDir", localKameletDir);
+            main = new KameletMain("file:" + localKameletDir);
+            writeSettings("camel.jbang.localKameletDir", localKameletDir);
         }
         return main;
     }

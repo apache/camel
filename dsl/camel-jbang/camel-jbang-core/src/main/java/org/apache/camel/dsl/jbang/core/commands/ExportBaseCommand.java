@@ -51,7 +51,8 @@ abstract class ExportBaseCommand extends CamelCommand {
             "camel.main.routesIncludePattern",
             "camel.component.properties.location",
             "camel.component.kamelet.location",
-            "camel.jbang.classpathFiles"
+            "camel.jbang.classpathFiles",
+            "camel.jbang.localKameletDir"
     };
 
     @CommandLine.Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "application",
@@ -79,6 +80,10 @@ abstract class ExportBaseCommand extends CamelCommand {
     @CommandLine.Option(names = {
             "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "0.8.1")
     protected String kameletsVersion;
+
+    @CommandLine.Option(names = { "--local-kamelet-dir" },
+                        description = "Local directory for loading Kamelets (takes precedence)")
+    String localKameletDir;
 
     @CommandLine.Option(names = { "--spring-boot-version" }, description = "Spring Boot version",
                         defaultValue = "2.7.3")
@@ -148,6 +153,7 @@ abstract class ExportBaseCommand extends CamelCommand {
         Run run = new Run(getMain());
         // need to declare the profile to use for run
         run.profile = profile;
+        run.localKameletDir = localKameletDir;
         Integer code = run.runSilent();
         return code;
     }
@@ -271,7 +277,7 @@ abstract class ExportBaseCommand extends CamelCommand {
 
         for (String k : SETTINGS_PROP_SOURCE_KEYS) {
             String files = prop.getProperty(k);
-            if (files != null) {
+            if (files != null && !files.isEmpty()) {
                 for (String f : files.split(",")) {
                     String scheme = getScheme(f);
                     if (scheme != null) {
@@ -284,10 +290,16 @@ abstract class ExportBaseCommand extends CamelCommand {
                     String ext = FileUtil.onlyExt(f, true);
                     boolean java = "java".equals(ext);
                     boolean camel = "camel.main.routesIncludePattern".equals(k)
-                            || "camel.component.kamelet.location".equals(k);
+                            || "camel.component.kamelet.location".equals(k)
+                            || "camel.jbang.localKameletDir".equals(k);
                     File target = java ? srcJavaDir : camel ? srcCamelResourcesDir : srcResourcesDir;
                     File source = new File(f);
-                    File out = new File(target, source.getName());
+                    File out;
+                    if (source.isDirectory()) {
+                        out = target;
+                    } else {
+                        out = new File(target, source.getName());
+                    }
                     safeCopy(source, out, true);
                     if (java) {
                         // need to append package name in java source file
@@ -391,6 +403,19 @@ abstract class ExportBaseCommand extends CamelCommand {
 
     protected static void safeCopy(File source, File target, boolean override) throws Exception {
         if (!source.exists()) {
+            return;
+        }
+
+        if (source.isDirectory()) {
+            // flattern files if they are from a directory
+            File[] children = source.listFiles();
+            if (children != null) {
+                for (File child : children) {
+                    if (child.isFile()) {
+                        safeCopy(child, new File(target, child.getName()), override);
+                    }
+                }
+            }
             return;
         }
 

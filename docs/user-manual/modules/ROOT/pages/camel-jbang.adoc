@@ -980,6 +980,9 @@ The follow options related to _exporting_, can be configured in `application.pro
 |`camel.jbang.kameletsVersion`
 |Apache Camel Kamelets version
 
+|`camel.jbang.localKameletDir`
+|Local directory for loading Kamelets
+
 |`camel.jbang.springBootVersion`
 |Spring Boot version
 
