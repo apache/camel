@@ -139,15 +139,15 @@ public class CamelRouteStatus extends ProcessBaseCommand {
                     new Column().header("From").dataAlign(HorizontalAlign.LEFT).maxColumnWidth(40)
                             .with(r -> maxWidth(r.from, 38)),
                     new Column().header("State").with(r -> r.state),
-                    new Column().header("Uptime").with(r -> r.uptime),
-                    new Column().header("Total\n#").headerAlign(HorizontalAlign.CENTER).with(r -> r.total),
-                    new Column().header("Failed\n#").headerAlign(HorizontalAlign.CENTER).maxColumnWidth(8).with(r -> r.failed),
-                    new Column().header("Inflight\n#").headerAlign(HorizontalAlign.CENTER).maxColumnWidth(10)
+                    new Column().header("Age").with(r -> r.uptime),
+                    new Column().header("Total").headerAlign(HorizontalAlign.CENTER).with(r -> r.total),
+                    new Column().header("Failed").headerAlign(HorizontalAlign.CENTER).maxColumnWidth(8).with(r -> r.failed),
+                    new Column().header("Inflight").headerAlign(HorizontalAlign.CENTER).maxColumnWidth(10)
                             .with(r -> r.inflight),
-                    new Column().header("Mean\n(ms)").headerAlign(HorizontalAlign.CENTER).maxColumnWidth(8).with(r -> r.mean),
-                    new Column().header("Max\n(ms)").headerAlign(HorizontalAlign.CENTER).maxColumnWidth(8).with(r -> r.max),
-                    new Column().header("Min\n(ms)").headerAlign(HorizontalAlign.CENTER).maxColumnWidth(8).with(r -> r.min),
-                    new Column().header("Since\nLast").headerAlign(HorizontalAlign.CENTER).maxColumnWidth(10)
+                    new Column().header("Mean").headerAlign(HorizontalAlign.CENTER).maxColumnWidth(8).with(r -> r.mean),
+                    new Column().header("Max").headerAlign(HorizontalAlign.CENTER).maxColumnWidth(8).with(r -> r.max),
+                    new Column().header("Min").headerAlign(HorizontalAlign.CENTER).maxColumnWidth(8).with(r -> r.min),
+                    new Column().header("Last Ago").headerAlign(HorizontalAlign.CENTER).maxColumnWidth(10)
                             .with(r -> r.sinceLast))));
         }
 

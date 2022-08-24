@@ -77,11 +77,13 @@ public class CamelContextStatus extends ProcessBaseCommand {
                     if (ObjectHelper.isNotEmpty(row.name)) {
                         row.pid = "" + ph.pid();
                         row.ago = TimeUtils.printSince(extractSince(ph));
-                        JsonObject status = loadStatus(ph.pid());
-                        if (status != null) {
-                            status = (JsonObject) status.get("context");
-                            row.state = status.getString("state").toLowerCase(Locale.ROOT);
-                            Map<String, ?> stats = status.getMap("statistics");
+                        JsonObject root = loadStatus(ph.pid());
+                        if (root != null) {
+                            JsonObject hc = (JsonObject) root.get("healthChecks");
+                            row.ready = hc.getString("ready") + "/" + hc.getString("total");
+                            JsonObject context = (JsonObject) root.get("context");
+                            row.state = context.getString("state").toLowerCase(Locale.ROOT);
+                            Map<String, ?> stats = context.getMap("statistics");
                             if (stats != null) {
                                 row.total = stats.get("exchangesTotal").toString();
                                 row.inflight = stats.get("exchangesInflight").toString();
@@ -101,12 +103,13 @@ public class CamelContextStatus extends ProcessBaseCommand {
                     new Column().header("PID").with(r -> r.pid),
                     new Column().header("Name").dataAlign(HorizontalAlign.LEFT).maxColumnWidth(30)
                             .with(r -> maxWidth(r.name, 28)),
+                    new Column().header("Ready").dataAlign(HorizontalAlign.CENTER).with(r -> r.ready),
                     new Column().header("State").with(r -> r.state),
-                    new Column().header("Uptime").with(r -> r.ago),
-                    new Column().header("Total #").with(r -> r.total),
-                    new Column().header("Failed #").with(r -> r.failed),
-                    new Column().header("Inflight #").with(r -> r.inflight),
-                    new Column().header("Since Last").with(r -> r.sinceLast))));
+                    new Column().header("Age").with(r -> r.ago),
+                    new Column().header("Total").with(r -> r.total),
+                    new Column().header("Failed").with(r -> r.failed),
+                    new Column().header("Inflight").with(r -> r.inflight),
+                    new Column().header("Last Ago").with(r -> r.sinceLast))));
         }
 
         return 0;
@@ -130,8 +133,9 @@ public class CamelContextStatus extends ProcessBaseCommand {
     private static class Row {
         String pid;
         String name;
-        String ago;
+        String ready;
         String state;
+        String ago;
         String total;
         String failed;
         String inflight;

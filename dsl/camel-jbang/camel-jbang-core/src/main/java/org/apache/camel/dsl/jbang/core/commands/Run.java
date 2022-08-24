@@ -30,6 +30,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -52,6 +53,8 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.generator.openapi.RestDslGenerator;
+import org.apache.camel.health.HealthCheck;
+import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.impl.lw.LightweightCamelContext;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.main.download.DownloadListener;
@@ -587,6 +590,19 @@ class Run extends CamelCommand {
                         .getDevConsoleResolver().resolveDevConsole("context");
                 DevConsole dc2 = main.getCamelContext().adapt(ExtendedCamelContext.class)
                         .getDevConsoleResolver().resolveDevConsole("route");
+                int ready = 0;
+                int total = 0;
+                // and health-check readiness
+                Collection<HealthCheck.Result> res = HealthCheckHelper.invokeReadiness(main.getCamelContext());
+                for (var r : res) {
+                    if (r.getState().equals(HealthCheck.State.UP)) {
+                        ready++;
+                    }
+                    total++;
+                }
+                JsonObject hc = new JsonObject();
+                hc.put("ready", ready);
+                hc.put("total", total);
                 if (dc != null && dc2 != null) {
                     JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON);
                     JsonObject json2 = (JsonObject) dc2.call(DevConsole.MediaType.JSON);
@@ -594,6 +610,7 @@ class Run extends CamelCommand {
                         JsonObject root = new JsonObject();
                         root.put("context", json);
                         root.put("routes", json2.get("routes"));
+                        root.put("healthChecks", hc);
                         IOHelper.writeText(root.toJson(), statusFile);
                     }
                 }
