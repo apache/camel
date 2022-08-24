@@ -32,6 +32,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -238,17 +239,23 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
             ClassLoader cl = camelContext.getApplicationContextClassLoader();
             if (cl instanceof URLClassLoader) {
                 URLClassLoader ucl = (URLClassLoader) cl;
+                // create path like target to match against the file url
+                String urlTarget = groupId + "/" + artifactId;
+                urlTarget = urlTarget.replace('.', '/');
+                urlTarget += "/" + version + "/" + target + ".jar";
+                urlTarget = FileUtil.normalizePath(urlTarget); // windows vs linux
                 for (URL u : ucl.getURLs()) {
                     String s = u.toString();
-                    if (s.contains(target)) {
+                    s = FileUtil.normalizePath(s);
+                    if (s.contains(urlTarget)) {
                         // trigger listener
                         if (listener) {
                             for (DownloadListener dl : downloadListeners) {
                                 dl.onDownloadDependency(groupId, artifactId, version);
                             }
+                            // already on classpath
+                            return true;
                         }
-                        // already on classpath
-                        return true;
                     }
                 }
             }
