@@ -30,6 +30,7 @@ import com.github.freva.asciitable.HorizontalAlign;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -130,25 +131,24 @@ public class CamelRouteStatus extends ProcessBaseCommand {
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            System.out.println(AsciiTable.getTable(AsciiTable.BASIC_ASCII_NO_DATA_SEPARATORS, rows, Arrays.asList(
-                    new Column().header("PID").with(r -> r.pid),
-                    new Column().header("Name").dataAlign(HorizontalAlign.LEFT).maxColumnWidth(30)
+            System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
+                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxColumnWidth(30)
                             .with(r -> maxWidth(r.name, 28)),
-                    new Column().header("Route ID").dataAlign(HorizontalAlign.LEFT).maxColumnWidth(30)
+                    new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxColumnWidth(30)
                             .with(r -> maxWidth(r.routeId, 28)),
-                    new Column().header("From").dataAlign(HorizontalAlign.LEFT).maxColumnWidth(40)
+                    new Column().header("FROM").dataAlign(HorizontalAlign.LEFT).maxColumnWidth(40)
                             .with(r -> maxWidth(r.from, 38)),
-                    new Column().header("State").with(r -> r.state),
-                    new Column().header("Age").with(r -> r.uptime),
-                    new Column().header("Total").headerAlign(HorizontalAlign.CENTER).with(r -> r.total),
-                    new Column().header("Failed").headerAlign(HorizontalAlign.CENTER).maxColumnWidth(8).with(r -> r.failed),
-                    new Column().header("Inflight").headerAlign(HorizontalAlign.CENTER).maxColumnWidth(10)
-                            .with(r -> r.inflight),
-                    new Column().header("Mean").headerAlign(HorizontalAlign.CENTER).maxColumnWidth(8).with(r -> r.mean),
-                    new Column().header("Max").headerAlign(HorizontalAlign.CENTER).maxColumnWidth(8).with(r -> r.max),
-                    new Column().header("Min").headerAlign(HorizontalAlign.CENTER).maxColumnWidth(8).with(r -> r.min),
-                    new Column().header("Last Ago").headerAlign(HorizontalAlign.CENTER).maxColumnWidth(10)
-                            .with(r -> r.sinceLast))));
+                    new Column().header("STATE").headerAlign(HorizontalAlign.CENTER)
+                            .with(r -> StringHelper.capitalize(r.state)),
+                    new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.uptime),
+                    new Column().header("TOTAL").with(r -> r.total),
+                    new Column().header("FAILED").with(r -> r.failed),
+                    new Column().header("INFLIGHT").with(r -> r.inflight),
+                    new Column().header("MEAN").with(r -> r.mean),
+                    new Column().header("MIN").with(r -> r.min),
+                    new Column().header("MAX").with(r -> r.max),
+                    new Column().header("LAST AGO").with(r -> r.sinceLast))));
         }
 
         return 0;

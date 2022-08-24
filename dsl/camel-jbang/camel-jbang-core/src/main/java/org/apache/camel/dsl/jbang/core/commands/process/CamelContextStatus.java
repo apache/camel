@@ -30,6 +30,7 @@ import com.github.freva.asciitable.HorizontalAlign;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -99,17 +100,18 @@ public class CamelContextStatus extends ProcessBaseCommand {
                 });
 
         if (!rows.isEmpty()) {
-            System.out.println(AsciiTable.getTable(AsciiTable.BASIC_ASCII_NO_DATA_SEPARATORS, rows, Arrays.asList(
-                    new Column().header("PID").with(r -> r.pid),
-                    new Column().header("Name").dataAlign(HorizontalAlign.LEFT).maxColumnWidth(30)
+            System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
+                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxColumnWidth(30)
                             .with(r -> maxWidth(r.name, 28)),
-                    new Column().header("Ready").dataAlign(HorizontalAlign.CENTER).with(r -> r.ready),
-                    new Column().header("State").with(r -> r.state),
-                    new Column().header("Age").with(r -> r.ago),
-                    new Column().header("Total").with(r -> r.total),
-                    new Column().header("Failed").with(r -> r.failed),
-                    new Column().header("Inflight").with(r -> r.inflight),
-                    new Column().header("Last Ago").with(r -> r.sinceLast))));
+                    new Column().header("READY").dataAlign(HorizontalAlign.CENTER).with(r -> r.ready),
+                    new Column().header("STATE").headerAlign(HorizontalAlign.CENTER)
+                            .with(r -> StringHelper.capitalize(r.state)),
+                    new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
+                    new Column().header("TOTAL").with(r -> r.total),
+                    new Column().header("FAILED").with(r -> r.failed),
+                    new Column().header("INFLIGHT").with(r -> r.inflight),
+                    new Column().header("LAST AGO").with(r -> r.sinceLast))));
         }
 
         return 0;
