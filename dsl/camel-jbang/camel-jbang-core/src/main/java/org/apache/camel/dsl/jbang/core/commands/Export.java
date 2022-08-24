@@ -47,6 +47,7 @@ class Export extends ExportBaseCommand {
             // allow configuring versions from profile
             this.javaVersion = prop.getProperty("camel.jbang.javaVersion", this.javaVersion);
             this.kameletsVersion = prop.getProperty("camel.jbang.kameletsVersion", this.kameletsVersion);
+            this.localKameletDir = prop.getProperty("camel.jbang.localKameletDir", this.localKameletDir);
             this.quarkusGroupId = prop.getProperty("camel.jbang.quarkusGroupId", this.quarkusGroupId);
             this.quarkusArtifactId = prop.getProperty("camel.jbang.quarkusArtifactId", this.quarkusArtifactId);
             this.quarkusVersion = prop.getProperty("camel.jbang.quarkusVersion", this.quarkusVersion);
@@ -84,6 +85,7 @@ class Export extends ExportBaseCommand {
         cmd.fresh = this.fresh;
         cmd.javaVersion = this.javaVersion;
         cmd.kameletsVersion = this.kameletsVersion;
+        cmd.localKameletDir = this.localKameletDir;
         cmd.logging = this.logging;
         cmd.loggingLevel = this.loggingLevel;
         cmd.mainClassname = this.mainClassname;
