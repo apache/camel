@@ -17,7 +17,11 @@
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.StringJoiner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -26,6 +30,9 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
 
 abstract class ProcessBaseCommand extends CamelCommand {
+
+    private static final String[] DSL_EXT = new String[] { "groovy", "java", "js", "jsh", "kts", "xml", "yaml" };
+    private static final Pattern PATTERN = Pattern.compile("([\\w|\\-.])+");
 
     public ProcessBaseCommand(CamelJBangMain main) {
         super(main);
@@ -63,10 +70,20 @@ abstract class ProcessBaseCommand extends CamelCommand {
         String name = StringHelper.after(cl, "main.CamelJBang run");
         if (name != null) {
             name = name.trim();
-        } else {
-            name = "";
+            StringJoiner js = new StringJoiner(" ");
+            // focus only on the route files supported (to skip such as readme files)
+            Matcher matcher = PATTERN.matcher(name);
+            while (matcher.find()) {
+                String part = matcher.group();
+                String ext = FileUtil.onlyExt(part, true);
+                if (ext != null && Arrays.asList(DSL_EXT).contains(ext)) {
+                    js.add(part);
+                }
+            }
+            return js.toString();
         }
-        return name;
+
+        return "";
     }
 
     static long extractSince(ProcessHandle ph) {
