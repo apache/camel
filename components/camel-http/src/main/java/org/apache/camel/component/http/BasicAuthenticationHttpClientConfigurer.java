@@ -44,7 +44,7 @@ public class BasicAuthenticationHttpClientConfigurer implements HttpClientConfig
             defaultcreds = new UsernamePasswordCredentials(username, password);
         }
         clientBuilder.setDefaultCredentialsProvider(HttpCredentialsHelper
-                .getCredentialsProvider(host, null, defaultcreds));
+                .getCredentialsProvider(clientBuilder, host, null, defaultcreds));
     }
 
 }

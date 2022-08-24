@@ -63,7 +63,7 @@ public class ProxyHttpClientConfigurer implements HttpClientConfigurer {
                 defaultcreds = new UsernamePasswordCredentials(username, password);
             }
             clientBuilder.setDefaultCredentialsProvider(HttpCredentialsHelper
-                    .getCredentialsProvider(host, port, defaultcreds));
+                    .getCredentialsProvider(clientBuilder, host, port, defaultcreds));
         }
     }
 
