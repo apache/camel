@@ -27,7 +27,9 @@ import java.util.Map;
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
+import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -131,14 +133,16 @@ public class CamelRouteStatus extends ProcessBaseCommand {
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
+            boolean sources = rows.stream().noneMatch(r -> r.source == null);
             System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                     new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxColumnWidth(30)
-                            .with(r -> maxWidth(r.name, 28)),
-                    new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxColumnWidth(30)
-                            .with(r -> maxWidth(r.routeId, 28)),
-                    new Column().header("FROM").dataAlign(HorizontalAlign.LEFT).maxColumnWidth(40)
-                            .with(r -> maxWidth(r.from, 38)),
+                    new Column().header(sources ? "SOURCE" : "NAME").dataAlign(HorizontalAlign.LEFT)
+                            .maxWidth(30, OverflowBehaviour.CLIP)
+                            .with(r -> sourceLocLine(sources ? r.source : r.name)),
+                    new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.ELLIPSIS)
+                            .with(r -> r.routeId),
+                    new Column().header("FROM").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS)
+                            .with(r -> r.from),
                     new Column().header("STATE").headerAlign(HorizontalAlign.CENTER)
                             .with(r -> StringHelper.capitalize(r.state)),
                     new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.uptime),
@@ -148,7 +152,7 @@ public class CamelRouteStatus extends ProcessBaseCommand {
                     new Column().header("MEAN").with(r -> r.mean),
                     new Column().header("MIN").with(r -> r.min),
                     new Column().header("MAX").with(r -> r.max),
-                    new Column().header("LAST AGO").with(r -> r.sinceLast))));
+                    new Column().header("SINCE-LAST").with(r -> r.sinceLast))));
         }
 
         return 0;
@@ -167,6 +171,22 @@ public class CamelRouteStatus extends ProcessBaseCommand {
             // ignore
         }
         return null;
+    }
+
+    protected String sourceLocLine(String location) {
+        while (StringHelper.countChar(location, ':') > 1) {
+            location = location.substring(location.indexOf(':') + 1);
+        }
+        int pos = location.indexOf(':');
+        // is the colon as scheme or line number
+        String last = location.substring(pos + 1);
+        boolean digits = last.matches("\\d+");
+        if (!digits) {
+            // it must be scheme so clip that
+            location = location.substring(pos + 1);
+        }
+        location = FileUtil.stripPath(location);
+        return location;
     }
 
     protected int sortRow(Row o1, Row o2) {

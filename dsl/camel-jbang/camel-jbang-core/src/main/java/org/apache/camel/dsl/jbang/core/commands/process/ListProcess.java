@@ -16,6 +16,14 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.process;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import com.github.freva.asciitable.AsciiTable;
+import com.github.freva.asciitable.Column;
+import com.github.freva.asciitable.HorizontalAlign;
+import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.TimeUtils;
@@ -35,6 +43,8 @@ public class ListProcess extends ProcessBaseCommand {
 
     @Override
     public Integer call() throws Exception {
+        List<Row> rows = new ArrayList<>();
+
         ProcessHandle.allProcesses()
                 .sorted((o1, o2) -> {
                     switch (sort) {
@@ -50,13 +60,30 @@ public class ListProcess extends ProcessBaseCommand {
                     }
                 })
                 .forEach(ph -> {
-                    String name = extractName(ph);
-                    if (ObjectHelper.isNotEmpty(name)) {
-                        String ago = TimeUtils.printSince(extractSince(ph));
-                        System.out.println(ph.pid() + " camel run " + name + " (age: " + ago + ")");
+                    Row row = new Row();
+                    row.name = extractName(ph);
+                    if (ObjectHelper.isNotEmpty(row.name)) {
+                        row.pid = "" + ph.pid();
+                        row.age = TimeUtils.printSince(extractSince(ph));
+                        rows.add(row);
                     }
                 });
+
+        if (!rows.isEmpty()) {
+            System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
+                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS)
+                            .with(r -> r.name),
+                    new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age))));
+        }
+
         return 0;
+    }
+
+    private static class Row {
+        String pid;
+        String name;
+        String age;
     }
 
 }

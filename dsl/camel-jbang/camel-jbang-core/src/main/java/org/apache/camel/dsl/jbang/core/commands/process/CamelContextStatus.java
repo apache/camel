@@ -27,6 +27,7 @@ import java.util.Map;
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
+import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -102,8 +103,8 @@ public class CamelContextStatus extends ProcessBaseCommand {
         if (!rows.isEmpty()) {
             System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                     new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxColumnWidth(30)
-                            .with(r -> maxWidth(r.name, 28)),
+                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS)
+                            .with(r -> r.name),
                     new Column().header("READY").dataAlign(HorizontalAlign.CENTER).with(r -> r.ready),
                     new Column().header("STATE").headerAlign(HorizontalAlign.CENTER)
                             .with(r -> StringHelper.capitalize(r.state)),
@@ -111,7 +112,7 @@ public class CamelContextStatus extends ProcessBaseCommand {
                     new Column().header("TOTAL").with(r -> r.total),
                     new Column().header("FAILED").with(r -> r.failed),
                     new Column().header("INFLIGHT").with(r -> r.inflight),
-                    new Column().header("LAST AGO").with(r -> r.sinceLast))));
+                    new Column().header("SINCE-LAST").with(r -> r.sinceLast))));
         }
 
         return 0;
