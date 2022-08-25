@@ -70,7 +70,13 @@ public class CamelMicroProfilePropertiesSource implements LoadablePropertiesSour
 
         for (String name : config.getPropertyNames()) {
             if (filter.test(name)) {
-                config.getOptionalValue(name, String.class).ifPresent(value -> answer.put(name, value));
+                try {
+                    config.getOptionalValue(name, String.class).ifPresent(value -> answer.put(name, value));
+                } catch (NoSuchElementException e) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Failed to resolve property {} due to {}", name, e.getMessage());
+                    }
+                }
             }
         }
 
