@@ -26,17 +26,19 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Isolated
 public class JmsPollingConsumerTest extends AbstractJMSTest {
 
     @Nested
     class ConsumerWaitTest {
 
-        private CountDownLatch latch = new CountDownLatch(1);
+        private final CountDownLatch latch = new CountDownLatch(1);
 
         @BeforeEach
         void setupConsumer() {
@@ -68,7 +70,7 @@ public class JmsPollingConsumerTest extends AbstractJMSTest {
 
     @Nested
     class ConsumerNoWaitTest {
-        private CountDownLatch latch = new CountDownLatch(1);
+        private final CountDownLatch latch = new CountDownLatch(1);
         private volatile String body;
 
         @BeforeEach
@@ -90,8 +92,7 @@ public class JmsPollingConsumerTest extends AbstractJMSTest {
             MockEndpoint mock = getMockEndpoint("mock:result");
             mock.expectedBodiesReceived("Hello Claus");
 
-            // wait a little to demonstrate we can start poll before we have a msg on the queue
-            assertTrue(latch.await(500, TimeUnit.MILLISECONDS));
+            assertTrue(latch.await(1, TimeUnit.SECONDS));
             assertNull(body, "Message body should be null because there was no message and the polling consumer is 'no wait'");
 
             template.sendBody("direct:start", "Hello");
@@ -102,7 +103,7 @@ public class JmsPollingConsumerTest extends AbstractJMSTest {
 
     @Nested
     class LowTimeoutTest {
-        private CountDownLatch latch = new CountDownLatch(1);
+        private final CountDownLatch latch = new CountDownLatch(1);
         private volatile String body;
 
         @BeforeEach
@@ -132,12 +133,10 @@ public class JmsPollingConsumerTest extends AbstractJMSTest {
 
     @Nested
     class HighTimeOutTest {
-        private CountDownLatch latch = new CountDownLatch(1);
+        private final CountDownLatch latch = new CountDownLatch(1);
 
         @BeforeEach
         void setupConsumer() {
-            // use another thread for polling consumer to demonstrate that we can wait before
-            // the message is sent to the queue
             Executors.newSingleThreadExecutor().execute(() -> {
                 String body = consumer.receiveBody("activemq:queue.JmsPollingConsumerTest.start", 3000, String.class);
                 template.sendBody("activemq:queue.JmsPollingConsumerTest.foo", body + " Claus");
@@ -150,10 +149,12 @@ public class JmsPollingConsumerTest extends AbstractJMSTest {
             MockEndpoint mock = getMockEndpoint("mock:result");
             mock.expectedBodiesReceived("Hello Claus");
 
-            // wait a little to demonstrate we can start poll before we have a msg on the queue
             assertFalse(latch.await(500, TimeUnit.MILLISECONDS),
-                    "No message should have been received within 500 milliseconds");
+                    "No message should have been received within 500 milliseconds because the test has not sent any");
+
             template.sendBody("direct:start", "Hello");
+            assertTrue(latch.await(5, TimeUnit.SECONDS),
+                    "A message should have been received but it was not");
 
             assertMockEndpointsSatisfied();
         }

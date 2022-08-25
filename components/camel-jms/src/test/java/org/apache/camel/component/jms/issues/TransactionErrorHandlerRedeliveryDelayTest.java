@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jms.issues;
 
+import java.util.concurrent.atomic.LongAdder;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
@@ -30,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class TransactionErrorHandlerRedeliveryDelayTest extends CamelSpringTestSupport {
 
-    private static volatile int counter;
+    private static LongAdder counter = new LongAdder();
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
@@ -42,7 +44,7 @@ public class TransactionErrorHandlerRedeliveryDelayTest extends CamelSpringTestS
     public void testTransactedRedeliveryDelay() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
-        template.sendBody("activemq:queue:in", "Hello World");
+        template.sendBody("activemq:queue:TransactionErrorHandlerRedeliveryDelayTest.in", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -54,8 +56,10 @@ public class TransactionErrorHandlerRedeliveryDelayTest extends CamelSpringTestS
 
         @Override
         public void process(Exchange exchange) {
-            if (counter++ < 3) {
-                throw new IllegalArgumentException("Forced exception as counter is " + counter);
+            int counterValue = counter.intValue();
+            counter.increment();
+            if (counterValue < 3) {
+                throw new IllegalArgumentException("Forced exception as counter is " + counterValue);
             }
             assertTrue(exchange.isTransacted(), "Should be transacted");
             exchange.getIn().setBody("Bye World");

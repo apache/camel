@@ -26,7 +26,7 @@
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <jmxAgent id="agent" disabled="true"/>
         <route errorHandlerRef="myTransactionErrorHandler">
-            <from uri="activemq:queue:in"/>
+            <from uri="activemq:queue:TransactionErrorHandlerRedeliveryDelayTest.in"/>
             <transacted ref="required"/>
             <process ref="myFailureProcessor"/>
             <to uri="mock:result"/>

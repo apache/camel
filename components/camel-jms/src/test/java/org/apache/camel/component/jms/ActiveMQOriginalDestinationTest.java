@@ -92,7 +92,7 @@ public class ActiveMQOriginalDestinationTest extends AbstractJMSTest {
      * <p/>
      * This implementation uses ActiveMQ specific code which can be moved to activemq-camel when it supports Camel 2.16
      */
-    private class OriginalDestinationPropagateStrategy implements MessageCreatedStrategy {
+    private static class OriginalDestinationPropagateStrategy implements MessageCreatedStrategy {
 
         // TODO: This is supported out of the box from ActiveMQ 5.14 onwards, and hence remove OriginalDestinationPropagateStrategy
 

@@ -33,7 +33,8 @@ public class JmsSetBodyNullErrorHandlerUseOriginalMessageTest extends AbstractPe
 
         assertMockEndpointsSatisfied();
 
-        String body = consumer.receiveBody("activemq:queue:dead", 5000, String.class);
+        String body = consumer.receiveBody("activemq:queue:JmsSetBodyNullErrorHandlerUseOriginalMessageTest.dead", 5000,
+                String.class);
         assertEquals("Hello World", body);
     }
 
@@ -42,7 +43,8 @@ public class JmsSetBodyNullErrorHandlerUseOriginalMessageTest extends AbstractPe
         return new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(deadLetterChannel("activemq:queue:dead").useOriginalMessage());
+                errorHandler(deadLetterChannel("activemq:queue:JmsSetBodyNullErrorHandlerUseOriginalMessageTest.dead")
+                        .useOriginalMessage());
 
                 from("activemq:queue:JmsSetBodyNullErrorHandlerUseOriginalMessageTest")
                         .to("mock:foo")

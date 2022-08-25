@@ -19,8 +19,12 @@ package org.apache.camel.component.jms.issues;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
+// Not parallel due to processing some part of the route concurrently (may be delayed when running on the test threads)
+@Tags({ @Tag("not-parallel") })
 public class JmsInOutPersistentReplyQueueTest extends AbstractJMSTest {
 
     @Test

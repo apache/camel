@@ -50,6 +50,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Tags({ @Tag("not-parallel"), @Tag("slow") })
 @Timeout(60)
 public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
+    public static final int MESSAGE_COUNT = 500;
+    public static final int POOL_SIZE = 5;
+
     private static final Logger LOG = LoggerFactory.getLogger(JmsDefaultTaskExecutorTypeTest.class);
 
     @RegisterExtension
@@ -60,8 +63,8 @@ public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
         context.getRouteController().startRoute("threadPool");
         Long beforeThreadCount = currentThreadCount();
         getMockEndpoint("mock:result.threadPool").expectedMessageCount(1000);
-        doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.threadPool", 500, 5, DefaultTaskExecutorType.ThreadPool);
-        doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.threadPool", 500, 5, DefaultTaskExecutorType.ThreadPool);
+        doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.threadPool", DefaultTaskExecutorType.ThreadPool);
+        doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.threadPool", DefaultTaskExecutorType.ThreadPool);
         assertMockEndpointsSatisfied();
         Long numberThreadsCreated = currentThreadCount() - beforeThreadCount;
         LOG.info("Number of threads created, testThreadPoolTaskExecutor: {}", numberThreadsCreated);
@@ -74,9 +77,9 @@ public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
         context.getRouteController().startRoute("simpleAsync");
         Long beforeThreadCount = currentThreadCount();
         getMockEndpoint("mock:result.simpleAsync").expectedMessageCount(1000);
-        doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.simpleAsync", 500, 5, DefaultTaskExecutorType.SimpleAsync);
-        doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.simpleAsync", 500, 5, DefaultTaskExecutorType.SimpleAsync);
-        assertMockEndpointsSatisfied();
+        doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.simpleAsync", DefaultTaskExecutorType.SimpleAsync);
+        doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.simpleAsync", DefaultTaskExecutorType.SimpleAsync);
+        assertMockEndpointsSatisfied(40, TimeUnit.SECONDS);
         Long numberThreadsCreated = currentThreadCount() - beforeThreadCount;
         LOG.info("Number of threads created, testSimpleAsyncTaskExecutor: " + numberThreadsCreated);
         assertTrue(numberThreadsCreated >= 800, "Number of threads created should be equal or higher than "
@@ -88,8 +91,8 @@ public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
         context.getRouteController().startRoute("default");
         Long beforeThreadCount = currentThreadCount();
         getMockEndpoint("mock:result.default").expectedMessageCount(1000);
-        doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.default", 500, 5, null);
-        doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.default", 500, 5, null);
+        doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.default", null);
+        doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.default", null);
         assertMockEndpointsSatisfied();
         Long numberThreadsCreated = currentThreadCount() - beforeThreadCount;
         LOG.info("Number of threads created, testDefaultTaskExecutor: {}", numberThreadsCreated);
@@ -106,9 +109,9 @@ public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
         context.getRouteController().startRoute("default");
         Long beforeThreadCount = currentThreadCount();
         getMockEndpoint("mock:result.default").expectedMessageCount(1000);
-        doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.default", 500, 5, DefaultTaskExecutorType.ThreadPool);
-        doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.default", 500, 5, DefaultTaskExecutorType.ThreadPool);
-        assertMockEndpointsSatisfied();
+        doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.default", DefaultTaskExecutorType.ThreadPool);
+        doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.default", DefaultTaskExecutorType.ThreadPool);
+        assertMockEndpointsSatisfied(40, TimeUnit.SECONDS);
         Long numberThreadsCreated = currentThreadCount() - beforeThreadCount;
         LOG.info("Number of threads created, testDefaultTaskExecutorThreadPoolAtComponentConfig: " + numberThreadsCreated);
         assertTrue(numberThreadsCreated <= 100, "Number of threads created should be equal or lower than "
@@ -120,8 +123,7 @@ public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
             IllegalAccessException, InvocationTargetException {
         Method m = ThreadHelper.class.getDeclaredMethod("nextThreadCounter", (Class<?>[]) null);
         m.setAccessible(true);
-        Long nextThreadCount = (Long) m.invoke(null);
-        return nextThreadCount;
+        return (Long) m.invoke(null);
     }
 
     @Override
@@ -152,22 +154,21 @@ public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
                 return null;
             });
         }
-
     }
 
     private void doSendMessages(
-            final String queueName, int messages, int poolSize,
+            final String queueName,
             final DefaultTaskExecutorType defaultTaskExecutorType)
             throws Exception {
-        ExecutorService executor = Executors.newFixedThreadPool(poolSize);
-        final CountDownLatch latch = new CountDownLatch(messages);
+        final ExecutorService executor = Executors.newFixedThreadPool(POOL_SIZE);
+        final CountDownLatch latch = new CountDownLatch(MESSAGE_COUNT);
 
         try {
-            doSendMessages(queueName, messages, defaultTaskExecutorType, latch, executor);
+            doSendMessages(queueName, MESSAGE_COUNT, defaultTaskExecutorType, latch, executor);
             executor.shutdown();
-            executor.awaitTermination(5, TimeUnit.SECONDS);
+            executor.awaitTermination(POOL_SIZE, TimeUnit.SECONDS);
         } finally {
-            latch.await(5, TimeUnit.SECONDS);
+            latch.await(POOL_SIZE, TimeUnit.SECONDS);
         }
     }
 

@@ -50,7 +50,7 @@ public class JmsInOnlyIssueTest extends AbstractJMSTest {
 
         final CompletableFuture<Object> future = template.asyncSendBody("activemq:queue:JmsInOnlyIssueTest.in", "Hello World");
 
-        assertDoesNotThrow(() -> future.get(1, TimeUnit.SECONDS));
+        assertDoesNotThrow(() -> future.get(5, TimeUnit.SECONDS));
 
         assertMockEndpointsSatisfied();
     }
@@ -83,7 +83,7 @@ public class JmsInOnlyIssueTest extends AbstractJMSTest {
             exchange.getIn().setBody("Hello World");
         });
 
-        assertDoesNotThrow(() -> future.get(1, TimeUnit.SECONDS));
+        assertDoesNotThrow(() -> future.get(5, TimeUnit.SECONDS));
 
         assertMockEndpointsSatisfied();
     }

@@ -26,6 +26,7 @@ import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Isolated
 public class JmsRequestReplyExclusiveReplyToConcurrentTest extends AbstractJMSTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsRequestReplyExclusiveReplyToConcurrentTest.class);
@@ -47,10 +49,16 @@ public class JmsRequestReplyExclusiveReplyToConcurrentTest extends AbstractJMSTe
     }
 
     @AfterEach
-    void cleanupExecutor() throws InterruptedException {
-        // just sleep a bit before shutting down
-        Thread.sleep(1000);
-        executor.shutdownNow();
+    void cleanupExecutor() {
+        executor.shutdown();
+        try {
+            final boolean finished = executor.awaitTermination(1, TimeUnit.SECONDS);
+            if (!finished) {
+                LOG.debug("Executor tasks did not terminate within the timeout (shutdown will be forced)");
+            }
+        } catch (InterruptedException e) {
+            executor.shutdownNow();
+        }
     }
 
     @Test
