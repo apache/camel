@@ -18,13 +18,16 @@ package org.apache.camel.test.infra.chatscript.services;
 
 import org.apache.camel.test.infra.common.services.TestService;
 import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 /**
  * Test infra service for ChatScript
  */
-public interface ChatScriptService extends BeforeAllCallback, AfterAllCallback, TestService {
+public interface ChatScriptService
+        extends BeforeAllCallback, AfterAllCallback, BeforeEachCallback, AfterEachCallback, TestService {
 
     String serviceAddress();
 
@@ -36,5 +39,15 @@ public interface ChatScriptService extends BeforeAllCallback, AfterAllCallback, 
     @Override
     default void afterAll(ExtensionContext extensionContext) throws Exception {
         shutdown();
+    }
+
+    @Override
+    default void afterEach(ExtensionContext extensionContext) throws Exception {
+        shutdown();
+    }
+
+    @Override
+    default void beforeEach(ExtensionContext extensionContext) throws Exception {
+        initialize();
     }
 }
