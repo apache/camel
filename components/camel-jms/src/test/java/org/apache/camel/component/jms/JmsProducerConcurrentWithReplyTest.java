@@ -21,8 +21,10 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.Timeout;
@@ -33,6 +35,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Timeout(60)
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class JmsProducerConcurrentWithReplyTest extends AbstractJMSTest {
+
+    private ExecutorService executor;
+
+    @AfterEach
+    void cleanupExecutor() {
+        executor.shutdownNow();
+    }
 
     @Test
     public void testNoConcurrentProducers() throws Exception {
@@ -48,7 +57,7 @@ public class JmsProducerConcurrentWithReplyTest extends AbstractJMSTest {
         getMockEndpoint("mock:result").expectedMessageCount(files);
         getMockEndpoint("mock:result").expectsNoDuplicates(body());
 
-        ExecutorService executor = Executors.newFixedThreadPool(poolSize);
+        executor = Executors.newFixedThreadPool(poolSize);
         final List<Future<String>> futures = new ArrayList<>();
         for (int i = 0; i < files; i++) {
             final int index = i;
@@ -59,10 +68,10 @@ public class JmsProducerConcurrentWithReplyTest extends AbstractJMSTest {
         assertMockEndpointsSatisfied();
 
         for (int i = 0; i < futures.size(); i++) {
-            Object out = futures.get(i).get();
+            Object out = futures.get(i).get(5, TimeUnit.SECONDS);
             assertEquals("Bye Message " + i, out);
         }
-        executor.shutdownNow();
+
     }
 
     @Override

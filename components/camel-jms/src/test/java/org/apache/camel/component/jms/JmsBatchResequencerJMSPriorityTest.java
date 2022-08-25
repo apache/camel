@@ -16,20 +16,22 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 /**
  * JMSPriority being ordered using the resequencer in batch mode.
  */
+@Isolated
 public class JmsBatchResequencerJMSPriorityTest extends AbstractJMSTest {
 
-    @Test
-    public void testBatchResequencerJMSPriority() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("G", "A", "B", "E", "H", "C", "D", "F");
-
+    @BeforeEach
+    void sendMessages() {
         // must use preserveMessageQos=true to be able to specify the JMSPriority to be used
         template.sendBodyAndHeader("jms:queue:JmsBatchResequencerJMSPriorityTest?preserveMessageQos=true", "A", "JMSPriority",
                 6);
@@ -47,8 +49,14 @@ public class JmsBatchResequencerJMSPriorityTest extends AbstractJMSTest {
                 8);
         template.sendBodyAndHeader("jms:queue:JmsBatchResequencerJMSPriorityTest?preserveMessageQos=true", "H", "JMSPriority",
                 6);
+    }
 
-        assertMockEndpointsSatisfied();
+    @Test
+    public void testBatchResequencerJMSPriority() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("G", "A", "B", "E", "H", "C", "D", "F");
+
+        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
     }
 
     @Override

@@ -43,7 +43,7 @@ public class ProduceMessageConverterTest extends AbstractJMSTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBody("activemq:queue:hello?messageConverter=#myMessageConverter", "World");
+        template.sendBody("activemq:queue:ProduceMessageConverterTest?messageConverter=#myMessageConverter", "World");
 
         assertMockEndpointsSatisfied();
     }
@@ -52,7 +52,7 @@ public class ProduceMessageConverterTest extends AbstractJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:hello").to("mock:result");
+                from("activemq:queue:ProduceMessageConverterTest").to("mock:result");
             }
         };
     }

@@ -18,30 +18,40 @@ package org.apache.camel.component.jms;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jms.JmsConstants.JMS_X_GROUP_ID;
 import static org.apache.camel.test.junit5.TestSupport.body;
 
+@Timeout(20)
 public class JmsRouteUsingJMSXGroupTest extends AbstractJMSTest {
+    public static final int POOL_SIZE = 1;
+    private static final Logger LOG = LoggerFactory.getLogger(JmsRouteUsingJMSXGroupTest.class);
+
+    private ExecutorService executor;
 
     @Test
     public void testNoConcurrentProducersJMSXGroupID() throws Exception {
-        doSendMessages(1, 1);
+        doSendMessages(1);
     }
 
     @Test
     public void testConcurrentProducersJMSXGroupID() throws Exception {
-        doSendMessages(10, 1);
+        doSendMessages(10);
     }
 
-    private void doSendMessages(int files, int poolSize) throws Exception {
+    private void doSendMessages(int files) throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(files * 2);
         getMockEndpoint("mock:result").expectsNoDuplicates(body());
 
-        ExecutorService executor = Executors.newFixedThreadPool(poolSize);
         for (int i = 0; i < files; i++) {
             final int index = i;
             executor.submit(() -> {
@@ -53,7 +63,24 @@ public class JmsRouteUsingJMSXGroupTest extends AbstractJMSTest {
         }
 
         assertMockEndpointsSatisfied();
-        executor.shutdownNow();
+    }
+
+    @BeforeEach
+    void setupExecutor() {
+        executor = Executors.newFixedThreadPool(POOL_SIZE);
+    }
+
+    @AfterEach
+    void cleanupExecutor() {
+        executor.shutdown();
+        try {
+            final boolean finished = executor.awaitTermination(1, TimeUnit.SECONDS);
+            if (!finished) {
+                LOG.debug("Executor tasks did not terminate within the timeout (shutdown will be forced)");
+            }
+        } catch (InterruptedException e) {
+            executor.shutdownNow();
+        }
     }
 
     @Override

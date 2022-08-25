@@ -23,12 +23,16 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.activemq.services.ActiveMQService;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ResourceLock("target/stream/JmsStreamMessageTypeNoStreamCachingTest")
 public class JmsStreamMessageTypeNoStreamCachingTest extends AbstractJMSTest {
 
     @Override
@@ -59,12 +63,17 @@ public class JmsStreamMessageTypeNoStreamCachingTest extends AbstractJMSTest {
         return camelContext;
     }
 
-    @Test
-    public void testStreamType() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "message1.xml", "message1.txt" })
+    @DisplayName("Tests stream type with both a small (message1.xml) and a large file (message1.txt)")
+    public void testStreamType(String filename) throws Exception {
         getMockEndpoint("mock:resultJmsStreamMessageTypeNoStreamCachingTest").expectedMessageCount(1);
 
         // copy the file
-        FileUtil.copyFile(new File("src/test/data/message1.xml"), new File("target/stream/in/message1.xml"));
+        final File baseFile = new File("src/test/data/", filename);
+        final File sourceFile = new File("target/stream/JmsStreamMessageTypeNoStreamCachingTest/in", filename);
+
+        FileUtil.copyFile(baseFile, sourceFile);
 
         assertMockEndpointsSatisfied();
 
@@ -72,38 +81,14 @@ public class JmsStreamMessageTypeNoStreamCachingTest extends AbstractJMSTest {
                 .getIn().getBody();
         StreamMessageInputStream is = assertIsInstanceOf(StreamMessageInputStream.class, body);
 
-        // no more bytes should be available on the inputstream
+        // no more bytes should be available on the input stream
         assertEquals(0, is.available());
 
         // assert on the content of input versus output file
-        String srcContent = context.getTypeConverter().mandatoryConvertTo(String.class, new File("src/test/data/message1.xml"));
+        String srcContent = context.getTypeConverter().mandatoryConvertTo(String.class, baseFile);
         String dstContent
                 = context.getTypeConverter().mandatoryConvertTo(String.class,
-                        new File("target/stream/JmsStreamMessageTypeNoStreamCachingTest/out/message1.xml"));
-        assertEquals(srcContent, dstContent, "both the source and destination files should have the same content");
-    }
-
-    @Test
-    public void testStreamTypeWithBigFile() throws Exception {
-        getMockEndpoint("mock:resultJmsStreamMessageTypeNoStreamCachingTest").expectedMessageCount(1);
-
-        // copy the file
-        FileUtil.copyFile(new File("src/test/data/message1.txt"), new File("target/stream/in/message1.txt"));
-
-        assertMockEndpointsSatisfied();
-
-        Object body = getMockEndpoint("mock:resultJmsStreamMessageTypeNoStreamCachingTest").getReceivedExchanges().get(0)
-                .getIn().getBody();
-        StreamMessageInputStream is = assertIsInstanceOf(StreamMessageInputStream.class, body);
-
-        // no more bytes should be available on the inputstream
-        assertEquals(0, is.available());
-
-        // assert on the content of input versus output file
-        String srcContent = context.getTypeConverter().mandatoryConvertTo(String.class, new File("src/test/data/message1.txt"));
-        String dstContent
-                = context.getTypeConverter().mandatoryConvertTo(String.class,
-                        new File("target/stream/JmsStreamMessageTypeNoStreamCachingTest/out/message1.txt"));
+                        new File("target/stream/JmsStreamMessageTypeNoStreamCachingTest/out/", filename));
         assertEquals(srcContent, dstContent, "both the source and destination files should have the same content");
     }
 
@@ -112,7 +97,8 @@ public class JmsStreamMessageTypeNoStreamCachingTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("file:target/stream/in").to("jms:queue:JmsStreamMessageTypeNoStreamCachingTest");
+                from("file:target/stream/JmsStreamMessageTypeNoStreamCachingTest/in")
+                        .to("jms:queue:JmsStreamMessageTypeNoStreamCachingTest");
 
                 from("jms:queue:JmsStreamMessageTypeNoStreamCachingTest")
                         .to("file:target/stream/JmsStreamMessageTypeNoStreamCachingTest/out")

@@ -41,7 +41,7 @@ public class JmsAsyncStartListenerTest extends AbstractPersistentJMSTest {
         result.expectedMessageCount(2);
 
         template.sendBody("activemq:queue:JmsAsyncStartListenerTest", "Hello World");
-        template.sendBody("activemq:queue:JmsAsyncStartListenerTest", "Gooday World");
+        template.sendBody("activemq:queue:JmsAsyncStartListenerTest", "Goodbye World");
 
         result.assertIsSatisfied();
     }

@@ -141,7 +141,7 @@ public class JmsBlockedAsyncRoutingEngineTest extends CamelTestSupport {
         };
     }
 
-    private class DelayerBrokerPlugin extends BrokerPluginSupport {
+    private static class DelayerBrokerPlugin extends BrokerPluginSupport {
         int i;
 
         @Override

@@ -25,8 +25,7 @@ import org.apache.camel.test.infra.activemq.services.ActiveMQService;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Tags;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -37,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * This test cannot run in parallel: it reuses the same path for different test iterations
  */
-@Tags({ @Tag("not-parallel") })
+@ResourceLock("target/stream/JmsStreamMessageTypeTest")
 public class JmsStreamMessageTypeTest extends AbstractJMSTest {
 
     @Override

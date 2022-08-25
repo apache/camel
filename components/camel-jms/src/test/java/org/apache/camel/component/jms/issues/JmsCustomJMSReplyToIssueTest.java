@@ -30,7 +30,7 @@ import org.springframework.jms.core.JmsTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Timeout(10)
+@Timeout(15)
 public class JmsCustomJMSReplyToIssueTest extends AbstractJMSTest {
 
     private JmsComponent amq;

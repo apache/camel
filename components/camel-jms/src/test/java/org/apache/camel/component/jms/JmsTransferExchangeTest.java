@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
@@ -23,14 +25,14 @@ import org.junit.jupiter.api.Test;
 public class JmsTransferExchangeTest extends AbstractJMSTest {
 
     protected String getUri() {
-        return "activemq:queue:foo?transferExchange=true";
+        return "activemq:queue:JmsTransferExchangeTest?transferExchange=true";
     }
 
     @Test
     public void testBodyOnly() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
-        mock.expectedHeaderReceived("JMSDestination", "queue://foo");
+        mock.expectedHeaderReceived("JMSDestination", "queue://JmsTransferExchangeTest");
 
         template.sendBody("direct:start", "Hello World");
 
@@ -42,7 +44,7 @@ public class JmsTransferExchangeTest extends AbstractJMSTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
         mock.expectedHeaderReceived("foo", "cheese");
-        mock.expectedHeaderReceived("JMSDestination", "queue://foo");
+        mock.expectedHeaderReceived("JMSDestination", "queue://JmsTransferExchangeTest");
 
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", "cheese");
 
@@ -55,7 +57,7 @@ public class JmsTransferExchangeTest extends AbstractJMSTest {
         mock.expectedBodiesReceived("Hello World");
         mock.expectedHeaderReceived("foo", "cheese");
         mock.expectedPropertyReceived("bar", 123);
-        mock.expectedHeaderReceived("JMSDestination", "queue://foo");
+        mock.expectedHeaderReceived("JMSDestination", "queue://JmsTransferExchangeTest");
 
         template.send("direct:start", exchange -> {
             exchange.getIn().setBody("Hello World");
@@ -63,7 +65,7 @@ public class JmsTransferExchangeTest extends AbstractJMSTest {
             exchange.setProperty("bar", 123);
         });
 
-        assertMockEndpointsSatisfied();
+        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
     }
 
     @Override

@@ -36,7 +36,7 @@ public class JmsToFileMessageIdTest extends AbstractJMSTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBody("activemq:foo", "Hello World");
+        template.sendBody("activemq:JmsToFileMessageIdTest", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -52,7 +52,7 @@ public class JmsToFileMessageIdTest extends AbstractJMSTest {
             @Override
             public void configure() {
                 // Make a route from an activemq queue to a file endpoint, then try to call getMessageId()
-                from("activemq:foo")
+                from("activemq:JmsToFileMessageIdTest")
                         .process(exchange -> {
                             // assert camel id is based on jms id
                             String camelId = exchange.getIn().getMessageId();

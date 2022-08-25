@@ -62,7 +62,7 @@ public class JmsMessageCreatedStrategyEndpointTest extends AbstractJMSTest {
         };
     }
 
-    private class MyMessageCreatedStrategy implements MessageCreatedStrategy {
+    private static class MyMessageCreatedStrategy implements MessageCreatedStrategy {
 
         @Override
         public void onMessageCreated(Message message, Session session, Exchange exchange, Throwable cause) {

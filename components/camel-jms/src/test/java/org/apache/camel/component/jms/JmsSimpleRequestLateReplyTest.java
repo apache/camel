@@ -133,6 +133,6 @@ public class JmsSimpleRequestLateReplyTest extends AbstractJMSTest {
 
     protected static String getQueueEndpointName() {
         // need to use a fixed queue for reply as a temp queue may be deleted
-        return "activemq:queue:hello.queue?replyTo=myReplyQueue";
+        return "activemq:queue:JmsSimpleRequestLateReplyTest?replyTo=JmsSimpleRequestLateReplyTest.reply";
     }
 }

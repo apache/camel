@@ -41,7 +41,7 @@ public class JmsDeadLetterQueueUsingTransferExchangeTest extends AbstractJMSTest
 
     @Test
     public void testKabom() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:dead");
+        MockEndpoint mock = getMockEndpoint("mock:JmsDeadLetterQueueUsingTransferExchangeTest.dead");
         mock.expectedBodiesReceived("Kabom");
 
         template.sendBody("direct:start", "Kabom");
@@ -68,7 +68,7 @@ public class JmsDeadLetterQueueUsingTransferExchangeTest extends AbstractJMSTest
                     }
                 }).to("mock:result");
 
-                from(getUri()).to("mock:dead");
+                from(getUri()).to("mock:JmsDeadLetterQueueUsingTransferExchangeTest.dead");
             }
         };
     }
