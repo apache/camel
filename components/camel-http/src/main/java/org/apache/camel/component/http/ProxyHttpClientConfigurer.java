@@ -17,11 +17,9 @@
 package org.apache.camel.component.http;
 
 import org.apache.http.HttpHost;
-import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 /**
@@ -36,13 +34,14 @@ public class ProxyHttpClientConfigurer implements HttpClientConfigurer {
     private final String password;
     private final String domain;
     private final String ntHost;
+    private final HttpCredentialsHelper credentialsHelper;
 
     public ProxyHttpClientConfigurer(String host, Integer port, String scheme) {
-        this(host, port, scheme, null, null, null, null);
+        this(host, port, scheme, null, null, null, null, null);
     }
 
     public ProxyHttpClientConfigurer(String host, Integer port, String scheme, String username, String password, String domain,
-                                     String ntHost) {
+                                     String ntHost, HttpCredentialsHelper credentialsHelper) {
         this.host = host;
         this.port = port;
         this.scheme = scheme;
@@ -50,6 +49,7 @@ public class ProxyHttpClientConfigurer implements HttpClientConfigurer {
         this.password = password;
         this.domain = domain;
         this.ntHost = ntHost;
+        this.credentialsHelper = credentialsHelper;
     }
 
     @Override
@@ -63,9 +63,8 @@ public class ProxyHttpClientConfigurer implements HttpClientConfigurer {
             } else {
                 defaultcreds = new UsernamePasswordCredentials(username, password);
             }
-            BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-            credentialsProvider.setCredentials(AuthScope.ANY, defaultcreds);
-            clientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+            clientBuilder.setDefaultCredentialsProvider(credentialsHelper
+                    .getCredentialsProvider(host, port, defaultcreds));
         }
     }
 
