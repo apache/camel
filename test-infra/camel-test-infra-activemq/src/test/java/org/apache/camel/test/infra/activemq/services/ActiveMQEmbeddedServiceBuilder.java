@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Consumer;
 
 import javax.management.ObjectName;
@@ -48,6 +49,9 @@ import org.apache.activemq.store.PersistenceAdapterFactory;
 import org.apache.activemq.thread.TaskRunnerFactory;
 import org.apache.activemq.usage.SystemUsage;
 import org.apache.activemq.util.IOExceptionHandler;
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -57,10 +61,13 @@ import static org.junit.jupiter.api.Assertions.fail;
  * embedded ActiveMQ, they can use this to wrap the broker service into the test-infra compatible service that can be
  * managed by Junit 5.
  */
-public class ActiveMQEmbeddedServiceBuilder {
-    private BrokerService brokerService;
+public final class ActiveMQEmbeddedServiceBuilder {
+    private static final Logger LOG = LoggerFactory.getLogger(ActiveMQEmbeddedServiceBuilder.class);
 
-    public ActiveMQEmbeddedServiceBuilder() {
+    private static final LongAdder BROKER_COUNT = new LongAdder();
+    private final BrokerService brokerService;
+
+    private ActiveMQEmbeddedServiceBuilder() {
         brokerService = new BrokerService();
     }
 
@@ -602,16 +609,40 @@ public class ActiveMQEmbeddedServiceBuilder {
     }
 
     private static String generateDataDirectoryPathForInstance(String name) {
-        return ActiveMQEmbeddedServiceBuilder.class.getResource("/").getFile() + name
-               + ThreadLocalRandom.current().nextInt(1000);
+        final String dataDirectoryPath = ActiveMQEmbeddedServiceBuilder.class.getResource("/").getFile() + name;
+
+        final File dataDirectory = new File(dataDirectoryPath);
+        if (dataDirectory.exists()) {
+            try {
+                FileUtils.deleteDirectory(dataDirectory);
+            } catch (IOException e) {
+                LOG.warn(
+                        "Could not delete the data directory at {}: {} (the error will be ignored, but the tests are likely to fail)",
+                        dataDirectoryPath, e.getMessage());
+            }
+        }
+
+        return dataDirectoryPath;
+    }
+
+    private static String generateSemiUniqueBrokerName() {
+        final String semiUniqueName
+                = ActiveMQEmbeddedServiceBuilder.class.getSimpleName() + "-" + BROKER_COUNT.longValue() + "."
+                  + ThreadLocalRandom.current().nextInt(1000);
+
+        BROKER_COUNT.increment();
+        return semiUniqueName;
     }
 
     public static ActiveMQEmbeddedServiceBuilder defaultBroker() {
-        return defaultBroker(ActiveMQEmbeddedServiceBuilder.class.getSimpleName());
+        final String semiUniqueName = generateSemiUniqueBrokerName();
+
+        return defaultBroker(semiUniqueName);
     }
 
     public static ActiveMQEmbeddedServiceBuilder defaultBroker(String name) {
         final String dataDirectoryPath = generateDataDirectoryPathForInstance(name);
+
         return new ActiveMQEmbeddedServiceBuilder()
                 .withDeleteAllMessagesOnStartup(true)
                 .withBrokerName(name)
@@ -621,9 +652,11 @@ public class ActiveMQEmbeddedServiceBuilder {
     }
 
     public static ActiveMQEmbeddedServiceBuilder persistentBroker() {
-        final String name = "persistent" + ActiveMQEmbeddedServiceBuilder.class.getSimpleName()
-                            + ThreadLocalRandom.current().nextInt(1000);
-        return persistentBroker(name);
+        String semiUniqueName = "persistent" + generateSemiUniqueBrokerName();
+
+        BROKER_COUNT.increment();
+
+        return persistentBroker(semiUniqueName);
     }
 
     public static ActiveMQEmbeddedServiceBuilder persistentBroker(String name) {
