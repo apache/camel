@@ -30,7 +30,8 @@ public class CamelStatus extends CamelCommand {
 
     @Override
     public Integer call() throws Exception {
-        new CommandLine(this).execute("--help");
+        // default to get the integrations
+        new CommandLine(new CamelContextStatus(getMain())).execute();
         return 0;
     }
 }
