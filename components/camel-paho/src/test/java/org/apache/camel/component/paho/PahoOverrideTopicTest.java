@@ -29,7 +29,7 @@ public class PahoOverrideTopicTest extends CamelTestSupport {
     static int mqttPort = AvailablePortFinder.getNextAvailable();
 
     @RegisterExtension
-    public static ActiveMQEmbeddedService service = ActiveMQEmbeddedServiceBuilder
+    public ActiveMQEmbeddedService service = ActiveMQEmbeddedServiceBuilder
             .bare()
             .withPersistent(false)
             .withMqttTransport(mqttPort)
