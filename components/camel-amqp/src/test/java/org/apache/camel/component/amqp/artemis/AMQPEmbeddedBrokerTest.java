@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.amqp.artemis;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.activemq.artemis.api.core.RoutingType;
 import org.apache.activemq.artemis.core.config.Configuration;
 import org.apache.activemq.artemis.core.config.CoreAddressConfiguration;
@@ -31,12 +33,15 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import static org.apache.camel.component.amqp.AMQPConnectionDetails.AMQP_PORT;
 import static org.apache.camel.component.amqp.AMQPConnectionDetails.AMQP_SET_TOPIC_PREFIX;
 import static org.apache.camel.component.amqp.AMQPConnectionDetails.discoverAMQP;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class AMQPEmbeddedBrokerTest extends CamelTestSupport {
 
     static int amqpPort = AvailablePortFinder.getNextAvailable();
@@ -78,11 +83,15 @@ public class AMQPEmbeddedBrokerTest extends CamelTestSupport {
         server.stop();
     }
 
-    @Test
-    public void testTopicWithoutPrefix() throws Exception {
+    @BeforeEach
+    void prepareTest() {
         resultEndpoint.expectedMessageCount(1);
         template.sendBody("direct:send-topic", expectedBody);
-        resultEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void testTopicWithoutPrefix() throws Exception {
+        resultEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS);
     }
 
     @Override
