@@ -16,31 +16,24 @@
  */
 package org.apache.camel.component.http.helper;
 
-import java.util.Map;
 import java.util.Objects;
 
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.HttpClientBuilder;
 
 public final class HttpCredentialsHelper {
 
-    private static final Map<HttpClientBuilder, CredentialsProvider> CREDENTIAL_PROVIDER_MAP = new java.util.HashMap<>();
+    private final CredentialsProvider credentialsProvider;
 
-    private HttpCredentialsHelper() {
-        // helper class
+    public HttpCredentialsHelper() {
+        this.credentialsProvider = new BasicCredentialsProvider();
     }
 
-    public static CredentialsProvider getCredentialsProvider(
-            HttpClientBuilder builder, String host, Integer port, Credentials credentials) {
-        CredentialsProvider credentialsProvider = CREDENTIAL_PROVIDER_MAP.get(builder);
-        if (credentialsProvider == null) {
-            credentialsProvider = new BasicCredentialsProvider();
-            CREDENTIAL_PROVIDER_MAP.put(builder, credentialsProvider);
-        }
-        credentialsProvider.setCredentials(new AuthScope(
+    public CredentialsProvider getCredentialsProvider(
+            String host, Integer port, Credentials credentials) {
+        this.credentialsProvider.setCredentials(new AuthScope(
                 host,
                 Objects.requireNonNullElse(port, AuthScope.ANY_PORT)), credentials);
         return credentialsProvider;

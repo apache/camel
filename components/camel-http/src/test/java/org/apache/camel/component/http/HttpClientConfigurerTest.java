@@ -17,6 +17,7 @@
 package org.apache.camel.component.http;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.http.helper.HttpCredentialsHelper;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +38,9 @@ public class HttpClientConfigurerTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // add configurer to http component
-                configurer = new ProxyHttpClientConfigurer("proxyhost", 80, "http", "user", "password", null, null);
+                configurer = new ProxyHttpClientConfigurer(
+                        "proxyhost", 80, "http", "user", "password", null, null,
+                        new HttpCredentialsHelper());
                 getContext().getComponent("http", HttpComponent.class).setHttpClientConfigurer(configurer);
 
                 from("direct:start")

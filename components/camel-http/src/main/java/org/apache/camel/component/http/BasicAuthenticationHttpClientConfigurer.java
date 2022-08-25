@@ -27,12 +27,15 @@ public class BasicAuthenticationHttpClientConfigurer implements HttpClientConfig
     private final String password;
     private final String domain;
     private final String host;
+    private final HttpCredentialsHelper credentialsHelper;
 
-    public BasicAuthenticationHttpClientConfigurer(String user, String pwd, String domain, String host) {
+    public BasicAuthenticationHttpClientConfigurer(String user, String pwd, String domain, String host,
+                                                   HttpCredentialsHelper credentialsHelper) {
         this.username = user;
         this.password = pwd;
         this.domain = domain;
         this.host = host;
+        this.credentialsHelper = credentialsHelper;
     }
 
     @Override
@@ -43,8 +46,8 @@ public class BasicAuthenticationHttpClientConfigurer implements HttpClientConfig
         } else {
             defaultcreds = new UsernamePasswordCredentials(username, password);
         }
-        clientBuilder.setDefaultCredentialsProvider(HttpCredentialsHelper
-                .getCredentialsProvider(clientBuilder, host, null, defaultcreds));
+        clientBuilder.setDefaultCredentialsProvider(credentialsHelper
+                .getCredentialsProvider(host, null, defaultcreds));
     }
 
 }

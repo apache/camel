@@ -16,19 +16,18 @@
  */
 package org.apache.camel.component.http.helper;
 
-import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class HttpCredentialsHelperTest extends CamelTestSupport {
+
+    HttpCredentialsHelper credentialsHelper = new HttpCredentialsHelper();
 
     private final String host = "credentials.test.org";
     private final Integer port = Integer.valueOf(80);
@@ -40,23 +39,10 @@ class HttpCredentialsHelperTest extends CamelTestSupport {
     private String proxyUsername = "proxyUser";
     private String proxyPassword = "proxyPassowrd";
 
-    private HttpClientBuilder clientBuilder1;//= HttpClientBuilder.create();
-    private HttpClientBuilder clientBuilder2;//= HttpClientBuilder.create();
-
-    @BeforeEach
-    public void createEndpoint() {
-        HttpEndpoint end1 = context.getEndpoint("http://" + host, HttpEndpoint.class);
-        clientBuilder1 = end1.getClientBuilder();
-        System.out.println("Hashcode clientbuilder1=" + clientBuilder1.hashCode());
-        HttpEndpoint end2 = context.getEndpoint("http://" + proxyHost, HttpEndpoint.class);
-        clientBuilder2 = end2.getClientBuilder();
-        System.out.println("Hashcode clientbuilder2=" + clientBuilder2.hashCode());
-    }
-
     @Test
     void testOneCredential() {
         Credentials credentials = new UsernamePasswordCredentials(username, password);
-        CredentialsProvider provider = HttpCredentialsHelper.getCredentialsProvider(clientBuilder1, host, port, credentials);
+        CredentialsProvider provider = credentialsHelper.getCredentialsProvider(host, port, credentials);
         assertNotNull(provider);
         assertEquals(credentials, provider.getCredentials(new AuthScope(host, port)));
     }
@@ -64,7 +50,7 @@ class HttpCredentialsHelperTest extends CamelTestSupport {
     @Test
     void testCredentialsNoPort() {
         Credentials credentials = new UsernamePasswordCredentials(username, password);
-        CredentialsProvider provider = HttpCredentialsHelper.getCredentialsProvider(clientBuilder1, host, null, credentials);
+        CredentialsProvider provider = credentialsHelper.getCredentialsProvider(host, null, credentials);
         assertNotNull(provider);
         assertEquals(credentials, provider.getCredentials(new AuthScope(host, AuthScope.ANY_PORT)));
     }
@@ -72,9 +58,9 @@ class HttpCredentialsHelperTest extends CamelTestSupport {
     @Test
     void testTwoCredentials() {
         Credentials credentials = new UsernamePasswordCredentials(username, password);
-        CredentialsProvider provider = HttpCredentialsHelper.getCredentialsProvider(clientBuilder1, host, port, credentials);
+        CredentialsProvider provider = credentialsHelper.getCredentialsProvider(host, port, credentials);
         Credentials proxyCredentials = new UsernamePasswordCredentials(proxyUsername, proxyPassword);
-        CredentialsProvider provider2 = HttpCredentialsHelper.getCredentialsProvider(clientBuilder1, proxyHost, proxyPort,
+        CredentialsProvider provider2 = credentialsHelper.getCredentialsProvider(proxyHost, proxyPort,
                 proxyCredentials);
 
         assertNotNull(provider);
@@ -87,11 +73,11 @@ class HttpCredentialsHelperTest extends CamelTestSupport {
     @Test
     void testTwoCredentialsDifferentHttpComponents() {
         Credentials credentials1 = new UsernamePasswordCredentials(username, password);
-        CredentialsProvider provider1 = HttpCredentialsHelper.getCredentialsProvider(clientBuilder1, host, port, credentials1);
+        CredentialsProvider provider1 = credentialsHelper.getCredentialsProvider(host, port, credentials1);
         Credentials credentials2 = new UsernamePasswordCredentials(username + "2", password + "2");
 
         CredentialsProvider provider2
-                = HttpCredentialsHelper.getCredentialsProvider(clientBuilder2, proxyHost, proxyPort, credentials2);
+                = new HttpCredentialsHelper().getCredentialsProvider(proxyHost, proxyPort, credentials2);
         assertNotEquals(provider1, provider2);
         assertEquals(credentials1, provider1.getCredentials(new AuthScope(host, port)));
         assertEquals(credentials2, provider2.getCredentials(new AuthScope(proxyHost, proxyPort)));

@@ -25,6 +25,7 @@ import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
+import org.apache.camel.component.http.helper.HttpCredentialsHelper;
 import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
@@ -165,7 +166,9 @@ final class HttpComponentVerifierExtension extends DefaultComponentVerifierExten
         return httpUri;
     }
 
-    private Optional<HttpClientConfigurer> configureAuthentication(Map<String, Object> parameters) {
+    private Optional<HttpClientConfigurer> configureAuthentication(
+            Map<String, Object> parameters,
+            HttpCredentialsHelper credentialsHelper) {
         Optional<String> authUsername = getOption(parameters, "authUsername", String.class);
         Optional<String> authPassword = getOption(parameters, "authPassword", String.class);
 
@@ -178,13 +181,16 @@ final class HttpComponentVerifierExtension extends DefaultComponentVerifierExten
                             authUsername.get(),
                             authPassword.get(),
                             authDomain.orElse(null),
-                            authHost.orElse(null)));
+                            authHost.orElse(null),
+                            credentialsHelper));
         }
 
         return Optional.empty();
     }
 
-    private Optional<HttpClientConfigurer> configureProxy(Map<String, Object> parameters) {
+    private Optional<HttpClientConfigurer> configureProxy(
+            Map<String, Object> parameters,
+            HttpCredentialsHelper credentialsHelper) {
         Optional<String> uri = getOption(parameters, "httpUri", String.class);
         Optional<String> proxyAuthHost = getOption(parameters, "proxyAuthHost", String.class);
         Optional<Integer> proxyAuthPort = getOption(parameters, "proxyAuthPort", Integer.class);
@@ -209,7 +215,8 @@ final class HttpComponentVerifierExtension extends DefaultComponentVerifierExten
                                 proxyAuthUsername.orElse(null),
                                 proxyAuthPassword.orElse(null),
                                 proxyAuthDomain.orElse(null),
-                                proxyAuthNtHost.orElse(null)));
+                                proxyAuthNtHost.orElse(null),
+                                credentialsHelper));
             } else {
                 return Optional.of(
                         new ProxyHttpClientConfigurer(
@@ -224,8 +231,9 @@ final class HttpComponentVerifierExtension extends DefaultComponentVerifierExten
 
     private CloseableHttpClient createHttpClient(Map<String, Object> parameters) throws Exception {
         CompositeHttpConfigurer configurer = new CompositeHttpConfigurer();
-        configureAuthentication(parameters).ifPresent(configurer::addConfigurer);
-        configureProxy(parameters).ifPresent(configurer::addConfigurer);
+        HttpCredentialsHelper credentialsHelper = new HttpCredentialsHelper();
+        configureAuthentication(parameters, credentialsHelper).ifPresent(configurer::addConfigurer);
+        configureProxy(parameters, credentialsHelper).ifPresent(configurer::addConfigurer);
 
         HttpClientBuilder builder = HttpClientBuilder.create();
         configurer.configureHttpClient(builder);
