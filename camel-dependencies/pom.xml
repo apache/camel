@@ -81,7 +81,7 @@
     <azure-storage-queue-version>12.12.2</azure-storage-queue-version>
     <bouncycastle-version>1.71</bouncycastle-version>
     <box-java-sdk-version>2.58.0</box-java-sdk-version>
-    <braintree-gateway-version>3.17.0</braintree-gateway-version>
+    <braintree-gateway-version>3.18.0</braintree-gateway-version>
     <brave-zipkin-version>5.13.3</brave-zipkin-version>
     <build-helper-maven-plugin-version>3.2.0</build-helper-maven-plugin-version>
     <c3p0-version>0.9.5.5</c3p0-version>
