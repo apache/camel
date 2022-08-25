@@ -61,8 +61,8 @@ public interface CliConnectorFactory {
     String getRuntimeVersion();
 
     /**
-     * Creates the connector which will be added as a {@link Service}
-     * to {@link org.apache.camel.CamelContext} as the lifecycle to start and stop the connector.
+     * Creates the connector which will be added as a {@link Service} to {@link org.apache.camel.CamelContext} as the
+     * lifecycle to start and stop the connector.
      */
     Service createConnector();
 
