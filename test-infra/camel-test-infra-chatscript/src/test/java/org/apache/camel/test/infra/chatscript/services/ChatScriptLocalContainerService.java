@@ -45,6 +45,7 @@ public class ChatScriptLocalContainerService implements ChatScriptService, Conta
     public void initialize() {
         LOG.info("Trying to start the ChatScript container");
         container.start();
+        registerProperties();
 
         LOG.info("ChatScript instance running at {}", serviceAddress());
     }
@@ -62,6 +63,6 @@ public class ChatScriptLocalContainerService implements ChatScriptService, Conta
 
     @Override
     public String serviceAddress() {
-        return container.getTestHostIpAddress() + ":" + container.getMappedPort(SERVICE_PORT);
+        return container.getHost() + ":" + container.getMappedPort(SERVICE_PORT);
     }
 }
