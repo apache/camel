@@ -49,7 +49,7 @@ public class AMQPRouteTest extends CamelTestSupport {
     static int amqpPort = AvailablePortFinder.getNextAvailable();
 
     @RegisterExtension
-    public static ActiveMQEmbeddedService service = ActiveMQEmbeddedServiceBuilder
+    public ActiveMQEmbeddedService service = ActiveMQEmbeddedServiceBuilder
             .defaultBroker()
             .withAmqpTransport(amqpPort)
             .build();
