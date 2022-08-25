@@ -121,8 +121,7 @@ public class JmsPollingConsumerTest extends AbstractJMSTest {
             MockEndpoint mock = getMockEndpoint("mock:result");
             mock.expectedBodiesReceived("Hello Claus");
 
-            // wait a little to demonstrate we can start poll before we have a msg on the queue
-            assertTrue(latch.await(500, TimeUnit.MILLISECONDS));
+            assertTrue(latch.await(1, TimeUnit.SECONDS));
             assertNull(body, "Message body should be null because the receive timed out");
 
             template.sendBody("direct:start", "Hello");
