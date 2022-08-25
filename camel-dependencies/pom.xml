@@ -431,7 +431,7 @@
     <nessus-weka-version>1.0.1</nessus-weka-version>
     <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
     <netty-version>4.1.79.Final</netty-version>
-    <networknt-json-schema-validator-version>1.0.69</networknt-json-schema-validator-version>
+    <networknt-json-schema-validator-version>1.0.72</networknt-json-schema-validator-version>
     <nimbus-jose-jwt>8.9</nimbus-jose-jwt>
     <nitrite-version>3.4.4</nitrite-version>
     <ognl-version>3.1.12</ognl-version>
