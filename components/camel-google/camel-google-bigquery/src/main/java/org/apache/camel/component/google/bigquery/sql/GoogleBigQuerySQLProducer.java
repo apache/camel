@@ -163,7 +163,15 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
         }
 
         params.forEach((key, value) -> {
-            QueryParameterValue parameterValue = QueryParameterValue.of(value.toString(), StandardSQLTypeName.STRING);
+            QueryParameterValue parameterValue;
+
+            try {
+                parameterValue = QueryParameterValue.of(value, (Class<Object>) value.getClass());
+            } catch (IllegalArgumentException e) {
+                LOG.warn("{} Fallback to *.toString() value.", e.getMessage());
+                //use String representation
+                parameterValue = QueryParameterValue.of(value.toString(), StandardSQLTypeName.STRING);
+            }
             builder.addNamedParameter(key, parameterValue);
         });
     }
