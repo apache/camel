@@ -34,16 +34,16 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.shaded.org.awaitility.Awaitility;
 
 public class ChatScriptComponentIT extends CamelTestSupport {
-    @RegisterExtension
-    static ChatScriptService service = ChatScriptServiceFactory.createService();
-
     private static final Logger LOG = LoggerFactory.getLogger(ChatScriptComponentIT.class);
+
+    @RegisterExtension
+    public ChatScriptService service = ChatScriptServiceFactory.createService();
 
     @Test
     public void testChatScript() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
-        Awaitility.await().atMost(Duration.ofMillis(100)).untilAsserted(() -> assertMockEndpointsSatisfied());
+        Awaitility.await().atMost(Duration.ofSeconds(2)).untilAsserted(() -> assertMockEndpointsSatisfied());
     }
 
     @Override
