@@ -586,12 +586,23 @@ class Run extends CamelCommand {
             }
             // update status file with details from the context console
             try {
+                JsonObject root = new JsonObject();
                 DevConsole dc = main.getCamelContext().adapt(ExtendedCamelContext.class)
                         .getDevConsoleResolver().resolveDevConsole("context");
                 DevConsole dc2 = main.getCamelContext().adapt(ExtendedCamelContext.class)
                         .getDevConsoleResolver().resolveDevConsole("route");
                 int ready = 0;
                 int total = 0;
+                if (dc != null && dc2 != null) {
+                    JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON);
+                    JsonObject json2 = (JsonObject) dc2.call(DevConsole.MediaType.JSON);
+                    if (json != null && json2 != null) {
+                        root.put("context", json);
+                        json.put("runtime", "camel-jbang");
+                        root.put("routes", json2.get("routes"));
+                        IOHelper.writeText(root.toJson(), statusFile);
+                    }
+                }
                 // and health-check readiness
                 Collection<HealthCheck.Result> res = HealthCheckHelper.invokeReadiness(main.getCamelContext());
                 for (var r : res) {
@@ -603,17 +614,7 @@ class Run extends CamelCommand {
                 JsonObject hc = new JsonObject();
                 hc.put("ready", ready);
                 hc.put("total", total);
-                if (dc != null && dc2 != null) {
-                    JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON);
-                    JsonObject json2 = (JsonObject) dc2.call(DevConsole.MediaType.JSON);
-                    if (json != null && json2 != null) {
-                        JsonObject root = new JsonObject();
-                        root.put("context", json);
-                        root.put("routes", json2.get("routes"));
-                        root.put("healthChecks", hc);
-                        IOHelper.writeText(root.toJson(), statusFile);
-                    }
-                }
+                root.put("healthChecks", hc);
             } catch (Throwable e) {
                 // ignore
             }
