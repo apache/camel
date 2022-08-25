@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.http.helper;
+package org.apache.camel.component.http;
 
 import java.util.Objects;
 
@@ -23,11 +23,11 @@ import org.apache.http.auth.Credentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 
-public final class HttpCredentialsHelper {
+final class HttpCredentialsHelper {
 
     private final CredentialsProvider credentialsProvider;
 
-    public HttpCredentialsHelper() {
+    HttpCredentialsHelper() {
         this.credentialsProvider = new BasicCredentialsProvider();
     }
 

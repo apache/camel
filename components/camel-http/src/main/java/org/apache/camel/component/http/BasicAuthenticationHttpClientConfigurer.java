@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.http;
 
-import org.apache.camel.component.http.helper.HttpCredentialsHelper;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;

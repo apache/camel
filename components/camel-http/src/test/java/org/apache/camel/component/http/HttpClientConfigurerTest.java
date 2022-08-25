@@ -17,7 +17,6 @@
 package org.apache.camel.component.http;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http.helper.HttpCredentialsHelper;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
