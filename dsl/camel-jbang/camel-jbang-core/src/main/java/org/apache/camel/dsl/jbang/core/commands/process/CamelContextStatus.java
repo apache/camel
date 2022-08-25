@@ -82,7 +82,7 @@ public class CamelContextStatus extends ProcessBaseCommand {
                         JsonObject root = loadStatus(ph.pid());
                         if (root != null) {
                             JsonObject hc = (JsonObject) root.get("healthChecks");
-                            row.ready = hc.getString("ready") + "/" + hc.getString("total");
+                            row.ready = hc != null ? hc.getString("ready") + "/" + hc.getString("total") : null;
                             JsonObject context = (JsonObject) root.get("context");
                             row.state = context.getString("state").toLowerCase(Locale.ROOT);
                             Map<String, ?> stats = context.getMap("statistics");

@@ -571,17 +571,15 @@ To display the status of the running Camel integrations:
 
 [source,bash]
 ----
-camel get integration
-+------+----------+---------+-------+---------+----------+------------+------------+
-| PID  | Name     | State   | Age   | Total # | Failed # | Inflight # | Since Last |
-+------+----------+---------+-------+---------+----------+------------+------------+
-| 2617 | bar.yaml | started | 1h27m |    5231 |        0 |          0 |         0s |
-| 2630 | foo.java | started | 1h27m |    1050 |        0 |          0 |         4s |
-+------+----------+---------+-------+---------+----------+------------+------------+
+camel get
+  PID   NAME         READY   STATE   AGE  TOTAL  FAILED  INFLIGHT  SINCE-LAST
+ 38780  routes.yaml   1/1   Started  10s      2       0         0          1s
+ 38793  dude.java     1/1   Started   9s      6       0         0          0s
+ 38806  gro.groovy    1/1   Started   8s      3       0         0          0s
 ----
 
-TIP: You can use `camel get int` or `camel get context` as a short-hand
-command for displaying the integration status as above.
+The `camel get` command will default display integrations, which is equivalent to
+typing `camel get integrations` or `camel get int`.
 
 This displays overall information for every Camel integration, where you can see
 the total number of messages processed. The column _Since Last_
@@ -593,16 +591,10 @@ You can also see the status of every routes, from all the local Camel integratio
 [source,bash]
 ----
 camel get route
-+------+------------+-----------------------+-------------------------------------+---------+--------+---------+--------+----------+--------+--------+--------+----------+
-| PID  | Name       | Route ID              | From                                | State   | Uptime |  Total  | Failed | Inflight |  Mean  |  Max   |  Min   |  Since   |
-|      |            |                       |                                     |         |        |    #    |   #    |    #     |  (ms)  |  (ms)  |  (ms)  |   Last   |
-+------+------------+-----------------------+-------------------------------------+---------+--------+---------+--------+----------+--------+--------+--------+----------+
-| 2617 | bar.yaml   | route1                | timer://yaml2?period=1000           | started |  1h31m |    5483 |      0 |        0 |      0 |     59 |      0 |       0s |
-| 7313 | chuck.yaml | chuck                 | kamelet://chuck-norris-source       | started |    12s |       2 |      0 |        0 |      0 |      1 |      0 |       1s |
-|      |            | chuck-norris-source-1 | timer://chuck?period=10000          | started |    12s |       2 |      0 |        0 |    105 |    133 |     78 |       1s |
-|      |            | log-sink-2            | kamelet://source?routeId=log-sink-2 | started |    12s |       2 |      0 |        0 |      0 |      0 |      0 |       1s |
-| 2630 | foo.java   | java                  | timer://java?period=5000            | started |  1h31m |    1101 |      0 |        0 |      0 |     10 |      0 |       1s |
-+------+------------+-----------------------+-------------------------------------+---------+--------+---------+--------+----------+--------+--------+--------+----------+
+  PID   SOURCE          ID      FROM                         STATE   AGE  TOTAL  FAILED  INFLIGHT  MEAN  MIN  MAX  SINCE-LAST
+ 38911  routes.yaml:18  route1  timer://tick?period=5000    Started  11s      3       0         0    13    0   37          0s
+ 38924  dude.java:11    java    timer://java?period=1000    Started  10s     10       0         0     1    0    5          0s
+ 38937  gro.groovy      groovy  timer://groovy?period=1000  Started   8s      8       0         0     1    0   11          0s
 ----
 
 TIP: Use `camel get --help` to display all the available commands as additional will be added in upcoming releases.

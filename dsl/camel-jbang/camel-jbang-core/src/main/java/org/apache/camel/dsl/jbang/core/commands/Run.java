@@ -584,8 +584,8 @@ class Run extends CamelCommand {
                 context.stop();
                 return;
             }
-            // update status file with details from the context console
             try {
+                // update status file with details from the context console
                 JsonObject root = new JsonObject();
                 DevConsole dc = main.getCamelContext().adapt(ExtendedCamelContext.class)
                         .getDevConsoleResolver().resolveDevConsole("context");
@@ -600,7 +600,6 @@ class Run extends CamelCommand {
                         root.put("context", json);
                         json.put("runtime", "camel-jbang");
                         root.put("routes", json2.get("routes"));
-                        IOHelper.writeText(root.toJson(), statusFile);
                     }
                 }
                 // and health-check readiness
@@ -615,6 +614,8 @@ class Run extends CamelCommand {
                 hc.put("ready", ready);
                 hc.put("total", total);
                 root.put("healthChecks", hc);
+
+                IOHelper.writeText(root.toJson(), statusFile);
             } catch (Throwable e) {
                 // ignore
             }
