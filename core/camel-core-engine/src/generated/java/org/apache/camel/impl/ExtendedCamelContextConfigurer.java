@@ -49,6 +49,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "CaseInsensitiveHeaders": target.setCaseInsensitiveHeaders(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "classresolver":
         case "ClassResolver": target.setClassResolver(property(camelContext, org.apache.camel.spi.ClassResolver.class, value)); return true;
+        case "cliconnectorfactory":
+        case "CliConnectorFactory": target.setCliConnectorFactory(property(camelContext, org.apache.camel.spi.CliConnectorFactory.class, value)); return true;
         case "componentnameresolver":
         case "ComponentNameResolver": target.setComponentNameResolver(property(camelContext, org.apache.camel.spi.ComponentNameResolver.class, value)); return true;
         case "componentresolver":
@@ -252,6 +254,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "CaseInsensitiveHeaders": return java.lang.Boolean.class;
         case "classresolver":
         case "ClassResolver": return org.apache.camel.spi.ClassResolver.class;
+        case "cliconnectorfactory":
+        case "CliConnectorFactory": return org.apache.camel.spi.CliConnectorFactory.class;
         case "componentnameresolver":
         case "ComponentNameResolver": return org.apache.camel.spi.ComponentNameResolver.class;
         case "componentresolver":
@@ -456,6 +460,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "CaseInsensitiveHeaders": return target.isCaseInsensitiveHeaders();
         case "classresolver":
         case "ClassResolver": return target.getClassResolver();
+        case "cliconnectorfactory":
+        case "CliConnectorFactory": return target.getCliConnectorFactory();
         case "componentnameresolver":
         case "ComponentNameResolver": return target.getComponentNameResolver();
         case "componentresolver":

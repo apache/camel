@@ -45,7 +45,9 @@ public class ListProcess extends ProcessBaseCommand {
     public Integer call() throws Exception {
         List<Row> rows = new ArrayList<>();
 
+        final long cur = ProcessHandle.current().pid();
         ProcessHandle.allProcesses()
+                .filter(ph -> ph.pid() != cur)
                 .sorted((o1, o2) -> {
                     switch (sort) {
                         case "pid":

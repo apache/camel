@@ -98,6 +98,7 @@ import org.apache.camel.spi.CamelContextTracker;
 import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
@@ -313,6 +314,7 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile RestRegistryFactory restRegistryFactory;
     private volatile RestRegistry restRegistry;
     private volatile HeadersMapFactory headersMapFactory;
+    private volatile CliConnectorFactory cliConnectorFactory;
     private volatile BeanProxyFactory beanProxyFactory;
     private volatile BeanProcessorFactory beanProcessorFactory;
     private volatile XMLRoutesDefinitionLoader xmlRoutesDefinitionLoader;
@@ -1524,6 +1526,10 @@ public abstract class AbstractCamelContext extends BaseService
             Object object, boolean stopOnShutdown,
             boolean forceStart, boolean useLifecycleStrategies)
             throws Exception {
+
+        if (object == null) {
+            return;
+        }
 
         // inject CamelContext
         CamelContextAware.trySetCamelContext(object, getCamelContextReference());
@@ -2858,6 +2864,11 @@ public abstract class AbstractCamelContext extends BaseService
 
         forceLazyInitialization();
 
+        CliConnectorFactory ccf = getCliConnectorFactory();
+        if (ccf != null && ccf.isEnabled()) {
+            LOG.info("Detected: {} JAR (Enabling Camel CLI Connector)", ccf);
+            addService(ccf.createConnector(), true);
+        }
         addService(getManagementStrategy(), false);
         lifecycleStrategies.sort(OrderedComparator.get());
         ServiceHelper.initService(lifecycleStrategies);
@@ -5293,6 +5304,8 @@ public abstract class AbstractCamelContext extends BaseService
 
     protected abstract HeadersMapFactory createHeadersMapFactory();
 
+    protected abstract CliConnectorFactory createCliConnectorFactory();
+
     protected abstract BeanProxyFactory createBeanProxyFactory();
 
     protected abstract AnnotationBasedProcessorFactory createAnnotationBasedProcessorFactory();
@@ -5363,6 +5376,23 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public void setStartupStepRecorder(StartupStepRecorder startupStepRecorder) {
         this.startupStepRecorder = startupStepRecorder;
+    }
+
+    @Override
+    public CliConnectorFactory getCliConnectorFactory() {
+        if (cliConnectorFactory == null) {
+            synchronized (lock) {
+                if (cliConnectorFactory == null) {
+                    setCliConnectorFactory(createCliConnectorFactory());
+                }
+            }
+        }
+        return cliConnectorFactory;
+    }
+
+    @Override
+    public void setCliConnectorFactory(CliConnectorFactory cliConnectorFactory) {
+        this.cliConnectorFactory = cliConnectorFactory;
     }
 
     @Deprecated

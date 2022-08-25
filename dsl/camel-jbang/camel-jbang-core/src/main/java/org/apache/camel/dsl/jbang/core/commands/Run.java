@@ -30,16 +30,12 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringJoiner;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,12 +45,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.apicurio.datamodels.Library;
 import io.apicurio.datamodels.openapi.models.OasDocument;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.console.DevConsole;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.generator.openapi.RestDslGenerator;
-import org.apache.camel.health.HealthCheck;
-import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.impl.lw.LightweightCamelContext;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.main.download.DownloadListener;
@@ -64,7 +56,6 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.json.JsonObject;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import picocli.CommandLine;
@@ -95,9 +86,6 @@ class Run extends CamelCommand {
             "^\\s*public class\\s+([a-zA-Z0-9]*)[\\s+|;].*$", Pattern.MULTILINE);
 
     private CamelContext context;
-    private File lockFile;
-    private File statusFile;
-    private ScheduledExecutorService executor;
     private boolean silentRun;
     private boolean pipeRun;
 
@@ -164,10 +152,6 @@ class Run extends CamelCommand {
 
     @Option(names = { "-p", "--prop", "--property" }, description = "Additional properties (override existing)", arity = "0")
     String[] property;
-
-    @Option(names = { "--file-lock" },
-            description = "Whether to create a temporary file lock, which upon deleting triggers this process to terminate", defaultValue = "true")
-    boolean fileLock = true;
 
     @Option(names = { "--jfr" },
             description = "Enables Java Flight Recorder saving recording to disk on exit")
@@ -245,12 +229,6 @@ class Run extends CamelCommand {
     }
 
     private int stop() {
-        if (lockFile != null) {
-            FileUtil.deleteFile(lockFile);
-        }
-        if (statusFile != null) {
-            FileUtil.deleteFile(statusFile);
-        }
         return 0;
     }
 
@@ -409,10 +387,6 @@ class Run extends CamelCommand {
         writeSetting(main, profileProperties, "camel.jbang.jfr", jfr || jfrProfile != null ? "jfr" : null);
         writeSetting(main, profileProperties, "camel.jbang.jfr-profile", jfrProfile != null ? jfrProfile : null);
 
-        if (fileLock) {
-            initLockFile(main);
-        }
-
         StringJoiner js = new StringJoiner(",");
         StringJoiner sjReload = new StringJoiner(",");
         StringJoiner sjClasspathFiles = new StringJoiner(",");
@@ -569,57 +543,6 @@ class Run extends CamelCommand {
         main.run();
 
         return main.getExitCode();
-    }
-
-    private void initLockFile(KameletMain main) {
-        lockFile = createLockFile(getPid());
-        if (lockFile != null) {
-            statusFile = createLockFile(lockFile.getName() + "-status.json");
-        }
-        // to trigger shutdown on file lock deletion
-        executor = Executors.newSingleThreadScheduledExecutor();
-        executor.scheduleWithFixedDelay(() -> {
-            // if the lock file is deleted then stop
-            if (!lockFile.exists()) {
-                context.stop();
-                return;
-            }
-            try {
-                // update status file with details from the context console
-                JsonObject root = new JsonObject();
-                DevConsole dc = main.getCamelContext().adapt(ExtendedCamelContext.class)
-                        .getDevConsoleResolver().resolveDevConsole("context");
-                DevConsole dc2 = main.getCamelContext().adapt(ExtendedCamelContext.class)
-                        .getDevConsoleResolver().resolveDevConsole("route");
-                int ready = 0;
-                int total = 0;
-                if (dc != null && dc2 != null) {
-                    JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON);
-                    JsonObject json2 = (JsonObject) dc2.call(DevConsole.MediaType.JSON);
-                    if (json != null && json2 != null) {
-                        root.put("context", json);
-                        json.put("runtime", "camel-jbang");
-                        root.put("routes", json2.get("routes"));
-                    }
-                }
-                // and health-check readiness
-                Collection<HealthCheck.Result> res = HealthCheckHelper.invokeReadiness(main.getCamelContext());
-                for (var r : res) {
-                    if (r.getState().equals(HealthCheck.State.UP)) {
-                        ready++;
-                    }
-                    total++;
-                }
-                JsonObject hc = new JsonObject();
-                hc.put("ready", ready);
-                hc.put("total", total);
-                root.put("healthChecks", hc);
-
-                IOHelper.writeText(root.toJson(), statusFile);
-            } catch (Throwable e) {
-                // ignore
-            }
-        }, 2000, 2000, TimeUnit.MILLISECONDS);
     }
 
     private String evalGistSource(KameletMain main, String file) throws Exception {

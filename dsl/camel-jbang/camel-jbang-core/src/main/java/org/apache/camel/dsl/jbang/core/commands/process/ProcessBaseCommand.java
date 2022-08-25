@@ -51,8 +51,10 @@ abstract class ProcessBaseCommand extends CamelCommand {
             }
         }
 
+        final long cur = ProcessHandle.current().pid();
         final String pattern = name;
         ProcessHandle.allProcesses()
+                .filter(ph -> ph.pid() != cur)
                 .forEach(ph -> {
                     String pName = extractName(ph);
                     // ignore file extension, so it is easier to match by name
@@ -67,6 +69,45 @@ abstract class ProcessBaseCommand extends CamelCommand {
 
     static String extractName(ProcessHandle ph) {
         String cl = ph.info().commandLine().orElse("");
+
+        String name = extractCamelJBangName(cl);
+        if (name == null) {
+            name = extractCamelMavenName(cl);
+        }
+        if (name == null) {
+            name = extractCamelMain(cl);
+        }
+
+        return name == null ? "" : name;
+    }
+
+    private static String extractCamelMavenName(String cl) {
+        String name = StringHelper.before(cl, " camel:run");
+        if (name != null) {
+            if (name.contains("org.codehaus.plexus.classworlds.launcher.Launcher")) {
+                return "mvn camel:run";
+            }
+        }
+
+        return null;
+    }
+
+    private static String extractCamelMain(String cl) {
+        if (cl != null) {
+            if (cl.contains("camel-main")) {
+                int pos = cl.lastIndexOf(" ");
+                String after = cl.substring(pos);
+                after = after.trim();
+                if (after.matches("[\\w|.]+")) {
+                    return "camel-main";
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private static String extractCamelJBangName(String cl) {
         String name = StringHelper.after(cl, "main.CamelJBang run");
         if (name != null) {
             name = name.trim();
@@ -83,7 +124,7 @@ abstract class ProcessBaseCommand extends CamelCommand {
             return js.toString();
         }
 
-        return "";
+        return null;
     }
 
     static long extractSince(ProcessHandle ph) {

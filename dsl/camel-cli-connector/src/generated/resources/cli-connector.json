@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "cli-connector",
+    "title": "CLI Connector",
+    "description": "Runtime adapter connecting with Camel CLI",
+    "deprecated": false,
+    "firstVersion": "3.19.0",
+    "label": "tooling",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-cli-connector",
+    "version": "3.19.0-SNAPSHOT"
+  }
+}

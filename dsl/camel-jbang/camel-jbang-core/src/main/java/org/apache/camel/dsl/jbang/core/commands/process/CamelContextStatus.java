@@ -81,10 +81,12 @@ public class CamelContextStatus extends ProcessBaseCommand {
                         row.ago = TimeUtils.printSince(extractSince(ph));
                         JsonObject root = loadStatus(ph.pid());
                         if (root != null) {
-                            JsonObject hc = (JsonObject) root.get("healthChecks");
-                            row.ready = hc != null ? hc.getString("ready") + "/" + hc.getString("total") : null;
+                            JsonObject runtime = (JsonObject) root.get("runtime");
+                            row.platform = runtime != null ? runtime.getString("platform") : null;
+                            row.platformVersion = runtime != null ? runtime.getString("platformVersion") : null;
                             JsonObject context = (JsonObject) root.get("context");
                             row.state = context.getString("state").toLowerCase(Locale.ROOT);
+                            row.camelVersion = context.getString("version");
                             Map<String, ?> stats = context.getMap("statistics");
                             if (stats != null) {
                                 row.total = stats.get("exchangesTotal").toString();
@@ -95,6 +97,8 @@ public class CamelContextStatus extends ProcessBaseCommand {
                                     row.sinceLast = last.toString();
                                 }
                             }
+                            JsonObject hc = (JsonObject) root.get("healthChecks");
+                            row.ready = hc != null ? hc.getString("ready") + "/" + hc.getString("total") : null;
                         }
                         rows.add(row);
                     }
@@ -105,6 +109,8 @@ public class CamelContextStatus extends ProcessBaseCommand {
                     new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                     new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS)
                             .with(r -> r.name),
+                    new Column().header("CAMEL").dataAlign(HorizontalAlign.LEFT).with(r -> r.camelVersion),
+                    new Column().header("PLATFORM").dataAlign(HorizontalAlign.LEFT).with(this::getPlatform),
                     new Column().header("READY").dataAlign(HorizontalAlign.CENTER).with(r -> r.ready),
                     new Column().header("STATE").headerAlign(HorizontalAlign.CENTER)
                             .with(r -> StringHelper.capitalize(r.state)),
@@ -116,6 +122,14 @@ public class CamelContextStatus extends ProcessBaseCommand {
         }
 
         return 0;
+    }
+
+    private String getPlatform(Row r) {
+        if (r.platformVersion != null) {
+            return r.platform + " v" + r.platformVersion + ")";
+        } else {
+            return r.platform;
+        }
     }
 
     private JsonObject loadStatus(long pid) {
@@ -135,6 +149,9 @@ public class CamelContextStatus extends ProcessBaseCommand {
 
     private static class Row {
         String pid;
+        String platform;
+        String platformVersion;
+        String camelVersion;
         String name;
         String ready;
         String state;

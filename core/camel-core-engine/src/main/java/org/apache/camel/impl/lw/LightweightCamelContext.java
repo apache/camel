@@ -83,6 +83,7 @@ import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
@@ -1779,6 +1780,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public void setStartupStepRecorder(StartupStepRecorder startupStepRecorder) {
         getExtendedCamelContext().setStartupStepRecorder(startupStepRecorder);
+    }
+
+    @Override
+    public CliConnectorFactory getCliConnectorFactory() {
+        return getExtendedCamelContext().getCliConnectorFactory();
+    }
+
+    @Override
+    public void setCliConnectorFactory(CliConnectorFactory cliConnectorFactory) {
+        getExtendedCamelContext().setCliConnectorFactory(cliConnectorFactory);
     }
 
     @Override

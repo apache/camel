@@ -1,0 +1,1 @@
+../../../../../dsl/camel-cli-connector/src/main/docs/cli-connector.adoc

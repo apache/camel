@@ -40,6 +40,7 @@ import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
@@ -407,6 +408,17 @@ public class SimpleCamelContext extends AbstractCamelContext {
                 HeadersMapFactory.class);
 
         return result.orElseGet(DefaultHeadersMapFactory::new);
+    }
+
+    @Override
+    protected CliConnectorFactory createCliConnectorFactory() {
+        Optional<CliConnectorFactory> result = ResolverHelper.resolveService(
+                getCamelContextReference(),
+                getBootstrapFactoryFinder(),
+                CliConnectorFactory.FACTORY,
+                CliConnectorFactory.class);
+        // cli-connector is optional
+        return result.orElse(null);
     }
 
     @Override

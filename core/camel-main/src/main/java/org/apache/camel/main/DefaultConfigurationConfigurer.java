@@ -43,6 +43,7 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelLifecycleStrategy;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EventFactory;
@@ -352,6 +353,10 @@ public final class DefaultConfigurationConfigurer {
         StartupStepRecorder ssr = getSingleBeanOfType(registry, StartupStepRecorder.class);
         if (ssr != null) {
             ecc.setStartupStepRecorder(ssr);
+        }
+        CliConnectorFactory ccf = getSingleBeanOfType(registry, CliConnectorFactory.class);
+        if (ccf != null) {
+            ecc.setCliConnectorFactory(ccf);
         }
         PropertiesComponent pc = getSingleBeanOfType(registry, PropertiesComponent.class);
         if (pc != null) {

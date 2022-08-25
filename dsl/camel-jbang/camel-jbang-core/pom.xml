@@ -60,6 +60,10 @@
 
         <!-- cli -->
         <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-cli-connector</artifactId>
+        </dependency>
+        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>

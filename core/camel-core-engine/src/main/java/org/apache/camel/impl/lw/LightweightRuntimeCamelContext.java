@@ -78,6 +78,7 @@ import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
@@ -181,6 +182,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     private final CamelBeanPostProcessor beanPostProcessor;
     private final CamelDependencyInjectionAnnotationFactory dependencyInjectionAnnotationFactory;
     private final HeadersMapFactory headersMapFactory;
+    private final CliConnectorFactory cliConnectorFactory;
     private final ExchangeFactory exchangeFactory;
     private final ExchangeFactoryManager exchangeFactoryManager;
     private final ProcessorExchangeFactory processorExchangeFactory;
@@ -236,6 +238,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         dependencyInjectionAnnotationFactory
                 = context.adapt(ExtendedCamelContext.class).getDependencyInjectionAnnotationFactory();
         headersMapFactory = context.adapt(ExtendedCamelContext.class).getHeadersMapFactory();
+        cliConnectorFactory = context.adapt(ExtendedCamelContext.class).getCliConnectorFactory();
         exchangeFactory = context.adapt(ExtendedCamelContext.class).getExchangeFactory();
         exchangeFactoryManager = context.adapt(ExtendedCamelContext.class).getExchangeFactoryManager();
         modelineFactory = context.adapt(ExtendedCamelContext.class).getModelineFactory();
@@ -1711,6 +1714,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
     @Override
     public void setHeadersMapFactory(HeadersMapFactory factory) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public CliConnectorFactory getCliConnectorFactory() {
+        return cliConnectorFactory;
+    }
+
+    @Override
+    public void setCliConnectorFactory(CliConnectorFactory cliConnectorFactory) {
         throw new UnsupportedOperationException();
     }
 
