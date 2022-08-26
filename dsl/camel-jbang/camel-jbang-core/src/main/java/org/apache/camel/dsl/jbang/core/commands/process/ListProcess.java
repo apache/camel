@@ -19,7 +19,6 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
