@@ -45,8 +45,11 @@ import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.main.http.VertxHttpServer;
 import org.apache.camel.main.injection.AnnotationDependencyInjection;
 import org.apache.camel.main.util.ExtraFilesClassLoader;
+import org.apache.camel.spi.CliConnector;
+import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.startup.jfr.FlightRecorderStartupStepRecorder;
+import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * A Main class for booting up Camel with Kamelet in standalone mode.
@@ -301,6 +304,25 @@ public class KameletMain extends MainCommandLineSupport {
         // annotation based dependency injection for camel/spring/quarkus annotations in DSLs and Java beans
         AnnotationDependencyInjection.initAnnotationBasedDependencyInjection(answer);
 
+        if (!stub) {
+            // setup cli-connector if not already done
+            if (answer.hasService(CliConnector.class) == null) {
+                CliConnectorFactory ccf = answer.getCliConnectorFactory();
+                if (ccf != null && ccf.isEnabled()) {
+                    CliConnector connector = ccf.createConnector();
+                    try {
+                        answer.addService(connector, true);
+                        // force start cli connector early as otherwise it will be deferred until context is started
+                        // but, we want status available during startup phase
+                        ServiceHelper.startService(connector);
+                    } catch (Exception e) {
+                        LOG.warn("Cannot start camel-cli-connector due: " + e.getMessage()
+                                + ". This integration cannot be managed by Camel CLI.");
+                    }
+                }
+            }
+
+        }
         // embed HTTP server if port is specified
         Object port = getInitialProperties().get("camel.jbang.platform-http.port");
         if (port != null) {

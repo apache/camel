@@ -74,6 +74,6 @@ public interface CliConnectorFactory {
      * Creates the connector which will be added as a {@link Service} to {@link org.apache.camel.CamelContext} as the
      * lifecycle to start and stop the connector.
      */
-    Service createConnector();
+    CliConnector createConnector();
 
 }

@@ -29,6 +29,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
+import org.apache.camel.spi.CliConnector;
 import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FileUtil;
@@ -41,7 +42,7 @@ import org.slf4j.LoggerFactory;
 /**
  * CLI Connector for local management of Camel integrations from the Camel CLI.
  */
-public class LocalCliConnector extends ServiceSupport implements CamelContextAware {
+public class LocalCliConnector extends ServiceSupport implements CliConnector, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(LocalCliConnector.class);
 
@@ -66,19 +67,6 @@ public class LocalCliConnector extends ServiceSupport implements CamelContextAwa
 
     @Override
     protected void doStart() throws Exception {
-        // create thread from JDK so it is not managed by Camel because we want the pool to be independent when
-        // camel is being stopped which otherwise can lead to stopping the thread pool while the task is running
-        executor = Executors.newSingleThreadScheduledExecutor(r -> {
-            String threadName = ThreadHelper.resolveThreadName(null, "LocalCliConnector");
-            return new Thread(r, threadName);
-        });
-
-        lockFile = createLockFile(getPid());
-        if (lockFile != null) {
-            statusFile = createLockFile(lockFile.getName() + "-status.json");
-        }
-        executor.scheduleWithFixedDelay(this::statusTask, 0, delay, TimeUnit.MILLISECONDS);
-
         // what platform are we running
         CliConnectorFactory ccf = camelContext.adapt(ExtendedCamelContext.class).getCliConnectorFactory();
         mainClass = ccf.getRuntimeStartClass();
@@ -104,7 +92,21 @@ public class LocalCliConnector extends ServiceSupport implements CamelContextAwa
         }
         platformVersion = ccf.getRuntimeVersion();
 
-        LOG.info("Local CLI Connector started");
+        // create thread from JDK so it is not managed by Camel because we want the pool to be independent when
+        // camel is being stopped which otherwise can lead to stopping the thread pool while the task is running
+        executor = Executors.newSingleThreadScheduledExecutor(r -> {
+            String threadName = ThreadHelper.resolveThreadName(null, "LocalCliConnector");
+            return new Thread(r, threadName);
+        });
+
+        lockFile = createLockFile(getPid());
+        if (lockFile != null) {
+            statusFile = createLockFile(lockFile.getName() + "-status.json");
+            executor.scheduleWithFixedDelay(this::statusTask, 0, delay, TimeUnit.MILLISECONDS);
+            LOG.info("Local CLI Connector started");
+        } else {
+            LOG.warn("Cannot create PID file: {}. This integration cannot be managed by Camel CLI.", getPid());
+        }
     }
 
     protected void statusTask() {

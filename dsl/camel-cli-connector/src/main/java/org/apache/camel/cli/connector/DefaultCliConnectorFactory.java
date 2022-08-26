@@ -16,7 +16,7 @@
  */
 package org.apache.camel.cli.connector;
 
-import org.apache.camel.Service;
+import org.apache.camel.spi.CliConnector;
 import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.annotations.JdkService;
 
@@ -67,7 +67,7 @@ public class DefaultCliConnectorFactory implements CliConnectorFactory {
     }
 
     @Override
-    public Service createConnector() {
+    public CliConnector createConnector() {
         if (enabled) {
             return new LocalCliConnector();
         } else {

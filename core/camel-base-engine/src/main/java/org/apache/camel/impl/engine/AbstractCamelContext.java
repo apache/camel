@@ -98,6 +98,7 @@ import org.apache.camel.spi.CamelContextTracker;
 import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.CliConnector;
 import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
@@ -2864,11 +2865,18 @@ public abstract class AbstractCamelContext extends BaseService
 
         forceLazyInitialization();
 
-        CliConnectorFactory ccf = getCliConnectorFactory();
-        if (ccf != null && ccf.isEnabled()) {
-            LOG.info("Detected: {} JAR (Enabling Camel CLI Connector)", ccf);
-            addService(ccf.createConnector(), true);
+        // setup cli-connector if not already done
+        if (hasService(CliConnector.class) == null) {
+            CliConnectorFactory ccf = getCliConnectorFactory();
+            if (ccf != null && ccf.isEnabled()) {
+                CliConnector connector = ccf.createConnector();
+                addService(connector, true);
+                // force start cli connector early as otherwise it will be deferred until context is started
+                // but, we want status available during startup phase
+                ServiceHelper.startService(connector);
+            }
         }
+
         addService(getManagementStrategy(), false);
         lifecycleStrategies.sort(OrderedComparator.get());
         ServiceHelper.initService(lifecycleStrategies);
