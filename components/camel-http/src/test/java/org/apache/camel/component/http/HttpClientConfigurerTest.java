@@ -37,7 +37,9 @@ public class HttpClientConfigurerTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // add configurer to http component
-                configurer = new ProxyHttpClientConfigurer("proxyhost", 80, "http", "user", "password", null, null);
+                configurer = new ProxyHttpClientConfigurer(
+                        "proxyhost", 80, "http", "user", "password", null, null,
+                        new HttpCredentialsHelper());
                 getContext().getComponent("http", HttpComponent.class).setHttpClientConfigurer(configurer);
 
                 from("direct:start")

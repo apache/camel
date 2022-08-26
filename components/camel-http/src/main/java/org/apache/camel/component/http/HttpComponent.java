@@ -206,14 +206,16 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
             // fallback to component configured
             configurer = getHttpClientConfigurer();
         }
-
-        configurer = configureBasicAuthentication(parameters, configurer);
-        configurer = configureHttpProxy(parameters, configurer, secure);
+        HttpCredentialsHelper credentialsProvider = new HttpCredentialsHelper();
+        configurer = configureBasicAuthentication(parameters, configurer, credentialsProvider);
+        configurer = configureHttpProxy(parameters, configurer, secure, credentialsProvider);
 
         return configurer;
     }
 
-    private HttpClientConfigurer configureBasicAuthentication(Map<String, Object> parameters, HttpClientConfigurer configurer) {
+    private HttpClientConfigurer configureBasicAuthentication(
+            Map<String, Object> parameters, HttpClientConfigurer configurer,
+            HttpCredentialsHelper credentialsProvider) {
         String authUsername = getParameter(parameters, "authUsername", String.class);
         String authPassword = getParameter(parameters, "authPassword", String.class);
 
@@ -222,14 +224,15 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
             String authHost = getParameter(parameters, "authHost", String.class);
 
             return CompositeHttpConfigurer.combineConfigurers(configurer,
-                    new BasicAuthenticationHttpClientConfigurer(authUsername, authPassword, authDomain, authHost));
+                    new BasicAuthenticationHttpClientConfigurer(
+                            authUsername, authPassword, authDomain, authHost, credentialsProvider));
         } else if (this.httpConfiguration != null) {
             if ("basic".equalsIgnoreCase(this.httpConfiguration.getAuthMethod())) {
                 return CompositeHttpConfigurer.combineConfigurers(configurer,
                         new BasicAuthenticationHttpClientConfigurer(
                                 this.httpConfiguration.getAuthUsername(),
                                 this.httpConfiguration.getAuthPassword(), this.httpConfiguration.getAuthDomain(),
-                                this.httpConfiguration.getAuthHost()));
+                                this.httpConfiguration.getAuthHost(), credentialsProvider));
             }
         }
 
@@ -237,7 +240,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     private HttpClientConfigurer configureHttpProxy(
-            Map<String, Object> parameters, HttpClientConfigurer configurer, boolean secure) {
+            Map<String, Object> parameters, HttpClientConfigurer configurer, boolean secure,
+            HttpCredentialsHelper credentialsProvider) {
         String proxyAuthScheme = getParameter(parameters, "proxyAuthScheme", String.class, getProxyAuthScheme());
         if (proxyAuthScheme == null) {
             // fallback and use either http or https depending on secure
@@ -266,7 +270,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
                         configurer,
                         new ProxyHttpClientConfigurer(
                                 proxyAuthHost, proxyAuthPort, proxyAuthScheme, proxyAuthUsername, proxyAuthPassword,
-                                proxyAuthDomain, proxyAuthNtHost));
+                                proxyAuthDomain, proxyAuthNtHost, credentialsProvider));
             } else {
                 return CompositeHttpConfigurer.combineConfigurers(configurer,
                         new ProxyHttpClientConfigurer(proxyAuthHost, proxyAuthPort, proxyAuthScheme));
