@@ -54,7 +54,7 @@ public class FhirConfiguration {
     private EncodingEnum encoding;
     @UriParam(description = "Username to use for basic authentication", label = "security", secret = true)
     private String username;
-    @UriParam(description = "Username to use for basic authentication", label = "security", secret = true)
+    @UriParam(description = "Password to use for basic authentication", label = "security", secret = true)
     private String password;
     @UriParam(description = "OAuth access token", label = "security", secret = true)
     private String accessToken;
