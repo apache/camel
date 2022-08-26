@@ -37,7 +37,7 @@
         </camel.osgi.import.before.defaults>
 
         <camel.surefire.forkCount>4</camel.surefire.forkCount>
-        <camel.surefire.forkTimeout>60</camel.surefire.forkTimeout>
+        <camel.surefire.forkTimeout>600</camel.surefire.forkTimeout>
         <camel.surefire.parallel>false</camel.surefire.parallel>
 
         <!-- This one can run in parallel rather safely-->
