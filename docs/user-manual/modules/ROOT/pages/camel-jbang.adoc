@@ -563,6 +563,33 @@ Stopping running Camel integration (pid: 61818)
 Stopping running Camel integration (pid: 62506)
 ----
 
+==== Controlling Spring Boot and Quarkus integrations
+
+The Camel JBang CLI will by default only control Camel integrations that are running using the CLI, eg `camel run foo.java`.
+
+For the CLI to be able to control and manage Spring Boot or Quarkus applications, then you need to add a dependency
+to these projects to integrate with Camel CLI.
+
+In Spring Boot you add the following dependency:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel.springboot</groupId>
+    <artifactId>camel-cli-connector-starter</artifactId>
+</dependency>
+----
+
+In Quarkus you need to add the following dependency:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel.quarkus</groupId>
+    <artifactId>camel-quarkus-cli-connector</artifactId>
+</dependency>
+----
+
 === Get status of Camel integrations
 
 The `get` command in Camel JBang is used for getting Camel specific status for one
