@@ -76,7 +76,7 @@ public class CamelRouteStatus extends ProcessBaseCommand {
                             row.routeId = o.getString("routeId");
                             row.from = o.getString("from");
                             row.source = o.getString("source");
-                            row.state = o.getByte("state");
+                            row.state = o.getString("state");
                             row.age = o.getString("uptime");
                             row.uptime = row.age != null ? TimeUtils.toMilliSeconds(row.age) : 0;
                             Map<String, ?> stats = o.getMap("statistics");
@@ -125,7 +125,7 @@ public class CamelRouteStatus extends ProcessBaseCommand {
                     new Column().header("FROM").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS)
                             .with(r -> r.from),
                     new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
-                            .with(r -> extractState(r.state)),
+                            .with(r -> r.state),
                     new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
                     new Column().header("TOTAL").with(r -> r.total),
                     new Column().header("FAILED").with(r -> r.failed),
@@ -175,7 +175,7 @@ public class CamelRouteStatus extends ProcessBaseCommand {
         String routeId;
         String from;
         String source;
-        byte state;
+        String state;
         String age;
         String total;
         String failed;
