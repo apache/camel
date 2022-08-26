@@ -127,8 +127,6 @@ public class Main extends MainCommandLineSupport {
     // Implementation methods
     // -------------------------------------------------------------------------
 
-
-
     @Override
     protected void doInit() throws Exception {
         super.doInit();
