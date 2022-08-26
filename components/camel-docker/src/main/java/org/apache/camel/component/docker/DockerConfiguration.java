@@ -28,10 +28,10 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class DockerConfiguration implements Cloneable {
 
-    @UriPath(enums = "events,stats,auth,info,ping,version,imagebuild,imagecreate,imageinspect,imagelist,imagepull,imagepush"
-                     + "imageremove,imagesearch,imagetag,containerattach,containercommit,containercopyfile,containercreate,containerdiff"
-                     + "inspectcontainer,containerkill,containerlist,containerlog,containerpause,containerrestart,containerremove,containerstart"
-                     + "containerstop,containertop,containerunpause,containerwait,execcreate,execstart")
+    @UriPath(enums = "events,stats,auth,info,ping,version,imagebuild,imagecreate,imageinspect,imagelist,imagepull,imagepush,"
+                     + "imageremove,imagesearch,imagetag,containerattach,containercommit,containercopyfile,containercreate,containerdiff,"
+                     + "inspectcontainer,containerkill,containerlist,containerlog,containerpause,containerrestart,containerremove,containerstart,"
+                     + "containerstop,containertop,containerunpause,containerwait,execcreate,execstart,networkconnect,networkcreate,networkremove")
     @Metadata(required = true)
     private DockerOperation operation;
     @UriParam(defaultValue = "localhost")
