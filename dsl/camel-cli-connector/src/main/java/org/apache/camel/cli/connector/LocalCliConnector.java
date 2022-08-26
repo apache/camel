@@ -70,6 +70,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         // what platform are we running
         CliConnectorFactory ccf = camelContext.adapt(ExtendedCamelContext.class).getCliConnectorFactory();
         mainClass = ccf.getRuntimeStartClass();
+        if (mainClass == null) {
+            mainClass = camelContext.getGlobalOption("CamelMainClass");
+        }
         platform = ccf.getRuntime();
         if (platform == null) {
             // use camel context name to guess platform if not specified
@@ -84,7 +87,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 platform = "Karaf";
             } else if (sn.contains("cdi")) {
                 platform = "CDI";
-            } else if (sn.contains("kamelet") || camelContext.getName().equals("CamelJBang")) {
+            } else if (camelContext.getName().equals("CamelJBang")) {
                 platform = "JBang";
             } else {
                 platform = "Camel";

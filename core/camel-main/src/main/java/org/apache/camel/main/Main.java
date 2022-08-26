@@ -31,6 +31,7 @@ public class Main extends MainCommandLineSupport {
 
     protected static Main instance;
     protected final MainRegistry registry = new MainRegistry();
+    protected Class<?> mainClass;
 
     /**
      * Camel main application
@@ -46,6 +47,7 @@ public class Main extends MainCommandLineSupport {
      * @param mainClass the main class
      */
     public Main(Class<?> mainClass) {
+        this.mainClass = mainClass;
         configure().withBasePackageScan(mainClass.getPackageName());
     }
 
@@ -58,6 +60,7 @@ public class Main extends MainCommandLineSupport {
     @SafeVarargs
     public Main(Class<?> mainClass, Class<CamelConfiguration>... configurationClasses) {
         super(configurationClasses);
+        this.mainClass = mainClass;
         configure().withBasePackageScan(mainClass.getPackageName());
     }
 
@@ -124,6 +127,8 @@ public class Main extends MainCommandLineSupport {
     // Implementation methods
     // -------------------------------------------------------------------------
 
+
+
     @Override
     protected void doInit() throws Exception {
         super.doInit();
@@ -168,6 +173,11 @@ public class Main extends MainCommandLineSupport {
         DefaultCamelContext answer = new DefaultCamelContext(false);
         answer.setLogJvmUptime(true); // we run in standalone mode so lets show JVM uptime
         answer.setRegistry(registry);
+        if (mainClass != null) {
+            answer.getGlobalOptions().put("CamelMainClass", mainClass.getName());
+        } else {
+            answer.getGlobalOptions().put("CamelMainClass", this.getClass().getName());
+        }
         return answer;
     }
 
