@@ -134,25 +134,31 @@ abstract class ProcessBaseCommand extends CamelCommand {
 
     private static String extractCamelName(String cl, String mvn) {
         if (cl != null) {
-            if (cl.contains("camel-spring-boot")) {
-                if (mvn != null) {
-                    return mvn;
-                } else {
-                    return "camel-spring-boot";
-                }
-            } else if (cl.contains("camel-quarkus") && mvn != null) {
-                return mvn;
-            } else if ((cl.contains("camel-main") || cl.contains("camel-core")) && mvn != null) {
-                return mvn;
-            } else if (cl.contains("camel-core") && mvn == null) {
+            if (cl.contains("camel-spring-boot") && mvn != null) {
                 int pos = cl.lastIndexOf(" ");
                 if (pos != -1) {
                     String after = cl.substring(pos);
                     after = after.trim();
                     if (after.matches("[\\w|.]+")) {
-                        return cl.contains("camel-main") ? "camel-main" : "camel-core";
+                        return after;
                     }
                 }
+                return mvn;
+            } else if (cl.contains("camel-quarkus") && mvn != null) {
+                return mvn;
+            } else {
+                int pos = cl.lastIndexOf(" ");
+                if (pos != -1) {
+                    String after = cl.substring(pos);
+                    after = after.trim();
+                    if (after.matches("[\\w|.]+")) {
+                        return after;
+                    }
+                }
+                if (mvn != null) {
+                    return mvn;
+                }
+                return cl.contains("camel-main") ? "camel-main" : "camel-core";
             }
         }
 
