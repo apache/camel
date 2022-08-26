@@ -120,8 +120,10 @@
 
         <maven-compiler-plugin-version>3.10.1</maven-compiler-plugin-version>
         <maven-javadoc-plugin-version>3.2.0</maven-javadoc-plugin-version>
-        <maven-surefire-plugin-version>3.0.0-M7</maven-surefire-plugin-version>
-        <maven-failsafe-plugin-version>3.0.0-M7</maven-failsafe-plugin-version>
+        <!-- 3.0.0-M6 and 3.0.0-M7 seem to be causing instabilities and longer test run time: see SUREFIRE-2096 -->
+        <maven-surefire-plugin-version>3.0.0-M5</maven-surefire-plugin-version>
+        <!-- For now, use 3.0.0-M4 due to SUREFIRE-1831 affecting M5 and causing integration tests (w/ failsafe) to misbehave -->
+        <maven-failsafe-plugin-version>3.0.0-M4</maven-failsafe-plugin-version>
         <!-- we need to override the version inherited from Apache POM for modules that use this POM as parent -->
         <surefire.version>${maven-surefire-plugin-version}</surefire.version>
         <java-diff-utils-version>4.7</java-diff-utils-version>
