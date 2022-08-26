@@ -159,7 +159,7 @@ abstract class ProcessBaseCommand extends CamelCommand {
         return null;
     }
 
-    private static String extractCamelJBangName(String cl) {
+    static String extractCamelJBangName(String cl) {
         String name = StringHelper.after(cl, "main.CamelJBang run");
         if (name != null) {
             name = name.trim();
@@ -187,11 +187,22 @@ abstract class ProcessBaseCommand extends CamelCommand {
         return since;
     }
 
-    static String extractState(String status) {
-        if ("started".equalsIgnoreCase(status)) {
-            status = "Running"; // favour using running instead of started
+    static String extractState(int status) {
+        if (status <= 4) {
+            return "Starting";
+        } else if (status == 5) {
+            return "Running";
+        } else if (status == 6) {
+            return "Suspending";
+        } else if (status == 7) {
+            return "Suspended";
+        } else if (status == 8) {
+            return "Stopping";
+        } else if (status == 9) {
+            return "Stopped";
+        } else {
+            return "Terminating";
         }
-        return StringHelper.capitalize(status);
     }
 
     JsonObject loadStatus(long pid) {

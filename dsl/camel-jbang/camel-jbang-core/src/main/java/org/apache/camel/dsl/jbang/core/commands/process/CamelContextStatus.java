@@ -19,7 +19,6 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import com.github.freva.asciitable.AsciiTable;
@@ -64,10 +63,10 @@ public class CamelContextStatus extends ProcessBaseCommand {
                         row.uptime = extractSince(ph);
                         row.ago = TimeUtils.printSince(row.uptime);
                         JsonObject runtime = (JsonObject) root.get("runtime");
-                        row.platform = runtime != null ? runtime.getString("platform") : null;
+                        row.platform = extractPlatform(ph, runtime);
                         row.platformVersion = runtime != null ? runtime.getString("version") : null;
                         JsonObject context = (JsonObject) root.get("context");
-                        row.state = context.getString("state").toLowerCase(Locale.ROOT);
+                        row.state = context.getInteger("phase");
                         row.camelVersion = context.getString("version");
                         Map<String, ?> stats = context.getMap("statistics");
                         if (stats != null) {
@@ -108,6 +107,18 @@ public class CamelContextStatus extends ProcessBaseCommand {
         return 0;
     }
 
+    private String extractPlatform(ProcessHandle ph, JsonObject runtime) {
+        String answer = runtime != null ? runtime.getString("platform") : null;
+        if ("Camel".equals(answer)) {
+            // generic camel, we need to check if we run in JBang
+            String cl = ph.info().commandLine().orElse("");
+            if (cl.contains("main.CamelJBang run")) {
+                answer = "JBang";
+            }
+        }
+        return answer;
+    }
+
     protected int sortRow(Row o1, Row o2) {
         switch (sort) {
             case "pid":
@@ -136,7 +147,7 @@ public class CamelContextStatus extends ProcessBaseCommand {
         String camelVersion;
         String name;
         String ready;
-        String state;
+        int state;
         String ago;
         long uptime;
         String total;

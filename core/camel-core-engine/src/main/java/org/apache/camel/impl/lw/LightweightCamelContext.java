@@ -204,6 +204,11 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public byte getStatusPhase() {
+        return delegate.adapt(ExtendedCamelContext.class).getStatusPhase();
+    }
+
+    @Override
     public void disposeModel() {
         delegate.adapt(ExtendedCamelContext.class).disposeModel();
     }

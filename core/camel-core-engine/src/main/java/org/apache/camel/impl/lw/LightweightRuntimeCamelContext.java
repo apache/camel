@@ -296,6 +296,11 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public byte getStatusPhase() {
+        return reference.adapt(ExtendedCamelContext.class).getStatusPhase();
+    }
+
+    @Override
     public void disposeModel() {
         // noop
     }

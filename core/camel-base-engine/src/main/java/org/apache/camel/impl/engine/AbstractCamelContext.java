@@ -454,6 +454,11 @@ public abstract class AbstractCamelContext extends BaseService
         return this;
     }
 
+    @Override
+    public byte getStatusPhase() {
+        return status;
+    }
+
     /**
      * Whether to eager create {@link TypeConverter} during initialization of CamelContext. This is enabled by default
      * to optimize camel-core.

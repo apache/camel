@@ -877,4 +877,10 @@ public interface ExtendedCamelContext extends CamelContext {
      */
     void setModelineFactory(ModelineFactory modelineFactory);
 
+    /**
+     * The {@link CamelContext} have additional phases that are not defined in {@link ServiceStatus}
+     * and this method provides the phase ordinal value.
+     */
+    byte getStatusPhase();
+
 }

@@ -58,7 +58,7 @@ public class ListProcess extends ProcessBaseCommand {
                         row.uptime = extractSince(ph);
                         row.ago = TimeUtils.printSince(row.uptime);
                         JsonObject context = (JsonObject) root.get("context");
-                        row.state = context.getString("state").toLowerCase(Locale.ROOT);
+                        row.state = context.getInteger("phase");
                         JsonObject hc = (JsonObject) root.get("healthChecks");
                         row.ready = hc != null ? hc.getString("ready") + "/" + hc.getString("total") : null;
                         rows.add(row);
@@ -99,7 +99,7 @@ public class ListProcess extends ProcessBaseCommand {
         String pid;
         String name;
         String ready;
-        String state;
+        int state;
         String ago;
         long uptime;
     }
