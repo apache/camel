@@ -70,36 +70,50 @@ abstract class ProcessBaseCommand extends CamelCommand {
     static String extractName(ProcessHandle ph) {
         String cl = ph.info().commandLine().orElse("");
 
+        // TODO: parent/child when mvn spring-boot:run etc
+
+        // try first camel-jbang
         String name = extractCamelJBangName(cl);
-        if (name == null) {
-            name = extractCamelMavenName(cl);
-        }
-        if (name == null) {
-            name = extractCamelMain(cl);
+        if (name != null) {
+            return name;
         }
 
+        // this may be a maven plugin run, so check that first
+        String mvn = extractMavenPluginName(cl);
+        if (mvn == null && ph.parent().isPresent()) {
+            // try parent as it may spawn a sub process
+            String clp = ph.parent().get().info().commandLine().orElse("");
+            mvn = extractMavenPluginName(clp);
+        }
+
+        name = extractCamelName(cl, mvn);
         return name == null ? "" : name;
     }
 
-    private static String extractCamelMavenName(String cl) {
-        String name = StringHelper.before(cl, " camel:run");
+    private static String extractMavenPluginName(String cl) {
+        String name = StringHelper.after(cl, "org.codehaus.plexus.classworlds.launcher.Launcher");
         if (name != null) {
-            if (name.contains("org.codehaus.plexus.classworlds.launcher.Launcher")) {
-                return "mvn camel:run";
-            }
+            return name.trim();
         }
-
         return null;
     }
 
-    private static String extractCamelMain(String cl) {
+    private static String extractCamelName(String cl, String mvn) {
         if (cl != null) {
-            if (cl.contains("camel-main")) {
+            if (cl.contains("camel-spring-boot") && mvn != null) {
+                return mvn;
+            } else if (cl.contains("camel-quarkus") && mvn != null) {
+                return mvn;
+            } else if ((cl.contains("camel-main") || cl.contains("camel-core")) && mvn != null) {
+                return mvn;
+            } else if (cl.contains("camel-core") && mvn == null) {
                 int pos = cl.lastIndexOf(" ");
-                String after = cl.substring(pos);
-                after = after.trim();
-                if (after.matches("[\\w|.]+")) {
-                    return "camel-main";
+                if (pos != -1) {
+                    String after = cl.substring(pos);
+                    after = after.trim();
+                    if (after.matches("[\\w|.]+")) {
+                        return cl.contains("camel-main") ? "camel-main" : "camel-core";
+                    }
                 }
             }
         }

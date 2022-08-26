@@ -412,6 +412,12 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected CliConnectorFactory createCliConnectorFactory() {
+        // lookup in registry first
+        CliConnectorFactory ccf = getCamelContextReference().getRegistry().findSingleByType(CliConnectorFactory.class);
+        if (ccf != null) {
+            return ccf;
+        }
+        // then classpath scanning
         Optional<CliConnectorFactory> result = ResolverHelper.resolveService(
                 getCamelContextReference(),
                 getBootstrapFactoryFinder(),

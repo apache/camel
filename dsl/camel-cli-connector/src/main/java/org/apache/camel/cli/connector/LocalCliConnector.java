@@ -96,8 +96,6 @@ public class LocalCliConnector extends ServiceSupport implements CamelContextAwa
                 platform = "CDI";
             } else if (sn.contains("kamelet") || camelContext.getName().equals("CamelJBang")) {
                 platform = "JBang";
-                // dev.jbang.BuildConfig
-                // dev.jbang.util.getJBangVersion
             } else {
                 platform = "Camel";
             }

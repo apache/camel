@@ -83,7 +83,7 @@ public class CamelContextStatus extends ProcessBaseCommand {
                         if (root != null) {
                             JsonObject runtime = (JsonObject) root.get("runtime");
                             row.platform = runtime != null ? runtime.getString("platform") : null;
-                            row.platformVersion = runtime != null ? runtime.getString("platformVersion") : null;
+                            row.platformVersion = runtime != null ? runtime.getString("version") : null;
                             JsonObject context = (JsonObject) root.get("context");
                             row.state = context.getString("state").toLowerCase(Locale.ROOT);
                             row.camelVersion = context.getString("version");
@@ -126,7 +126,7 @@ public class CamelContextStatus extends ProcessBaseCommand {
 
     private String getPlatform(Row r) {
         if (r.platformVersion != null) {
-            return r.platform + " v" + r.platformVersion + ")";
+            return r.platform + " v" + r.platformVersion;
         } else {
             return r.platform;
         }
