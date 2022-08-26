@@ -5,5 +5,4 @@ import org.apache.camel.StaticService;
 
 public interface CliConnector extends StaticService, NonManagedService {
 
-
 }
