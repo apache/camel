@@ -317,7 +317,7 @@ public class KameletMain extends MainCommandLineSupport {
                         ServiceHelper.startService(connector);
                     } catch (Exception e) {
                         LOG.warn("Cannot start camel-cli-connector due: " + e.getMessage()
-                                + ". This integration cannot be managed by Camel CLI.");
+                                 + ". This integration cannot be managed by Camel CLI.");
                     }
                 }
             }
