@@ -521,13 +521,14 @@ camel run clipboard.xml
 
 === Controlling local Camel integrations
 
-To list the currently running Camel JBang integrations you use the `ps` command:
+To list the currently running Camel integrations you use the `ps` command:
 
 [source,bash]
 ----
 camel ps
-37928 camel run foo.yaml (age: 20h18m)
-44805 camel run dude.java (age: 58s)
+  PID   NAME                          READY  STATUS    AGE
+ 61818  sample.camel.MyCamelApplica…   1/1   Running  26m38s
+ 62506  dude.java                      1/1   Running   4m34s
 ----
 
 This lists the PID, the name and age of the integration.
@@ -538,15 +539,15 @@ For example to stop dude, you can do
 [source,bash]
 ----
 camel stop dude
-Stopping running Camel integration (pid: 44805)
+Stopping running Camel integration (pid: 62506)
 ----
 
 You can also stop by the PID:
 
 [source,bash]
 ----
-camel stop 44805
-Stopping running Camel integration (pid: 44805)
+camel stop 62506
+Stopping running Camel integration (pid: 62506)
 ----
 
 TIP: You do not have to type the full name, as the stop command will match using integrations
@@ -558,13 +559,13 @@ To stop all integrations then you need to use the `--all` option as follows:
 [source,bash]
 ----
 camel stop --all
-Stopping running Camel integration (pid: 42171)
-Stopping running Camel integration (pid: 44805)
+Stopping running Camel integration (pid: 61818)
+Stopping running Camel integration (pid: 62506)
 ----
 
 === Get status of Camel integrations
 
-The `get` command in Camel JBang is used for getting status for one
+The `get` command in Camel JBang is used for getting Camel specific status for one
 or all of the running Camel integrations.
 
 To display the status of the running Camel integrations:
@@ -572,10 +573,10 @@ To display the status of the running Camel integrations:
 [source,bash]
 ----
 camel get
-  PID   NAME         READY   STATE   AGE  TOTAL  FAILED  INFLIGHT  SINCE-LAST
- 38780  routes.yaml   1/1   Started  10s      2       0         0          1s
- 38793  dude.java     1/1   Started   9s      6       0         0          0s
- 38806  gro.groovy    1/1   Started   8s      3       0         0          0s
+  PID   NAME                          CAMEL            PLATFORM            READY  STATUS    AGE    TOTAL  FAILED  INFLIGHT  SINCE-LAST
+ 61818  sample.camel.MyCamelApplica…  3.19.0-SNAPSHOT  Spring Boot v2.7.3   1/1   Running  28m34s    854       0         0          0s
+ 63051  dude.java                     3.19.0-SNAPSHOT  JBang                1/1   Running     18s     14       0         0          0s
+ 63068  gro.groovy                    3.19.0-SNAPSHOT  JBang                1/1   Running      5s      2       0         0          0s
 ----
 
 The `camel get` command will default display integrations, which is equivalent to
@@ -591,10 +592,10 @@ You can also see the status of every routes, from all the local Camel integratio
 [source,bash]
 ----
 camel get route
-  PID   SOURCE          ID      FROM                         STATE   AGE  TOTAL  FAILED  INFLIGHT  MEAN  MIN  MAX  SINCE-LAST
- 38911  routes.yaml:18  route1  timer://tick?period=5000    Started  11s      3       0         0    13    0   37          0s
- 38924  dude.java:11    java    timer://java?period=1000    Started  10s     10       0         0     1    0    5          0s
- 38937  gro.groovy      groovy  timer://groovy?period=1000  Started   8s      8       0         0     1    0   11          0s
+  PID   NAME                          ID      FROM                        STATUS    AGE   TOTAL  FAILED  INFLIGHT  MEAN  MIN  MAX  SINCE-LAST
+ 61818  sample.camel.MyCamelApplica…  hello   timer://hello?period=2000   Running  29m2s    870       0         0     0    0   14          0s
+ 63051  dude.java                     java    timer://java?period=1000    Running    46s     46       0         0     0    0    9          0s
+ 63068  gro.groovy                    groovy  timer://groovy?period=1000  Running    34s     34       0         0     0    0    5          0s
 ----
 
 TIP: Use `camel get --help` to display all the available commands as additional will be added in upcoming releases.
@@ -613,16 +614,17 @@ must be installed in the running integration, this can be done, either explicit 
 [source,bash]
 ----
 camel ps
-37928 camel run foo.yaml (age: 20h18m)
-44805 camel run dude.java (age: 58s)
+  PID   NAME                          READY  STATUS    AGE
+ 61818  sample.camel.MyCamelApplica…   1/1   Running  26m38s
+ 62506  dude.java                      1/1   Running   4m34s
 ----
 
 With the PID you can then attach Jolokia:
 
 [source,bash]
 ----
-camel jolokia 37928
-Started Jolokia for PID 37928
+camel jolokia 62506
+Started Jolokia for PID 62506
 http://127.0.0.1:8778/jolokia/
 ----
 
@@ -633,7 +635,7 @@ without knowing the PID as follows:
 [source,bash]
 ----
 camel jolokia du
-Started Jolokia for PID 44805
+Started Jolokia for PID 62506
 http://127.0.0.1:8778/jolokia/
 ----
 
@@ -658,8 +660,8 @@ You can uninstall the Jolokia JVM Agent in a running Camel integration when no l
 
 [source,bash]
 ----
-camel jolokia 37928 --stop
-Stopped Jolokia for PID 37928
+camel jolokia 62506 --stop
+Stopped Jolokia for PID 62506
 ----
 
 It is also possible to do this with only one command, as follows:
