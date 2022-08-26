@@ -61,6 +61,16 @@ public interface CliConnectorFactory {
     String getRuntimeVersion();
 
     /**
+     * The main class used by the runtime to start.
+     */
+    void setRuntimeStartClass(String className);
+
+    /**
+     * The main class used by the runtime to start.
+     */
+    String getRuntimeStartClass();
+
+    /**
      * Creates the connector which will be added as a {@link Service} to {@link org.apache.camel.CamelContext} as the
      * lifecycle to start and stop the connector.
      */

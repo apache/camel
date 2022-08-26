@@ -26,6 +26,7 @@ public class DefaultCliConnectorFactory implements CliConnectorFactory {
     private boolean enabled = true;
     private String runtime;
     private String runtimeVersion;
+    private String runtimeStartClass;
 
     @Override
     public boolean isEnabled() {
@@ -53,6 +54,16 @@ public class DefaultCliConnectorFactory implements CliConnectorFactory {
 
     public void setRuntimeVersion(String runtimeVersion) {
         this.runtimeVersion = runtimeVersion;
+    }
+
+    @Override
+    public String getRuntimeStartClass() {
+        return runtimeStartClass;
+    }
+
+    @Override
+    public void setRuntimeStartClass(String runtimeStartClass) {
+        this.runtimeStartClass = runtimeStartClass;
     }
 
     @Override

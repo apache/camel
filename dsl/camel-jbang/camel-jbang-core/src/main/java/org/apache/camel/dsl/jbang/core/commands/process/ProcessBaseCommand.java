@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.process;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,7 +29,10 @@ import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 abstract class ProcessBaseCommand extends CamelCommand {
 
@@ -38,7 +43,7 @@ abstract class ProcessBaseCommand extends CamelCommand {
         super(main);
     }
 
-    static List<Long> findPids(String name) {
+    List<Long> findPids(String name) {
         List<Long> pids = new ArrayList<>();
 
         // we need to know the pids of the running camel integrations
@@ -56,21 +61,50 @@ abstract class ProcessBaseCommand extends CamelCommand {
         ProcessHandle.allProcesses()
                 .filter(ph -> ph.pid() != cur)
                 .forEach(ph -> {
-                    String pName = extractName(ph);
-                    // ignore file extension, so it is easier to match by name
-                    pName = FileUtil.onlyName(pName);
-                    if (!pName.isEmpty() && PatternHelper.matchPattern(pName, pattern)) {
-                        pids.add(ph.pid());
+                    JsonObject root = loadStatus(ph.pid());
+                    // there must be a status file for the running Camel integration
+                    if (root != null) {
+                        String pName = extractName(root, ph);
+                        // ignore file extension, so it is easier to match by name
+                        pName = FileUtil.onlyName(pName);
+                        if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pattern)) {
+                            pids.add(ph.pid());
+                        }
                     }
                 });
 
         return pids;
     }
 
-    static String extractName(ProcessHandle ph) {
+    static String extractMainClass(JsonObject root) {
+        JsonObject runtime = (JsonObject) root.get("runtime");
+        return runtime != null ? runtime.getString("mainClass") : null;
+    }
+
+    static String extractName(JsonObject root, ProcessHandle ph) {
+        String name = doExtractName(root, ph);
+        return FileUtil.stripPath(name);
+    }
+
+    static String doExtractName(JsonObject root, ProcessHandle ph) {
+        // favour main class if known
+        if (root != null) {
+            String mc = extractMainClass(root);
+            if (mc != null) {
+                return mc;
+            }
+        }
         String cl = ph.info().commandLine().orElse("");
 
-        // TODO: parent/child when mvn spring-boot:run etc
+        // this may be a maven plugin run that spawns a child process where Camel actually runs (link to child)
+        String mvn = extractMavenPluginName(cl);
+        if (mvn != null) {
+            // is camel running in any of the children?
+            boolean camel = ph.children().anyMatch(ch -> !extractName(root, ch).isEmpty());
+            if (camel) {
+                return ""; // skip parent as we want only the child process with camel
+            }
+        }
 
         // try first camel-jbang
         String name = extractCamelJBangName(cl);
@@ -78,8 +112,8 @@ abstract class ProcessBaseCommand extends CamelCommand {
             return name;
         }
 
-        // this may be a maven plugin run, so check that first
-        String mvn = extractMavenPluginName(cl);
+        // this may be a maven plugin run that spawns a child process where Camel actually runs (link to parent)
+        mvn = extractMavenPluginName(cl);
         if (mvn == null && ph.parent().isPresent()) {
             // try parent as it may spawn a sub process
             String clp = ph.parent().get().info().commandLine().orElse("");
@@ -100,8 +134,12 @@ abstract class ProcessBaseCommand extends CamelCommand {
 
     private static String extractCamelName(String cl, String mvn) {
         if (cl != null) {
-            if (cl.contains("camel-spring-boot") && mvn != null) {
-                return mvn;
+            if (cl.contains("camel-spring-boot")) {
+                if (mvn != null) {
+                    return mvn;
+                } else {
+                    return "camel-spring-boot";
+                }
             } else if (cl.contains("camel-quarkus") && mvn != null) {
                 return mvn;
             } else if ((cl.contains("camel-main") || cl.contains("camel-core")) && mvn != null) {
@@ -147,6 +185,28 @@ abstract class ProcessBaseCommand extends CamelCommand {
             since = ph.info().startInstant().get().toEpochMilli();
         }
         return since;
+    }
+
+    static String extractState(String status) {
+        if ("started".equalsIgnoreCase(status)) {
+            status = "Running"; // favour using running instead of started
+        }
+        return StringHelper.capitalize(status);
+    }
+
+    JsonObject loadStatus(long pid) {
+        try {
+            File f = getStatusFile("" + pid);
+            if (f != null) {
+                FileInputStream fis = new FileInputStream(f);
+                String text = IOHelper.loadText(fis);
+                IOHelper.close(fis);
+                return (JsonObject) Jsoner.deserialize(text);
+            }
+        } catch (Throwable e) {
+            // ignore
+        }
+        return null;
     }
 
 }

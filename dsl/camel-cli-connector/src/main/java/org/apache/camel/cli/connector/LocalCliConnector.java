@@ -49,6 +49,7 @@ public class LocalCliConnector extends ServiceSupport implements CamelContextAwa
     private int delay = 2000;
     private String platform;
     private String platformVersion;
+    private String mainClass;
     private ScheduledExecutorService executor;
     private File lockFile;
     private File statusFile;
@@ -76,10 +77,11 @@ public class LocalCliConnector extends ServiceSupport implements CamelContextAwa
         if (lockFile != null) {
             statusFile = createLockFile(lockFile.getName() + "-status.json");
         }
-        executor.scheduleWithFixedDelay(this::statusTask, 1000, delay, TimeUnit.MILLISECONDS);
+        executor.scheduleWithFixedDelay(this::statusTask, 0, delay, TimeUnit.MILLISECONDS);
 
         // what platform are we running
         CliConnectorFactory ccf = camelContext.adapt(ExtendedCamelContext.class).getCliConnectorFactory();
+        mainClass = ccf.getRuntimeStartClass();
         platform = ccf.getRuntime();
         if (platform == null) {
             // use camel context name to guess platform if not specified
@@ -125,9 +127,17 @@ public class LocalCliConnector extends ServiceSupport implements CamelContextAwa
 
             // what runtime are in use
             JsonObject rc = new JsonObject();
+            String dir = new File(".").getAbsolutePath();
+            dir = FileUtil.onlyPath(dir);
+            rc.put("pid", ProcessHandle.current().pid());
+            rc.put("directory", dir);
+            ProcessHandle.current().info().user().ifPresent(u -> rc.put("user", u));
             rc.put("platform", platform);
             if (platformVersion != null) {
                 rc.put("version", platformVersion);
+            }
+            if (mainClass != null) {
+                rc.put("mainClass", mainClass);
             }
             root.put("runtime", rc);
 

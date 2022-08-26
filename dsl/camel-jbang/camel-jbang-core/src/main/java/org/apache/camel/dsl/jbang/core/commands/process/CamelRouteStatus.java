@@ -16,8 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.process;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,12 +28,10 @@ import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
-import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -68,62 +64,48 @@ public class CamelRouteStatus extends ProcessBaseCommand {
         List<Long> pids = findPids(name);
         ProcessHandle.allProcesses()
                 .filter(ph -> pids.contains(ph.pid()))
-                .sorted((o1, o2) -> {
-                    switch (sort) {
-                        case "pid":
-                            return Long.compare(o1.pid(), o2.pid());
-                        case "name":
-                            return extractName(o1).compareTo(extractName(o2));
-                        case "age":
-                            // we want newest in top
-                            return Long.compare(extractSince(o1), extractSince(o2)) * -1;
-                        default:
-                            return 0;
-                    }
-                })
                 .forEach(ph -> {
-                    String name = extractName(ph);
-                    if (ObjectHelper.isNotEmpty(name)) {
-                        JsonObject status = loadStatus(ph.pid());
-                        if (status != null) {
-                            JsonArray array = (JsonArray) status.get("routes");
-                            for (int i = 0; i < array.size(); i++) {
-                                JsonObject o = (JsonObject) array.get(i);
-                                Row row = new Row();
-                                row.pid = "" + ph.pid();
-                                row.name = name;
-                                row.routeId = o.getString("routeId");
-                                row.from = o.getString("from");
-                                row.source = o.getString("source");
-                                row.state = o.getString("state").toLowerCase(Locale.ROOT);
-                                row.uptime = o.getString("uptime");
-                                Map<String, ?> stats = o.getMap("statistics");
-                                if (stats != null) {
-                                    row.total = stats.get("exchangesTotal").toString();
-                                    row.inflight = stats.get("exchangesInflight").toString();
-                                    row.failed = stats.get("exchangesFailed").toString();
-                                    row.mean = stats.get("meanProcessingTime").toString();
-                                    if ("-1".equals(row.mean)) {
-                                        row.mean = null;
-                                    }
-                                    row.max = stats.get("maxProcessingTime").toString();
-                                    row.min = stats.get("minProcessingTime").toString();
-                                    Object last = stats.get("sinceLastExchange");
-                                    if (last != null) {
-                                        row.sinceLast = last.toString();
-                                    }
+                    JsonObject root = loadStatus(ph.pid());
+                    if (root != null) {
+                        String name = extractName(root, ph);
+                        JsonArray array = (JsonArray) root.get("routes");
+                        for (int i = 0; i < array.size(); i++) {
+                            JsonObject o = (JsonObject) array.get(i);
+                            Row row = new Row();
+                            row.name = name;
+                            row.pid = "" + ph.pid();
+                            row.routeId = o.getString("routeId");
+                            row.from = o.getString("from");
+                            row.source = o.getString("source");
+                            row.state = o.getString("state").toLowerCase(Locale.ROOT);
+                            row.age = o.getString("uptime");
+                            row.uptime = row.age != null ? TimeUtils.toMilliSeconds(row.age) : 0;
+                            Map<String, ?> stats = o.getMap("statistics");
+                            if (stats != null) {
+                                row.total = stats.get("exchangesTotal").toString();
+                                row.inflight = stats.get("exchangesInflight").toString();
+                                row.failed = stats.get("exchangesFailed").toString();
+                                row.mean = stats.get("meanProcessingTime").toString();
+                                if ("-1".equals(row.mean)) {
+                                    row.mean = null;
                                 }
+                                row.max = stats.get("maxProcessingTime").toString();
+                                row.min = stats.get("minProcessingTime").toString();
+                                Object last = stats.get("sinceLastExchange");
+                                if (last != null) {
+                                    row.sinceLast = last.toString();
+                                }
+                            }
 
-                                boolean add = true;
-                                if (mean > 0 && row.mean != null && Long.parseLong(row.mean) < mean) {
-                                    add = false;
-                                }
-                                if (limit > 0 && rows.size() >= limit) {
-                                    add = false;
-                                }
-                                if (add) {
-                                    rows.add(row);
-                                }
+                            boolean add = true;
+                            if (mean > 0 && row.mean != null && Long.parseLong(row.mean) < mean) {
+                                add = false;
+                            }
+                            if (limit > 0 && rows.size() >= limit) {
+                                add = false;
+                            }
+                            if (add) {
+                                rows.add(row);
                             }
                         }
                     }
@@ -143,9 +125,9 @@ public class CamelRouteStatus extends ProcessBaseCommand {
                             .with(r -> r.routeId),
                     new Column().header("FROM").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS)
                             .with(r -> r.from),
-                    new Column().header("STATE").headerAlign(HorizontalAlign.CENTER)
-                            .with(r -> StringHelper.capitalize(r.state)),
-                    new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.uptime),
+                    new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
+                            .with(r -> extractState(r.state)),
+                    new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
                     new Column().header("TOTAL").with(r -> r.total),
                     new Column().header("FAILED").with(r -> r.failed),
                     new Column().header("INFLIGHT").with(r -> r.inflight),
@@ -156,21 +138,6 @@ public class CamelRouteStatus extends ProcessBaseCommand {
         }
 
         return 0;
-    }
-
-    private JsonObject loadStatus(long pid) {
-        try {
-            File f = getStatusFile("" + pid);
-            if (f != null) {
-                FileInputStream fis = new FileInputStream(f);
-                String text = IOHelper.loadText(fis);
-                IOHelper.close(fis);
-                return (JsonObject) Jsoner.deserialize(text);
-            }
-        } catch (Throwable e) {
-            // ignore
-        }
-        return null;
     }
 
     protected String sourceLocLine(String location) {
@@ -190,18 +157,27 @@ public class CamelRouteStatus extends ProcessBaseCommand {
     }
 
     protected int sortRow(Row o1, Row o2) {
-        // no sort by default
-        return 0;
+        switch (sort) {
+            case "pid":
+                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid));
+            case "name":
+                return o1.name.compareToIgnoreCase(o2.name);
+            case "age":
+                return Long.compare(o1.uptime, o2.uptime);
+            default:
+                return 0;
+        }
     }
 
     static class Row {
         String pid;
         String name;
+        long uptime;
         String routeId;
         String from;
         String source;
-        String uptime;
         String state;
+        String age;
         String total;
         String failed;
         String inflight;
