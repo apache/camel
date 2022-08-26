@@ -1562,14 +1562,15 @@ public interface DockerEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * Which operation to use
-         * There are 31 enums and the value can be one of: events, stats, auth,
+         * There are 37 enums and the value can be one of: events, stats, auth,
          * info, ping, version, imagebuild, imagecreate, imageinspect,
-         * imagelist, imagepull, imagepushimageremove, imagesearch, imagetag,
+         * imagelist, imagepull, imagepush, imageremove, imagesearch, imagetag,
          * containerattach, containercommit, containercopyfile, containercreate,
-         * containerdiffinspectcontainer, containerkill, containerlist,
+         * containerdiff, inspectcontainer, containerkill, containerlist,
          * containerlog, containerpause, containerrestart, containerremove,
-         * containerstartcontainerstop, containertop, containerunpause,
-         * containerwait, execcreate, execstart
+         * containerstart, containerstop, containertop, containerunpause,
+         * containerwait, execcreate, execstart, networkconnect, networkcreate,
+         * networkremove
          * 
          * @param path operation
          * @return the dsl builder
@@ -1589,14 +1590,15 @@ public interface DockerEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * Which operation to use
-         * There are 31 enums and the value can be one of: events, stats, auth,
+         * There are 37 enums and the value can be one of: events, stats, auth,
          * info, ping, version, imagebuild, imagecreate, imageinspect,
-         * imagelist, imagepull, imagepushimageremove, imagesearch, imagetag,
+         * imagelist, imagepull, imagepush, imageremove, imagesearch, imagetag,
          * containerattach, containercommit, containercopyfile, containercreate,
-         * containerdiffinspectcontainer, containerkill, containerlist,
+         * containerdiff, inspectcontainer, containerkill, containerlist,
          * containerlog, containerpause, containerrestart, containerremove,
-         * containerstartcontainerstop, containertop, containerunpause,
-         * containerwait, execcreate, execstart
+         * containerstart, containerstop, containertop, containerunpause,
+         * containerwait, execcreate, execstart, networkconnect, networkcreate,
+         * networkremove
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
