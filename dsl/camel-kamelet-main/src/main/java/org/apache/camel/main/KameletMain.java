@@ -424,6 +424,7 @@ public class KameletMain extends MainCommandLineSupport {
         addInitialProperty("camel.component.kamelet.location", location);
         addInitialProperty("camel.component.rest.consumerComponentName", "platform-http");
         addInitialProperty("camel.component.rest.producerComponentName", "vertx-http");
+        addInitialProperty("camel.main.shutdownTimeout", "10");
     }
 
     protected String startupInfo() {
