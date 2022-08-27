@@ -22,6 +22,7 @@ import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -31,6 +32,7 @@ import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.spi.CliConnector;
 import org.apache.camel.spi.CliConnectorFactory;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -51,6 +53,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private String platform;
     private String platformVersion;
     private String mainClass;
+    private final AtomicBoolean terminating = new AtomicBoolean();
     private ScheduledExecutorService executor;
     private File lockFile;
     private File statusFile;
@@ -67,6 +70,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
 
     @Override
     protected void doStart() throws Exception {
+        terminating.set(false);
+
         // what platform are we running
         CliConnectorFactory ccf = camelContext.adapt(ExtendedCamelContext.class).getCliConnectorFactory();
         mainClass = ccf.getRuntimeStartClass();
@@ -112,19 +117,31 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         }
     }
 
-    protected void statusTask() {
-        // if the lock file is deleted then stop
-        if (!lockFile.exists()) {
-            try {
-                camelContext.stop();
-            } finally {
-                if (lockFile != null) {
-                    FileUtil.deleteFile(lockFile);
-                }
-                if (statusFile != null) {
-                    FileUtil.deleteFile(statusFile);
-                }
+    @Override
+    public void sigterm() {
+        // we are terminating
+        terminating.set(true);
+
+        try {
+            camelContext.stop();
+        } finally {
+            if (lockFile != null) {
+                FileUtil.deleteFile(lockFile);
             }
+            if (statusFile != null) {
+                FileUtil.deleteFile(statusFile);
+            }
+            ServiceHelper.stopAndShutdownService(this);
+        }
+    }
+
+    protected void statusTask() {
+        if (terminating.get()) {
+            return; // terminating in progress
+        }
+        if (!lockFile.exists()) {
+            // if the lock file is deleted then stop
+            sigterm();
             return;
         }
         try {
