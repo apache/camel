@@ -48,6 +48,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
 
     private static final Logger LOG = LoggerFactory.getLogger(LocalCliConnector.class);
 
+    private final CliConnectorFactory cliConnectorFactory;
     private CamelContext camelContext;
     private int delay = 2000;
     private String platform;
@@ -57,6 +58,10 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private ScheduledExecutorService executor;
     private File lockFile;
     private File statusFile;
+
+    public LocalCliConnector(CliConnectorFactory cliConnectorFactory) {
+        this.cliConnectorFactory = cliConnectorFactory;
+    }
 
     @Override
     public CamelContext getCamelContext() {
@@ -73,12 +78,11 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         terminating.set(false);
 
         // what platform are we running
-        CliConnectorFactory ccf = camelContext.adapt(ExtendedCamelContext.class).getCliConnectorFactory();
-        mainClass = ccf.getRuntimeStartClass();
+        mainClass = cliConnectorFactory.getRuntimeStartClass();
         if (mainClass == null) {
             mainClass = camelContext.getGlobalOption("CamelMainClass");
         }
-        platform = ccf.getRuntime();
+        platform = cliConnectorFactory.getRuntime();
         if (platform == null) {
             // use camel context name to guess platform if not specified
             String sn = camelContext.getClass().getSimpleName().toLowerCase(Locale.ROOT);
@@ -98,7 +102,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 platform = "Camel";
             }
         }
-        platformVersion = ccf.getRuntimeVersion();
+        platformVersion = cliConnectorFactory.getRuntimeVersion();
 
         // create thread from JDK so it is not managed by Camel because we want the pool to be independent when
         // camel is being stopped which otherwise can lead to stopping the thread pool while the task is running

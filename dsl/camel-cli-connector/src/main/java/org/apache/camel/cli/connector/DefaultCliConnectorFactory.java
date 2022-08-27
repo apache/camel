@@ -69,7 +69,7 @@ public class DefaultCliConnectorFactory implements CliConnectorFactory {
     @Override
     public CliConnector createConnector() {
         if (enabled) {
-            return new LocalCliConnector();
+            return new LocalCliConnector(this);
         } else {
             return null;
         }
