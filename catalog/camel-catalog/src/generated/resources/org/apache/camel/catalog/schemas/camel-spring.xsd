@@ -392,7 +392,7 @@ Enriches a message with data from a secondary resource
   <xs:element name="errorHandler" nillable="true" type="xs:anyType">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
-Error handler settings
+Camel error handling.
       ]]></xs:documentation>
     </xs:annotation>
   </xs:element>
