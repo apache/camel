@@ -15,9 +15,8 @@
 
 The StAX component allows messages to be process through a SAX
 http://download.oracle.com/javase/6/docs/api/org/xml/sax/ContentHandler.html[ContentHandler]. +
-Another feature of this component is to allow to iterate over JAXB
-records using StAX, for example using the Splitter
-EIP.
+Another feature of this component is to allow iterating over JAXB
+records using StAX, for example using the xref:eips:split-eip.adoc[Split EIP].
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -180,7 +179,7 @@ from("file:target/in")
 ------------------------------------------
 
 Where `stax` is a static method on
-`org.apache.camel.component.stax.StAXBuilder` which you can static
+`org.apache.camel.component.stax.StAXBuilder` which you can have static
 import in the Java code. The stax builder is by default namespace aware
 on the XMLReader it uses. You can turn this
 off by setting the boolean parameter to false, as shown below:
@@ -194,7 +193,31 @@ from("file:target/in")
 
 === The previous example with XML DSL
 
-The example above could be implemented as follows in XML DSL
+The example above could be implemented as follows in Spring XML
+
+[source,xml]
+----
+  <!-- use STaXBuilder to create the expression we want to use in the route below for splitting the XML file -->
+  <!-- notice we use the factory-method to define the stax method, and to pass in the parameter as a constructor-arg -->
+  <bean id="staxRecord" class="org.apache.camel.component.stax.StAXBuilder" factory-method="stax">
+    <!-- FQN class name of the POJO with the JAXB annotations -->
+    <constructor-arg index="0" value="org.apache.camel.component.stax.model.Record"/>
+  </bean>
+
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+      <!-- pickup XML files -->
+      <from uri="file:target/in"/>
+      <split streaming="true">
+        <!-- split the file using StAX (ref to bean above) -->
+        <!-- and use streaming mode in the splitter -->
+        <ref>staxRecord</ref>
+        <!-- and send each splitted to a mock endpoint, which will be a Record POJO instance -->
+        <to uri="mock:records"/>
+      </split>
+    </route>
+  </camelContext>
+----
 
 
 
