@@ -45,18 +45,20 @@ public class ContextDevConsole extends AbstractDevConsole {
         ManagedCamelContext mcc = getCamelContext().getExtension(ManagedCamelContext.class);
         if (mcc != null) {
             ManagedCamelContextMBean mb = mcc.getManagedCamelContext();
-            sb.append(String.format("\n    Total: %s", mb.getExchangesTotal()));
-            sb.append(String.format("\n    Failed: %s", mb.getExchangesFailed()));
-            sb.append(String.format("\n    Inflight: %s", mb.getExchangesInflight()));
-            sb.append(String.format("\n    Mean Time: %s", TimeUtils.printDuration(mb.getMeanProcessingTime(), true)));
-            sb.append(String.format("\n    Max Time: %s", TimeUtils.printDuration(mb.getMaxProcessingTime(), true)));
-            sb.append(String.format("\n    Min Time: %s", TimeUtils.printDuration(mb.getMinProcessingTime(), true)));
-            Date last = mb.getLastExchangeCreatedTimestamp();
-            if (last != null) {
-                String ago = TimeUtils.printSince(last.getTime());
-                sb.append(String.format("\n    Since Last: %s", ago));
+            if (mb != null) {
+                sb.append(String.format("\n    Total: %s", mb.getExchangesTotal()));
+                sb.append(String.format("\n    Failed: %s", mb.getExchangesFailed()));
+                sb.append(String.format("\n    Inflight: %s", mb.getExchangesInflight()));
+                sb.append(String.format("\n    Mean Time: %s", TimeUtils.printDuration(mb.getMeanProcessingTime(), true)));
+                sb.append(String.format("\n    Max Time: %s", TimeUtils.printDuration(mb.getMaxProcessingTime(), true)));
+                sb.append(String.format("\n    Min Time: %s", TimeUtils.printDuration(mb.getMinProcessingTime(), true)));
+                Date last = mb.getLastExchangeCreatedTimestamp();
+                if (last != null) {
+                    String ago = TimeUtils.printSince(last.getTime());
+                    sb.append(String.format("\n    Since Last: %s", ago));
+                }
+                sb.append("\n");
             }
-            sb.append("\n");
         }
 
         return sb.toString();
@@ -73,19 +75,21 @@ public class ContextDevConsole extends AbstractDevConsole {
         ManagedCamelContext mcc = getCamelContext().getExtension(ManagedCamelContext.class);
         if (mcc != null) {
             ManagedCamelContextMBean mb = mcc.getManagedCamelContext();
-            JsonObject stats = new JsonObject();
-            stats.put("exchangesTotal", mb.getExchangesTotal());
-            stats.put("exchangesFailed", mb.getExchangesFailed());
-            stats.put("exchangesInflight", mb.getExchangesInflight());
-            stats.put("meanProcessingTime", mb.getMeanProcessingTime());
-            stats.put("maxProcessingTime", mb.getMaxProcessingTime());
-            stats.put("minProcessingTime", mb.getMinProcessingTime());
-            Date last = mb.getLastExchangeCreatedTimestamp();
-            if (last != null) {
-                String ago = TimeUtils.printSince(last.getTime());
-                stats.put("sinceLastExchange", ago);
+            if (mb != null) {
+                JsonObject stats = new JsonObject();
+                stats.put("exchangesTotal", mb.getExchangesTotal());
+                stats.put("exchangesFailed", mb.getExchangesFailed());
+                stats.put("exchangesInflight", mb.getExchangesInflight());
+                stats.put("meanProcessingTime", mb.getMeanProcessingTime());
+                stats.put("maxProcessingTime", mb.getMaxProcessingTime());
+                stats.put("minProcessingTime", mb.getMinProcessingTime());
+                Date last = mb.getLastExchangeCreatedTimestamp();
+                if (last != null) {
+                    String ago = TimeUtils.printSince(last.getTime());
+                    stats.put("sinceLastExchange", ago);
+                }
+                root.put("statistics", stats);
             }
-            root.put("statistics", stats);
         }
 
         return root;

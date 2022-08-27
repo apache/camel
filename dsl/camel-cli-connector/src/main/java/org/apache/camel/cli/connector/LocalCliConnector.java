@@ -115,7 +115,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         if (lockFile != null) {
             statusFile = createLockFile(lockFile.getName() + "-status.json");
             executor.scheduleWithFixedDelay(this::statusTask, 0, delay, TimeUnit.MILLISECONDS);
-            LOG.info("Local CLI Connector started");
+            LOG.info("Camel CLI enabled (local)");
         } else {
             LOG.warn("Cannot create PID file: {}. This integration cannot be managed by Camel CLI.", getPid());
         }
@@ -124,6 +124,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     @Override
     public void sigterm() {
         // we are terminating
+        LOG.info("Camel CLI terminating JVM");
         terminating.set(true);
 
         try {
@@ -199,6 +200,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             IOHelper.writeText(root.toJson(), statusFile);
         } catch (Throwable e) {
             // ignore
+            LOG.trace(
+                    "Error updating status file: " + statusFile + " due to: " + e.getMessage() + ". This exception is ignored.",
+                    e);
         }
     }
 

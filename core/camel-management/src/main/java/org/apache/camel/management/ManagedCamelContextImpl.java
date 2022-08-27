@@ -122,6 +122,10 @@ public class ManagedCamelContextImpl implements ManagedCamelContext {
         if (getManagementStrategy().getManagementAgent() == null) {
             return null;
         }
+        // jmx must be started
+        if (getManagementStrategy().getManagementObjectNameStrategy() == null) {
+            return null;
+        }
 
         try {
             ObjectName on = getManagementStrategy().getManagementObjectNameStrategy()
