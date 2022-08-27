@@ -63,3 +63,6 @@ The deprecated options were removed and should be replaced by the following opti
 |`writeTimeout`
 |===
 
+=== camel-google-bigquery-sql
+
+Parameters in form of `@name` are extracted from the body or message and their type is preserved and translated into corresponding `com.google.cloud.bigquery.StandardSQLTypeName`. See the https://cloud.google.com/java/docs/reference/google-cloud-bigquery/latest/com.google.cloud.bigquery.QueryParameterValue[documentation] for more information. (Conversion to StandardSQLTypeName.STRING was used for each type before)
