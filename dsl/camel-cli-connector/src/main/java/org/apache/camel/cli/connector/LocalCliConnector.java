@@ -19,8 +19,10 @@ package org.apache.camel.cli.connector;
 import java.io.File;
 import java.util.Collection;
 import java.util.Locale;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -56,6 +58,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private String mainClass;
     private final AtomicBoolean terminating = new AtomicBoolean();
     private ScheduledExecutorService executor;
+    private volatile ExecutorService terminateExecutor;
     private File lockFile;
     private File statusFile;
 
@@ -124,32 +127,37 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     @Override
     public void sigterm() {
         // we are terminating
-        LOG.info("Camel CLI terminating JVM");
         terminating.set(true);
 
-        try {
-            camelContext.stop();
-        } finally {
-            if (lockFile != null) {
-                FileUtil.deleteFile(lockFile);
+        // spawn a thread that terminates, so we can keep this thread to update status
+        terminateExecutor = Executors.newSingleThreadExecutor(r -> {
+            String threadName = ThreadHelper.resolveThreadName(null, "Terminate JVM task");
+            return new Thread(r, threadName);
+        });
+        terminateExecutor.submit(new Runnable() {
+            @Override
+            public void run() {
+                LOG.info("Camel CLI terminating JVM");
+                try {
+                    camelContext.stop();
+                } finally {
+                    ServiceHelper.stopAndShutdownService(this);
+                }
             }
-            if (statusFile != null) {
-                FileUtil.deleteFile(statusFile);
-            }
-            ServiceHelper.stopAndShutdownService(this);
-        }
+        });
     }
 
     protected void statusTask() {
-        if (terminating.get()) {
-            return; // terminating in progress
-        }
-        if (!lockFile.exists()) {
-            // if the lock file is deleted then stop
+        if (!lockFile.exists() && terminating.compareAndSet(false, true)) {
+            // if the lock file is deleted then trigger termination
             sigterm();
             return;
         }
+        if (!statusFile.exists()) {
+            return;
+        }
         try {
+            // even during termination then collect status as we want to see status changes during stopping
             JsonObject root = new JsonObject();
 
             // what runtime are in use
@@ -209,6 +217,12 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     @Override
     protected void doStop() throws Exception {
         // cleanup
+        if (lockFile != null) {
+            FileUtil.deleteFile(lockFile);
+        }
+        if (statusFile != null) {
+            FileUtil.deleteFile(statusFile);
+        }
         if (executor != null) {
             camelContext.getExecutorServiceManager().shutdown(executor);
             executor = null;

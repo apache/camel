@@ -203,11 +203,11 @@ abstract class ProcessBaseCommand extends CamelCommand {
         } else if (status == 7) {
             return "Suspended";
         } else if (status == 8) {
-            return "Stopping";
-        } else if (status == 9) {
-            return "Stopped";
-        } else {
             return "Terminating";
+        } else if (status == 9) {
+            return "Terminated";
+        } else {
+            return "Terminated";
         }
     }
 

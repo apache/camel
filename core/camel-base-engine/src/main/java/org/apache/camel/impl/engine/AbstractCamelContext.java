@@ -3424,8 +3424,8 @@ public abstract class AbstractCamelContext extends BaseService
         // Stop the route controller
         ServiceHelper.stopAndShutdownService(this.routeController);
 
-        // stop route inputs in the same order as they was started so we stop
-        // the very first inputs first
+        // stop route inputs in the same order as they were started, so we stop
+        // the very first inputs at first
         try {
             // force shutting down routes as they may otherwise cause shutdown to hang
             if (shutdownStrategy != null) {
