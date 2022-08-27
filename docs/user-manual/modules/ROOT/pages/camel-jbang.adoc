@@ -315,7 +315,7 @@ For example to run one of the Camel K examples you can do:
 
 [source,bash]
 ----
-camel run github:apache:camel-k:examples/languages/routes.yaml
+camel run github:apache:camel-kamelets-examples:jbang/hello-java/Hey.java
 ----
 
 You can also use the `https` URL for GitHub. For example, you can browse the examples from a web-browser and
@@ -323,21 +323,21 @@ then copy the URL from the browser window and run the example with Camel JBang:
 
 [source,bash]
 ----
-camel run https://github.com/apache/camel-k/blob/main/examples/languages/routes.yaml
+camel run https://github.com/apache/camel-kamelets-examples/tree/main/jbang/hello-java
 ----
 
 You can also use wildcards (i.e. `*`) to match multiple files, such as running all the groovy files:
 
 [source,bash]
 ----
-camel run https://github.com/apache/camel-k/tree/main/examples/languages/*.groovy
+camel run https://github.com/apache/camel-kamelets-examples/tree/main/jbang/languages/*.groovy
 ----
 
 Or you can run all files starting with rou*
 
 [source,bash]
 ----
-camel run https://github.com/apache/camel-k/tree/main/examples/languages/rou*
+camel run https://github.com/apache/camel-kamelets-examples/tree/main/jbang/languages/rou*
 ----
 
 ==== Running routes from GitHub gists
