@@ -81,16 +81,19 @@ public class RouteConfigurationDefinitionDeserializer extends YamlDeserializerBa
                     case "precondition":
                         target.setPrecondition(asText(val));
                         break;
+                    case "errorHandler":
                     case "error-handler":
                         setDeserializationContext(val, dc);
                         ErrorHandlerDefinition ehd = asType(val, ErrorHandlerDefinition.class);
                         target.setErrorHandler(ehd);
                         break;
+                    case "onException":
                     case "on-exception":
                         setDeserializationContext(val, dc);
                         OnExceptionDefinition oed = asType(val, OnExceptionDefinition.class);
                         target.getOnExceptions().add(oed);
                         break;
+                    case "onCompletion":
                     case "on-completion":
                         setDeserializationContext(val, dc);
                         OnCompletionDefinition ocd = asType(val, OnCompletionDefinition.class);
@@ -101,11 +104,13 @@ public class RouteConfigurationDefinitionDeserializer extends YamlDeserializerBa
                         InterceptDefinition id = asType(val, InterceptDefinition.class);
                         target.getIntercepts().add(id);
                         break;
+                    case "interceptFrom":
                     case "intercept-from":
                         setDeserializationContext(val, dc);
                         InterceptFromDefinition ifd = asType(val, InterceptFromDefinition.class);
                         target.getInterceptFroms().add(ifd);
                         break;
+                    case "interceptSendToEndpoint":
                     case "intercept-send-to-endpoint":
                         setDeserializationContext(val, dc);
                         InterceptSendToEndpointDefinition isted = asType(val, InterceptSendToEndpointDefinition.class);

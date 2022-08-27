@@ -83,6 +83,7 @@ public class ErrorHandlerBuilderDeserializer implements ConstructNode {
                     return customizer(def);
                 case "none":
                     return customizer(asType(val, NoErrorHandlerDefinition.class));
+                case "deadLetterChannel":
                 case "dead-letter-channel":
                     return customizer(asType(val, DeadLetterChannelDefinition.class));
                 case "log":

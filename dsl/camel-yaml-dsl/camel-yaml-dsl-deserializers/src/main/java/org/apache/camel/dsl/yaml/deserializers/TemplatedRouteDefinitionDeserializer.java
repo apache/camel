@@ -58,10 +58,12 @@ public class TemplatedRouteDefinitionDeserializer extends YamlDeserializerBase<T
             TemplatedRouteDefinition target, String propertyKey, String propertyName, Node node) {
 
         switch (propertyKey) {
+            case "routeId":
             case "route-id": {
                 target.setRouteId(asText(node));
                 break;
             }
+            case "routeTemplateRef":
             case "route-template-ref": {
                 target.setRouteTemplateRef(asText(node));
                 break;

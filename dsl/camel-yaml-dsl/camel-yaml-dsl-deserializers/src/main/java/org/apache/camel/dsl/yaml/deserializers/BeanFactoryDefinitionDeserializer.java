@@ -38,6 +38,7 @@ public abstract class BeanFactoryDefinitionDeserializer<T extends BeanFactoryDef
             T target, String propertyKey,
             String propertyName, Node node) {
         switch (propertyKey) {
+            case "beanType":
             case "bean-type": {
                 String val = asText(node);
                 target.setBeanType(val);

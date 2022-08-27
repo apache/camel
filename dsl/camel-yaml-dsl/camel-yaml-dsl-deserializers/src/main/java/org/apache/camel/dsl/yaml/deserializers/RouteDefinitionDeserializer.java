@@ -84,24 +84,31 @@ public class RouteDefinitionDeserializer extends YamlDeserializerBase<RouteDefin
                 case "group":
                     target.setGroup(asText(val));
                     break;
+                case "routeConfigurationId":
                 case "route-configuration-id":
                     target.setRouteConfigurationId(asText(val));
                     break;
+                case "autoStartup":
                 case "auto-startup":
                     target.setAutoStartup(asText(val));
                     break;
+                case "routePolicy":
                 case "route-policy":
                     target.setRoutePolicyRef(asText(val));
                     break;
+                case "startupOrder":
                 case "startup-order":
                     target.setStartupOrder(asInt(val));
                     break;
+                case "streamCaching":
                 case "stream-caching":
                     target.setStreamCache(asText(val));
                     break;
+                case "logMask":
                 case "log-mask":
                     target.setLogMask(asText(val));
                     break;
+                case "messageHistory":
                 case "message-history":
                     target.setMessageHistory(asText(val));
                     break;
