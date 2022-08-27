@@ -194,6 +194,37 @@ class RoutesTest extends YamlTestSupport {
         }
     }
 
+    def "load route inlined camelCase"() {
+        when:
+        loadRoutes '''
+                - route:
+                    id: demo-route
+                    streamCaching: true
+                    autoStartup: false
+                    startupOrder: 123
+                    routePolicy: "myPolicy"
+                    from:
+                      uri: "direct:info"
+                      steps:
+                        - log: "message"
+            '''
+        then:
+        context.routeDefinitions.size() == 1
+
+        with(context.routeDefinitions[0], RouteDefinition) {
+            routeId == 'demo-route'
+            streamCache == 'true'
+            autoStartup == 'false'
+            startupOrder == 123
+            routePolicyRef == 'myPolicy'
+            input.endpointUri == 'direct:info'
+
+            with (outputs[0], LogDefinition) {
+                message == 'message'
+            }
+        }
+    }
+
     def "load route description"() {
         when:
         loadRoutes '''

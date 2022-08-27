@@ -81,6 +81,10 @@ public class KameletDeserializer extends YamlDeserializerBase<KameletDefinition>
                 case "name":
                     name = asText(val);
                     break;
+                case "inheritErrorHandler":
+                case "inherit-error-handler":
+                    target.setInheritErrorHandler(asBoolean(val));
+                    break;
                 case "parameters":
                     parameters = asScalarMap(tuple.getValueNode());
                     break;
