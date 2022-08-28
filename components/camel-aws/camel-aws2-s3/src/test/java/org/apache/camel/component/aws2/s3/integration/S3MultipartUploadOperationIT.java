@@ -50,8 +50,8 @@ public class S3MultipartUploadOperationIT extends Aws2S3Base {
 
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(AWS2S3Constants.KEY, "empty.txt");
-                exchange.getIn().setBody(new File("src/test/resources/empty.txt"));
+                exchange.getIn().setHeader(AWS2S3Constants.KEY, "empty.bin");
+                exchange.getIn().setBody(new File("src/test/resources/empty.bin"));
             }
         });
 
@@ -67,7 +67,7 @@ public class S3MultipartUploadOperationIT extends Aws2S3Base {
             @Override
             public void process(Exchange exchange) {
                 exchange.getIn().setHeader(AWS2S3Constants.KEY, "camel-content-type.txt");
-                exchange.getIn().setBody(new File("src/test/resources/empty.txt"));
+                exchange.getIn().setBody(new File("src/test/resources/empty.bin"));
                 exchange.getIn().setHeader(AWS2S3Constants.CONTENT_TYPE, "application/text");
             }
         });
