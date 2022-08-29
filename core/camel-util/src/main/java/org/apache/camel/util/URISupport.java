@@ -331,14 +331,20 @@ public final class URISupport {
                     String raw = URIScanner.resolveRaw(str);
                     if (raw != null) {
                         // update the string in the list
-                        list.set(i, raw);
+                        // do not encode RAW parameters unless it has %
+                        // need to reverse: replace % with %25 to avoid losing "%" when decoding
+                        String s = raw.replace("%25", "%");
+                        list.set(i, s);
                     }
                 }
             } else {
                 String str = entry.getValue().toString();
                 String raw = URIScanner.resolveRaw(str);
                 if (raw != null) {
-                    entry.setValue(raw);
+                    // do not encode RAW parameters unless it has %
+                    // need to reverse: replace % with %25 to avoid losing "%" when decoding
+                    String s = raw.replace("%25", "%");
+                    entry.setValue(s);
                 }
             }
         }
