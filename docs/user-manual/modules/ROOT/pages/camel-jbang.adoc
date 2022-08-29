@@ -614,7 +614,7 @@ the total number of messages processed. The column _Since Last_
 shows how long time ago the integration was active processing
 incoming messages.
 
-You can also see the status of every routes, from all the local Camel integrations:
+You can also see the status of every routes, from all the local Camel integrations with `camel get route`:
 
 [source,bash]
 ----
@@ -626,6 +626,40 @@ camel get route
 ----
 
 TIP: Use `camel get --help` to display all the available commands as additional will be added in upcoming releases.
+
+=== Top status of Camel integrations
+
+The `camel top` command is intended for getting top utilization statistics (highest to lowest heap used memory)
+of the running Camel integrations.
+
+[source,bash]
+----
+camel top
+  PID   NAME                          JAVA     CAMEL            PLATFORM            STATUS    AGE         HEAP        NON-HEAP     GC     THREADS   CLASSES
+ 22104  chuck.yaml                    11.0.13  3.19.0-SNAPSHOT  JBang               Running   2m10s  131/322/4294 MB  70/73 MB  17ms (6)      7/8  7456/7456
+ 14242  sample.camel.MyCamelApplica…  11.0.13  3.19.0-SNAPSHOT  Spring Boot v2.7.3  Running  33m40s  115/332/4294 MB  62/66 MB  37ms (6)    16/16  8428/8428
+ 22116  bar.yaml                      11.0.13  3.19.0-SNAPSHOT  JBang               Running    2m7s   33/268/4294 MB  54/58 MB  20ms (4)      7/8  6104/6104
+----
+
+The _HEAP_ column shows the heap memory (used/committed/max) and the non-heap (used/committed).
+The _GC_ column shows garbage collection information (time and total runs).
+The _CLASSES_ column shows number of classes (loaded/total).
+
+You can also see the top performing routes (highest to lowest mean processing time)
+of every routes, from all the local Camel integrations with `camel top route`:
+
+[source,bash]
+----
+camel top route
+  PID   NAME                          ID                     FROM                                 STATUS    AGE    TOTAL  FAILED  INFLIGHT  MEAN  MIN  MAX  SINCE-LAST
+ 22104  chuck.yaml                    chuck-norris-source-1  timer://chuck?period=10000           Started     10s      1       0         0   163  163  163          9s
+ 22116  bar.yaml                      route1                 timer://yaml2?period=1000            Started      7s      7       0         0     1    0   11          0s
+ 22104  chuck.yaml                    chuck                  kamelet://chuck-norris-source        Started     10s      1       0         0     0    0    0          9s
+ 22104  chuck.yaml                    log-sink-2             kamelet://source?routeId=log-sink-2  Started     10s      1       0         0     0    0    0          9s
+ 14242  sample.camel.MyCamelApplicat  hello                  timer://hello?period=2000            Started  31m41s    948       0         0     0    0    4          0s
+----
+
+TIP: Use `camel top --help` to display all the available commands as additional will be added in upcoming releases.
 
 
 === Using Jolokia and Hawtio
