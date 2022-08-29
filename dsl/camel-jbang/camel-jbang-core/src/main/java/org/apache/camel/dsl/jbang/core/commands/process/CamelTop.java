@@ -31,7 +31,7 @@ public class CamelTop extends CamelCommand {
     @Override
     public Integer call() throws Exception {
         // default to top the integrations
-        new CommandLine(new CamelRouteTop(getMain())).execute();
+        new CommandLine(new CamelContextTop(getMain())).execute();
         return 0;
     }
 }
