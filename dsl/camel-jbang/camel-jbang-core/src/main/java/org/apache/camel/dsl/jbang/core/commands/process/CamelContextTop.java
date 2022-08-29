@@ -178,7 +178,7 @@ public class CamelContextTop extends ProcessBaseCommand {
         if (r.gcTime <= 0) {
             return "";
         } else {
-            return r.gcTime + "ms (" + r.gcCount + ")";
+            return String.format("%s (%d)", TimeUtils.printDuration(r.gcTime, true), r.gcCount);
         }
     }
 
