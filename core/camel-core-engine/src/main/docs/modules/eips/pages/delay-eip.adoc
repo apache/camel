@@ -37,6 +37,21 @@ And in XML:
 </route>
 ----
 
+Note that delay creates its own block, so some DSLs (including Java) require the delay block be closed:
+[source,java]
+----
+.from("direct:delayBlockExample")
+    .to("direct:getJobState")
+    .loopDoWhile(simple("${body.state} = 'NOT_DONE'"))
+        .log(LoggingLevel.DEBUG, "Pausing")
+        .delay(10000)
+            .syncDelayed()
+        .end() // we must end the delay or else the log statement will be executed in each loop iteration
+        .to("direct:getJobState")
+    .end()
+    .log("and we're done");
+----
+
 The delayed value can be a dynamic xref:manual::expression.adoc[Expression].
 
 For example to delay a random between 1 and 5 seconds, we can use
