@@ -16,28 +16,22 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.process;
 
+import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import picocli.CommandLine.Command;
+import picocli.CommandLine;
 
-@Command(name = "top", description = "Top performing routes")
-public class CamelTopStatus extends CamelRouteStatus {
+@CommandLine.Command(name = "top",
+                     description = "Top status of Camel integrations (use --help to see sub commands)")
+public class CamelTop extends CamelCommand {
 
-    public CamelTopStatus(CamelJBangMain main) {
+    public CamelTop(CamelJBangMain main) {
         super(main);
     }
 
     @Override
-    protected int sortRow(Row o1, Row o2) {
-        // sort for highest mean value as we want the slowest in the top
-        long m1 = o1.mean != null ? Long.parseLong(o1.mean) : 0;
-        long m2 = o2.mean != null ? Long.parseLong(o2.mean) : 0;
-        if (m1 < m2) {
-            return 1;
-        } else if (m1 > m2) {
-            return -1;
-        } else {
-            return 0;
-        }
+    public Integer call() throws Exception {
+        // default to top the integrations
+        new CommandLine(new CamelRouteTop(getMain())).execute();
+        return 0;
     }
-
 }

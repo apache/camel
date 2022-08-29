@@ -17,7 +17,14 @@
 package org.apache.camel.cli.connector;
 
 import java.io.File;
+import java.lang.management.ClassLoadingMXBean;
+import java.lang.management.GarbageCollectorMXBean;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.RuntimeMXBean;
+import java.lang.management.ThreadMXBean;
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -168,10 +175,14 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             ProcessHandle.current().info().user().ifPresent(u -> rc.put("user", u));
             rc.put("platform", platform);
             if (platformVersion != null) {
-                rc.put("version", platformVersion);
+                rc.put("platformVersion", platformVersion);
             }
             if (mainClass != null) {
                 rc.put("mainClass", mainClass);
+            }
+            RuntimeMXBean mb = ManagementFactory.getRuntimeMXBean();
+            if (mb != null) {
+                rc.put("javaVersion", mb.getVmVersion());
             }
             root.put("runtime", rc);
 
@@ -189,6 +200,23 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     root.put("context", json);
                     root.put("routes", json2.get("routes"));
                 }
+            }
+            // various details
+            JsonObject mem = collectMemory();
+            if (mem != null) {
+                root.put("memory", mem);
+            }
+            JsonObject cl = collectClassLoading();
+            if (cl != null) {
+                root.put("classLoading", cl);
+            }
+            JsonObject threads = collectThreads();
+            if (threads != null) {
+                root.put("threads", threads);
+            }
+            JsonObject gc = collectGC();
+            if (gc != null) {
+                root.put("gc", gc);
             }
             // and health-check readiness
             Collection<HealthCheck.Result> res = HealthCheckHelper.invokeReadiness(camelContext);
@@ -211,6 +239,60 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     "Error updating status file: " + statusFile + " due to: " + e.getMessage() + ". This exception is ignored.",
                     e);
         }
+    }
+
+    private JsonObject collectMemory() {
+        MemoryMXBean mb = ManagementFactory.getMemoryMXBean();
+        if (mb != null) {
+            JsonObject root = new JsonObject();
+            root.put("heapMemoryUsed", mb.getHeapMemoryUsage().getUsed());
+            root.put("heapMemoryCommitted", mb.getHeapMemoryUsage().getCommitted());
+            root.put("heapMemoryMax", mb.getHeapMemoryUsage().getMax());
+            root.put("nonHeapMemoryUsed", mb.getNonHeapMemoryUsage().getUsed());
+            root.put("nonHeapMemoryCommitted", mb.getNonHeapMemoryUsage().getCommitted());
+            return root;
+        }
+        return null;
+    }
+
+    private JsonObject collectClassLoading() {
+        ClassLoadingMXBean cb = ManagementFactory.getClassLoadingMXBean();
+        if (cb != null) {
+            JsonObject root = new JsonObject();
+            root.put("loadedClassCount", cb.getLoadedClassCount());
+            root.put("unloadedClassCount", cb.getUnloadedClassCount());
+            root.put("totalLoadedClassCount", cb.getTotalLoadedClassCount());
+            return root;
+        }
+        return null;
+    }
+
+    private JsonObject collectThreads() {
+        ThreadMXBean tb = ManagementFactory.getThreadMXBean();
+        if (tb != null) {
+            JsonObject root = new JsonObject();
+            root.put("threadCount", tb.getThreadCount());
+            root.put("peakThreadCount", tb.getPeakThreadCount());
+            return root;
+        }
+        return null;
+    }
+
+    private JsonObject collectGC() {
+        List<GarbageCollectorMXBean> gcs = ManagementFactory.getGarbageCollectorMXBeans();
+        if (gcs != null && !gcs.isEmpty()) {
+            JsonObject root = new JsonObject();
+            long count = 0;
+            long time = 0;
+            for (GarbageCollectorMXBean gc : gcs) {
+                count += gc.getCollectionCount();
+                time += gc.getCollectionTime();
+            }
+            root.put("collectionCount", count);
+            root.put("collectionTime", time);
+            return root;
+        }
+        return null;
     }
 
     @Override
