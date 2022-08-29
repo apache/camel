@@ -33,6 +33,7 @@ import org.apache.camel.test.infra.couchbase.services.CouchbaseServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class CouchbaseIntegrationTestBase extends CamelTestSupport {
@@ -55,6 +56,10 @@ public class CouchbaseIntegrationTestBase extends CamelTestSupport {
                 bucketName,
                 Collections.singletonMap(bucketName, new View("function (doc, meta) {  emit(meta.id, doc);}")));
         cluster.bucket(bucketName).viewIndexes().upsertDesignDocument(designDoc, DesignDocumentNamespace.PRODUCTION);
+    }
+
+    @BeforeEach
+    public void waitForStarted() {
         cluster.bucket(bucketName).waitUntilReady(Duration.ofSeconds(30));
     }
 
