@@ -16,18 +16,16 @@
  */
 package org.apache.camel.impl.console;
 
-import org.apache.camel.spi.Configurer;
-import org.apache.camel.spi.annotations.DevConsole;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
-
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static org.apache.camel.util.UnitUtils.printUnitFromBytesDot;
+import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.annotations.DevConsole;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 
 @DevConsole("gc")
 @Configurer(bootstrap = true)
