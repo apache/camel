@@ -16,16 +16,16 @@
  */
 package org.apache.camel.impl.console;
 
-import org.apache.camel.spi.Configurer;
-import org.apache.camel.spi.annotations.DevConsole;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
-
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 import java.util.Arrays;
 import java.util.Map;
+
+import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.annotations.DevConsole;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 
 @DevConsole("thread")
 @Configurer(bootstrap = true)
