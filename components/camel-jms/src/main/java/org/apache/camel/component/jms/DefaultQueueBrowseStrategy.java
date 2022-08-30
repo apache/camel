@@ -20,7 +20,10 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
+import javax.jms.JMSException;
 import javax.jms.Message;
+import javax.jms.QueueBrowser;
+import javax.jms.Session;
 
 import org.apache.camel.Exchange;
 import org.springframework.jms.core.BrowserCallback;
@@ -34,42 +37,31 @@ public class DefaultQueueBrowseStrategy implements QueueBrowseStrategy {
     @Override
     public List<Exchange> browse(JmsOperations template, String queue, final JmsBrowsableEndpoint endpoint) {
         if (endpoint.getSelector() != null) {
-            return template.browseSelected(queue, endpoint.getSelector(), (session, browser) -> {
-                int size = endpoint.getMaximumBrowseSize();
-                if (size <= 0) {
-                    size = Integer.MAX_VALUE;
-                }
-
-                // not the best implementation in the world as we have to browse
-                // the entire queue, which could be massive
-                List<Exchange> answer = new ArrayList<>();
-                Enumeration<?> iter = browser.getEnumeration();
-                for (int i = 0; i < size && iter.hasMoreElements(); i++) {
-                    Message message = (Message) iter.nextElement();
-                    Exchange exchange = endpoint.createExchange(message, session);
-                    answer.add(exchange);
-                }
-                return answer;
-            });
+            return template.browseSelected(queue, endpoint.getSelector(),
+                    (session, browser) -> doBrowse(endpoint, session, browser));
         } else {
-            return template.browse(queue, (session, browser) -> {
-                int size = endpoint.getMaximumBrowseSize();
-                if (size <= 0) {
-                    size = Integer.MAX_VALUE;
-                }
-
-                // not the best implementation in the world as we have to browse
-                // the entire queue, which could be massive
-                List<Exchange> answer = new ArrayList<>();
-                Enumeration<?> iter = browser.getEnumeration();
-                for (int i = 0; i < size && iter.hasMoreElements(); i++) {
-                    Message message = (Message) iter.nextElement();
-                    Exchange exchange = endpoint.createExchange(message, session);
-                    answer.add(exchange);
-                }
-                return answer;
-            });
+            return template.browse(queue, (session, browser) -> doBrowse(endpoint, session, browser));
         }
+    }
+
+    private static List<Exchange> doBrowse(JmsBrowsableEndpoint endpoint, Session session, QueueBrowser browser)
+            throws JMSException {
+        int size = endpoint.getMaximumBrowseSize();
+        if (size <= 0) {
+            size = Integer.MAX_VALUE;
+        }
+
+        // not the best implementation in the world as we have to browse
+        // the entire queue, which could be massive
+        List<Exchange> answer = new ArrayList<>();
+        Enumeration<?> iter = browser.getEnumeration();
+
+        for (int i = 0; i < size && iter.hasMoreElements(); i++) {
+            Message message = (Message) iter.nextElement();
+            Exchange exchange = endpoint.createExchange(message, session);
+            answer.add(exchange);
+        }
+        return answer;
     }
 
 }

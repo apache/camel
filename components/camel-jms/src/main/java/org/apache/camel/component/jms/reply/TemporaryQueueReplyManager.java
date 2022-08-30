@@ -146,11 +146,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         } else {
             answer.setCacheLevel(DefaultMessageListenerContainer.CACHE_CONSUMER);
         }
-        String clientId = endpoint.getClientId();
-        if (clientId != null) {
-            clientId += ".CamelReplyManager";
-            answer.setClientId(clientId);
-        }
+        setupClientId(endpoint, answer);
 
         // we cannot do request-reply over JMS with transaction
         answer.setSessionTransacted(false);
