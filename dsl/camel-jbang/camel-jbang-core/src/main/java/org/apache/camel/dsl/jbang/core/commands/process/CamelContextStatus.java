@@ -27,6 +27,7 @@ import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -78,6 +79,16 @@ public class CamelContextStatus extends ProcessBaseCommand {
                                 row.sinceLast = last.toString();
                             }
                         }
+                        JsonArray array = (JsonArray) root.get("routes");
+                        for (int i = 0; i < array.size(); i++) {
+                            JsonObject o = (JsonObject) array.get(i);
+                            String state = o.getString("state");
+                            row.routeTotal++;
+                            if ("Started".equals(state)) {
+                                row.routeStarted++;
+                            }
+                        }
+
                         JsonObject hc = (JsonObject) root.get("healthChecks");
                         row.ready = hc != null ? hc.getString("ready") + "/" + hc.getString("total") : null;
                         rows.add(row);
@@ -98,6 +109,7 @@ public class CamelContextStatus extends ProcessBaseCommand {
                     new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
                             .with(r -> extractState(r.state)),
                     new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
+                    new Column().header("ROUTE").with(this::getRoutes),
                     new Column().header("TOTAL").with(r -> r.total),
                     new Column().header("FAILED").with(r -> r.failed),
                     new Column().header("INFLIGHT").with(r -> r.inflight),
@@ -140,6 +152,10 @@ public class CamelContextStatus extends ProcessBaseCommand {
         }
     }
 
+    private String getRoutes(Row r) {
+        return r.routeStarted + "/" + r.routeTotal;
+    }
+
     private static class Row {
         String pid;
         String platform;
@@ -147,6 +163,8 @@ public class CamelContextStatus extends ProcessBaseCommand {
         String camelVersion;
         String name;
         String ready;
+        int routeStarted;
+        int routeTotal;
         int state;
         String ago;
         long uptime;
