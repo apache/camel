@@ -28,7 +28,7 @@ import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
  */
 public class FileRouteJmsPreMoveTest extends AbstractJMSTest {
 
-    protected String componentName = "activemq";
+    protected final String componentName = "activemq";
 
     @Override
     @BeforeEach

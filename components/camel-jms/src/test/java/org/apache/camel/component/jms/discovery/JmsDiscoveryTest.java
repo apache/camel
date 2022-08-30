@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class JmsDiscoveryTest extends AbstractJMSTest {
-    protected MyRegistry myRegistry = new MyRegistry();
+    protected final MyRegistry myRegistry = new MyRegistry();
 
     @Test
     public void testDiscovery() throws Exception {

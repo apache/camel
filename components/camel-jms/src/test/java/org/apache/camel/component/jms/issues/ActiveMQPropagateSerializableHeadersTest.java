@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ActiveMQPropagateSerializableHeadersTest extends AbstractJMSTest {
 
-    protected Object expectedBody = "<time>" + new Date() + "</time>";
+    protected final Object expectedBody = "<time>" + new Date() + "</time>";
     protected ActiveMQQueue replyQueue = new ActiveMQQueue("ActiveMQPropagateSerializableHeadersTest.reply.queue");
     protected String correlationID = "ABC-123";
     protected String messageType = getClass().getName();

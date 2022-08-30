@@ -42,7 +42,7 @@ public class JmsAsyncStartStopListenerTest extends CamelTestSupport {
     @RegisterExtension
     public ActiveMQService service = ActiveMQServiceFactory.createPersistentVMService();
 
-    protected String componentName = "activemq";
+    protected final String componentName = "activemq";
 
     @Test
     public void testAsyncStartListener() throws Exception {

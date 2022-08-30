@@ -29,8 +29,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BrowsableQueueTest extends AbstractJMSTest {
     private static final Logger LOG = LoggerFactory.getLogger(BrowsableQueueTest.class);
 
-    protected String componentName = "activemq";
-    protected Object[] expectedBodies = { "body1", "body2", "body3", "body4", "body5", "body6", "body7", "body8" };
+    protected final String componentName = "activemq";
+    protected final Object[] expectedBodies = { "body1", "body2", "body3", "body4", "body5", "body6", "body7", "body8" };
 
     @Test
     public void testSendMessagesThenBrowseQueue() {

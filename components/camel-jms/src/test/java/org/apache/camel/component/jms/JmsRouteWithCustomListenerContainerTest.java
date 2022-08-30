@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class JmsRouteWithCustomListenerContainerTest extends AbstractJMSTest {
 
-    protected String componentName = "activemq";
+    protected final String componentName = "activemq";
 
     @BindToRegistry("orderService")
     private final MyOrderServiceBean serviceBean = new MyOrderServiceBean();

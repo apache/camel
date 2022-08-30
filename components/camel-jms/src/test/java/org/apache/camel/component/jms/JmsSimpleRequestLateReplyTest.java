@@ -42,7 +42,7 @@ public class JmsSimpleRequestLateReplyTest extends AbstractJMSTest {
     private static final Logger LOG = LoggerFactory.getLogger(JmsSimpleRequestLateReplyTest.class);
     private static Destination replyDestination;
     private static String cid;
-    protected String expectedBody = "Late Reply";
+    protected final String expectedBody = "Late Reply";
     protected JmsComponent activeMQComponent;
     private final CountDownLatch latch = new CountDownLatch(1);
 

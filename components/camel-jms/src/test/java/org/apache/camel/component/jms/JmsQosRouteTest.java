@@ -21,7 +21,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class JmsQosRouteTest extends AbstractJMSTest {
-    protected String componentName = "activemq";
+    protected final String componentName = "activemq";
 
     @Test
     public void testJmsRoutePreserveQos() throws Exception {

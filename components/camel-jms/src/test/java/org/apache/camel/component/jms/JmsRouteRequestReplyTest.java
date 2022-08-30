@@ -55,17 +55,17 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class JmsRouteRequestReplyTest extends CamelTestSupport {
 
     protected static final String REPLY_TO_DESTINATION_SELECTOR_NAME = "camelProducer";
-    protected static String componentName = "amq";
-    protected static String componentName1 = "amq1";
-    protected static String endpointUriA = componentName + ":queue:JmsRouteRequestReplyTest.a";
-    protected static String endpointUriB = componentName + ":queue:JmsRouteRequestReplyTest.b";
-    protected static String endpointUriB1 = componentName1 + ":queue:JmsRouteRequestReplyTest.b";
+    protected static final String COMPONENT_NAME = "amq";
+    protected static final String COMPONENT_NAME_1 = "amq1";
+    protected static String endpointUriA = COMPONENT_NAME + ":queue:JmsRouteRequestReplyTest.a";
+    protected static String endpointUriB = COMPONENT_NAME + ":queue:JmsRouteRequestReplyTest.b";
+    protected static String endpointUriB1 = COMPONENT_NAME_1 + ":queue:JmsRouteRequestReplyTest.b";
     // note that the replyTo both A and B endpoints share the persistent replyTo queue,
     // which is one more way to verify that reply listeners of A and B endpoints don't steal each other messages
     protected static String endpointReplyToUriA
-            = componentName + ":queue:JmsRouteRequestReplyTest.a?replyTo=queue:JmsRouteRequestReplyTest.a.reply";
+            = COMPONENT_NAME + ":queue:JmsRouteRequestReplyTest.a?replyTo=queue:JmsRouteRequestReplyTest.a.reply";
     protected static String endpointReplyToUriB
-            = componentName + ":queue:JmsRouteRequestReplyTest.b?replyTo=queue:JmsRouteRequestReplyTest.a.reply";
+            = COMPONENT_NAME + ":queue:JmsRouteRequestReplyTest.b?replyTo=queue:JmsRouteRequestReplyTest.a.reply";
 
     protected static String request = "Hello World";
     protected static String expectedReply = "Re: " + request;
@@ -149,7 +149,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
             JmsComponent jmsComponent = jmsComponentAutoAcknowledge(connectionFactory);
             jmsComponent.getConfiguration().setUseMessageIDAsCorrelationID(true);
             jmsComponent.getConfiguration().setConcurrentConsumers(maxServerTasks);
-            context.addComponent(componentName, jmsComponent);
+            context.addComponent(COMPONENT_NAME, jmsComponent);
             return context;
         }
     }
@@ -166,7 +166,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
                 JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
                 jms.getConfiguration().setUseMessageIDAsCorrelationID(false);
                 jms.getConfiguration().setConcurrentConsumers(maxServerTasks);
-                context.addComponent(componentName, jms);
+                context.addComponent(COMPONENT_NAME, jms);
                 return context;
             };
 
@@ -178,7 +178,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
                 jms.getConfiguration().setReplyToDestinationSelectorName(REPLY_TO_DESTINATION_SELECTOR_NAME);
                 jms.getConfiguration().setUseMessageIDAsCorrelationID(true);
                 jms.getConfiguration().setConcurrentConsumers(maxServerTasks);
-                context.addComponent(componentName, jms);
+                context.addComponent(COMPONENT_NAME, jms);
                 return context;
             };
 
@@ -190,7 +190,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
                 jms.getConfiguration().setReplyToDestinationSelectorName(REPLY_TO_DESTINATION_SELECTOR_NAME);
                 jms.getConfiguration().setUseMessageIDAsCorrelationID(false);
                 jms.getConfiguration().setConcurrentConsumers(maxServerTasks);
-                context.addComponent(componentName, jms);
+                context.addComponent(COMPONENT_NAME, jms);
                 return context;
             };
 
@@ -199,12 +199,12 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
                 ConnectionFactory connectionFactory = createConnectionFactory(brokerUrl, null);
                 JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
                 jms.getConfiguration().setConcurrentConsumers(maxServerTasks);
-                context.addComponent(componentName, jms);
+                context.addComponent(COMPONENT_NAME, jms);
 
                 JmsComponent jms1 = jmsComponentAutoAcknowledge(connectionFactory);
                 jms1.getConfiguration().setUseMessageIDAsCorrelationID(false);
                 jms1.getConfiguration().setConcurrentConsumers(maxServerTasks);
-                context.addComponent(componentName1, jms1);
+                context.addComponent(COMPONENT_NAME_1, jms1);
                 return context;
             };
 
@@ -214,12 +214,12 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
                 JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
                 jms.getConfiguration().setUseMessageIDAsCorrelationID(true);
                 jms.getConfiguration().setConcurrentConsumers(maxServerTasks);
-                context.addComponent(componentName, jms);
+                context.addComponent(COMPONENT_NAME, jms);
 
                 JmsComponent jms1 = jmsComponentAutoAcknowledge(connectionFactory);
                 jms1.getConfiguration().setUseMessageIDAsCorrelationID(true);
                 jms1.getConfiguration().setConcurrentConsumers(maxServerTasks);
-                context.addComponent(componentName1, jms1);
+                context.addComponent(COMPONENT_NAME_1, jms1);
                 return context;
             };
 

@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class TransactionErrorHandlerRedeliveryDelayTest extends CamelSpringTestSupport {
 
-    private static LongAdder counter = new LongAdder();
+    private static final LongAdder COUNTER = new LongAdder();
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
@@ -56,8 +56,8 @@ public class TransactionErrorHandlerRedeliveryDelayTest extends CamelSpringTestS
 
         @Override
         public void process(Exchange exchange) {
-            int counterValue = counter.intValue();
-            counter.increment();
+            int counterValue = COUNTER.intValue();
+            COUNTER.increment();
             if (counterValue < 3) {
                 throw new IllegalArgumentException("Forced exception as counter is " + counterValue);
             }

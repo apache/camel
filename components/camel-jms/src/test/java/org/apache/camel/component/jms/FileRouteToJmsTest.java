@@ -28,7 +28,7 @@ import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
  */
 public class FileRouteToJmsTest extends AbstractJMSTest {
 
-    protected String componentName = "activemq";
+    protected final String componentName = "activemq";
 
     @Test
     public void testRouteToFile() throws Exception {

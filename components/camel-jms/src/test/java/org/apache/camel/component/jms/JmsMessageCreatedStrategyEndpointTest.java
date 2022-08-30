@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 
 public class JmsMessageCreatedStrategyEndpointTest extends AbstractJMSTest {
 
-    protected String componentName = "activemq";
+    protected final String componentName = "activemq";
 
     @BindToRegistry("myStrategy")
     private final MyMessageCreatedStrategy strategy = new MyMessageCreatedStrategy();

@@ -29,7 +29,7 @@ public class JmsRequestReplyProcessRepliesConcurrentUsingThreadsTest extends Abs
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsRequestReplyProcessRepliesConcurrentUsingThreadsTest.class);
 
-    protected String componentName = "activemq";
+    protected final String componentName = "activemq";
 
     @Test
     public void testRequestReplyWithConcurrent() throws Exception {
