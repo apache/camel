@@ -21,6 +21,7 @@ import java.util.concurrent.Callable;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelAction;
+import org.apache.camel.dsl.jbang.core.commands.action.CamelGCAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteStartAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteStopAction;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelContextStatus;
@@ -55,7 +56,8 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("route", new CommandLine(new CamelRouteTop(main))))
                 .addSubcommand("cmd", new CommandLine(new CamelAction(main))
                         .addSubcommand("start-route", new CommandLine(new CamelRouteStartAction(main)))
-                        .addSubcommand("stop-route", new CommandLine(new CamelRouteStopAction(main))))
+                        .addSubcommand("stop-route", new CommandLine(new CamelRouteStopAction(main)))
+                        .addSubcommand("gc", new CommandLine(new CamelGCAction(main))))
                 .addSubcommand("generate", new CommandLine(new CodeGenerator(main))
                         .addSubcommand("rest", new CommandLine(new CodeRestGenerator(main))))
                 .addSubcommand("jolokia", new CommandLine(new Jolokia(main)))

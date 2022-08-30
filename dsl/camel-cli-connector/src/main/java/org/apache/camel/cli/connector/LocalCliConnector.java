@@ -225,6 +225,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                         // ignore
                     }
                 }
+            } else if ("gc".equals(action)) {
+                System.gc();
             }
 
             // action done so delete file
