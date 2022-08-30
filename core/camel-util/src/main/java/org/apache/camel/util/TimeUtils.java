@@ -156,8 +156,8 @@ public final class TimeUtils {
     /**
      * Converts to milliseconds.
      *
-     * @param source duration which can be in text format such as 15s
-     * @return time in millis, will return 0 if the input is null or empty
+     * @param  source duration which can be in text format such as 15s
+     * @return        time in millis, will return 0 if the input is null or empty
      */
     public static long toMilliSeconds(String source) {
         if (source == null || source.isEmpty()) {
