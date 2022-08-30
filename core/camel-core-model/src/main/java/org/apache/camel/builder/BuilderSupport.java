@@ -547,7 +547,7 @@ public abstract class BuilderSupport implements CamelContextAware {
     }
 
     public ErrorHandlerFactory getErrorHandlerFactory() {
-        if (errorHandlerFactory == null) {
+        if (!hasErrorHandlerFactory()) {
             errorHandlerFactory = createErrorHandlerBuilder();
         }
         return errorHandlerFactory;
@@ -562,6 +562,14 @@ public abstract class BuilderSupport implements CamelContextAware {
      */
     public void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory) {
         this.errorHandlerFactory = errorHandlerFactory;
+    }
+
+    /**
+     * 
+     * @return true if it an error handler factory was initialized
+     */
+    public boolean hasErrorHandlerFactory() {
+        return this.errorHandlerFactory != null;
     }
 
 }
