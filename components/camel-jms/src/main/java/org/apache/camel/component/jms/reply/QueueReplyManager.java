@@ -29,6 +29,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jms.ConsumerType;
 import org.apache.camel.component.jms.DefaultSpringErrorHandler;
+import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.component.jms.MessageListenerContainerFactory;
 import org.apache.camel.component.jms.ReplyToType;
 import org.apache.camel.component.jms.SimpleJmsMessageListenerContainer;
@@ -296,11 +297,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
             answer.setMaxConcurrentConsumers(endpoint.getReplyToMaxConcurrentConsumers());
         }
         answer.setConnectionFactory(endpoint.getConfiguration().getOrCreateConnectionFactory());
-        String clientId = endpoint.getClientId();
-        if (clientId != null) {
-            clientId += ".CamelReplyManager";
-            answer.setClientId(clientId);
-        }
+        setupClientId(endpoint, answer);
 
         // we cannot do request-reply over JMS with transaction
         answer.setSessionTransacted(false);
@@ -348,5 +345,4 @@ public class QueueReplyManager extends ReplyManagerSupport {
 
         return answer;
     }
-
 }

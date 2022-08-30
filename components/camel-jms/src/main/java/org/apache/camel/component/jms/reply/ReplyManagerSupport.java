@@ -45,6 +45,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
+import org.springframework.jms.listener.DefaultMessageListenerContainer;
 
 /**
  * Base class for {@link ReplyManager} implementations.
@@ -300,4 +301,12 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         }
     }
 
+
+    protected static void setupClientId(JmsEndpoint endpoint, DefaultMessageListenerContainer answer) {
+        String clientId = endpoint.getClientId();
+        if (clientId != null) {
+            clientId += ".CamelReplyManager";
+            answer.setClientId(clientId);
+        }
+    }
 }
