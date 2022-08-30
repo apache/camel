@@ -435,6 +435,7 @@ public final class JmsMessageHelper {
                 for (byte b : bytes) {
                     if (b != 0) {
                         isNull = false;
+                        break;
                     }
                 }
             }
