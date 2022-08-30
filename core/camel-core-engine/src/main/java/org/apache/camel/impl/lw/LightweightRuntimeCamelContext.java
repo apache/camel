@@ -658,7 +658,6 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         throw new UnsupportedOperationException();
     }
 
-
     @Override
     public String getDescription() {
         return description;
