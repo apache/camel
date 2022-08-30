@@ -44,9 +44,10 @@ public class JmsRequestReplyTemporaryCacheNoneTest extends AbstractJMSTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("activemq:queue:hello?replyToCacheLevelName=CACHE_NONE");
+                from("direct:start")
+                        .to("activemq:queue:JmsRequestReplyTemporaryCacheNoneTest?replyToCacheLevelName=CACHE_NONE");
 
-                from("activemq:queue:hello").process(exchange -> {
+                from("activemq:queue:JmsRequestReplyTemporaryCacheNoneTest").process(exchange -> {
                     exchange.getIn().setBody("Bye World");
                     assertNotNull(exchange.getIn().getHeader("JMSReplyTo"));
                 }).to("mock:result");
