@@ -61,6 +61,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ConsumerTemplateCacheSize": target.setConsumerTemplateCacheSize(property(camelContext, int.class, value)); return true;
         case "debugging":
         case "Debugging": target.setDebugging(property(camelContext, boolean.class, value)); return true;
+        case "description":
+        case "Description": target.setDescription(property(camelContext, java.lang.String.class, value)); return true;
         case "devconsoleenabled":
         case "DevConsoleEnabled": target.setDevConsoleEnabled(property(camelContext, boolean.class, value)); return true;
         case "dumproutes":
@@ -300,6 +302,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ConsumerTemplateCacheSize": return int.class;
         case "debugging":
         case "Debugging": return boolean.class;
+        case "description":
+        case "Description": return java.lang.String.class;
         case "devconsoleenabled":
         case "DevConsoleEnabled": return boolean.class;
         case "dumproutes":
@@ -540,6 +544,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "ConsumerTemplateCacheSize": return target.getConsumerTemplateCacheSize();
         case "debugging":
         case "Debugging": return target.isDebugging();
+        case "description":
+        case "Description": return target.getDescription();
         case "devconsoleenabled":
         case "DevConsoleEnabled": return target.isDevConsoleEnabled();
         case "dumproutes":

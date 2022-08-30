@@ -83,6 +83,11 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     @Override
+    public String getCamelDescription() {
+        return context.getDescription();
+    }
+
+    @Override
     public String getManagementName() {
         return context.getManagementName();
     }

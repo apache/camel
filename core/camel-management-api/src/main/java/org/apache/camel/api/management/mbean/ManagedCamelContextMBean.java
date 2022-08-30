@@ -28,6 +28,9 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedAttribute(description = "Camel ID")
     String getCamelId();
 
+    @ManagedAttribute(description = "Camel Description")
+    String getCamelDescription();
+
     @ManagedAttribute(description = "Camel ManagementName")
     String getManagementName();
 

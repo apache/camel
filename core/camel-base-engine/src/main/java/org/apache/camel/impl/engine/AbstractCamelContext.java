@@ -291,6 +291,7 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile String version;
     private volatile PropertiesComponent propertiesComponent;
     private volatile CamelContextNameStrategy nameStrategy;
+    private volatile String description;
     private volatile ExchangeFactoryManager exchangeFactoryManager;
     private volatile ExchangeFactory exchangeFactory;
     private volatile ProcessorExchangeFactory processorExchangeFactory;
@@ -543,6 +544,16 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public void setNameStrategy(CamelContextNameStrategy nameStrategy) {
         this.nameStrategy = doAddService(nameStrategy);
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override

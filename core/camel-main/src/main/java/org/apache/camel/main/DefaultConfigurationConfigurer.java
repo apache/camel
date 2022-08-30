@@ -159,6 +159,9 @@ public final class DefaultConfigurationConfigurer {
         if (config.getName() != null) {
             ecc.setName(config.getName());
         }
+        if (config.getDescription() != null) {
+            ecc.setDescription(config.getDescription());
+        }
         if (config.getStartupSummaryLevel() != null) {
             camelContext.setStartupSummaryLevel(config.getStartupSummaryLevel());
         }

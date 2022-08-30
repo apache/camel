@@ -324,6 +324,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public String getDescription() {
+        return delegate.getDescription();
+    }
+
+    @Override
+    public void setDescription(String description) {
+        delegate.adapt(ExtendedCamelContext.class).setDescription(description);
+    }
+
+    @Override
     public ManagementNameStrategy getManagementNameStrategy() {
         return delegate.getManagementNameStrategy();
     }

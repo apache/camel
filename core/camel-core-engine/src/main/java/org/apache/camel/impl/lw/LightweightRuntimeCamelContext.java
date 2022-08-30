@@ -201,6 +201,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     private final ClassResolver classResolver;
     private final Map<String, String> globalOptions;
     private final String name;
+    private final String description;
     private final boolean eventNotificationApplicable;
     private final boolean useDataType;
     private final boolean useBreadcrumb;
@@ -257,6 +258,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         injector = context.getInjector();
         classResolver = context.getClassResolver();
         name = context.getName();
+        description = context.adapt(ExtendedCamelContext.class).getDescription();
         eventNotificationApplicable = context.adapt(ExtendedCamelContext.class).isEventNotificationApplicable();
         useDataType = context.isUseDataType();
         useBreadcrumb = context.isUseBreadcrumb();
@@ -653,6 +655,17 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
     @Override
     public void setName(String name) {
+        throw new UnsupportedOperationException();
+    }
+
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public void setDescription(String description) {
         throw new UnsupportedOperationException();
     }
 

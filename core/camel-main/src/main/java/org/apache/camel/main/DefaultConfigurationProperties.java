@@ -33,6 +33,7 @@ import org.apache.camel.support.PatternHelper;
 public abstract class DefaultConfigurationProperties<T> {
 
     private String name;
+    private String description;
     @Metadata(defaultValue = "Default")
     private StartupSummaryLevel startupSummaryLevel;
     private int durationMaxSeconds;
@@ -161,6 +162,17 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Sets the description (intended for humans) of the Camel application.
+     */
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public StartupSummaryLevel getStartupSummaryLevel() {
@@ -1572,6 +1584,14 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withName(String name) {
         this.name = name;
+        return (T) this;
+    }
+
+    /**
+     * Sets the description (intended for humans) of the Camel application.
+     */
+    public T withDescription(String description) {
+        this.description = description;
         return (T) this;
     }
 

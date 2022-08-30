@@ -115,11 +115,18 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     boolean isVetoStarted();
 
     /**
-     * Gets the name (id) of the this CamelContext.
+     * Gets the name (id) of this CamelContext.
      *
      * @return the name
      */
     String getName();
+
+    /**
+     * Gets the description of this CamelContext.
+     *
+     * @return the description, or null if no description has been set.
+     */
+    String getDescription();
 
     /**
      * Gets the current name strategy

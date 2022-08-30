@@ -69,6 +69,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "Delayer": target.setDelayer(property(camelContext, java.lang.Long.class, value)); return true;
         case "dependencyinjectionannotationfactory":
         case "DependencyInjectionAnnotationFactory": target.setDependencyInjectionAnnotationFactory(property(camelContext, org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory.class, value)); return true;
+        case "description":
+        case "Description": target.setDescription(property(camelContext, java.lang.String.class, value)); return true;
         case "devconsole":
         case "DevConsole": target.setDevConsole(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "devconsoleresolver":
@@ -274,6 +276,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "Delayer": return java.lang.Long.class;
         case "dependencyinjectionannotationfactory":
         case "DependencyInjectionAnnotationFactory": return org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory.class;
+        case "description":
+        case "Description": return java.lang.String.class;
         case "devconsole":
         case "DevConsole": return java.lang.Boolean.class;
         case "devconsoleresolver":
@@ -480,6 +484,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "Delayer": return target.getDelayer();
         case "dependencyinjectionannotationfactory":
         case "DependencyInjectionAnnotationFactory": return target.getDependencyInjectionAnnotationFactory();
+        case "description":
+        case "Description": return target.getDescription();
         case "devconsole":
         case "DevConsole": return target.isDevConsole();
         case "devconsoleresolver":

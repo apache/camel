@@ -91,6 +91,11 @@ public interface ExtendedCamelContext extends CamelContext {
     void setName(String name);
 
     /**
+     * Sets the description of this Camel application.
+     */
+    void setDescription(String description);
+
+    /**
      * Sets the registry Camel should use for looking up beans by name or type.
      * <p/>
      * This operation is mostly only used by different Camel runtimes such as camel-spring, camel-cdi, camel-spring-boot
