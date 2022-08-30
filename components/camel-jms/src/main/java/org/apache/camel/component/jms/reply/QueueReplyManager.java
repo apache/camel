@@ -29,7 +29,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jms.ConsumerType;
 import org.apache.camel.component.jms.DefaultSpringErrorHandler;
-import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.component.jms.MessageListenerContainerFactory;
 import org.apache.camel.component.jms.ReplyToType;
 import org.apache.camel.component.jms.SimpleJmsMessageListenerContainer;
@@ -101,7 +100,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
     }
 
     private final class DestinationResolverDelegate implements DestinationResolver {
-        private DestinationResolver delegate;
+        private final DestinationResolver delegate;
         private Destination destination;
 
         DestinationResolverDelegate(DestinationResolver delegate) {

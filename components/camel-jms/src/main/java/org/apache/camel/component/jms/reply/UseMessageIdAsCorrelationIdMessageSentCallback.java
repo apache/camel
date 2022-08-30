@@ -32,9 +32,9 @@ import static org.apache.camel.component.jms.JmsMessageHelper.getJMSMessageID;
  */
 public class UseMessageIdAsCorrelationIdMessageSentCallback implements MessageSentCallback {
 
-    private ReplyManager replyManager;
-    private String correlationId;
-    private long requestTimeout;
+    private final ReplyManager replyManager;
+    private final String correlationId;
+    private final long requestTimeout;
 
     public UseMessageIdAsCorrelationIdMessageSentCallback(ReplyManager replyManager, String correlationId,
                                                           long requestTimeout) {
