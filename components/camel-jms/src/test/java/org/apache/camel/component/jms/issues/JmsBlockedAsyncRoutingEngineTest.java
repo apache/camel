@@ -147,7 +147,7 @@ public class JmsBlockedAsyncRoutingEngineTest extends CamelTestSupport {
         @Override
         public void send(ProducerBrokerExchange producerExchange, Message messageSend) throws Exception {
             String destinationName = messageSend.getDestination().getPhysicalName();
-            LOG.info("******** Received message for destination " + destinationName);
+            LOG.info("******** Received message for destination {}", destinationName);
 
             // do not intercept sends to DLQ
             if (destinationName.toLowerCase().contains("JmsBlockedAsyncRoutingEngineTest") && i == 0) {
