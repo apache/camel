@@ -34,7 +34,7 @@ public abstract class CamelRouteAction extends ActionBaseCommand {
     boolean all;
 
     @CommandLine.Option(names = { "--id" },
-                        description = "Route ids (supports wildcards)", defaultValue = "*")
+                        description = "Route ids (multiple ids can be separated by comma)", defaultValue = "*")
     String id = "*";
 
     public CamelRouteAction(CamelJBangMain main) {

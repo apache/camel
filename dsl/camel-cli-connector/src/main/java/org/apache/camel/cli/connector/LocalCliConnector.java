@@ -188,11 +188,18 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             String action = root.getString("action");
             if ("route".equals(action)) {
                 // id is a pattern
-                String pattern = root.getString("id");
+                String[] patterns = root.getString("id").split(",");
                 // find matching IDs
                 List<String> ids = camelContext.getRoutes()
                         .stream().map(Route::getRouteId)
-                        .filter(routeId -> PatternHelper.matchPattern(routeId, pattern))
+                        .filter(routeId -> {
+                            for (String p : patterns) {
+                                if (PatternHelper.matchPattern(routeId, p)) {
+                                    return true;
+                                }
+                            }
+                            return false;
+                        })
                         .collect(Collectors.toList());
                 for (String id : ids) {
                     try {
