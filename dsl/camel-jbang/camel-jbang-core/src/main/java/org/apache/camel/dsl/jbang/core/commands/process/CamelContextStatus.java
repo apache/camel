@@ -69,7 +69,7 @@ public class CamelContextStatus extends ProcessBaseCommand {
                         row.ago = TimeUtils.printSince(row.uptime);
                         JsonObject runtime = (JsonObject) root.get("runtime");
                         row.platform = extractPlatform(ph, runtime);
-                        row.platformVersion = runtime != null ? runtime.getString("version") : null;
+                        row.platformVersion = runtime != null ? runtime.getString("platformVersion") : null;
                         row.state = context.getInteger("phase");
                         row.camelVersion = context.getString("version");
                         Map<String, ?> stats = context.getMap("statistics");

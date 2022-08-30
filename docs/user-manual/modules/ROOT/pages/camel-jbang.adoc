@@ -528,7 +528,7 @@ To list the currently running Camel integrations you use the `ps` command:
 camel ps
   PID   NAME                          READY  STATUS    AGE
  61818  sample.camel.MyCamelApplica…   1/1   Running  26m38s
- 62506  dude.java                      1/1   Running   4m34s
+ 62506  dude                           1/1   Running   4m34s
 ----
 
 This lists the PID, the name and age of the integration.
@@ -590,7 +590,7 @@ In Quarkus you need to add the following dependency:
 </dependency>
 ----
 
-=== Get status of Camel integrations
+==== Getting status of Camel integrations
 
 The `get` command in Camel JBang is used for getting Camel specific status for one
 or all of the running Camel integrations.
@@ -600,10 +600,10 @@ To display the status of the running Camel integrations:
 [source,bash]
 ----
 camel get
-  PID   NAME                          CAMEL            PLATFORM            READY  STATUS    AGE    TOTAL  FAILED  INFLIGHT  SINCE-LAST
- 61818  sample.camel.MyCamelApplica…  3.19.0-SNAPSHOT  Spring Boot v2.7.3   1/1   Running  28m34s    854       0         0          0s
- 63051  dude.java                     3.19.0-SNAPSHOT  JBang                1/1   Running     18s     14       0         0          0s
- 63068  gro.groovy                    3.19.0-SNAPSHOT  JBang                1/1   Running      5s      2       0         0          0s
+  PID   NAME      CAMEL            PLATFORM            READY  STATUS    AGE    TOTAL  FAILED  INFLIGHT  SINCE-LAST
+ 61818  MyCamel   3.19.0-SNAPSHOT  Spring Boot v2.7.3   1/1   Running  28m34s    854       0         0          0s
+ 63051  dude      3.19.0-SNAPSHOT  JBang                1/1   Running     18s     14       0         0          0s
+ 63068  mygroovy  3.19.0-SNAPSHOT  JBang                1/1   Running      5s      2       0         0          0s
 ----
 
 The `camel get` command will default display integrations, which is equivalent to
@@ -619,15 +619,15 @@ You can also see the status of every routes, from all the local Camel integratio
 [source,bash]
 ----
 camel get route
-  PID   NAME                          ID      FROM                        STATUS    AGE   TOTAL  FAILED  INFLIGHT  MEAN  MIN  MAX  SINCE-LAST
- 61818  sample.camel.MyCamelApplica…  hello   timer://hello?period=2000   Running  29m2s    870       0         0     0    0   14          0s
- 63051  dude.java                     java    timer://java?period=1000    Running    46s     46       0         0     0    0    9          0s
- 63068  gro.groovy                    groovy  timer://groovy?period=1000  Running    34s     34       0         0     0    0    5          0s
+  PID   NAME      ID      FROM                        STATUS    AGE   TOTAL  FAILED  INFLIGHT  MEAN  MIN  MAX  SINCE-LAST
+ 61818  MyCamel   hello   timer://hello?period=2000   Running  29m2s    870       0         0     0    0   14          0s
+ 63051  dude      java    timer://java?period=1000    Running    46s     46       0         0     0    0    9          0s
+ 63068  mygroovy  groovy  timer://groovy?period=1000  Running    34s     34       0         0     0    0    5          0s
 ----
 
 TIP: Use `camel get --help` to display all the available commands as additional will be added in upcoming releases.
 
-=== Top status of Camel integrations
+==== Top status of Camel integrations
 
 The `camel top` command is intended for getting top utilization statistics (highest to lowest heap used memory)
 of the running Camel integrations.
@@ -635,10 +635,10 @@ of the running Camel integrations.
 [source,bash]
 ----
 camel top
-  PID   NAME                          JAVA     CAMEL            PLATFORM            STATUS    AGE         HEAP        NON-HEAP     GC     THREADS   CLASSES
- 22104  chuck.yaml                    11.0.13  3.19.0-SNAPSHOT  JBang               Running   2m10s  131/322/4294 MB  70/73 MB  17ms (6)      7/8  7456/7456
- 14242  sample.camel.MyCamelApplica…  11.0.13  3.19.0-SNAPSHOT  Spring Boot v2.7.3  Running  33m40s  115/332/4294 MB  62/66 MB  37ms (6)    16/16  8428/8428
- 22116  bar.yaml                      11.0.13  3.19.0-SNAPSHOT  JBang               Running    2m7s   33/268/4294 MB  54/58 MB  20ms (4)      7/8  6104/6104
+  PID   NAME     JAVA     CAMEL            PLATFORM            STATUS    AGE         HEAP        NON-HEAP     GC     THREADS   CLASSES
+ 22104  chuck    11.0.13  3.19.0-SNAPSHOT  JBang               Running   2m10s  131/322/4294 MB  70/73 MB  17ms (6)      7/8  7456/7456
+ 14242  MyCamel  11.0.13  3.19.0-SNAPSHOT  Spring Boot v2.7.3  Running  33m40s  115/332/4294 MB  62/66 MB  37ms (6)    16/16  8428/8428
+ 22116  bar      11.0.13  3.19.0-SNAPSHOT  JBang               Running    2m7s   33/268/4294 MB  54/58 MB  20ms (4)      7/8  6104/6104
 ----
 
 The _HEAP_ column shows the heap memory (used/committed/max) and the non-heap (used/committed).
@@ -651,16 +651,64 @@ of every routes, from all the local Camel integrations with `camel top route`:
 [source,bash]
 ----
 camel top route
-  PID   NAME                          ID                     FROM                                 STATUS    AGE    TOTAL  FAILED  INFLIGHT  MEAN  MIN  MAX  SINCE-LAST
- 22104  chuck.yaml                    chuck-norris-source-1  timer://chuck?period=10000           Started     10s      1       0         0   163  163  163          9s
- 22116  bar.yaml                      route1                 timer://yaml2?period=1000            Started      7s      7       0         0     1    0   11          0s
- 22104  chuck.yaml                    chuck                  kamelet://chuck-norris-source        Started     10s      1       0         0     0    0    0          9s
- 22104  chuck.yaml                    log-sink-2             kamelet://source?routeId=log-sink-2  Started     10s      1       0         0     0    0    0          9s
- 14242  sample.camel.MyCamelApplicat  hello                  timer://hello?period=2000            Started  31m41s    948       0         0     0    0    4          0s
+  PID   NAME     ID                     FROM                                 STATUS    AGE    TOTAL  FAILED  INFLIGHT  MEAN  MIN  MAX  SINCE-LAST
+ 22104  chuck    chuck-norris-source-1  timer://chuck?period=10000           Started     10s      1       0         0   163  163  163          9s
+ 22116  bar      route1                 timer://yaml2?period=1000            Started      7s      7       0         0     1    0   11          0s
+ 22104  chuck    chuck                  kamelet://chuck-norris-source        Started     10s      1       0         0     0    0    0          9s
+ 22104  chuck    log-sink-2             kamelet://source?routeId=log-sink-2  Started     10s      1       0         0     0    0    0          9s
+ 14242  MyCamel  hello                  timer://hello?period=2000            Started  31m41s    948       0         0     0    0    4          0s
 ----
 
 TIP: Use `camel top --help` to display all the available commands as additional will be added in upcoming releases.
 
+==== Starting and Stopping routes
+
+The `camel cmd` is intended for executing miscellaneous commands in the running Camel integrations.
+For example there are commands to start and stop routes.
+
+To stop all the routes in the chuck integration, you execute:
+
+[source,bash]
+----
+camel cmd stop-route chuck
+----
+
+And the status will then report the status as _Stopped_ for the chuck integration:
+
+[source,bash]
+----
+camel get route
+  PID   NAME     ID                     FROM                                 STATUS    AGE   TOTAL  FAILED  INFLIGHT  MEAN  MIN  MAX  SINCE-LAST
+ 81663  chuck    chuck                  kamelet://chuck-norris-source        Stopped           600       0         0     0    0    1          4s
+ 81663  chuck    chuck-norris-source-1  timer://chuck?period=10000           Stopped           600       0         0    65   52  290          4s
+ 81663  chuck    log-sink-2             kamelet://source?routeId=log-sink-2  Stopped           600       0         0     0    0    1          4s
+ 83415  bar      route1                 timer://yaml2?period=1000            Started  5m30s    329       0         0     0    0   10          0s
+ 83695  MyCamel  hello                  timer://hello?period=2000            Started  3m52s    116       0         0     0    0    9          1s
+----
+
+To start the routes, you can do:
+
+[source,bash]
+----
+camel cmd start-route chuck
+----
+
+To stop _all_ routes in every Camel integration you need to use the `--all` flag as follows:
+
+[source,bash]
+----
+camel cmd stop-route --all
+----
+
+And you can start _all_ routes using:
+
+[source,bash]
+----
+camel cmd start-route --all
+----
+
+TIP: You can stop one or more route by their ids by separating using
+comma such as: camel cmd start-route --id=route1,hello. Use `camel cmd start-route --help` for more details.
 
 === Using Jolokia and Hawtio
 
