@@ -53,9 +53,9 @@ public class JmsSimpleRequestCustomReplyToTest extends AbstractJMSTest {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
 
-        Exchange out = template.request("activemq:queue:hello", exchange -> {
+        Exchange out = template.request("activemq:queue:JmsSimpleRequestCustomReplyToTest", exchange -> {
             exchange.setPattern(ExchangePattern.InOnly);
-            exchange.getIn().setHeader("MyReplyQeueue", "foo");
+            exchange.getIn().setHeader("MyReplyQeueue", "JmsSimpleRequestCustomReplyToTest.reply");
             exchange.getIn().setBody("Hello World");
         });
 
@@ -122,7 +122,7 @@ public class JmsSimpleRequestCustomReplyToTest extends AbstractJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(componentName + ":queue:hello").process(exchange -> {
+                from(componentName + ":queue:JmsSimpleRequestCustomReplyToTest").process(exchange -> {
                     assertEquals("Hello World", exchange.getIn().getBody());
 
                     myReplyTo = exchange.getIn().getHeader("MyReplyQeueue", String.class);
