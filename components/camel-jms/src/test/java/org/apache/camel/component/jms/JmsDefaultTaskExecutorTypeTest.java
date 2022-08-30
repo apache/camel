@@ -66,7 +66,7 @@ public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
         doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.threadPool", DefaultTaskExecutorType.ThreadPool);
         doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.threadPool", DefaultTaskExecutorType.ThreadPool);
         assertMockEndpointsSatisfied();
-        Long numberThreadsCreated = currentThreadCount() - beforeThreadCount;
+        long numberThreadsCreated = currentThreadCount() - beforeThreadCount;
         LOG.info("Number of threads created, testThreadPoolTaskExecutor: {}", numberThreadsCreated);
         assertTrue(numberThreadsCreated <= 100, "Number of threads created should be equal or lower than "
                                                 + "100 with ThreadPoolTaskExecutor: " + numberThreadsCreated);
@@ -80,7 +80,7 @@ public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
         doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.simpleAsync", DefaultTaskExecutorType.SimpleAsync);
         doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.simpleAsync", DefaultTaskExecutorType.SimpleAsync);
         assertMockEndpointsSatisfied(40, TimeUnit.SECONDS);
-        Long numberThreadsCreated = currentThreadCount() - beforeThreadCount;
+        long numberThreadsCreated = currentThreadCount() - beforeThreadCount;
         LOG.info("Number of threads created, testSimpleAsyncTaskExecutor: " + numberThreadsCreated);
         assertTrue(numberThreadsCreated >= 800, "Number of threads created should be equal or higher than "
                                                 + "800 with SimpleAsyncTaskExecutor: " + numberThreadsCreated);
@@ -94,7 +94,7 @@ public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
         doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.default", null);
         doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.default", null);
         assertMockEndpointsSatisfied();
-        Long numberThreadsCreated = currentThreadCount() - beforeThreadCount;
+        long numberThreadsCreated = currentThreadCount() - beforeThreadCount;
         LOG.info("Number of threads created, testDefaultTaskExecutor: {}", numberThreadsCreated);
         assertTrue(numberThreadsCreated >= 800, "Number of threads created should be equal or higher than "
                                                 + "800 with default behaviour: " + numberThreadsCreated);
@@ -112,7 +112,7 @@ public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
         doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.default", DefaultTaskExecutorType.ThreadPool);
         doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.default", DefaultTaskExecutorType.ThreadPool);
         assertMockEndpointsSatisfied(40, TimeUnit.SECONDS);
-        Long numberThreadsCreated = currentThreadCount() - beforeThreadCount;
+        long numberThreadsCreated = currentThreadCount() - beforeThreadCount;
         LOG.info("Number of threads created, testDefaultTaskExecutorThreadPoolAtComponentConfig: " + numberThreadsCreated);
         assertTrue(numberThreadsCreated <= 100, "Number of threads created should be equal or lower than "
                                                 + "100 with ThreadPoolTaskExecutor as a component default");
