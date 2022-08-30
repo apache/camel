@@ -26,8 +26,6 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -66,12 +64,15 @@ public class CamelRouteStatus extends ProcessBaseCommand {
                 .forEach(ph -> {
                     JsonObject root = loadStatus(ph.pid());
                     if (root != null) {
-                        String name = extractName(root, ph);
+                        JsonObject context = (JsonObject) root.get("context");
                         JsonArray array = (JsonArray) root.get("routes");
                         for (int i = 0; i < array.size(); i++) {
                             JsonObject o = (JsonObject) array.get(i);
                             Row row = new Row();
-                            row.name = name;
+                            row.name = context.getString("name");
+                            if ("CamelJBang".equals(row.name)) {
+                                row.name = extractName(root, ph);
+                            }
                             row.pid = "" + ph.pid();
                             row.routeId = o.getString("routeId");
                             row.from = o.getString("from");
@@ -117,9 +118,8 @@ public class CamelRouteStatus extends ProcessBaseCommand {
             boolean sources = rows.stream().noneMatch(r -> r.source == null);
             System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                     new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header(sources ? "SOURCE" : "NAME").dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(30, OverflowBehaviour.CLIP)
-                            .with(r -> sourceLocLine(sources ? r.source : r.name)),
+                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS)
+                            .with(r -> r.name),
                     new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.ELLIPSIS)
                             .with(r -> r.routeId),
                     new Column().header("FROM").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS)
@@ -137,22 +137,6 @@ public class CamelRouteStatus extends ProcessBaseCommand {
         }
 
         return 0;
-    }
-
-    protected String sourceLocLine(String location) {
-        while (StringHelper.countChar(location, ':') > 1) {
-            location = location.substring(location.indexOf(':') + 1);
-        }
-        int pos = location.indexOf(':');
-        // is the colon as scheme or line number
-        String last = location.substring(pos + 1);
-        boolean digits = last.matches("\\d+");
-        if (!digits) {
-            // it must be scheme so clip that
-            location = location.substring(pos + 1);
-        }
-        location = FileUtil.stripPath(location);
-        return location;
     }
 
     protected int sortRow(Row o1, Row o2) {

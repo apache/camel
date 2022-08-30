@@ -59,14 +59,17 @@ public class CamelContextStatus extends ProcessBaseCommand {
                     // there must be a status file for the running Camel integration
                     if (root != null) {
                         Row row = new Row();
-                        row.name = extractName(root, ph);
+                        JsonObject context = (JsonObject) root.get("context");
+                        row.name = context.getString("name");
+                        if ("CamelJBang".equals(row.name)) {
+                            row.name = extractName(root, ph);
+                        }
                         row.pid = "" + ph.pid();
                         row.uptime = extractSince(ph);
                         row.ago = TimeUtils.printSince(row.uptime);
                         JsonObject runtime = (JsonObject) root.get("runtime");
                         row.platform = extractPlatform(ph, runtime);
                         row.platformVersion = runtime != null ? runtime.getString("version") : null;
-                        JsonObject context = (JsonObject) root.get("context");
                         row.state = context.getInteger("phase");
                         row.camelVersion = context.getString("version");
                         Map<String, ?> stats = context.getMap("statistics");

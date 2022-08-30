@@ -52,11 +52,14 @@ public class ListProcess extends ProcessBaseCommand {
                     JsonObject root = loadStatus(ph.pid());
                     if (root != null) {
                         Row row = new Row();
-                        row.name = extractName(root, ph);
                         row.pid = "" + ph.pid();
                         row.uptime = extractSince(ph);
                         row.ago = TimeUtils.printSince(row.uptime);
                         JsonObject context = (JsonObject) root.get("context");
+                        row.name = context.getString("name");
+                        if ("CamelJBang".equals(row.name)) {
+                            row.name = extractName(root, ph);
+                        }
                         row.state = context.getInteger("phase");
                         JsonObject hc = (JsonObject) root.get("healthChecks");
                         row.ready = hc != null ? hc.getString("ready") + "/" + hc.getString("total") : null;

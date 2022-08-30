@@ -333,7 +333,6 @@ class Run extends CamelCommand {
         });
         main.setAppName("Apache Camel (JBang)");
 
-        writeSetting(main, profileProperties, "camel.main.name", name);
         writeSetting(main, profileProperties, "camel.main.sourceLocationEnabled", "true");
         if (dev) {
             writeSetting(main, profileProperties, "camel.main.routesReloadEnabled", "true");
@@ -404,7 +403,6 @@ class Run extends CamelCommand {
 
         if (files != null) {
             for (String file : files) {
-
                 if (file.startsWith("clipboard") && !(new File(file).exists())) {
                     file = loadFromClipboard(file);
                 } else if (skipFile(file)) {
@@ -464,6 +462,13 @@ class Run extends CamelCommand {
                     }
                 }
 
+                if ("CamelJBang".equals(name)) {
+                    // no specific name was given so lets use the name from the first integration file
+                    // remove scheme and keep only the name (no path or ext)
+                    String s = StringHelper.after(file, ":");
+                    name = FileUtil.onlyName(s);
+                }
+
                 js.add(file);
                 if (dev && file.startsWith("file:")) {
                     // we can only reload if file based
@@ -471,6 +476,8 @@ class Run extends CamelCommand {
                 }
             }
         }
+
+        writeSetting(main, profileProperties, "camel.main.name", name);
 
         if (js.length() > 0) {
             main.addInitialProperty("camel.main.routesIncludePattern", js.toString());
@@ -679,14 +686,6 @@ class Run extends CamelCommand {
             }
         }
         return answer;
-    }
-
-    private static String getPid() {
-        try {
-            return "" + ProcessHandle.current().pid();
-        } catch (Throwable e) {
-            return null;
-        }
     }
 
     private boolean knownFile(String file) throws Exception {

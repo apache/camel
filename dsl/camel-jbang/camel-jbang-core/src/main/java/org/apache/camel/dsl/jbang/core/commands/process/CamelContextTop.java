@@ -58,7 +58,11 @@ public class CamelContextTop extends ProcessBaseCommand {
                     if (root != null) {
                         Row row = new Row();
                         rows.add(row);
-                        row.name = extractName(root, ph);
+                        JsonObject context = (JsonObject) root.get("context");
+                        row.name = context.getString("name");
+                        if ("CamelJBang".equals(row.name)) {
+                            row.name = extractName(root, ph);
+                        }
                         row.pid = "" + ph.pid();
                         row.uptime = extractSince(ph);
                         row.ago = TimeUtils.printSince(row.uptime);
@@ -66,7 +70,6 @@ public class CamelContextTop extends ProcessBaseCommand {
                         row.platform = extractPlatform(ph, runtime);
                         row.platformVersion = runtime != null ? runtime.getString("platformVersion") : null;
                         row.javaVersion = runtime != null ? runtime.getString("javaVersion") : null;
-                        JsonObject context = (JsonObject) root.get("context");
                         row.state = context.getInteger("phase");
                         row.camelVersion = context.getString("version");
 

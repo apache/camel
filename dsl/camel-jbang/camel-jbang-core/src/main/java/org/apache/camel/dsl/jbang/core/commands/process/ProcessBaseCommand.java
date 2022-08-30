@@ -226,4 +226,20 @@ abstract class ProcessBaseCommand extends CamelCommand {
         return null;
     }
 
+    String sourceLocLine(String location) {
+        while (StringHelper.countChar(location, ':') > 1) {
+            location = location.substring(location.indexOf(':') + 1);
+        }
+        int pos = location.indexOf(':');
+        // is the colon as scheme or line number
+        String last = location.substring(pos + 1);
+        boolean digits = last.matches("\\d+");
+        if (!digits) {
+            // it must be scheme so clip that
+            location = location.substring(pos + 1);
+        }
+        location = FileUtil.stripPath(location);
+        return location;
+    }
+
 }
