@@ -19,7 +19,7 @@ package org.apache.camel.component.github.consumer;
 import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
-import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -34,12 +34,14 @@ import org.slf4j.LoggerFactory;
 public class CommitConsumer extends AbstractGitHubConsumer {
     private static final transient Logger LOG = LoggerFactory.getLogger(CommitConsumer.class);
 
+    private static final int CAPACITY = 100;
+
     private CommitService commitService;
     private final String branchName;
     private final String startingSha;
 
-    // keep a chunk of the last hashes so we can filter out duplicates
-    private final Queue<String> commitHashes = new ArrayBlockingQueue<>(100);
+    // keep a chunk of the last 100 hashes, so we can filter out duplicates
+    private final Queue<String> commitHashes = new LinkedBlockingQueue<>(CAPACITY);
     private volatile String lastSha;
 
     public CommitConsumer(GitHubEndpoint endpoint, Processor processor, String branchName,
@@ -77,6 +79,10 @@ public class CommitConsumer extends AbstractGitHubConsumer {
             List<RepositoryCommit> commits = commitService.getCommits(getRepository(), branchName, null);
             for (RepositoryCommit commit : commits) {
                 String sha = commit.getSha();
+                // make room when adding new elements
+                while (commitHashes.size() > CAPACITY - 1) {
+                    commitHashes.remove();
+                }
                 commitHashes.add(sha);
                 if (lastSha == null) {
                     lastSha = sha;
