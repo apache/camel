@@ -46,4 +46,11 @@ public abstract class CamelCommand implements Callable<Integer> {
         return new File(camelDir, pid + "-status.json");
     }
 
+    public File getActionFile(String pid) {
+        if (camelDir == null) {
+            camelDir = new File(System.getProperty("user.home"), ".camel");
+        }
+        return new File(camelDir, pid + "-action.json");
+    }
+
 }

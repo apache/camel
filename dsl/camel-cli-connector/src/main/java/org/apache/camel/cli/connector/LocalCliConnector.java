@@ -17,6 +17,7 @@
 package org.apache.camel.cli.connector;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.lang.management.ClassLoadingMXBean;
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
@@ -31,21 +32,25 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.Route;
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.spi.CliConnector;
 import org.apache.camel.spi.CliConnectorFactory;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.concurrent.ThreadHelper;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,6 +72,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private volatile ExecutorService terminateExecutor;
     private File lockFile;
     private File statusFile;
+    private File actionFile;
 
     public LocalCliConnector(CliConnectorFactory cliConnectorFactory) {
         this.cliConnectorFactory = cliConnectorFactory;
@@ -123,7 +129,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         lockFile = createLockFile(getPid());
         if (lockFile != null) {
             statusFile = createLockFile(lockFile.getName() + "-status.json");
-            executor.scheduleWithFixedDelay(this::statusTask, 0, delay, TimeUnit.MILLISECONDS);
+            actionFile = createLockFile(lockFile.getName() + "-action.json");
+            executor.scheduleWithFixedDelay(this::task, 0, delay, TimeUnit.MILLISECONDS);
             LOG.info("Camel CLI enabled (local)");
         } else {
             LOG.warn("Cannot create PID file: {}. This integration cannot be managed by Camel CLI.", getPid());
@@ -153,7 +160,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         });
     }
 
-    protected void statusTask() {
+    protected void task() {
         if (!lockFile.exists() && terminating.compareAndSet(false, true)) {
             // if the lock file is deleted then trigger termination
             sigterm();
@@ -162,6 +169,87 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         if (!statusFile.exists()) {
             return;
         }
+
+        actionTask();
+        statusTask();
+    }
+
+    protected void actionTask() {
+        try {
+            JsonObject root = loadAction();
+            if (root.isEmpty()) {
+                return;
+            }
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Action: {}", root);
+            }
+
+            String action = root.getString("action");
+            if ("route".equals(action)) {
+                // id is a pattern
+                String pattern = root.getString("id");
+                // find matching IDs
+                List<String> ids = camelContext.getRoutes()
+                        .stream().map(Route::getRouteId)
+                        .filter(routeId -> PatternHelper.matchPattern(routeId, pattern))
+                        .collect(Collectors.toList());
+                for (String id : ids) {
+                    try {
+                        String command = root.getString("command");
+                        if ("start".equals(command)) {
+                            if ("*".equals(id)) {
+                                camelContext.getRouteController().startAllRoutes();
+                            } else {
+                                camelContext.getRouteController().startRoute(id);
+                            }
+                        } else if ("stop".equals(command)) {
+                            if ("*".equals(id)) {
+                                camelContext.getRouteController().stopAllRoutes();
+                            } else {
+                                camelContext.getRouteController().stopRoute(id);
+                            }
+                        } else if ("suspend".equals(command)) {
+                            camelContext.getRouteController().suspendRoute(id);
+                        } else if ("resume".equals(command)) {
+                            camelContext.getRouteController().resumeRoute(id);
+                        }
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                }
+            }
+
+            // action done so delete file
+            FileUtil.deleteFile(actionFile);
+
+        } catch (Throwable e) {
+            // ignore
+            LOG.trace(
+                    "Error executing action file: " + actionFile + " due to: " + e.getMessage()
+                      + ". This exception is ignored.",
+                    e);
+        }
+    }
+
+    JsonObject loadAction() {
+        try {
+            if (actionFile != null && actionFile.exists()) {
+                FileInputStream fis = new FileInputStream(actionFile);
+                String text = IOHelper.loadText(fis);
+                IOHelper.close(fis);
+                if (!text.isEmpty()) {
+                    return (JsonObject) Jsoner.deserialize(text);
+                }
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+            // ignore
+        }
+        return null;
+    }
+
+    protected void statusTask() {
         try {
             // even during termination then collect status as we want to see status changes during stopping
             JsonObject root = new JsonObject();
@@ -303,6 +391,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         }
         if (statusFile != null) {
             FileUtil.deleteFile(statusFile);
+        }
+        if (actionFile != null) {
+            FileUtil.deleteFile(actionFile);
         }
         if (executor != null) {
             camelContext.getExecutorServiceManager().shutdown(executor);
