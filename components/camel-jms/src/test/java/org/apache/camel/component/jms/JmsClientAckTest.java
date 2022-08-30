@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JmsClientAckTest extends AbstractJMSTest {
 
-    protected String componentName = "activemq";
+    protected final String componentName = "activemq";
 
     @Test
     public void testJmsClientAck() throws Exception {

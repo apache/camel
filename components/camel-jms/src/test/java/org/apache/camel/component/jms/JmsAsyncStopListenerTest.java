@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Timeout;
 @Timeout(60)
 public class JmsAsyncStopListenerTest extends AbstractJMSTest {
 
-    protected String componentName = "activemq";
+    protected final String componentName = "activemq";
 
     @Test
     public void testAsyncStopListener() throws Exception {

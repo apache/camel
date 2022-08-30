@@ -40,7 +40,7 @@ public class JmsSimpleRequestCustomReplyToTest extends AbstractJMSTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsSimpleRequestCustomReplyToTest.class);
     private static String myReplyTo;
-    protected String componentName = "activemq";
+    protected final String componentName = "activemq";
     private CountDownLatch latch = new CountDownLatch(1);
 
     @Test

@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
  */
 public class JmsSimpleInOnlyNoMutateTest extends AbstractJMSTest {
 
-    protected String componentName = "activemq";
+    protected final String componentName = "activemq";
 
     @Test
     public void testRequestReplyNoMutate() throws Exception {

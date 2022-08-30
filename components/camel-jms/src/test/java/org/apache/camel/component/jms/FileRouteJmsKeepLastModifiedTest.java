@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileRouteJmsKeepLastModifiedTest extends AbstractJMSTest {
 
-    protected String componentName = "activemq";
+    protected final String componentName = "activemq";
     private final File inbox = new File("target/FileRouteJmsKeepLastModifiedTest/inbox/hello.txt");
 
     @Override

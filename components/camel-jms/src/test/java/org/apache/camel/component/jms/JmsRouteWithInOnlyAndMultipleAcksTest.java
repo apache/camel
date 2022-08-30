@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class JmsRouteWithInOnlyAndMultipleAcksTest extends AbstractJMSTest {
 
-    protected String componentName = "amq";
+    protected final String componentName = "amq";
 
     @BindToRegistry("orderService")
     private final MyOrderServiceBean serviceBean = new MyOrderServiceBean();

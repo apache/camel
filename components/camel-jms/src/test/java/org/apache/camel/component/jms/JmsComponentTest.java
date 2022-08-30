@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class JmsComponentTest extends CamelTestSupport {
 
-    protected String componentName = "activemq123";
+    protected final String componentName = "activemq123";
     protected JmsEndpoint endpoint;
 
     @Test

@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
  */
 public class PayloadByteArrayJmsTest extends AbstractJMSTest {
 
-    protected String componentName = "activemq";
+    protected final String componentName = "activemq";
 
     @Test
     public void testReaderShouldBeByteArray() throws Exception {

@@ -32,10 +32,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ActiveMQPropagateHeadersTest extends AbstractJMSTest {
 
-    protected Object expectedBody = "<time>" + new Date() + "</time>";
-    protected ActiveMQQueue replyQueue = new ActiveMQQueue("test.reply.queue.ActiveMQPropagateHeadersTest");
-    protected String correlationID = "ABC-123";
-    protected String messageType = getClass().getName();
+    protected final Object expectedBody = "<time>" + new Date() + "</time>";
+    protected final ActiveMQQueue replyQueue = new ActiveMQQueue("test.reply.queue.ActiveMQPropagateHeadersTest");
+    protected final String correlationID = "ABC-123";
+    protected final String messageType = getClass().getName();
 
     @Test
     public void testForwardingAMessageAcrossJMSKeepingCustomJMSHeaders() throws Exception {

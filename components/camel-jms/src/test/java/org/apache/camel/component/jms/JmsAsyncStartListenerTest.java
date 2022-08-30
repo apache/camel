@@ -33,7 +33,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 @Timeout(60)
 public class JmsAsyncStartListenerTest extends AbstractPersistentJMSTest {
 
-    protected String componentName = "activemq";
+    protected final String componentName = "activemq";
 
     @Test
     public void testAsyncStartListener() throws Exception {

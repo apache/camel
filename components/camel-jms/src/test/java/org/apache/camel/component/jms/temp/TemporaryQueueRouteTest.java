@@ -22,7 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class TemporaryQueueRouteTest extends AbstractJMSTest {
-    protected String endpointUri = "activemq:temp-queue:TemporaryQueueRouteTest";
+    protected final String endpointUri = "activemq:temp-queue:TemporaryQueueRouteTest";
 
     @Test
     public void testSendMessage() throws Exception {

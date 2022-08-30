@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Timeout(10)
 public class JmsRouteWithInOnlyTest extends AbstractJMSTest {
 
-    protected String componentName = "activemq";
+    protected final String componentName = "activemq";
 
     @BindToRegistry("orderService")
     private final MyOrderServiceBean serviceBean = new MyOrderServiceBean();
