@@ -81,7 +81,7 @@ public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
         doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.simpleAsync", DefaultTaskExecutorType.SimpleAsync);
         assertMockEndpointsSatisfied(40, TimeUnit.SECONDS);
         long numberThreadsCreated = currentThreadCount() - beforeThreadCount;
-        LOG.info("Number of threads created, testSimpleAsyncTaskExecutor: " + numberThreadsCreated);
+        LOG.info("Number of threads created, testSimpleAsyncTaskExecutor: {}", numberThreadsCreated);
         assertTrue(numberThreadsCreated >= 800, "Number of threads created should be equal or higher than "
                                                 + "800 with SimpleAsyncTaskExecutor: " + numberThreadsCreated);
     }
