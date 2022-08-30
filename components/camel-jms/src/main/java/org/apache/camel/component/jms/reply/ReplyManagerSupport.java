@@ -301,7 +301,6 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         }
     }
 
-
     protected static void setupClientId(JmsEndpoint endpoint, DefaultMessageListenerContainer answer) {
         String clientId = endpoint.getClientId();
         if (clientId != null) {
