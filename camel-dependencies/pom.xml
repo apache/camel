@@ -277,7 +277,7 @@
     <irclib-version>1.10</irclib-version>
     <ironmq-version>3.0.5</ironmq-version>
     <ivy-version>2.5.0</ivy-version>
-    <jackrabbit-version>2.21.11</jackrabbit-version>
+    <jackrabbit-version>2.21.12</jackrabbit-version>
     <jackson-jq-version>1.0.0-preview.20210928</jackson-jq-version>
     <jackson-version>1.9.12</jackson-version>
     <jackson2-version>2.13.3</jackson2-version>
