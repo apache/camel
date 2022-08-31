@@ -2282,7 +2282,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>caffeine-cache:cacheName</code>
      * 
      * Path parameter: cacheName (required)
-     * the cache name
+     * Cache name
      * 
      * @param path cacheName
      * @return the dsl builder
@@ -2302,7 +2302,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>caffeine-cache:cacheName</code>
      * 
      * Path parameter: cacheName (required)
-     * the cache name
+     * Cache name
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
