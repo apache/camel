@@ -5,6 +5,8 @@
 :description: Runtime adapter connecting with Camel CLI
 :since: 3.19
 :supportlevel: Preview
+//Manually maintained attributes
+:camel-spring-boot-name: cli-connector
 
 *Since Camel {since}*
 
@@ -25,3 +27,6 @@ and Camel should auto-detect this on startup and log as follows:
 ----
 Local CLI Connector started
 ----
+
+
+include::spring-boot:partial$starter.adoc[]
