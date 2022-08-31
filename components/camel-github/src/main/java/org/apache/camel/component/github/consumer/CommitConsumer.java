@@ -132,8 +132,12 @@ public class CommitConsumer extends AbstractGitHubConsumer {
         while (!newCommits.empty()) {
             RepositoryCommit newCommit = newCommits.pop();
             Exchange e = createExchange(true);
-            e.getMessage().setHeader(GitHubConstants.GITHUB_COMMIT_AUTHOR, newCommit.getAuthor().getName());
-            e.getMessage().setHeader(GitHubConstants.GITHUB_COMMIT_COMMITTER, newCommit.getCommitter().getName());
+            if (newCommit.getAuthor() != null) {
+                e.getMessage().setHeader(GitHubConstants.GITHUB_COMMIT_AUTHOR, newCommit.getAuthor().getName());
+            }
+            if (newCommit.getCommitter() != null) {
+                e.getMessage().setHeader(GitHubConstants.GITHUB_COMMIT_COMMITTER, newCommit.getCommitter().getName());
+            }
             e.getMessage().setHeader(GitHubConstants.GITHUB_COMMIT_SHA, newCommit.getSha());
             e.getMessage().setHeader(GitHubConstants.GITHUB_COMMIT_URL, newCommit.getUrl());
             e.getMessage().setBody(newCommit.getCommit().getMessage());
