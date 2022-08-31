@@ -67,6 +67,7 @@ public class EIPDocumentationMojoTest {
         eipDocumentationEnricherMojo.execute();
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(true);
+        documentBuilderFactory.setCoalescing(true);
         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         Document doc = documentBuilder.parse(tempFile);
         validateElement(doc);
@@ -109,8 +110,8 @@ public class EIPDocumentationMojoTest {
 
         Node cdata = documentation.getFirstChild();
         assertThat(cdata, instanceOf(CharacterData.class));
-
-        assertThat(cdata.getTextContent(), containsString(expectedText));
+        CharacterData cd = (CharacterData) cdata;
+        assertThat(cd.getData(), containsString(expectedText));
     }
 
     private Element getFirsElement(NodeList nodeList) {
