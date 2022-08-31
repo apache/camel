@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 public class CommitConsumer extends AbstractGitHubConsumer {
     private static final transient Logger LOG = LoggerFactory.getLogger(CommitConsumer.class);
 
-    private static final int CAPACITY = 100;
+    private static final int CAPACITY = 1000; // in case there is a lot of commits and this runs not very frequently
 
     private CommitService commitService;
     private final String branchName;
@@ -49,8 +49,18 @@ public class CommitConsumer extends AbstractGitHubConsumer {
         super(endpoint, processor);
         this.branchName = branchName;
         this.startingSha = startingSha;
+    }
 
-        Registry registry = endpoint.getCamelContext().getRegistry();
+    @Override
+    public GitHubEndpoint getEndpoint() {
+        return (GitHubEndpoint) super.getEndpoint();
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        Registry registry = getEndpoint().getCamelContext().getRegistry();
         Object service = registry.lookupByName(GitHubConstants.GITHUB_COMMIT_SERVICE);
         if (service != null) {
             LOG.debug("Using CommitService found in registry {}", service.getClass().getCanonicalName());
@@ -58,11 +68,7 @@ public class CommitConsumer extends AbstractGitHubConsumer {
         } else {
             commitService = new CommitService();
         }
-    }
 
-    @Override
-    protected void doInit() throws Exception {
-        super.doInit();
         initService(commitService);
     }
 
@@ -75,25 +81,28 @@ public class CommitConsumer extends AbstractGitHubConsumer {
         lastSha = null;
 
         if (startingSha.equals("last")) {
-            LOG.info("GitHub CommitConsumer: Indexing current commits...");
+            LOG.info("Indexing current commits on: {}/{}@{}", getEndpoint().getRepoOwner(), getEndpoint().getRepoName(),
+                    branchName);
             List<RepositoryCommit> commits = commitService.getCommits(getRepository(), branchName, null);
             for (RepositoryCommit commit : commits) {
                 String sha = commit.getSha();
-                // make room when adding new elements
-                while (commitHashes.size() > CAPACITY - 1) {
-                    commitHashes.remove();
-                }
-                commitHashes.add(sha);
-                if (lastSha == null) {
-                    lastSha = sha;
+                if (!commitHashes.contains(sha)) {
+                    // make room when adding new elements
+                    while (commitHashes.size() > CAPACITY - 1) {
+                        commitHashes.remove();
+                    }
+                    commitHashes.add(sha);
                 }
             }
-            LOG.info("GitHub CommitConsumer: Starting from last sha: {}", lastSha);
+            if (!commitHashes.isEmpty()) {
+                lastSha = commitHashes.peek();
+            }
+            LOG.info("Starting from last sha: {}", lastSha);
         } else if (!startingSha.equals("beginning")) {
             lastSha = startingSha;
-            LOG.info("GitHub CommitConsumer: Starting from sha: {}", lastSha);
+            LOG.info("Starting from sha: {}", lastSha);
         } else {
-            LOG.info("GitHub CommitConsumer: Starting from beginning");
+            LOG.info("Starting from beginning");
         }
     }
 
@@ -107,30 +116,41 @@ public class CommitConsumer extends AbstractGitHubConsumer {
 
     @Override
     protected int poll() throws Exception {
-        List<RepositoryCommit> commits;
+        List<RepositoryCommit> commits = commitService.getCommits(getRepository(), branchName, null);
+
+        // clip the list after the last sha
         if (lastSha != null) {
-            commits = commitService.getCommits(getRepository(), lastSha, null);
-        } else {
-            commits = commitService.getCommits(getRepository());
+            int pos = -1;
+            for (int i = 0; i < commits.size(); i++) {
+                RepositoryCommit commit = commits.get(i);
+                if (lastSha.equals(commit.getSha())) {
+                    pos = i;
+                    break;
+                }
+            }
+            if (pos != -1) {
+                commits = commits.subList(0, pos);
+            }
         }
 
         // In the end, we want tags oldest to newest.
         Stack<RepositoryCommit> newCommits = new Stack<>();
         for (RepositoryCommit commit : commits) {
-            if (!commitHashes.contains(commit.getSha())) {
+            String sha = commit.getSha();
+            if (!commitHashes.contains(sha)) {
                 newCommits.push(commit);
                 // make room when adding new elements
                 while (commitHashes.size() > CAPACITY - 1) {
                     commitHashes.remove();
                 }
-                commitHashes.add(commit.getSha());
-                lastSha = commit.getSha();
+                commitHashes.add(sha);
             }
         }
 
         int counter = 0;
         while (!newCommits.empty()) {
             RepositoryCommit newCommit = newCommits.pop();
+            lastSha = newCommit.getSha();
             Exchange e = createExchange(true);
             if (newCommit.getAuthor() != null) {
                 e.getMessage().setHeader(GitHubConstants.GITHUB_COMMIT_AUTHOR, newCommit.getAuthor().getName());
@@ -144,6 +164,8 @@ public class CommitConsumer extends AbstractGitHubConsumer {
             getProcessor().process(e);
             counter++;
         }
+        LOG.debug("Last sha: {}", lastSha);
         return counter;
     }
+
 }
