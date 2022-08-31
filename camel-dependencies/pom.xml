@@ -549,7 +549,6 @@
     <wiremock-version>2.32.0</wiremock-version>
     <woodstox-core-version>6.1.1</woodstox-core-version>
     <woodstox-version>4.4.1</woodstox-version>
-    <xalan-version>2.7.2</xalan-version>
     <xbean-asm5-shaded-version>4.5</xbean-asm5-shaded-version>
     <xbean-spring-version>4.21</xbean-spring-version>
     <xchange-guava-version>29.0-jre</xchange-guava-version>

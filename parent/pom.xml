@@ -536,7 +536,6 @@
         <wiremock-version>2.32.0</wiremock-version>
         <woodstox-version>4.4.1</woodstox-version>
         <woodstox-core-version>6.1.1</woodstox-core-version>
-        <xalan-version>2.7.2</xalan-version>
         <xbean-spring-version>4.21</xbean-spring-version>
         <xbean-asm5-shaded-version>4.5</xbean-asm5-shaded-version>
         <xchange-version>5.0.13</xchange-version>
@@ -3900,11 +3899,6 @@
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>${commons-io-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>xalan</groupId>
-                <artifactId>xalan</artifactId>
-                <version>${xalan-version}</version>
             </dependency>
             <dependency>
                 <groupId>xerces</groupId>
