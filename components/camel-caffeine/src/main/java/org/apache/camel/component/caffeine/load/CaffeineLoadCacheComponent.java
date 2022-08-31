@@ -17,7 +17,9 @@
 package org.apache.camel.component.caffeine.load;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -25,9 +27,10 @@ import org.apache.camel.component.caffeine.CaffeineConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.caffeine.CaffeineHelper.defineBuilder;
 
 /**
  * Represents the component that manages {@link DefaultComponent}.
@@ -36,10 +39,10 @@ import org.slf4j.LoggerFactory;
 public class CaffeineLoadCacheComponent extends DefaultComponent {
     private static final Logger LOGGER = LoggerFactory.getLogger(CaffeineLoadCacheComponent.class);
 
+    private final Map<String, LoadingCache<?, ?>> caches = new ConcurrentHashMap<>();
+
     @Metadata(label = "advanced")
     private CaffeineConfiguration configuration = new CaffeineConfiguration();
-
-    private LoadingCache cache;
 
     public CaffeineLoadCacheComponent() {
     }
@@ -57,9 +60,13 @@ public class CaffeineLoadCacheComponent extends DefaultComponent {
         return endpoint;
     }
 
-    // ****************************
-    // Properties
-    // ****************************
+    protected LoadingCache<?, ?> getOrCreateCache(String name, CaffeineConfiguration configuration) {
+        return caches.computeIfAbsent(name, key -> {
+            Caffeine<?, ?> builder = Caffeine.newBuilder();
+            defineBuilder(builder, configuration);
+            return builder.build(configuration.getCacheLoader());
+        });
+    }
 
     public CaffeineConfiguration getConfiguration() {
         return configuration;
@@ -69,9 +76,6 @@ public class CaffeineLoadCacheComponent extends DefaultComponent {
      * Sets the global component configuration
      */
     public void setConfiguration(CaffeineConfiguration configuration) {
-        // The component configuration can't be null
-        ObjectHelper.notNull(configuration, "CaffeineConfiguration");
-
         this.configuration = configuration;
     }
 }
