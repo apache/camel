@@ -56,7 +56,7 @@ public class MockCommitService extends CommitService {
         }
         rc.setCommit(commit);
         LOG.debug("In MockCommitService added commit with sha " + rc.getSha());
-        commitsList.add(rc);
+        commitsList.add(0, rc);
 
         return rc;
     }

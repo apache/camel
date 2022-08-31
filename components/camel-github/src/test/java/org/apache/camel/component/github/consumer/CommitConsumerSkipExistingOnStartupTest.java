@@ -46,7 +46,7 @@ public class CommitConsumerSkipExistingOnStartupTest extends GitHubComponentTest
         commitService.addRepositoryCommit("test-2");
 
         mockResultEndpoint.expectedMessageCount(3);
-        mockResultEndpoint.expectedBodiesReceivedInAnyOrder("test-3", "test-4", "test-5");
+        mockResultEndpoint.expectedBodiesReceived("test-3", "test-4", "test-5");
 
         context.getRouteController().startAllRoutes();
 
