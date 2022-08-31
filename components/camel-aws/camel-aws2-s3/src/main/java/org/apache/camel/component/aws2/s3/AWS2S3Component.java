@@ -40,8 +40,6 @@ public class AWS2S3Component extends DefaultComponent {
 
     public AWS2S3Component(CamelContext context) {
         super(context);
-
-        registerExtension(new AWS2S3ComponentVerifierExtension());
     }
 
     @Override
