@@ -27,32 +27,32 @@ import org.apache.camel.spi.UriParams;
 public class CaffeineConfiguration implements Cloneable {
     @UriParam(defaultValue = "true")
     private boolean createCacheIfNotExist = true;
-    @UriParam(label = "producer")
+    @UriParam(enums = "GET,GET_ALL,PUT,PUT_ALL,INVALIDATE,INVALIDATE_ALL,CLEANUP,AS_MAP")
     private String action;
-    @UriParam(label = "producer")
+    @UriParam
     private Object key;
     @UriParam(label = "advanced")
     private String keyType;
     @UriParam(label = "advanced")
     private String valueType;
-    @UriParam(label = "producer")
-    private CacheLoader cacheLoader;
-    @UriParam(label = "producer")
-    private boolean statsEnabled;
-    @UriParam(label = "producer", defaultValue = "10000")
-    private int initialCapacity = 10000;
-    @UriParam(label = "producer", defaultValue = "10000")
-    private int maximumSize = 10000;
-    @UriParam(label = "producer", defaultValue = "SIZE_BASED")
+    @UriParam
+    private Integer initialCapacity;
+    @UriParam
+    private Integer maximumSize;
+    @UriParam(defaultValue = "SIZE_BASED")
     private EvictionType evictionType = EvictionType.SIZE_BASED;
-    @UriParam(label = "producer", defaultValue = "300")
+    @UriParam(defaultValue = "300")
     private int expireAfterAccessTime = 300;
-    @UriParam(label = "producer", defaultValue = "300")
+    @UriParam(defaultValue = "300")
     private int expireAfterWriteTime = 300;
-    @UriParam(label = "producer")
+    @UriParam(label = "advanced")
     private RemovalListener removalListener;
-    @UriParam(label = "producer")
+    @UriParam(label = "advanced")
+    private boolean statsEnabled;
+    @UriParam(label = "advanced")
     private StatsCounter statsCounter;
+    @UriParam(label = "advanced")
+    private CacheLoader cacheLoader;
 
     public CaffeineConfiguration() {
     }
@@ -62,7 +62,7 @@ public class CaffeineConfiguration implements Cloneable {
     }
 
     /**
-     * Configure if a cache need to be created if it does exist or can't be pre-configured.
+     * Automatic create the Caffeine cache if none has been configured or exists in the registry.
      */
     public void setCreateCacheIfNotExist(boolean createCacheIfNotExist) {
         this.createCacheIfNotExist = createCacheIfNotExist;
@@ -136,25 +136,33 @@ public class CaffeineConfiguration implements Cloneable {
         this.statsEnabled = statsEnabled;
     }
 
-    public int getInitialCapacity() {
+    public Integer getInitialCapacity() {
         return initialCapacity;
     }
 
     /**
-     * Set the initial Capacity for the cache
+     * Sets the minimum total size for the internal data structures. Providing a large enough estimate at construction
+     * time avoids the need for expensive resizing operations later, but setting this value unnecessarily high wastes
+     * memory.
      */
     public void setInitialCapacity(int initialCapacity) {
         this.initialCapacity = initialCapacity;
     }
 
-    public int getMaximumSize() {
+    public Integer getMaximumSize() {
         return maximumSize;
     }
 
     /**
-     * Set the maximum size for the cache
+     * Specifies the maximum number of entries the cache may contain. Note that the cache may evict an entry before this
+     * limit is exceeded or temporarily exceed the threshold while evicting. As the cache size grows close to the
+     * maximum, the cache evicts entries that are less likely to be used again. For example, the cache may evict an
+     * entry because it hasn't been used recently or very often. When size is zero, elements will be evicted immediately
+     * after being loaded into the cache. This can be useful in testing, or to disable caching temporarily without a
+     * code change. As eviction is scheduled on the configured executor, tests may instead prefer to configure the cache
+     * to execute tasks directly on the same thread.
      */
-    public void setMaximumSize(int maximumSize) {
+    public void setMaximumSize(Integer maximumSize) {
         this.maximumSize = maximumSize;
     }
 
@@ -174,7 +182,11 @@ public class CaffeineConfiguration implements Cloneable {
     }
 
     /**
-     * Set the expire After Access Time in case of time based Eviction (in seconds)
+     * Specifies that each entry should be automatically removed from the cache once a fixed duration has elapsed after
+     * the entry's creation, the most recent replacement of its value, or its last read. Access time is reset by all
+     * cache read and write operations.
+     *
+     * The unit is in seconds.
      */
     public void setExpireAfterAccessTime(int expireAfterAccessTime) {
         this.expireAfterAccessTime = expireAfterAccessTime;
@@ -185,7 +197,10 @@ public class CaffeineConfiguration implements Cloneable {
     }
 
     /**
-     * Set the expire After Access Write in case of time based Eviction (in seconds)
+     * Specifies that each entry should be automatically removed from the cache once a fixed duration has elapsed after
+     * the entry's creation, or the most recent replacement of its value.
+     *
+     * The unit is in seconds.
      */
     public void setExpireAfterWriteTime(int expireAfterWriteTime) {
         this.expireAfterWriteTime = expireAfterWriteTime;

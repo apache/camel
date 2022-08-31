@@ -33,14 +33,14 @@ public class CaffeineCacheEndpointConfigurer extends PropertyConfigurerSupport i
         case "expireafterwritetime":
         case "expireAfterWriteTime": target.getConfiguration().setExpireAfterWriteTime(property(camelContext, int.class, value)); return true;
         case "initialcapacity":
-        case "initialCapacity": target.getConfiguration().setInitialCapacity(property(camelContext, int.class, value)); return true;
+        case "initialCapacity": target.getConfiguration().setInitialCapacity(property(camelContext, java.lang.Integer.class, value)); return true;
         case "key": target.getConfiguration().setKey(property(camelContext, java.lang.Object.class, value)); return true;
         case "keytype":
         case "keyType": target.getConfiguration().setKeyType(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maximumsize":
-        case "maximumSize": target.getConfiguration().setMaximumSize(property(camelContext, int.class, value)); return true;
+        case "maximumSize": target.getConfiguration().setMaximumSize(property(camelContext, java.lang.Integer.class, value)); return true;
         case "removallistener":
         case "removalListener": target.getConfiguration().setRemovalListener(property(camelContext, com.github.benmanes.caffeine.cache.RemovalListener.class, value)); return true;
         case "statscounter":
@@ -68,14 +68,14 @@ public class CaffeineCacheEndpointConfigurer extends PropertyConfigurerSupport i
         case "expireafterwritetime":
         case "expireAfterWriteTime": return int.class;
         case "initialcapacity":
-        case "initialCapacity": return int.class;
+        case "initialCapacity": return java.lang.Integer.class;
         case "key": return java.lang.Object.class;
         case "keytype":
         case "keyType": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maximumsize":
-        case "maximumSize": return int.class;
+        case "maximumSize": return java.lang.Integer.class;
         case "removallistener":
         case "removalListener": return com.github.benmanes.caffeine.cache.RemovalListener.class;
         case "statscounter":
