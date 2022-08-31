@@ -119,11 +119,16 @@ public class CommitConsumer extends AbstractGitHubConsumer {
         for (RepositoryCommit commit : commits) {
             if (!commitHashes.contains(commit.getSha())) {
                 newCommits.push(commit);
+                // make room when adding new elements
+                while (commitHashes.size() > CAPACITY - 1) {
+                    commitHashes.remove();
+                }
                 commitHashes.add(commit.getSha());
                 lastSha = commit.getSha();
             }
         }
 
+        int counter = 0;
         while (!newCommits.empty()) {
             RepositoryCommit newCommit = newCommits.pop();
             Exchange e = createExchange(true);
@@ -133,7 +138,8 @@ public class CommitConsumer extends AbstractGitHubConsumer {
             e.getMessage().setHeader(GitHubConstants.GITHUB_COMMIT_URL, newCommit.getUrl());
             e.getMessage().setBody(newCommit.getCommit().getMessage());
             getProcessor().process(e);
+            counter++;
         }
-        return newCommits.size();
+        return counter;
     }
 }
