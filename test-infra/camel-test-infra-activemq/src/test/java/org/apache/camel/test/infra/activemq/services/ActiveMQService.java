@@ -19,13 +19,16 @@ package org.apache.camel.test.infra.activemq.services;
 import org.apache.camel.test.infra.activemq.common.ActiveMQProperties;
 import org.apache.camel.test.infra.common.services.TestService;
 import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 /**
  * Test infra service for ActiveMQ
  */
-public interface ActiveMQService extends BeforeAllCallback, AfterAllCallback, TestService {
+public interface ActiveMQService
+        extends BeforeAllCallback, AfterAllCallback, BeforeEachCallback, AfterEachCallback, TestService {
 
     String serviceAddress();
 
@@ -49,6 +52,16 @@ public interface ActiveMQService extends BeforeAllCallback, AfterAllCallback, Te
     @Override
     default void afterAll(ExtensionContext extensionContext) throws Exception {
         shutdown();
+    }
+
+    @Override
+    default void afterEach(ExtensionContext extensionContext) throws Exception {
+        shutdown();
+    }
+
+    @Override
+    default void beforeEach(ExtensionContext extensionContext) throws Exception {
+        initialize();
     }
 
     void restart();

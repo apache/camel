@@ -53,6 +53,16 @@ public final class ActiveMQServiceFactory {
         }
 
         @Override
+        public void afterEach(ExtensionContext extensionContext) {
+            // NO-OP
+        }
+
+        @Override
+        public void beforeEach(ExtensionContext extensionContext) {
+            addToStore(extensionContext);
+        }
+
+        @Override
         public void restart() {
             getService().restart();
         }
@@ -90,7 +100,7 @@ public final class ActiveMQServiceFactory {
      * @return a new instance of an embedded ActiveMQ
      */
     public static synchronized ActiveMQService createVMService() {
-        return createSingletonVMService();
+        return createVMServiceInstance();
     }
 
     /**

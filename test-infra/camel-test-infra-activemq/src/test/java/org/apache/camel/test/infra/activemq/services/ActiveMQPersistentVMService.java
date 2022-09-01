@@ -35,6 +35,8 @@ public class ActiveMQPersistentVMService extends AbstractActiveMQEmbeddedService
 
     public ActiveMQPersistentVMService(BrokerService brokerService) {
         super(brokerService);
+
+        super.initialize();
     }
 
     @Override
@@ -60,5 +62,15 @@ public class ActiveMQPersistentVMService extends AbstractActiveMQEmbeddedService
     @Override
     public String password() {
         return null;
+    }
+
+    @Override
+    public void initialize() {
+        // NO-OP: it already initializes when the class is created.
+    }
+
+    @Override
+    public void shutdown() {
+        // NO-OP
     }
 }

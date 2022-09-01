@@ -27,16 +27,12 @@ import javax.management.ObjectName;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.jmx.DestinationViewMBean;
 import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
-import org.junit.jupiter.api.extension.AfterEachCallback;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-public abstract class AbstractActiveMQEmbeddedService
-        implements ActiveMQService, ConnectionFactoryAware, BeforeEachCallback, AfterEachCallback {
+public abstract class AbstractActiveMQEmbeddedService implements ActiveMQService, ConnectionFactoryAware {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractActiveMQEmbeddedService.class);
     private final BrokerService brokerService;
 
@@ -125,16 +121,6 @@ public abstract class AbstractActiveMQEmbeddedService
             LOG.error("Error getting the port: {}", e.getMessage());
             throw new RuntimeException("Error getting the port", e);
         }
-    }
-
-    @Override
-    public void afterEach(ExtensionContext extensionContext) {
-        shutdown();
-    }
-
-    @Override
-    public void beforeEach(ExtensionContext extensionContext) {
-        initialize();
     }
 
     public abstract String getVmURL();
