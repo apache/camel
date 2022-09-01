@@ -19,7 +19,6 @@ package org.apache.camel.impl.console;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Map;
 import java.util.stream.Stream;
 
