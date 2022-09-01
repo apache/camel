@@ -242,7 +242,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
     public void startRoute(String routeId) throws Exception {
         final Optional<RouteHolder> route = routes.stream().filter(r -> r.getId().equals(routeId)).findFirst();
 
-        if (!route.isPresent()) {
+        if (route.isEmpty()) {
             // This route is unknown to this controller, apply default behaviour
             // from super class.
             super.startRoute(routeId);
@@ -255,7 +255,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
     public void stopRoute(String routeId) throws Exception {
         final Optional<RouteHolder> route = routes.stream().filter(r -> r.getId().equals(routeId)).findFirst();
 
-        if (!route.isPresent()) {
+        if (route.isEmpty()) {
             // This route is unknown to this controller, apply default behaviour
             // from super class.
             super.stopRoute(routeId);
@@ -268,7 +268,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
     public void stopRoute(String routeId, Throwable cause) throws Exception {
         final Optional<RouteHolder> route = routes.stream().filter(r -> r.getId().equals(routeId)).findFirst();
 
-        if (!route.isPresent()) {
+        if (route.isEmpty()) {
             // This route is unknown to this controller, apply default behaviour
             // from super class.
             super.stopRoute(routeId, cause);
@@ -281,7 +281,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
     public void stopRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception {
         final Optional<RouteHolder> route = routes.stream().filter(r -> r.getId().equals(routeId)).findFirst();
 
-        if (!route.isPresent()) {
+        if (route.isEmpty()) {
             // This route is unknown to this controller, apply default behaviour
             // from super class.
             super.stopRoute(routeId, timeout, timeUnit);
@@ -310,7 +310,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
     public void suspendRoute(String routeId) throws Exception {
         final Optional<RouteHolder> route = routes.stream().filter(r -> r.getId().equals(routeId)).findFirst();
 
-        if (!route.isPresent()) {
+        if (route.isEmpty()) {
             // This route is unknown to this controller, apply default behaviour
             // from super class.
             super.suspendRoute(routeId);
@@ -323,7 +323,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
     public void suspendRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception {
         final Optional<RouteHolder> route = routes.stream().filter(r -> r.getId().equals(routeId)).findFirst();
 
-        if (!route.isPresent()) {
+        if (route.isEmpty()) {
             // This route is unknown to this controller, apply default behaviour
             // from super class.
             super.suspendRoute(routeId, timeout, timeUnit);
@@ -336,7 +336,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
     public void resumeRoute(String routeId) throws Exception {
         final Optional<RouteHolder> route = routes.stream().filter(r -> r.getId().equals(routeId)).findFirst();
 
-        if (!route.isPresent()) {
+        if (route.isEmpty()) {
             // This route is unknown to this controller, apply default behaviour
             // from super class.
             super.resumeRoute(routeId);
