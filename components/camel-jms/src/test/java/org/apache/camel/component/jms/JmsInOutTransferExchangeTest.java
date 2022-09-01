@@ -19,34 +19,25 @@ package org.apache.camel.component.jms;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.activemq.command.ActiveMQObjectMessage;
-import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchangeHolder;
-import org.apache.camel.test.infra.activemq.services.ActiveMQService;
-import org.apache.camel.test.infra.activemq.services.ActiveMQServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Timeout(60)
-public class JmsInOutTransferExchangeTest extends CamelTestSupport {
-
-    @RegisterExtension
-    public ActiveMQService service = ActiveMQServiceFactory.createVMService();
+public class JmsInOutTransferExchangeTest extends AbstractJMSTest {
+    private static final Logger LOG = LoggerFactory.getLogger(JmsInOutTransferExchangeTest.class);
 
     @EndpointInject("mock:transfer")
     protected MockEndpoint transfer;
@@ -55,11 +46,8 @@ public class JmsInOutTransferExchangeTest extends CamelTestSupport {
     protected MockEndpoint result;
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = createConnectionFactory(service);
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
-        return camelContext;
+    protected String getComponentName() {
+        return "activemq";
     }
 
     @Test
@@ -68,6 +56,7 @@ public class JmsInOutTransferExchangeTest extends CamelTestSupport {
         result.expectedMessageCount(1);
 
         template.send("direct:start", exchange -> {
+            LOG.debug("Preparing the exchange");
             exchange.getIn().setBody(new SerializableRequestDto("Restless Camel"));
 
             Map<String, Object> map = new HashMap<>();
@@ -79,7 +68,14 @@ public class JmsInOutTransferExchangeTest extends CamelTestSupport {
             exchange.getIn().setHeaders(map);
 
             exchange.setProperty("PropertyName", "PropertyValue");
+            LOG.debug("Done preparing the exchange");
         });
+
+        LOG.debug("Asserting transfer");
+        transfer.assertIsSatisfied();
+
+        LOG.debug("Asserting result");
+        result.assertIsSatisfied();
 
         assertMockEndpointsSatisfied();
 
