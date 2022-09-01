@@ -17,7 +17,6 @@
 package org.apache.camel.impl.engine;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.spi.ContextReloadStrategy;

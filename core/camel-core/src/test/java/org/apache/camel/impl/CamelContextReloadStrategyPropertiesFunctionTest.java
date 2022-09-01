@@ -23,37 +23,34 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.DefaultContextReloadStrategy;
 import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.spi.PropertiesComponent;
-import org.apache.camel.spi.PropertiesSource;
-import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.spi.PropertiesFunction;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class CamelContextReloadStrategyTest extends ContextTestSupport {
+public class CamelContextReloadStrategyPropertiesFunctionTest extends ContextTestSupport {
+
+    private MyFunction my = new MyFunction();
 
     @Test
     public void testContextReload() throws Exception {
-        Assertions.assertEquals("Hello 1", context.resolvePropertyPlaceholders("{{hello}}"));
-
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello 1", "Hello 1");
+        mock.expectedBodiesReceived("Bye 1", "Bye 1");
         template.sendBody("direct:start", "Camel");
         template.sendBody("direct:start", "Dog");
         mock.assertIsSatisfied();
 
-        // simulate that an external system forces reload
-        // where we reload the context
+        // simulate that an external system forces reload where we update the counter
+        // and reload the context
+        my.incCounter();
         ContextReloadStrategy crs = context.hasService(ContextReloadStrategy.class);
         Assertions.assertNotNull(crs);
         crs.onReload("CamelContextReloadStrategyTest");
-
-        Assertions.assertEquals("Hello 2", context.resolvePropertyPlaceholders("{{hello}}"));
 
         // need to re-get endpoint after reload
         mock = getMockEndpoint("mock:result");
 
         mock.reset();
-        mock.expectedBodiesReceived("Hello 2", "Hello 2");
+        mock.expectedBodiesReceived("Bye 2", "Bye 2");
         template.sendBody("direct:start", "World");
         template.sendBody("direct:start", "Moon");
         mock.assertIsSatisfied();
@@ -64,9 +61,7 @@ public class CamelContextReloadStrategyTest extends ContextTestSupport {
         CamelContext context = super.createCamelContext();
 
         PropertiesComponent pc = context.getPropertiesComponent();
-        MySource my = new MySource();
-        ServiceHelper.startService(my);
-        pc.addPropertiesSource(my);
+        pc.addPropertiesFunction(my);
 
         ContextReloadStrategy crs = new DefaultContextReloadStrategy();
         context.addService(crs);
@@ -80,15 +75,19 @@ public class CamelContextReloadStrategyTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .setBody(constant("{{hello}}"))
+                        .setBody(constant("{{my:Bye}}"))
                         .to("mock:result");
             }
         };
     }
 
-    private class MySource extends ServiceSupport implements PropertiesSource {
+    private class MyFunction implements PropertiesFunction {
 
-        private int counter;
+        private int counter = 1;
+
+        public void incCounter() {
+            counter++;
+        }
 
         @Override
         public String getName() {
@@ -96,17 +95,9 @@ public class CamelContextReloadStrategyTest extends ContextTestSupport {
         }
 
         @Override
-        public String getProperty(String name) {
-            if ("hello".equals(name)) {
-                return "Hello " + counter;
-            }
-            return null;
+        public String apply(String remainder) {
+            return remainder + " " + counter;
         }
 
-        @Override
-        protected void doStart() throws Exception {
-            // the properties source will be restarted
-            counter++;
-        }
     }
 }
