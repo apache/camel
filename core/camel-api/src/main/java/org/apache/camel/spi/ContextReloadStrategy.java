@@ -23,8 +23,8 @@ import org.apache.camel.StaticService;
 /**
  * SPI strategy for reloading {@link CamelContext}.
  *
- * The reloading is limited to all routes and property placeholders.
- * General services in the {@link CamelContext} is not reloaded.
+ * The reloading is limited to all routes and property placeholders. General services in the {@link CamelContext} is not
+ * reloaded.
  *
  * @see ResourceReloadStrategy
  */
