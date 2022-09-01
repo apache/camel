@@ -44,11 +44,13 @@ public class SingletonService<T extends TestService> implements ExtensionContext
         final ExtensionContext.Store store = root.getStore(ExtensionContext.Namespace.GLOBAL);
         LOG.debug("Using store: {}", store);
 
-        store.getOrComputeIfAbsent(name, s -> {
-            LOG.debug("Registering singleton service {}", name);
-            service.initialize();
-            return this;
-        });
+        store.getOrComputeIfAbsent(name, this::doInitializeService);
+    }
+
+    protected SingletonService<T> doInitializeService(String name) {
+        LOG.debug("Registering singleton service {}", name);
+        service.initialize();
+        return this;
     }
 
     @Override
