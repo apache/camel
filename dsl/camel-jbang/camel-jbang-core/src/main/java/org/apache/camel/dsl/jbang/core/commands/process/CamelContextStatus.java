@@ -78,9 +78,17 @@ public class CamelContextStatus extends ProcessBaseCommand {
                             row.inflight = stats.get("exchangesInflight").toString();
                             row.failed = stats.get("exchangesFailed").toString();
                             row.reloaded = stats.get("reloaded").toString();
-                            Object last = stats.get("sinceLastExchange");
+                            Object last = stats.get("sinceLastCreatedExchange");
                             if (last != null) {
-                                row.sinceLast = last.toString();
+                                row.sinceLastStarted = last.toString();
+                            }
+                            last = stats.get("sinceLastCompletedExchange");
+                            if (last != null) {
+                                row.sinceLastCompleted = last.toString();
+                            }
+                            last = stats.get("sinceLastFailedExchange");
+                            if (last != null) {
+                                row.sinceLastFailed = last.toString();
                             }
                         }
                         JsonArray array = (JsonArray) root.get("routes");
@@ -124,7 +132,7 @@ public class CamelContextStatus extends ProcessBaseCommand {
                     new Column().header("TOTAL").with(r -> r.total),
                     new Column().header("FAILED").with(r -> r.failed),
                     new Column().header("INFLIGHT").with(r -> r.inflight),
-                    new Column().header("SINCE-LAST").with(r -> r.sinceLast))));
+                    new Column().header("SINCE-LAST").with(this::getSinceLast))));
         }
 
         return 0;
@@ -163,6 +171,13 @@ public class CamelContextStatus extends ProcessBaseCommand {
         }
     }
 
+    private String getSinceLast(Row r) {
+        String s1 = r.sinceLastStarted != null ? r.sinceLastStarted : "-";
+        String s2 = r.sinceLastCompleted != null ? r.sinceLastCompleted : "-";
+        String s3 = r.sinceLastFailed != null ? r.sinceLastFailed : "-";
+        return s1 + "/" + s2 + "/" + s3;
+    }
+
     private String getRoutes(Row r) {
         return r.routeStarted + "/" + r.routeTotal;
     }
@@ -183,7 +198,9 @@ public class CamelContextStatus extends ProcessBaseCommand {
         String total;
         String failed;
         String inflight;
-        String sinceLast;
+        String sinceLastStarted;
+        String sinceLastCompleted;
+        String sinceLastFailed;
     }
 
 }

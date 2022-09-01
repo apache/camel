@@ -91,9 +91,17 @@ public class CamelRouteStatus extends ProcessBaseCommand {
                                 }
                                 row.max = stats.get("maxProcessingTime").toString();
                                 row.min = stats.get("minProcessingTime").toString();
-                                Object last = stats.get("sinceLastExchange");
+                                Object last = stats.get("sinceLastCreatedExchange");
                                 if (last != null) {
-                                    row.sinceLast = last.toString();
+                                    row.sinceLastStarted = last.toString();
+                                }
+                                last = stats.get("sinceLastCompletedExchange");
+                                if (last != null) {
+                                    row.sinceLastCompleted = last.toString();
+                                }
+                                last = stats.get("sinceLastFailedExchange");
+                                if (last != null) {
+                                    row.sinceLastFailed = last.toString();
                                 }
                             }
 
@@ -133,10 +141,17 @@ public class CamelRouteStatus extends ProcessBaseCommand {
                     new Column().header("MEAN").with(r -> r.mean),
                     new Column().header("MIN").with(r -> r.min),
                     new Column().header("MAX").with(r -> r.max),
-                    new Column().header("SINCE-LAST").with(r -> r.sinceLast))));
+                    new Column().header("SINCE-LAST").with(this::getSinceLast))));
         }
 
         return 0;
+    }
+
+    private String getSinceLast(Row r) {
+        String s1 = r.sinceLastStarted != null ? r.sinceLastStarted : "-";
+        String s2 = r.sinceLastCompleted != null ? r.sinceLastCompleted : "-";
+        String s3 = r.sinceLastFailed != null ? r.sinceLastFailed : "-";
+        return s1 + "/" + s2 + "/" + s3;
     }
 
     protected int sortRow(Row o1, Row o2) {
@@ -167,7 +182,9 @@ public class CamelRouteStatus extends ProcessBaseCommand {
         String mean;
         String max;
         String min;
-        String sinceLast;
+        String sinceLastStarted;
+        String sinceLastCompleted;
+        String sinceLastFailed;
     }
 
 }

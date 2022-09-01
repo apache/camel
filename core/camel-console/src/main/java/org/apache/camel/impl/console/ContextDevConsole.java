@@ -70,7 +70,17 @@ public class ContextDevConsole extends AbstractDevConsole {
                 Date last = mb.getLastExchangeCreatedTimestamp();
                 if (last != null) {
                     String ago = TimeUtils.printSince(last.getTime());
-                    sb.append(String.format("\n    Since Last: %s", ago));
+                    sb.append(String.format("\n    Since Last Started: %s", ago));
+                }
+                last = mb.getLastExchangeCompletedTimestamp();
+                if (last != null) {
+                    String ago = TimeUtils.printSince(last.getTime());
+                    sb.append(String.format("\n    Since Last Completed: %s", ago));
+                }
+                last = mb.getLastExchangeFailureTimestamp();
+                if (last != null) {
+                    String ago = TimeUtils.printSince(last.getTime());
+                    sb.append(String.format("\n    Since Last Failed: %s", ago));
                 }
                 sb.append("\n");
             }
@@ -114,7 +124,17 @@ public class ContextDevConsole extends AbstractDevConsole {
                 Date last = mb.getLastExchangeCreatedTimestamp();
                 if (last != null) {
                     String ago = TimeUtils.printSince(last.getTime());
-                    stats.put("sinceLastExchange", ago);
+                    stats.put("sinceLastCreatedExchange", ago);
+                }
+                last = mb.getLastExchangeCompletedTimestamp();
+                if (last != null) {
+                    String ago = TimeUtils.printSince(last.getTime());
+                    stats.put("sinceLastCompletedExchange", ago);
+                }
+                last = mb.getLastExchangeFailureTimestamp();
+                if (last != null) {
+                    String ago = TimeUtils.printSince(last.getTime());
+                    stats.put("sinceLastFailedExchange", ago);
                 }
                 root.put("statistics", stats);
             }

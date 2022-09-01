@@ -601,9 +601,9 @@ To display the status of the running Camel integrations:
 ----
 camel get
   PID   NAME      CAMEL            PLATFORM            READY  STATUS    AGE    TOTAL  FAILED  INFLIGHT  SINCE-LAST
- 61818  MyCamel   3.19.0-SNAPSHOT  Spring Boot v2.7.3   1/1   Running  28m34s    854       0         0          0s
- 63051  dude      3.19.0-SNAPSHOT  JBang                1/1   Running     18s     14       0         0          0s
- 63068  mygroovy  3.19.0-SNAPSHOT  JBang                1/1   Running      5s      2       0         0          0s
+ 61818  MyCamel   3.19.0-SNAPSHOT  Spring Boot v2.7.3   1/1   Running  28m34s    854       0         0     0s/0s/-
+ 63051  dude      3.19.0-SNAPSHOT  JBang                1/1   Running     18s     14       0         0     0s/0s/-
+ 63068  mygroovy  3.19.0-SNAPSHOT  JBang                1/1   Running      5s      2       0         0     0s/0s/-
 ----
 
 The `camel get` command will default display integrations, which is equivalent to
@@ -611,8 +611,11 @@ typing `camel get integrations` or `camel get int`.
 
 This displays overall information for every Camel integration, where you can see
 the total number of messages processed. The column _Since Last_
-shows how long time ago the integration was active processing
-incoming messages.
+shows how long time ago the last processed message for 3 stages (started/completed/failed).
+
+The value of `0s/0s/-` means that the last started and completed message just happened (0 seconds ago),
+and  that there has not been any failed message yet. And this example `9s/9s/1h3m` means that last started and
+completed message is 9 seconds ago, and last failed is 1 hour and 3 minutes ago.
 
 You can also see the status of every routes, from all the local Camel integrations with `camel get route`:
 
@@ -620,9 +623,9 @@ You can also see the status of every routes, from all the local Camel integratio
 ----
 camel get route
   PID   NAME      ID      FROM                        STATUS    AGE   TOTAL  FAILED  INFLIGHT  MEAN  MIN  MAX  SINCE-LAST
- 61818  MyCamel   hello   timer://hello?period=2000   Running  29m2s    870       0         0     0    0   14          0s
- 63051  dude      java    timer://java?period=1000    Running    46s     46       0         0     0    0    9          0s
- 63068  mygroovy  groovy  timer://groovy?period=1000  Running    34s     34       0         0     0    0    5          0s
+ 61818  MyCamel   hello   timer://hello?period=2000   Running  29m2s    870       0         0     0    0   14     0s/0s/-
+ 63051  dude      java    timer://java?period=1000    Running    46s     46       0         0     0    0    9     0s/0s/-
+ 63068  mygroovy  groovy  timer://groovy?period=1000  Running    34s     34       0         0     0    0    5     0s/0s/-
 ----
 
 TIP: Use `camel get --help` to display all the available commands as additional will be added in upcoming releases.
