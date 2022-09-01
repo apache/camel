@@ -77,6 +77,7 @@ public class CamelContextStatus extends ProcessBaseCommand {
                             row.total = stats.get("exchangesTotal").toString();
                             row.inflight = stats.get("exchangesInflight").toString();
                             row.failed = stats.get("exchangesFailed").toString();
+                            row.reloaded = stats.get("reloaded").toString();
                             Object last = stats.get("sinceLastExchange");
                             if (last != null) {
                                 row.sinceLast = last.toString();
@@ -116,6 +117,8 @@ public class CamelContextStatus extends ProcessBaseCommand {
                     new Column().header("READY").dataAlign(HorizontalAlign.CENTER).with(r -> r.ready),
                     new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
                             .with(r -> extractState(r.state)),
+                    new Column().header("RELOAD").headerAlign(HorizontalAlign.CENTER)
+                            .with(r -> r.reloaded),
                     new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
                     new Column().header("ROUTE").with(this::getRoutes),
                     new Column().header("TOTAL").with(r -> r.total),
@@ -174,6 +177,7 @@ public class CamelContextStatus extends ProcessBaseCommand {
         int routeStarted;
         int routeTotal;
         int state;
+        String reloaded;
         String ago;
         long uptime;
         String total;
