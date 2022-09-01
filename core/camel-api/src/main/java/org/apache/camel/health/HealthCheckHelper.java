@@ -45,10 +45,20 @@ public final class HealthCheckHelper {
     }
 
     /**
-     * Invokes the checks and returns a collection of results.
+     * Invokes all the checks and returns a collection of results.
      */
     public static Collection<HealthCheck.Result> invoke(CamelContext camelContext) {
         return invoke(camelContext, check -> Map.of(HealthCheck.CHECK_KIND, HealthCheck.Kind.ALL), check -> false, null);
+    }
+
+    /**
+     * Invokes all the checks and returns a collection of results.
+     *
+     * @param camelContext   the camel context
+     * @param exposureLevel level of exposure (full, oneline or default)
+     */
+    public static Collection<HealthCheck.Result> invoke(CamelContext camelContext, String exposureLevel) {
+        return invoke(camelContext, check -> Map.of(HealthCheck.CHECK_KIND, HealthCheck.Kind.ALL), check -> false, exposureLevel);
     }
 
     /**
@@ -60,11 +70,33 @@ public final class HealthCheckHelper {
     }
 
     /**
+     * Invokes the readiness checks and returns a collection of results.
+     *
+     * @param camelContext   the camel context
+     * @param exposureLevel level of exposure (full, oneline or default)
+     */
+    public static Collection<HealthCheck.Result> invokeReadiness(CamelContext camelContext, String exposureLevel) {
+        return invoke(camelContext, check -> Map.of(HealthCheck.CHECK_KIND, HealthCheck.Kind.READINESS),
+                check -> !check.isReadiness(), exposureLevel);
+    }
+
+    /**
      * Invokes the liveness checks and returns a collection of results.
      */
     public static Collection<HealthCheck.Result> invokeLiveness(CamelContext camelContext) {
         return invoke(camelContext, check -> Map.of(HealthCheck.CHECK_KIND, HealthCheck.Kind.LIVENESS),
                 check -> !check.isLiveness(), null);
+    }
+
+    /**
+     * Invokes the liveness checks and returns a collection of results.
+     *
+     * @param camelContext   the camel context
+     * @param exposureLevel level of exposure (full, oneline or default)
+     */
+    public static Collection<HealthCheck.Result> invokeLiveness(CamelContext camelContext, String exposureLevel) {
+        return invoke(camelContext, check -> Map.of(HealthCheck.CHECK_KIND, HealthCheck.Kind.LIVENESS),
+                check -> !check.isLiveness(), exposureLevel);
     }
 
     /**

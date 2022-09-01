@@ -93,7 +93,12 @@ public class CamelContextStatus extends ProcessBaseCommand {
                         }
 
                         JsonObject hc = (JsonObject) root.get("healthChecks");
-                        row.ready = hc != null ? hc.getString("ready") + "/" + hc.getString("total") : null;
+                        boolean rdy = hc != null && hc.getBoolean("ready");
+                        if (rdy) {
+                            row.ready = "1/1";
+                        } else {
+                            row.ready = "0/1";
+                        }
                         rows.add(row);
                     }
                 });

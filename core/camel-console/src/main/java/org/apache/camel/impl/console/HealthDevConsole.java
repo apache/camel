@@ -19,11 +19,14 @@ package org.apache.camel.impl.console;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.spi.annotations.DevConsole;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 @DevConsole("health")
@@ -37,7 +40,8 @@ public class HealthDevConsole extends AbstractDevConsole {
         // only text is supported
         StringBuilder sb = new StringBuilder();
 
-        Collection<HealthCheck.Result> results = HealthCheckHelper.invoke(getCamelContext());
+        String exposureLevel = (String) options.get("exposureLevel");
+        Collection<HealthCheck.Result> results = HealthCheckHelper.invoke(getCamelContext(), exposureLevel);
         boolean up = results.stream().allMatch(h -> HealthCheck.State.UP.equals(h.getState()));
         sb.append(String.format("Health Check Status: %s", up ? "UP" : "DOWN"));
         sb.append("\n");
@@ -67,21 +71,37 @@ public class HealthDevConsole extends AbstractDevConsole {
     protected JsonObject doCallJson(Map<String, Object> options) {
         JsonObject root = new JsonObject();
 
-        Collection<HealthCheck.Result> results = HealthCheckHelper.invoke(getCamelContext());
-        boolean up = results.stream().allMatch(h -> HealthCheck.State.UP.equals(h.getState()));
-        root.put("up", up);
+        String exposureLevel = (String) options.get("exposureLevel");
+        Collection<HealthCheck.Result> readies = HealthCheckHelper.invokeReadiness(getCamelContext(), exposureLevel);
+        Collection<HealthCheck.Result> lives = HealthCheckHelper.invokeLiveness(getCamelContext(), exposureLevel);
+        boolean ready = HealthCheckHelper.isResultsUp(readies, true);
+        boolean live = HealthCheckHelper.isResultsUp(lives, false);
+        root.put("up", ready && live);
+        root.put("ready", ready);
+        root.put("live", live);
 
-        results.forEach(res -> {
+        JsonArray arr = new JsonArray();
+        root.put("checks", arr);
+
+        Stream<HealthCheck.Result> checks = Stream.concat(readies.stream(), lives.stream());
+        checks.forEach(res -> {
             JsonObject jo = new JsonObject();
-            jo.put("id", res.getCheck().getId());
-            jo.put("group", res.getCheck().getGroup());
-            jo.put("state", res.getState().toString());
+            arr.add(jo);
 
             boolean ok = res.getState().equals(HealthCheck.State.UP);
+            jo.put("id", res.getCheck().getId());
+            jo.put("group", res.getCheck().getGroup());
             if (ok) {
                 jo.put("up", true);
             } else {
                 jo.put("up", false);
+            }
+            jo.put("state", res.getState().toString());
+            jo.put("enabled", res.getCheck().isEnabled());
+            jo.put("readiness", res.getCheck().isReadiness());
+            jo.put("liveness", res.getCheck().isLiveness());
+
+            if (!ok) {
                 String msg = res.getMessage().orElse("");
                 jo.put("message", msg);
 

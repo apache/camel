@@ -298,6 +298,13 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     root.put("routes", json2.get("routes"));
                 }
             }
+            DevConsole dc3 = camelContext.adapt(ExtendedCamelContext.class)
+                    .getDevConsoleResolver().resolveDevConsole("health");
+            if (dc3 != null) {
+                // include full details in health checks
+                JsonObject json = (JsonObject) dc3.call(DevConsole.MediaType.JSON, Map.of("exposureLevel", "full"));
+                root.put("healthChecks", json);
+            }
             // various details
             JsonObject mem = collectMemory();
             if (mem != null) {
@@ -315,14 +322,6 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             if (gc != null) {
                 root.put("gc", gc);
             }
-            // and health-check readiness (use 1/1 or 0/1 for UP or DOWN like kubernetes)
-            Collection<HealthCheck.Result> res = HealthCheckHelper.invokeReadiness(camelContext);
-            int ready = HealthCheckHelper.isResultsUp(res, true) ? 1 : 0;
-            JsonObject hc = new JsonObject();
-            hc.put("ready", ready);
-            hc.put("total", 1);
-            root.put("healthChecks", hc);
-
             LOG.trace("Updating status file: {}", statusFile);
             IOHelper.writeText(root.toJson(), statusFile);
         } catch (Throwable e) {
