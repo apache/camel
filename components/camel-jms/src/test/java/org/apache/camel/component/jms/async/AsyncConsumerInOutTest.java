@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jms.async;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,7 +25,7 @@ import org.apache.camel.component.jms.AbstractJMSTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
-@Timeout(10)
+@Timeout(30)
 public class AsyncConsumerInOutTest extends AbstractJMSTest {
 
     @Test
@@ -37,7 +39,7 @@ public class AsyncConsumerInOutTest extends AbstractJMSTest {
         template.sendBody("activemq:queue:AsyncConsumerInOutTest.start", "Hello Camel");
         template.sendBody("activemq:queue:AsyncConsumerInOutTest.start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
     }
 
     @Override

@@ -18,6 +18,7 @@ package org.apache.camel.component.jms;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
@@ -41,16 +42,18 @@ public class JmsProducerConcurrentTest extends AbstractJMSTest {
         getMockEndpoint("mock:result").expectsNoDuplicates(body());
 
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
-        for (int i = 0; i < files; i++) {
-            final int index = i;
-            executor.submit(() -> {
-                template.sendBody("direct:start", "Message " + index);
-                return null;
-            });
+        try {
+            for (int i = 0; i < files; i++) {
+                final int index = i;
+                executor.submit(() -> {
+                    template.sendBody("direct:start", "Message " + index);
+                    return null;
+                });
+            }
+            assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
+        } finally {
+            executor.shutdownNow();
         }
-
-        assertMockEndpointsSatisfied();
-        executor.shutdownNow();
     }
 
     @Override

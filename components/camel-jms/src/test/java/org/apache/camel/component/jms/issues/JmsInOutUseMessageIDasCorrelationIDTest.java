@@ -18,12 +18,19 @@ package org.apache.camel.component.jms.issues;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class JmsInOutUseMessageIDasCorrelationIDTest extends AbstractJMSTest {
+
+    @BeforeEach
+    void waitForConnections() {
+        Awaitility.await().until(() -> context.getRoute("route-1").getUptimeMillis() > 100);
+    }
 
     @Test
     public void testInOutWithMsgIdAsCorrId() {
@@ -52,6 +59,7 @@ public class JmsInOutUseMessageIDasCorrelationIDTest extends AbstractJMSTest {
         return new RouteBuilder() {
             public void configure() {
                 from("activemq:queue:JmsInOutUseMessageIDasCorrelationIDTest.in?useMessageIDAsCorrelationID=true")
+                        .routeId("route-1")
                         .process(exchange -> {
                             String id = exchange.getIn().getHeader("JMSCorrelationID", String.class);
                             assertNull(id, "JMSCorrelationID should be null");

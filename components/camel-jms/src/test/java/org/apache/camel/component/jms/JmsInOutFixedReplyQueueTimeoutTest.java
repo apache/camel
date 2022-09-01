@@ -17,19 +17,18 @@
 package org.apache.camel.component.jms;
 
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class JmsInOutFixedReplyQueueTimeoutTest extends AbstractJMSTest {
 
     protected final String componentName = "activemq";
@@ -41,7 +40,7 @@ public class JmsInOutFixedReplyQueueTimeoutTest extends AbstractJMSTest {
         String out = template.requestBody("direct:JmsInOutFixedReplyQueueTimeoutTest", "Camel", String.class);
         assertEquals("Bye Camel", out);
 
-        assertMockEndpointsSatisfied();
+        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
     }
 
     @Test
@@ -53,7 +52,7 @@ public class JmsInOutFixedReplyQueueTimeoutTest extends AbstractJMSTest {
                 "Should have thrown exception");
 
         assertIsInstanceOf(ExchangeTimedOutException.class, ex.getCause());
-        assertMockEndpointsSatisfied();
+        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
     }
 
     @Override
@@ -71,9 +70,11 @@ public class JmsInOutFixedReplyQueueTimeoutTest extends AbstractJMSTest {
                         .to("mock:result");
 
                 from("activemq:queue:JmsInOutFixedReplyQueueTimeoutTest")
-                        .choice().when(body().isEqualTo("World"))
-                        .log("Sleeping for 4 sec to force a timeout")
-                        .delay(Duration.ofSeconds(4).toMillis()).endChoice().end()
+                        .choice()
+                            .when(body().isEqualTo("World"))
+                                .log("Sleeping for 4 sec to force a timeout")
+                                .delay(Duration.ofSeconds(4).toMillis()).
+                            endChoice().end()
                         .transform(body().prepend("Bye ")).to("log:reply");
             }
         };

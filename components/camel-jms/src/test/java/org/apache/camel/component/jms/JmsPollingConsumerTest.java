@@ -64,7 +64,7 @@ public class JmsPollingConsumerTest extends AbstractJMSTest {
 
             template.sendBody("direct:start.wait", "Hello");
 
-            assertMockEndpointsSatisfied();
+            assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
         }
     }
 
@@ -97,7 +97,7 @@ public class JmsPollingConsumerTest extends AbstractJMSTest {
 
             template.sendBody("direct:start", "Hello");
 
-            assertMockEndpointsSatisfied();
+            assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
         }
     }
 
@@ -127,7 +127,7 @@ public class JmsPollingConsumerTest extends AbstractJMSTest {
 
             template.sendBody("direct:start", "Hello");
 
-            assertMockEndpointsSatisfied();
+            assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
         }
     }
 
@@ -156,7 +156,7 @@ public class JmsPollingConsumerTest extends AbstractJMSTest {
             assertTrue(latch.await(5, TimeUnit.SECONDS),
                     "A message should have been received but it was not");
 
-            assertMockEndpointsSatisfied();
+            assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
         }
     }
 

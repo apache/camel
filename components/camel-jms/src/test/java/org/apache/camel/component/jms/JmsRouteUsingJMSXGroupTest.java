@@ -62,7 +62,7 @@ public class JmsRouteUsingJMSXGroupTest extends AbstractJMSTest {
             });
         }
 
-        assertMockEndpointsSatisfied();
+        assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
     }
 
     @BeforeEach

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
@@ -49,7 +51,7 @@ public class JmsRouteWithInOnlyTest extends AbstractJMSTest {
         Object out = template.requestBody("activemq:queue:JmsRouteWithInOnlyTest", "Camel in Action");
         assertEquals("OK: Camel in Action", out);
 
-        assertMockEndpointsSatisfied();
+        assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
 
         // assert MEP
         assertEquals(ExchangePattern.InOut, inbox.getReceivedExchanges().get(0).getPattern());

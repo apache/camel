@@ -20,11 +20,9 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class JmsRequestReplyProcessRepliesConcurrentUsingThreadsTest extends AbstractJMSTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsRequestReplyProcessRepliesConcurrentUsingThreadsTest.class);
