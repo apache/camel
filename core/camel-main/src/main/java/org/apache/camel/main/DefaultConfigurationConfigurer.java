@@ -34,6 +34,7 @@ import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.impl.debugger.BacklogTracer;
+import org.apache.camel.impl.engine.DefaultContextReloadStrategy;
 import org.apache.camel.impl.engine.PooledExchangeFactory;
 import org.apache.camel.impl.engine.PooledProcessorExchangeFactory;
 import org.apache.camel.impl.engine.PrototypeExchangeFactory;
@@ -44,6 +45,7 @@ import org.apache.camel.model.ModelLifecycleStrategy;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.CliConnectorFactory;
+import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EventFactory;
@@ -246,6 +248,10 @@ public final class DefaultConfigurationConfigurer {
                     config.getRoutesReloadDirectory(), config.isRoutesReloadDirectoryRecursive());
             reloader.setPattern(config.getRoutesReloadPattern());
             reloader.setRemoveAllRoutes(config.isRoutesReloadRemoveAllRoutes());
+            camelContext.addService(reloader);
+        }
+        if (config.isContextReloadEnabled()) {
+            ContextReloadStrategy reloader = new DefaultContextReloadStrategy();
             camelContext.addService(reloader);
         }
 

@@ -104,6 +104,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private String routeFilterExcludePattern;
     private boolean beanIntrospectionExtendedStatistics;
     private LoggingLevel beanIntrospectionLoggingLevel;
+    private boolean contextReloadEnabled;
     private boolean routesCollectorEnabled = true;
     private String javaRoutesIncludePattern;
     private String javaRoutesExcludePattern;
@@ -1153,6 +1154,19 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setRoutesReloadEnabled(boolean routesReloadEnabled) {
         this.routesReloadEnabled = routesReloadEnabled;
+    }
+
+    public boolean isContextReloadEnabled() {
+        return contextReloadEnabled;
+    }
+
+    /**
+     * Used for enabling context reloading. If enabled then Camel allow external systems such as
+     * security vaults (AWS secrets manager, etc.) to trigger refreshing Camel by updating
+     * property placeholders and reload all existing routes to take changes into effect.
+     */
+    public void setContextReloadEnabled(boolean contextReloadEnabled) {
+        this.contextReloadEnabled = contextReloadEnabled;
     }
 
     public String getRoutesReloadDirectory() {
@@ -2322,6 +2336,15 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withRoutesExcludePattern(String routesExcludePattern) {
         this.routesExcludePattern = routesExcludePattern;
+        return (T) this;
+    }
+
+    /**
+     * Used for enabling automatic routes reloading. If enabled then Camel will watch for file changes in the given
+     * reload directory, and trigger reloading routes if files are changed.
+     */
+    public T withContextReloadEnabled(boolean contextReloadEnabled) {
+        this.contextReloadEnabled = contextReloadEnabled;
         return (T) this;
     }
 
