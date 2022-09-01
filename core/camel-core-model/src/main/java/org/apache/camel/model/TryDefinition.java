@@ -202,7 +202,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
 
     @Override
     public void preCreateProcessor() {
-        // force re-creating initialization to ensure its up-to-date
+        // force re-creating initialization to ensure its up-to-date (yaml-dsl creates this EIP specially via @DslProperty)
         initialized = false;
         checkInitialized();
     }
@@ -219,9 +219,11 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
             }
             for (ProcessorDefinition<?> output : outputs) {
                 if (output instanceof CatchDefinition) {
-                    catchClauses.add((CatchDefinition) output);
+                    if (!catchClauses.contains(output)) {
+                        catchClauses.add((CatchDefinition) output);
+                    }
                 } else if (output instanceof FinallyDefinition) {
-                    if (finallyClause != null) {
+                    if (finallyClause != null && output != finallyClause) {
                         throw new IllegalArgumentException(
                                 "Multiple finally clauses added: " + finallyClause + " and " + output);
                     } else {
