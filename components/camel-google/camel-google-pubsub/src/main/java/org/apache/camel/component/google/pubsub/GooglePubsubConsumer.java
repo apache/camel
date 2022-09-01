@@ -192,8 +192,12 @@ public class GooglePubsubConsumer extends DefaultConsumer {
                         }
 
                         if (endpoint.getAckMode() != GooglePubsubConstants.AckMode.NONE) {
+                            //existing subscriber can not be propagated, because it will be closed at the end of this block
+                            //subscriber will be created at the moment of use
+                            // (see  https://issues.apache.org/jira/browse/CAMEL-18447)
                             exchange.adapt(ExtendedExchange.class)
-                                    .addOnCompletion(new AcknowledgeSync(subscriber, subscriptionName));
+                                    .addOnCompletion(new AcknowledgeSync(
+                                            () -> endpoint.getComponent().getSubscriberStub(endpoint), subscriptionName));
                         }
 
                         try {
