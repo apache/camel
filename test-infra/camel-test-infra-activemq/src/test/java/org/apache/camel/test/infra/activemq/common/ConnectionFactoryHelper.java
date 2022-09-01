@@ -66,6 +66,7 @@ public final class ConnectionFactoryHelper {
             connectionFactory.getRedeliveryPolicy().setMaximumRedeliveries(maximumRedeliveries);
         }
         connectionFactory.setTrustAllPackages(true);
+        connectionFactory.setWatchTopicAdvisories(false);
         return connectionFactory;
     }
 
