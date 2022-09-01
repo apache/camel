@@ -48,7 +48,7 @@ public final class HealthCheckHelper {
      * Invokes the checks and returns a collection of results.
      */
     public static Collection<HealthCheck.Result> invoke(CamelContext camelContext) {
-        return invoke(camelContext, check -> Map.of(HealthCheck.CHECK_KIND, HealthCheck.Kind.ALL), check -> false);
+        return invoke(camelContext, check -> Map.of(HealthCheck.CHECK_KIND, HealthCheck.Kind.ALL), check -> false, null);
     }
 
     /**
@@ -56,7 +56,7 @@ public final class HealthCheckHelper {
      */
     public static Collection<HealthCheck.Result> invokeReadiness(CamelContext camelContext) {
         return invoke(camelContext, check -> Map.of(HealthCheck.CHECK_KIND, HealthCheck.Kind.READINESS),
-                check -> !check.isReadiness());
+                check -> !check.isReadiness(), null);
     }
 
     /**
@@ -64,7 +64,7 @@ public final class HealthCheckHelper {
      */
     public static Collection<HealthCheck.Result> invokeLiveness(CamelContext camelContext) {
         return invoke(camelContext, check -> Map.of(HealthCheck.CHECK_KIND, HealthCheck.Kind.LIVENESS),
-                check -> !check.isLiveness());
+                check -> !check.isLiveness(), null);
     }
 
     /**
@@ -74,7 +74,7 @@ public final class HealthCheckHelper {
             CamelContext camelContext,
             Function<HealthCheck, Map<String, Object>> optionsSupplier) {
 
-        return invoke(camelContext, optionsSupplier, check -> false);
+        return invoke(camelContext, optionsSupplier, check -> false, null);
     }
 
     /**
@@ -84,7 +84,7 @@ public final class HealthCheckHelper {
             CamelContext camelContext,
             Predicate<HealthCheck> filter) {
 
-        return invoke(camelContext, check -> Collections.emptyMap(), filter);
+        return invoke(camelContext, check -> Collections.emptyMap(), filter, null);
     }
 
     /**
@@ -93,11 +93,13 @@ public final class HealthCheckHelper {
      * @param camelContext    the camel context.
      * @param optionsSupplier a supplier for options.
      * @param filter          filter to exclude some checks.
+     * @param exposureLevel   full or oneline (null to use default)
      */
     public static Collection<HealthCheck.Result> invoke(
             CamelContext camelContext,
             Function<HealthCheck, Map<String, Object>> optionsSupplier,
-            Predicate<HealthCheck> filter) {
+            Predicate<HealthCheck> filter,
+            String exposureLevel) {
 
         final HealthCheckRegistry registry = HealthCheckRegistry.get(camelContext);
 
@@ -116,8 +118,12 @@ public final class HealthCheckHelper {
                 return Collections.emptyList();
             }
 
+            if (exposureLevel == null) {
+                exposureLevel = registry.getExposureLevel();
+            }
+
             // the result includes all the details
-            if ("full".equals(registry.getExposureLevel())) {
+            if ("full".equals(exposureLevel)) {
                 return result;
             } else {
                 // are there any downs?
@@ -127,7 +133,7 @@ public final class HealthCheckHelper {
                 // default mode is to either be just UP or include all DOWNs
                 // oneline mode is either UP or DOWN
                 if (!downs.isEmpty()) {
-                    if ("oneline".equals(registry.getExposureLevel())) {
+                    if ("oneline".equals(exposureLevel)) {
                         // grab first down
                         return Collections.singleton(downs.iterator().next());
                     } else {
