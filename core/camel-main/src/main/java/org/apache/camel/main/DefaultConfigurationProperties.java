@@ -1161,9 +1161,9 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Used for enabling context reloading. If enabled then Camel allow external systems such as
-     * security vaults (AWS secrets manager, etc.) to trigger refreshing Camel by updating
-     * property placeholders and reload all existing routes to take changes into effect.
+     * Used for enabling context reloading. If enabled then Camel allow external systems such as security vaults (AWS
+     * secrets manager, etc.) to trigger refreshing Camel by updating property placeholders and reload all existing
+     * routes to take changes into effect.
      */
     public void setContextReloadEnabled(boolean contextReloadEnabled) {
         this.contextReloadEnabled = contextReloadEnabled;
