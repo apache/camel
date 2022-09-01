@@ -41,7 +41,7 @@
         <camel.surefire.forkCount>1</camel.surefire.forkCount>
         <camel.surefire.forkTimeout>340</camel.surefire.forkTimeout>
         <camel.surefire.parallel>true</camel.surefire.parallel>
-        <camel.surefire.parallel.factor>0.7</camel.surefire.parallel.factor>
+        <camel.surefire.parallel.factor>0.5</camel.surefire.parallel.factor>
     </properties>
 
     <dependencies>
