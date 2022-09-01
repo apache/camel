@@ -23,16 +23,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-// This one is too flaky when running in parallel
-@Tags({ @Tag("not-parallel") })
 @Timeout(30)
 public class JmsDurableTopicTest extends AbstractPersistentJMSTest {
     private MockEndpoint mock;
@@ -45,11 +41,12 @@ public class JmsDurableTopicTest extends AbstractPersistentJMSTest {
 
         mock2 = getMockEndpoint("mock:result2");
         mock2.expectedBodiesReceived("Hello World");
+
+        Awaitility.await().until(() -> context.getRoute("route-2").getUptimeMillis() > 100);
     }
 
     @Test
     public void testDurableTopic() {
-
         final CompletableFuture<Object> future = template.asyncSendBody("activemq:topic:JmsDurableTopicTest", "Hello World");
         final Object request = assertDoesNotThrow(() -> future.get(5, TimeUnit.SECONDS));
         assertNotNull(request);
@@ -63,9 +60,11 @@ public class JmsDurableTopicTest extends AbstractPersistentJMSTest {
             @Override
             public void configure() {
                 from("activemq:topic:JmsDurableTopicTest?clientId=123&durableSubscriptionName=bar")
+                        .routeId("route-1")
                         .to("mock:result");
 
                 from("activemq:topic:JmsDurableTopicTest?clientId=456&durableSubscriptionName=bar")
+                        .routeId("route-2")
                         .to("mock:result2");
             }
         };

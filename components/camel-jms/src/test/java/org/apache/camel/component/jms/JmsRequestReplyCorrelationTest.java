@@ -28,7 +28,6 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -38,7 +37,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Tests how the correlation between request and reply is done
  */
-@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class JmsRequestReplyCorrelationTest extends AbstractJMSTest {
     private static final String REPLY_BODY = "Bye World";
 

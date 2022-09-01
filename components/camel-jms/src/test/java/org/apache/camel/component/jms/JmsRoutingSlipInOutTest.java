@@ -17,16 +17,15 @@
 package org.apache.camel.component.jms;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Headers;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.Timeout;
 
-@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 @Timeout(10)
 public class JmsRoutingSlipInOutTest extends AbstractJMSTest {
 
@@ -39,7 +38,7 @@ public class JmsRoutingSlipInOutTest extends AbstractJMSTest {
 
         template.sendBody("activemq:queue:JmsRoutingSlipInOutTest.start", "Hello");
 
-        assertMockEndpointsSatisfied();
+        assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
     }
 
     @Override

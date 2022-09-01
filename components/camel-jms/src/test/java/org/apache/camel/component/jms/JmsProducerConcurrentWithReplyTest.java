@@ -26,14 +26,12 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.Timeout;
 
 import static org.apache.camel.test.junit5.TestSupport.body;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Timeout(60)
-@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class JmsProducerConcurrentWithReplyTest extends AbstractJMSTest {
 
     private ExecutorService executor;
@@ -65,7 +63,7 @@ public class JmsProducerConcurrentWithReplyTest extends AbstractJMSTest {
             futures.add(out);
         }
 
-        assertMockEndpointsSatisfied();
+        assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
 
         for (int i = 0; i < futures.size(); i++) {
             Object out = futures.get(i).get(5, TimeUnit.SECONDS);

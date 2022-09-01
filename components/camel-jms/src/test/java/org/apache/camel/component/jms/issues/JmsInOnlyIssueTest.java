@@ -38,7 +38,7 @@ public class JmsInOnlyIssueTest extends AbstractJMSTest {
 
         template.sendBody("activemq:queue:JmsInOnlyIssueTest.in", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
     }
 
     @Test
@@ -52,7 +52,7 @@ public class JmsInOnlyIssueTest extends AbstractJMSTest {
 
         assertDoesNotThrow(() -> future.get(5, TimeUnit.SECONDS));
 
-        assertMockEndpointsSatisfied();
+        assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
     }
 
     @Test
@@ -85,7 +85,7 @@ public class JmsInOnlyIssueTest extends AbstractJMSTest {
 
         assertDoesNotThrow(() -> future.get(5, TimeUnit.SECONDS));
 
-        assertMockEndpointsSatisfied();
+        assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
     }
 
     @Override
