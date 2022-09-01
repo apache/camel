@@ -27,6 +27,7 @@ import java.lang.management.ThreadMXBean;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -41,6 +42,7 @@ import org.apache.camel.Route;
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
+import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.spi.CliConnector;
 import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.support.PatternHelper;
@@ -288,8 +290,6 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     .getDevConsoleResolver().resolveDevConsole("context");
             DevConsole dc2 = camelContext.adapt(ExtendedCamelContext.class)
                     .getDevConsoleResolver().resolveDevConsole("route");
-            int ready = 0;
-            int total = 0;
             if (dc != null && dc2 != null) {
                 JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON);
                 JsonObject json2 = (JsonObject) dc2.call(DevConsole.MediaType.JSON);
@@ -315,17 +315,12 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             if (gc != null) {
                 root.put("gc", gc);
             }
-            // and health-check readiness
+            // and health-check readiness (use 1/1 or 0/1 for UP or DOWN like kubernetes)
             Collection<HealthCheck.Result> res = HealthCheckHelper.invokeReadiness(camelContext);
-            for (var r : res) {
-                if (r.getState().equals(HealthCheck.State.UP)) {
-                    ready++;
-                }
-                total++;
-            }
+            int ready = HealthCheckHelper.isResultsUp(res, true) ? 1 : 0;
             JsonObject hc = new JsonObject();
             hc.put("ready", ready);
-            hc.put("total", total);
+            hc.put("total", 1);
             root.put("healthChecks", hc);
 
             LOG.trace("Updating status file: {}", statusFile);
