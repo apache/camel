@@ -97,6 +97,7 @@ For a deeper and better understanding of Apache Camel, an xref:faq:what-is-camel
 * xref:route-controller.adoc[RouteController]
 * xref:route-policy.adoc[RoutePolicy]
 * xref:route-configuration.adoc[RouteConfiguration]
+* xref:context-reload.adoc[ContextReload]
 * xref:route-reload.adoc[RouteReload]
 * xref:route-template.adoc[RouteTemplate]
 * xref:routes.adoc[Routes]
