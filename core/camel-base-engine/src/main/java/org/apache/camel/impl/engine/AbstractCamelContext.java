@@ -223,6 +223,7 @@ public abstract class AbstractCamelContext extends BaseService
     private final List<LifecycleStrategy> lifecycleStrategies = new CopyOnWriteArrayList<>();
     private final ThreadLocal<Boolean> isStartingRoutes = new ThreadLocal<>();
     private final ThreadLocal<Boolean> isSetupRoutes = new ThreadLocal<>();
+    private final ThreadLocal<Boolean> isLockModel = new ThreadLocal<>();
     private final Map<String, FactoryFinder> factories = new ConcurrentHashMap<>();
     private final Map<String, FactoryFinder> bootstrapFactories = new ConcurrentHashMap<>();
     private volatile FactoryFinder bootstrapFactoryFinder;
@@ -1225,6 +1226,19 @@ public abstract class AbstractCamelContext extends BaseService
             isStartingRoutes.set(true);
         } else {
             isStartingRoutes.remove();
+        }
+    }
+
+    public boolean isLockModel() {
+        Boolean answer = isLockModel.get();
+        return answer != null && answer;
+    }
+
+    public void setLockModel(boolean lockModel) {
+        if (lockModel) {
+            isLockModel.set(true);
+        } else {
+            isLockModel.remove();
         }
     }
 

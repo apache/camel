@@ -666,7 +666,8 @@ public class PropertiesComponent extends ServiceSupport
         return null;
     }
 
-    public List<PropertiesSource> getSources() {
+    @Override
+    public List<PropertiesSource> getPropertiesSources() {
         return sources;
     }
 

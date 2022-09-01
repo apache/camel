@@ -100,6 +100,22 @@ public interface RouteController extends CamelContextAware, StaticService {
     boolean isStartingRoutes();
 
     /**
+     * Reloads all the routes
+     *
+     * @throws Exception is thrown if a route could not be reloaded for whatever reason
+     */
+    void reloadAllRoutes() throws Exception;
+
+    /**
+     * Indicates whether current thread is reloading route(s).
+     * <p/>
+     * This can be useful to know by {@link LifecycleStrategy} or the likes, in case they need to react differently.
+     *
+     * @return <tt>true</tt> if current thread is reloading route(s), or <tt>false</tt> if not.
+     */
+    boolean isReloadingRoutes();
+
+    /**
      * Returns the current status of the given route
      *
      * @param  routeId the route id

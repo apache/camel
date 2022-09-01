@@ -364,7 +364,9 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
         if (model == null && isLightweight()) {
             throw new IllegalStateException("Access to model not supported in lightweight mode");
         }
-        model.removeRouteDefinitions(routeDefinitions);
+        if (!isLockModel()) {
+            model.removeRouteDefinitions(routeDefinitions);
+        }
     }
 
     @Override
@@ -372,7 +374,9 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
         if (model == null && isLightweight()) {
             throw new IllegalStateException("Access to model not supported in lightweight mode");
         }
-        model.removeRouteDefinition(routeDefinition);
+        if (!isLockModel()) {
+            model.removeRouteDefinition(routeDefinition);
+        }
     }
 
     @Override
@@ -412,7 +416,9 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
         if (model == null && isLightweight()) {
             throw new IllegalStateException("Access to model not supported in lightweight mode");
         }
-        model.removeRouteTemplateDefinitions(routeTemplateDefinitions);
+        if (!isLockModel()) {
+            model.removeRouteTemplateDefinitions(routeTemplateDefinitions);
+        }
     }
 
     @Override
@@ -420,7 +426,9 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
         if (model == null && isLightweight()) {
             throw new IllegalStateException("Access to model not supported in lightweight mode");
         }
-        model.removeRouteTemplateDefinition(routeTemplateDefinition);
+        if (!isLockModel()) {
+            model.removeRouteTemplateDefinition(routeTemplateDefinition);
+        }
     }
 
     @Override
@@ -428,7 +436,9 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
         if (model == null && isLightweight()) {
             throw new IllegalStateException("Access to model not supported in lightweight mode");
         }
-        model.removeRouteTemplateDefinitions(pattern);
+        if (!isLockModel()) {
+            model.removeRouteTemplateDefinitions(pattern);
+        }
     }
 
     @Override
@@ -471,7 +481,9 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
         if (model == null && isLightweight()) {
             throw new IllegalStateException("Access to model not supported in lightweight mode");
         }
-        model.removeRouteTemplateDefinitions(pattern);
+        if (!isLockModel()) {
+            model.removeRouteTemplateDefinitions(pattern);
+        }
     }
 
     @Override

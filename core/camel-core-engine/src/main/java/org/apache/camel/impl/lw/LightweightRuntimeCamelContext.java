@@ -2178,6 +2178,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
             }
 
             @Override
+            public void reloadAllRoutes() throws Exception {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public boolean isReloadingRoutes() {
+                return false;
+            }
+
+            @Override
             public ServiceStatus getRouteStatus(String routeId) {
                 return ServiceStatus.Started;
             }
