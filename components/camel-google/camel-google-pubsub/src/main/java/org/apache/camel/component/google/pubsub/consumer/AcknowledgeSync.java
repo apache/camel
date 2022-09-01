@@ -18,6 +18,7 @@ package org.apache.camel.component.google.pubsub.consumer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import com.google.cloud.pubsub.v1.stub.SubscriberStub;
 import com.google.pubsub.v1.AcknowledgeRequest;
@@ -28,11 +29,12 @@ import org.apache.camel.spi.Synchronization;
 
 public class AcknowledgeSync implements Synchronization {
 
-    private final SubscriberStub subscriber;
+    //Supplier cannot be used because of thrown exception (Callback used instead)
+    private final Callable<SubscriberStub> subscriberStubSupplier;
     private final String subscriptionName;
 
-    public AcknowledgeSync(SubscriberStub subscriber, String subscriptionName) {
-        this.subscriber = subscriber;
+    public AcknowledgeSync(Callable<SubscriberStub> subscriberStubSupplier, String subscriptionName) {
+        this.subscriberStubSupplier = subscriberStubSupplier;
         this.subscriptionName = subscriptionName;
     }
 
@@ -41,7 +43,7 @@ public class AcknowledgeSync implements Synchronization {
         AcknowledgeRequest ackRequest = AcknowledgeRequest.newBuilder()
                 .addAllAckIds(getAckIdList(exchange))
                 .setSubscription(subscriptionName).build();
-        try {
+        try (SubscriberStub subscriber = subscriberStubSupplier.call()) {
             subscriber.acknowledgeCallable().call(ackRequest);
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
