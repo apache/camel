@@ -2340,8 +2340,9 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Used for enabling automatic routes reloading. If enabled then Camel will watch for file changes in the given
-     * reload directory, and trigger reloading routes if files are changed.
+     * Used for enabling context reloading. If enabled then Camel allow external systems such as
+     * security vaults (AWS secrets manager, etc.) to trigger refreshing Camel by updating
+     * property placeholders and reload all existing routes to take changes into effect.
      */
     public T withContextReloadEnabled(boolean contextReloadEnabled) {
         this.contextReloadEnabled = contextReloadEnabled;
