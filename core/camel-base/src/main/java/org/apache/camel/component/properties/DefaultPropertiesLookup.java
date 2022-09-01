@@ -73,7 +73,7 @@ public class DefaultPropertiesLookup implements PropertiesLookup {
         }
         if (answer == null) {
             // try till first found source
-            for (PropertiesSource ps : component.getSources()) {
+            for (PropertiesSource ps : component.getPropertiesSources()) {
                 answer = ps.getProperty(name);
                 if (answer != null) {
                     String source = ps.getName();

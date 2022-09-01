@@ -110,6 +110,16 @@ public class DefaultRouteController extends ServiceSupport implements RouteContr
     }
 
     @Override
+    public void reloadAllRoutes() throws Exception {
+        getInternalRouteController().reloadAllRoutes();
+    }
+
+    @Override
+    public boolean isReloadingRoutes() {
+        return getInternalRouteController().isReloadingRoutes();
+    }
+
+    @Override
     public ServiceStatus getRouteStatus(String routeId) {
         return getInternalRouteController().getRouteStatus(routeId);
     }
