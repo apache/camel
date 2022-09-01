@@ -54,11 +54,12 @@ public final class HealthCheckHelper {
     /**
      * Invokes all the checks and returns a collection of results.
      *
-     * @param camelContext   the camel context
+     * @param camelContext  the camel context
      * @param exposureLevel level of exposure (full, oneline or default)
      */
     public static Collection<HealthCheck.Result> invoke(CamelContext camelContext, String exposureLevel) {
-        return invoke(camelContext, check -> Map.of(HealthCheck.CHECK_KIND, HealthCheck.Kind.ALL), check -> false, exposureLevel);
+        return invoke(camelContext, check -> Map.of(HealthCheck.CHECK_KIND, HealthCheck.Kind.ALL), check -> false,
+                exposureLevel);
     }
 
     /**
@@ -72,7 +73,7 @@ public final class HealthCheckHelper {
     /**
      * Invokes the readiness checks and returns a collection of results.
      *
-     * @param camelContext   the camel context
+     * @param camelContext  the camel context
      * @param exposureLevel level of exposure (full, oneline or default)
      */
     public static Collection<HealthCheck.Result> invokeReadiness(CamelContext camelContext, String exposureLevel) {
@@ -91,7 +92,7 @@ public final class HealthCheckHelper {
     /**
      * Invokes the liveness checks and returns a collection of results.
      *
-     * @param camelContext   the camel context
+     * @param camelContext  the camel context
      * @param exposureLevel level of exposure (full, oneline or default)
      */
     public static Collection<HealthCheck.Result> invokeLiveness(CamelContext camelContext, String exposureLevel) {
