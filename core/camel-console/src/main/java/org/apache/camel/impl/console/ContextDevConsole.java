@@ -23,6 +23,8 @@ import java.util.Map;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
+import org.apache.camel.spi.ContextReloadStrategy;
+import org.apache.camel.spi.ResourceReloadStrategy;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
@@ -49,9 +51,19 @@ public class ContextDevConsole extends AbstractDevConsole {
         if (mcc != null) {
             ManagedCamelContextMBean mb = mcc.getManagedCamelContext();
             if (mb != null) {
+                int reloaded = 0;
+                ResourceReloadStrategy rrs = getCamelContext().hasService(ResourceReloadStrategy.class);
+                if (rrs != null) {
+                    reloaded += rrs.getReloadCounter();
+                }
+                ContextReloadStrategy crs = getCamelContext().hasService(ContextReloadStrategy.class);
+                if (crs != null) {
+                    reloaded += crs.getReloadCounter();
+                }
                 sb.append(String.format("\n    Total: %s", mb.getExchangesTotal()));
                 sb.append(String.format("\n    Failed: %s", mb.getExchangesFailed()));
                 sb.append(String.format("\n    Inflight: %s", mb.getExchangesInflight()));
+                sb.append(String.format("\n    Reloaded: %s", reloaded));
                 sb.append(String.format("\n    Mean Time: %s", TimeUtils.printDuration(mb.getMeanProcessingTime(), true)));
                 sb.append(String.format("\n    Max Time: %s", TimeUtils.printDuration(mb.getMaxProcessingTime(), true)));
                 sb.append(String.format("\n    Min Time: %s", TimeUtils.printDuration(mb.getMinProcessingTime(), true)));
@@ -82,10 +94,20 @@ public class ContextDevConsole extends AbstractDevConsole {
         if (mcc != null) {
             ManagedCamelContextMBean mb = mcc.getManagedCamelContext();
             if (mb != null) {
+                int reloaded = 0;
+                ResourceReloadStrategy rrs = getCamelContext().hasService(ResourceReloadStrategy.class);
+                if (rrs != null) {
+                    reloaded += rrs.getReloadCounter();
+                }
+                ContextReloadStrategy crs = getCamelContext().hasService(ContextReloadStrategy.class);
+                if (crs != null) {
+                    reloaded += crs.getReloadCounter();
+                }
                 JsonObject stats = new JsonObject();
                 stats.put("exchangesTotal", mb.getExchangesTotal());
                 stats.put("exchangesFailed", mb.getExchangesFailed());
                 stats.put("exchangesInflight", mb.getExchangesInflight());
+                stats.put("reloaded", reloaded);
                 stats.put("meanProcessingTime", mb.getMeanProcessingTime());
                 stats.put("maxProcessingTime", mb.getMaxProcessingTime());
                 stats.put("minProcessingTime", mb.getMinProcessingTime());
