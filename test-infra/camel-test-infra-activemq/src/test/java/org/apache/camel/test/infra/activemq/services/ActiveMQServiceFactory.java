@@ -100,7 +100,7 @@ public final class ActiveMQServiceFactory {
      * @return a new instance of an embedded ActiveMQ
      */
     public static synchronized ActiveMQService createVMService() {
-        return createVMServiceInstance();
+        return createSingletonVMService();
     }
 
     /**
