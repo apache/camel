@@ -129,11 +129,6 @@ public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
                 outputProperties.put("omit-xml-declaration", "yes");
 
                 transformer.setOutputProperties(outputProperties);
-                if (factory.getClass().getName().equals("org.apache.xalan.processor.TransformerFactoryImpl")
-                        && source instanceof StAXSource) {
-                    source = new StAX2SAXSource(((StAXSource) source).getXMLStreamReader());
-                }
-
                 transformer.transform(source, result);
             }
         }

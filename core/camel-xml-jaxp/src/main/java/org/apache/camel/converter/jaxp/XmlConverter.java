@@ -93,7 +93,6 @@ public class XmlConverter {
 
     private static final String JDK_FALLBACK_TRANSFORMER_FACTORY
             = "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl";
-    private static final String XALAN_TRANSFORMER_FACTORY = "org.apache.xalan.processor.TransformerFactoryImpl";
     private static final Logger LOG = LoggerFactory.getLogger(XmlConverter.class);
     private static final ErrorHandler DOCUMENT_BUILDER_LOGGING_ERROR_HANDLER = new DocumentBuilderLoggingErrorHandler();
 
@@ -138,11 +137,6 @@ public class XmlConverter {
             throw new TransformerException("Could not create a transformer - JAXP is misconfigured!");
         }
         transformer.setOutputProperties(outputProperties);
-        if (this.transformerFactory.getClass().getName().equals(XALAN_TRANSFORMER_FACTORY)
-                && source instanceof StAXSource) {
-            //external xalan can't handle StAXSource, so convert StAXSource to SAXSource.
-            source = new StAX2SAXSource(((StAXSource) source).getXMLStreamReader());
-        }
         transformer.transform(source, result);
     }
 
