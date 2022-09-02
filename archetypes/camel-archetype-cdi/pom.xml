@@ -29,7 +29,7 @@
 
     <groupId>org.apache.camel.archetypes</groupId>
     <artifactId>camel-archetype-cdi</artifactId>
-    <name>Camel :: Archetypes :: CDI Based Router</name>
+    <name>Camel :: Archetypes :: CDI Based Router (deprecated)</name>
     <description>Creates a new Camel project using CDI.</description>
     <packaging>maven-archetype</packaging>
 

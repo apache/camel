@@ -134,6 +134,7 @@ public class RunMojo extends AbstractExecMojo {
     /**
      * Whether to use CDI when running, instead of Spring
      */
+    @Deprecated
     @Parameter(property = "camel.useCDI")
     protected Boolean useCDI;
 
@@ -361,6 +362,7 @@ public class RunMojo extends AbstractExecMojo {
             // must include plugin dependencies for cdi
             extraPluginDependencyArtifactId = "camel-cdi";
             getLog().info("Using " + mainClass + " to initiate a CamelContext");
+            getLog().warn("Running CDI in camel-maven-plugin is deprecated");
         } else if (usingKameletMain) {
             mainClass = "org.apache.camel.main.KameletMain";
             // must include plugin dependencies for kamelet
@@ -627,6 +629,7 @@ public class RunMojo extends AbstractExecMojo {
     }
 
     @SuppressWarnings("unchecked")
+    @Deprecated
     private boolean detectCDIOnClassPath() {
         List<Dependency> deps = project.getCompileDependencies();
         for (Dependency dep : deps) {
