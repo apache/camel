@@ -39,23 +39,6 @@ The maven plugin *run* goal supports the following options which can be configur
 |===
 
 
-=== Running OSGi Blueprint
-
-Use the `camel-karaf-maven-plugin` which is intended for Apache Camel on Karaf/OSGi.
-
-=== Running CDI
-
-The `camel:run` plugin also supports running a CDI application
-
-This allows you to boot up any CDI services you wish - whether they are Camel-related, or any other CDI enabled services.
-You should add the CDI container of your choice (e.g. Weld or OpenWebBeans) to the dependencies of the camel-maven-plugin such as in this example.
-
-From the source of Camel you can run a CDI example via
-
-----
-cd examples/camel-example-cdi
-mvn compile camel:run
-----
 
 === Logging the classpath
 
