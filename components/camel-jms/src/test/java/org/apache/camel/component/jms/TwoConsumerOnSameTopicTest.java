@@ -47,7 +47,7 @@ public class TwoConsumerOnSameTopicTest extends AbstractPersistentJMSTest {
     class SingleMessageTest {
 
         @BeforeEach
-        void prepare() throws Exception {
+        void prepare() {
             getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
             getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");
 
