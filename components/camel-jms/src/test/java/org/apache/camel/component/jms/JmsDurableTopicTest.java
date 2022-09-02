@@ -42,7 +42,7 @@ public class JmsDurableTopicTest extends AbstractPersistentJMSTest {
         mock2 = getMockEndpoint("mock:result2");
         mock2.expectedBodiesReceived("Hello World");
 
-        Awaitility.await().until(() -> context.getRoute("route-2").getUptimeMillis() > 100);
+        Awaitility.await().until(() -> context.getRoute("route-2").getUptimeMillis() > 200);
     }
 
     @Test
