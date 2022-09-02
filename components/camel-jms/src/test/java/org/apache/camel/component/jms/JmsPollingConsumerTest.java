@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -133,14 +134,13 @@ public class JmsPollingConsumerTest extends AbstractJMSTest {
 
     @Nested
     class HighTimeOutTest {
-        private final CountDownLatch latch = new CountDownLatch(1);
+        private volatile String body;
 
         @BeforeEach
         void setupConsumer() {
             Executors.newSingleThreadExecutor().execute(() -> {
-                String body = consumer.receiveBody("activemq:queue.JmsPollingConsumerTest.start", 3000, String.class);
+                body = consumer.receiveBody("activemq:queue.JmsPollingConsumerTest.start", 3000, String.class);
                 template.sendBody("activemq:queue.JmsPollingConsumerTest.foo", body + " Claus");
-                latch.countDown();
             });
         }
 
@@ -149,12 +149,10 @@ public class JmsPollingConsumerTest extends AbstractJMSTest {
             MockEndpoint mock = getMockEndpoint("mock:result");
             mock.expectedBodiesReceived("Hello Claus");
 
-            assertFalse(latch.await(500, TimeUnit.MILLISECONDS),
-                    "No message should have been received within 500 milliseconds because the test has not sent any");
-
+            assertNull(body, "No message should have been received because the test has not sent any");
             template.sendBody("direct:start", "Hello");
-            assertTrue(latch.await(5, TimeUnit.SECONDS),
-                    "A message should have been received but it was not");
+            Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                    .until(() -> body != null);
 
             assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
         }
