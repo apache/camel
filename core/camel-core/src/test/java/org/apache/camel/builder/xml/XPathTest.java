@@ -29,7 +29,6 @@ import java.util.concurrent.TimeUnit;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFunctionResolver;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
