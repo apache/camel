@@ -9,8 +9,6 @@ NOTE: This feature is not supported when using Camel Quarkus, as you should be u
 the hot-reloading functionality that comes with Quarkus instead. This functionality
 can also reload Java source code changes and much more.
 
-TIP: See related xref:context-reload.adoc[]
-
 == Using route reloading
 
 You cannot watch for file changes in the Java classpath. It is only possible to watch
