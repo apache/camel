@@ -23,9 +23,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stax.StAXSource;
 
-import org.apache.camel.support.builder.xml.StAX2SAXSource;
 import org.apache.camel.support.builder.xml.XMLConverterHelper;
 import org.apache.camel.util.ObjectHelper;
 
