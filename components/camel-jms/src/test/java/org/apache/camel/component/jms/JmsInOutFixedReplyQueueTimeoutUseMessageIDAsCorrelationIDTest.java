@@ -21,9 +21,6 @@ import java.time.Duration;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 
-/**
- *
- */
 public class JmsInOutFixedReplyQueueTimeoutUseMessageIDAsCorrelationIDTest extends JmsInOutFixedReplyQueueTimeoutTest {
 
     @Override
@@ -31,11 +28,13 @@ public class JmsInOutFixedReplyQueueTimeoutUseMessageIDAsCorrelationIDTest exten
         return new RouteBuilder() {
             public void configure() {
                 from("direct:JmsInOutFixedReplyQueueTimeoutTest")
+                        .routeId("route-1")
                         .to(ExchangePattern.InOut,
                                 "activemq:queue:JmsInOutFixedReplyQueueTimeoutUseMessageIDAsCorrelationIDTest?replyTo=queue:JmsInOutFixedReplyQueueTimeoutUseMessageIDAsCorrelationIDTestReply&useMessageIDAsCorrelationID=true&requestTimeout=2000")
                         .to("mock:result");
 
                 from("activemq:queue:JmsInOutFixedReplyQueueTimeoutUseMessageIDAsCorrelationIDTest")
+                        .routeId("route-2")
                         .choice().when(body().isEqualTo("World"))
                         .log("Sleeping for 4 sec to force a timeout")
                         .delay(Duration.ofSeconds(4).toMillis()).endChoice().end()

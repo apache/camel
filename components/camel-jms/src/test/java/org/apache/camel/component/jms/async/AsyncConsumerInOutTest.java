@@ -22,11 +22,19 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
 @Timeout(30)
 public class AsyncConsumerInOutTest extends AbstractJMSTest {
+
+    @BeforeEach
+    void waitForConnections() {
+        Awaitility.await().until(() -> context.getRoute("route-1").getUptimeMillis() > 200);
+        Awaitility.await().until(() -> context.getRoute("route-2").getUptimeMillis() > 200);
+    }
 
     @Test
     public void testAsyncJmsConsumer() throws Exception {
@@ -62,6 +70,7 @@ public class AsyncConsumerInOutTest extends AbstractJMSTest {
             public void configure() {
                 // enable async in only mode on the consumer
                 from("activemq:queue:AsyncConsumerInOutTest.start?asyncConsumer=true")
+                        .routeId("route-1")
                         .choice()
                         .when(body().contains("Camel"))
                         .to("async:camel?delay=2000")
@@ -72,6 +81,7 @@ public class AsyncConsumerInOutTest extends AbstractJMSTest {
                         .to("mock:result");
 
                 from("activemq:queue:AsyncConsumerInOutTest.camel")
+                        .routeId("route-2")
                         .to("log:camel")
                         .transform(constant("Bye Camel"));
             }

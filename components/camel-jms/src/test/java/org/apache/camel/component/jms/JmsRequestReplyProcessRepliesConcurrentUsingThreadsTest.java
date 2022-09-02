@@ -19,6 +19,8 @@ package org.apache.camel.component.jms;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +30,12 @@ public class JmsRequestReplyProcessRepliesConcurrentUsingThreadsTest extends Abs
     private static final Logger LOG = LoggerFactory.getLogger(JmsRequestReplyProcessRepliesConcurrentUsingThreadsTest.class);
 
     protected final String componentName = "activemq";
+
+    @BeforeEach
+    void waitForConnections() {
+        Awaitility.await().until(() -> context.getRoute("route-1").getUptimeMillis() > 200);
+        Awaitility.await().until(() -> context.getRoute("route-2").getUptimeMillis() > 200);
+    }
 
     @Test
     public void testRequestReplyWithConcurrent() throws Exception {
@@ -56,10 +64,12 @@ public class JmsRequestReplyProcessRepliesConcurrentUsingThreadsTest extends Abs
             @Override
             public void configure() {
                 from("activemq:queue:JmsRequestReplyProcessRepliesConcurrentUsingThreadsTest")
+                        .routeId("route-1")
                         .log("request - ${body}")
                         .transform(body().prepend("Bye "));
 
                 from("seda:start")
+                        .routeId("route-2")
                         .setExchangePattern(ExchangePattern.InOut)
                         .to("activemq:queue:JmsRequestReplyProcessRepliesConcurrentUsingThreadsTest")
                         .log("reply   - ${body}")
