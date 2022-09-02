@@ -23,6 +23,8 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
@@ -32,6 +34,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class JmsInOutFixedReplyQueueTimeoutTest extends AbstractJMSTest {
 
     protected final String componentName = "activemq";
+
+    @BeforeEach
+    void waitForConnections() {
+        Awaitility.await().until(() -> context.getRoute("route-1").getUptimeMillis() > 200);
+        Awaitility.await().until(() -> context.getRoute("route-2").getUptimeMillis() > 200);
+    }
 
     @Test
     public void testOk() throws Exception {
@@ -65,11 +73,13 @@ public class JmsInOutFixedReplyQueueTimeoutTest extends AbstractJMSTest {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:JmsInOutFixedReplyQueueTimeoutTest")
+                        .routeId("route-1")
                         .to(ExchangePattern.InOut,
                                 "activemq:queue:JmsInOutFixedReplyQueueTimeoutTest?replyTo=queue:JmsInOutFixedReplyQueueTimeoutTestReply&requestTimeout=2000")
                         .to("mock:result");
 
                 from("activemq:queue:JmsInOutFixedReplyQueueTimeoutTest")
+                        .routeId("route-2")
                         .choice()
                             .when(body().isEqualTo("World"))
                                 .log("Sleeping for 4 sec to force a timeout")

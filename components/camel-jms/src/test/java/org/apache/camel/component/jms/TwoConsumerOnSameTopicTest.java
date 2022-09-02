@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -106,6 +107,12 @@ public class TwoConsumerOnSameTopicTest extends AbstractPersistentJMSTest {
 
             assertMockEndpointsSatisfied();
         }
+    }
+
+    @BeforeEach
+    void waitForConnections() {
+        Awaitility.await().until(() -> context.getRoute("a").getUptimeMillis() > 200);
+        Awaitility.await().until(() -> context.getRoute("a").getUptimeMillis() > 200);
     }
 
     @Override

@@ -18,11 +18,19 @@ package org.apache.camel.component.jms.issues;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsInOutExclusiveTopicTest extends AbstractJMSTest {
+
+    @BeforeEach
+    void waitForConnections() {
+        Awaitility.await().until(() -> context.getRoute("route-1").getUptimeMillis() > 200);
+        Awaitility.await().until(() -> context.getRoute("route-2").getUptimeMillis() > 200);
+    }
 
     @Test
     public void testJmsInOutExclusiveTopicTest() throws Exception {
@@ -44,10 +52,12 @@ public class JmsInOutExclusiveTopicTest extends AbstractJMSTest {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
+                        .routeId("route-1")
                         .to("activemq:topic:news?replyToType=Exclusive&replyTo=queue:JmsInOutExclusiveTopicTest.reply")
                         .to("mock:result");
 
                 from("activemq:topic:news?disableReplyTo=true")
+                        .routeId("route-2")
                         .transform(body().prepend("Bye "))
                         .process(exchange -> {
                             String replyTo = exchange.getIn().getHeader("JMSReplyTo", String.class);
