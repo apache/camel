@@ -37,8 +37,8 @@ public class Hawtio extends CamelCommand {
     String name;
 
     @CommandLine.Option(names = { "--version" },
-                        description = "Version of the Hawtio web console", defaultValue = "2.15.0")
-    String version = "2.15.0";
+                        description = "Version of the Hawtio web console", defaultValue = "2.15.1")
+    String version = "2.15.1";
 
     // use port 8888 as 8080 is too commonly used
     @CommandLine.Option(names = { "--port" },
