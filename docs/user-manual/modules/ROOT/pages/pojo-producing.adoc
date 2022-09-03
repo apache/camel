@@ -11,6 +11,8 @@ xref:endpoint.adoc[Endpoint] from a POJO:
 To allow sending of messages from POJOs you can use the `@Produce` annotation.
 This will inject a `org.apache.camel.ProducerTemplate` so that the bean can send messages.
 
+IMPORTANT: The `@Produce` POJO annotations are not part of any Camel routes, and you cannot use errorHandler or onException with that.
+
 For example to send a message to the foo queue on ActiveMQ:
 
 [source,java]

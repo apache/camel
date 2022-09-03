@@ -5,6 +5,8 @@ annotation to mark a particular method of a bean as being a consumer
 method. The value of the annotation defines the Camel
 xref:endpoint.adoc[Endpoint] to consume from.
 
+IMPORTANT: The `@Consume` POJO annotations are not part of any Camel routes, and you cannot use errorHandler or onException with that.
+
 For example lets invoke the `onCheese()` method with the String body of the
 inbound JMS message from xref:components::activemq-component.adoc[ActiveMQ] on the cheese
 queue; this will use the xref:type-converter.adoc[Type Converter] to
