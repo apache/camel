@@ -43,6 +43,7 @@ import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.util.InetAddressUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
@@ -2002,6 +2003,33 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${propertiesExist:!myKey}", "false");
         assertPredicate("${propertiesExist:myKey}", true);
         assertPredicate("${propertiesExist:!myKey}", false);
+    }
+
+    @Test
+    public void testUuid() throws Exception {
+        Expression expression = context.resolveLanguage("simple").createExpression("${uuid}");
+        String s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+
+        expression = context.resolveLanguage("simple").createExpression("${uuid(default)}");
+        s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+
+        expression = context.resolveLanguage("simple").createExpression("${uuid(short)}");
+        s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+
+        expression = context.resolveLanguage("simple").createExpression("${uuid(simple)}");
+        s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+
+        expression = context.resolveLanguage("simple").createExpression("${uuid(classic)}");
+        s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+
+        // custom generator
+        context.getRegistry().bind("mygen", (UuidGenerator) () -> "1234");
+        assertExpression("${uuid(mygen)}", "1234");
     }
 
     @Override

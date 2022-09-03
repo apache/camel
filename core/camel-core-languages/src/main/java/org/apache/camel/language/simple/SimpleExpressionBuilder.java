@@ -37,9 +37,14 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.ClassicUuidGenerator;
+import org.apache.camel.support.DefaultUuidGenerator;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.ShortUuidGenerator;
+import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.apache.camel.util.FileUtil;
@@ -234,6 +239,46 @@ public final class SimpleExpressionBuilder {
             @Override
             public String toString() {
                 return "random(" + min + "," + max + ")";
+            }
+        };
+    }
+
+    /**
+     * Returns a uuid string based on the given generator (default, classic, short, simple)
+     */
+    public static Expression uuidExpression(final String generator) {
+        return new ExpressionAdapter() {
+
+            UuidGenerator uuid;
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                return uuid.generateUuid();
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                if ("classic".equalsIgnoreCase(generator)) {
+                    uuid = new ClassicUuidGenerator();
+                } else if ("short".equals(generator)) {
+                    uuid = new ShortUuidGenerator();
+                } else if ("simple".equals(generator)) {
+                    uuid = new SimpleUuidGenerator();
+                } else if (generator == null || "default".equals(generator)) {
+                    uuid = new DefaultUuidGenerator();
+                } else {
+                    // lookup custom generator
+                    uuid = CamelContextHelper.mandatoryLookup(context, generator, UuidGenerator.class);
+                }
+            }
+
+            @Override
+            public String toString() {
+                if (generator != null) {
+                    return "uuid(" + generator + ")";
+                } else {
+                    return "uuid";
+                }
             }
         };
     }

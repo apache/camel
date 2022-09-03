@@ -557,6 +557,16 @@ public class SimpleFunctionExpression extends LiteralExpression {
         } else if (ObjectHelper.equal(function, "messageHistory")) {
             return SimpleExpressionBuilder.messageHistoryExpression(true);
         }
+
+        // uuid function
+        remainder = ifStartsWithReturnRemainder("uuid", function);
+        if (remainder != null) {
+            String values = StringHelper.between(remainder, "(", ")");
+            return SimpleExpressionBuilder.uuidExpression(values);
+        } else if (ObjectHelper.equal(function, "uuid")) {
+            return SimpleExpressionBuilder.uuidExpression(null);
+        }
+
         return null;
     }
 

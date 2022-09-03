@@ -168,11 +168,11 @@ the ?method=methodname syntax that is used by the xref:components::bean-componen
 component. Camel will by default lookup a bean by the given name. However if you need to refer
 to a bean class (such as calling a static method) then you can prefix with type, such as `bean:type:fqnClassName`.
 
-|`properties:key:default` |String |Lookup a property with the given key. If the key does
+|properties:key:default |String |Lookup a property with the given key. If the key does
 not exists or has no value, then an optional default value can be
 specified.
 
-|`propertiesExist:key` |String |Checks whether a property placeholder with the given key exists or not.
+|propertiesExist:key |String |Checks whether a property placeholder with the given key exists or not.
 The result can be negated by prefixing the key with `!`.
 
 |routeId |String |Returns the id of the current route the
@@ -218,6 +218,13 @@ the error handler logs in case of an unhandled exception.
 |messageHistory(false) |String |As messageHistory but without the exchange details (only
 includes the route stack-trace). This can be used if you do not want to
 log sensitive data from the message itself.
+
+|uuid(type) |String |Returns an UUID using the Camel `UuidGenerator`.
+You can choose between `default`, `classic`, `short` and `simple` as the type.
+If no type is given the default is used. It is also possible to use a custom `UuidGenerator`
+and bind the bean to the xref:manual::registry.adoc[Registry] with an id. For example `${uuid(myGenerator}`
+where the ID is _myGenerator_.
+
 |=======================================================================
 
 == OGNL expression support
