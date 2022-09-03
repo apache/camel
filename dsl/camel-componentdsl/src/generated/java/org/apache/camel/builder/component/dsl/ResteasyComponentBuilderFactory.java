@@ -40,6 +40,7 @@ public interface ResteasyComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static ResteasyComponentBuilder resteasy() {
         return new ResteasyComponentBuilderImpl();
     }

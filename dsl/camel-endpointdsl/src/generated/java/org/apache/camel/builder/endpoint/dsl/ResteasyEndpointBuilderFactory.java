@@ -2016,6 +2016,7 @@ public interface ResteasyEndpointBuilderFactory {
          * @param path httpUri
          * @return the dsl builder
          */
+        @Deprecated
         default ResteasyEndpointBuilder resteasy(String path) {
             return ResteasyEndpointBuilderFactory.endpointBuilder("resteasy", path);
         }
@@ -2037,6 +2038,7 @@ public interface ResteasyEndpointBuilderFactory {
          * @param path httpUri
          * @return the dsl builder
          */
+        @Deprecated
         default ResteasyEndpointBuilder resteasy(
                 String componentName,
                 String path) {
@@ -2198,6 +2200,7 @@ public interface ResteasyEndpointBuilderFactory {
             return "HttpPath";
         }
     }
+    @Deprecated
     static ResteasyEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
