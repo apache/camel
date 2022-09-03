@@ -5945,7 +5945,7 @@
     "name": "resteasy",
     "title": "Resteasy",
     "description": "Expose REST endpoints and access external REST servers.",
-    "deprecated": false,
+    "deprecated": true,
     "deprecationNote": "",
     "firstVersion": "3.4.0",
     "label": "rest",
