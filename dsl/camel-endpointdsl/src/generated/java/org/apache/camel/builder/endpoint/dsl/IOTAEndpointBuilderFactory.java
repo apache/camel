@@ -280,6 +280,7 @@ public interface IOTAEndpointBuilderFactory {
          * @param path name
          * @return the dsl builder
          */
+        @Deprecated
         default IOTAEndpointBuilder iota(String path) {
             return IOTAEndpointBuilderFactory.endpointBuilder("iota", path);
         }
@@ -301,6 +302,7 @@ public interface IOTAEndpointBuilderFactory {
          * @param path name
          * @return the dsl builder
          */
+        @Deprecated
         default IOTAEndpointBuilder iota(String componentName, String path) {
             return IOTAEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
@@ -394,6 +396,7 @@ public interface IOTAEndpointBuilderFactory {
             return "IOTAAddressEndIndex";
         }
     }
+    @Deprecated
     static IOTAEndpointBuilder endpointBuilder(String componentName, String path) {
         class IOTAEndpointBuilderImpl extends AbstractEndpointBuilder implements IOTAEndpointBuilder, AdvancedIOTAEndpointBuilder {
             public IOTAEndpointBuilderImpl(String path) {

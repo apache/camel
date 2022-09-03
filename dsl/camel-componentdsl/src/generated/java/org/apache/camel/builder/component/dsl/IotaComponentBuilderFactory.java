@@ -40,6 +40,7 @@ public interface IotaComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static IotaComponentBuilder iota() {
         return new IotaComponentBuilderImpl();
     }
