@@ -32,18 +32,6 @@
     <name>Camel :: Azure :: Parent</name>
     <description>Camel Azure parent</description>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.azure</groupId>
-                <artifactId>azure-sdk-bom</artifactId>
-                <version>${azure-sdk-bom-version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <modules>
         <module>camel-azure-eventhubs</module>
         <module>camel-azure-storage-blob</module>

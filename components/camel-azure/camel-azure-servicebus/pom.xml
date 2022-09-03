@@ -51,10 +51,12 @@
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-messaging-servicebus</artifactId>
+            <version>${azure-messaging-servicebus-version}</version>
         </dependency>
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-identity</artifactId>
+            <version>${azure-identity-version}</version>
         </dependency>
 
         <!-- extras -->

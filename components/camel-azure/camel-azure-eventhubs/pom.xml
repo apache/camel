@@ -51,10 +51,12 @@
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-messaging-eventhubs</artifactId>
+            <version>${azure-eventhubs-version}</version>
         </dependency>
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-messaging-eventhubs-checkpointstore-blob</artifactId>
+            <version>${azure-messaging-eventhubs-checkpointstore-blob-version}</version>
         </dependency>
 
         <!-- extras -->
