@@ -2248,6 +2248,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.IotaComponentBuilderFactory.IotaComponentBuilder iota() {
         return org.apache.camel.builder.component.dsl.IotaComponentBuilderFactory.iota();
     }
