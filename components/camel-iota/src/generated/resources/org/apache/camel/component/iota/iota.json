@@ -4,7 +4,7 @@
     "name": "iota",
     "title": "IOTA",
     "description": "Manage financial transactions using IOTA distributed ledger.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.23.0",
     "label": "ledger,api",
     "javaType": "org.apache.camel.component.iota.IOTAComponent",

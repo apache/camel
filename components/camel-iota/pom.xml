@@ -29,7 +29,7 @@
 
     <artifactId>camel-iota</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: IOTA</name>
+    <name>Camel :: IOTA (deprecated)</name>
     <description>Camel IOTA component</description>
 
     <properties>

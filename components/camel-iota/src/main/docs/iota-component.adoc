@@ -1,10 +1,11 @@
-= IOTA Component
+= IOTA Component (deprecated)
 :doctitle: IOTA
 :shortname: iota
 :artifactid: camel-iota
 :description: Manage financial transactions using IOTA distributed ledger.
 :since: 2.23
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: iota
