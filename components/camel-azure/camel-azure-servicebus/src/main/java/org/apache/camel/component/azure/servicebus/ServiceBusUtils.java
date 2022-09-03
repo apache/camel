@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.azure.servicebus;
 
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -27,21 +28,28 @@ public final class ServiceBusUtils {
     private ServiceBusUtils() {
     }
 
-    public static ServiceBusMessage createServiceBusMessage(final Object data) {
+    public static ServiceBusMessage createServiceBusMessage(
+            final Object data, final Map<String, Object> applicationProperties) {
+        ServiceBusMessage serviceBusMessage;
         if (data instanceof String) {
-            return new ServiceBusMessage((String) data);
+            serviceBusMessage = new ServiceBusMessage((String) data);
         } else if (data instanceof byte[]) {
-            return new ServiceBusMessage((byte[]) data);
+            serviceBusMessage = new ServiceBusMessage((byte[]) data);
         } else if (data instanceof BinaryData) {
-            return new ServiceBusMessage((BinaryData) data);
+            serviceBusMessage = new ServiceBusMessage((BinaryData) data);
         } else {
             throw new IllegalArgumentException("Make sure your message data is in String, byte[] or BinaryData");
         }
+        if (applicationProperties != null) {
+            serviceBusMessage.getRawAmqpMessage().getApplicationProperties().putAll(applicationProperties);
+        }
+        return serviceBusMessage;
     }
 
-    public static Iterable<ServiceBusMessage> createServiceBusMessages(final Iterable<Object> data) {
+    public static Iterable<ServiceBusMessage> createServiceBusMessages(
+            final Iterable<Object> data, final Map<String, Object> applicationProperties) {
         return StreamSupport.stream(data.spliterator(), false)
-                .map(ServiceBusUtils::createServiceBusMessage)
+                .map(obj -> createServiceBusMessage(obj, applicationProperties))
                 .collect(Collectors.toList());
     }
 }

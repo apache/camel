@@ -52,7 +52,8 @@ class ServiceBusConsumerTest extends BaseCamelServiceBusTestSupport {
         inputBatch.add("test batch 2");
         inputBatch.add("test batch 3");
 
-        new ServiceBusSenderOperations(new ServiceBusSenderAsyncClientWrapper(senderAsyncClient)).sendMessages(inputBatch, null)
+        new ServiceBusSenderOperations(new ServiceBusSenderAsyncClientWrapper(senderAsyncClient))
+                .sendMessages(inputBatch, null, null)
                 .block();
 
         // test the data now
@@ -81,7 +82,8 @@ class ServiceBusConsumerTest extends BaseCamelServiceBusTestSupport {
         inputBatch.add("peek test batch 2");
         inputBatch.add("peek test batch 3");
 
-        new ServiceBusSenderOperations(new ServiceBusSenderAsyncClientWrapper(senderAsyncClient)).sendMessages(inputBatch, null)
+        new ServiceBusSenderOperations(new ServiceBusSenderAsyncClientWrapper(senderAsyncClient))
+                .sendMessages(inputBatch, null, null)
                 .block();
 
         // test the data now

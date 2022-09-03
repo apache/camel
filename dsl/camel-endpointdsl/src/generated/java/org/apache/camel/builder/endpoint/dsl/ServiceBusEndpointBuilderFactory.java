@@ -1534,13 +1534,13 @@ public interface ServiceBusEndpointBuilderFactory {
         private static final ServiceBusHeaderNameBuilder INSTANCE = new ServiceBusHeaderNameBuilder();
 
         /**
-         * Gets the set of free-form ServiceBusReceivedMessage properties which
-         * may be used for passing metadata associated with the
-         * ServiceBusReceivedMessagel during Service Bus operations.
+         * The application properties (also known as custom properties) on
+         * messages sent and received by the producer and consumer,
+         * respectively.
          * 
          * The option is a: {@code Map<String, Object>} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code
          * AzureServiceBusApplicationProperties}.
