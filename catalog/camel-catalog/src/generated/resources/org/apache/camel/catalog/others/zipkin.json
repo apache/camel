@@ -4,7 +4,7 @@
     "name": "zipkin",
     "title": "Zipkin",
     "description": "Distributed message tracing using Zipkin",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.18.0",
     "label": "monitoring,microservice",
     "supportLevel": "Stable",

@@ -29,7 +29,7 @@
 
     <artifactId>camel-zipkin</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Zipkin</name>
+    <name>Camel :: Zipkin (deprecated)</name>
     <description>Distributed message tracing using Zipkin</description>
 
     <properties>

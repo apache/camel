@@ -1,10 +1,11 @@
-= Zipkin Component
+= Zipkin Component (deprecated)
 :doctitle: Zipkin
 :shortname: zipkin
 :artifactid: camel-zipkin
 :description: Distributed message tracing using Zipkin
 :since: 2.18
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 //Manually maintained attributes
 :camel-spring-boot-name: zipkin
 
