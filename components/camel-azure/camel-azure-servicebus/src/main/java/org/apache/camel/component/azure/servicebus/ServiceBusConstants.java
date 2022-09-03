@@ -23,8 +23,8 @@ public final class ServiceBusConstants {
     // common headers, set by consumer and evaluated by producer
 
     // headers set by the consumer only
-    @Metadata(label = "consumer",
-              description = "Gets the set of free-form `ServiceBusReceivedMessage` properties which may be used for passing metadata  associated with the `ServiceBusReceivedMessagel during Service Bus operations.",
+    @Metadata(label = "common",
+              description = "The application properties (also known as custom properties) on messages sent and received by the producer and consumer, respectively.",
               javaType = "Map<String, Object>")
     public static final String APPLICATION_PROPERTIES = HEADER_PREFIX + "ApplicationProperties";
     @Metadata(label = "consumer", description = "Gets the content type of the message.", javaType = "String")

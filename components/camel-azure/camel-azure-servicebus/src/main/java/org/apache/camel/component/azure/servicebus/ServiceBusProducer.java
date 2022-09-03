@@ -143,16 +143,18 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
     private BiConsumer<Exchange, AsyncCallback> sendMessages() {
         return (exchange, callback) -> {
             final Object inputBody = exchange.getMessage().getBody();
+            final Map<String, Object> applicationProperties
+                    = exchange.getMessage().getHeader(ServiceBusConstants.APPLICATION_PROPERTIES, Map.class);
 
             Mono<Void> sendMessageAsync;
 
             if (exchange.getMessage().getBody() instanceof Iterable) {
                 sendMessageAsync
                         = serviceBusSenderOperations.sendMessages(convertBodyToList((Iterable<Object>) inputBody),
-                                configurationOptionsProxy.getServiceBusTransactionContext(exchange));
+                                configurationOptionsProxy.getServiceBusTransactionContext(exchange), applicationProperties);
             } else {
                 sendMessageAsync = serviceBusSenderOperations.sendMessages(exchange.getMessage().getBody(String.class),
-                        configurationOptionsProxy.getServiceBusTransactionContext(exchange));
+                        configurationOptionsProxy.getServiceBusTransactionContext(exchange), applicationProperties);
             }
 
             subscribeToMono(sendMessageAsync, exchange, noop -> {
@@ -164,6 +166,8 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
     private BiConsumer<Exchange, AsyncCallback> scheduleMessages() {
         return (exchange, callback) -> {
             final Object inputBody = exchange.getMessage().getBody();
+            final Map<String, Object> applicationProperties
+                    = exchange.getMessage().getHeader(ServiceBusConstants.APPLICATION_PROPERTIES, Map.class);
 
             Mono<List<Long>> scheduleMessagesAsync;
 
@@ -171,12 +175,14 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
                 scheduleMessagesAsync
                         = serviceBusSenderOperations.scheduleMessages(convertBodyToList((Iterable<Object>) inputBody),
                                 configurationOptionsProxy.getScheduledEnqueueTime(exchange),
-                                configurationOptionsProxy.getServiceBusTransactionContext(exchange));
+                                configurationOptionsProxy.getServiceBusTransactionContext(exchange),
+                                applicationProperties);
             } else {
                 scheduleMessagesAsync
                         = serviceBusSenderOperations.scheduleMessages(exchange.getMessage().getBody(String.class),
                                 configurationOptionsProxy.getScheduledEnqueueTime(exchange),
-                                configurationOptionsProxy.getServiceBusTransactionContext(exchange));
+                                configurationOptionsProxy.getServiceBusTransactionContext(exchange),
+                                applicationProperties);
             }
 
             subscribeToMono(scheduleMessagesAsync, exchange,

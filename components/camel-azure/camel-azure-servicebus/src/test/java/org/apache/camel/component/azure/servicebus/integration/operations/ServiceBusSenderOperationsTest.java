@@ -17,10 +17,7 @@
 package org.apache.camel.component.azure.servicebus.integration.operations;
 
 import java.time.OffsetDateTime;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Properties;
-import java.util.Spliterator;
+import java.util.*;
 import java.util.stream.StreamSupport;
 
 import com.azure.messaging.servicebus.ServiceBusClientBuilder;
@@ -89,7 +86,7 @@ public class ServiceBusSenderOperationsTest {
     void testSendSingleMessage() {
         final ServiceBusSenderOperations operations = new ServiceBusSenderOperations(clientSenderWrapper);
 
-        operations.sendMessages("test data", null).block();
+        operations.sendMessages("test data", null, Map.of("customKey", "customValue")).block();
 
         final boolean exists = StreamSupport.stream(clientReceiverWrapper.receiveMessages().toIterable().spliterator(), false)
                 .anyMatch(serviceBusReceivedMessage -> serviceBusReceivedMessage.getBody().toString().equals("test data"));
@@ -98,7 +95,7 @@ public class ServiceBusSenderOperationsTest {
 
         // test if we have something other than string or byte[]
         assertThrows(IllegalArgumentException.class, () -> {
-            operations.sendMessages(12345, null).block();
+            operations.sendMessages(12345, null, null).block();
         });
     }
 
@@ -111,7 +108,7 @@ public class ServiceBusSenderOperationsTest {
         inputBatch.add("test batch 2");
         inputBatch.add("test batch 3");
 
-        operations.sendMessages(inputBatch, null).block();
+        operations.sendMessages(inputBatch, null, null).block();
 
         final Spliterator<ServiceBusReceivedMessage> receivedMessages
                 = clientReceiverWrapper.receiveMessages().toIterable().spliterator();
@@ -134,7 +131,7 @@ public class ServiceBusSenderOperationsTest {
     void testScheduleMessage() {
         final ServiceBusSenderOperations operations = new ServiceBusSenderOperations(clientSenderWrapper);
 
-        operations.scheduleMessages("testScheduleMessage", OffsetDateTime.now(), null).block();
+        operations.scheduleMessages("testScheduleMessage", OffsetDateTime.now(), null, null).block();
 
         final boolean exists = StreamSupport.stream(clientReceiverWrapper.receiveMessages().toIterable().spliterator(), false)
                 .anyMatch(serviceBusReceivedMessage -> serviceBusReceivedMessage.getBody().toString()
@@ -144,7 +141,7 @@ public class ServiceBusSenderOperationsTest {
 
         // test if we have something other than string or byte[]
         assertThrows(IllegalArgumentException.class, () -> {
-            operations.scheduleMessages(12345, OffsetDateTime.now(), null).block();
+            operations.scheduleMessages(12345, OffsetDateTime.now(), null, null).block();
         });
     }
 
@@ -157,7 +154,7 @@ public class ServiceBusSenderOperationsTest {
         inputBatch.add("testSchedulingBatchMessages 2");
         inputBatch.add("testSchedulingBatchMessages 3");
 
-        operations.scheduleMessages(inputBatch, OffsetDateTime.now(), null).block();
+        operations.scheduleMessages(inputBatch, OffsetDateTime.now(), null, null).block();
 
         final Spliterator<ServiceBusReceivedMessage> receivedMessages
                 = clientReceiverWrapper.receiveMessages().toIterable().spliterator();

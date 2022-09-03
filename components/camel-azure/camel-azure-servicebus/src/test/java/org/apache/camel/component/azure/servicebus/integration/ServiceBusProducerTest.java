@@ -19,7 +19,9 @@ package org.apache.camel.component.azure.servicebus.integration;
 import java.time.OffsetDateTime;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Spliterator;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
@@ -49,18 +51,24 @@ class ServiceBusProducerTest extends BaseCamelServiceBusTestSupport {
     public void testSendMessage() throws InterruptedException {
         template.send("direct:sendMessage", exchange -> {
             exchange.getIn().setBody(123456789);
+            exchange.getIn().setHeader(ServiceBusConstants.APPLICATION_PROPERTIES, Map.of("customKey", "customValue"));
         });
 
         Thread.sleep(1000);
 
         // let's check our data
-        final Spliterator<ServiceBusReceivedMessage> receivedMessages
-                = receiverAsyncClient.receiveMessages().toIterable().spliterator();
+        final List<ServiceBusReceivedMessage> receivedMessages
+                = receiverAsyncClient.receiveMessages().toStream().collect(Collectors.toList());
 
-        final boolean batch1Exists = StreamSupport.stream(receivedMessages, false)
+        final boolean batch1Exists = receivedMessages.stream()
                 .anyMatch(serviceBusReceivedMessage -> serviceBusReceivedMessage.getBody().toString().equals("123456789"));
 
-        assertTrue(batch1Exists);
+        final boolean applicationPropertiesPresent = receivedMessages.stream()
+                .anyMatch(serviceBusReceivedMessage -> serviceBusReceivedMessage.getApplicationProperties()
+                        .containsKey("customKey"));
+
+        assertTrue(batch1Exists, "test message body");
+        assertTrue(applicationPropertiesPresent, "test message application properties");
     }
 
     @Test
