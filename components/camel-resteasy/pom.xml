@@ -31,7 +31,7 @@
 
     <artifactId>camel-resteasy</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Resteasy</name>
+    <name>Camel :: Resteasy (deprecated)</name>
     <description>Camel Resteasy support</description>
 
     <properties>

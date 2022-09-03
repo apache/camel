@@ -1,10 +1,11 @@
-= Resteasy Component
+= Resteasy Component (deprecated)
 :doctitle: Resteasy
 :shortname: resteasy
 :artifactid: camel-resteasy
 :description: Expose REST endpoints and access external REST servers.
 :since: 3.4
-:supportlevel: Preview
+:supportlevel: Preview-deprecated
+:deprecated: *deprecated*
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: resteasy
