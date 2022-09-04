@@ -759,7 +759,7 @@ public interface FhirEndpointBuilderFactory {
             return this;
         }
         /**
-         * Username to use for basic authentication.
+         * Password to use for basic authentication.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1477,7 +1477,7 @@ public interface FhirEndpointBuilderFactory {
             return this;
         }
         /**
-         * Username to use for basic authentication.
+         * Password to use for basic authentication.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -2092,7 +2092,7 @@ public interface FhirEndpointBuilderFactory {
             return this;
         }
         /**
-         * Username to use for basic authentication.
+         * Password to use for basic authentication.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
