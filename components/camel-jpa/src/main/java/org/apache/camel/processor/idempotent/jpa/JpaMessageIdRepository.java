@@ -62,7 +62,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
                                   String processorName) {
         this.entityManagerFactory = entityManagerFactory;
         this.processorName = processorName;
-        this.transactionStrategy= transactionStrategy;
+        this.transactionStrategy = transactionStrategy;
     }
 
     public static JpaMessageIdRepository jpaMessageIdRepository(String persistenceUnit, String processorName) {
