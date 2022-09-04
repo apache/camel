@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.18.2-SNAPSHOT</version>
+        <version>3.18.2</version>
     </parent>
 
     <artifactId>camel-file</artifactId>
@@ -66,8 +66,8 @@
                         </goals>
                         <configuration>
                             <tasks>
-                                <replace token= "Private-Package: org.apache.camel.resume" value="Private-Package: !*" dir="target/classes">
-                                    <include name="**/MANIFEST.MF"/>
+                                <replace token="Private-Package: org.apache.camel.resume" value="Private-Package: !*" dir="target/classes">
+                                    <include name="**/MANIFEST.MF" />
                                 </replace>
                             </tasks>
                         </configuration>
