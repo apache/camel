@@ -32,6 +32,12 @@
     <name>Camel :: File</name>
     <description>Camel File component</description>
 
+    <properties>
+        <camel.osgi.import.before.defaults>
+            org.apache.camel.resume;${camel.osgi.import.camel.version}
+        </camel.osgi.import.before.defaults>
+    </properties>
+
     <dependencies>
 
         <dependency>
