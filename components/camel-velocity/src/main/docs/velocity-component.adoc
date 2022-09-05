@@ -204,6 +204,8 @@ from("direct:in").
 In this sample we want to use Velocity templating for an order
 confirmation email. The email template is laid out in Velocity as:
 
+.letter.vm
+[source,text]
 ----------------------------------------------
 Dear ${headers.lastName}, ${headers.firstName}
 
@@ -213,8 +215,42 @@ Regards Camel Riders Bookstore
 ${body}
 ----------------------------------------------
 
-And the java code:
+And the java code (from an unit test):
 
+[source,java]
+----
+    private Exchange createLetter() {
+        Exchange exchange = context.getEndpoint("direct:a").createExchange();
+        Message msg = exchange.getIn();
+        msg.setHeader("firstName", "Claus");
+        msg.setHeader("lastName", "Ibsen");
+        msg.setHeader("item", "Camel in Action");
+        msg.setBody("PS: Next beer is on me, James");
+        return exchange;
+    }
+
+    @Test
+    public void testVelocityLetter() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.message(0).body(String.class).contains("Thanks for the order of Camel in Action");
+
+        template.send("direct:a", createLetter());
+
+        mock.assertIsSatisfied();
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() {
+                from("direct:a")
+                    .to("velocity:org/apache/camel/component/velocity/letter.vm")
+                    .to("mock:result");
+            }
+        };
+    }
+----
 
 
 include::spring-boot:partial$starter.adoc[]
