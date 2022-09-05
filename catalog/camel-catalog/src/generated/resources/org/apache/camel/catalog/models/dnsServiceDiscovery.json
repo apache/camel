@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "dnsServiceDiscovery",
     "title": "Dns Service Discovery",
-    "deprecated": false,
+    "deprecated": true,
     "label": "routing,cloud,service-discovery",
     "javaType": "org.apache.camel.model.cloud.DnsServiceCallServiceDiscoveryConfiguration",
     "abstract": false,

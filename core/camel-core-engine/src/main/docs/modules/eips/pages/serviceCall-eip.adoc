@@ -6,6 +6,8 @@
 :supportlevel: Stable-deprecated
 :deprecated: *deprecated*
 
+IMPORTANT: The Service Call EIP is deprecated
+
 How can I call a remote service in a distributed system where the service is looked up from a service registry of some sorts?
 
 image::eip/MessagingGatewayIcon.gif[image]

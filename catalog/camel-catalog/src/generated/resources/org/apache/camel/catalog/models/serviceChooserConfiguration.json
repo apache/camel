@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "serviceChooserConfiguration",
     "title": "Service Chooser Configuration",
-    "deprecated": false,
+    "deprecated": true,
     "label": "routing,cloud,service-discovery",
     "javaType": "org.apache.camel.model.cloud.ServiceCallServiceChooserConfiguration",
     "abstract": false,

@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "healthyServiceFilter",
     "title": "Healthy Service Filter",
-    "deprecated": false,
+    "deprecated": true,
     "label": "routing,cloud,service-filter",
     "javaType": "org.apache.camel.model.cloud.HealthyServiceCallServiceFilterConfiguration",
     "abstract": false,

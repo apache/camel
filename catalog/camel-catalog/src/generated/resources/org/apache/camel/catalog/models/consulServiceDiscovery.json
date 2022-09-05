@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "consulServiceDiscovery",
     "title": "Consul Service Discovery",
-    "deprecated": false,
+    "deprecated": true,
     "label": "routing,cloud,service-discovery",
     "javaType": "org.apache.camel.model.cloud.ConsulServiceCallServiceDiscoveryConfiguration",
     "abstract": false,

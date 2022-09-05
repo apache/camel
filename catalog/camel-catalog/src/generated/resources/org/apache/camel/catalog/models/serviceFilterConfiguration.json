@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "serviceFilterConfiguration",
     "title": "Service Filter Configuration",
-    "deprecated": false,
+    "deprecated": true,
     "label": "routing,cloud,service-discovery",
     "javaType": "org.apache.camel.model.cloud.ServiceCallServiceFilterConfiguration",
     "abstract": false,
