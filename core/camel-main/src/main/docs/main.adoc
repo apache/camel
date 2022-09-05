@@ -18,7 +18,7 @@ The following tables lists all the options:
 
 // main options: START
 === Camel Main configurations
-The camel.main supports 118 options, which are listed below.
+The camel.main supports 117 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -52,7 +52,6 @@ The camel.main supports 118 options, which are listed below.
 | *camel.main.durationMaxIdle{zwsp}Seconds* | To specify for how long time in seconds Camel can be idle before automatic terminating the JVM. You can use this to run Camel for a short while. |  | int
 | *camel.main.durationMaxMessages* | To specify how many messages to process by Camel before automatic terminating the JVM. You can use this to run Camel for a short while. |  | int
 | *camel.main.durationMaxSeconds* | To specify for how long time in seconds to keep running the JVM before automatic terminating the JVM. You can use this to run Camel for a short while. |  | int
-| *camel.main.eagerClassloading* | Whether to eager load a common set of Camel classes that would otherwise first be loaded on processing the first message. By eager loading these classes then the JVM has already loaded the classes during build phase, which allows Camel to process the first message faster. | false | boolean
 | *camel.main.endpointBridgeError{zwsp}Handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN/ERROR level and ignored. The default value is false. | false | boolean
 | *camel.main.endpointLazyStart{zwsp}Producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. The default value is false. | false | boolean
 | *camel.main.endpointRuntime{zwsp}StatisticsEnabled* | Sets whether endpoint runtime statistics is enabled (gathers runtime usage of each incoming and outgoing endpoints). The default value is false. | false | boolean

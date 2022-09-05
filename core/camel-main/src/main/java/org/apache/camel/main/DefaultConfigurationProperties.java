@@ -120,7 +120,6 @@ public abstract class DefaultConfigurationProperties<T> {
     @Metadata(defaultValue = "true")
     private boolean routesReloadRestartDuration = true;
     private boolean lightweight;
-    private boolean eagerClassloading;
     @Metadata(defaultValue = "default", enums = "default,prototype,pooled")
     private String exchangeFactory = "default";
     private int exchangeFactoryCapacity = 100;
@@ -1247,19 +1246,6 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setLightweight(boolean lightweight) {
         this.lightweight = lightweight;
-    }
-
-    public boolean isEagerClassloading() {
-        return eagerClassloading;
-    }
-
-    /**
-     * Whether to eager load a common set of Camel classes that would otherwise first be loaded on processing the first
-     * message. By eager loading these classes then the JVM has already loaded the classes during build phase, which
-     * allows Camel to process the first message faster.
-     */
-    public void setEagerClassloading(boolean eagerClassloading) {
-        this.eagerClassloading = eagerClassloading;
     }
 
     public String getExchangeFactory() {
@@ -2420,16 +2406,6 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withLightweight(boolean lightweight) {
         this.lightweight = lightweight;
-        return (T) this;
-    }
-
-    /**
-     * Whether to eager load a common set of Camel classes that would otherwise first be loaded on processing the first
-     * message. By eager loading these classes then the JVM has already loaded the classes during build phase, which
-     * allows Camel to process the first message faster.
-     */
-    public T withEagerClassloading(boolean eagerClassloading) {
-        this.eagerClassloading = eagerClassloading;
         return (T) this;
     }
 

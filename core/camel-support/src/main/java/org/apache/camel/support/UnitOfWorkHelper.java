@@ -26,7 +26,6 @@ import org.apache.camel.Service;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.SynchronizationRouteAware;
 import org.apache.camel.spi.UnitOfWork;
-import org.apache.camel.spi.annotations.EagerClassloaded;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,16 +33,11 @@ import org.slf4j.LoggerFactory;
 /**
  * Utility methods for {@link org.apache.camel.spi.UnitOfWork}
  */
-@EagerClassloaded
 public final class UnitOfWorkHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(UnitOfWorkHelper.class);
 
     private UnitOfWorkHelper() {
-    }
-
-    public static void onClassloaded(Logger log) {
-        log.trace("Loaded UnitOfWorkHelper");
     }
 
     /**

@@ -25,7 +25,6 @@ import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.ReactiveExecutor;
-import org.apache.camel.spi.annotations.EagerClassloaded;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.concurrent.NamedThreadLocal;
 import org.slf4j.Logger;
@@ -35,7 +34,6 @@ import org.slf4j.LoggerFactory;
  * Default {@link ReactiveExecutor}.
  */
 @ManagedResource(description = "Managed ReactiveExecutor")
-@EagerClassloaded
 public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveExecutor, StaticService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultReactiveExecutor.class);
@@ -103,12 +101,6 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
     @ManagedAttribute(description = "Number of pending tasks")
     public int getPendingTasks() {
         return pendingTasks.intValue();
-    }
-
-    public static void onClassloaded(Logger log) {
-        log.trace("Loaded DefaultReactiveExecutor");
-        Worker dummy = new Worker(-1, null);
-        log.trace("Loaded {}", dummy.getClass().getName());
     }
 
     @Override

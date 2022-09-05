@@ -624,12 +624,6 @@ public abstract class BaseMainSupport extends BaseService {
             recorder.endStep(step);
         }
 
-        if (mainConfigurationProperties.isEagerClassloading()) {
-            step = recorder.beginStep(BaseMainSupport.class, "classloading", "Eager Classloading");
-            EagerClassloadedHelper.eagerLoadClasses();
-            recorder.endStep(step);
-        }
-
         configureLifecycle(camelContext);
 
         if (standalone) {

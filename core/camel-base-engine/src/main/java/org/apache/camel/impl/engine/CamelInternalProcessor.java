@@ -56,7 +56,6 @@ import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.spi.UnitOfWorkFactory;
-import org.apache.camel.spi.annotations.EagerClassloaded;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.LoggerHelper;
@@ -98,7 +97,6 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * The added advices can implement {@link Ordered} to control in which order the advices are executed.
  */
-@EagerClassloaded
 public class CamelInternalProcessor extends DelegateAsyncProcessor implements InternalProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelInternalProcessor.class);
@@ -133,11 +131,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         shutdownStrategy = null;
         AsyncAfterTask task = new AsyncAfterTask(null);
         log.trace("Loaded {}", task.getClass().getSimpleName());
-    }
-
-    public static void onClassloaded(Logger log) {
-        CamelInternalProcessor dummy = new CamelInternalProcessor(log);
-        log.trace("Loaded {}", dummy.getClass().getSimpleName());
     }
 
     @Override
