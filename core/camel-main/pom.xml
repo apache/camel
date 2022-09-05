@@ -152,13 +152,6 @@
                         </goals>
                     </execution>
                     <execution>
-                        <id>update-classloaded</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>update-classloaded-helper</goal>
-                        </goals>
-                    </execution>
-                    <execution>
                         <id>generate-test-configurer</id>
                         <phase>process-test-classes</phase>
                         <goals>
