@@ -37,12 +37,12 @@ import org.slf4j.LoggerFactory;
 
 import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
-public class AWS2S3ConsumerHealthCheckTest extends CamelTestSupport {
+public class AWS2S3ConsumerHealthCheckStaticCredsTest extends CamelTestSupport {
 
     @RegisterExtension
     public static AWSService service = AWSServiceFactory.createS3Service();
 
-    private static final Logger LOG = LoggerFactory.getLogger(AWS2S3ConsumerHealthCheckTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AWS2S3ConsumerHealthCheckStaticCredsTest.class);
 
     CamelContext context;
 

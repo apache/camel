@@ -54,11 +54,17 @@ public class AWS2S3ConsumerHealthCheck extends AbstractHealthCheck {
                 builder.down();
                 return;
             }
-            AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
-            S3ClientBuilder clientBuilder = S3Client.builder();
-            S3Client client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred))
-                    .region(Region.of(configuration.getRegion())).build();
-            client.listBuckets();
+            if (!configuration.isUseDefaultCredentialsProvider()) {
+                AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
+                S3ClientBuilder clientBuilder = S3Client.builder();
+                S3Client client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred))
+                        .region(Region.of(configuration.getRegion())).build();
+                client.listBuckets();
+            } else {
+                S3ClientBuilder clientBuilder = S3Client.builder();
+                S3Client client = clientBuilder.region(Region.of(configuration.getRegion())).build();
+                client.listBuckets();
+            }
         } catch (SdkClientException e) {
             builder.message(e.getMessage());
             builder.error(e);
