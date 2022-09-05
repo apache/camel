@@ -209,7 +209,7 @@ public class JsonRestProcessor extends AbstractRestProcessor {
                     if (!rawPayload && responseType != null) {
                         response = objectMapper.readValue(responseEntity, responseType);
                     } else {
-                        // return the response as a stream, for getBlobField
+                        // return the response as a stream, for getBlobField and rawPayload
                         response = responseEntity;
                     }
                 }
@@ -246,12 +246,12 @@ public class JsonRestProcessor extends AbstractRestProcessor {
                 String propName = parser.getCurrentName();
                 if ("type".equals(propName)) {
                     parser.nextToken();
-                    type = "QueryRecords" + parser.getText();
+                    type = parser.getText();
                     break;
                 }
             }
-            setResponseClass(exchange, type);
-            responseClass = exchange.getProperty(RESPONSE_CLASS, Class.class);
+            String prefix = exchange.getProperty(RESPONSE_CLASS_PREFIX, "", String.class);
+            responseClass = getSObjectClass(prefix + type, null);
         } catch (IOException | SalesforceException exc) {
             throw new RuntimeException(exc);
         } finally {
@@ -295,6 +295,7 @@ public class JsonRestProcessor extends AbstractRestProcessor {
         } finally {
             exchange.removeProperty(RESPONSE_CLASS);
             exchange.removeProperty(RESPONSE_CLASS_DEFERRED);
+            exchange.removeProperty(RESPONSE_CLASS_PREFIX);
             exchange.removeProperty(RESPONSE_TYPE);
 
             try {

@@ -228,6 +228,15 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     }
 
     @Test
+    public void testApexCallDetectResponseType() throws Exception {
+        // request merchandise with id in URI template
+        Merchandise__c merchandise
+                = template().requestBodyAndHeader("direct:apexCallGetDetectResponseType", null, "id", merchandiseId,
+                        Merchandise__c.class);
+        assertNotNull(merchandise);
+    }
+
+    @Test
     public void returnsHttpResponseStatusAndText() {
         Exchange exchange = new DefaultExchange(context);
         template().send("direct:query", exchange);
@@ -848,8 +857,8 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
                 // testQuery
                 from("direct:queryWithSObjectName")
-                        .to("salesforce:query?sObjectQuery=SELECT Id, name, Typeof Owner WHEN User Then Username End, recordTypeId, RecordType.Name from Line_Item__c&sObjectName="
-                            + "QueryRecordsLine_Item__c");
+                        .to("salesforce:query?sObjectQuery=SELECT Id, name, Typeof Owner WHEN User Then Username End, recordTypeId, RecordType.Name from Line_Item__c"
+                            + "&sObjectName=QueryRecordsLine_Item__c");
 
                 // testQuery
                 from("direct:queryStreamResult")
@@ -899,6 +908,10 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
                 // testApexCall
                 from("direct:apexCallGet")
                         .to("salesforce:apexCall?apexMethod=GET&apexUrl=Merchandise/{id}&sObjectName=Merchandise__c");
+
+                // testApexCall
+                from("direct:apexCallGetDetectResponseType")
+                        .to("salesforce:apexCall?apexMethod=GET&apexUrl=Merchandise/{id}");
 
                 from("direct:apexCallGetWithId")
                         .to("salesforce:apexCall/Merchandise/?apexMethod=GET&id=dummyId" + "&sObjectClass="

@@ -31,6 +31,10 @@ public class SalesforceException extends CamelException {
     private final int statusCode;
     private final InputStream responseContent;
 
+    public SalesforceException(String message) {
+        this(message, null);
+    }
+
     public SalesforceException(Throwable cause) {
         this(null, 0, null, cause);
     }
