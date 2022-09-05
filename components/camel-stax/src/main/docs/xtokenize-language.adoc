@@ -1,7 +1,7 @@
 = XML Tokenize Language
 :doctitle: XML Tokenize
 :shortname: xtokenize
-:artifactid: camel-xml-jaxp
+:artifactid: camel-stax
 :description: Tokenize XML payloads.
 :since: 2.14
 :supportlevel: Stable

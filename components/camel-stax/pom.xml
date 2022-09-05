@@ -45,6 +45,10 @@
             <artifactId>camel-support</artifactId>
         </dependency>		
         <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-xml-jaxp</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.fasterxml.woodstox</groupId>
             <artifactId>woodstox-core</artifactId>
             <version>${woodstox-core-version}</version>

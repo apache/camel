@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "xml-jaxp",
+    "title": "Xml Jaxp",
+    "description": "Camel XML JAXP",
+    "deprecated": false,
+    "firstVersion": "3.0.0",
+    "label": "core,xml",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-xml-jaxp",
+    "version": "3.19.0-SNAPSHOT"
+  }
+}

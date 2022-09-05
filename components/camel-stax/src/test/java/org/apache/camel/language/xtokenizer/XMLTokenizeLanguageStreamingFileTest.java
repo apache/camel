@@ -14,15 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.tokenizer;
+package org.apache.camel.language.xtokenizer;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.builder.Namespaces;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class XMLTokenizeLanguageStreamingFileTest extends ContextTestSupport {
+public class XMLTokenizeLanguageStreamingFileTest extends CamelTestSupport {
 
     @Test
     public void testFromFile() throws Exception {

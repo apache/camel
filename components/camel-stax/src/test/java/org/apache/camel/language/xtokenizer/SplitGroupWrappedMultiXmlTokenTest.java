@@ -14,44 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language;
+package org.apache.camel.language.xtokenizer;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.builder.Namespaces;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-/**
- *
- */
-public class XMLTokenSplitTest extends ContextTestSupport {
+public class SplitGroupWrappedMultiXmlTokenTest extends CamelTestSupport {
 
     @Test
-    public void testXMLToken() throws Exception {
+    public void testTokenXMLPairGroup() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedMessageCount(3);
-        mock.message(0).body().isEqualTo("<order id=\"1\" xmlns=\"http:acme.com\">Camel in Action</order>");
-        mock.message(1).body().isEqualTo("<order id=\"2\" xmlns=\"http:acme.com\">ActiveMQ in Action</order>");
-        mock.message(2).body().isEqualTo("<order id=\"3\" xmlns=\"http:acme.com\">DSL in Action</order>");
+        mock.message(0).body()
+                .isEqualTo(
+                        "<?xml version=\"1.0\"?>\n<orders xmlns=\"http:acme.com\">\n  <order id=\"1\">Camel in Action</order><order id=\"2\">ActiveMQ in Action</order></orders>");
+        mock.message(1).body()
+                .isEqualTo(
+                        "<?xml version=\"1.0\"?>\n<orders xmlns=\"http:acme.com\">\n  <order id=\"3\">Spring in Action</order><order id=\"4\">Scala in Action</order></orders>");
+        mock.message(2).body().isEqualTo(
+                "<?xml version=\"1.0\"?>\n<orders xmlns=\"http:acme.com\">\n  <order id=\"5\">Groovy in Action</order></orders>");
 
         String body = createBody();
-        template.sendBodyAndHeader(fileUri("xtokenizer"), body, Exchange.FILE_NAME, "orders.xml");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testXMLToken2() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:split");
-        mock.expectedMessageCount(3);
-        mock.message(0).body().isEqualTo("<order id=\"1\" xmlns=\"http:acme.com\">Camel in Action</order>");
-        mock.message(1).body().isEqualTo("<order id=\"2\" xmlns=\"http:acme.com\">ActiveMQ in Action</order>");
-        mock.message(2).body().isEqualTo("<order id=\"3\" xmlns=\"http:acme.com\">DSL in Action</order>");
-
-        String body = createBody();
-        template.sendBodyAndHeader(fileUri("xtokenizer2"), body, Exchange.FILE_NAME, "orders.xml");
+        template.sendBodyAndHeader(fileUri(), body, Exchange.FILE_NAME, "orders.xml");
 
         assertMockEndpointsSatisfied();
     }
@@ -61,8 +49,9 @@ public class XMLTokenSplitTest extends ContextTestSupport {
         sb.append("<orders xmlns=\"http:acme.com\">\n");
         sb.append("  <order id=\"1\">Camel in Action</order>\n");
         sb.append("  <order id=\"2\">ActiveMQ in Action</order>\n");
-        sb.append("  <order id=\"3\">DSL in Action</order>\n");
-        sb.append("  <order id=\"4\" xmlns=\"\">Illegal Action</order>\n");
+        sb.append("  <order id=\"3\">Spring in Action</order>\n");
+        sb.append("  <order id=\"4\">Scala in Action</order>\n");
+        sb.append("  <order id=\"5\">Groovy in Action</order>\n");
         sb.append("</orders>");
         return sb.toString();
     }
@@ -75,17 +64,13 @@ public class XMLTokenSplitTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from(fileUri("xtokenizer?initialDelay=0&delay=10"))
+                from(fileUri("?initialDelay=0&delay=10"))
                         // split the order child tags, and inherit namespaces from
                         // the orders root tag
-                        .split().xtokenize("//orders/order", ns).to("mock:split");
+                        .split().xtokenize("//order", 'w', ns, 2).to("log:split").to("mock:split");
                 // END SNIPPET: e1
-
-                from(fileUri("xtokenizer2?initialDelay=0&delay=10"))
-                        // split the order child tags, and inherit namespaces from
-                        // the orders root tag
-                        .split(body().xtokenize("//orders/order", ns)).to("mock:split");
             }
         };
     }
+
 }

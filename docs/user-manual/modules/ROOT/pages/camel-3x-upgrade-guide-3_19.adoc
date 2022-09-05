@@ -45,7 +45,6 @@ spec:
 
 The URI format for consumer operations has changed. All consumer URIs now use the `subscribe` operation. E.g., `salesforce:subscribe:<topic_name>`, `salesforce:subscribe:event/<event_name>`, `salesforce:subscribe:data/ChangeEvents`.
 
-
 === camel-consul
 
 The deprecated options were removed and should be replaced by the following options:
@@ -66,3 +65,9 @@ The deprecated options were removed and should be replaced by the following opti
 === camel-google-bigquery-sql
 
 Parameters in form of `@name` are extracted from the body or message and their type is preserved and translated into corresponding `com.google.cloud.bigquery.StandardSQLTypeName`. See the https://cloud.google.com/java/docs/reference/google-cloud-bigquery/latest/com.google.cloud.bigquery.QueryParameterValue[documentation] for more information. (Conversion to StandardSQLTypeName.STRING was used for each type before)
+
+=== xtokenize language
+
+The xtokenize language has moved from `camel-xml-jaxp` to `camel-stax` JAR because
+a stax parser was needed anyway to use the language.
+

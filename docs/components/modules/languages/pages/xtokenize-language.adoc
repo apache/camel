@@ -1,1 +1,1 @@
-../../../../../core/camel-xml-jaxp/src/main/docs/modules/languages/pages/xtokenize-language.adoc
+../../../../../components/camel-stax/src/main/docs/xtokenize-language.adoc

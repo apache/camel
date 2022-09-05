@@ -14,26 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language;
+package org.apache.camel.language.xtokenizer;
 
-import org.apache.camel.CamelContext;
-import org.junit.jupiter.api.Test;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.support.builder.Namespaces;
 
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
-
-/**
- *
- */
-public class SpringXMLTokenSplitTest extends XMLTokenSplitTest {
+public class XMLTokenizeLanguageStreamingTest extends XMLTokenizeLanguageTest {
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/language/SpringXMLTokenSplitTest.xml");
-    }
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            Namespaces ns = new Namespaces("C", "urn:c");
 
-    @Override
-    @Test
-    public void testXMLToken2() throws Exception {
-        // noop
+            public void configure() {
+                from("direct:start").split().xtokenize("//C:child", ns).streaming().to("mock:result").end();
+            }
+        };
     }
 }
