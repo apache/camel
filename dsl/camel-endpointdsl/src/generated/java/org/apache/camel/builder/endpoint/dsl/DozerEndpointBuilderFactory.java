@@ -240,6 +240,7 @@ public interface DozerEndpointBuilderFactory {
          * @param path name
          * @return the dsl builder
          */
+        @Deprecated
         default DozerEndpointBuilder dozer(String path) {
             return DozerEndpointBuilderFactory.endpointBuilder("dozer", path);
         }
@@ -261,10 +262,12 @@ public interface DozerEndpointBuilderFactory {
          * @param path name
          * @return the dsl builder
          */
+        @Deprecated
         default DozerEndpointBuilder dozer(String componentName, String path) {
             return DozerEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static DozerEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
