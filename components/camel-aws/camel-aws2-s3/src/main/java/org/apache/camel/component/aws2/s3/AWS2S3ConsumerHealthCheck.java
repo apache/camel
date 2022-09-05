@@ -26,6 +26,7 @@ import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3ClientBuilder;
+import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
 
 public class AWS2S3ConsumerHealthCheck extends AbstractHealthCheck {
 
@@ -54,18 +55,18 @@ public class AWS2S3ConsumerHealthCheck extends AbstractHealthCheck {
                 builder.down();
                 return;
             }
+            S3Client client;
             if (!configuration.isUseDefaultCredentialsProvider()) {
                 AwsBasicCredentials cred
                         = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
                 S3ClientBuilder clientBuilder = S3Client.builder();
-                S3Client client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred))
+                client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred))
                         .region(Region.of(configuration.getRegion())).build();
-                client.listBuckets();
             } else {
                 S3ClientBuilder clientBuilder = S3Client.builder();
-                S3Client client = clientBuilder.region(Region.of(configuration.getRegion())).build();
-                client.listBuckets();
+                client = clientBuilder.region(Region.of(configuration.getRegion())).build();
             }
+            client.headBucket(HeadBucketRequest.builder().bucket(configuration.getBucketName()).build());
         } catch (SdkClientException e) {
             builder.message(e.getMessage());
             builder.error(e);
