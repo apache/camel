@@ -1331,8 +1331,8 @@ public interface KafkaEndpointBuilderFactory {
          * it to a short name. Any later rules in the list are ignored. By
          * default, principal names of the form {username}/{hostname}{REALM} are
          * mapped to {username}. For more details on the format please see the
-         * security authorization and acls documentation.. Multiple values can
-         * be separated by comma.
+         * security authorization and acls documentation (at the Apache Kafka
+         * project). Multiple values can be separated by comma.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -2547,13 +2547,16 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The configuration controls how long sending to kafka will block.
-         * These methods can be blocked for multiple reasons. For e.g: buffer
-         * full, metadata unavailable.This configuration imposes maximum limit
-         * on the total time spent in fetching metadata, serialization of key
-         * and value, partitioning and allocation of buffer memory when doing a
-         * send(). In case of partitionsFor(), this configuration imposes a
-         * maximum time threshold on waiting for metadata.
+         * The configuration controls how long the KafkaProducer's send(),
+         * partitionsFor(), initTransactions(), sendOffsetsToTransaction(),
+         * commitTransaction() and abortTransaction() methods will block. For
+         * send() this timeout bounds the total time waiting for both metadata
+         * fetch and buffer allocation (blocking in the user-supplied
+         * serializers or partitioner is not counted against this timeout). For
+         * partitionsFor() this timeout bounds the time spent waiting for
+         * metadata if it is unavailable. The transaction-related methods always
+         * block, but may timeout if the transaction coordinator could not be
+         * discovered or did not respond within the timeout.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
@@ -2568,13 +2571,16 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The configuration controls how long sending to kafka will block.
-         * These methods can be blocked for multiple reasons. For e.g: buffer
-         * full, metadata unavailable.This configuration imposes maximum limit
-         * on the total time spent in fetching metadata, serialization of key
-         * and value, partitioning and allocation of buffer memory when doing a
-         * send(). In case of partitionsFor(), this configuration imposes a
-         * maximum time threshold on waiting for metadata.
+         * The configuration controls how long the KafkaProducer's send(),
+         * partitionsFor(), initTransactions(), sendOffsetsToTransaction(),
+         * commitTransaction() and abortTransaction() methods will block. For
+         * send() this timeout bounds the total time waiting for both metadata
+         * fetch and buffer allocation (blocking in the user-supplied
+         * serializers or partitioner is not counted against this timeout). For
+         * partitionsFor() this timeout bounds the time spent waiting for
+         * metadata if it is unavailable. The transaction-related methods always
+         * block, but may timeout if the transaction coordinator could not be
+         * discovered or did not respond within the timeout.
          * 
          * The option will be converted to a
          * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
@@ -2725,7 +2731,7 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The number of samples maintained to compute metrics.
+         * The window of time a metrics sample is computed over.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
@@ -2741,7 +2747,7 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * The number of samples maintained to compute metrics.
+         * The window of time a metrics sample is computed over.
          * 
          * The option will be converted to a
          * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
@@ -3453,8 +3459,8 @@ public interface KafkaEndpointBuilderFactory {
          * it to a short name. Any later rules in the list are ignored. By
          * default, principal names of the form {username}/{hostname}{REALM} are
          * mapped to {username}. For more details on the format please see the
-         * security authorization and acls documentation.. Multiple values can
-         * be separated by comma.
+         * security authorization and acls documentation (at the Apache Kafka
+         * project). Multiple values can be separated by comma.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -4309,8 +4315,8 @@ public interface KafkaEndpointBuilderFactory {
          * it to a short name. Any later rules in the list are ignored. By
          * default, principal names of the form {username}/{hostname}{REALM} are
          * mapped to {username}. For more details on the format please see the
-         * security authorization and acls documentation.. Multiple values can
-         * be separated by comma.
+         * security authorization and acls documentation (at the Apache Kafka
+         * project). Multiple values can be separated by comma.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
