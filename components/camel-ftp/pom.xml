@@ -190,6 +190,7 @@
                     <forkCount>${camel.failsafe.forkCount}</forkCount>
                     <parallel>${camel.failsafe.parallel}</parallel>
                     <forkedProcessTimeoutInSeconds>${camel.failsafe.forkTimeout}</forkedProcessTimeoutInSeconds>
+                    <argLine>-XX:+ExitOnOutOfMemoryError -Xmx1G</argLine>
                 </configuration>
             </plugin>
         </plugins>
