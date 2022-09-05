@@ -50,6 +50,7 @@ import org.apache.camel.util.function.ThrowingHelper;
 import static org.apache.camel.support.CamelContextHelper.findSingleByType;
 import static org.apache.camel.support.CamelContextHelper.lookup;
 
+@Deprecated
 public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCallDefinition> {
 
     private volatile ServiceCallDefinition definition;

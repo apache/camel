@@ -40,6 +40,7 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "serviceDiscoveryConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Configurer(extended = true)
+@Deprecated
 public class ServiceCallServiceDiscoveryConfiguration extends ServiceCallConfiguration implements ServiceDiscoveryFactory {
     @XmlTransient
     private final Optional<ServiceCallDefinition> parent;

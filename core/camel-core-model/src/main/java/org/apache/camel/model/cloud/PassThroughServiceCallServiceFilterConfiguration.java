@@ -27,6 +27,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "passThroughServiceFilter")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Configurer(extended = true)
+@Deprecated
 public class PassThroughServiceCallServiceFilterConfiguration extends ServiceCallServiceFilterConfiguration {
     public PassThroughServiceCallServiceFilterConfiguration() {
         this(null);

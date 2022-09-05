@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "serviceExpression",
     "title": "Service Expression",
-    "deprecated": false,
+    "deprecated": true,
     "label": "routing,cloud",
     "javaType": "org.apache.camel.model.cloud.ServiceCallExpressionConfiguration",
     "abstract": false,

@@ -27,6 +27,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "defaultLoadBalancer")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Configurer(extended = true)
+@Deprecated
 public class DefaultServiceCallServiceLoadBalancerConfiguration extends ServiceCallServiceLoadBalancerConfiguration {
     public DefaultServiceCallServiceLoadBalancerConfiguration() {
         this(null);

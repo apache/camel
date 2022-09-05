@@ -36,6 +36,7 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "staticServiceDiscovery")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Configurer(extended = true)
+@Deprecated
 public class StaticServiceCallServiceDiscoveryConfiguration extends ServiceCallServiceDiscoveryConfiguration {
     @XmlElement
     private List<String> servers;

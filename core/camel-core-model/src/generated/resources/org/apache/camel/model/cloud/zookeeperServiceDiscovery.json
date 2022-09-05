@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "zookeeperServiceDiscovery",
     "title": "Zookeeper Service Discovery",
-    "deprecated": false,
+    "deprecated": true,
     "label": "routing,cloud,service-discovery",
     "javaType": "org.apache.camel.model.cloud.ZooKeeperServiceCallServiceDiscoveryConfiguration",
     "abstract": false,

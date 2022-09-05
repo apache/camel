@@ -36,6 +36,7 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "blacklistServiceFilter")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Configurer(extended = true)
+@Deprecated
 public class BlacklistServiceCallServiceFilterConfiguration extends ServiceCallServiceFilterConfiguration {
     @XmlElement
     private List<String> servers;

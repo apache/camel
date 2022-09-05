@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "passThroughServiceFilter",
     "title": "Pass Through Service Filter",
-    "deprecated": false,
+    "deprecated": true,
     "label": "routing,cloud,service-filter",
     "javaType": "org.apache.camel.model.cloud.PassThroughServiceCallServiceFilterConfiguration",
     "abstract": false,

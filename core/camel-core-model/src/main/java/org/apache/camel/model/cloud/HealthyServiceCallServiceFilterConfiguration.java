@@ -27,6 +27,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "healthyServiceFilter")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Configurer(extended = true)
+@Deprecated
 public class HealthyServiceCallServiceFilterConfiguration extends ServiceCallServiceFilterConfiguration {
     public HealthyServiceCallServiceFilterConfiguration() {
         this(null);

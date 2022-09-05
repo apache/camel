@@ -28,6 +28,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "dnsServiceDiscovery")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Configurer(extended = true)
+@Deprecated
 public class DnsServiceCallServiceDiscoveryConfiguration extends ServiceCallServiceDiscoveryConfiguration {
     @XmlAttribute
     @Metadata(defaultValue = "_tcp")

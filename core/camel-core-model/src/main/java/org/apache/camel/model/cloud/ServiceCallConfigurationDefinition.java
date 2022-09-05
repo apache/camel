@@ -40,6 +40,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "routing,cloud")
 @XmlRootElement(name = "serviceCallConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class ServiceCallConfigurationDefinition extends IdentifiedType {
     @XmlAttribute
     private String uri;

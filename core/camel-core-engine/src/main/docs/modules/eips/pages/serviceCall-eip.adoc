@@ -1,9 +1,10 @@
-= Service Call EIP
+= Service Call EIP (deprecated)
 :doctitle: Service Call
 :shortname: serviceCall
 :description: To call remote services
 :since: 
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 
 How can I call a remote service in a distributed system where the service is looked up from a service registry of some sorts?
 
@@ -496,4 +497,3 @@ from("direct:start")
     .end()
     .to("mock:result");
 ----
-
