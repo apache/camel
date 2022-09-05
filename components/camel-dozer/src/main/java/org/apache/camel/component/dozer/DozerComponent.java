@@ -25,6 +25,7 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 @Component("dozer")
+@Deprecated
 public class DozerComponent extends DefaultComponent {
 
     public DozerComponent() {
