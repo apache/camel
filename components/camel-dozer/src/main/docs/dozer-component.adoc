@@ -1,10 +1,11 @@
-= Dozer Component
+= Dozer Component (deprecated)
 :doctitle: Dozer
 :shortname: dozer
 :artifactid: camel-dozer
 :description: Map between Java beans using the Dozer mapping library.
 :since: 2.15
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: dozer

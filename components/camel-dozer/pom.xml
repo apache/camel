@@ -28,7 +28,7 @@
 
     <artifactId>camel-dozer</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Dozer</name>
+    <name>Camel :: Dozer (deprecated)</name>
     <description>Camel Support for the Dozer type conversion framework</description>
 
     <properties>

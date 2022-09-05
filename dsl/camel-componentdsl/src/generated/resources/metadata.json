@@ -1978,7 +1978,7 @@
     "name": "dozer",
     "title": "Dozer",
     "description": "Map between Java beans using the Dozer mapping library.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.15.0",
     "label": "transformation",
     "javaType": "org.apache.camel.component.dozer.DozerComponent",

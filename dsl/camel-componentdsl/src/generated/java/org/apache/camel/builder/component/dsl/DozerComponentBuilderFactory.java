@@ -40,6 +40,7 @@ public interface DozerComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static DozerComponentBuilder dozer() {
         return new DozerComponentBuilderImpl();
     }
