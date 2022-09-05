@@ -138,6 +138,8 @@ public class MailConfiguration implements Cloneable {
     private Properties javaMailProperties;
     @UriParam(label = "advanced")
     private MailAuthenticator authenticator;
+    @UriParam(label = "consumer,advanced")
+    private boolean failOnDuplicateFileAttachment;
 
     public MailConfiguration() {
     }
@@ -827,5 +829,18 @@ public class MailConfiguration implements Cloneable {
      */
     public void setDecodeFilename(boolean decodeFilename) {
         this.decodeFilename = decodeFilename;
+    }
+
+    public boolean isFailOnDuplicateFileAttachment() {
+        return failOnDuplicateFileAttachment;
+    }
+
+    /**
+     * Whether to fail processing the mail if the mail message contains attachments with duplicate file names. If set to
+     * false, then the duplicate attachment is skipped and a WARN is logged. If set to true then an exception is thrown
+     * failing to process the mail message.
+     */
+    public void setFailOnDuplicateFileAttachment(boolean failOnDuplicateFileAttachment) {
+        this.failOnDuplicateFileAttachment = failOnDuplicateFileAttachment;
     }
 }

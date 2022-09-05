@@ -72,6 +72,7 @@ public class MailBinding {
     private ContentTypeResolver contentTypeResolver;
     private boolean decodeFilename;
     private boolean mapMailMessage = true;
+    private boolean failOnDuplicateAttachment;
 
     public MailBinding() {
         headerFilterStrategy = new DefaultHeaderFilterStrategy();
@@ -80,15 +81,29 @@ public class MailBinding {
     @Deprecated
     public MailBinding(HeaderFilterStrategy headerFilterStrategy, ContentTypeResolver contentTypeResolver,
                        boolean decodeFilename) {
-        this(headerFilterStrategy, contentTypeResolver, decodeFilename, true);
+        this(headerFilterStrategy, contentTypeResolver, decodeFilename, true, false);
     }
 
     public MailBinding(HeaderFilterStrategy headerFilterStrategy, ContentTypeResolver contentTypeResolver,
                        boolean decodeFilename, boolean mapMailMessage) {
+        this(headerFilterStrategy, contentTypeResolver, decodeFilename, mapMailMessage, false);
+    }
+
+    public MailBinding(HeaderFilterStrategy headerFilterStrategy, ContentTypeResolver contentTypeResolver,
+                       boolean decodeFilename, boolean mapMailMessage, boolean failOnDuplicateAttachment) {
         this.headerFilterStrategy = headerFilterStrategy;
         this.contentTypeResolver = contentTypeResolver;
         this.decodeFilename = decodeFilename;
         this.mapMailMessage = mapMailMessage;
+        this.failOnDuplicateAttachment = failOnDuplicateAttachment;
+    }
+
+    public boolean isFailOnDuplicateAttachment() {
+        return failOnDuplicateAttachment;
+    }
+
+    public void setFailOnDuplicateAttachment(boolean failOnDuplicateAttachment) {
+        this.failOnDuplicateAttachment = failOnDuplicateAttachment;
     }
 
     public void populateMailMessage(MailEndpoint endpoint, MimeMessage mimeMessage, Exchange exchange)
@@ -370,10 +385,25 @@ public class MailBinding {
                         }
                         map.put(fileName, camelAttachment);
                     } else {
-                        LOG.warn("Cannot extract duplicate file attachment: {}.", fileName);
+                        handleDuplicateFileAttachment(mp, fileName);
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Strategy for handling extracting mail message that has duplicate file attachments
+     *
+     * @param mp  the multipart entity
+     * @param duplicateFileName the duplicated file name
+     * @throws MessagingException is thrown, failing with an error
+     */
+    protected void handleDuplicateFileAttachment(Multipart mp, String duplicateFileName) throws MessagingException {
+        if (failOnDuplicateAttachment) {
+            throw new MessagingException("Duplicate file attachment: " + duplicateFileName);
+        } else {
+            LOG.warn("Cannot extract duplicate file attachment: {}.", duplicateFileName);
         }
     }
 

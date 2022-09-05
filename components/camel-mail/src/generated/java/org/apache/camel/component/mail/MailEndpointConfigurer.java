@@ -60,6 +60,8 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "failonduplicatefileattachment":
+        case "failOnDuplicateFileAttachment": target.getConfiguration().setFailOnDuplicateFileAttachment(property(camelContext, boolean.class, value)); return true;
         case "fetchsize":
         case "fetchSize": target.getConfiguration().setFetchSize(property(camelContext, int.class, value)); return true;
         case "foldername":
@@ -182,6 +184,8 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "failonduplicatefileattachment":
+        case "failOnDuplicateFileAttachment": return boolean.class;
         case "fetchsize":
         case "fetchSize": return int.class;
         case "foldername":
@@ -305,6 +309,8 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "failonduplicatefileattachment":
+        case "failOnDuplicateFileAttachment": return target.getConfiguration().isFailOnDuplicateFileAttachment();
         case "fetchsize":
         case "fetchSize": return target.getConfiguration().getFetchSize();
         case "foldername":

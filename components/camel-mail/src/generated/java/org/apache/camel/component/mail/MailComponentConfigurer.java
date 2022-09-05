@@ -58,6 +58,8 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "decodeFilename": getOrCreateConfiguration(target).setDecodeFilename(property(camelContext, boolean.class, value)); return true;
         case "delete": getOrCreateConfiguration(target).setDelete(property(camelContext, boolean.class, value)); return true;
         case "disconnect": getOrCreateConfiguration(target).setDisconnect(property(camelContext, boolean.class, value)); return true;
+        case "failonduplicatefileattachment":
+        case "failOnDuplicateFileAttachment": getOrCreateConfiguration(target).setFailOnDuplicateFileAttachment(property(camelContext, boolean.class, value)); return true;
         case "fetchsize":
         case "fetchSize": getOrCreateConfiguration(target).setFetchSize(property(camelContext, int.class, value)); return true;
         case "foldername":
@@ -137,6 +139,8 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "decodeFilename": return boolean.class;
         case "delete": return boolean.class;
         case "disconnect": return boolean.class;
+        case "failonduplicatefileattachment":
+        case "failOnDuplicateFileAttachment": return boolean.class;
         case "fetchsize":
         case "fetchSize": return int.class;
         case "foldername":
@@ -217,6 +221,8 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "decodeFilename": return getOrCreateConfiguration(target).isDecodeFilename();
         case "delete": return getOrCreateConfiguration(target).isDelete();
         case "disconnect": return getOrCreateConfiguration(target).isDisconnect();
+        case "failonduplicatefileattachment":
+        case "failOnDuplicateFileAttachment": return getOrCreateConfiguration(target).isFailOnDuplicateFileAttachment();
         case "fetchsize":
         case "fetchSize": return getOrCreateConfiguration(target).getFetchSize();
         case "foldername":
