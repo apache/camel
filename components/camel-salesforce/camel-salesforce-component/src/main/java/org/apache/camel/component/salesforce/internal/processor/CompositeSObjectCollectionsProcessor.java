@@ -98,7 +98,7 @@ public class CompositeSObjectCollectionsProcessor extends AbstractSalesforceProc
         String sObjectName = getParameter(SalesforceEndpointConfig.SOBJECT_NAME, exchange, IGNORE_BODY, IS_OPTIONAL);
 
         // gets class by sObjectName if not null, otherwise tries the SOBJECT_CLASS option
-        Class<?> sObjectClass = getSObjectClass(sObjectName, exchange);
+        Class<?> sObjectClass = getSObjectClass(exchange);
 
         RetrieveSObjectCollectionsDto request = new RetrieveSObjectCollectionsDto(ids, fields);
         compositeClient.submitRetrieveCompositeCollections(request, determineHeaders(exchange),

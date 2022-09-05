@@ -175,18 +175,35 @@ public abstract class AbstractSalesforceProcessor extends ServiceSupport impleme
         }
     }
 
-    protected Class<?> getSObjectClass(String sObjectName, Exchange exchange) throws SalesforceException {
+    protected Class<?> getSObjectClass(Exchange exchange) throws SalesforceException {
+        final String sObjectName = getParameter(SalesforceEndpointConfig.SOBJECT_NAME, exchange, IGNORE_BODY, IS_OPTIONAL);
+        final String className = getParameter(SalesforceEndpointConfig.SOBJECT_CLASS, exchange, IGNORE_BODY, IS_OPTIONAL);
+        return getSObjectClass(sObjectName, className);
+    }
+
+    /**
+     *
+     * @param  sObjectName         if provided, will attempt to look up class by simple name
+     * @param  className           if provided, will attempt to look up class by fully qualified name
+     * @return                     Class, if found.
+     * @throws SalesforceException if unable to find class by whichever parameter was non-null
+     */
+    protected Class<?> getSObjectClass(String sObjectName, String className) throws SalesforceException {
         Class<?> sObjectClass = null;
         if (sObjectName != null) {
             sObjectClass = classMap.get(sObjectName);
+            if (sObjectClass == null) {
+                throw new SalesforceException(
+                        String.format("SObject class not found for sObjectName: %s", sObjectName));
+            }
         }
-        if (sObjectClass == null) {
-            final String className = getParameter(SalesforceEndpointConfig.SOBJECT_CLASS, exchange, IGNORE_BODY, NOT_OPTIONAL);
+        if (className != null) {
             try {
-                sObjectClass = endpoint.getComponent().getCamelContext().getClassResolver().resolveMandatoryClass(className);
+                sObjectClass
+                        = endpoint.getComponent().getCamelContext().getClassResolver().resolveMandatoryClass(className);
             } catch (ClassNotFoundException e) {
                 throw new SalesforceException(
-                        String.format("SObject class not found %s or by sObjectName %s", className, sObjectName), e);
+                        String.format("SObject class not found %s", className), e);
             }
         }
         return sObjectClass;

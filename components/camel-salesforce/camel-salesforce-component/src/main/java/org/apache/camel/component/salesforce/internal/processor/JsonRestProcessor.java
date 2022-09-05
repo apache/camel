@@ -23,6 +23,9 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.AsyncCallback;
@@ -196,6 +199,9 @@ public class JsonRestProcessor extends AbstractRestProcessor {
                 // do we need to un-marshal a response
                 final Object response;
                 Class<?> responseClass = exchange.getProperty(RESPONSE_CLASS, Class.class);
+                if (responseClass == null && exchange.getProperty(RESPONSE_CLASS_DEFERRED, false, Boolean.class)) {
+                    responseClass = detectResponseClass(exchange, responseEntity);
+                }
                 if (!rawPayload && responseClass != null) {
                     response = objectMapper.readValue(responseEntity, responseClass);
                 } else {
@@ -203,7 +209,7 @@ public class JsonRestProcessor extends AbstractRestProcessor {
                     if (!rawPayload && responseType != null) {
                         response = objectMapper.readValue(responseEntity, responseType);
                     } else {
-                        // return the response as a stream, for getBlobField
+                        // return the response as a stream, for getBlobField and rawPayload
                         response = responseEntity;
                     }
                 }
@@ -229,6 +235,29 @@ public class JsonRestProcessor extends AbstractRestProcessor {
             callback.done(false);
         }
 
+    }
+
+    private Class<?> detectResponseClass(Exchange exchange, InputStream responseEntity) throws IOException {
+        Class<?> responseClass;
+        try {
+            final JsonParser parser = new JsonFactory().createParser(responseEntity);
+            String type = null;
+            while (parser.nextToken() != JsonToken.END_OBJECT) {
+                String propName = parser.getCurrentName();
+                if ("type".equals(propName)) {
+                    parser.nextToken();
+                    type = parser.getText();
+                    break;
+                }
+            }
+            String prefix = exchange.getProperty(RESPONSE_CLASS_PREFIX, "", String.class);
+            responseClass = getSObjectClass(prefix + type, null);
+        } catch (IOException | SalesforceException exc) {
+            throw new RuntimeException(exc);
+        } finally {
+            responseEntity.reset();
+        }
+        return responseClass;
     }
 
     @Override
@@ -265,6 +294,8 @@ public class JsonRestProcessor extends AbstractRestProcessor {
             exchange.setException(new SalesforceException(msg, e));
         } finally {
             exchange.removeProperty(RESPONSE_CLASS);
+            exchange.removeProperty(RESPONSE_CLASS_DEFERRED);
+            exchange.removeProperty(RESPONSE_CLASS_PREFIX);
             exchange.removeProperty(RESPONSE_TYPE);
 
             try {

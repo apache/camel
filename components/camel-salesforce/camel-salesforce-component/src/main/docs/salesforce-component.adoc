@@ -522,15 +522,16 @@ Deletes a record in salesforce by External ID.
 
 `query`
 
-Runs a Salesforce SOQL query.
+Runs a Salesforce SOQL query. If neither `sObjectClass` nor `sObjectName` are set, Camel will attempt to determine
+the correct `AbstractQueryRecordsBase` sublcass based on the response.
 
 |===
 | Parameter | Type | Description | Default | Required
 
 | Body or `sObjectQuery` | `String`  | SOQL query | | x
 | streamQueryResult | `Boolean` | If true, returns a streaming `Iterator` and transparently retrieves all pages as needed. The `sObjectClass` option must reference an `AbstractQueryRecordsBase` subclass. | false |
-| `sObjectClass` | `String` | Fully qualified name of class to deserialize response to. Usually a subclass of `AbstractQueryRecordsBase`, e.g. `org.my.dto.QueryRecordsAccount`| | One of sObjectClass or sObjectName is required
-| `sObjectName` | `String` | Simple name of class to deserialize response to. Usually a subclass of `AbstractQueryRecordsBase`, e.g. `QueryRecordsAccount`. Requires the `package` option be set.| |One of sObjectClass or sObjectName is required
+| `sObjectClass` | `String` | Fully qualified name of class to deserialize response to. Usually a subclass of `AbstractQueryRecordsBase`, e.g. `org.my.dto.QueryRecordsAccount`| |
+| `sObjectName` | `String` | Simple name of class to deserialize response to. Usually a subclass of `AbstractQueryRecordsBase`, e.g. `QueryRecordsAccount`. Requires the `package` option be set.| |
 |===
 
 *Output*
@@ -542,14 +543,16 @@ Type: Instance of class supplied in `sObjectClass`, or `Iterator<SomeSObject>` i
 
 `queryMore`
 
-Retrieves more results (in case of large number of results) using result link returned from the `query` and `queryAll` operations.
+Retrieves more results (in case of large number of results) using result link returned from the `query` and `queryAll`
+operations. If neither `sObjectClass` nor `sObjectName` are set, Camel will attempt to determine the correct
+`AbstractQueryRecordsBase` sublcass based on the response.
 
 |===
 | Parameter | Type | Description | Default | Required
 
 | Body or `sObjectQuery` | `String`  | `nextRecords` value. Can be found in a prior query result in the `AbstractQueryRecordsBase.nextRecordsUrl` property | | X
-| `sObjectClass` | `String` | Fully qualified name of class to deserialize response to. Usually a subclass of `AbstractQueryRecordsBase`, e.g. `org.my.dto.QueryRecordsAccount`| |One of sObjectClass or sObjectName is required
-| `sObjectName` | `String` | Simple name of class to deserialize response to. Usually a subclass of `AbstractQueryRecordsBase`, e.g. `QueryRecordsAccount`. Requires the `package` option be set. | |One of sObjectClass or sObjectName is required
+| `sObjectClass` | `String` | Fully qualified name of class to deserialize response to. Usually a subclass of `AbstractQueryRecordsBase`, e.g. `org.my.dto.QueryRecordsAccount`| |
+| `sObjectName` | `String` | Simple name of class to deserialize response to. Usually a subclass of `AbstractQueryRecordsBase`, e.g. `QueryRecordsAccount`. Requires the `package` option be set. | |
 
 |===
 
@@ -562,15 +565,18 @@ Type: Instance of class supplied in `sObjectClass`
 
 `queryAll`
 
-Executes the specified SOQL query. Unlike the `query` operation , `queryAll` returns records that are deleted because of a merge or delete. It also returns information about archived task and event records.
+Executes the specified SOQL query. Unlike the `query` operation , `queryAll` returns records that are deleted because
+of a merge or delete. It also returns information about archived task and event records. If neither `sObjectClass` nor
+`sObjectName` are set, Camel will attempt to determine the correct `AbstractQueryRecordsBase` sublcass based on the
+response.
 
 |===
 | Parameter | Type | Description | Default | Required
 
 | Body or `sObjectQuery` | `String`  | SOQL query | | x
 | streamQueryResult | `Boolean` | If true, returns a streaming `Iterable` and transparently retrieves all pages as needed. The `sObjectClass` option must reference an `AbstractQueryRecordsBase` subclass. | false |
-| `sObjectClass` | `String` | Fully qualified name of class to deserialize response to. Usually a subclass of `AbstractQueryRecordsBase`, e.g. `org.my.dto.QueryRecordsAccount`| |One of sObjectClass or sObjectName is required
-| `sObjectName` | `String` | Simple name of class to deserialize response to. Usually a subclass of `AbstractQueryRecordsBase`, e.g. `QueryRecordsAccount`. Requires the `package` option be set.| |One of sObjectClass or sObjectName is required
+| `sObjectClass` | `String` | Fully qualified name of class to deserialize response to. Usually a subclass of `AbstractQueryRecordsBase`, e.g. `org.my.dto.QueryRecordsAccount`| |
+| `sObjectName` | `String` | Simple name of class to deserialize response to. Usually a subclass of `AbstractQueryRecordsBase`, e.g. `QueryRecordsAccount`. Requires the `package` option be set.| |
 |===
 
 *Output*
@@ -1008,7 +1014,9 @@ salesforce:apexCall[/yourApexRestUrl][?options]
 
 You can supply the apexUrl either in the endpoint (see above), or as the `apexUrl` option as listed in the table below.
 In either case the Apex URL can contain placeholders in the format of `\{headerName}`. E.g., for the Apex URL `MyApexClass/\{id}`,
-the value of the header named `id` will be used to replace the placeholder.
+the value of the header named `id` will be used to replace the placeholder. If `rawPayload` is false and neither
+`sObjectClass` nor `sObjectName` are set, Camel will attempt to determine the correct `AbstractQueryRecordsBase`
+sublcass based on the response.
 
 |===
 | Parameter | Type | Description| Default| Required
@@ -1019,8 +1027,8 @@ is transformed into query parameters. For other HTTP methods, the body is used f
 | `apexMethod` | `String` | The HTTP method (e.g. `GET`, `POST`) to use. | `GET` |
 | `rawPayload` | `Boolean` | If true, Camel will not serialize the request or response bodies. | false |
 | Header: `apexQueryParam.[paramName]` | Object | Headers that override apex parameters passed in the endpoint. |  |
-| `sObjectName` | `String` | Name of sObject (e.g. `Merchandise__c`) used to deserialize the response |  | If `rawPayload` is false and `sObjectClass` not supplied
-| `sObjectClass` | `String` | Fully qualified class name used to deserialize the response |  | If `rawPayload` is false and `sObjectName` not supplied
+| `sObjectName` | `String` | Name of sObject (e.g. `Merchandise__c`) used to deserialize the response |  |
+| `sObjectClass` | `String` | Fully qualified class name used to deserialize the response |  |
 |===
 
 *Output*

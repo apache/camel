@@ -63,6 +63,10 @@ import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.STR
 public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor {
 
     protected static final String RESPONSE_CLASS = AbstractRestProcessor.class.getName() + ".responseClass";
+    protected static final String RESPONSE_CLASS_DEFERRED = AbstractRestProcessor.class.getName()
+                                                            + ".responseClassDeferred";
+    protected static final String RESPONSE_CLASS_PREFIX = AbstractRestProcessor.class.getName()
+                                                          + ".responseClassPrefix";
     protected static final String RESPONSE_TYPE = JsonRestProcessor.class.getName() + ".responseType";
 
     private static final Pattern URL_TEMPLATE = Pattern.compile("\\{([^\\{\\}]+)\\}");
@@ -332,7 +336,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         final String sObjectId = determineSObjectId(exchange);
 
         // use sObject name to load class
-        setResponseClass(exchange, sObjectName);
+        setResponseClass(exchange);
 
         // get optional field list
         String fieldsValue = getParameter(SOBJECT_FIELDS, exchange, IGNORE_BODY, IS_OPTIONAL);
@@ -403,7 +407,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         }
 
         // use sObject name to load class
-        setResponseClass(exchange, sObjectName);
+        setResponseClass(exchange);
 
         final Object finalOldValue = oldValue;
         restClient.getSObjectWithId(sObjectName, sObjectExtIdName, sObjectExtIdValue, determineHeaders(exchange),
@@ -492,10 +496,10 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
     private void processQuery(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
         final String sObjectQuery = getParameter(SOBJECT_QUERY, exchange, USE_BODY, NOT_OPTIONAL);
         final boolean streamQueryResults = getParameter(STREAM_QUERY_RESULT, exchange, IGNORE_BODY, IS_OPTIONAL, Boolean.class);
-        final String sObjectName = getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, IS_OPTIONAL);
 
         // use custom response class property
-        setResponseClass(exchange, sObjectName);
+        setResponseClass(exchange);
+        exchange.setProperty(RESPONSE_CLASS_PREFIX, "QueryRecords");
 
         if (streamQueryResults) {
             restClient.query(sObjectQuery, determineHeaders(exchange), processWithStreamResultCallback(exchange, callback));
@@ -507,10 +511,10 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
     private void processQueryMore(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
         // reuse SOBJECT_QUERY parameter name for nextRecordsUrl
         final String nextRecordsUrl = getParameter(SOBJECT_QUERY, exchange, USE_BODY, NOT_OPTIONAL);
-        final String sObjectName = getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, IS_OPTIONAL);
 
         // use custom response class property
-        setResponseClass(exchange, sObjectName);
+        setResponseClass(exchange);
+        exchange.setProperty(RESPONSE_CLASS_PREFIX, "QueryRecords");
 
         restClient.queryMore(nextRecordsUrl, determineHeaders(exchange), processWithResponseCallback(exchange, callback));
     }
@@ -518,10 +522,10 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
     private void processQueryAll(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
         final String sObjectQuery = getParameter(SOBJECT_QUERY, exchange, USE_BODY, NOT_OPTIONAL);
         final boolean streamQueryResults = getParameter(STREAM_QUERY_RESULT, exchange, IGNORE_BODY, IS_OPTIONAL, Boolean.class);
-        final String sObjectName = getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, IS_OPTIONAL);
 
         // use custom response class property
-        setResponseClass(exchange, sObjectName);
+        setResponseClass(exchange);
+        exchange.setProperty(RESPONSE_CLASS_PREFIX, "QueryRecords");
 
         if (streamQueryResults) {
             restClient.queryAll(sObjectQuery, determineHeaders(exchange), processWithStreamResultCallback(exchange, callback));
@@ -549,7 +553,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         final Map<String, Object> queryParams = getQueryParams(exchange);
 
         // set response class
-        setResponseClass(exchange, getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, IS_OPTIONAL));
+        setResponseClass(exchange);
 
         // set request stream
         final Object requestBody = exchange.getIn().getBody();
@@ -731,15 +735,19 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
      */
     protected abstract InputStream getRequestStream(Message in, Object object) throws SalesforceException;
 
-    private void setResponseClass(Exchange exchange, String sObjectName) throws SalesforceException {
+    protected void setResponseClass(Exchange exchange) throws SalesforceException {
 
         // nothing to do if using rawPayload
         if (rawPayload) {
             return;
         }
 
-        Class<?> sObjectClass = getSObjectClass(sObjectName, exchange);
-        exchange.setProperty(RESPONSE_CLASS, sObjectClass);
+        Class<?> sObjectClass = getSObjectClass(exchange);
+        if (sObjectClass != null) {
+            exchange.setProperty(RESPONSE_CLASS, sObjectClass);
+        } else {
+            exchange.setProperty(RESPONSE_CLASS_DEFERRED, true);
+        }
     }
 
     final ResponseCallback processWithResponseCallback(final Exchange exchange, final AsyncCallback callback) {
