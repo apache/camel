@@ -34,6 +34,8 @@ public final class SensitiveUtils {
                     "accountkey",
                     "accountsid",
                     "acltoken",
+                    "api_key",
+                    "api_secret",
                     "apipassword",
                     "apiuser",
                     "apiusername",
@@ -110,6 +112,8 @@ public final class SensitiveUtils {
                                                     + "|\\Qaccountkey\\E"
                                                     + "|\\Qaccountsid\\E"
                                                     + "|\\Qacltoken\\E"
+                                                    + "|\\Qapi_key\\E"
+                                                    + "|\\Qapi_secret\\E"
                                                     + "|\\Qapipassword\\E"
                                                     + "|\\Qapiuser\\E"
                                                     + "|\\Qapiusername\\E"
@@ -174,7 +178,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qverificationcode\\E"
                                                     + "|\\Qwebhookverifytoken\\E"
                                                     + "|\\Qzookeeperpassword\\E"
-    // SENSITIVE-PATTERN: END
+                                                    // SENSITIVE-PATTERN: END
     ;
 
     private SensitiveUtils() {
