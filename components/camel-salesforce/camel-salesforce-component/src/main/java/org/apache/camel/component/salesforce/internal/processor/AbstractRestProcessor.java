@@ -63,6 +63,8 @@ import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.STR
 public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor {
 
     protected static final String RESPONSE_CLASS = AbstractRestProcessor.class.getName() + ".responseClass";
+    protected static final String RESPONSE_CLASS_DEFERRED = AbstractRestProcessor.class.getName()
+                                                            + ".responseClassDeferred";
     protected static final String RESPONSE_TYPE = JsonRestProcessor.class.getName() + ".responseType";
 
     private static final Pattern URL_TEMPLATE = Pattern.compile("\\{([^\\{\\}]+)\\}");
@@ -731,7 +733,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
      */
     protected abstract InputStream getRequestStream(Message in, Object object) throws SalesforceException;
 
-    private void setResponseClass(Exchange exchange, String sObjectName) throws SalesforceException {
+    protected void setResponseClass(Exchange exchange, String sObjectName) throws SalesforceException {
 
         // nothing to do if using rawPayload
         if (rawPayload) {
@@ -739,7 +741,12 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         }
 
         Class<?> sObjectClass = getSObjectClass(sObjectName, exchange);
-        exchange.setProperty(RESPONSE_CLASS, sObjectClass);
+        if (sObjectClass != null) {
+            exchange.setProperty(RESPONSE_CLASS, sObjectClass);
+        } else {
+            exchange.setProperty(RESPONSE_CLASS_DEFERRED, true);
+        }
+
     }
 
     final ResponseCallback processWithResponseCallback(final Exchange exchange, final AsyncCallback callback) {

@@ -175,18 +175,24 @@ public abstract class AbstractSalesforceProcessor extends ServiceSupport impleme
         }
     }
 
+    /**
+     * \ * @return a Class if found, otherwise null
+     */
     protected Class<?> getSObjectClass(String sObjectName, Exchange exchange) throws SalesforceException {
         Class<?> sObjectClass = null;
         if (sObjectName != null) {
             sObjectClass = classMap.get(sObjectName);
         }
         if (sObjectClass == null) {
-            final String className = getParameter(SalesforceEndpointConfig.SOBJECT_CLASS, exchange, IGNORE_BODY, NOT_OPTIONAL);
-            try {
-                sObjectClass = endpoint.getComponent().getCamelContext().getClassResolver().resolveMandatoryClass(className);
-            } catch (ClassNotFoundException e) {
-                throw new SalesforceException(
-                        String.format("SObject class not found %s or by sObjectName %s", className, sObjectName), e);
+            final String className = getParameter(SalesforceEndpointConfig.SOBJECT_CLASS, exchange, IGNORE_BODY, IS_OPTIONAL);
+            if (className != null) {
+                try {
+                    sObjectClass
+                            = endpoint.getComponent().getCamelContext().getClassResolver().resolveMandatoryClass(className);
+                } catch (ClassNotFoundException e) {
+                    throw new SalesforceException(
+                            String.format("SObject class not found %s or by sObjectName %s", className, sObjectName), e);
+                }
             }
         }
         return sObjectClass;

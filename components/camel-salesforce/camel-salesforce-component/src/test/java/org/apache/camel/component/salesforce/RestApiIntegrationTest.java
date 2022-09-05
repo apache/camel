@@ -513,6 +513,14 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     }
 
     @Test
+    public void testQueryDetectResponseClass() throws Exception {
+        createLineItem();
+        final QueryRecordsLine_Item__c queryRecords
+                = template().requestBody("direct:queryDetectResponseClass", null, QueryRecordsLine_Item__c.class);
+        assertNotNull(queryRecords);
+    }
+
+    @Test
     public void testQueryWithSObjectName() throws Exception {
         createLineItem();
         final QueryRecordsLine_Item__c queryRecords
@@ -822,6 +830,13 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
                 // testGetBlobField
                 from("direct:getBlobField")
                         .to("salesforce:getBlobField?sObjectName=Document&sObjectBlobFieldName=Body");
+
+                // testQuery
+                from("direct:queryDetectResponseClass")
+                        .to("salesforce:query?sObjectQuery=SELECT Id, name, Typeof Owner WHEN User Then Username End, recordTypeId, RecordType.Name "
+                            + "from Line_Item__c "
+                            + "ORDER BY CreatedDate DESC "
+                            + "LIMIT 1");
 
                 // testQuery
                 from("direct:query")
