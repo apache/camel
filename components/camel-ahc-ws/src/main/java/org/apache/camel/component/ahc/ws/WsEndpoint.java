@@ -28,6 +28,8 @@ import org.apache.camel.component.ahc.AhcEndpoint;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.util.SensitiveUtils;
+import org.apache.camel.util.URISupport;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.AsyncHttpClientConfig;
 import org.asynchttpclient.DefaultAsyncHttpClient;
@@ -52,6 +54,7 @@ public class WsEndpoint extends AhcEndpoint {
     private final Set<WsConsumer> consumers = new HashSet<>();
     private final WsListener listener = new WsListener();
     private transient WebSocket websocket;
+    private transient String sanitizedUri;
 
     @UriParam(label = "producer")
     private boolean useStreaming;
@@ -60,6 +63,15 @@ public class WsEndpoint extends AhcEndpoint {
 
     public WsEndpoint(String endpointUri, WsComponent component) {
         super(endpointUri, component, null);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (getHttpUri() != null) {
+            sanitizedUri = URISupport.sanitizeUri(getHttpUri().toASCIIString());
+        }
     }
 
     @Override
@@ -128,7 +140,7 @@ public class WsEndpoint extends AhcEndpoint {
     public void connect() throws ExecutionException, InterruptedException {
         String uri = getHttpUri().toASCIIString();
 
-        LOG.debug("Connecting to {}", uri);
+        LOG.debug("Connecting to {}", sanitizedUri);
         websocket = getClient().prepareGet(uri).execute(
                 new WebSocketUpgradeHandler.Builder()
                         .addWebSocketListener(listener).build())
@@ -139,7 +151,7 @@ public class WsEndpoint extends AhcEndpoint {
     protected void doStop() throws Exception {
         if (websocket != null && websocket.isOpen()) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Disconnecting from {}", getHttpUri().toASCIIString());
+                LOG.debug("Disconnecting from {}", sanitizedUri);
             }
             websocket.removeWebSocketListener(listener);
             websocket.sendCloseFrame();
@@ -159,8 +171,7 @@ public class WsEndpoint extends AhcEndpoint {
 
     void reConnect() throws ExecutionException, InterruptedException {
         if (websocket == null || !websocket.isOpen()) {
-            String uri = getHttpUri().toASCIIString();
-            LOG.info("Reconnecting websocket: {}", uri);
+            LOG.info("Reconnecting websocket: {}", sanitizedUri);
             connect();
         }
     }
