@@ -964,16 +964,29 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     @Override
-    protected synchronized boolean removeRoute(String routeId, LoggingLevel loggingLevel) throws Exception {
-        boolean removed = super.removeRoute(routeId, loggingLevel);
-        if (removed) {
-            // must also remove the route definition
-            RouteDefinition def = getRouteDefinition(routeId);
-            if (def != null) {
-                removeRouteDefinition(def);
+    protected boolean removeRoute(String routeId, LoggingLevel loggingLevel) throws Exception {
+        // synchronize on model first to avoid deadlock with concurrent 'addRoutes' calls:
+        synchronized (model) {
+            synchronized (this) {
+                boolean removed = super.removeRoute(routeId, loggingLevel);
+                if (removed) {
+                    // must also remove the route definition
+                    RouteDefinition def = getRouteDefinition(routeId);
+                    if (def != null) {
+                        removeRouteDefinition(def);
+                    }
+                }
+                return removed;
             }
         }
-        return removed;
+    }
+
+    @Override
+    public boolean removeRoute(String routeId) throws Exception {
+        // synchronize on model first to avoid deadlock with concurrent 'addRoutes' calls:
+        synchronized (model) {
+            return super.removeRoute(routeId);
+        }
     }
 
     /**
