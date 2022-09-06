@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This component will hold a Quartz Scheduler that will provide scheduled timer based endpoint that generate a
- * QuartzMessage to a route. Currently it support Cron and Simple trigger scheduling type.
+ * QuartzMessage to a route.
  */
 @Component("quartz")
 public class QuartzComponent extends DefaultComponent implements ExtendedStartupListener {
@@ -59,8 +59,9 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
 
     private final List<SchedulerInitTask> schedulerInitTasks = new ArrayList<>();
     private volatile boolean schedulerInitTasksDone;
+    private volatile boolean shouldStopScheduler;
 
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", autowired = true)
     private Scheduler scheduler;
     @Metadata(label = "advanced")
     private SchedulerFactory schedulerFactory;
@@ -242,7 +243,7 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
             // enable jmx unless configured to not do so
             if (enableJmx && !prop.containsKey("org.quartz.scheduler.jmx.export")) {
                 prop.put("org.quartz.scheduler.jmx.export", "true");
-                LOG.info("Setting org.quartz.scheduler.jmx.export=true to ensure QuartzScheduler(s) will be enlisted in JMX.");
+                LOG.info("Setting org.quartz.scheduler.jmx.export=true to ensure QuartzScheduler(s) will be enlisted in JMX");
             }
 
             answer = new StdSchedulerFactory(prop);
@@ -284,7 +285,7 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
             // enable jmx unless configured to not do so
             if (enableJmx && !prop.containsKey("org.quartz.scheduler.jmx.export")) {
                 prop.put("org.quartz.scheduler.jmx.export", "true");
-                LOG.info("Setting org.quartz.scheduler.jmx.export=true to ensure QuartzScheduler(s) will be enlisted in JMX.");
+                LOG.info("Setting org.quartz.scheduler.jmx.export=true to ensure QuartzScheduler(s) will be enlisted in JMX");
             }
 
             answer = new StdSchedulerFactory(prop);
@@ -463,7 +464,8 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
     }
 
     private void createAndInitScheduler() throws SchedulerException {
-        LOG.info("Create and initializing scheduler.");
+        LOG.debug("Creating and initializing Quartz scheduler");
+        shouldStopScheduler = true;
         scheduler = createScheduler();
 
         SchedulerContext quartzContext = storeCamelContextInQuartzContext();
@@ -477,7 +479,7 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
         // Store CamelContext into QuartzContext space
         SchedulerContext quartzContext = scheduler.getContext();
         String camelContextName = QuartzHelper.getQuartzContextName(getCamelContext());
-        LOG.debug("Storing camelContextName={} into Quartz Context space.", camelContextName);
+        LOG.debug("Storing camelContextName={} into Quartz Context space", camelContextName);
         quartzContext.put(QuartzConstants.QUARTZ_CAMEL_CONTEXT + "-" + camelContextName, getCamelContext());
         return quartzContext;
     }
@@ -490,18 +492,18 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
     protected void doStop() throws Exception {
         super.doStop();
 
-        if (scheduler != null) {
+        if (scheduler != null && shouldStopScheduler) {
             if (isInterruptJobsOnShutdown()) {
-                LOG.info("Shutting down scheduler. (will interrupts jobs to shutdown quicker.)");
+                LOG.info("Shutting down Quartz scheduler (will interrupts jobs to shutdown quicker)");
                 scheduler.shutdown(false);
                 scheduler = null;
             } else {
                 AtomicInteger number = (AtomicInteger) scheduler.getContext().get(QuartzConstants.QUARTZ_CAMEL_JOBS_COUNT);
                 if (number != null && number.get() > 0) {
-                    LOG.info("Cannot shutdown scheduler: {} as there are still {} jobs registered.",
+                    LOG.info("Cannot shutdown Quartz scheduler: {} as there are still {} jobs registered",
                             scheduler.getSchedulerName(), number.get());
                 } else {
-                    LOG.info("Shutting down scheduler. (will wait for all jobs to complete first.)");
+                    LOG.info("Shutting down Quartz scheduler (will wait for all jobs to complete first)");
                     scheduler.shutdown(true);
                     scheduler = null;
                 }
@@ -543,12 +545,12 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
 
         // Now scheduler is ready, let see how we should start it.
         if (!autoStartScheduler) {
-            LOG.info("Not starting scheduler because autoStartScheduler is set to false");
+            LOG.info("Not starting Quartz scheduler: {} because autoStartScheduler is set to false", scheduler);
         } else {
             if (scheduler.isStarted()) {
-                LOG.info("The scheduler has already been started");
+                LOG.info("The Quartz scheduler: {} has already been started", scheduler);
             } else {
-                LOG.info("Starting scheduler");
+                LOG.info("Starting Quartz scheduler: {}", scheduler);
                 scheduler.start();
             }
         }
