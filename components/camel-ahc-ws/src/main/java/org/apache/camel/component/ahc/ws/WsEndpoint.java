@@ -28,7 +28,6 @@ import org.apache.camel.component.ahc.AhcEndpoint;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.util.SensitiveUtils;
 import org.apache.camel.util.URISupport;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.AsyncHttpClientConfig;
