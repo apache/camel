@@ -212,12 +212,13 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
             final String between = pomText.substring(before.length(), pomText.length() - after.length());
 
             Pattern pattern = Pattern.compile(
-                    "<dependency>\\s*<groupId>(?<groupId>.*)</groupId>\\s*<artifactId>(?<artifactId>.*)</artifactId>\\s*<version>\\$\\{project\\.version}</version>\\s*</dependency>");
+                    "<dependency>\\s*<groupId>(?<groupId>.*)</groupId>\\s*<artifactId>(?<artifactId>.*)</artifactId>\\s*<version>(?<version>.*)</version>\\s*</dependency>");
             Matcher matcher = pattern.matcher(between);
             TreeSet<String> dependencies = new TreeSet<>();
             while (matcher.find()) {
                 dependencies.add(matcher.group());
             }
+
             dependencies.add("<dependency>\n"
                              + "\t\t\t\t<groupId>" + project.getGroupId() + "</groupId>\n"
                              + "\t\t\t\t<artifactId>" + project.getArtifactId() + "</artifactId>\n"
