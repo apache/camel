@@ -141,7 +141,7 @@ constructed from the Message are all defined by the
 xref:manual::bean-binding.adoc[Bean Binding] mechanism which is used throughout
 all the various xref:manual::bean-integration.adoc[Bean Integration] mechanisms in Camel.
 
-See also related xref:bean-language.adoc[Bean Language].
+See also related xref:languages:bean-language.adoc[Bean Language].
 
 
 
