@@ -6,11 +6,11 @@
 :since: 2.14
 :supportlevel: Stable
 //Manually maintained attributes
-:camel-spring-boot-name: xml-jaxp
+:camel-spring-boot-name: stax
 
 *Since Camel {since}*
 
-The XML Tokenize language is a built-in language in `camel-xml-jaxp`, which
+The XML Tokenize language is a built-in language in `camel-stax`, which
 is a truly XML-aware tokenizer that can be used with the xref:eips:split-eip.adoc[Split] EIP
 as the conventional xref:tokenize-language.adoc[Tokenize] to efficiently and
 effectively tokenize XML documents.
