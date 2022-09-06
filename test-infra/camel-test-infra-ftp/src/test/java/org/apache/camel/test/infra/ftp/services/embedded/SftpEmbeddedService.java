@@ -40,6 +40,7 @@ import org.apache.sshd.scp.server.ScpCommandFactory;
 import org.apache.sshd.server.SshServer;
 import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
 import org.apache.sshd.sftp.server.SftpSubsystemFactory;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +54,7 @@ public class SftpEmbeddedService extends AbstractTestService implements FtpServi
     private Path rootDir;
     private Path knownHosts;
     private final EmbeddedConfiguration embeddedConfiguration;
+    private ExtensionContext context;
 
     public SftpEmbeddedService() {
         this(false);
@@ -164,7 +166,35 @@ public class SftpEmbeddedService extends AbstractTestService implements FtpServi
         store.accept(FtpProperties.ROOT_DIR, rootDir.toString());
     }
 
+    @Override
+    public void registerProperties() {
+        ExtensionContext.Store store = context.getStore(ExtensionContext.Namespace.GLOBAL);
+        registerProperties(store::put);
+    }
+
     public int getPort() {
         return port;
+    }
+
+    @Override
+    public void beforeAll(ExtensionContext extensionContext) throws Exception {
+        this.context = extensionContext;
+    }
+
+    @Override
+    public void afterAll(ExtensionContext extensionContext) throws Exception {
+        this.context = null;
+    }
+
+    @Override
+    public void afterEach(ExtensionContext extensionContext) throws Exception {
+        shutdown();
+        this.context = null;
+    }
+
+    @Override
+    public void beforeEach(ExtensionContext extensionContext) throws Exception {
+        this.context = extensionContext;
+        initialize();
     }
 }

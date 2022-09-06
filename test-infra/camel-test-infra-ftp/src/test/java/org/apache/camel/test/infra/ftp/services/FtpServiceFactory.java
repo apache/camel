@@ -17,6 +17,7 @@
 package org.apache.camel.test.infra.ftp.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.ftp.services.embedded.FtpEmbeddedService;
 
 public final class FtpServiceFactory {
 
@@ -30,7 +31,7 @@ public final class FtpServiceFactory {
 
     public static FtpService createService() {
         return builder()
-                .addRemoteMapping(FtpRemoteService::new)
+                .addLocalMapping(FtpEmbeddedService::new)
                 .build();
     }
 }
