@@ -85,28 +85,22 @@ include::partial$component-endpoint-headers.adoc[]
 
 If your Camel Application is running behind a firewall or if you need to
 have more control over the SqsClient instance configuration, you can
-create your own instance:
+create your own instance, and configure Camel to use your instance by the bean id.
+
+In the example below we use _myClient_ as the bean id:
 
 [source,java]
 ---------------------------------------------------------------------------------
-from("aws2-sqs://MyQueue?amazonSQSClient=#client&delay=5000&maxMessagesPerPoll=5")
+// crate my own instance of SqsClient
+SqsClient sqs = ...
+
+// register the client into Camel registry
+camelContext.getRegistry().bind("myClient", sqs);
+
+// refer to the custom client via myClient as the bean id
+from("aws2-sqs://MyQueue?amazonSQSClient=#m4yClient&delay=5000&maxMessagesPerPoll=5")
 .to("mock:result");
 ---------------------------------------------------------------------------------
-
-=== Creating or updating an SQS Queue
-
-In the SQS Component, when an endpoint is started, a check is executed to obtain information 
-about the existence of the queue or not. You're able to customize the creation through the QueueAttributeName 
-mapping with the SQSConfiguration option.
-
-[source,java]
----------------------------------------------------------------------------------
-from("aws2-sqs://MyQueue?autoCreateQueue=true")
-.to("mock:result");
----------------------------------------------------------------------------------
-
-In this example if the MyQueue queue is not already created on AWS (and the autoCreateQueue option is set to true), it will be created with default parameters from the 
-SQS configuration. If it's already up on AWS, the SQS configuration options will be used to override the existent AWS configuration.
 
 === DelayQueue VS Delay for Single message
 
@@ -161,6 +155,7 @@ instruct Camel to send the DeleteMessage, if being filtered.
 
 == Send Message
 
+[source,java]
 ------------------------------------------------------------------------------------------------------
 from("direct:start")
   .setBody(constant("Camel rocks!"))
@@ -171,6 +166,7 @@ from("direct:start")
 
 You can set a `SendMessageBatchRequest` or an `Iterable`
 
+[source,java]
 ------------------------------------------------------------------------------------------------------
 from("direct:start")
   .setHeader(SqsConstants.SQS_OPERATION, constant("sendBatchMessage"))
@@ -195,6 +191,7 @@ The id set on each message of the batch will be a Random UUID.
 
 Use deleteMessage operation to delete a single message. You'll need to set a receipt handle header for the message you want to delete.
 
+[source,java]
 ------------------------------------------------------------------------------------------------------
 from("direct:start")
   .setHeader(SqsConstants.SQS_OPERATION, constant("deleteMessage"))
@@ -208,6 +205,7 @@ As result you'll get an exchange containing a `DeleteMessageResponse` instance, 
 
 Use listQueues operation to list queues.
 
+[source,java]
 ------------------------------------------------------------------------------------------------------
 from("direct:start")
   .setHeader(SqsConstants.SQS_OPERATION, constant("listQueues"))
@@ -220,6 +218,7 @@ As result you'll get an exchange containing a `ListQueuesResponse` instance, tha
 
 Use purgeQueue operation to purge queue.
 
+[source,java]
 ------------------------------------------------------------------------------------------------------
 from("direct:start")
   .setHeader(SqsConstants.SQS_OPERATION, constant("purgeQueue"))
