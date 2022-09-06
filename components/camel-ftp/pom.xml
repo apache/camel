@@ -36,14 +36,7 @@
             com.jcraft.jsch.*;version="[0.2,1)"
         </camel.osgi.import.before.defaults>
 
-        <camel.surefire.forkCount>4</camel.surefire.forkCount>
-        <camel.surefire.forkTimeout>600</camel.surefire.forkTimeout>
-        <camel.surefire.parallel>false</camel.surefire.parallel>
-
-        <!-- This one can run in parallel rather safely-->
-        <camel.failsafe.forkCount>${camel.surefire.forkCount}</camel.failsafe.forkCount>
-        <camel.failsafe.forkTimeout>${camel.surefire.forkTimeout}</camel.failsafe.forkTimeout>
-        <camel.failsafe.parallel>${camel.surefire.parallel}</camel.failsafe.parallel>
+        <camel.failsafe.parallel.factor>0.5</camel.failsafe.parallel.factor>
     </properties>
 
     <dependencies>
@@ -186,12 +179,43 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
-                    <!-- This one can run in parallel rather safely-->
-                    <forkCount>${camel.failsafe.forkCount}</forkCount>
-                    <parallel>${camel.failsafe.parallel}</parallel>
-                    <forkedProcessTimeoutInSeconds>${camel.failsafe.forkTimeout}</forkedProcessTimeoutInSeconds>
-                    <argLine>-XX:+ExitOnOutOfMemoryError -Xmx1G</argLine>
+                    <argLine>-XX:+ExitOnOutOfMemoryError -Xmx2G</argLine>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>integration-test</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <forkCount>1</forkCount>
+                            <reuseForks>true</reuseForks>
+                            <excludedGroups>not-parallel</excludedGroups>
+                            <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
+                            <systemProperties>
+                                <junit.jupiter.execution.parallel.enabled>true</junit.jupiter.execution.parallel.enabled>
+                                <junit.jupiter.execution.parallel.mode.default>same_thread</junit.jupiter.execution.parallel.mode.default>
+                                <junit.jupiter.execution.parallel.mode.classes.default>concurrent</junit.jupiter.execution.parallel.mode.classes.default>
+                                <junit.jupiter.execution.parallel.config.strategy>dynamic</junit.jupiter.execution.parallel.config.strategy>
+                                <junit.jupiter.execution.parallel.config.dynamic.factor>${camel.failsafe.parallel.factor}</junit.jupiter.execution.parallel.config.dynamic.factor>
+                            </systemProperties>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>serials-test</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <forkCount>4</forkCount>
+                            <reuseForks>true</reuseForks>
+                            <groups>not-parallel</groups>
+                            <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
