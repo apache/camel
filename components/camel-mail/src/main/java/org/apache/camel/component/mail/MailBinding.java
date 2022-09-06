@@ -395,8 +395,8 @@ public class MailBinding {
     /**
      * Strategy for handling extracting mail message that has duplicate file attachments
      *
-     * @param mp  the multipart entity
-     * @param duplicateFileName the duplicated file name
+     * @param  mp                 the multipart entity
+     * @param  duplicateFileName  the duplicated file name
      * @throws MessagingException is thrown, failing with an error
      */
     protected void handleDuplicateFileAttachment(Multipart mp, String duplicateFileName) throws MessagingException {
