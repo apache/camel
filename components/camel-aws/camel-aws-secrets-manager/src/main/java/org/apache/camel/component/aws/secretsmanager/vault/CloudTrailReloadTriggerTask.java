@@ -1,8 +1,11 @@
 package org.apache.camel.component.aws.secretsmanager.vault;
 
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.ContextReloadStrategy;
-import org.apache.camel.vault.AwsVaultConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -12,10 +15,6 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudtrail.CloudTrailClient;
 import software.amazon.awssdk.services.cloudtrail.CloudTrailClientBuilder;
 import software.amazon.awssdk.services.cloudtrail.model.*;
-
-import java.time.Instant;
-import java.util.Arrays;
-import java.util.List;
 
 public class CloudTrailReloadTriggerTask implements Runnable {
     private CamelContext context;
@@ -41,13 +40,15 @@ public class CloudTrailReloadTriggerTask implements Runnable {
                     .region(regionValue)
                     .credentialsProvider(ProfileCredentialsProvider.create());
         } else {
-            AwsBasicCredentials cred = AwsBasicCredentials.create(context.getVaultConfiguration().aws().getAccessKey(), context.getVaultConfiguration().aws().getSecretKey());
+            AwsBasicCredentials cred = AwsBasicCredentials.create(context.getVaultConfiguration().aws().getAccessKey(),
+                    context.getVaultConfiguration().aws().getSecretKey());
             cloudTrailClientBuilder = CloudTrailClient.builder().credentialsProvider(StaticCredentialsProvider.create(cred));
         }
         CloudTrailClient cloudTrailClient = cloudTrailClientBuilder.build();
         try {
             LookupEventsRequest.Builder eventsRequestBuilder = LookupEventsRequest.builder()
-                    .maxResults(100).lookupAttributes(LookupAttribute.builder().attributeKey(LookupAttributeKey.EVENT_SOURCE).attributeValue(eventSourceSecrets).build());
+                    .maxResults(100).lookupAttributes(LookupAttribute.builder().attributeKey(LookupAttributeKey.EVENT_SOURCE)
+                            .attributeValue(eventSourceSecrets).build());
 
             if (lastTime != null) {
                 eventsRequestBuilder.startTime(lastTime.plusMillis(1000));
