@@ -108,6 +108,26 @@ public class PollEnrichDefinition extends ExpressionNode implements AggregationS
     }
 
     /**
+     * Timeout in millis when polling from the external service.
+     * <p/>
+     * The timeout has influence about the poll enrich behavior. It basically operations in three different modes:
+     * <ul>
+     * <li>negative value - Waits until a message is available and then returns it. Warning that this method could block
+     * indefinitely if no messages are available.</li>
+     * <li>0 - Attempts to receive a message exchange immediately without waiting and returning <tt>null</tt> if a
+     * message exchange is not available yet.</li>
+     * <li>positive value - Attempts to receive a message exchange, waiting up to the given timeout to expire if a
+     * message is not yet available. Returns <tt>null</tt> if timed out</li>
+     * </ul>
+     * The default value is -1 and therefore the method could block indefinitely, and therefore its recommended to use a
+     * timeout value
+     */
+    public PollEnrichDefinition timeout(String timeout) {
+        setTimeout(timeout);
+        return this;
+    }
+
+    /**
      * Sets the AggregationStrategy to be used to merge the reply from the external service, into a single outgoing
      * message. By default Camel will use the reply from the external service as outgoing message.
      */
