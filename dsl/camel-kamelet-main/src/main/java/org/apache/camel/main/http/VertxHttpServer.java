@@ -143,7 +143,6 @@ public final class VertxHttpServer {
                             if (last == null || last.size() != endpoints.size() || !last.containsAll(endpoints)) {
                                 LOG.info("HTTP endpoints summary");
                                 for (HttpEndpointModel u : endpoints) {
-                                    String v = u.getVerbs();
                                     String line = "http://0.0.0.0:" + port + u.getUri();
                                     if (u.getVerbs() != null) {
                                         line += " (" + u.getVerbs() + ")";
