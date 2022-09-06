@@ -31,7 +31,7 @@ import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
 
 /**
- * API for extended FHIR operations https://www.hl7.org/fhir/operations.html
+ * API for extended FHIR operations
  */
 public class FhirOperation {
 

@@ -26,7 +26,7 @@ import ca.uhn.fhir.rest.gclient.IClientExecutable;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 
 /**
- * Encapsulates a list of extra parameters that are valid for *ALL* Camel FHIR APIs.
+ * Encapsulates a list of extra parameters that are valid for all Camel FHIR APIs.
  */
 public enum ExtraParameters {
 
