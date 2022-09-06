@@ -108,7 +108,7 @@ public final class EmbeddedConfigurationBuilder {
         return embeddedConfiguration;
     }
 
-    public static EmbeddedConfiguration defaultConfiguration() {
+    public static EmbeddedConfigurationBuilder defaultConfigurationTemplate() {
         final EmbeddedConfiguration.User.UserInfo writableUser = new EmbeddedConfiguration.User.UserInfo(null, true);
         final EmbeddedConfiguration.User.UserInfo nonWritableUser = new EmbeddedConfiguration.User.UserInfo(null, false);
 
@@ -124,10 +124,14 @@ public final class EmbeddedConfigurationBuilder {
                 .withAdmin("admin", null, null)
                 .withServerAddress("localhost");
 
-        return builder.embeddedConfiguration;
+        return builder;
     }
 
-    public static EmbeddedConfiguration defaultFtpsConfiguration() {
+    public static EmbeddedConfiguration defaultConfiguration() {
+        return defaultConfigurationTemplate().build();
+    }
+
+    public static EmbeddedConfigurationBuilder defaultFtpsConfigurationTemplate() {
         final EmbeddedConfiguration.User.UserInfo writableUser = new EmbeddedConfiguration.User.UserInfo(null, true);
         final EmbeddedConfiguration.User.UserInfo nonWritableUser = new EmbeddedConfiguration.User.UserInfo(null, false);
 
@@ -147,7 +151,11 @@ public final class EmbeddedConfigurationBuilder {
                 .withKeyStoreType("JKS")
                 .withKeyStoreAlgorithm("SunX509");
 
-        return builder.embeddedConfiguration;
+        return builder;
+    }
+
+    public static EmbeddedConfiguration defaultFtpsConfiguration() {
+        return defaultFtpsConfigurationTemplate().build();
     }
 
     public static EmbeddedConfiguration defaultSftpConfiguration() {

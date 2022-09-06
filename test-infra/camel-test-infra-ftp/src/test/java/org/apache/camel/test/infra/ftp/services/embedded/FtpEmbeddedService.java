@@ -55,22 +55,25 @@ public class FtpEmbeddedService extends AbstractTestService implements FtpServic
     protected int port;
 
     protected Path rootDir;
-    private final EmbeddedConfiguration embeddedConfiguration;
+    private final EmbeddedConfigurationBuilder embeddedConfigurationTemplate;
 
     @Deprecated
     public FtpEmbeddedService() {
-        embeddedConfiguration = EmbeddedConfigurationBuilder.defaultConfiguration();
+        this(EmbeddedConfigurationBuilder.defaultConfigurationTemplate());
     }
 
-    protected FtpEmbeddedService(EmbeddedConfiguration embeddedConfiguration) {
-        this.embeddedConfiguration = embeddedConfiguration;
+    protected FtpEmbeddedService(EmbeddedConfigurationBuilder embeddedConfigurationTemplate) {
+        this.embeddedConfigurationTemplate = embeddedConfigurationTemplate;
     }
 
     public void setUp() throws Exception {
+        embeddedConfigurationTemplate.withTestDirectory(context.getDisplayName());
+        EmbeddedConfiguration embeddedConfiguration = embeddedConfigurationTemplate.build();
+
         rootDir = testDirectory().resolve(embeddedConfiguration.getTestDirectory());
         FileUtils.deleteDirectory(rootDir.toFile());
 
-        FtpServerFactory factory = createFtpServerFactory();
+        FtpServerFactory factory = createFtpServerFactory(embeddedConfiguration);
         ftpServer = factory.createServer();
         ftpServer.start();
 
@@ -98,7 +101,7 @@ public class FtpEmbeddedService extends AbstractTestService implements FtpServic
         }
     }
 
-    protected FtpServerFactory createFtpServerFactory() {
+    protected FtpServerFactory createFtpServerFactory(EmbeddedConfiguration embeddedConfiguration) {
         NativeFileSystemFactory fsf = new NativeFileSystemFactory();
         fsf.setCreateHome(true);
 
@@ -115,14 +118,17 @@ public class FtpEmbeddedService extends AbstractTestService implements FtpServic
             createUser(userMgr, user.getUsername(), user.getPassword(), homeDir, userInfo.isWritePermission());
         }
 
-        ListenerFactory factory = new ListenerFactory();
-        factory.setPort(port);
-
         FtpServerFactory serverFactory = new FtpServerFactory();
         serverFactory.setUserManager(userMgr);
         serverFactory.setFileSystem(fsf);
         serverFactory.setConnectionConfig(new ConnectionConfigFactory().createConnectionConfig());
-        serverFactory.addListener(DEFAULT_LISTENER, factory.createListener());
+
+        ListenerFactory factory = new ListenerFactory();
+        factory.setPort(port);
+        factory.setServerAddress(embeddedConfiguration.getServerAddress());
+        final Listener listener = factory.createListener();
+
+        serverFactory.addListener(DEFAULT_LISTENER, listener);
 
         return serverFactory;
     }
@@ -159,7 +165,9 @@ public class FtpEmbeddedService extends AbstractTestService implements FtpServic
 
     @Override
     protected void registerProperties(BiConsumer<String, String> store) {
-        store.accept(FtpProperties.SERVER_HOST, embeddedConfiguration.getServerAddress());
+        final String host = ((DefaultFtpServer) ftpServer).getListeners().values().stream()
+                .map(Listener::getServerAddress).findAny().get();
+        store.accept(FtpProperties.SERVER_HOST, host);
         store.accept(FtpProperties.SERVER_PORT, String.valueOf(getPort()));
         store.accept(FtpProperties.ROOT_DIR, rootDir.toString());
     }
@@ -192,9 +200,5 @@ public class FtpEmbeddedService extends AbstractTestService implements FtpServic
         }
 
         return count;
-    }
-
-    public EmbeddedConfiguration getEmbeddedConfiguration() {
-        return embeddedConfiguration;
     }
 }
