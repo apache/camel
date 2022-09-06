@@ -101,8 +101,7 @@ and will throw a `HttpOperationFailedException` with the information.
 
 The option, `throwExceptionOnFailure`, can be set to `false` to prevent
 the `HttpOperationFailedException` from being thrown for failed response
-codes. This allows you to get any response from the remote server. +
-There is a sample below demonstrating this.
+codes. This allows you to get any response from the remote server.
 
 == Exceptions
 
@@ -133,19 +132,17 @@ using HTTP.
 [source,java]
 -------------------------------
 from("direct:start")
-        .to("http://oldhost");
+    .to("http://oldhost");
 -------------------------------
 
-And the equivalent Spring sample:
+And the equivalent XML DSL:
 
 [source,xml]
 ---------------------------------------------------------------------
-<camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
-  <route>
-    <from uri="direct:start"/>
-    <to uri="http://oldhost"/>
-  </route>
-</camelContext>
+<route>
+  <from uri="direct:start"/>
+  <to uri="http://oldhost"/>
+</route>
 ---------------------------------------------------------------------
 
 You can override the HTTP endpoint URI by adding a header with the key
@@ -204,20 +201,18 @@ The method can be written a bit shorter using the string constants:
 .setHeader("CamelHttpMethod", constant("POST"))
 -----------------------------------------------
 
-And the equivalent Spring sample:
+And the equivalent XML DSL:
 
 [source,xml]
 ---------------------------------------------------------------------
-<camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
-  <route>
-    <from uri="direct:start"/>
-    <setHeader name="CamelHttpMethod">
-        <constant>POST</constant>
-    </setHeader>
-    <to uri="http://www.google.com"/>
-    <to uri="mock:results"/>
-  </route>
-</camelContext>
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelHttpMethod">
+      <constant>POST</constant>
+  </setHeader>
+  <to uri="http://www.google.com"/>
+  <to uri="mock:results"/>
+</route>
 ---------------------------------------------------------------------
 
 == Using client timeout - SO_TIMEOUT
@@ -247,25 +242,25 @@ only from the CamelContext or URI. +
 
 [source,java]
 ---------------------------------------------------------------
- context.getGlobalOptions().put("http.proxyHost", "172.168.18.9");
- context.getGlobalOptions().put("http.proxyPort", "8080");
+context.getGlobalOptions().put("http.proxyHost", "172.168.18.9");
+context.getGlobalOptions().put("http.proxyPort", "8080");
 ---------------------------------------------------------------
 
 Spring XML
 
 [source,xml]
 ----------------------------------------------------------------
-   <camelContext>
-       <properties>
-           <property key="http.proxyHost" value="172.168.18.9"/>
-           <property key="http.proxyPort" value="8080"/>
-      </properties>
-   </camelContext>
+<camelContext>
+    <properties>
+        <property key="http.proxyHost" value="172.168.18.9"/>
+        <property key="http.proxyPort" value="8080"/>
+   </properties>
+</camelContext>
 ----------------------------------------------------------------
 
 Camel will first set the settings from Java System or CamelContext
-Properties and then the endpoint proxy options if provided. +
- So you can override the system properties with the endpoint options.
+Properties and then the endpoint proxy options if provided.
+So you can override the system properties with the endpoint options.
 
 There is also a `http.proxyScheme` property you
 can set to explicit configure the scheme to use.
@@ -339,14 +334,12 @@ int responseCode = out.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
 == Disabling Cookies
 
 To disable cookies you can set the HTTP Client to ignore cookies by
-adding this URI option: +
- `httpClient.cookieSpec=ignoreCookies`
+adding this URI option: `httpClient.cookieSpec=ignoreCookies`
 
 == Basic auth with the streaming message body
 
 In order to avoid the `NonRepeatableRequestException`, you need to do the
-Preemptive Basic Authentication by adding the option: +
- `authenticationPreemptive=true`
+Preemptive Basic Authentication by adding the option: `authenticationPreemptive=true`
 
 == Advanced Usage
 
@@ -387,6 +380,7 @@ httpComponent.setSslContextParameters(scp);
 ---------------------------------------------------------------------------------------
 
 [[HTTP-SpringDSLbasedconfigurationofendpoint]]
+
 Spring DSL based configuration of endpoint
 
 [source,xml]
