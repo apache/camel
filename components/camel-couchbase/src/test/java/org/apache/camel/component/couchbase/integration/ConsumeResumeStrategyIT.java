@@ -30,10 +30,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
 import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_RESUME_ACTION;
 import static org.awaitility.Awaitility.await;
 
+@DisabledIfEnvironmentVariable(named = "JENKINS_URL", matches = ".*apache.org", disabledReason = "Flaky on Apache CI")
 public class ConsumeResumeStrategyIT extends CouchbaseIntegrationTestBase {
     static class TestCouchbaseResumeAdapter implements ResumeActionAware {
         volatile boolean setResumeActionCalled;

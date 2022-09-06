@@ -23,7 +23,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
+@DisabledIfEnvironmentVariable(named = "JENKINS_URL", matches = ".*apache.org", disabledReason = "Flaky on Apache CI")
 public class ConsumeMessagesWithLimitIT extends CouchbaseIntegrationTestBase {
 
     @BeforeEach
