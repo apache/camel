@@ -151,7 +151,6 @@ const sources = {
         '../components/{*,*/*,*/*/*}/src/generated/resources/org/apache/camel/*/**/*.json',
         '../core/camel-core-languages/src/generated/resources/org/apache/camel/language/**/*.json',
         '../core/camel-core-model/src/generated/resources/org/apache/camel/model/language/*.json',
-        '../core/camel-xml-jaxp/src/generated/resources/org/apache/camel/language/**/*.json',
       ],
       destination: 'components/modules/languages/examples/json',
       filter: (content) => JSON.parse(content).language, // check if there is a "language" key at the root
@@ -173,6 +172,7 @@ const sources = {
         '../core/camel-main/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
         '../components/{*,*/*}/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
         '../dsl/**/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
+        '../core/camel-xml-jaxp/src/generated/resources/*.json',
       ],
       destination: 'components/modules/others/pages',
       keep: [
