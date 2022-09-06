@@ -33,7 +33,7 @@ public class FtpsEmbeddedService extends FtpEmbeddedService {
     private boolean clientAuth;
 
     public FtpsEmbeddedService(boolean useImplicit, String authValue, boolean clientAuth) {
-        super(EmbeddedConfigurationBuilder.defaultFtpsConfiguration());
+        super(EmbeddedConfigurationBuilder.defaultFtpsConfigurationTemplate());
 
         this.useImplicit = useImplicit;
         this.authValue = authValue;
@@ -41,39 +41,39 @@ public class FtpsEmbeddedService extends FtpEmbeddedService {
     }
 
     @Override
-    protected FtpServerFactory createFtpServerFactory() {
-        FtpServerFactory serverFactory = super.createFtpServerFactory();
+    protected FtpServerFactory createFtpServerFactory(EmbeddedConfiguration embeddedConfiguration) {
+        FtpServerFactory serverFactory = super.createFtpServerFactory(embeddedConfiguration);
 
         ListenerFactory listenerFactory = new ListenerFactory(serverFactory.getListener(DEFAULT_LISTENER));
         listenerFactory.setPort(port);
         listenerFactory.setImplicitSsl(useImplicit);
-        listenerFactory.setSslConfiguration(createSslConfiguration().createSslConfiguration());
+        listenerFactory.setSslConfiguration(createSslConfiguration(embeddedConfiguration).createSslConfiguration());
 
         serverFactory.addListener(DEFAULT_LISTENER, listenerFactory.createListener());
 
         return serverFactory;
     }
 
-    protected SslConfigurationFactory createSslConfiguration() {
+    protected SslConfigurationFactory createSslConfiguration(EmbeddedConfiguration embeddedConfiguration) {
         // comment in, if you have trouble with SSL
         // System.setProperty("javax.net.debug", "all");
 
         SslConfigurationFactory sslConfigFactory = new SslConfigurationFactory();
         sslConfigFactory.setSslProtocol(authValue);
 
-        sslConfigFactory.setKeystoreFile(new File(getEmbeddedConfiguration().getKeyStore()));
-        sslConfigFactory.setKeystoreType(getEmbeddedConfiguration().getKeyStoreType());
-        sslConfigFactory.setKeystoreAlgorithm(getEmbeddedConfiguration().getKeyStoreAlgorithm());
-        sslConfigFactory.setKeystorePassword(getEmbeddedConfiguration().getKeyStorePassword());
-        sslConfigFactory.setKeyPassword(getEmbeddedConfiguration().getKeyStorePassword());
+        sslConfigFactory.setKeystoreFile(new File(embeddedConfiguration.getKeyStore()));
+        sslConfigFactory.setKeystoreType(embeddedConfiguration.getKeyStoreType());
+        sslConfigFactory.setKeystoreAlgorithm(embeddedConfiguration.getKeyStoreAlgorithm());
+        sslConfigFactory.setKeystorePassword(embeddedConfiguration.getKeyStorePassword());
+        sslConfigFactory.setKeyPassword(embeddedConfiguration.getKeyStorePassword());
 
         sslConfigFactory.setClientAuthentication(authValue);
 
         if (clientAuth) {
-            sslConfigFactory.setTruststoreFile(new File(getEmbeddedConfiguration().getKeyStore()));
-            sslConfigFactory.setTruststoreType(getEmbeddedConfiguration().getKeyStoreType());
-            sslConfigFactory.setTruststoreAlgorithm(getEmbeddedConfiguration().getKeyStoreAlgorithm());
-            sslConfigFactory.setTruststorePassword(getEmbeddedConfiguration().getKeyStorePassword());
+            sslConfigFactory.setTruststoreFile(new File(embeddedConfiguration.getKeyStore()));
+            sslConfigFactory.setTruststoreType(embeddedConfiguration.getKeyStoreType());
+            sslConfigFactory.setTruststoreAlgorithm(embeddedConfiguration.getKeyStoreAlgorithm());
+            sslConfigFactory.setTruststorePassword(embeddedConfiguration.getKeyStorePassword());
         }
 
         return sslConfigFactory;
