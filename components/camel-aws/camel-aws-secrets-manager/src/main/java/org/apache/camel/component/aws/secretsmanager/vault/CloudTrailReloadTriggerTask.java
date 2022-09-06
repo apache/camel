@@ -1,7 +1,22 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.aws.secretsmanager.vault;
 
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
@@ -14,15 +29,22 @@ import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudtrail.CloudTrailClient;
 import software.amazon.awssdk.services.cloudtrail.CloudTrailClientBuilder;
-import software.amazon.awssdk.services.cloudtrail.model.*;
+import software.amazon.awssdk.services.cloudtrail.model.CloudTrailException;
+import software.amazon.awssdk.services.cloudtrail.model.Event;
+import software.amazon.awssdk.services.cloudtrail.model.LookupAttribute;
+import software.amazon.awssdk.services.cloudtrail.model.LookupAttributeKey;
+import software.amazon.awssdk.services.cloudtrail.model.LookupEventsRequest;
+import software.amazon.awssdk.services.cloudtrail.model.LookupEventsResponse;
+import software.amazon.awssdk.services.cloudtrail.model.Resource;
 
 public class CloudTrailReloadTriggerTask implements Runnable {
-    private CamelContext context;
-    private String secretNameList;
-    private static Instant lastTime = null;
-    private static String eventSourceSecrets = "secretsmanager.amazonaws.com";
 
     private static final Logger LOG = LoggerFactory.getLogger(CloudTrailReloadTriggerTask.class);
+    private static final String SECRETSMANAGER_AMAZONAWS_COM = "secretsmanager.amazonaws.com";
+
+    private final CamelContext context;
+    private final String secretNameList;
+    private volatile Instant lastTime;
 
     public CloudTrailReloadTriggerTask(CamelContext context, String secretName) {
         this.context = context;
@@ -31,7 +53,7 @@ public class CloudTrailReloadTriggerTask implements Runnable {
 
     @Override
     public void run() {
-        List<String> secretNames = Arrays.asList(secretNameList.split(","));
+        String[] secretNames = secretNameList.split(",");
         boolean triggerReloading = false;
         CloudTrailClientBuilder cloudTrailClientBuilder;
         Region regionValue = Region.of(context.getVaultConfiguration().aws().getRegion());
@@ -48,7 +70,7 @@ public class CloudTrailReloadTriggerTask implements Runnable {
         try {
             LookupEventsRequest.Builder eventsRequestBuilder = LookupEventsRequest.builder()
                     .maxResults(100).lookupAttributes(LookupAttribute.builder().attributeKey(LookupAttributeKey.EVENT_SOURCE)
-                            .attributeValue(eventSourceSecrets).build());
+                            .attributeValue(SECRETSMANAGER_AMAZONAWS_COM).build());
 
             if (lastTime != null) {
                 eventsRequestBuilder.startTime(lastTime.plusMillis(1000));
@@ -63,15 +85,15 @@ public class CloudTrailReloadTriggerTask implements Runnable {
                 lastTime = events.get(0).eventTime();
             }
 
-            LOG.info("Found " + events.size() + " events");
+            LOG.debug("Found {} events", events.size());
             for (Event event : events) {
-                if (event.eventSource().equalsIgnoreCase(eventSourceSecrets)) {
+                if (event.eventSource().equalsIgnoreCase(SECRETSMANAGER_AMAZONAWS_COM)) {
                     if (event.eventName().equalsIgnoreCase("PutSecretValue")) {
                         List<Resource> a = event.resources();
                         for (Resource res : a) {
                             for (String secretNameElem : secretNames) {
                                 if (res.resourceName().contains(secretNameElem)) {
-                                    LOG.info("Update for secret " + secretNameElem + " detected, triggering a context reload");
+                                    LOG.info("Update for secret {} detected, triggering a CamelContext reload", secretNameElem);
                                     triggerReloading = true;
                                     break;
                                 }
@@ -80,17 +102,15 @@ public class CloudTrailReloadTriggerTask implements Runnable {
                     }
                 }
             }
-
         } catch (CloudTrailException e) {
             throw e;
         }
-        if (triggerReloading) {
-            if (context != null) {
-                ContextReloadStrategy reload = context.hasService(ContextReloadStrategy.class);
-                if (reload != null) {
-                    // trigger reload
-                    reload.onReload(context.getName());
-                }
+
+        if (triggerReloading && context != null) {
+            ContextReloadStrategy reload = context.hasService(ContextReloadStrategy.class);
+            if (reload != null) {
+                // trigger reload
+                reload.onReload(context.getName());
             }
         }
     }
