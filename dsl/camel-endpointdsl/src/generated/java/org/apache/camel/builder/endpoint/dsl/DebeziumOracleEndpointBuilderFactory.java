@@ -136,8 +136,6 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default:
-         * io.debezium.embedded.spi.OffsetCommitPolicy.PeriodicCommitOffsetPolicy
          * Group: consumer
          * 
          * @param offsetCommitPolicy the value to set
