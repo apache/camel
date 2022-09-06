@@ -19,19 +19,8 @@ package org.apache.camel.test.infra.common.services;
 import java.util.function.BiConsumer;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.extension.AfterAllCallback;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
 
-public abstract class AbstractTestService implements TestService, BeforeAllCallback, AfterAllCallback {
-
-    protected ExtensionContext context;
-
-    @Override
-    public void registerProperties() {
-        ExtensionContext.Store store = context.getStore(ExtensionContext.Namespace.GLOBAL);
-        registerProperties(store::put);
-    }
+public abstract class AbstractTestService implements TestService {
 
     @Override
     public void initialize() {
@@ -52,25 +41,13 @@ public abstract class AbstractTestService implements TestService, BeforeAllCallb
         }
     }
 
-    protected void registerProperties(BiConsumer<String, String> store) {
-    }
+    protected abstract void registerProperties(BiConsumer<String, String> store);
 
+    @Deprecated
     protected void setUp() throws Exception {
     }
 
+    @Deprecated
     protected void tearDown() throws Exception {
     }
-
-    @Override
-    public void beforeAll(ExtensionContext extensionContext) throws Exception {
-        this.context = extensionContext;
-        initialize();
-    }
-
-    @Override
-    public void afterAll(ExtensionContext extensionContext) throws Exception {
-        shutdown();
-        this.context = null;
-    }
-
 }

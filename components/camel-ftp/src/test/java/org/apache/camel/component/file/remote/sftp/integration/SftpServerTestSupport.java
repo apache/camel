@@ -24,7 +24,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class SftpServerTestSupport extends BaseServerTestSupport {
     @RegisterExtension
-    protected static SftpEmbeddedService service = new SftpEmbeddedService();
+    protected SftpEmbeddedService service = new SftpEmbeddedService();
 
     protected Path ftpFile(String file) {
         return service.getFtpRootDir().resolve(file);

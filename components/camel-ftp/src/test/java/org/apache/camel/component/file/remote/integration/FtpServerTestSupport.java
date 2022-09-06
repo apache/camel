@@ -31,7 +31,7 @@ import static org.apache.camel.language.simple.SimpleLanguage.simple;
 public abstract class FtpServerTestSupport extends BaseServerTestSupport {
 
     @RegisterExtension
-    static FtpEmbeddedService service = new FtpEmbeddedService();
+    public FtpEmbeddedService service = new FtpEmbeddedService();
 
     public void sendFile(String url, Object body, String fileName) {
         template.sendBodyAndHeader(url, body, Exchange.FILE_NAME, simple(fileName));

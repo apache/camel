@@ -16,20 +16,6 @@
  */
 package org.apache.camel.test.infra.ftp.services;
 
-public class FtpRemoteService implements FtpService {
+public interface FtpRemoteService extends FtpService {
 
-    @Override
-    public void registerProperties() {
-        // NO-OP
-    }
-
-    @Override
-    public void initialize() {
-        registerProperties();
-    }
-
-    @Override
-    public void shutdown() {
-        // NO-OP
-    }
 }

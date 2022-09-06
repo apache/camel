@@ -18,21 +18,13 @@ package org.apache.camel.test.infra.ftp.services;
 
 import org.apache.camel.test.infra.common.services.TestService;
 import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
 
 /**
  * Test infra service for Ftp
  */
-public interface FtpService extends BeforeAllCallback, AfterAllCallback, TestService {
+public interface FtpService extends TestService, BeforeAllCallback, AfterAllCallback, BeforeEachCallback, AfterEachCallback {
 
-    @Override
-    default void beforeAll(ExtensionContext extensionContext) throws Exception {
-        initialize();
-    }
-
-    @Override
-    default void afterAll(ExtensionContext extensionContext) throws Exception {
-        shutdown();
-    }
 }

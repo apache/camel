@@ -42,6 +42,7 @@ import org.apache.ftpserver.usermanager.ClearTextPasswordEncryptor;
 import org.apache.ftpserver.usermanager.PropertiesUserManagerFactory;
 import org.apache.ftpserver.usermanager.impl.BaseUser;
 import org.apache.ftpserver.usermanager.impl.WritePermission;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,8 +57,8 @@ public class FtpEmbeddedService extends AbstractTestService implements FtpServic
 
     protected Path rootDir;
     private final EmbeddedConfigurationBuilder embeddedConfigurationTemplate;
+    private ExtensionContext context;
 
-    @Deprecated
     public FtpEmbeddedService() {
         this(EmbeddedConfigurationBuilder.defaultConfigurationTemplate());
     }
@@ -126,6 +127,7 @@ public class FtpEmbeddedService extends AbstractTestService implements FtpServic
         ListenerFactory factory = new ListenerFactory();
         factory.setPort(port);
         factory.setServerAddress(embeddedConfiguration.getServerAddress());
+
         final Listener listener = factory.createListener();
 
         serverFactory.addListener(DEFAULT_LISTENER, listener);
@@ -172,6 +174,12 @@ public class FtpEmbeddedService extends AbstractTestService implements FtpServic
         store.accept(FtpProperties.ROOT_DIR, rootDir.toString());
     }
 
+    @Override
+    public void registerProperties() {
+        ExtensionContext.Store store = context.getStore(ExtensionContext.Namespace.GLOBAL);
+        registerProperties(store::put);
+    }
+
     public Path getFtpRootDir() {
         return rootDir;
     }
@@ -200,5 +208,27 @@ public class FtpEmbeddedService extends AbstractTestService implements FtpServic
         }
 
         return count;
+    }
+
+    @Override
+    public void beforeAll(ExtensionContext extensionContext) throws Exception {
+        this.context = extensionContext;
+    }
+
+    @Override
+    public void afterAll(ExtensionContext extensionContext) throws Exception {
+        this.context = null;
+    }
+
+    @Override
+    public void afterEach(ExtensionContext extensionContext) throws Exception {
+        shutdown();
+        this.context = null;
+    }
+
+    @Override
+    public void beforeEach(ExtensionContext extensionContext) throws Exception {
+        this.context = extensionContext;
+        initialize();
     }
 }
