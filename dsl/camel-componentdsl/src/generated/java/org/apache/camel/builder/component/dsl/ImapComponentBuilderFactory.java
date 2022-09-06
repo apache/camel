@@ -264,6 +264,25 @@ public interface ImapComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether to fail processing the mail if the mail message contains
+         * attachments with duplicate file names. If set to false, then the
+         * duplicate attachment is skipped and a WARN is logged. If set to true
+         * then an exception is thrown failing to process the mail message.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param failOnDuplicateFileAttachment the value to set
+         * @return the dsl builder
+         */
+        default ImapComponentBuilder failOnDuplicateFileAttachment(
+                boolean failOnDuplicateFileAttachment) {
+            doSetProperty("failOnDuplicateFileAttachment", failOnDuplicateFileAttachment);
+            return this;
+        }
+        /**
          * Sets the maximum number of messages to consume during a poll. This
          * can be used to avoid overloading a mail server, if a mailbox folder
          * contains a lot of messages. Default value of -1 means no fetch size
@@ -822,6 +841,7 @@ public interface ImapComponentBuilderFactory {
             case "peek": getOrCreateConfiguration((MailComponent) component).setPeek((boolean) value); return true;
             case "skipFailedMessage": getOrCreateConfiguration((MailComponent) component).setSkipFailedMessage((boolean) value); return true;
             case "unseen": getOrCreateConfiguration((MailComponent) component).setUnseen((boolean) value); return true;
+            case "failOnDuplicateFileAttachment": getOrCreateConfiguration((MailComponent) component).setFailOnDuplicateFileAttachment((boolean) value); return true;
             case "fetchSize": getOrCreateConfiguration((MailComponent) component).setFetchSize((int) value); return true;
             case "folderName": getOrCreateConfiguration((MailComponent) component).setFolderName((java.lang.String) value); return true;
             case "mapMailMessage": getOrCreateConfiguration((MailComponent) component).setMapMailMessage((boolean) value); return true;
