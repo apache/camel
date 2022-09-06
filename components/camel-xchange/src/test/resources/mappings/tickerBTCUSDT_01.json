@@ -1,0 +1,40 @@
+{
+  "id" : "407a66b1-4ef0-4905-b279-86bc63e4ba3f",
+  "name" : "api_v3_ticker_24hr",
+  "request" : {
+    "url" : "/api/v3/ticker/24hr?symbol=BTCUSDT",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"symbol\":\"BTCUSDT\",\"priceChange\":\"189.53000000\",\"priceChangePercent\":\"0.958\",\"weightedAvgPrice\":\"19816.85356468\",\"prevClosePrice\":\"19782.48000000\",\"lastPrice\":\"19972.01000000\",\"lastQty\":\"0.00519000\",\"bidPrice\":\"19972.01000000\",\"bidQty\":\"0.00205000\",\"askPrice\":\"19972.59000000\",\"askQty\":\"0.00052000\",\"openPrice\":\"19782.48000000\",\"highPrice\":\"20180.00000000\",\"lowPrice\":\"19633.83000000\",\"volume\":\"266370.69903000\",\"quoteVolume\":\"5278629136.60016780\",\"openTime\":1662368180452,\"closeTime\":1662454580452,\"firstId\":1756225797,\"lastId\":1761728733,\"count\":5502937}",
+    "headers" : {
+      "Content-Type" : "application/json;charset=UTF-8",
+      "Date" : "Tue, 06 Sep 2022 08:56:20 GMT",
+      "Server" : "nginx",
+      "Vary" : "Accept-Encoding",
+      "x-mbx-uuid" : "d6348505-0a09-4422-a654-29551f44535f",
+      "x-mbx-used-weight" : "11",
+      "x-mbx-used-weight-1m" : "11",
+      "Strict-Transport-Security" : "max-age=31536000; includeSubdomains",
+      "X-Frame-Options" : "SAMEORIGIN",
+      "X-Xss-Protection" : "1; mode=block",
+      "X-Content-Type-Options" : "nosniff",
+      "Content-Security-Policy" : "default-src 'self'",
+      "X-Content-Security-Policy" : "default-src 'self'",
+      "X-WebKit-CSP" : "default-src 'self'",
+      "Cache-Control" : "no-cache, no-store, must-revalidate",
+      "Pragma" : "no-cache",
+      "Expires" : "0",
+      "Access-Control-Allow-Origin" : "*",
+      "Access-Control-Allow-Methods" : "GET, HEAD, OPTIONS",
+      "X-Cache" : "Miss from cloudfront",
+      "Via" : "1.1 f0f31e95ac261ee02dea9c554605a186.cloudfront.net (CloudFront)",
+      "X-Amz-Cf-Pop" : "LHR61-P4",
+      "X-Amz-Cf-Id" : "EtyxG5Wbcwb664kgyg5wORsJDlROre5w7JwjbODjqYpXFLp8g-k3gg=="
+    }
+  },
+  "uuid" : "407a66b1-4ef0-4905-b279-86bc63e4ba3f",
+  "persistent" : true,
+  "insertionIndex" : 9
+}

@@ -19,9 +19,8 @@ package org.apache.camel.component.xchange.metadata;
 import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.xchange.XChangeTestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.meta.CurrencyMetaData;
@@ -32,8 +31,7 @@ import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CUR
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@EnabledIfSystemProperty(named = "enable.xchange.itests", matches = "true", disabledReason = "Requires API credentials")
-public class MetaDataProducerTest extends CamelTestSupport {
+public class MetaDataProducerTest extends XChangeTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
