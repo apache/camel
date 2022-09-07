@@ -37,8 +37,8 @@ public class FhirValidate {
     /**
      * Validates the resource
      *
-     * @param  resource        the {@link IBaseResource} to validate
-     * @param  extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
+     * @param resource        the {@link IBaseResource} to validate
+     * @param extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
      */
     public MethodOutcome resource(IBaseResource resource, Map<ExtraParameters, Object> extraParameters) {
         IValidateUntyped validateUntyped = client.validate().resource(resource);
@@ -49,8 +49,8 @@ public class FhirValidate {
     /**
      * Validates the resource
      *
-     * @param  resourceAsString     raw resource to validate
-     * @param  extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
+     * @param resourceAsString raw resource to validate
+     * @param extraParameters  see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
      */
     public MethodOutcome resource(String resourceAsString, Map<ExtraParameters, Object> extraParameters) {
         IValidateUntyped validateUntyped = client.validate().resource(resourceAsString);
