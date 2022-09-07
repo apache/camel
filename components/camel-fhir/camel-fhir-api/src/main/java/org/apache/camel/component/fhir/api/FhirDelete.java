@@ -76,7 +76,7 @@ public class FhirDelete {
     }
 
     /**
-     * Specifies that the delete should be performed as a conditional delete against a given search URL.
+     * Specifies deleting should be performed as a conditional delete against a given search URL.
      * 
      * @param  url             The search URL to use. The format of this URL should be of the form
      *                         <code>[ResourceType]?[Parameters]</code>, for example:
