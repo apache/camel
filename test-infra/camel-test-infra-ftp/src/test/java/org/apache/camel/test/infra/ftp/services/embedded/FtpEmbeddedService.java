@@ -48,11 +48,9 @@ import org.slf4j.LoggerFactory;
 
 public class FtpEmbeddedService extends AbstractTestService implements FtpService {
     protected static final String DEFAULT_LISTENER = "default";
-
     private static final Logger LOG = LoggerFactory.getLogger(FtpEmbeddedService.class);
 
     protected FtpServer ftpServer;
-
     protected int port;
 
     protected Path rootDir;
@@ -67,7 +65,8 @@ public class FtpEmbeddedService extends AbstractTestService implements FtpServic
         this.embeddedConfigurationTemplate = embeddedConfigurationTemplate;
     }
 
-    public void setUp() throws Exception {
+    @Override
+    protected void setUp() throws Exception {
         embeddedConfigurationTemplate.withTestDirectory(context.getDisplayName());
         EmbeddedConfiguration embeddedConfiguration = embeddedConfigurationTemplate.build();
 
@@ -78,7 +77,11 @@ public class FtpEmbeddedService extends AbstractTestService implements FtpServic
         ftpServer = factory.createServer();
         ftpServer.start();
 
-        port = ((DefaultFtpServer) ftpServer).getListeners().values().stream()
+        port = getListenerPort();
+    }
+
+    private int getListenerPort() {
+        return ((DefaultFtpServer) ftpServer).getListeners().values().stream()
                 .map(Listener::getPort).findAny().get();
     }
 
@@ -135,19 +138,17 @@ public class FtpEmbeddedService extends AbstractTestService implements FtpServic
         return serverFactory;
     }
 
-    public void tearDown() {
+    @Override
+    protected void tearDown() {
         try {
             if (ftpServer != null) {
                 ftpServer.stop();
             }
         } catch (Exception e) {
             // ignore while shutting down as we could be polling during
-            // shutdown
-            // and get errors when the ftp server is stopping. This is only
-            // an issue
-            // since we host the ftp server embedded in the same jvm for
+            // shutdown and get errors when the ftp server is stopping. This is only
+            // an issue since we host the ftp server embedded in the same jvm for
             // unit testing
-
             LOG.trace("Exception while shutting down: {}", e.getMessage(), e);
         } finally {
             ftpServer = null;
@@ -180,20 +181,17 @@ public class FtpEmbeddedService extends AbstractTestService implements FtpServic
         registerProperties(store::put);
     }
 
+    @Override
     public Path getFtpRootDir() {
         return rootDir;
     }
 
-    public void suspend() {
-        ftpServer.suspend();
-    }
-
     public void resume() {
         ftpServer.resume();
-        port = ((DefaultFtpServer) ftpServer).getListeners().values().stream()
-                .map(Listener::getPort).findAny().get();
+        port = getListenerPort();
     }
 
+    @Override
     public int getPort() {
         return port;
     }
@@ -211,23 +209,23 @@ public class FtpEmbeddedService extends AbstractTestService implements FtpServic
     }
 
     @Override
-    public void beforeAll(ExtensionContext extensionContext) throws Exception {
+    public void beforeAll(ExtensionContext extensionContext) {
         this.context = extensionContext;
     }
 
     @Override
-    public void afterAll(ExtensionContext extensionContext) throws Exception {
+    public void afterAll(ExtensionContext extensionContext) {
         this.context = null;
     }
 
     @Override
-    public void afterEach(ExtensionContext extensionContext) throws Exception {
+    public void afterEach(ExtensionContext extensionContext) {
         shutdown();
         this.context = null;
     }
 
     @Override
-    public void beforeEach(ExtensionContext extensionContext) throws Exception {
+    public void beforeEach(ExtensionContext extensionContext) {
         this.context = extensionContext;
         initialize();
     }

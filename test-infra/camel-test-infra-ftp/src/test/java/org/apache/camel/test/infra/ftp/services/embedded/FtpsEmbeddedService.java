@@ -22,22 +22,20 @@ import java.io.File;
 import org.apache.ftpserver.FtpServerFactory;
 import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.ssl.SslConfigurationFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FtpsEmbeddedService extends FtpEmbeddedService {
-    private static final Logger LOG = LoggerFactory.getLogger(FtpsEmbeddedService.class);
+    public FtpsEmbeddedService(EmbeddedConfigurationBuilder embeddedConfigurationBuilder) {
+        super(EmbeddedConfigurationBuilder.defaultFtpsConfigurationTemplate());
+    }
 
-    private boolean useImplicit;
-    private String authValue;
-    private boolean clientAuth;
+    public FtpsEmbeddedService(EmbeddedConfiguration.SecurityConfiguration securityConfiguration) {
+        super(EmbeddedConfigurationBuilder.defaultFtpsConfigurationTemplate().withSecurityConfiguration(securityConfiguration));
+    }
 
+    @Deprecated
     public FtpsEmbeddedService(boolean useImplicit, String authValue, boolean clientAuth) {
         super(EmbeddedConfigurationBuilder.defaultFtpsConfigurationTemplate());
 
-        this.useImplicit = useImplicit;
-        this.authValue = authValue;
-        this.clientAuth = clientAuth;
     }
 
     @Override
@@ -46,7 +44,7 @@ public class FtpsEmbeddedService extends FtpEmbeddedService {
 
         ListenerFactory listenerFactory = new ListenerFactory(serverFactory.getListener(DEFAULT_LISTENER));
         listenerFactory.setPort(port);
-        listenerFactory.setImplicitSsl(useImplicit);
+        listenerFactory.setImplicitSsl(embeddedConfiguration.getSecurityConfiguration().isUseImplicit());
         listenerFactory.setSslConfiguration(createSslConfiguration(embeddedConfiguration).createSslConfiguration());
 
         serverFactory.addListener(DEFAULT_LISTENER, listenerFactory.createListener());
@@ -54,12 +52,11 @@ public class FtpsEmbeddedService extends FtpEmbeddedService {
         return serverFactory;
     }
 
-    protected SslConfigurationFactory createSslConfiguration(EmbeddedConfiguration embeddedConfiguration) {
-        // comment in, if you have trouble with SSL
-        // System.setProperty("javax.net.debug", "all");
+    private SslConfigurationFactory createSslConfiguration(EmbeddedConfiguration embeddedConfiguration) {
+        // NOTE: if you have trouble with SSL set the system property "javax.net.debug" to "all"
 
         SslConfigurationFactory sslConfigFactory = new SslConfigurationFactory();
-        sslConfigFactory.setSslProtocol(authValue);
+        sslConfigFactory.setSslProtocol(embeddedConfiguration.getSecurityConfiguration().getAuthValue());
 
         sslConfigFactory.setKeystoreFile(new File(embeddedConfiguration.getKeyStore()));
         sslConfigFactory.setKeystoreType(embeddedConfiguration.getKeyStoreType());
@@ -67,9 +64,9 @@ public class FtpsEmbeddedService extends FtpEmbeddedService {
         sslConfigFactory.setKeystorePassword(embeddedConfiguration.getKeyStorePassword());
         sslConfigFactory.setKeyPassword(embeddedConfiguration.getKeyStorePassword());
 
-        sslConfigFactory.setClientAuthentication(authValue);
+        sslConfigFactory.setClientAuthentication(embeddedConfiguration.getSecurityConfiguration().getAuthValue());
 
-        if (clientAuth) {
+        if (embeddedConfiguration.getSecurityConfiguration().isClientAuth()) {
             sslConfigFactory.setTruststoreFile(new File(embeddedConfiguration.getKeyStore()));
             sslConfigFactory.setTruststoreType(embeddedConfiguration.getKeyStoreType());
             sslConfigFactory.setTruststoreAlgorithm(embeddedConfiguration.getKeyStoreAlgorithm());
