@@ -38,6 +38,14 @@ public class FhirUpdate {
         this.client = client;
     }
 
+    /**
+     * Updates a {@link IBaseResource} on the server by id
+     *
+     * @param  resource        The resource to update (e.g. Patient)
+     * @param  id              the {@link IIdType} referencing the resource
+     * @param preferReturn     whether the server include or suppress the resource body as a part of the result
+     * @param  extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
+     */
     public MethodOutcome resource(
             IBaseResource resource, IIdType id, PreferReturnEnum preferReturn, Map<ExtraParameters, Object> extraParameters) {
         IUpdateTyped updateTyped = client.update().resource(resource);
@@ -46,6 +54,14 @@ public class FhirUpdate {
         return processOptionalParam(preferReturn, updateExecutable);
     }
 
+    /**
+     * Updates a {@link IBaseResource} on the server by id
+     *
+     * @param  resourceAsString  The resource body to update
+     * @param  id              the {@link IIdType} referencing the resource
+     * @param preferReturn     whether the server include or suppress the resource body as a part of the result
+     * @param  extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
+     */
     public MethodOutcome resource(
             String resourceAsString, IIdType id, PreferReturnEnum preferReturn, Map<ExtraParameters, Object> extraParameters) {
         IUpdateTyped updateTyped = client.update().resource(resourceAsString);
@@ -54,6 +70,14 @@ public class FhirUpdate {
         return processOptionalParam(preferReturn, updateExecutable);
     }
 
+    /**
+     * Updates a {@link IBaseResource} on the server by id
+     *
+     * @param  resource        The resource to update (e.g. Patient)
+     * @param  stringId        the ID referencing the resource
+     * @param preferReturn     whether the server include or suppress the resource body as a part of the result
+     * @param  extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
+     */
     public MethodOutcome resource(
             IBaseResource resource, String stringId, PreferReturnEnum preferReturn,
             Map<ExtraParameters, Object> extraParameters) {
@@ -63,6 +87,14 @@ public class FhirUpdate {
         return processOptionalParam(preferReturn, updateExecutable);
     }
 
+    /**
+     * Updates a {@link IBaseResource} on the server by id
+     *
+     * @param  resourceAsString  The resource body to update
+     * @param  stringId        the ID referencing the resource
+     * @param preferReturn     whether the server include or suppress the resource body as a part of the result
+     * @param  extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
+     */
     public MethodOutcome resource(
             String resourceAsString, String stringId, PreferReturnEnum preferReturn,
             Map<ExtraParameters, Object> extraParameters) {
@@ -72,6 +104,14 @@ public class FhirUpdate {
         return processOptionalParam(preferReturn, updateExecutable);
     }
 
+    /**
+     * Updates a {@link IBaseResource} on the server by search url
+     *
+     * @param  resource        The resource to update (e.g. Patient)
+     * @param url              Specifies that the update should be performed as a conditional create against a given search URL.
+     * @param preferReturn     whether the server include or suppress the resource body as a part of the result
+     * @param  extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
+     */
     public MethodOutcome resourceBySearchUrl(
             IBaseResource resource, String url, PreferReturnEnum preferReturn, Map<ExtraParameters, Object> extraParameters) {
         IUpdateExecutable updateExecutable = client.update().resource(resource).conditionalByUrl(url);
@@ -79,6 +119,14 @@ public class FhirUpdate {
         return processOptionalParam(preferReturn, updateExecutable);
     }
 
+    /**
+     * Updates a {@link IBaseResource} on the server by search url
+     *
+     * @param  resourceAsString  The resource body to update
+     * @param url              Specifies that the update should be performed as a conditional create against a given search URL.
+     * @param preferReturn     whether the server include or suppress the resource body as a part of the result
+     * @param  extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
+     */
     public MethodOutcome resourceBySearchUrl(
             String resourceAsString, String url, PreferReturnEnum preferReturn, Map<ExtraParameters, Object> extraParameters) {
         IUpdateExecutable updateExecutable = client.update().resource(resourceAsString).conditionalByUrl(url);

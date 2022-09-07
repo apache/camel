@@ -16,18 +16,18 @@ import org.apache.camel.spi.UriParams;
  */
 @ApiParams(apiName = "validate", 
            description = "API for validating resources",
-           apiMethods = {@ApiMethod(methodName = "resource", signatures={"ca.uhn.fhir.rest.api.MethodOutcome resource(org.hl7.fhir.instance.model.api.IBaseResource resource, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)", "ca.uhn.fhir.rest.api.MethodOutcome resource(String resourceAsString, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)"}), }, aliases = {})
+           apiMethods = {@ApiMethod(methodName = "resource", description="Validates the resource", signatures={"ca.uhn.fhir.rest.api.MethodOutcome resource(org.hl7.fhir.instance.model.api.IBaseResource resource, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)", "ca.uhn.fhir.rest.api.MethodOutcome resource(String resourceAsString, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)"}), }, aliases = {})
 @UriParams
 @Configurer(extended = true)
 public final class FhirValidateEndpointConfiguration extends FhirConfiguration {
     @UriParam
-    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "resource"), @ApiMethod(methodName = "resource")})
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "resource", description="See ExtraParameters for a full list of parameters that can be passed, may be NULL"), @ApiMethod(methodName = "resource", description="See ExtraParameters for a full list of parameters that can be passed, may be NULL")})
     private java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters;
     @UriParam
-    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "resource")})
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "resource", description="The IBaseResource to validate")})
     private org.hl7.fhir.instance.model.api.IBaseResource resource;
     @UriParam
-    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "resource")})
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "resource", description="Raw resource to validate")})
     private String resourceAsString;
 
     public java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> getExtraParameters() {
