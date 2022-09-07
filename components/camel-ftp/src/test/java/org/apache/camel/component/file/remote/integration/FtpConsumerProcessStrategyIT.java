@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file.remote.integration;
 
+import java.util.concurrent.atomic.LongAdder;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFile;
@@ -31,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FtpConsumerProcessStrategyIT extends FtpServerTestSupport {
 
     @BindToRegistry("myStrategy")
-    private MyStrategy myStrategy = new MyStrategy();
+    private final MyStrategy myStrategy = new MyStrategy();
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
@@ -50,7 +52,7 @@ public class FtpConsumerProcessStrategyIT extends FtpServerTestSupport {
 
     private static class MyStrategy implements GenericFileProcessStrategy {
 
-        private volatile int invoked;
+        private final LongAdder invoked = new LongAdder();
 
         @Override
         public void prepareOnStartup(GenericFileOperations operations, GenericFileEndpoint endpoint) {
@@ -71,7 +73,7 @@ public class FtpConsumerProcessStrategyIT extends FtpServerTestSupport {
         @Override
         public void commit(
                 GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file) {
-            invoked++;
+            invoked.increment();
         }
 
         @Override
@@ -81,7 +83,7 @@ public class FtpConsumerProcessStrategyIT extends FtpServerTestSupport {
         }
 
         int getInvoked() {
-            return invoked;
+            return invoked.intValue();
         }
     }
 }

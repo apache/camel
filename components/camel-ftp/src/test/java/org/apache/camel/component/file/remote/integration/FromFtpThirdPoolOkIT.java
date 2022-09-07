@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FromFtpThirdPoolOkIT extends FtpServerTestSupport {
 
     private static int counter;
-    private String body = "Hello World this file will be deleted";
+    private final String body = "Hello World this file will be deleted";
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/thirdpool?password=admin&delete=true";

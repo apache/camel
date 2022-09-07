@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FtpProducerMultipleSiteCommandIT extends FtpServerTestSupport {
 
     @BindToRegistry("site")
-    private String site = "help site\nhelp site";
+    private final String site = "help site\nhelp site";
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/site?password=admin&siteCommand=#site";

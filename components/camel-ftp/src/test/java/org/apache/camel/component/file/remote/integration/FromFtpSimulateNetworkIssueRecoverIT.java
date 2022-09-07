@@ -39,7 +39,7 @@ public class FromFtpSimulateNetworkIssueRecoverIT extends FtpServerTestSupport {
     private static int rollback;
 
     @BindToRegistry("myPoll")
-    private MyPollStrategy strategy = new MyPollStrategy();
+    private final MyPollStrategy strategy = new MyPollStrategy();
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/recover?password=admin&pollStrategy=#myPoll";
@@ -69,7 +69,7 @@ public class FromFtpSimulateNetworkIssueRecoverIT extends FtpServerTestSupport {
         };
     }
 
-    public class MyPollStrategy extends RemoteFilePollingConsumerPollStrategy {
+    public static class MyPollStrategy extends RemoteFilePollingConsumerPollStrategy {
 
         @Override
         public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {

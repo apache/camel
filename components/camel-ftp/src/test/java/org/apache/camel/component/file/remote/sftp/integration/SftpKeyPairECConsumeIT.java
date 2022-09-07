@@ -31,8 +31,8 @@ import org.junit.jupiter.api.condition.EnabledIf;
 @EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 public class SftpKeyPairECConsumeIT extends SftpServerTestSupport {
 
+    private static final ByteArrayOutputStream PRIVATE_KEY = new ByteArrayOutputStream();
     private static KeyPair keyPair;
-    private static ByteArrayOutputStream privateKey = new ByteArrayOutputStream();
 
     @BeforeAll
     public static void createKeys() throws Exception {
@@ -85,7 +85,7 @@ public class SftpKeyPairECConsumeIT extends SftpServerTestSupport {
         //   86:d=2  hl=3 l= 134 prim:   BIT STRING
         // and a key with "-----BEGIN EC PRIVATE KEY-----"
         com.jcraft.jsch.KeyPair kp = com.jcraft.jsch.KeyPair.genKeyPair(null, com.jcraft.jsch.KeyPair.ECDSA, 521);
-        kp.writePrivateKey(privateKey);
+        kp.writePrivateKey(PRIVATE_KEY);
     }
 
     @Test
@@ -107,12 +107,7 @@ public class SftpKeyPairECConsumeIT extends SftpServerTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        //        StringBuilder sb = new StringBuilder(256);
-        //        sb.append("-----BEGIN EC PRIVATE KEY-----").append("\n");
-        //        sb.append(Base64.getEncoder().encodeToString(keyPair.getPrivate().getEncoded())).append("\n");
-        //        sb.append("-----END EC PRIVATE KEY-----").append("\n");
-
-        context.getRegistry().bind("privateKey", privateKey.toByteArray());
+        context.getRegistry().bind("privateKey", PRIVATE_KEY.toByteArray());
         context.getRegistry().bind("knownHosts", service.buildKnownHosts());
 
         return new RouteBuilder() {

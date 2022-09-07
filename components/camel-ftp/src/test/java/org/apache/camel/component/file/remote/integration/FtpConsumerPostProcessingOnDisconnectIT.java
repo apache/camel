@@ -87,7 +87,7 @@ public class FtpConsumerPostProcessingOnDisconnectIT extends FtpServerTestSuppor
                 from("ftp://admin@localhost:{{ftp.server.port}}?password=admin&delete=true").routeId("foo").noAutoStartup()
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 service.disconnectAllSessions(); // disconnect all Sessions on FTP server
                             }
                         }).to("mock:result");
@@ -95,7 +95,7 @@ public class FtpConsumerPostProcessingOnDisconnectIT extends FtpServerTestSuppor
                         .noAutoStartup()
                         .process(new Processor() {
                             @Override
-                            public void process(Exchange exchange) throws Exception {
+                            public void process(Exchange exchange) {
                                 service.disconnectAllSessions(); // disconnect all Sessions on FTP server
                             }
                         }).to("mock:result");

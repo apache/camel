@@ -42,17 +42,19 @@ public class FtpConsumerDeleteNoWritePermissionIT extends FtpServerTestSupport {
 
     @Test
     public void testConsumerDeleteNoWritePermission() throws Exception {
-        PollingConsumer consumer = context.getEndpoint(getFtpUrl()).createPollingConsumer();
-        consumer.start();
-        Exchange out = consumer.receive(3000);
-        assertNotNull(out, "Should get the file");
 
-        try {
-            // give consumer time to try to delete the file
-            Thread.sleep(1000);
-            consumer.stop();
-        } catch (GenericFileOperationFailedException fofe) {
-            // expected, ignore
+        try (PollingConsumer consumer = context.getEndpoint(getFtpUrl()).createPollingConsumer()) {
+            consumer.start();
+            Exchange out = consumer.receive(3000);
+            assertNotNull(out, "Should get the file");
+
+            try {
+                // give consumer time to try to delete the file
+                Thread.sleep(1000);
+                consumer.stop();
+            } catch (GenericFileOperationFailedException fofe) {
+                // expected, ignore
+            }
         }
     }
 

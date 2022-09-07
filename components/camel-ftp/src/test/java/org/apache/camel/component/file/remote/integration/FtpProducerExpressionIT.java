@@ -31,7 +31,7 @@ import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
 public class FtpProducerExpressionIT extends FtpServerTestSupport {
 
     @BindToRegistry("myguidgenerator")
-    private MyGuidGenerator guid = new MyGuidGenerator();
+    private final MyGuidGenerator guid = new MyGuidGenerator();
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/filelanguage?password=admin";
@@ -99,7 +99,7 @@ public class FtpProducerExpressionIT extends FtpServerTestSupport {
         assertFileExists(service.ftpFile("filelanguage/mybirthday-19740420.txt"));
     }
 
-    public class MyGuidGenerator {
+    public static class MyGuidGenerator {
         public String guid() {
             return "123";
         }

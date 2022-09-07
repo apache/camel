@@ -38,10 +38,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class FtpConsumerThrowExceptionOnLoginFailedIT extends FtpServerTestSupport {
 
-    private CountDownLatch latch = new CountDownLatch(1);
+    private final CountDownLatch latch = new CountDownLatch(1);
 
     @BindToRegistry("myPoll")
-    private MyPoll poll = new MyPoll();
+    private final MyPoll poll = new MyPoll();
 
     private String getFtpUrl() {
         return "ftp://dummy@localhost:{{ftp.server.port}}/badlogin?password=cantremember"

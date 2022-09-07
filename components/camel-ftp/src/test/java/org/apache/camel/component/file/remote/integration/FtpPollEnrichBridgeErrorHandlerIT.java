@@ -39,8 +39,8 @@ public class FtpPollEnrichBridgeErrorHandlerIT extends BaseServerTestSupport {
     // and turn of auto create as that will pre-login to check if the directory
     // exists
     // and in case of connection error then throw that as an exception
-    private String uri = "ftp://admin@localhost:" + service.getPort() + "/unknown/?password=admin"
-                         + "&maximumReconnectAttempts=0&autoCreate=false&throwExceptionOnConnectFailed=true&bridgeErrorHandler=true";
+    private final String uri = "ftp://admin@localhost:" + service.getPort() + "/unknown/?password=admin"
+                               + "&maximumReconnectAttempts=0&autoCreate=false&throwExceptionOnConnectFailed=true&bridgeErrorHandler=true";
 
     @Test
     public void testPollEnrich() throws Exception {
@@ -78,7 +78,7 @@ public class FtpPollEnrichBridgeErrorHandlerIT extends BaseServerTestSupport {
         };
     }
 
-    private class MyAggregationStrategy implements AggregationStrategy {
+    private static class MyAggregationStrategy implements AggregationStrategy {
 
         @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {

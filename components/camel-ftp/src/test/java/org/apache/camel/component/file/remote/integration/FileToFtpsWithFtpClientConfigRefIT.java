@@ -31,10 +31,10 @@ import org.junit.jupiter.api.condition.EnabledIf;
 public class FileToFtpsWithFtpClientConfigRefIT extends FtpsServerExplicitSSLWithoutClientAuthTestSupport {
 
     @BindToRegistry("ftpsClient")
-    private FTPSClient client = new FTPSClient("SSLv3");
+    private final FTPSClient client = new FTPSClient("SSLv3");
 
     @BindToRegistry("ftpsClientIn")
-    private FTPSClient client1 = new FTPSClient("SSLv3");
+    private final FTPSClient client1 = new FTPSClient("SSLv3");
 
     private String getFtpUrl(boolean in) {
         return "ftps://admin@localhost:{{ftp.server.port}}/tmp2/camel?password=admin&initialDelay=2000&ftpClient=#ftpsClient"

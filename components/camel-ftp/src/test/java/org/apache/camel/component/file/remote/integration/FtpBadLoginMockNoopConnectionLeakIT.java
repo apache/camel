@@ -50,10 +50,10 @@ public class FtpBadLoginMockNoopConnectionLeakIT extends FtpServerTestSupport {
     /**
      * Mapping of socket hashcode to two element tab ([connect() called, close() called])
      */
-    private Map<Integer, boolean[]> socketAudits = new HashMap<>();
+    private final Map<Integer, boolean[]> socketAudits = new HashMap<>();
 
     @BindToRegistry("sf")
-    private SocketFactory sf = new AuditingSocketFactory();
+    private final SocketFactory sf = new AuditingSocketFactory();
 
     private String getFtpUrl() {
         return "ftp://dummy@localhost:{{ftp.server.port}}/badlogin?password=cantremeber&maximumReconnectAttempts=3"
