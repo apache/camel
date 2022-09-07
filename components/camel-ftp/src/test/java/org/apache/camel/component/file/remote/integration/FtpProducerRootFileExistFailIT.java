@@ -52,6 +52,6 @@ public class FtpProducerRootFileExistFailIT extends FtpServerTestSupport {
         assertEquals("File already exist: hello.txt. Cannot write new file.", cause.getMessage());
 
         // root file should still exist
-        assertFileExists(ftpFile("hello.txt"));
+        assertFileExists(service.ftpFile("hello.txt"));
     }
 }

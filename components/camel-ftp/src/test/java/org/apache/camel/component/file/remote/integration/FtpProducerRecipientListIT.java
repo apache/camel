@@ -35,13 +35,13 @@ public class FtpProducerRecipientListIT extends FtpServerTestSupport {
         template.sendBodyAndHeader("direct:start", "Bye World", "foo", getFtpUrl() + "&fileName=bye.txt");
         template.sendBodyAndHeader("direct:start", "Hi World", "foo", getFtpUrl() + "&fileName=hi.txt");
 
-        File file1 = ftpFile("list/hello.txt").toFile();
+        File file1 = service.ftpFile("list/hello.txt").toFile();
         assertTrue(file1.exists(), "File should exists " + file1);
 
-        File file2 = ftpFile("list/bye.txt").toFile();
+        File file2 = service.ftpFile("list/bye.txt").toFile();
         assertTrue(file1.exists(), "File should exists " + file2);
 
-        File file3 = ftpFile("list/hi.txt").toFile();
+        File file3 = service.ftpFile("list/hi.txt").toFile();
         assertTrue(file1.exists(), "File should exists " + file3);
     }
 

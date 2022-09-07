@@ -35,7 +35,7 @@ public class FtpSimpleConsumeStreamingWithMultipleFilesIT extends FtpServerTestS
         // create file using regular file
 
         // FTP Server does not support absolute path, so lets simulate it
-        String path = ftpFile("tmp/mytemp").toString();
+        String path = service.ftpFile("tmp/mytemp").toString();
         template.sendBodyAndHeader("file:" + path, expected, Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader("file:" + path, expected2, Exchange.FILE_NAME, "goodbye.txt");
 

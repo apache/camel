@@ -40,7 +40,7 @@ public class FtpProducerFileExistIgnoreIT extends FtpServerTestSupport {
     public void testIgnore() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
-        mock.expectedFileExists(ftpFile("exist/hello.txt"), "Hello World");
+        mock.expectedFileExists(service.ftpFile("exist/hello.txt"), "Hello World");
 
         template.sendBodyAndHeader(getFtpUrl(), "Bye World", Exchange.FILE_NAME, "hello.txt");
 

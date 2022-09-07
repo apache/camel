@@ -55,7 +55,7 @@ public class FtpProducerTempFileExistIssueIT extends FtpServerTestSupport {
 
         template.sendBodyAndHeader(getFtpUrl() + "&tempPrefix=foo", "Bye World", Exchange.FILE_NAME, "hello.txt");
 
-        File file = ftpFile("tempprefix/hello.txt").toFile();
+        File file = service.ftpFile("tempprefix/hello.txt").toFile();
         await().atMost(500, TimeUnit.MILLISECONDS).untilAsserted(() -> assertEquals(true, file.exists()));
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
     }
@@ -69,7 +69,7 @@ public class FtpProducerTempFileExistIssueIT extends FtpServerTestSupport {
 
         template.sendBodyAndHeader(getFtpUrl() + "&tempPrefix=foo", "Bye World", Exchange.FILE_NAME, "hello.txt");
 
-        File file = ftpFile("tempprefix/hello.txt").toFile();
+        File file = service.ftpFile("tempprefix/hello.txt").toFile();
         await().atMost(500, TimeUnit.MILLISECONDS).untilAsserted(() -> assertEquals(true, file.exists()));
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
     }
@@ -83,7 +83,7 @@ public class FtpProducerTempFileExistIssueIT extends FtpServerTestSupport {
         template.sendBodyAndHeader(getFtpUrl() + "&tempPrefix=foo&fileExist=Override", "Bye World", Exchange.FILE_NAME,
                 "hello.txt");
 
-        File file = ftpFile("tempprefix/hello.txt").toFile();
+        File file = service.ftpFile("tempprefix/hello.txt").toFile();
         await().atMost(500, TimeUnit.MILLISECONDS)
                 .untilAsserted(() -> assertEquals(true, file.exists()));
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
@@ -98,7 +98,7 @@ public class FtpProducerTempFileExistIssueIT extends FtpServerTestSupport {
         template.sendBodyAndHeader(getFtpUrl() + "&tempPrefix=foo&fileExist=Ignore", "Bye World", Exchange.FILE_NAME,
                 "hello.txt");
 
-        File file = ftpFile("tempprefix/hello.txt").toFile();
+        File file = service.ftpFile("tempprefix/hello.txt").toFile();
         // should not write new file as we should ignore
         await().atMost(500, TimeUnit.MILLISECONDS)
                 .untilAsserted(() -> assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file)));
@@ -118,7 +118,7 @@ public class FtpProducerTempFileExistIssueIT extends FtpServerTestSupport {
                 = assertIsInstanceOf(GenericFileOperationFailedException.class, ex.getCause());
         assertTrue(cause.getMessage().startsWith("File already exist"));
 
-        File file = ftpFile("tempprefix/hello.txt").toFile();
+        File file = service.ftpFile("tempprefix/hello.txt").toFile();
         // should not write new file as we should ignore
         await().atMost(1, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file)));

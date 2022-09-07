@@ -56,7 +56,7 @@ public class FtpPollingConsumerIT extends FtpServerTestSupport {
 
         // sleep a bit to ensure polling consumer would not have picked up that
         // file
-        File file = ftpFile("polling/bye.txt").toFile();
+        File file = service.ftpFile("polling/bye.txt").toFile();
         await().atMost(1, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertTrue(file.exists(), "File should exist " + file));
 

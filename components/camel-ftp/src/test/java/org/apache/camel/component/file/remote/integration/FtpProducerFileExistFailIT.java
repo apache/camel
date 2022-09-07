@@ -46,7 +46,7 @@ public class FtpProducerFileExistFailIT extends FtpServerTestSupport {
     public void testFail() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
-        mock.expectedFileExists(ftpFile("exist/hello.txt"), "Hello World");
+        mock.expectedFileExists(service.ftpFile("exist/hello.txt"), "Hello World");
 
         String uri = getFtpUrl();
         Exception ex = assertThrows(CamelExecutionException.class,

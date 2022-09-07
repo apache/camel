@@ -46,8 +46,8 @@ public class FtpChangedZeroLengthReadLockIT extends FtpServerTestSupport {
     }
 
     private void writeZeroFile() throws Exception {
-        createDirectory(ftpFile("changed"));
-        FileOutputStream fos = new FileOutputStream(ftpFile("changed/zerofile.dat").toFile(), true);
+        createDirectory(service.ftpFile("changed"));
+        FileOutputStream fos = new FileOutputStream(service.ftpFile("changed/zerofile.dat").toFile(), true);
         fos.flush();
         fos.close();
     }

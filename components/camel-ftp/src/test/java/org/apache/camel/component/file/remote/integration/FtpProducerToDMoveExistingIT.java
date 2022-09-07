@@ -47,8 +47,8 @@ public class FtpProducerToDMoveExistingIT extends FtpServerTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertFileExists(ftpFile("out/old-hello.txt"));
-        assertFileExists(ftpFile("out/hello.txt"));
+        assertFileExists(service.ftpFile("out/old-hello.txt"));
+        assertFileExists(service.ftpFile("out/hello.txt"));
     }
 
     @Override

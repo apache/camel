@@ -54,7 +54,8 @@ public class FtpConsumerPostProcessingOnDisconnectIT extends FtpServerTestSuppor
         assertMockEndpointsSatisfied();
 
         // File is deleted
-        await().atMost(250, TimeUnit.MILLISECONDS).untilAsserted(() -> assertFileNotExists(ftpFile(SAMPLE_FILE_NAME_1)));
+        await().atMost(250, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertFileNotExists(service.ftpFile(SAMPLE_FILE_NAME_1)));
     }
 
     @Test
@@ -70,7 +71,7 @@ public class FtpConsumerPostProcessingOnDisconnectIT extends FtpServerTestSuppor
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived(SAMPLE_FILE_PAYLOAD);
         // use mock to assert that the file will be moved there eventually
-        mock.expectedFileExists(ftpFile(movedFile));
+        mock.expectedFileExists(service.ftpFile(movedFile));
 
         context.getRouteController().startRoute("bar");
 
@@ -103,7 +104,7 @@ public class FtpConsumerPostProcessingOnDisconnectIT extends FtpServerTestSuppor
     }
 
     private void createSampleFile(String fileName) throws IOException {
-        final Path path = ftpFile(fileName);
+        final Path path = service.ftpFile(fileName);
 
         path.getParent().toFile().mkdirs();
 

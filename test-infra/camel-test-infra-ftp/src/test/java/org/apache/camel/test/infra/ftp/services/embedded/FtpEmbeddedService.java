@@ -231,4 +231,8 @@ public class FtpEmbeddedService extends AbstractTestService implements FtpServic
         this.context = extensionContext;
         initialize();
     }
+
+    public Path ftpFile(String file) {
+        return getFtpRootDir().resolve(file);
+    }
 }

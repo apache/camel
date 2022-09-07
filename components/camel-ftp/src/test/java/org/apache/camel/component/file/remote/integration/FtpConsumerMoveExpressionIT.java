@@ -52,7 +52,7 @@ public class FtpConsumerMoveExpressionIT extends FtpServerTestSupport {
         // give time for consumer to rename file
         String now = new SimpleDateFormat("yyyyMMdd").format(new Date());
         await().atMost(1, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertFileExists(ftpFile("filelanguage/backup/" + now + "/123-report2.bak")));
+                .untilAsserted(() -> assertFileExists(service.ftpFile("filelanguage/backup/" + now + "/123-report2.bak")));
     }
 
     @Override

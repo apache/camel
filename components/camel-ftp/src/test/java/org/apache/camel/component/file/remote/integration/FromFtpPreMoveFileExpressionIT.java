@@ -69,7 +69,7 @@ public class FromFtpPreMoveFileExpressionIT extends FtpServerTestSupport {
         producer.stop();
 
         // assert file is created
-        File file = ftpFile("movefile/hello.txt").toFile();
+        File file = service.ftpFile("movefile/hello.txt").toFile();
         assertTrue(file.exists(), "The file should exists");
     }
 
@@ -80,7 +80,7 @@ public class FromFtpPreMoveFileExpressionIT extends FtpServerTestSupport {
                 from(getFtpUrl()).process(new Processor() {
                     public void process(Exchange exchange) {
                         // assert the file is pre moved
-                        File file = ftpFile("inprogress/hello.bak").toFile();
+                        File file = service.ftpFile("inprogress/hello.bak").toFile();
                         assertTrue(file.exists(), "The file should have been moved");
                     }
                 }).to("mock:result");

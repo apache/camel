@@ -45,7 +45,7 @@ public class FtpLoginIT extends FtpServerTestSupport {
         }
 
         // assert file NOT created
-        File file = ftpFile("login/report.txt").toFile();
+        File file = service.ftpFile("login/report.txt").toFile();
         assertFalse(file.exists(), "The file should NOT exists");
     }
 
@@ -54,7 +54,7 @@ public class FtpLoginIT extends FtpServerTestSupport {
         uploadFile("scott", "tiger");
 
         // assert file created
-        File file = ftpFile("login/report.txt").toFile();
+        File file = service.ftpFile("login/report.txt").toFile();
         assertTrue(file.exists(), "The file should exists");
     }
 

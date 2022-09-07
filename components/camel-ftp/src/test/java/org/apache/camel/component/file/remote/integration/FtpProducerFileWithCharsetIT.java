@@ -64,7 +64,7 @@ public class FtpProducerFileWithCharsetIT extends FtpServerTestSupport {
     public void testProducerWithCharset() throws Exception {
         sendFile(getFtpUrl(), payload, "charset/iso.txt");
 
-        File file = ftpFile("upload/charset/iso.txt").toFile();
+        File file = service.ftpFile("upload/charset/iso.txt").toFile();
         assertTrue(file.exists(), "The uploaded file should exists");
         String fileContent = new String(IOConverter.toByteArray(file), "iso-8859-1");
         assertEquals(fileContent, payload);

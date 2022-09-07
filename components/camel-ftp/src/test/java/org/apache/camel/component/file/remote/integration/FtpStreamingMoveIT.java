@@ -50,7 +50,7 @@ public class FtpStreamingMoveIT extends FtpServerTestSupport {
         assertNotNull(is);
 
         // give time for consumer to rename file
-        File file = ftpFile("mymove/done/hello.txt").toFile();
+        File file = service.ftpFile("mymove/done/hello.txt").toFile();
         await().atMost(1, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertTrue(file.exists(), "File should have been renamed"));
     }

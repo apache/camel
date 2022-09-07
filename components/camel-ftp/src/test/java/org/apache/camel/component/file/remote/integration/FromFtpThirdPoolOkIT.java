@@ -53,7 +53,7 @@ public class FromFtpThirdPoolOkIT extends FtpServerTestSupport {
                 .untilAsserted(() -> assertEquals(3, counter));
 
         // assert the file is deleted
-        File file = ftpFile("thirdpool/hello.txt").toFile();
+        File file = service.ftpFile("thirdpool/hello.txt").toFile();
         assertFalse(file.exists(), "The file should have been deleted");
     }
 
@@ -70,7 +70,7 @@ public class FromFtpThirdPoolOkIT extends FtpServerTestSupport {
                         counter++;
                         if (counter < 3) {
                             // file should exists
-                            File file = ftpFile("thirdpool/hello.txt").toFile();
+                            File file = service.ftpFile("thirdpool/hello.txt").toFile();
                             assertTrue(file.exists(), "The file should NOT have been deleted");
                             throw new IllegalArgumentException("Forced by unittest");
                         }

@@ -57,7 +57,7 @@ public class FromFtpPreMoveDeleteIT extends FtpServerTestSupport {
         mock.assertIsSatisfied();
 
         // and file should be deleted
-        File file = ftpFile("movefile/work/hello.txt").toFile();
+        File file = service.ftpFile("movefile/work/hello.txt").toFile();
         await().atMost(1, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertFalse(file.exists(), "The file should have been deleted"));
     }
@@ -83,7 +83,7 @@ public class FromFtpPreMoveDeleteIT extends FtpServerTestSupport {
                 from(getFtpUrl()).process(new Processor() {
                     public void process(Exchange exchange) {
                         // assert the file is pre moved
-                        File file = ftpFile("movefile/work/hello.txt").toFile();
+                        File file = service.ftpFile("movefile/work/hello.txt").toFile();
                         assertTrue(file.exists(), "The file should have been moved");
                     }
                 }).to("mock:result");

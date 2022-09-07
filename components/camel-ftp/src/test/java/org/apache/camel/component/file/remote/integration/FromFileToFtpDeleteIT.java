@@ -48,7 +48,7 @@ public class FromFileToFtpDeleteIT extends FtpServerTestSupport {
         assertFileNotExists(testFile("delete/hello.txt"));
 
         // file should exists on ftp server
-        assertFileExists(ftpFile("hello.txt"));
+        assertFileExists(service.ftpFile("hello.txt"));
     }
 
     @Override
