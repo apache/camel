@@ -183,7 +183,6 @@ import org.apache.camel.support.NormalizedUri;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.ProcessorEndpoint;
 import org.apache.camel.support.ResolverHelper;
-import org.apache.camel.support.TimerListenerManager;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.BaseService;
 import org.apache.camel.support.service.ServiceHelper;

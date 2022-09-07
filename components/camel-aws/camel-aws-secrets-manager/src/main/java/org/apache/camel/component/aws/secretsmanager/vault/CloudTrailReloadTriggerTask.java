@@ -43,8 +43,7 @@ import software.amazon.awssdk.services.cloudtrail.model.LookupEventsResponse;
 import software.amazon.awssdk.services.cloudtrail.model.Resource;
 
 /**
- * Period task which checks if AWS secrets has been updated and
- * can trigger Camel to be reloaded.
+ * Period task which checks if AWS secrets has been updated and can trigger Camel to be reloaded.
  */
 @PeriodicTask("aws-secret-refresh")
 public class CloudTrailReloadTriggerTask extends ServiceSupport implements CamelContextAware, Runnable {
@@ -163,7 +162,7 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
     protected boolean matchSecret(String name, String patterns) {
         String[] parts = patterns.split(",");
         for (String part : parts) {
-            if (name.contains(part) ||  PatternHelper.matchPattern(name, part)) {
+            if (name.contains(part) || PatternHelper.matchPattern(name, part)) {
                 return true;
             }
         }

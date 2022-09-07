@@ -22,8 +22,8 @@ import org.apache.camel.support.TimerListenerManager;
 import org.apache.camel.util.StopWatch;
 
 /**
- * A {@link PeriodTaskScheduler} that schedules generic tasks from
- * custom components that are defined with the {@link org.apache.camel.spi.annotations.PeriodicTask} annotation.
+ * A {@link PeriodTaskScheduler} that schedules generic tasks from custom components that are defined with the
+ * {@link org.apache.camel.spi.annotations.PeriodicTask} annotation.
  */
 public final class DefaultPeriodTaskScheduler extends TimerListenerManager implements PeriodTaskScheduler {
 

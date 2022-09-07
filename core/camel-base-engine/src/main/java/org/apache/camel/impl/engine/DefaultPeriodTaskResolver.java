@@ -16,10 +16,10 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.util.Optional;
+
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.PeriodTaskResolver;
-
-import java.util.Optional;
 
 public class DefaultPeriodTaskResolver implements PeriodTaskResolver {
 

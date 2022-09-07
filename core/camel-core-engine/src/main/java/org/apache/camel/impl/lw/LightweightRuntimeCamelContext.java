@@ -259,7 +259,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         routeController = context.getRouteController();
         inflightRepository = context.getInflightRepository();
         periodTaskResolver = context.adapt(ExtendedCamelContext.class).getPeriodTaskResolver();
-        periodTaskScheduler  = context.adapt(ExtendedCamelContext.class).getPeriodTaskScheduler();
+        periodTaskScheduler = context.adapt(ExtendedCamelContext.class).getPeriodTaskScheduler();
         globalOptions = context.getGlobalOptions();
         injector = context.getInjector();
         classResolver = context.getClassResolver();

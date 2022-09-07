@@ -16,15 +16,15 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.support.TimerListenerManager;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
-
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class PeriodTaskSchedulerTest extends ContextTestSupport {
 
