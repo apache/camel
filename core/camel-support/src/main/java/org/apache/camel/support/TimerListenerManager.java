@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support;
 
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
@@ -131,6 +132,13 @@ public class TimerListenerManager extends ServiceSupport implements Runnable, Ca
         ServiceHelper.stopAndShutdownService(listener);
         listeners.remove(listener);
         LOG.debug("Removed TimerListener: {}", listener);
+    }
+
+    /**
+     * A read-only set of the registered listeners
+     */
+    protected Set<TimerListener> getListeners() {
+        return Collections.unmodifiableSet(listeners);
     }
 
     @Override

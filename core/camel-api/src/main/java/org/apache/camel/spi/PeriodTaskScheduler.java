@@ -23,7 +23,6 @@ package org.apache.camel.spi;
  * For example the AWS vault is using this to periodically check for secrets refreshed in AWS to trigger Camel to reload
  * to use the updated secrets.
  */
-@FunctionalInterface
 public interface PeriodTaskScheduler {
 
     /**
@@ -34,5 +33,13 @@ public interface PeriodTaskScheduler {
      * @param period the interval (approximate) in millis, between running the task
      */
     void schedulePeriodTask(Runnable task, long period);
+
+    /**
+     * Gets an existing task by a given type, assuming there is only one task of the given type.
+     *
+     * @param type the type of the task
+     * @return the task, or <tt>null</tt> if no tasks exists
+     */
+    <T> T getTaskByType(Class<T> type);
 
 }

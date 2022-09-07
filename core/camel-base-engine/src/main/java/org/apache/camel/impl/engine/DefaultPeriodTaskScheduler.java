@@ -36,6 +36,20 @@ public final class DefaultPeriodTaskScheduler extends TimerListenerManager imple
     }
 
     @Override
+    public <T> T getTaskByType(Class<T> type) {
+        for (TimerListener listener : getListeners()) {
+            Object task = listener;
+            if (listener instanceof TaskWrapper) {
+                task = ((TaskWrapper) listener).getTask();
+            }
+            if (type.isInstance(task)) {
+                return type.cast(task);
+            }
+        }
+        return null;
+    }
+
+    @Override
     public void addTimerListener(TimerListener listener) {
         if (listener instanceof TaskWrapper) {
             super.addTimerListener(listener);
@@ -53,6 +67,10 @@ public final class DefaultPeriodTaskScheduler extends TimerListenerManager imple
         public TaskWrapper(Runnable task, long period) {
             this.task = task;
             this.period = period;
+        }
+
+        public Runnable getTask() {
+            return task;
         }
 
         @Override

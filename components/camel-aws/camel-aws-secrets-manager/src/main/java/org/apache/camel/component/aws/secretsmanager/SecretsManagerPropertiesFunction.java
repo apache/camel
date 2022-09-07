@@ -87,6 +87,9 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
 
     private final Set<String> secrets = new HashSet<>();
 
+    private String region;
+    private boolean defaultCredentialsProvider;
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
@@ -105,6 +108,7 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
                 useDefaultCredentialsProvider = awsVaultConfiguration.isDefaultCredentialsProvider();
             }
         }
+        this.region = region;
         if (ObjectHelper.isNotEmpty(accessKey) && ObjectHelper.isNotEmpty(secretKey) && ObjectHelper.isNotEmpty(region)) {
             SecretsManagerClientBuilder clientBuilder = SecretsManagerClient.builder();
             AwsBasicCredentials cred = AwsBasicCredentials.create(accessKey, secretKey);
@@ -112,6 +116,7 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
             clientBuilder.region(Region.of(region));
             client = clientBuilder.build();
         } else if (useDefaultCredentialsProvider && ObjectHelper.isNotEmpty(region)) {
+            this.defaultCredentialsProvider = true;
             SecretsManagerClientBuilder clientBuilder = SecretsManagerClient.builder();
             clientBuilder.region(Region.of(region));
             client = clientBuilder.build();
@@ -251,4 +256,17 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
         return secrets;
     }
 
+    /**
+     * The region in use for connecting to AWS Secrets Manager
+     */
+    public String getRegion() {
+        return region;
+    }
+
+    /**
+     * Whether login is using default credentials provider, or access/secret keys
+     */
+    public boolean isDefaultCredentialsProvider() {
+        return defaultCredentialsProvider;
+    }
 }

@@ -18,8 +18,10 @@ package org.apache.camel.component.aws.secretsmanager.vault;
 
 import java.time.Instant;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
@@ -60,10 +62,12 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
     private static final String SECRETSMANAGER_AMAZONAWS_COM = "secretsmanager.amazonaws.com";
 
     private CamelContext camelContext;
-    private CloudTrailClient cloudTrailClient;
+    private boolean reloadEnabled = true;
     private String secrets;
+    private CloudTrailClient cloudTrailClient;
     private SecretsManagerPropertiesFunction propertiesFunction;
     private volatile Instant lastTime;
+    private final Map<String, Instant> updates = new HashMap<>();
 
     public CloudTrailReloadTriggerTask() {
     }
@@ -76,6 +80,24 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    public boolean isReloadEnabled() {
+        return reloadEnabled;
+    }
+
+    /**
+     * Whether Camel should be reloaded on AWS secret updated
+     */
+    public void setReloadEnabled(boolean reloadEnabled) {
+        this.reloadEnabled = reloadEnabled;
+    }
+
+    /**
+     * A map of the updated secrets with the latest updated time.
+     */
+    public Map<String, Instant> getUpdates() {
+        return Collections.unmodifiableMap(updates);
     }
 
     @Override
@@ -121,6 +143,8 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
             }
             cloudTrailClient = null;
         }
+
+        updates.clear();
     }
 
     @Override
@@ -153,8 +177,11 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
                         for (Resource res : a) {
                             String name = res.resourceName();
                             if (matchSecret(name)) {
-                                LOG.info("Update for secret: {} detected, triggering a CamelContext reload", name);
-                                triggerReloading = true;
+                                updates.put(name, event.eventTime());
+                                if (isReloadEnabled()) {
+                                    LOG.info("Update for secret: {} detected, triggering a CamelContext reload", name);
+                                    triggerReloading = true;
+                                }
                                 break;
                             }
                         }
