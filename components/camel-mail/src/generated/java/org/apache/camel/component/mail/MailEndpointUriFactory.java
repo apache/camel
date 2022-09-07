@@ -22,7 +22,7 @@ public class MailEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(69);
+        Set<String> props = new HashSet<>(71);
         props.add("additionalJavaMailProperties");
         props.add("alternativeBodyHeader");
         props.add("attachmentsContentTransferEncodingResolver");
@@ -50,7 +50,9 @@ public class MailEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("fetchSize");
         props.add("folderName");
         props.add("from");
+        props.add("generateMissingAttachmentNames");
         props.add("greedy");
+        props.add("handleDuplicateAttachmentNames");
         props.add("handleFailedMessage");
         props.add("headerFilterStrategy");
         props.add("host");

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.mail;
 
+import static org.apache.camel.component.mail.MailConstants.MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER;
+import static org.apache.camel.component.mail.MailConstants.MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER;
+
 import javax.mail.Message;
 import javax.mail.search.SearchTerm;
 
@@ -141,7 +144,12 @@ public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterS
             boolean decode = getConfiguration() != null && getConfiguration().isDecodeFilename();
             boolean mapMailMessage = getConfiguration() != null && getConfiguration().isMapMailMessage();
             boolean failDuplicate = getConfiguration() != null && getConfiguration().isFailOnDuplicateFileAttachment();
-            binding = new MailBinding(headerFilterStrategy, contentTypeResolver, decode, mapMailMessage, failDuplicate);
+            String generateMissingAttachmentNames =
+                getConfiguration() != null ? getConfiguration().getGenerateMissingAttachmentNames() : MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER;
+            String handleDuplicateAttachmentNames =
+                getConfiguration() != null ? getConfiguration().getHandleDuplicateAttachmentNames() : MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER;
+            binding = new MailBinding(headerFilterStrategy, contentTypeResolver, decode, mapMailMessage, failDuplicate, generateMissingAttachmentNames,
+                                      handleDuplicateAttachmentNames);
         }
         return binding;
     }

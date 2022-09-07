@@ -1,0 +1,70 @@
+From: "lastname, firstname" <first.last@company.com>
+To: "receiver@company.com" <receiver@company.com>
+Subject: Attachment with no name
+Date: Tue, 6 Sep 2022 18:17:05 +0000
+Accept-Language: en-DE, de-DE, en-US
+Content-Language: en-US
+Content-Type: multipart/mixed;
+	boundary="_004_AM9PR02MB741067956AE4647A6F9AE087E87E9AM9PR02MB7410eurp_"
+MIME-Version: 1.0
+
+--_004_AM9PR02MB741067956AE4647A6F9AE087E87E9AM9PR02MB7410eurp_
+Content-Type: multipart/alternative;
+	boundary="_000_AM9PR02MB741067956AE4647A6F9AE087E87E9AM9PR02MB7410eurp_"
+
+--_000_AM9PR02MB741067956AE4647A6F9AE087E87E9AM9PR02MB7410eurp_
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+This mail has a attachment which is another mail message. The attachment ha=
+s no name.
+
+--_000_AM9PR02MB741067956AE4647A6F9AE087E87E9AM9PR02MB7410eurp_
+Content-Type: text/html; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<body>
+This mail has a attachment whic=
+h is another mail message. The attachment has no name
+</body>
+</html>
+
+--_000_AM9PR02MB741067956AE4647A6F9AE087E87E9AM9PR02MB7410eurp_--
+
+--_004_AM9PR02MB741067956AE4647A6F9AE087E87E9AM9PR02MB7410eurp_
+Content-Type: message/rfc822
+Content-Disposition: attachment;
+	creation-date="Tue, 06 Sep 2022 18:17:05 GMT";
+	modification-date="Tue, 06 Sep 2022 18:17:05 GMT"
+
+From: "lastname, firstname" <first.last@company.com>
+To: "lastname, firstname" <first.last@company.com>
+Subject: Inner message
+Date: Tue, 6 Sep 2022 18:15:43 +0000
+Accept-Language: en-DE, de-DE, en-US
+Content-Language: en-US
+Content-Type: multipart/alternative;
+	boundary="_000_AM9PR02MB7410FDA20E6645A379EA7FADE87E9AM9PR02MB7410eurp_"
+MIME-Version: 1.0
+
+--_000_AM9PR02MB7410FDA20E6645A379EA7FADE87E9AM9PR02MB7410eurp_
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+Inner message
+
+
+--_000_AM9PR02MB7410FDA20E6645A379EA7FADE87E9AM9PR02MB7410eurp_
+Content-Type: text/html; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<body>
+Inner message
+</body>
+</html>
+
+--_000_AM9PR02MB7410FDA20E6645A379EA7FADE87E9AM9PR02MB7410eurp_--
+
+--_004_AM9PR02MB741067956AE4647A6F9AE087E87E9AM9PR02MB7410eurp_--
