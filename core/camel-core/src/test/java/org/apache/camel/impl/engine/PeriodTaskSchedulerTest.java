@@ -23,7 +23,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.support.TimerListenerManager;
+import org.apache.camel.support.service.ServiceSupport;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class PeriodTaskSchedulerTest extends ContextTestSupport {
@@ -37,6 +39,8 @@ public class PeriodTaskSchedulerTest extends ContextTestSupport {
 
     @Test
     public void testScheduler() throws Exception {
+        counter.set(0);
+
         PeriodTaskScheduler scheduler = context.adapt(ExtendedCamelContext.class).getPeriodTaskScheduler();
         if (scheduler instanceof TimerListenerManager) {
             // speedup unit test
@@ -47,4 +51,54 @@ public class PeriodTaskSchedulerTest extends ContextTestSupport {
 
         Awaitility.waitAtMost(5, TimeUnit.SECONDS).until(() -> counter.get() > 0);
     }
+
+    @Test
+    public void testSchedulerLifecycle() throws Exception {
+        counter.set(0);
+
+        MyTask task = new MyTask();
+
+        PeriodTaskScheduler scheduler = context.adapt(ExtendedCamelContext.class).getPeriodTaskScheduler();
+        if (scheduler instanceof TimerListenerManager) {
+            // speedup unit test
+            ((TimerListenerManager) scheduler).setInterval(10);
+        }
+        scheduler.schedulePeriodTask(task, 10);
+        context.start();
+
+        Awaitility.waitAtMost(5, TimeUnit.SECONDS).until(() -> counter.get() > 1);
+
+        Assertions.assertTrue(task.getEvent().startsWith("start"));
+        Assertions.assertTrue(task.getEvent().endsWith("run"));
+
+        context.stop();
+
+        Assertions.assertTrue(task.getEvent().endsWith("stop"));
+    }
+
+    private class MyTask extends ServiceSupport implements Runnable {
+
+        private volatile String event = "";
+
+        public String getEvent() {
+            return event;
+        }
+
+        @Override
+        protected void doStart() throws Exception {
+            event += "start";
+        }
+
+        @Override
+        protected void doStop() throws Exception {
+            event += "stop";
+        }
+
+        @Override
+        public void run() {
+            counter.incrementAndGet();
+            event += "run";
+        }
+    }
+
 }
