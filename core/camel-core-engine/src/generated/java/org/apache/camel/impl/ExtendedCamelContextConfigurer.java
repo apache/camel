@@ -145,6 +145,10 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "PackageScanClassResolver": target.setPackageScanClassResolver(property(camelContext, org.apache.camel.spi.PackageScanClassResolver.class, value)); return true;
         case "packagescanresourceresolver":
         case "PackageScanResourceResolver": target.setPackageScanResourceResolver(property(camelContext, org.apache.camel.spi.PackageScanResourceResolver.class, value)); return true;
+        case "periodtaskresolver":
+        case "PeriodTaskResolver": target.setPeriodTaskResolver(property(camelContext, org.apache.camel.spi.PeriodTaskResolver.class, value)); return true;
+        case "periodtaskscheduler":
+        case "PeriodTaskScheduler": target.setPeriodTaskScheduler(property(camelContext, org.apache.camel.spi.PeriodTaskScheduler.class, value)); return true;
         case "processorexchangefactory":
         case "ProcessorExchangeFactory": target.setProcessorExchangeFactory(property(camelContext, org.apache.camel.spi.ProcessorExchangeFactory.class, value)); return true;
         case "processorfactory":
@@ -352,6 +356,10 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "PackageScanClassResolver": return org.apache.camel.spi.PackageScanClassResolver.class;
         case "packagescanresourceresolver":
         case "PackageScanResourceResolver": return org.apache.camel.spi.PackageScanResourceResolver.class;
+        case "periodtaskresolver":
+        case "PeriodTaskResolver": return org.apache.camel.spi.PeriodTaskResolver.class;
+        case "periodtaskscheduler":
+        case "PeriodTaskScheduler": return org.apache.camel.spi.PeriodTaskScheduler.class;
         case "processorexchangefactory":
         case "ProcessorExchangeFactory": return org.apache.camel.spi.ProcessorExchangeFactory.class;
         case "processorfactory":
@@ -560,6 +568,10 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "PackageScanClassResolver": return target.getPackageScanClassResolver();
         case "packagescanresourceresolver":
         case "PackageScanResourceResolver": return target.getPackageScanResourceResolver();
+        case "periodtaskresolver":
+        case "PeriodTaskResolver": return target.getPeriodTaskResolver();
+        case "periodtaskscheduler":
+        case "PeriodTaskScheduler": return target.getPeriodTaskScheduler();
         case "processorexchangefactory":
         case "ProcessorExchangeFactory": return target.getProcessorExchangeFactory();
         case "processorfactory":

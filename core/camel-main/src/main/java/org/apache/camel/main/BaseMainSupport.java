@@ -49,16 +49,20 @@ import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.impl.event.CamelContextRoutesStartedEvent;
+import org.apache.camel.model.cloud.ServiceCallDefinitionConstants;
 import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.spi.AutowiredLifecycleStrategy;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PackageScanClassResolver;
+import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.RouteTemplateParameterSource;
 import org.apache.camel.spi.StartupStepRecorder;
+import org.apache.camel.spi.annotations.PeriodicTask;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.LifecycleStrategySupport;
@@ -66,12 +70,14 @@ import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.BaseService;
 import org.apache.camel.support.startup.LoggingStartupStepRecorder;
+import org.apache.camel.support.task.BackgroundTask;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.SensitiveUtils;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.vault.VaultConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -384,6 +390,27 @@ public abstract class BaseMainSupport extends BaseService {
     protected void configureLifecycle(CamelContext camelContext) throws Exception {
     }
 
+    /**
+     * Configures security vaults such as AWS, Azure, Google and Hashicorp.
+     */
+    protected void configureVault(CamelContext camelContext) throws Exception {
+        VaultConfiguration vc = camelContext.getVaultConfiguration();
+        if (vc == null) {
+            return;
+        }
+
+        if (vc.aws().isRefreshEnabled()) {
+            Optional<Runnable> task = camelContext.adapt(ExtendedCamelContext.class)
+                    .getPeriodTaskResolver().newInstance("aws-secret-refresh", Runnable.class);
+            if (task.isPresent()) {
+                long period = vc.aws().getRefreshPeriod();
+                LOG.info("Scheduling: {} running every: {}", task, TimeUtils.printDuration(period, true));
+                PeriodTaskScheduler scheduler = getCamelContext().adapt(ExtendedCamelContext.class).getPeriodTaskScheduler();
+                scheduler.schedulePeriodTask(task.get(), period);
+            }
+        }
+    }
+
     protected void autoconfigure(CamelContext camelContext) throws Exception {
         // gathers the properties (key=value) that was auto-configured
         final OrderedLocationProperties autoConfiguredProperties = new OrderedLocationProperties();
@@ -625,6 +652,8 @@ public abstract class BaseMainSupport extends BaseService {
         }
 
         configureLifecycle(camelContext);
+
+        configureVault(camelContext);
 
         if (standalone) {
             step = recorder.beginStep(BaseMainSupport.class, "configureRoutes", "Collect Routes");

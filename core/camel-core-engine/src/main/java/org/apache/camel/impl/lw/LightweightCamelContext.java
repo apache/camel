@@ -122,6 +122,8 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
+import org.apache.camel.spi.PeriodTaskResolver;
+import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
@@ -2104,6 +2106,27 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public ModelReifierFactory getModelReifierFactory() {
         return getModelCamelContext().getModelReifierFactory();
+    }
+
+    @Override
+    public PeriodTaskScheduler getPeriodTaskScheduler() {
+        return getExtendedCamelContext().getPeriodTaskScheduler();
+    }
+
+    @Override
+    public void setPeriodTaskScheduler(PeriodTaskScheduler periodTaskScheduler) {
+        getExtendedCamelContext().setPeriodTaskScheduler(periodTaskScheduler);
+
+    }
+
+    @Override
+    public PeriodTaskResolver getPeriodTaskResolver() {
+        return getExtendedCamelContext().getPeriodTaskResolver();
+    }
+
+    @Override
+    public void setPeriodTaskResolver(PeriodTaskResolver periodTaskResolver) {
+        getExtendedCamelContext().setPeriodTaskResolver(periodTaskResolver);
     }
 
     @Override

@@ -20,8 +20,12 @@ import java.time.Instant;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.spi.ContextReloadStrategy;
+import org.apache.camel.spi.annotations.PeriodicTask;
 import org.apache.camel.support.PatternHelper;
+import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -42,40 +46,73 @@ import software.amazon.awssdk.services.cloudtrail.model.Resource;
  * Period task which checks if AWS secrets has been updated and
  * can trigger Camel to be reloaded.
  */
-public class CloudTrailReloadTriggerTask implements Runnable {
+@PeriodicTask("aws-secret-refresh")
+public class CloudTrailReloadTriggerTask extends ServiceSupport implements CamelContextAware, Runnable {
 
-    // TODO: extends ServiceSupport
-    // TODO: doStart to create CloudTrailClient
-    // TODO: doStop to cleanup if needed
     // TODO: support ENV like SecretsManagerPropertiesFunction
 
     private static final Logger LOG = LoggerFactory.getLogger(CloudTrailReloadTriggerTask.class);
     private static final String SECRETSMANAGER_AMAZONAWS_COM = "secretsmanager.amazonaws.com";
 
-    private final CamelContext context;
-    private final String secrets;
+    private CamelContext camelContext;
+    private CloudTrailClient cloudTrailClient;
+    private String secrets;
     private volatile Instant lastTime;
 
-    public CloudTrailReloadTriggerTask(CamelContext context, String secrets) {
-        this.context = context;
-        this.secrets = secrets;
+    public CloudTrailReloadTriggerTask() {
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        secrets = camelContext.getVaultConfiguration().aws().getSecrets();
+        if (ObjectHelper.isEmpty(secrets)) {
+            throw new IllegalArgumentException("Secrets must be configured on AWS vault configuration");
+        }
+
+        CloudTrailClientBuilder cloudTrailClientBuilder;
+        Region regionValue = Region.of(camelContext.getVaultConfiguration().aws().getRegion());
+        if (camelContext.getVaultConfiguration().aws().isDefaultCredentialsProvider()) {
+            cloudTrailClientBuilder = CloudTrailClient.builder()
+                    .region(regionValue)
+                    .credentialsProvider(ProfileCredentialsProvider.create());
+        } else {
+            AwsBasicCredentials cred = AwsBasicCredentials.create(camelContext.getVaultConfiguration().aws().getAccessKey(),
+                    camelContext.getVaultConfiguration().aws().getSecretKey());
+            cloudTrailClientBuilder = CloudTrailClient.builder().credentialsProvider(StaticCredentialsProvider.create(cred));
+        }
+        cloudTrailClient = cloudTrailClientBuilder.build();
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        super.doShutdown();
+
+        if (cloudTrailClient != null) {
+            try {
+                cloudTrailClient.close();
+            } catch (Exception e) {
+                // ignore
+            }
+            cloudTrailClient = null;
+        }
     }
 
     @Override
     public void run() {
         boolean triggerReloading = false;
-        CloudTrailClientBuilder cloudTrailClientBuilder;
-        Region regionValue = Region.of(context.getVaultConfiguration().aws().getRegion());
-        if (context.getVaultConfiguration().aws().isDefaultCredentialsProvider()) {
-            cloudTrailClientBuilder = CloudTrailClient.builder()
-                    .region(regionValue)
-                    .credentialsProvider(ProfileCredentialsProvider.create());
-        } else {
-            AwsBasicCredentials cred = AwsBasicCredentials.create(context.getVaultConfiguration().aws().getAccessKey(),
-                    context.getVaultConfiguration().aws().getSecretKey());
-            cloudTrailClientBuilder = CloudTrailClient.builder().credentialsProvider(StaticCredentialsProvider.create(cred));
-        }
-        CloudTrailClient cloudTrailClient = cloudTrailClientBuilder.build();
+
         try {
             LookupEventsRequest.Builder eventsRequestBuilder = LookupEventsRequest.builder()
                     .maxResults(100).lookupAttributes(LookupAttribute.builder().attributeKey(LookupAttributeKey.EVENT_SOURCE)
@@ -115,10 +152,10 @@ public class CloudTrailReloadTriggerTask implements Runnable {
         }
 
         if (triggerReloading) {
-            ContextReloadStrategy reload = context.hasService(ContextReloadStrategy.class);
+            ContextReloadStrategy reload = camelContext.hasService(ContextReloadStrategy.class);
             if (reload != null) {
                 // trigger reload
-                reload.onReload(context.getName());
+                reload.onReload(camelContext.getName());
             }
         }
     }
@@ -131,5 +168,10 @@ public class CloudTrailReloadTriggerTask implements Runnable {
             }
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return "AWS Secrets Refresh Task";
     }
 }

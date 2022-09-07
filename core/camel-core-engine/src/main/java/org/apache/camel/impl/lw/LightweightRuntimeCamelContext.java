@@ -117,6 +117,8 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
+import org.apache.camel.spi.PeriodTaskResolver;
+import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
@@ -197,6 +199,8 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     private final ProcessorFactory processorFactory;
     private final InternalProcessorFactory internalProcessorFactory;
     private final InflightRepository inflightRepository;
+    private final PeriodTaskResolver periodTaskResolver;
+    private final PeriodTaskScheduler periodTaskScheduler;
     private final Injector injector;
     private final ClassResolver classResolver;
     private final Map<String, String> globalOptions;
@@ -254,6 +258,8 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         internalProcessorFactory = context.adapt(ExtendedCamelContext.class).getInternalProcessorFactory();
         routeController = context.getRouteController();
         inflightRepository = context.getInflightRepository();
+        periodTaskResolver = context.adapt(ExtendedCamelContext.class).getPeriodTaskResolver();
+        periodTaskScheduler  = context.adapt(ExtendedCamelContext.class).getPeriodTaskScheduler();
         globalOptions = context.getGlobalOptions();
         injector = context.getInjector();
         classResolver = context.getClassResolver();
@@ -2277,6 +2283,26 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
     @Override
     public void setStartupStepRecorder(StartupStepRecorder startupStepRecorder) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public PeriodTaskResolver getPeriodTaskResolver() {
+        return periodTaskResolver;
+    }
+
+    @Override
+    public void setPeriodTaskScheduler(PeriodTaskScheduler periodTaskScheduler) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public PeriodTaskScheduler getPeriodTaskScheduler() {
+        return periodTaskScheduler;
+    }
+
+    @Override
+    public void setPeriodTaskResolver(PeriodTaskResolver periodTaskResolver) {
         throw new UnsupportedOperationException();
     }
 
