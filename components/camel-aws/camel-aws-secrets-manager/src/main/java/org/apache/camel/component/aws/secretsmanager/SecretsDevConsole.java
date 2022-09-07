@@ -16,12 +16,16 @@
  */
 package org.apache.camel.component.aws.secretsmanager;
 
+import java.time.Instant;
 import java.util.Map;
 
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.component.aws.secretsmanager.vault.CloudTrailReloadTriggerTask;
 import org.apache.camel.impl.console.AbstractDevConsole;
+import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.spi.annotations.DevConsole;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.vault.AwsVaultConfiguration;
@@ -44,6 +48,11 @@ public class SecretsDevConsole extends AbstractDevConsole {
         if (pf instanceof SecretsManagerPropertiesFunction) {
             propertiesFunction = (SecretsManagerPropertiesFunction) pf;
         }
+        AwsVaultConfiguration aws = getCamelContext().getVaultConfiguration().getAwsVaultConfiguration();
+        if (aws != null && aws.isRefreshEnabled()) {
+            PeriodTaskScheduler scheduler = getCamelContext().adapt(ExtendedCamelContext.class).getPeriodTaskScheduler();
+            secretsRefreshTask = scheduler.getTaskByType(CloudTrailReloadTriggerTask.class);
+        }
     }
 
     @Override
@@ -63,9 +72,20 @@ public class SecretsDevConsole extends AbstractDevConsole {
                 sb.append(String.format("\n    Refresh Enabled: %s", aws.isRefreshEnabled()));
                 sb.append(String.format("\n    Refresh Period: %s", aws.getRefreshPeriod()));
             }
+            if (secretsRefreshTask != null) {
+                Instant last = secretsRefreshTask.getLastCheckTime();
+                String s = last != null ? TimeUtils.printSince(last.toEpochMilli()) : "none";
+                sb.append(String.format("\n    Last Check: %s", s));
+            }
             sb.append("\n\nSecrets in use:");
             for (String sec : propertiesFunction.getSecrets()) {
-                sb.append(String.format("\n    %s", sec)); // TODO: update time
+                Instant last = secretsRefreshTask != null ? secretsRefreshTask.getUpdates().get(sec) : null;
+                String age = last != null ? TimeUtils.printSince(last.toEpochMilli()) : null;
+                if (age != null) {
+                    sb.append(String.format("\n    %s", sec));
+                } else {
+                    sb.append(String.format("\n    %s (age: %s)", sec, age));
+                }
             }
         }
 
@@ -92,7 +112,12 @@ public class SecretsDevConsole extends AbstractDevConsole {
             for (String sec : propertiesFunction.getSecrets()) {
                 JsonObject jo = new JsonObject();
                 jo.put("name", sec);
-                // TODO: update time
+                Instant last = secretsRefreshTask != null ? secretsRefreshTask.getUpdates().get(sec) : null;
+                if (last != null) {
+                    long timestamp = last.toEpochMilli();
+                    jo.put("timestamp", timestamp);
+                    jo.put("age", TimeUtils.printSince(timestamp));
+                }
                 arr.add(jo);
             }
         }

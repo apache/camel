@@ -67,6 +67,7 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
     private CloudTrailClient cloudTrailClient;
     private SecretsManagerPropertiesFunction propertiesFunction;
     private volatile Instant lastTime;
+    private volatile Instant lastCheckTime;
     private final Map<String, Instant> updates = new HashMap<>();
 
     public CloudTrailReloadTriggerTask() {
@@ -98,6 +99,13 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
      */
     public Map<String, Instant> getUpdates() {
         return Collections.unmodifiableMap(updates);
+    }
+
+    /**
+     * Last time this task checked AWS for updated secrets.
+     */
+    public Instant getLastCheckTime() {
+        return lastCheckTime;
     }
 
     @Override
@@ -149,6 +157,7 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
 
     @Override
     public void run() {
+        lastCheckTime = Instant.now();
         boolean triggerReloading = false;
 
         try {
