@@ -19,7 +19,7 @@ package org.apache.camel.component.file.remote.integration;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -51,11 +51,11 @@ public class FtpConsumerWithCharsetIT extends FtpServerTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        byte[] iso = payload.getBytes("iso-8859-1");
-        byte[] utf = payload.getBytes("utf-8");
+        byte[] iso = payload.getBytes(StandardCharsets.ISO_8859_1);
+        byte[] utf = payload.getBytes(StandardCharsets.UTF_8);
 
-        LOG.debug("iso: {}", new String(iso, Charset.forName("iso-8859-1")));
-        LOG.debug("utf: {}", new String(utf, Charset.forName("utf-8")));
+        LOG.debug("iso: {}", new String(iso, StandardCharsets.ISO_8859_1));
+        LOG.debug("utf: {}", new String(utf, StandardCharsets.UTF_8));
 
         for (byte b : iso) {
             LOG.debug("iso byte: {}", b);
@@ -101,7 +101,7 @@ public class FtpConsumerWithCharsetIT extends FtpServerTestSupport {
         assertNotNull(file);
         assertEquals("iso-8859-1", file.getCharset());
         // The String will be encoded with UTF-8 by default
-        byte[] data = exchange.getIn().getBody(String.class).getBytes("UTF-8");
+        byte[] data = exchange.getIn().getBody(String.class).getBytes(StandardCharsets.UTF_8);
         // data should be in iso, where the danish ae is -61 -90, oe is -61 -72
         // aa is -61 -91
         // and copyright is -62 -87

@@ -78,9 +78,9 @@ public class FromFtpAsyncProcessIT extends FtpServerTestSupport {
         };
     }
 
-    private class MyAsyncProcessor extends AsyncProcessorSupport {
+    private static class MyAsyncProcessor extends AsyncProcessorSupport {
 
-        private ExecutorService executor = Executors.newSingleThreadExecutor();
+        private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
         @Override
         public boolean process(final Exchange exchange, final AsyncCallback callback) {

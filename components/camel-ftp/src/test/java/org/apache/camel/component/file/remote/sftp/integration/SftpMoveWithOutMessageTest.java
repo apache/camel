@@ -40,7 +40,7 @@ public class SftpMoveWithOutMessageTest extends SftpServerTestSupport {
 
     @Timeout(value = 30)
     @Test
-    public void testMoveFileForMultiplePollEnrich() throws Exception {
+    public void testMoveFileForMultiplePollEnrich() {
         String expected = "Hello World";
 
         // create two files using regular file
@@ -68,11 +68,11 @@ public class SftpMoveWithOutMessageTest extends SftpServerTestSupport {
     }
 
     @Override
-    protected RouteBuilder[] createRouteBuilders() throws Exception {
+    protected RouteBuilder[] createRouteBuilders() {
         TestProcessor processor = new TestProcessor();
         return new RouteBuilder[] { new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("vm:trigger")
                         .pollEnrich(
                                 "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin&delay=10000&disconnect=true&move=archive")
@@ -85,7 +85,7 @@ public class SftpMoveWithOutMessageTest extends SftpServerTestSupport {
 
     private static class TestProcessor implements Processor {
         @Override
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) {
             DefaultMessage msg = new DefaultMessage(exchange);
             msg.setBody(exchange.getIn().getBody());
             msg.setHeaders(exchange.getIn().getHeaders());

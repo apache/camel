@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 public class FromFilePasswordBeanRefIT extends FtpServerTestSupport {
 
     @BindToRegistry("myPass")
-    private String somename = "t%st";
+    private final String somename = "t%st";
 
     protected String getFtpUrl() {
         return "ftp://localhost:{{ftp.server.port}}/tmp3/camel?username=us@r&password=#bean:myPass&initialDelay=3000";

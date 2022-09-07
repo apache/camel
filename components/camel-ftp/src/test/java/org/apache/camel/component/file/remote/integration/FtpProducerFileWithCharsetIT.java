@@ -19,7 +19,7 @@ package org.apache.camel.component.file.remote.integration;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.IOHelper;
@@ -36,7 +36,7 @@ public class FtpProducerFileWithCharsetIT extends FtpServerTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FtpProducerFileWithCharsetIT.class);
 
-    private String payload = "\u00e6\u00f8\u00e5 \u00a9";
+    private final String payload = "\u00e6\u00f8\u00e5 \u00a9";
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/upload?charset=iso-8859-1&password=admin";
@@ -45,11 +45,11 @@ public class FtpProducerFileWithCharsetIT extends FtpServerTestSupport {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        byte[] utf = payload.getBytes("utf-8");
-        byte[] iso = payload.getBytes("iso-8859-1");
+        byte[] utf = payload.getBytes(StandardCharsets.UTF_8);
+        byte[] iso = payload.getBytes(StandardCharsets.ISO_8859_1);
 
-        LOG.debug("utf: {}", new String(utf, Charset.forName("utf-8")));
-        LOG.debug("iso: {}", new String(iso, Charset.forName("iso-8859-1")));
+        LOG.debug("utf: {}", new String(utf, StandardCharsets.UTF_8));
+        LOG.debug("iso: {}", new String(iso, StandardCharsets.ISO_8859_1));
 
         for (byte b : utf) {
             LOG.debug("utf byte: {}", b);
@@ -66,7 +66,7 @@ public class FtpProducerFileWithCharsetIT extends FtpServerTestSupport {
 
         File file = service.ftpFile("upload/charset/iso.txt").toFile();
         assertTrue(file.exists(), "The uploaded file should exists");
-        String fileContent = new String(IOConverter.toByteArray(file), "iso-8859-1");
+        String fileContent = new String(IOConverter.toByteArray(file), StandardCharsets.ISO_8859_1);
         assertEquals(fileContent, payload);
 
         // Lets also test byte wise

@@ -32,7 +32,7 @@ import org.junit.jupiter.api.condition.OS;
 public class FromFtpRemoteFileFilterIT extends FtpServerTestSupport {
 
     @BindToRegistry("myFilter")
-    private MyFileFilter filter = new MyFileFilter<>();
+    private final MyFileFilter filter = new MyFileFilter<>();
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/filefilter?password=admin&filter=#myFilter";
@@ -78,7 +78,7 @@ public class FromFtpRemoteFileFilterIT extends FtpServerTestSupport {
     }
 
     // START SNIPPET: e1
-    public class MyFileFilter<T> implements GenericFileFilter<T> {
+    public static class MyFileFilter<T> implements GenericFileFilter<T> {
 
         @Override
         public boolean accept(GenericFile<T> file) {

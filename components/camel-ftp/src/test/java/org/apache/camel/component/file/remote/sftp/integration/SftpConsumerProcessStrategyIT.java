@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file.remote.sftp.integration;
 
+import java.util.concurrent.atomic.LongAdder;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFile;
@@ -33,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SftpConsumerProcessStrategyIT extends SftpServerTestSupport {
 
     @BindToRegistry("myStrategy")
-    private MyStrategy myStrategy = new MyStrategy();
+    private final MyStrategy myStrategy = new MyStrategy();
 
     @Test
     public void testSftpConsume() {
@@ -51,7 +53,7 @@ public class SftpConsumerProcessStrategyIT extends SftpServerTestSupport {
 
     private static class MyStrategy implements GenericFileProcessStrategy {
 
-        private volatile int invoked;
+        private final LongAdder invoked = new LongAdder();
 
         @Override
         public void prepareOnStartup(GenericFileOperations operations, GenericFileEndpoint endpoint) {
@@ -72,7 +74,7 @@ public class SftpConsumerProcessStrategyIT extends SftpServerTestSupport {
         @Override
         public void commit(
                 GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file) {
-            invoked++;
+            invoked.increment();
         }
 
         @Override
@@ -82,7 +84,7 @@ public class SftpConsumerProcessStrategyIT extends SftpServerTestSupport {
         }
 
         int getInvoked() {
-            return invoked;
+            return invoked.intValue();
         }
     }
 }

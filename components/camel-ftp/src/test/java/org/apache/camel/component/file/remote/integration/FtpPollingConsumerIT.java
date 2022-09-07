@@ -41,26 +41,27 @@ public class FtpPollingConsumerIT extends FtpServerTestSupport {
     public void testPollingConsumer() throws Exception {
         template.sendBodyAndHeader(getFtpUrl(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        PollingConsumer consumer = context.getEndpoint(getFtpUrl()).createPollingConsumer();
-        consumer.start();
-        Exchange exchange = consumer.receive(5000);
-        assertNotNull(exchange);
-        assertEquals("Hello World", exchange.getIn().getBody(String.class));
+        try (PollingConsumer consumer = context.getEndpoint(getFtpUrl()).createPollingConsumer()) {
+            consumer.start();
+            Exchange exchange = consumer.receive(5000);
+            assertNotNull(exchange);
+            assertEquals("Hello World", exchange.getIn().getBody(String.class));
 
-        // sleep a bit to ensure polling consumer would be suspended after we
-        // have used it
-        Thread.sleep(1000);
+            // sleep a bit to ensure polling consumer would be suspended after we
+            // have used it
+            Thread.sleep(1000);
 
-        // drop a new file which should not be picked up by the consumer
-        template.sendBodyAndHeader(getFtpUrl(), "Bye World", Exchange.FILE_NAME, "bye.txt");
+            // drop a new file which should not be picked up by the consumer
+            template.sendBodyAndHeader(getFtpUrl(), "Bye World", Exchange.FILE_NAME, "bye.txt");
 
-        // sleep a bit to ensure polling consumer would not have picked up that
-        // file
-        File file = service.ftpFile("polling/bye.txt").toFile();
-        await().atMost(1, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertTrue(file.exists(), "File should exist " + file));
+            // sleep a bit to ensure polling consumer would not have picked up that
+            // file
+            File file = service.ftpFile("polling/bye.txt").toFile();
+            await().atMost(1, TimeUnit.SECONDS)
+                    .untilAsserted(() -> assertTrue(file.exists(), "File should exist " + file));
+            consumer.stop();
+        }
 
-        consumer.stop();
     }
 
 }

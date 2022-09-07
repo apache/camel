@@ -33,7 +33,7 @@ public class FtpConsumerIdempotentRefIT extends FtpServerTestSupport {
     private static boolean invoked;
 
     @BindToRegistry("myIdempotentRepo")
-    private MyIdempotentRepository myIdempotentRepo = new MyIdempotentRepository();
+    private final MyIdempotentRepository myIdempotentRepo = new MyIdempotentRepository();
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}"
@@ -77,7 +77,7 @@ public class FtpConsumerIdempotentRefIT extends FtpServerTestSupport {
         };
     }
 
-    public class MyIdempotentRepository implements IdempotentRepository {
+    public static class MyIdempotentRepository implements IdempotentRepository {
 
         @Override
         public boolean add(String messageId) {
@@ -105,7 +105,6 @@ public class FtpConsumerIdempotentRefIT extends FtpServerTestSupport {
 
         @Override
         public void clear() {
-            return;
         }
 
         @Override
