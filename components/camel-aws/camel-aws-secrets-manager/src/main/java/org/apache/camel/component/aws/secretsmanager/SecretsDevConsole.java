@@ -17,6 +17,9 @@
 package org.apache.camel.component.aws.secretsmanager;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.ExtendedCamelContext;
@@ -34,7 +37,7 @@ import org.apache.camel.vault.AwsVaultConfiguration;
 public class SecretsDevConsole extends AbstractDevConsole {
 
     private SecretsManagerPropertiesFunction propertiesFunction;
-    private CloudTrailReloadTriggerTask secretsRefreshTask; // TODO:
+    private CloudTrailReloadTriggerTask secretsRefreshTask;
 
     public SecretsDevConsole() {
         super("camel", "aws-secrets", "AWS Secrets", "AWS Secrets Manager");
@@ -78,7 +81,11 @@ public class SecretsDevConsole extends AbstractDevConsole {
                 sb.append(String.format("\n    Last Check: %s", s));
             }
             sb.append("\n\nSecrets in use:");
-            for (String sec : propertiesFunction.getSecrets()) {
+
+            List<String> sorted = new ArrayList<>(propertiesFunction.getSecrets());
+            Collections.sort(sorted);
+
+            for (String sec : sorted) {
                 Instant last = secretsRefreshTask != null ? secretsRefreshTask.getUpdates().get(sec) : null;
                 String age = last != null ? TimeUtils.printSince(last.toEpochMilli()) : null;
                 if (age != null) {
@@ -107,9 +114,21 @@ public class SecretsDevConsole extends AbstractDevConsole {
                 root.put("refreshEnabled", aws.isRefreshEnabled());
                 root.put("refreshPeriod", aws.getRefreshPeriod());
             }
+            if (secretsRefreshTask != null) {
+                Instant last = secretsRefreshTask.getLastCheckTime();
+                if (last != null) {
+                    long timestamp = last.toEpochMilli();
+                    root.put("lastCheckTimestamp", timestamp);
+                    root.put("lastCheckAge", TimeUtils.printSince(timestamp));
+                }
+            }
             JsonArray arr = new JsonArray();
             root.put("secrets", arr);
-            for (String sec : propertiesFunction.getSecrets()) {
+
+            List<String> sorted = new ArrayList<>(propertiesFunction.getSecrets());
+            Collections.sort(sorted);
+
+            for (String sec : sorted) {
                 JsonObject jo = new JsonObject();
                 jo.put("name", sec);
                 Instant last = secretsRefreshTask != null ? secretsRefreshTask.getUpdates().get(sec) : null;
