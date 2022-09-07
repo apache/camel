@@ -24,6 +24,7 @@ import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.vault.AwsVaultConfiguration;
 
 @DevConsole("aws-secrets")
 public class SecretsDevConsole extends AbstractDevConsole {
@@ -57,6 +58,11 @@ public class SecretsDevConsole extends AbstractDevConsole {
             } else {
                 sb.append("\n    Login: Access and Secret Keys");
             }
+            AwsVaultConfiguration aws = getCamelContext().getVaultConfiguration().getAwsVaultConfiguration();
+            if (aws != null) {
+                sb.append(String.format("\n    Refresh Enabled: %s", aws.isRefreshEnabled()));
+                sb.append(String.format("\n    Refresh Period: %s", aws.getRefreshPeriod()));
+            }
             sb.append("\n\nSecrets in use:");
             for (String sec : propertiesFunction.getSecrets()) {
                 sb.append(String.format("\n    %s", sec)); // TODO: update time
@@ -75,6 +81,11 @@ public class SecretsDevConsole extends AbstractDevConsole {
                 root.put("login", "DefaultCredentialsProvider");
             } else {
                 root.put("login", "Access and Secret Keys");
+            }
+            AwsVaultConfiguration aws = getCamelContext().getVaultConfiguration().getAwsVaultConfiguration();
+            if (aws != null) {
+                root.put("refreshEnabled", aws.isRefreshEnabled());
+                root.put("refreshPeriod", aws.getRefreshPeriod());
             }
             JsonArray arr = new JsonArray();
             root.put("secrets", arr);
