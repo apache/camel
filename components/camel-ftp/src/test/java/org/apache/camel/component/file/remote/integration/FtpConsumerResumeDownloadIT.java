@@ -43,7 +43,7 @@ public class FtpConsumerResumeDownloadIT extends FtpServerTestSupport {
         super.setUp();
 
         // create file on FTP server to download
-        Path myserver = ftpFile("myserver");
+        Path myserver = service.ftpFile("myserver");
         createDirectory(myserver);
         Files.write(myserver.resolve("hello.txt"), "Hello\nWorld\nI was here".getBytes());
 

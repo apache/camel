@@ -43,7 +43,7 @@ public class FtpProducerRawPasswordIT extends FtpServerTestSupport {
     public void testRawPassword() throws Exception {
         sendFile(getFtpUrl(), "Hello World", "camel.txt");
 
-        File file = ftpFile("upload/camel.txt").toFile();
+        File file = service.ftpFile("upload/camel.txt").toFile();
         assertTrue(file.exists(), "The uploaded file should exists");
         assertEquals("Hello World", IOConverter.toString(file, null));
     }

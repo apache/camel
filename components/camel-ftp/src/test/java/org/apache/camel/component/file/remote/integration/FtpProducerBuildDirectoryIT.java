@@ -37,7 +37,7 @@ public class FtpProducerBuildDirectoryIT extends FtpServerTestSupport {
     public void testProduceAndBuildFullRemotFolderTest() throws Exception {
         sendFile(getFtpUrl(), "Hello World", "claus.txt");
 
-        File file = ftpFile("upload/user/claus/claus.txt").toFile();
+        File file = service.ftpFile("upload/user/claus/claus.txt").toFile();
         assertTrue(file.exists(), "The uploaded file should exists");
         assertEquals("Hello World", IOConverter.toString(file, null));
     }

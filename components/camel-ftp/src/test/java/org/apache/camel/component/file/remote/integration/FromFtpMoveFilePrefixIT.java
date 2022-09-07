@@ -50,7 +50,7 @@ public class FromFtpMoveFilePrefixIT extends FtpServerTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World this file will be moved");
-        mock.expectedFileExists(ftpFile("movefile/done/hello.txt"));
+        mock.expectedFileExists(service.ftpFile("movefile/done/hello.txt"));
 
         mock.assertIsSatisfied();
     }
@@ -69,7 +69,7 @@ public class FromFtpMoveFilePrefixIT extends FtpServerTestSupport {
         producer.stop();
 
         // assert file is created
-        File file = ftpFile("movefile/hello.txt").toFile();
+        File file = service.ftpFile("movefile/hello.txt").toFile();
         assertTrue(file.exists(), "The file should exists");
     }
 

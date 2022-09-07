@@ -51,7 +51,7 @@ public class FtpPollEnrichConsumeWithDisconnectAndDeleteIT extends FtpServerTest
 
         assertMockEndpointsSatisfied();
 
-        File file = ftpFile("poll/hello.txt").toFile();
+        File file = service.ftpFile("poll/hello.txt").toFile();
         await().atMost(3, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertFalse(file.exists(), "The file should have been deleted"));
     }

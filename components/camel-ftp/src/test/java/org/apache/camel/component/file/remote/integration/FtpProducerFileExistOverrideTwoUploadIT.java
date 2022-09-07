@@ -36,7 +36,7 @@ public class FtpProducerFileExistOverrideTwoUploadIT extends FtpServerTestSuppor
         template.sendBodyAndHeader(getFtpUrl(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         // the 1st file should be stored
-        File file = ftpFile("exist/hello.txt").toFile();
+        File file = service.ftpFile("exist/hello.txt").toFile();
         assertTrue(file.exists());
 
         String body = context.getTypeConverter().convertTo(String.class, file);
@@ -48,7 +48,7 @@ public class FtpProducerFileExistOverrideTwoUploadIT extends FtpServerTestSuppor
         template.sendBodyAndHeader(getFtpUrl(), "Bye World", Exchange.FILE_NAME, "hello.txt");
 
         // the 2nd file should also exists as we stored with override
-        file = ftpFile("exist/hello.txt").toFile();
+        file = service.ftpFile("exist/hello.txt").toFile();
         assertTrue(file.exists());
 
         body = context.getTypeConverter().convertTo(String.class, file);

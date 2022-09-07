@@ -64,7 +64,7 @@ public class FtpConsumerTemplateIT extends FtpServerTestSupport {
         consumer.doneUoW(exchange);
 
         // file should still exist
-        File file = ftpFile("template/hello.txt").toFile();
+        File file = service.ftpFile("template/hello.txt").toFile();
         await().atMost(1, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertTrue(file.exists(), "The file should exist: " + file));
     }
@@ -93,7 +93,7 @@ public class FtpConsumerTemplateIT extends FtpServerTestSupport {
         consumer.doneUoW(exchange2);
 
         // file should still exists
-        File file = ftpFile("template/hello.txt").toFile();
+        File file = service.ftpFile("template/hello.txt").toFile();
         await().atMost(1, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertTrue(file.exists(), "The file should exist: " + file));
     }
@@ -109,7 +109,7 @@ public class FtpConsumerTemplateIT extends FtpServerTestSupport {
         producer.stop();
 
         // assert file is created
-        File file = ftpFile("template/hello.txt").toFile();
+        File file = service.ftpFile("template/hello.txt").toFile();
         assertTrue(file.exists(), "The file should exist: " + file);
     }
 

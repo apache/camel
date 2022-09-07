@@ -38,7 +38,7 @@ public class FileToFtpTempFileNameIT extends FtpServerTestSupport {
 
         assertTrue(notify.matchesWaitTime());
 
-        File file = ftpFile("out/sub/hello.txt").toFile();
+        File file = service.ftpFile("out/sub/hello.txt").toFile();
         assertTrue(file.exists(), "File should exists " + file);
     }
 

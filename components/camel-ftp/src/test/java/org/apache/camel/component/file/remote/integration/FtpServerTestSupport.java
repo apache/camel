@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.file.remote.integration;
 
-import java.nio.file.Path;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.remote.BaseServerTestSupport;
 import org.apache.camel.test.infra.ftp.services.embedded.FtpEmbeddedService;
@@ -37,8 +35,4 @@ public abstract class FtpServerTestSupport extends BaseServerTestSupport {
         template.sendBodyAndHeader(url, body, Exchange.FILE_NAME, simple(fileName));
     }
 
-    @Deprecated
-    protected Path ftpFile(String file) {
-        return service.getFtpRootDir().resolve(file);
-    }
 }

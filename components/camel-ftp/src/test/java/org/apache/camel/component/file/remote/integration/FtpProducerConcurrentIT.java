@@ -49,7 +49,7 @@ public class FtpProducerConcurrentIT extends FtpServerTestSupport {
 
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
         for (int i = 0; i < files; i++) {
-            getMockEndpoint("mock:result").expectedFileExists(ftpFile("concurrent/" + i + ".txt"));
+            getMockEndpoint("mock:result").expectedFileExists(service.ftpFile("concurrent/" + i + ".txt"));
 
             final int index = i;
             executor.submit(new Callable<Object>() {

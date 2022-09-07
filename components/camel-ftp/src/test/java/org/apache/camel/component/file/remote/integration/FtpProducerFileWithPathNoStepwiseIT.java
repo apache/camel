@@ -34,7 +34,7 @@ public class FtpProducerFileWithPathNoStepwiseIT extends FtpServerTestSupport {
     public void testProducerFileWithPathNoStepwise() throws Exception {
         sendFile(getFtpUrl(), "Hello World", "hello/claus.txt");
 
-        File file = ftpFile("upload/hello/claus.txt").toFile();
+        File file = service.ftpFile("upload/hello/claus.txt").toFile();
         assertTrue(file.exists(), "The uploaded file should exists");
         assertEquals("Hello World", IOConverter.toString(file, null));
     }

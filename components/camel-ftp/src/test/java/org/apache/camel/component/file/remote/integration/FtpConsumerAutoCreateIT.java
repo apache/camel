@@ -45,10 +45,10 @@ public class FtpConsumerAutoCreateIT extends FtpServerTestSupport {
         FtpEndpoint<?> endpoint = (FtpEndpoint<?>) this.getMandatoryEndpoint(getFtpUrl() + "&autoCreate=true");
         endpoint.start();
         endpoint.getExchanges();
-        assertDirectoryExists(ftpFile("foo/bar/baz/xxx"));
+        assertDirectoryExists(service.ftpFile("foo/bar/baz/xxx"));
         // producer should create necessary subdirs
         sendFile(getFtpUrl(), "Hello World", "sub1/sub2/hello.txt");
-        assertDirectoryExists(ftpFile("foo/bar/baz/xxx/sub1/sub2"));
+        assertDirectoryExists(service.ftpFile("foo/bar/baz/xxx/sub1/sub2"));
 
         // to see if another connect causes problems with autoCreate=true
         endpoint.stop();

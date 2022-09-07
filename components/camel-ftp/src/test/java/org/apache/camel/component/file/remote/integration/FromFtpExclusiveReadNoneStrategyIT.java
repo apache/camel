@@ -60,7 +60,7 @@ public class FromFtpExclusiveReadNoneStrategyIT extends FtpServerTestSupport {
         context.start();
 
         deleteDirectory(service.getFtpRootDir());
-        createDirectory(ftpFile("slowfile"));
+        createDirectory(service.ftpFile("slowfile"));
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
@@ -84,7 +84,7 @@ public class FromFtpExclusiveReadNoneStrategyIT extends FtpServerTestSupport {
         @Override
         public void process(Exchange exchange) throws Exception {
             LOG.info("Creating a slow file ...");
-            File file = ftpFile("slowfile/hello.txt").toFile();
+            File file = service.ftpFile("slowfile/hello.txt").toFile();
             FileOutputStream fos = new FileOutputStream(file);
             FileLock lock = fos.getChannel().lock();
             fos.write("Hello World".getBytes());

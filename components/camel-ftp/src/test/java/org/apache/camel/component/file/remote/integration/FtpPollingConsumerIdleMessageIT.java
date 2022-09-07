@@ -41,7 +41,7 @@ public class FtpPollingConsumerIdleMessageIT extends FtpServerTestSupport {
 
     @BeforeEach
     public void setup() {
-        ftpFile("polling").toFile().mkdirs();
+        service.ftpFile("polling").toFile().mkdirs();
     }
 
     @Override

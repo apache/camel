@@ -55,8 +55,8 @@ public class FtpProducerMoveExistingIT extends FtpServerTestSupport {
         template.sendBodyAndHeader(getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}", "Hello World",
                 Exchange.FILE_NAME, "hello.txt");
 
-        assertFileExists(ftpFile("move/hello.txt"));
-        assertFileNotExists(ftpFile("move/renamed-hello.txt"));
+        assertFileExists(service.ftpFile("move/hello.txt"));
+        assertFileNotExists(service.ftpFile("move/renamed-hello.txt"));
     }
 
     @Test
@@ -66,8 +66,8 @@ public class FtpProducerMoveExistingIT extends FtpServerTestSupport {
         template.sendBodyAndHeader(getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}", "Bye World",
                 Exchange.FILE_NAME, "hello.txt");
 
-        assertFileExists(ftpFile("move/hello.txt"), "Bye World");
-        assertFileExists(ftpFile("move/renamed-hello.txt"), "Hello World");
+        assertFileExists(service.ftpFile("move/hello.txt"), "Bye World");
+        assertFileExists(service.ftpFile("move/renamed-hello.txt"), "Hello World");
     }
 
     @Test
@@ -81,9 +81,9 @@ public class FtpProducerMoveExistingIT extends FtpServerTestSupport {
                 "Bye World", Exchange.FILE_NAME,
                 "hello.txt");
 
-        assertFileExists(ftpFile("move/hello.txt"), "Bye World");
+        assertFileExists(service.ftpFile("move/hello.txt"), "Bye World");
 
-        assertFileExists(ftpFile("move/renamed-hello.txt"), "Hello World");
+        assertFileExists(service.ftpFile("move/renamed-hello.txt"), "Hello World");
     }
 
     @Test
@@ -96,9 +96,9 @@ public class FtpProducerMoveExistingIT extends FtpServerTestSupport {
                                    + "-${date:now:yyyyMMddHHmmssSSS}/",
                 "Bye World", Exchange.FILE_NAME, "hello.txt");
 
-        assertFileExists(ftpFile("move/hello.txt"), "Bye World");
+        assertFileExists(service.ftpFile("move/hello.txt"), "Bye World");
 
-        File folder = ftpFile("move").toFile();
+        File folder = service.ftpFile("move").toFile();
         String[] directories = folder.list(new FilenameFilter() {
             @Override
             public boolean accept(File current, String name) {
@@ -107,7 +107,7 @@ public class FtpProducerMoveExistingIT extends FtpServerTestSupport {
             }
         });
         assertEquals(1, directories.length);
-        assertFileExists(ftpFile("move/" + directories[0] + "/hello.txt"), "Hello World");
+        assertFileExists(service.ftpFile("move/" + directories[0] + "/hello.txt"), "Hello World");
     }
 
     @Test
@@ -119,9 +119,9 @@ public class FtpProducerMoveExistingIT extends FtpServerTestSupport {
         template.sendBodyAndHeader(getFtpUrl() + "&tempFileName=${file:onlyname}.temp&moveExisting=${file:parent}/"
                                    + subdirPrefix + "-${date:now:yyyyMMddHHmmssSSS}/${file:onlyname}",
                 "Bye World", Exchange.FILE_NAME, "hello.txt");
-        assertFileExists(ftpFile("move/hello.txt"), "Bye World");
+        assertFileExists(service.ftpFile("move/hello.txt"), "Bye World");
 
-        File folder = ftpFile("move").toFile();
+        File folder = service.ftpFile("move").toFile();
         String[] directories = folder.list(new FilenameFilter() {
             @Override
             public boolean accept(File current, String name) {
@@ -130,7 +130,7 @@ public class FtpProducerMoveExistingIT extends FtpServerTestSupport {
             }
         });
         assertEquals(1, directories.length);
-        assertFileExists(ftpFile("move/" + directories[0] + "/hello.txt"), "Hello World");
+        assertFileExists(service.ftpFile("move/" + directories[0] + "/hello.txt"), "Hello World");
     }
 
     @Test
@@ -140,9 +140,9 @@ public class FtpProducerMoveExistingIT extends FtpServerTestSupport {
         template.sendBodyAndHeader(getFtpUrl() + "&tempFileName=${file:onlyname}.temp&moveExisting=archive", "Bye World",
                 Exchange.FILE_NAME, "hello.txt");
 
-        assertFileExists(ftpFile("move/hello.txt"), "Bye World");
+        assertFileExists(service.ftpFile("move/hello.txt"), "Bye World");
 
-        assertFileExists(ftpFile("move/archive/hello.txt"), "Hello World");
+        assertFileExists(service.ftpFile("move/archive/hello.txt"), "Hello World");
     }
 
     @Test
@@ -150,10 +150,10 @@ public class FtpProducerMoveExistingIT extends FtpServerTestSupport {
         template.sendBodyAndHeader(getFtpUrl() + "&moveExisting=backup", "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader(getFtpUrl() + "&moveExisting=backup", "Bye World", Exchange.FILE_NAME, "hello.txt");
 
-        assertFileExists(ftpFile("move/hello.txt"), "Bye World");
+        assertFileExists(service.ftpFile("move/hello.txt"), "Bye World");
 
         // would move into sub directory and keep existing name as is
-        assertFileExists(ftpFile("move/backup/hello.txt"), "Hello World");
+        assertFileExists(service.ftpFile("move/backup/hello.txt"), "Hello World");
     }
 
     @Test
@@ -173,10 +173,10 @@ public class FtpProducerMoveExistingIT extends FtpServerTestSupport {
                 Exchange.FILE_NAME, "hello.txt");
 
         // we could write the new file so the old context should be there
-        assertFileExists(ftpFile("move/hello.txt"), "Bye World");
+        assertFileExists(service.ftpFile("move/hello.txt"), "Bye World");
 
         // and the renamed file should be overridden
-        assertFileExists(ftpFile("move/renamed-hello.txt"), "Hello World");
+        assertFileExists(service.ftpFile("move/renamed-hello.txt"), "Hello World");
     }
 
     @Test
@@ -201,10 +201,10 @@ public class FtpProducerMoveExistingIT extends FtpServerTestSupport {
 
         // we could not write the new file so the previous context should be
         // there
-        assertFileExists(ftpFile("move/hello.txt"), "Hello World");
+        assertFileExists(service.ftpFile("move/hello.txt"), "Hello World");
 
         // and the renamed file should be untouched
-        assertFileExists(ftpFile("move/renamed-hello.txt"), "Old file");
+        assertFileExists(service.ftpFile("move/renamed-hello.txt"), "Old file");
     }
 
     private String generateRandomString(int targetStringLength) {
