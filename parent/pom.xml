@@ -337,7 +337,7 @@
         <jsonata4java-version>1.5.8</jsonata4java-version>
         <json-schema-validator-version>2.2.14</json-schema-validator-version>
         <json-unit-version>2.32.0</json-unit-version>
-        <jsoup-version>1.14.3</jsoup-version>
+        <jsoup-version>1.15.3</jsoup-version>
         <jt400-version>11.0</jt400-version>
         <junit-toolbox-version>2.4</junit-toolbox-version>
         <junit-version>4.13.2</junit-version>
