@@ -141,6 +141,8 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
+import org.apache.camel.spi.PeriodTaskResolver;
+import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
@@ -332,6 +334,8 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile NodeIdFactory nodeIdFactory;
     private volatile ModelineFactory modelineFactory;
     private volatile ProcessorFactory processorFactory;
+    private volatile PeriodTaskResolver periodTaskResolver;
+    private volatile PeriodTaskScheduler periodTaskScheduler;
     private volatile InternalProcessorFactory internalProcessorFactory;
     private volatile InterceptEndpointFactory interceptEndpointFactory;
     private volatile RouteFactory routeFactory;
@@ -4206,6 +4210,38 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
+    public PeriodTaskResolver getPeriodTaskResolver() {
+        if (periodTaskResolver == null) {
+            synchronized (lock) {
+                if (periodTaskResolver == null) {
+                    setPeriodTaskResolver(createPeriodTaskResolver());
+                }
+            }
+        }
+        return periodTaskResolver;
+    }
+
+    @Override
+    public void setPeriodTaskResolver(PeriodTaskResolver periodTaskResolver) {
+        this.periodTaskResolver = doAddService(periodTaskResolver);
+    }
+
+    public PeriodTaskScheduler getPeriodTaskScheduler() {
+        if (periodTaskScheduler == null) {
+            synchronized (lock) {
+                if (periodTaskScheduler == null) {
+                    setPeriodTaskScheduler(createPeriodTaskScheduler());
+                }
+            }
+        }
+        return periodTaskScheduler;
+    }
+
+    public void setPeriodTaskScheduler(PeriodTaskScheduler periodTaskScheduler) {
+        this.periodTaskScheduler = doAddService(periodTaskScheduler);
+    }
+
+    @Override
     public ManagementStrategy getManagementStrategy() {
         return managementStrategy;
     }
@@ -5299,6 +5335,10 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract NodeIdFactory createNodeIdFactory();
 
     protected abstract ModelineFactory createModelineFactory();
+
+    protected abstract PeriodTaskResolver createPeriodTaskResolver();
+
+    protected abstract PeriodTaskScheduler createPeriodTaskScheduler();
 
     protected abstract FactoryFinderResolver createFactoryFinderResolver();
 

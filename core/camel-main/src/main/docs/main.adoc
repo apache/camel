@@ -207,15 +207,18 @@ The camel.rest supports 25 options, which are listed below.
 |===
 
 === Camel AWS Vault configurations
-The camel.vault.aws supports 4 options, which are listed below.
+The camel.vault.aws supports 7 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *camel.vault.aws.accessKey* | The AWS access key |  | String
 | *camel.vault.aws.default{zwsp}CredentialsProvider* | Define if we want to use the AWS Default Credentials Provider or not | false | boolean
+| *camel.vault.aws.refreshEnabled* | Whether to automatically reload Camel upon secrets being updated in AWS. | false | boolean
+| *camel.vault.aws.refreshPeriod* | The period (millis) between checking AWS for updated secrets. | 30000 | long
 | *camel.vault.aws.region* | The AWS region |  | String
 | *camel.vault.aws.secretKey* | The AWS secret key |  | String
+| *camel.vault.aws.secrets* | Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma. |  | String
 |===
 
 === Camel GCP Vault configurations

@@ -66,6 +66,8 @@ import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
+import org.apache.camel.spi.PeriodTaskResolver;
+import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
@@ -255,6 +257,19 @@ public class SimpleCamelContext extends AbstractCamelContext {
             throw new IllegalArgumentException(
                     "Cannot find ModelineFactory on classpath. Add camel-dsl-modeline to classpath.");
         }
+    }
+
+    @Override
+    protected PeriodTaskResolver createPeriodTaskResolver() {
+        // we need a factory finder
+        FactoryFinder finder = getFactoryFinderResolver()
+                .resolveBootstrapFactoryFinder(getClassResolver(), PeriodTaskResolver.RESOURCE_PATH);
+        return new DefaultPeriodTaskResolver(finder);
+    }
+
+    @Override
+    protected PeriodTaskScheduler createPeriodTaskScheduler() {
+        return new DefaultPeriodTaskScheduler();
     }
 
     @Override

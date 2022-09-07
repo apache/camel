@@ -59,6 +59,8 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
+import org.apache.camel.spi.PeriodTaskResolver;
+import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.ReactiveExecutor;
@@ -887,5 +889,25 @@ public interface ExtendedCamelContext extends CamelContext {
      * provides the phase ordinal value.
      */
     byte getStatusPhase();
+
+    /**
+     * Gets the period task scheduler
+     */
+    PeriodTaskScheduler getPeriodTaskScheduler();
+
+    /**
+     * To use a custom period task scheduler
+     */
+    void setPeriodTaskScheduler(PeriodTaskScheduler periodTaskScheduler);
+
+    /**
+     * Gets the period task resolver
+     */
+    PeriodTaskResolver getPeriodTaskResolver();
+
+    /**
+     * To use a custom period task resolver
+     */
+    void setPeriodTaskResolver(PeriodTaskResolver periodTaskResolver);
 
 }

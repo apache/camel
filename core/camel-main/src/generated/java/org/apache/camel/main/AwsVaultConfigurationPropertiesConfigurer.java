@@ -33,10 +33,16 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "GcpVaultConfiguration": target.setGcpVaultConfiguration(property(camelContext, org.apache.camel.vault.GcpVaultConfiguration.class, value)); return true;
         case "hashicorpvaultconfiguration":
         case "HashicorpVaultConfiguration": target.setHashicorpVaultConfiguration(property(camelContext, org.apache.camel.vault.HashicorpVaultConfiguration.class, value)); return true;
+        case "refreshenabled":
+        case "RefreshEnabled": target.setRefreshEnabled(property(camelContext, boolean.class, value)); return true;
+        case "refreshperiod":
+        case "RefreshPeriod": target.setRefreshPeriod(property(camelContext, long.class, value)); return true;
         case "region":
         case "Region": target.setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "SecretKey": target.setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "secrets":
+        case "Secrets": target.setSecrets(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -56,10 +62,16 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "GcpVaultConfiguration": return org.apache.camel.vault.GcpVaultConfiguration.class;
         case "hashicorpvaultconfiguration":
         case "HashicorpVaultConfiguration": return org.apache.camel.vault.HashicorpVaultConfiguration.class;
+        case "refreshenabled":
+        case "RefreshEnabled": return boolean.class;
+        case "refreshperiod":
+        case "RefreshPeriod": return long.class;
         case "region":
         case "Region": return java.lang.String.class;
         case "secretkey":
         case "SecretKey": return java.lang.String.class;
+        case "secrets":
+        case "Secrets": return java.lang.String.class;
         default: return null;
         }
     }
@@ -80,10 +92,16 @@ public class AwsVaultConfigurationPropertiesConfigurer extends org.apache.camel.
         case "GcpVaultConfiguration": return target.getGcpVaultConfiguration();
         case "hashicorpvaultconfiguration":
         case "HashicorpVaultConfiguration": return target.getHashicorpVaultConfiguration();
+        case "refreshenabled":
+        case "RefreshEnabled": return target.isRefreshEnabled();
+        case "refreshperiod":
+        case "RefreshPeriod": return target.getRefreshPeriod();
         case "region":
         case "Region": return target.getRegion();
         case "secretkey":
         case "SecretKey": return target.getSecretKey();
+        case "secrets":
+        case "Secrets": return target.getSecrets();
         default: return null;
         }
     }

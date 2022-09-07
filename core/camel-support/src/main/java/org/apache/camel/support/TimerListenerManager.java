@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.StaticService;
 import org.apache.camel.TimerListener;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -38,7 +39,6 @@ import org.slf4j.LoggerFactory;
  * Also ensure when adding and remove listeners, that they are correctly removed to avoid leaking memory.
  *
  * @see TimerListener
- * @see org.apache.camel.management.ManagedLoadTimer
  */
 public class TimerListenerManager extends ServiceSupport implements Runnable, CamelContextAware, StaticService {
 
@@ -112,6 +112,9 @@ public class TimerListenerManager extends ServiceSupport implements Runnable, Ca
      * @param listener listener
      */
     public void addTimerListener(TimerListener listener) {
+        CamelContextAware.trySetCamelContext(listener, camelContext);
+        ServiceHelper.startService(listener);
+
         listeners.add(listener);
         LOG.debug("Added TimerListener: {}", listener);
     }
@@ -125,6 +128,7 @@ public class TimerListenerManager extends ServiceSupport implements Runnable, Ca
      * @param listener listener.
      */
     public void removeTimerListener(TimerListener listener) {
+        ServiceHelper.stopAndShutdownService(listener);
         listeners.remove(listener);
         LOG.debug("Removed TimerListener: {}", listener);
     }
@@ -154,6 +158,7 @@ public class TimerListenerManager extends ServiceSupport implements Runnable, Ca
         // shutdown thread pool when we are shutting down
         camelContext.getExecutorServiceManager().shutdownNow(executorService);
         executorService = null;
+        ServiceHelper.stopAndShutdownServices(listeners);
         listeners.clear();
     }
 }
