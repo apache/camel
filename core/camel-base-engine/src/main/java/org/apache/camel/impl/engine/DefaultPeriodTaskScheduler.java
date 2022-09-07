@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl.engine;
 
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.TimerListener;
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.support.TimerListenerManager;
@@ -43,7 +44,7 @@ public final class DefaultPeriodTaskScheduler extends TimerListenerManager imple
         }
     }
 
-    private static final class TaskWrapper extends ServiceSupport implements TimerListener {
+    private final class TaskWrapper extends ServiceSupport implements TimerListener {
 
         private final StopWatch watch = new StopWatch();
         private final Runnable task;
@@ -60,6 +61,17 @@ public final class DefaultPeriodTaskScheduler extends TimerListenerManager imple
                 watch.restart();
                 task.run();
             }
+        }
+
+        @Override
+        protected void doBuild() throws Exception {
+            CamelContextAware.trySetCamelContext(task, getCamelContext());
+            ServiceHelper.buildService(task);
+        }
+
+        @Override
+        protected void doInit() throws Exception {
+            ServiceHelper.initService(task);
         }
 
         @Override
