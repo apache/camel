@@ -62,7 +62,7 @@ public class DynamicallyConcurrentlyAddRoutesTest extends ContextTestSupport {
                         String endpointUri = "tmp:start_" + routeId;
                         MySlowEndpoint mySlowEndpoint = new MySlowEndpoint(endpointUri, context);
                         from(mySlowEndpoint).id(routeId).to("mock:result");
-                        log.info("Route " + endpointUri + " configured");
+                        log.info("Route {} configured", endpointUri);
                     }
                 });
                 context.getRouteController().stopRoute(routeId, 30, TimeUnit.SECONDS, true);
