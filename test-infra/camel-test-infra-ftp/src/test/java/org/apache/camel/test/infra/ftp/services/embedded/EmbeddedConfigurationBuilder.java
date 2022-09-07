@@ -104,6 +104,18 @@ public final class EmbeddedConfigurationBuilder {
         return this;
     }
 
+    public EmbeddedConfigurationBuilder withSecurityConfiguration(boolean useImplicit, String authValue, boolean clientAuth) {
+        return withSecurityConfiguration(new EmbeddedConfiguration.SecurityConfiguration(useImplicit, authValue, clientAuth));
+
+    }
+
+    public EmbeddedConfigurationBuilder withSecurityConfiguration(
+            EmbeddedConfiguration.SecurityConfiguration securityConfiguration) {
+        embeddedConfiguration.setSecurityConfiguration(securityConfiguration);
+
+        return this;
+    }
+
     public EmbeddedConfiguration build() {
         return embeddedConfiguration;
     }

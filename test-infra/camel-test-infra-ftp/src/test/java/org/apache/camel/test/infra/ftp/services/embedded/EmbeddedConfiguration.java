@@ -64,6 +64,30 @@ public class EmbeddedConfiguration {
         }
     }
 
+    public static class SecurityConfiguration {
+        private final boolean useImplicit;
+        private final String authValue;
+        private final boolean clientAuth;
+
+        public SecurityConfiguration(boolean useImplicit, String authValue, boolean clientAuth) {
+            this.useImplicit = useImplicit;
+            this.authValue = authValue;
+            this.clientAuth = clientAuth;
+        }
+
+        public boolean isUseImplicit() {
+            return useImplicit;
+        }
+
+        public String getAuthValue() {
+            return authValue;
+        }
+
+        public boolean isClientAuth() {
+            return clientAuth;
+        }
+    }
+
     static final String DEFAULT_KNOWN_HOSTS = "[localhost]:%d ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQDdfIWeSV4o68dRrKS"
                                               + "zFd/Bk51E65UTmmSrmW0O1ohtzi6HzsDPjXgCtlTt3FqTcfFfI92IlTr4JWqC9UK1QT1ZTeng0MkPQmv68hDANHbt5CpETZHjW5q4OOgWhV"
                                               + "vj5IyOC2NZHtKlJBkdsMAa15ouOOJLzBvAvbqOR/yUROsEiQ==";
@@ -79,6 +103,7 @@ public class EmbeddedConfiguration {
     private String knownHosts;
     private String knownHostsPath;
     private String keyPairFile;
+    private SecurityConfiguration securityConfiguration;
 
     public String getTestDirectory() {
         return testDirectory;
@@ -170,5 +195,13 @@ public class EmbeddedConfiguration {
 
     void setKeyPairFile(String keyPairFile) {
         this.keyPairFile = keyPairFile;
+    }
+
+    public SecurityConfiguration getSecurityConfiguration() {
+        return securityConfiguration;
+    }
+
+    public void setSecurityConfiguration(SecurityConfiguration securityConfiguration) {
+        this.securityConfiguration = securityConfiguration;
     }
 }

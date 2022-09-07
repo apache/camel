@@ -44,10 +44,8 @@ public abstract class AbstractTestService implements TestService {
     protected abstract void registerProperties(BiConsumer<String, String> store);
 
     @Deprecated
-    protected void setUp() throws Exception {
-    }
+    protected abstract void setUp() throws Exception;
 
     @Deprecated
-    protected void tearDown() throws Exception {
-    }
+    protected abstract void tearDown() throws Exception;
 }

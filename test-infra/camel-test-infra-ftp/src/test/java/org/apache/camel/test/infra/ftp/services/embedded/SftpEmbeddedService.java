@@ -69,6 +69,7 @@ public class SftpEmbeddedService extends AbstractTestService implements FtpServi
         this.embeddedConfiguration = embeddedConfiguration;
     }
 
+    @Override
     public void setUp() throws Exception {
         rootDir = testDirectory().resolve(embeddedConfiguration.getTestDirectory());
         knownHosts = testDirectory().resolve(embeddedConfiguration.getKnownHostsPath());
@@ -155,6 +156,7 @@ public class SftpEmbeddedService extends AbstractTestService implements FtpServi
         return knownHosts.toString();
     }
 
+    @Override
     public Path getFtpRootDir() {
         return rootDir;
     }
@@ -172,28 +174,29 @@ public class SftpEmbeddedService extends AbstractTestService implements FtpServi
         registerProperties(store::put);
     }
 
+    @Override
     public int getPort() {
         return port;
     }
 
     @Override
-    public void beforeAll(ExtensionContext extensionContext) throws Exception {
+    public void beforeAll(ExtensionContext extensionContext) {
         this.context = extensionContext;
     }
 
     @Override
-    public void afterAll(ExtensionContext extensionContext) throws Exception {
+    public void afterAll(ExtensionContext extensionContext) {
         this.context = null;
     }
 
     @Override
-    public void afterEach(ExtensionContext extensionContext) throws Exception {
+    public void afterEach(ExtensionContext extensionContext) {
         shutdown();
         this.context = null;
     }
 
     @Override
-    public void beforeEach(ExtensionContext extensionContext) throws Exception {
+    public void beforeEach(ExtensionContext extensionContext) {
         this.context = extensionContext;
         initialize();
     }
