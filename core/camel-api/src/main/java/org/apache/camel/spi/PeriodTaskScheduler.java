@@ -16,13 +16,21 @@
  */
 package org.apache.camel.spi;
 
+/**
+ * A shared scheduler to run small period tasks, such as updating internal statistics, or for custom components to have
+ * a background task.
+ *
+ * For example the AWS vault is using this to periodically check for secrets refreshed in AWS to trigger Camel to reload
+ * to use the updated secrets.
+ */
 @FunctionalInterface
 public interface PeriodTaskScheduler {
 
     /**
      * Schedules the period task.
      *
-     * @param task   the period task
+     * @param task   the period task (the task can extend {@link org.apache.camel.support.service.ServiceSupport} to
+     *               have lifecycle)
      * @param period the interval (approximate) in millis, between running the task
      */
     void schedulePeriodTask(Runnable task, long period);
