@@ -81,4 +81,28 @@ public class AwsVaultConfigurationProperties extends AwsVaultConfiguration imple
         return this;
     }
 
+    /**
+     * Whether to automatically reload Camel upon secrets being updated in AWS.
+     */
+    public AwsVaultConfigurationProperties withRefreshEnabled(boolean refreshEnabled) {
+        setRefreshEnabled(refreshEnabled);
+        return this;
+    }
+
+    /**
+     * The period (millis) between checking AWS for updated secrets.
+     */
+    public AwsVaultConfigurationProperties withRefreshPeriod(long refreshPeriod) {
+        setRefreshPeriod(refreshPeriod);
+        return this;
+    }
+
+    /**
+     * Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma.
+     */
+    public AwsVaultConfigurationProperties withSecrets(String secrets) {
+        setSecrets(secrets);
+        return this;
+    }
+
 }
