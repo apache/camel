@@ -74,5 +74,6 @@
         <module>camel-test-infra-openldap</module>
         <module>camel-test-infra-ignite</module>
         <module>camel-test-infra-hashicorp-vault</module>
+        <module>camel-test-infra-jetty</module>
     </modules>
 </project>
