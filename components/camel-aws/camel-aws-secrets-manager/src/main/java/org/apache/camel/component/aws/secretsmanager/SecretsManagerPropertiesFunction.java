@@ -17,6 +17,8 @@
 package org.apache.camel.component.aws.secretsmanager;
 
 import java.util.Base64;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -51,7 +53,7 @@ import software.amazon.awssdk.services.secretsmanager.model.SecretsManagerExcept
  * </ul>
  * <p/>
  *
- * Otherwise it is possible to specify the credentials as properties:
+ * Otherwise, it is possible to specify the credentials as properties:
  *
  * <ul>
  * <li><tt>camel.vault.aws.accessKey</tt></li>
@@ -72,7 +74,6 @@ import software.amazon.awssdk.services.secretsmanager.model.SecretsManagerExcept
  * <tt>aws:database/username:admin</tt>. The admin value will be returned as default value, if the conditions above were
  * all met.
  */
-
 @org.apache.camel.spi.annotations.PropertiesFunction("aws")
 public class SecretsManagerPropertiesFunction extends ServiceSupport implements PropertiesFunction, CamelContextAware {
 
@@ -84,9 +85,12 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
     private CamelContext camelContext;
     private SecretsManagerClient client;
 
+    private final Set<String> secrets = new HashSet<>();
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
         String accessKey = System.getenv(CAMEL_AWS_VAULT_ACCESS_KEY_ENV);
         String secretKey = System.getenv(CAMEL_AWS_VAULT_SECRET_KEY_ENV);
         String region = System.getenv(CAMEL_AWS_VAULT_REGION_ENV);
@@ -120,8 +124,14 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
     @Override
     protected void doStop() throws Exception {
         if (client != null) {
-            client.close();
+            try {
+                client.close();
+            } catch (Exception e) {
+                // ignore
+            }
+            client = null;
         }
+        secrets.clear();
         super.doStop();
     }
 
@@ -182,6 +192,10 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
     private String getSecretFromSource(
             String key, String subkey, String defaultValue, String version)
             throws JsonProcessingException {
+
+        // capture name of secret
+        secrets.add(key);
+
         String returnValue;
         GetSecretValueRequest request;
         GetSecretValueRequest.Builder builder = GetSecretValueRequest.builder();
@@ -229,4 +243,12 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
     public CamelContext getCamelContext() {
         return camelContext;
     }
+
+    /**
+     * Ids of the secrets in use
+     */
+    public Set<String> getSecrets() {
+        return secrets;
+    }
+
 }

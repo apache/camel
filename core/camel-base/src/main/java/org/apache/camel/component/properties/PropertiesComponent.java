@@ -561,12 +561,7 @@ public class PropertiesComponent extends ServiceSupport
         return propertiesFunctionResolver.getFunctions();
     }
 
-    /**
-     * Gets the function by the given name
-     *
-     * @param  name the function name
-     * @return      the function or null if no function exists
-     */
+    @Override
     public PropertiesFunction getPropertiesFunction(String name) {
         if (name == null) {
             return null;
@@ -574,9 +569,7 @@ public class PropertiesComponent extends ServiceSupport
         return propertiesFunctionResolver.resolvePropertiesFunction(name);
     }
 
-    /**
-     * Registers the {@link PropertiesFunction} as a function to this component.
-     */
+    @Override
     public void addPropertiesFunction(PropertiesFunction function) {
         propertiesFunctionResolver.addPropertiesFunction(function);
     }

@@ -187,6 +187,14 @@ public interface PropertiesComponent extends StaticService {
     void addPropertiesFunction(PropertiesFunction function);
 
     /**
+     * Gets the {@link PropertiesFunction} by the given name
+     *
+     * @param  name the function name
+     * @return      the function or null if no function exists
+     */
+    PropertiesFunction getPropertiesFunction(String name);
+
+    /**
      * Whether to silently ignore if a location cannot be located, such as a properties file not found.
      */
     void setIgnoreMissingLocation(boolean ignoreMissingLocation);

@@ -17,11 +17,17 @@
 package org.apache.camel.component.aws.secretsmanager.vault;
 
 import java.time.Instant;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.component.aws.secretsmanager.SecretsManagerPropertiesFunction;
 import org.apache.camel.spi.ContextReloadStrategy;
+import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.spi.annotations.PeriodicTask;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -56,6 +62,7 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
     private CamelContext camelContext;
     private CloudTrailClient cloudTrailClient;
     private String secrets;
+    private SecretsManagerPropertiesFunction propertiesFunction;
     private volatile Instant lastTime;
 
     public CloudTrailReloadTriggerTask() {
@@ -75,8 +82,16 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
     protected void doStart() throws Exception {
         super.doStart();
 
+        // auto-detect secrets in-use
+        PropertiesComponent pc = camelContext.getPropertiesComponent();
+        PropertiesFunction pf = pc.getPropertiesFunction("aws");
+        if (pf instanceof SecretsManagerPropertiesFunction) {
+            propertiesFunction = (SecretsManagerPropertiesFunction) pf;
+            LOG.debug("Auto-detecting secrets from properties-function: {}", pf.getName());
+        }
+        // specific secrets
         secrets = camelContext.getVaultConfiguration().aws().getSecrets();
-        if (ObjectHelper.isEmpty(secrets)) {
+        if (ObjectHelper.isEmpty(secrets) && propertiesFunction == null) {
             throw new IllegalArgumentException("Secrets must be configured on AWS vault configuration");
         }
 
@@ -137,7 +152,7 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
                         List<Resource> a = event.resources();
                         for (Resource res : a) {
                             String name = res.resourceName();
-                            if (matchSecret(name, secrets)) {
+                            if (matchSecret(name)) {
                                 LOG.info("Update for secret: {} detected, triggering a CamelContext reload", name);
                                 triggerReloading = true;
                                 break;
@@ -159,13 +174,23 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
         }
     }
 
-    protected boolean matchSecret(String name, String patterns) {
-        String[] parts = patterns.split(",");
-        for (String part : parts) {
-            if (name.contains(part) || PatternHelper.matchPattern(name, part)) {
+    protected boolean matchSecret(String name) {
+        Set<String> set = new HashSet<>();
+        if (secrets != null) {
+            Collections.addAll(set, secrets.split(","));
+        }
+        if (propertiesFunction != null) {
+            set.addAll(propertiesFunction.getSecrets());
+        }
+
+        for (String part : set) {
+            boolean result = name.contains(part) || PatternHelper.matchPattern(name, part);
+            LOG.trace("Matching secret id: {}={} -> {}", name, part, result);
+            if (result) {
                 return true;
             }
         }
+
         return false;
     }
 
