@@ -41,6 +41,7 @@ public interface CamelEvent {
         CamelContextStopping,
         CamelContextSuspended,
         CamelContextSuspending,
+        CamelContextReloading,
         CamelContextReloaded,
         ExchangeCompleted,
         ExchangeCreated,
@@ -218,6 +219,13 @@ public interface CamelEvent {
         @Override
         default Type getType() {
             return Type.RoutesStopped;
+        }
+    }
+
+    interface CamelContextReloadingEvent extends CamelContextEvent {
+        @Override
+        default Type getType() {
+            return Type.CamelContextReloading;
         }
     }
 

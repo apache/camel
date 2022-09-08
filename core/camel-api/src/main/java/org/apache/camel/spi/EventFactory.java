@@ -138,6 +138,15 @@ public interface EventFactory {
     CamelEvent createCamelContextRoutesStoppedEvent(CamelContext context);
 
     /**
+     * Creates an {@link CamelEvent} for {@link CamelContext} being reloaded.
+     *
+     * @param  context camel context
+     * @param  source  the source triggered reload
+     * @return         the reloading event
+     */
+    CamelEvent createCamelContextReloading(CamelContext context, Object source);
+
+    /**
      * Creates an {@link CamelEvent} for {@link CamelContext} has been reloaded successfully.
      *
      * @param  context camel context

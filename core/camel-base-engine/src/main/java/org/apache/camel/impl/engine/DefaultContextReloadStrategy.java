@@ -50,6 +50,7 @@ public class DefaultContextReloadStrategy extends ServiceSupport implements Cont
     public void onReload(Object source) {
         LOG.info("Reloading CamelContext ({}) triggered by: {}", camelContext.getName(), source);
         try {
+            EventHelper.notifyContextReloading(getCamelContext(), source);
             reloadProperties(source);
             reloadRoutes(source);
             incSucceededCounter();
