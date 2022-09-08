@@ -130,7 +130,7 @@ public class CamelContextStatus extends ProcessBaseCommand {
                     new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
                     new Column().header("ROUTE").with(this::getRoutes),
                     new Column().header("TOTAL").with(r -> r.total),
-                    new Column().header("FAILED").with(r -> r.failed),
+                    new Column().header("FAIL").with(r -> r.failed),
                     new Column().header("INFLIGHT").with(r -> r.inflight),
                     new Column().header("SINCE-LAST").with(this::getSinceLast))));
         }

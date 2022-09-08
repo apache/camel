@@ -136,7 +136,7 @@ public class CamelRouteStatus extends ProcessBaseCommand {
                             .with(r -> r.state),
                     new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
                     new Column().header("TOTAL").with(r -> r.total),
-                    new Column().header("FAILED").with(r -> r.failed),
+                    new Column().header("FAIL").with(r -> r.failed),
                     new Column().header("INFLIGHT").with(r -> r.inflight),
                     new Column().header("MEAN").with(r -> r.mean),
                     new Column().header("MIN").with(r -> r.min),
