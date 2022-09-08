@@ -16,37 +16,47 @@
  */
 package org.apache.camel.component.ahc.ws;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+
 import org.apache.camel.support.jsse.ClientAuthentication;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.SSLContextServerParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.SslConnectionFactory;
-import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.infra.jetty.services.JettyConfiguration;
+import org.apache.camel.test.infra.jetty.services.JettyConfigurationBuilder;
+import org.apache.camel.test.infra.jetty.services.JettyEmbeddedService;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-@Disabled("Not yet migrated to work with Jetty 9")
+@Disabled("Not yet migrated to work with Jetty 9 - and this component is deprecated CAMEL-17667")
 public class WssProducerTest extends WsProducerTestBase {
     protected static final String PW = "changeit";
-
-    @Override
-    protected Connector getConnector() throws Exception {
-
-        SslContextFactory sslContextFactory = new SslContextFactory();
-        sslContextFactory.setSslContext(defineSSLContextServerParameters().createSSLContext(camelContext));
-
-        ServerConnector https = new ServerConnector(
-                server,
-                new SslConnectionFactory(sslContextFactory, null));
-        return https;
-    }
+    private final JettyConfiguration jettyConfiguration = JettyConfigurationBuilder
+            .emptyTemplate()
+            .withPort(AvailablePortFinder.getNextAvailable())
+            .withContextPath(JettyConfiguration.ROOT_CONTEXT_PATH)
+            .addServletConfiguration(new JettyConfiguration.ServletConfiguration(
+                    TestServletFactory.class.getName(), JettyConfiguration.ServletConfiguration.ROOT_PATH_SPEC))
+            .withSslContext(() -> {
+                try {
+                    return WssProducerTest.defineSSLContextServerParameters().createSSLContext(null);
+                } catch (GeneralSecurityException e) {
+                    throw new RuntimeException(e);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            })
+            .build();
+    @RegisterExtension
+    public JettyEmbeddedService service = new JettyEmbeddedService(jettyConfiguration);
 
     @Override
     protected String getTargetURL() {
-        return "ahc-wss://localhost:" + PORT;
+        return "ahc-wss://localhost:" + service.getPort();
     }
 
     @Override

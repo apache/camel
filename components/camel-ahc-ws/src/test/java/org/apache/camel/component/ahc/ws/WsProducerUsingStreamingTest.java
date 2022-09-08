@@ -16,18 +16,35 @@
  */
 package org.apache.camel.component.ahc.ws;
 
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.ServerConnector;
+import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.infra.jetty.services.JettyConfiguration;
+import org.apache.camel.test.infra.jetty.services.JettyConfigurationBuilder;
+import org.apache.camel.test.infra.jetty.services.JettyEmbeddedService;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
+@Timeout(10)
 public class WsProducerUsingStreamingTest extends WsProducerTestBase {
+
+    private final JettyConfiguration jettyConfiguration = JettyConfigurationBuilder
+            .emptyTemplate()
+            .withPort(AvailablePortFinder.getNextAvailable())
+            .withContextPath(JettyConfiguration.ROOT_CONTEXT_PATH)
+            .addServletConfiguration(new JettyConfiguration.ServletConfiguration(
+                    TestServletFactory.class.getName(), JettyConfiguration.ServletConfiguration.ROOT_PATH_SPEC))
+            .build();
+    @RegisterExtension
+    public JettyEmbeddedService service = new JettyEmbeddedService(jettyConfiguration);
 
     @Override
     protected void setUpComponent() {
     }
 
+    @Disabled("Flaky test that was previously disabled")
     @Override
-    protected Connector getConnector() {
-        return new ServerConnector(server);
+    public void testWriteBytesToWebsocket() {
+        // NO-OP
     }
 
     @Override
@@ -42,6 +59,6 @@ public class WsProducerUsingStreamingTest extends WsProducerTestBase {
 
     @Override
     protected String getTargetURL() {
-        return "ahc-ws://localhost:" + PORT + "?useStreaming=true";
+        return "ahc-ws://localhost:" + service.getPort() + "?useStreaming=true";
     }
 }
