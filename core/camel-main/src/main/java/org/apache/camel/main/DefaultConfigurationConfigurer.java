@@ -250,7 +250,7 @@ public final class DefaultConfigurationConfigurer {
             reloader.setRemoveAllRoutes(config.isRoutesReloadRemoveAllRoutes());
             camelContext.addService(reloader);
         }
-        if (config.isContextReloadEnabled()) {
+        if (config.isContextReloadEnabled() && camelContext.hasService(ContextReloadStrategy.class) == null) {
             ContextReloadStrategy reloader = new DefaultContextReloadStrategy();
             camelContext.addService(reloader);
         }
