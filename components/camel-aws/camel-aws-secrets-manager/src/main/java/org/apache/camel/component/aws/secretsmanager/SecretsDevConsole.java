@@ -81,6 +81,9 @@ public class SecretsDevConsole extends AbstractDevConsole {
                 Instant last = secretsRefreshTask.getLastCheckTime();
                 String s = last != null ? TimeUtils.printSince(last.toEpochMilli()) : "none";
                 sb.append(String.format("\n    Last Check: %s", s));
+                last = secretsRefreshTask.getLastReloadTime();
+                s = last != null ? TimeUtils.printSince(last.toEpochMilli()) : "none";
+                sb.append(String.format("\n    Last Reload: %s", s));
             }
             sb.append("\n\nSecrets in use:");
 
@@ -122,6 +125,12 @@ public class SecretsDevConsole extends AbstractDevConsole {
                     long timestamp = last.toEpochMilli();
                     root.put("lastCheckTimestamp", timestamp);
                     root.put("lastCheckAge", TimeUtils.printSince(timestamp));
+                }
+                last = secretsRefreshTask.getLastReloadTime();
+                if (last != null) {
+                    long timestamp = last.toEpochMilli();
+                    root.put("lastReloadTimestamp", timestamp);
+                    root.put("lastReloadAge", TimeUtils.printSince(timestamp));
                 }
             }
             JsonArray arr = new JsonArray();
