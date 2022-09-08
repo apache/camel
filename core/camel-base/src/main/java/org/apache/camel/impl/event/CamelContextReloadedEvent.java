@@ -40,6 +40,6 @@ public class CamelContextReloadedEvent extends AbstractContextEvent
 
     @Override
     public String toString() {
-        return "CamelContext reloaded";
+        return "Reloaded CamelContext: " + getContext().getName();
     }
 }
