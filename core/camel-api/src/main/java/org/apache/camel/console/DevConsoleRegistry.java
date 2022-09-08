@@ -110,4 +110,12 @@ public interface DevConsoleRegistry extends CamelContextAware, StaticService, Id
      */
     void loadDevConsoles();
 
+    /**
+     * Loads custom dev consoles by scanning classpath.
+     *
+     * @param force force re-scanning such as when additional JARs has been added to the classpath that
+     *              can include custom dev consoles
+     */
+    void loadDevConsoles(boolean force);
+
 }

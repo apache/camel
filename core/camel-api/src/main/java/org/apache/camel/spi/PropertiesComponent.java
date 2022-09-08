@@ -195,6 +195,11 @@ public interface PropertiesComponent extends StaticService {
     PropertiesFunction getPropertiesFunction(String name);
 
     /**
+     * Is there a {@link PropertiesFunction} with the given name?
+     */
+    boolean hasPropertiesFunction(String name);
+
+    /**
      * Whether to silently ignore if a location cannot be located, such as a properties file not found.
      */
     void setIgnoreMissingLocation(boolean ignoreMissingLocation);

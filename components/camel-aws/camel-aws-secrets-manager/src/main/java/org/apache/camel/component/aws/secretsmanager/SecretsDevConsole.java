@@ -47,9 +47,11 @@ public class SecretsDevConsole extends AbstractDevConsole {
     protected void doStart() throws Exception {
         super.doStart();
 
-        PropertiesFunction pf = getCamelContext().getPropertiesComponent().getPropertiesFunction("aws");
-        if (pf instanceof SecretsManagerPropertiesFunction) {
-            propertiesFunction = (SecretsManagerPropertiesFunction) pf;
+        if (getCamelContext().getPropertiesComponent().hasPropertiesFunction("aws")) {
+            PropertiesFunction pf = getCamelContext().getPropertiesComponent().getPropertiesFunction("aws");
+            if (pf instanceof SecretsManagerPropertiesFunction) {
+                propertiesFunction = (SecretsManagerPropertiesFunction) pf;
+            }
         }
         AwsVaultConfiguration aws = getCamelContext().getVaultConfiguration().getAwsVaultConfiguration();
         if (aws != null && aws.isRefreshEnabled()) {

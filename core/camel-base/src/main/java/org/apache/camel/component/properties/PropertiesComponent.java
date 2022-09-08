@@ -574,11 +574,19 @@ public class PropertiesComponent extends ServiceSupport
         propertiesFunctionResolver.addPropertiesFunction(function);
     }
 
+    @Override
+    public boolean hasPropertiesFunction(String name) {
+        return propertiesFunctionResolver.hasFunction(name);
+    }
+
     /**
      * Is there a {@link PropertiesFunction} with the given name?
+     *
+     * @deprecated  use hasPropertiesFunction
      */
+    @Deprecated
     public boolean hasFunction(String name) {
-        return propertiesFunctionResolver.hasFunction(name);
+        return hasPropertiesFunction(name);
     }
 
     @ManagedAttribute(description = "System properties mode")

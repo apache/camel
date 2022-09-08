@@ -164,21 +164,29 @@ public class DefaultDevConsoleRegistry extends ServiceSupport implements DevCons
 
     @Override
     public void loadDevConsoles() {
+        loadDevConsoles(false);
+    }
+
+    @Override
+    public void loadDevConsoles(boolean force) {
         StopWatch watch = new StopWatch();
 
-        if (!loadDevConsolesDone) {
+        if (!loadDevConsolesDone || force) {
             loadDevConsolesDone = true;
 
             DefaultDevConsolesLoader loader = new DefaultDevConsolesLoader(camelContext);
             Collection<DevConsole> col = loader.loadDevConsoles();
 
             if (col.size() > 0) {
+                int added = 0;
                 // register the loaded consoles
                 for (DevConsole console : col) {
-                    register(console);
+                    if (register(console)) {
+                        added++;
+                    }
                 }
                 String time = TimeUtils.printDuration(watch.taken(), true);
-                LOG.debug("Dev consoles (scanned: {}) loaded in {}", col.size(), time);
+                LOG.debug("Dev consoles (scanned: {} registered:{}) loaded in {}", col.size(), added, time);
             }
         }
     }

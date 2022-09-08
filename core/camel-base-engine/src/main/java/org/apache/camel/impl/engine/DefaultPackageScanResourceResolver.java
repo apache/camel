@@ -332,13 +332,4 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
         }
     }
 
-    @Override
-    protected void doInit() throws Exception {
-        ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
-    }
 }

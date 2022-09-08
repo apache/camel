@@ -62,6 +62,16 @@ public abstract class BasePackageScanResolver extends ServiceSupport implements 
     }
 
     @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        // ensure we also use app context class-loader
+        if (camelContext.getApplicationContextClassLoader() != null) {
+            addClassLoader(camelContext.getApplicationContextClassLoader());
+        }
+    }
+
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }

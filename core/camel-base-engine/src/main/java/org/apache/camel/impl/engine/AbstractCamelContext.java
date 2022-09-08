@@ -2871,7 +2871,7 @@ public abstract class AbstractCamelContext extends BaseService
         }
         // ensure additional dev consoles is loaded
         if (devConsole) {
-            StartupStep step4 = startupStepRecorder.beginStep(CamelContext.class, null, "Scan DevConsoles");
+            StartupStep step4 = startupStepRecorder.beginStep(CamelContext.class, null, "Scan DevConsoles (phase 1)");
             DevConsoleRegistry dcr = getExtension(DevConsoleRegistry.class);
             if (dcr != null) {
                 dcr.loadDevConsoles();
@@ -3418,6 +3418,16 @@ public abstract class AbstractCamelContext extends BaseService
             internalRouteStartupManager.doStartOrResumeRoutes(routeServices, true, !doNotStartRoutesOnFirstStart, false, true);
             EventHelper.notifyCamelContextRoutesStarted(this);
             startupStepRecorder.endStep(subStep);
+        }
+
+        // ensure extra dev consoles is loaded in case additional JARs has been dynamically added to the classpath
+        if (devConsole) {
+            StartupStep step = startupStepRecorder.beginStep(CamelContext.class, null, "Scan DevConsoles (phase 2)");
+            DevConsoleRegistry dcr = getExtension(DevConsoleRegistry.class);
+            if (dcr != null) {
+                dcr.loadDevConsoles(true);
+            }
+            startupStepRecorder.endStep(step);
         }
 
         long cacheCounter = beanIntrospection != null ? beanIntrospection.getCachedClassesCounter() : 0;
