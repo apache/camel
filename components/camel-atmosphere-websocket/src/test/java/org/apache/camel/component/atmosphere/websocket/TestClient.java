@@ -36,11 +36,12 @@ import org.slf4j.LoggerFactory;
 public class TestClient {
     private static final Logger LOG = LoggerFactory.getLogger(TestClient.class);
 
-    private List<Object> received;
+    private final List<Object> received;
+    private final AsyncHttpClient client;
+    private final String url;
+
     private CountDownLatch latch;
-    private AsyncHttpClient client;
     private WebSocket websocket;
-    private String url;
 
     public TestClient(String url, AsyncHttpClientConfig conf) {
         this(url, conf, 1);
@@ -134,20 +135,20 @@ public class TestClient {
 
         @Override
         public void onError(Throwable t) {
-            LOG.error("[ws] error", t);
+            LOG.error("[ws] error: {}", t.getMessage(), t);
         }
 
         @Override
         public void onBinaryFrame(byte[] message, boolean finalFragment, int rsv) {
             received.add(message);
-            LOG.info("[ws] received bytes --> " + Arrays.toString(message));
+            LOG.info("[ws] received bytes --> {}", Arrays.toString(message));
             latch.countDown();
         }
 
         @Override
         public void onTextFrame(String message, boolean finalFragment, int rsv) {
             received.add(message);
-            LOG.info("[ws] received --> " + message);
+            LOG.info("[ws] received --> {}", message);
             latch.countDown();
         }
 
