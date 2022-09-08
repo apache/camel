@@ -60,6 +60,12 @@ public class ContextDevConsole extends AbstractDevConsole {
                 if (crs != null) {
                     reloaded += crs.getReloadCounter();
                 }
+                String load1 = getLoad1(mb);
+                String load5 = getLoad5(mb);
+                String load15 = getLoad15(mb);
+                if (!load1.isEmpty() || !load5.isEmpty() || !load15.isEmpty()) {
+                    sb.append(String.format("\n    Load Average: %s %s %s\n", load1, load5, load15));
+                }
                 sb.append(String.format("\n    Total: %s", mb.getExchangesTotal()));
                 sb.append(String.format("\n    Failed: %s", mb.getExchangesFailed()));
                 sb.append(String.format("\n    Inflight: %s", mb.getExchangesInflight()));
@@ -104,6 +110,8 @@ public class ContextDevConsole extends AbstractDevConsole {
         if (mcc != null) {
             ManagedCamelContextMBean mb = mcc.getManagedCamelContext();
             if (mb != null) {
+                JsonObject stats = new JsonObject();
+
                 int reloaded = 0;
                 ResourceReloadStrategy rrs = getCamelContext().hasService(ResourceReloadStrategy.class);
                 if (rrs != null) {
@@ -113,7 +121,14 @@ public class ContextDevConsole extends AbstractDevConsole {
                 if (crs != null) {
                     reloaded += crs.getReloadCounter();
                 }
-                JsonObject stats = new JsonObject();
+                String load1 = getLoad1(mb);
+                String load5 = getLoad5(mb);
+                String load15 = getLoad15(mb);
+                if (!load1.isEmpty() || !load5.isEmpty() || !load15.isEmpty()) {
+                    stats.put("load01", load1);
+                    stats.put("load05", load5);
+                    stats.put("load15", load15);
+                }
                 stats.put("exchangesTotal", mb.getExchangesTotal());
                 stats.put("exchangesFailed", mb.getExchangesFailed());
                 stats.put("exchangesInflight", mb.getExchangesInflight());
@@ -141,6 +156,27 @@ public class ContextDevConsole extends AbstractDevConsole {
         }
 
         return root;
+    }
+
+    private String getLoad1(ManagedCamelContextMBean mb) {
+        String s = mb.getLoad01();
+        // lets use dot as separator
+        s = s.replace(',', '.');
+        return s;
+    }
+
+    private String getLoad5(ManagedCamelContextMBean mb) {
+        String s = mb.getLoad05();
+        // lets use dot as separator
+        s = s.replace(',', '.');
+        return s;
+    }
+
+    private String getLoad15(ManagedCamelContextMBean mb) {
+        String s = mb.getLoad15();
+        // lets use dot as separator
+        s = s.replace(',', '.');
+        return s;
     }
 
 }

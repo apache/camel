@@ -86,6 +86,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean caseInsensitiveHeaders = true;
     private boolean autowiredEnabled = true;
     private boolean endpointRuntimeStatisticsEnabled;
+    private boolean loadStatisticsEnabled;
     private boolean endpointLazyStartProducer;
     private boolean endpointBridgeErrorHandler;
     private boolean useDataType;
@@ -807,6 +808,20 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setEndpointRuntimeStatisticsEnabled(boolean endpointRuntimeStatisticsEnabled) {
         this.endpointRuntimeStatisticsEnabled = endpointRuntimeStatisticsEnabled;
+    }
+
+    public boolean isLoadStatisticsEnabled() {
+        return loadStatisticsEnabled;
+    }
+
+    /**
+     * Sets whether context load statistics is enabled (something like the unix load average).
+     * The statistics requires to have camel-management on the classpath as JMX is required.
+     *
+     * The default value is false.
+     */
+    public void setLoadStatisticsEnabled(boolean loadStatisticsEnabled) {
+        this.loadStatisticsEnabled = loadStatisticsEnabled;
     }
 
     public boolean isEndpointLazyStartProducer() {
@@ -2023,6 +2038,16 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withEndpointRuntimeStatisticsEnabled(boolean endpointRuntimeStatisticsEnabled) {
         this.endpointRuntimeStatisticsEnabled = endpointRuntimeStatisticsEnabled;
+        return (T) this;
+    }
+
+    /**
+     * Sets whether context load statistics is enabled (something like the unix load average).
+     *
+     * The default value is false.
+     */
+    public T withLoadStatisticsEnabled(boolean loadStatisticsEnabled) {
+        this.loadStatisticsEnabled = loadStatisticsEnabled;
         return (T) this;
     }
 

@@ -22,6 +22,7 @@ import java.util.Objects;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -342,6 +343,7 @@ public class KameletMain extends MainCommandLineSupport {
         }
         configure().withLoadHealthChecks(true);
         configure().withModeline(true);
+        configure().withLoadStatisticsEnabled(true);
 
         boolean health = "true".equals(getInitialProperties().get("camel.jbang.health"));
         if (health && port == null) {

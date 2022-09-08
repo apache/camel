@@ -259,6 +259,8 @@ public final class DefaultConfigurationConfigurer {
             camelContext.getManagementStrategy().getManagementAgent()
                     .setEndpointRuntimeStatisticsEnabled(config.isEndpointRuntimeStatisticsEnabled());
             camelContext.getManagementStrategy().getManagementAgent()
+                    .setLoadStatisticsEnabled(config.isLoadStatisticsEnabled());
+            camelContext.getManagementStrategy().getManagementAgent()
                     .setStatisticsLevel(config.getJmxManagementStatisticsLevel());
             camelContext.getManagementStrategy().getManagementAgent()
                     .setMBeansLevel(config.getJmxManagementMBeansLevel());

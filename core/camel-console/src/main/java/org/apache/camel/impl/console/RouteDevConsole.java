@@ -25,6 +25,7 @@ import java.util.function.Function;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.api.management.ManagedCamelContext;
+import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.PatternHelper;
@@ -63,6 +64,12 @@ public class RouteDevConsole extends AbstractDevConsole {
             }
             sb.append(String.format("\n    State: %s", mrb.getState()));
             sb.append(String.format("\n    Uptime: %s", mrb.getUptime()));
+            String load1 = getLoad1(mrb);
+            String load5 = getLoad5(mrb);
+            String load15 = getLoad15(mrb);
+            if (!load1.isEmpty() || !load5.isEmpty() || !load15.isEmpty()) {
+                sb.append(String.format("\n    Load Average: %s %s %s\n", load1, load5, load15));
+            }
             sb.append(String.format("\n    Total: %s", mrb.getExchangesTotal()));
             sb.append(String.format("\n    Failed: %s", mrb.getExchangesFailed()));
             sb.append(String.format("\n    Inflight: %s", mrb.getExchangesInflight()));
@@ -99,7 +106,6 @@ public class RouteDevConsole extends AbstractDevConsole {
         Function<ManagedRouteMBean, Object> task = mrb -> {
             JsonObject jo = new JsonObject();
             list.add(jo);
-
             jo.put("routeId", mrb.getRouteId());
             jo.put("from", mrb.getEndpointUri());
             if (mrb.getSourceLocation() != null) {
@@ -108,6 +114,14 @@ public class RouteDevConsole extends AbstractDevConsole {
             jo.put("state", mrb.getState());
             jo.put("uptime", mrb.getUptime());
             JsonObject stats = new JsonObject();
+            String load1 = getLoad1(mrb);
+            String load5 = getLoad5(mrb);
+            String load15 = getLoad15(mrb);
+            if (!load1.isEmpty() || !load5.isEmpty() || !load15.isEmpty()) {
+                stats.put("load01", load1);
+                stats.put("load05", load5);
+                stats.put("load15", load15);
+            }
             stats.put("exchangesTotal", mrb.getExchangesTotal());
             stats.put("exchangesFailed", mrb.getExchangesFailed());
             stats.put("exchangesInflight", mrb.getExchangesInflight());
@@ -171,6 +185,27 @@ public class RouteDevConsole extends AbstractDevConsole {
     private static int sort(ManagedRouteMBean o1, ManagedRouteMBean o2) {
         // sort by id
         return o1.getRouteId().compareTo(o2.getRouteId());
+    }
+
+    private String getLoad1(ManagedRouteMBean mrb) {
+        String s = mrb.getLoad01();
+        // lets use dot as separator
+        s = s.replace(',', '.');
+        return s;
+    }
+
+    private String getLoad5(ManagedRouteMBean mrb) {
+        String s = mrb.getLoad05();
+        // lets use dot as separator
+        s = s.replace(',', '.');
+        return s;
+    }
+
+    private String getLoad15(ManagedRouteMBean mrb) {
+        String s = mrb.getLoad15();
+        // lets use dot as separator
+        s = s.replace(',', '.');
+        return s;
     }
 
 }

@@ -115,6 +115,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "Lightweight": target.setLightweight(property(camelContext, boolean.class, value)); return true;
         case "loadhealthchecks":
         case "LoadHealthChecks": target.setLoadHealthChecks(property(camelContext, boolean.class, value)); return true;
+        case "loadstatisticsenabled":
+        case "LoadStatisticsEnabled": target.setLoadStatisticsEnabled(property(camelContext, boolean.class, value)); return true;
         case "loadtypeconverters":
         case "LoadTypeConverters": target.setLoadTypeConverters(property(camelContext, boolean.class, value)); return true;
         case "logdebugmaxchars":
@@ -356,6 +358,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "Lightweight": return boolean.class;
         case "loadhealthchecks":
         case "LoadHealthChecks": return boolean.class;
+        case "loadstatisticsenabled":
+        case "LoadStatisticsEnabled": return boolean.class;
         case "loadtypeconverters":
         case "LoadTypeConverters": return boolean.class;
         case "logdebugmaxchars":
@@ -598,6 +602,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "Lightweight": return target.isLightweight();
         case "loadhealthchecks":
         case "LoadHealthChecks": return target.isLoadHealthChecks();
+        case "loadstatisticsenabled":
+        case "LoadStatisticsEnabled": return target.isLoadStatisticsEnabled();
         case "loadtypeconverters":
         case "LoadTypeConverters": return target.isLoadTypeConverters();
         case "logdebugmaxchars":

@@ -18,7 +18,7 @@ The following tables lists all the options:
 
 // main options: START
 === Camel Main configurations
-The camel.main supports 117 options, which are listed below.
+The camel.main supports 118 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -70,6 +70,7 @@ The camel.main supports 117 options, which are listed below.
 | *camel.main.jmxManagement{zwsp}StatisticsLevel* | Sets the JMX statistics level, the level can be set to Extended to gather additional information The default value is Default. | Default | ManagementStatisticsLevel
 | *camel.main.lightweight* | Configure the context to be lightweight. This will trigger some optimizations and memory reduction options. Lightweight context have some limitations. At this moment, dynamic endpoint destinations are not supported. | false | boolean
 | *camel.main.loadHealthChecks* | Whether to load custom health checks by scanning classpath. | false | boolean
+| *camel.main.loadStatistics{zwsp}Enabled* | Sets whether context load statistics is enabled (something like the unix load average). The statistics requires to have camel-management on the classpath as JMX is required. The default value is false. | false | boolean
 | *camel.main.loadTypeConverters* | Whether to load custom type converters by scanning classpath. This is used for backwards compatibility with Camel 2.x. Its recommended to migrate to use fast type converter loading by setting Converter(loader = true) on your custom type converter classes. | false | boolean
 | *camel.main.logDebugMaxChars* | Is used to limit the maximum length of the logging Camel message bodies. If the message body is longer than the limit, the log message is clipped. Use -1 to have unlimited length. Use for example 1000 to log at most 1000 characters. |  | int
 | *camel.main.logExhaustedMessage{zwsp}Body* | Sets whether to log exhausted message body with message history. Default is false. | false | boolean
