@@ -400,9 +400,12 @@ public abstract class BaseMainSupport extends BaseService {
                     .getPeriodTaskResolver().newInstance("aws-secret-refresh", Runnable.class);
             if (task.isPresent()) {
                 long period = vc.aws().getRefreshPeriod();
-                LOG.info("Scheduling: {} running every: {}", task, TimeUtils.printDuration(period, true));
+                Runnable r = task.get();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Scheduling: {} (period: {})", r, TimeUtils.printDuration(period, false));
+                }
                 PeriodTaskScheduler scheduler = getCamelContext().adapt(ExtendedCamelContext.class).getPeriodTaskScheduler();
-                scheduler.schedulePeriodTask(task.get(), period);
+                scheduler.schedulePeriodTask(r, period);
             }
         }
     }

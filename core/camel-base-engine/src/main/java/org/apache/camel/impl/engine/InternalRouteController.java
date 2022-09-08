@@ -86,17 +86,19 @@ class InternalRouteController implements RouteController {
     @Override
     public void reloadAllRoutes() throws Exception {
         // lock model as we need to preserve the model definitions
-        // during reloading because we need to create new processors from the models
+        // during removing routes because we need to create new processors from the models
         abstractCamelContext.setLockModel(true);
         try {
             abstractCamelContext.removeAllRoutes();
-            // remove left-over route templates and endpoints, so we can start on a fresh
+            // remove endpoints, so we can start on a fresh
             abstractCamelContext.getEndpointRegistry().clear();
-            // start all routes again
-            abstractCamelContext.startRouteDefinitions();
         } finally {
             abstractCamelContext.setLockModel(false);
         }
+        // remove left-over route created from templates (model should not be locked for templates to be removed)
+        abstractCamelContext.removeRouteDefinitionsFromTemplate();
+        // start all routes again
+        abstractCamelContext.startRouteDefinitions();
     }
 
     @Override

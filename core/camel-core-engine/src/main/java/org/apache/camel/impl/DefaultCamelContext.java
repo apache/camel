@@ -759,8 +759,25 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
         }
         List<RouteDefinition> routeDefinitions = model.getRouteDefinitions();
         if (routeDefinitions != null) {
-            startRouteDefinitions(routeDefinitions);
+            // defensive copy of routes to be started as kamelets
+            // can add route definitions from existing routes
+            List<RouteDefinition> toBeStarted = new ArrayList<>(routeDefinitions);
+            startRouteDefinitions(toBeStarted);
         }
+    }
+
+    @Override
+    public void removeRouteDefinitionsFromTemplate() throws Exception {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
+        List<RouteDefinition> toBeRemoved = new ArrayList<>();
+        for (RouteDefinition rd : model.getRouteDefinitions()) {
+            if (rd.isTemplate() != null && rd.isTemplate()) {
+                toBeRemoved.add(rd);
+            }
+        }
+        removeRouteDefinitions(toBeRemoved);
     }
 
     public void startRouteDefinitions(List<RouteDefinition> routeDefinitions) throws Exception {

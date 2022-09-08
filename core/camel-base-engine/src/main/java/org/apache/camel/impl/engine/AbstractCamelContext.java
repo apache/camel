@@ -3667,6 +3667,9 @@ public abstract class AbstractCamelContext extends BaseService
     public void startRouteDefinitions() throws Exception {
     }
 
+    public void removeRouteDefinitionsFromTemplate() throws Exception {
+    }
+
     protected boolean isStreamCachingInUse() throws Exception {
         return isStreamCaching();
     }
