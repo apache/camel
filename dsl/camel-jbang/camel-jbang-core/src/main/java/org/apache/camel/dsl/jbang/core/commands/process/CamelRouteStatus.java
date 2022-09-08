@@ -82,6 +82,18 @@ public class CamelRouteStatus extends ProcessBaseCommand {
                             row.uptime = row.age != null ? TimeUtils.toMilliSeconds(row.age) : 0;
                             Map<String, ?> stats = o.getMap("statistics");
                             if (stats != null) {
+                                Object load = stats.get("load01");
+                                if (load != null) {
+                                    row.load01 = load.toString();
+                                }
+                                load = stats.get("load05");
+                                if (load != null) {
+                                    row.load05 = load.toString();
+                                }
+                                load = stats.get("load15");
+                                if (load != null) {
+                                    row.load15 = load.toString();
+                                }
                                 row.total = stats.get("exchangesTotal").toString();
                                 row.inflight = stats.get("exchangesInflight").toString();
                                 row.failed = stats.get("exchangesFailed").toString();
@@ -123,31 +135,34 @@ public class CamelRouteStatus extends ProcessBaseCommand {
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            boolean sources = rows.stream().noneMatch(r -> r.source == null);
-            System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS)
-                            .with(r -> r.name),
-                    new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.ELLIPSIS)
-                            .with(r -> r.routeId),
-                    new Column().header("FROM").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS)
-                            .with(r -> r.from),
-                    new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
-                            .with(r -> r.state),
-                    new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
-                    new Column().header("TOTAL").with(r -> r.total),
-                    new Column().header("FAIL").with(r -> r.failed),
-                    new Column().header("INFLIGHT").with(r -> r.inflight),
-                    new Column().header("MEAN").with(r -> r.mean),
-                    new Column().header("MIN").with(r -> r.min),
-                    new Column().header("MAX").with(r -> r.max),
-                    new Column().header("SINCE-LAST").with(this::getSinceLast))));
+            printTable(rows);
         }
 
         return 0;
     }
 
-    private String getSinceLast(Row r) {
+    protected void printTable(List<Row> rows) {
+        System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
+                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS)
+                        .with(r -> r.name),
+                new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.ELLIPSIS)
+                        .with(r -> r.routeId),
+                new Column().header("FROM").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS)
+                        .with(r -> r.from),
+                new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
+                        .with(r -> r.state),
+                new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
+                new Column().header("TOTAL").with(r -> r.total),
+                new Column().header("FAIL").with(r -> r.failed),
+                new Column().header("INFLIGHT").with(r -> r.inflight),
+                new Column().header("MEAN").with(r -> r.mean),
+                new Column().header("MIN").with(r -> r.min),
+                new Column().header("MAX").with(r -> r.max),
+                new Column().header("SINCE-LAST").with(this::getSinceLast))));
+    }
+
+    String getSinceLast(Row r) {
         String s1 = r.sinceLastStarted != null ? r.sinceLastStarted : "-";
         String s2 = r.sinceLastCompleted != null ? r.sinceLastCompleted : "-";
         String s3 = r.sinceLastFailed != null ? r.sinceLastFailed : "-";
@@ -185,6 +200,9 @@ public class CamelRouteStatus extends ProcessBaseCommand {
         String sinceLastStarted;
         String sinceLastCompleted;
         String sinceLastFailed;
+        String load01;
+        String load05;
+        String load15;
     }
 
 }

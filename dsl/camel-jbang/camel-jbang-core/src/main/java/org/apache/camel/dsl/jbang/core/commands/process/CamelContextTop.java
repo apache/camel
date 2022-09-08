@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -72,7 +73,21 @@ public class CamelContextTop extends ProcessBaseCommand {
                         row.javaVersion = runtime != null ? runtime.getString("javaVersion") : null;
                         row.state = context.getInteger("phase");
                         row.camelVersion = context.getString("version");
-
+                        Map<String, ?> stats = context.getMap("statistics");
+                        if (stats != null) {
+                            Object load = stats.get("load01");
+                            if (load != null) {
+                                row.load01 = load.toString();
+                            }
+                            load = stats.get("load05");
+                            if (load != null) {
+                                row.load05 = load.toString();
+                            }
+                            load = stats.get("load15");
+                            if (load != null) {
+                                row.load15 = load.toString();
+                            }
+                        }
                         JsonObject mem = (JsonObject) root.get("memory");
                         if (mem != null) {
                             row.heapMemUsed = mem.getLong("heapMemoryUsed");
@@ -113,6 +128,8 @@ public class CamelContextTop extends ProcessBaseCommand {
                     new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
                             .with(r -> extractState(r.state)),
                     new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
+                    new Column().header("LOAD").headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER)
+                            .with(this::getLoad),
                     new Column().header("HEAP").headerAlign(HorizontalAlign.CENTER).with(this::getHeapMemory),
                     new Column().header("NON-HEAP").headerAlign(HorizontalAlign.CENTER).with(this::getNonHeapMemory),
                     new Column().header("GC").headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.LEFT)
@@ -197,6 +214,22 @@ public class CamelContextTop extends ProcessBaseCommand {
         return v;
     }
 
+    private String getLoad(Row r) {
+        String s1 = r.load01 != null ? r.load01 : "-";
+        String s2 = r.load05 != null ? r.load05 : "-";
+        String s3 = r.load15 != null ? r.load15 : "-";
+        if ("0.00".equals(s1)) {
+            s1 = "-";
+        }
+        if ("0.00".equals(s2)) {
+            s2 = "-";
+        }
+        if ("0.00".equals(s3)) {
+            s3 = "-";
+        }
+        return s1 + "/" + s2 + "/" + s3;
+    }
+
     private static long asMegaBytesOneDigit(long bytes) {
         return bytes / 1000 / 1000;
     }
@@ -211,6 +244,9 @@ public class CamelContextTop extends ProcessBaseCommand {
         int state;
         String ago;
         long uptime;
+        String load01;
+        String load05;
+        String load15;
         long heapMemUsed;
         long heapMemCommitted;
         long heapMemMax;
