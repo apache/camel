@@ -48,11 +48,12 @@ import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
-import org.apache.camel.impl.event.CamelContextRoutesStartedEvent;
+import org.apache.camel.impl.engine.DefaultContextReloadStrategy;
 import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.spi.AutowiredLifecycleStrategy;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -404,6 +405,11 @@ public abstract class BaseMainSupport extends BaseService {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Scheduling: {} (period: {})", r, TimeUtils.printDuration(period, false));
                 }
+                if (camelContext.hasService(ContextReloadStrategy.class) == null) {
+                    // refresh is enabled then we need to automatically enable context-reload as well
+                    ContextReloadStrategy reloader = new DefaultContextReloadStrategy();
+                    camelContext.addService(reloader);
+                }
                 PeriodTaskScheduler scheduler = getCamelContext().adapt(ExtendedCamelContext.class).getPeriodTaskScheduler();
                 scheduler.schedulePeriodTask(r, period);
             }
@@ -672,7 +678,7 @@ public abstract class BaseMainSupport extends BaseService {
             camelContext.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
                 @Override
                 public boolean isEnabled(CamelEvent event) {
-                    return event instanceof CamelContextRoutesStartedEvent;
+                    return event instanceof CamelEvent.CamelContextRoutesStartedEvent;
                 }
 
                 @Override
