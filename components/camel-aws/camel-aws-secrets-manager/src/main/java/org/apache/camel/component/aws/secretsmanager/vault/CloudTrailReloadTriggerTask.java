@@ -205,7 +205,7 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
             ContextReloadStrategy reload = camelContext.hasService(ContextReloadStrategy.class);
             if (reload != null) {
                 // trigger reload
-                reload.onReload(camelContext.getName());
+                reload.onReload(this);
             }
         }
     }

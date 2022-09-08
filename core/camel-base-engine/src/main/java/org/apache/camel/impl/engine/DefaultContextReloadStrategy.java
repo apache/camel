@@ -22,6 +22,7 @@ import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesSource;
+import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
@@ -48,11 +49,11 @@ public class DefaultContextReloadStrategy extends ServiceSupport implements Cont
     @Override
     public void onReload(Object source) {
         LOG.info("Reloading CamelContext ({}) triggered by: {}", camelContext.getName(), source);
-
         try {
             reloadProperties(source);
             reloadRoutes(source);
             incSucceededCounter();
+            EventHelper.notifyContextReloaded(getCamelContext(), source);
         } catch (Exception e) {
             incFailedCounter();
             LOG.warn("Error reloading CamelContext (" + camelContext.getName() + ") due to: " + e.getMessage(), e);
