@@ -527,7 +527,7 @@
         <wildfly-elytron>1.11.4.Final</wildfly-elytron>
         <wiremock-version>2.32.0</wiremock-version>
         <woodstox-version>4.4.1</woodstox-version>
-        <woodstox-core-version>6.1.1</woodstox-core-version>
+        <woodstox-core-version>6.3.1</woodstox-core-version>
         <xbean-spring-version>4.21</xbean-spring-version>
         <xbean-asm5-shaded-version>4.5</xbean-asm5-shaded-version>
         <xchange-version>5.0.13</xchange-version>
