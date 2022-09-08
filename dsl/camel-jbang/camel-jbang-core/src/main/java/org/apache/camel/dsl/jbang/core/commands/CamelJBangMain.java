@@ -23,6 +23,7 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelGCAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelReloadAction;
+import org.apache.camel.dsl.jbang.core.commands.action.CamelResetStatsAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteStartAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteStopAction;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelContextStatus;
@@ -58,6 +59,7 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("cmd", new CommandLine(new CamelAction(main))
                         .addSubcommand("start-route", new CommandLine(new CamelRouteStartAction(main)))
                         .addSubcommand("stop-route", new CommandLine(new CamelRouteStopAction(main)))
+                        .addSubcommand("reset-stats", new CommandLine(new CamelResetStatsAction(main)))
                         .addSubcommand("reload", new CommandLine(new CamelReloadAction(main)))
                         .addSubcommand("gc", new CommandLine(new CamelGCAction(main))))
                 .addSubcommand("generate", new CommandLine(new CodeGenerator(main))

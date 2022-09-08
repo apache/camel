@@ -38,6 +38,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Route;
+import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.spi.CliConnector;
 import org.apache.camel.spi.CliConnectorFactory;
@@ -234,6 +235,11 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     camelContext.addService(reloader);
                 }
                 reloader.onReload("Camel CLI");
+            } else if ("reset-stats".equals(action)) {
+                ManagedCamelContext mcc = camelContext.getExtension(ManagedCamelContext.class);
+                if (mcc != null) {
+                    mcc.getManagedCamelContext().reset(true);
+                }
             }
 
             // action done so delete file
