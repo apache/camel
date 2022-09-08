@@ -582,7 +582,7 @@ public class PropertiesComponent extends ServiceSupport
     /**
      * Is there a {@link PropertiesFunction} with the given name?
      *
-     * @deprecated  use hasPropertiesFunction
+     * @deprecated use hasPropertiesFunction
      */
     @Deprecated
     public boolean hasFunction(String name) {
