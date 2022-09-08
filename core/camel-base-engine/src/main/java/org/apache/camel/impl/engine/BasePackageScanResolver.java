@@ -66,7 +66,7 @@ public abstract class BasePackageScanResolver extends ServiceSupport implements 
         super.doInit();
 
         // ensure we also use app context class-loader
-        if (camelContext.getApplicationContextClassLoader() != null) {
+        if (camelContext != null && camelContext.getApplicationContextClassLoader() != null) {
             addClassLoader(camelContext.getApplicationContextClassLoader());
         }
     }
