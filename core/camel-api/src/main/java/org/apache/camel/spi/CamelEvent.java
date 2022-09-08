@@ -43,6 +43,7 @@ public interface CamelEvent {
         CamelContextSuspending,
         CamelContextReloading,
         CamelContextReloaded,
+        CamelContextReloadFailure,
         ExchangeCompleted,
         ExchangeCreated,
         ExchangeFailed,
@@ -233,6 +234,13 @@ public interface CamelEvent {
         @Override
         default Type getType() {
             return Type.CamelContextReloaded;
+        }
+    }
+
+    interface CamelContextReloadFailureEvent extends CamelContextEvent, FailureEvent {
+        @Override
+        default Type getType() {
+            return Type.CamelContextReloadFailure;
         }
     }
 

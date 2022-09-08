@@ -156,6 +156,16 @@ public interface EventFactory {
     CamelEvent createCamelContextReloaded(CamelContext context, Object source);
 
     /**
+     * Creates an {@link CamelEvent} for {@link CamelContext} failed reload.
+     *
+     * @param  context camel context
+     * @param  source  the source triggered reload
+     * @param  cause   the caused of the failure
+     * @return         the reloaded failed event
+     */
+    CamelEvent createCamelContextReloadFailure(CamelContext context, Object source, Throwable cause);
+
+    /**
      * Creates an {@link CamelEvent} for a Service failed to start cleanly
      *
      * @param  context camel context

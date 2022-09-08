@@ -160,6 +160,15 @@ public class DefaultEventFactory implements EventFactory {
     }
 
     @Override
+    public CamelEvent createCamelContextReloadFailure(CamelContext context, Object source, Throwable cause) {
+        CamelEvent answer = new CamelContextReloadFailureEvent(context, source, cause);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
+    }
+
+    @Override
     public CamelEvent createCamelContextReloaded(CamelContext context, Object source) {
         CamelEvent answer = new CamelContextReloadedEvent(context, source);
         if (timestampEnabled) {
