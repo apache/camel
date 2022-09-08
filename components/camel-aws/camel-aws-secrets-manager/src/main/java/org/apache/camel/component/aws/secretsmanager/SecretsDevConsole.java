@@ -40,7 +40,7 @@ public class SecretsDevConsole extends AbstractDevConsole {
     private CloudTrailReloadTriggerTask secretsRefreshTask;
 
     public SecretsDevConsole() {
-        super("camel", "aws-secrets", "AWS Secrets", "AWS Secrets Manager");
+        super("camel", "aws-secret", "AWS Secrets", "AWS Secrets Manager");
     }
 
     @Override

@@ -38,6 +38,7 @@ public class EventConsole extends AbstractDevConsole {
     private int capacity = 25;
 
     private Queue<CamelEvent> events;
+    private Queue<CamelEvent.RouteEvent> routeEvents;
     private Queue<CamelEvent.ExchangeEvent> exchangeEvents;
     private final ConsoleEventNotifier listener = new ConsoleEventNotifier();
 
@@ -56,6 +57,7 @@ public class EventConsole extends AbstractDevConsole {
     @Override
     protected void doInit() throws Exception {
         this.events = new ArrayDeque<>(capacity);
+        this.routeEvents = new ArrayDeque<>(capacity);
         this.exchangeEvents = new ArrayDeque<>(capacity);
     }
 
@@ -67,7 +69,6 @@ public class EventConsole extends AbstractDevConsole {
     @Override
     protected void doStop() throws Exception {
         getCamelContext().getManagementStrategy().removeEventNotifier(listener);
-        events.clear();
     }
 
     protected String doCallText(Map<String, Object> options) {
@@ -76,6 +77,18 @@ public class EventConsole extends AbstractDevConsole {
         if (!events.isEmpty()) {
             sb.append(String.format("Last %s Camel Events:", events.size()));
             for (CamelEvent event : events) {
+                if (event.getTimestamp() > 0) {
+                    sb.append(String.format("\n    %s (age: %s)", event, TimeUtils.printSince(event.getTimestamp())));
+                } else {
+                    sb.append(String.format("\n    %s", event));
+                }
+            }
+            sb.append("\n");
+        }
+        if (!routeEvents.isEmpty()) {
+            sb.append("\n");
+            sb.append(String.format("Last %s Route Events:", routeEvents.size()));
+            for (CamelEvent.RouteEvent event : routeEvents) {
                 if (event.getTimestamp() > 0) {
                     sb.append(String.format("\n    %s (age: %s)", event, TimeUtils.printSince(event.getTimestamp())));
                 } else {
@@ -116,6 +129,19 @@ public class EventConsole extends AbstractDevConsole {
             }
             root.put("events", arr);
         }
+        if (!routeEvents.isEmpty()) {
+            List<JsonObject> arr = new ArrayList<>();
+            for (CamelEvent event : routeEvents) {
+                JsonObject jo = new JsonObject();
+                jo.put("type", event.getType().toString());
+                if (event.getTimestamp() > 0) {
+                    jo.put("timestamp", event.getTimestamp());
+                }
+                jo.put("message", event.toString());
+                arr.add(jo);
+            }
+            root.put("routeEvents", arr);
+        }
         if (!exchangeEvents.isEmpty()) {
             List<JsonObject> arr = new ArrayList<>();
             for (CamelEvent.ExchangeEvent event : exchangeEvents) {
@@ -143,6 +169,11 @@ public class EventConsole extends AbstractDevConsole {
                     exchangeEvents.poll();
                 }
                 exchangeEvents.add((CamelEvent.ExchangeEvent) event);
+            } else if (event instanceof CamelEvent.RouteEvent) {
+                if (routeEvents.size() >= capacity) {
+                    routeEvents.poll();
+                }
+                routeEvents.add((CamelEvent.RouteEvent) event);
             } else {
                 if (events.size() >= capacity) {
                     events.poll();
