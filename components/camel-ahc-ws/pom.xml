@@ -70,6 +70,21 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- test infra -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-common</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-jetty</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+        </dependency>
+
         <!-- Jetty8 for testing-->
         <dependency>
             <groupId>org.eclipse.jetty.websocket</groupId>
@@ -80,24 +95,6 @@
         <dependency>
             <groupId>org.eclipse.jetty.websocket</groupId>
             <artifactId>websocket-server</artifactId>
-            <version>${jetty-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty.websocket</groupId>
-            <artifactId>websocket-servlet</artifactId>
-            <version>${jetty-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlet</artifactId>
-            <version>${jetty-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-server</artifactId>
             <version>${jetty-version}</version>
             <scope>test</scope>
         </dependency>

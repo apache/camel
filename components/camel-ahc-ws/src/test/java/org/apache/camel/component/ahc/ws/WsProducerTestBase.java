@@ -27,58 +27,27 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.AvailablePortFinder;
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-/**
- *
- */
+@Timeout(10)
 public abstract class WsProducerTestBase {
-
     protected static final String TEST_MESSAGE = "Hello World!";
-    protected static final int PORT = AvailablePortFinder.getNextAvailable();
 
     protected CamelContext camelContext;
     protected ProducerTemplate template;
-    protected Server server;
-
-    public void startTestServer() throws Exception {
-        // start a simple websocket echo service
-        server = new Server(PORT);
-        Connector connector = getConnector();
-        server.addConnector(connector);
-
-        ServletContextHandler ctx = new ServletContextHandler();
-        ctx.setContextPath("/");
-        ctx.addServlet(TestServletFactory.class.getName(), "/*");
-
-        server.setHandler(ctx);
-
-        server.start();
-        assertTrue(server.isStarted());
-    }
-
-    public void stopTestServer() throws Exception {
-        server.stop();
-        server.destroy();
-    }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         TestMessages.getInstance().getMessages().clear();
-
-        startTestServer();
 
         camelContext = new DefaultCamelContext();
         camelContext.start();
@@ -88,16 +57,12 @@ public abstract class WsProducerTestBase {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         template.stop();
         camelContext.stop();
-
-        stopTestServer();
     }
 
     protected abstract void setUpComponent();
-
-    protected abstract Connector getConnector() throws Exception;
 
     protected abstract String getTargetURL();
 
@@ -117,7 +82,6 @@ public abstract class WsProducerTestBase {
         verifyMessage(testMessage, TestMessages.getInstance().getMessages().get(0));
     }
 
-    @Disabled
     @Test
     public void testWriteBytesToWebsocket() throws Exception {
         byte[] testMessageBytes = getByteTestMessage();

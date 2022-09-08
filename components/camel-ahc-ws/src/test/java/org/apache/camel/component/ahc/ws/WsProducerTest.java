@@ -16,22 +16,32 @@
  */
 package org.apache.camel.component.ahc.ws;
 
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.ServerConnector;
+import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.infra.jetty.services.JettyConfiguration;
+import org.apache.camel.test.infra.jetty.services.JettyConfigurationBuilder;
+import org.apache.camel.test.infra.jetty.services.JettyEmbeddedService;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
+@Timeout(10)
 public class WsProducerTest extends WsProducerTestBase {
+
+    private final JettyConfiguration jettyConfiguration = JettyConfigurationBuilder
+            .emptyTemplate()
+            .withPort(AvailablePortFinder.getNextAvailable())
+            .withContextPath(JettyConfiguration.ROOT_CONTEXT_PATH)
+            .addServletConfiguration(new JettyConfiguration.ServletConfiguration(
+                    TestServletFactory.class.getName(), JettyConfiguration.ServletConfiguration.ROOT_PATH_SPEC))
+            .build();
+    @RegisterExtension
+    public JettyEmbeddedService service = new JettyEmbeddedService(jettyConfiguration);
 
     @Override
     protected void setUpComponent() {
     }
 
     @Override
-    protected Connector getConnector() {
-        return new ServerConnector(server);
-    }
-
-    @Override
     protected String getTargetURL() {
-        return "ahc-ws://localhost:" + PORT;
+        return "ahc-ws://localhost:" + service.getPort();
     }
 }
