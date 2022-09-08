@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.engine;
+package org.apache.camel.support;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedAttribute;
@@ -22,12 +22,14 @@ import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesSource;
-import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Default {@link ContextReloadStrategy}.
+ */
 public class DefaultContextReloadStrategy extends ServiceSupport implements ContextReloadStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultContextReloadStrategy.class);
