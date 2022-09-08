@@ -91,9 +91,9 @@ public class SecretsDevConsole extends AbstractDevConsole {
                 Instant last = secretsRefreshTask != null ? secretsRefreshTask.getUpdates().get(sec) : null;
                 String age = last != null ? TimeUtils.printSince(last.toEpochMilli()) : null;
                 if (age != null) {
-                    sb.append(String.format("\n    %s", sec));
-                } else {
                     sb.append(String.format("\n    %s (age: %s)", sec, age));
+                } else {
+                    sb.append(String.format("\n    %s", sec));
                 }
             }
         }
