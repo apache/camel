@@ -19,7 +19,9 @@ package org.apache.camel.test.infra.jetty.services;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.net.ssl.SSLContext;
 import javax.servlet.Servlet;
@@ -42,10 +44,19 @@ public class JettyConfiguration {
 
         private final T servlet;
         private final String pathSpec;
+        private Map<String, String> initParameters = new HashMap<>();
+        private String name;
 
         public ServletConfiguration(T servlet, String pathSpec) {
             this.servlet = servlet;
             this.pathSpec = pathSpec;
+            this.name = null;
+        }
+
+        public ServletConfiguration(T servlet, String pathSpec, String name) {
+            this.servlet = servlet;
+            this.pathSpec = pathSpec;
+            this.name = name;
         }
 
         public T getServlet() {
@@ -56,12 +67,38 @@ public class JettyConfiguration {
             return pathSpec;
         }
 
+        public void addInitParameter(String param, String value) {
+            initParameters.put(param, value);
+        }
+
+        public Map<String, String> getInitParameters() {
+            return Collections.unmodifiableMap(initParameters);
+        }
+
         public ServletHolder buildServletHolder() {
+            ServletHolder servletHolder = resolveServletHolder();
+
+            if (!initParameters.isEmpty()) {
+                servletHolder.setInitParameters(initParameters);
+            }
+
+            return servletHolder;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        private ServletHolder resolveServletHolder() {
             if (servlet instanceof ServletHolder) {
                 return (ServletHolder) servlet;
             }
 
             ServletHolder servletHolder = new ServletHolder();
+
+            if (name != null) {
+                servletHolder.setName(name);
+            }
 
             if (servlet instanceof String) {
                 servletHolder.setClassName((String) servlet);
