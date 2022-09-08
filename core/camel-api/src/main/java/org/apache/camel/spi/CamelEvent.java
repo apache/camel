@@ -224,7 +224,7 @@ public interface CamelEvent {
     interface CamelContextReloadedEvent extends CamelContextEvent {
         @Override
         default Type getType() {
-            return Type.CamelContextStartupFailure;
+            return Type.CamelContextReloaded;
         }
     }
 
