@@ -34,9 +34,9 @@ decimal or grouping separators.
 |===
 |Type |Format Type |Pattern example |Link
 
-|Date |DateFormat |dd-MM-yyyy |https://docs.oracle.com/javase/8/docs/api/java/text/SimpleDateFormat.html
+|Date |DateFormat |dd-MM-yyyy |https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/text/SimpleDateFormat.html
 
-|Decimal* |DecimalFormat |+##.###.###+ |https://docs.oracle.com/javase/8/docs/api/java/text/DecimalFormat.html
+|Decimal* |DecimalFormat |+##.###.###+ |https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/text/DecimalFormat.html
 |===
 
 *Decimal = Double, Integer, Float, Short, Long
