@@ -45,7 +45,6 @@ import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Default implement of {@link org.apache.camel.spi.PackageScanResourceResolver}
