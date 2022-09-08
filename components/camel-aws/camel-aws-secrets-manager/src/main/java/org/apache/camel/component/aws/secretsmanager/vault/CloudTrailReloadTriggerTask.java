@@ -42,7 +42,6 @@ import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudtrail.CloudTrailClient;
 import software.amazon.awssdk.services.cloudtrail.CloudTrailClientBuilder;
-import software.amazon.awssdk.services.cloudtrail.model.CloudTrailException;
 import software.amazon.awssdk.services.cloudtrail.model.Event;
 import software.amazon.awssdk.services.cloudtrail.model.LookupAttribute;
 import software.amazon.awssdk.services.cloudtrail.model.LookupAttributeKey;
@@ -188,7 +187,7 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
                             if (matchSecret(name)) {
                                 updates.put(name, event.eventTime());
                                 if (isReloadEnabled()) {
-                                    LOG.info("Update for secret: {} detected, triggering a CamelContext reload", name);
+                                    LOG.info("Update for AWS secret: {} detected, triggering CamelContext reload", name);
                                     triggerReloading = true;
                                 }
                                 break;
@@ -197,8 +196,10 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
                     }
                 }
             }
-        } catch (CloudTrailException e) {
-            throw e;
+        } catch (Exception e) {
+            LOG.warn("Error during AWS Secrets Refresh Task due to " + e.getMessage()
+                     + ". This exception is ignored. Will try again on next run.",
+                    e);
         }
 
         if (triggerReloading) {
