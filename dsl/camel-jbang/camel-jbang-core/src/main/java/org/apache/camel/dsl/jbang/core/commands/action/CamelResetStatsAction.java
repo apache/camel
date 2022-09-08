@@ -16,13 +16,13 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import java.io.File;
+import java.util.List;
+
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
-
-import java.io.File;
-import java.util.List;
 
 @CommandLine.Command(name = "reset-stats",
                      description = "Reset performance statistics")
