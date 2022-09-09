@@ -25,7 +25,6 @@ import java.util.function.Function;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.api.management.ManagedCamelContext;
-import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.PatternHelper;
