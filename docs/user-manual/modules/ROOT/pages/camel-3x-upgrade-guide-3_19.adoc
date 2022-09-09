@@ -21,6 +21,10 @@ The default TLS protocol is changed from `TLSv1.2` to `TLSv1.3`.
 Updated the documentation to reflect the default TLS protocol in Kafka Clients running on JDK11+
 is `TLSv1.2,TLSv1.3` (prefer v1.3 but can fall back to v1.2).
 
+=== camel-netty / camel-netty-http
+
+The default TLS protocol is changed from `TLSv1,TLSv1.1,TLSv1.2` to `TLSv1.2,TLSv1.3`.
+
 === camel-yaml-dsl
 
 Removed using `template` as a custom alias for `routeTemplate` or `route-template`.
