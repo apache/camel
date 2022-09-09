@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.aws.secretsmanager.SecretsManagerPropertiesFunction;
 import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.spi.PropertiesComponent;
@@ -34,6 +35,7 @@ import org.apache.camel.spi.annotations.PeriodicTask;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.vault.AwsVaultConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -48,6 +50,8 @@ import software.amazon.awssdk.services.cloudtrail.model.LookupAttributeKey;
 import software.amazon.awssdk.services.cloudtrail.model.LookupEventsRequest;
 import software.amazon.awssdk.services.cloudtrail.model.LookupEventsResponse;
 import software.amazon.awssdk.services.cloudtrail.model.Resource;
+import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
+import software.amazon.awssdk.services.secretsmanager.SecretsManagerClientBuilder;
 
 /**
  * Period task which checks if AWS secrets has been updated and can trigger Camel to be reloaded.
@@ -55,7 +59,11 @@ import software.amazon.awssdk.services.cloudtrail.model.Resource;
 @PeriodicTask("aws-secret-refresh")
 public class CloudTrailReloadTriggerTask extends ServiceSupport implements CamelContextAware, Runnable {
 
-    // TODO: support ENV like SecretsManagerPropertiesFunction
+    private static final String CAMEL_AWS_VAULT_ACCESS_KEY_ENV = "CAMEL_VAULT_AWS_ACCESS_KEY";
+    private static final String CAMEL_AWS_VAULT_SECRET_KEY_ENV = "CAMEL_VAULT_AWS_SECRET_KEY";
+    private static final String CAMEL_AWS_VAULT_REGION_ENV = "CAMEL_VAULT_AWS_REGION";
+    private static final String CAMEL_AWS_VAULT_USE_DEFAULT_CREDENTIALS_PROVIDER_ENV
+            = "CAMEL_VAULT_AWS_USE_DEFAULT_CREDENTIALS_PROVIDER";
 
     private static final Logger LOG = LoggerFactory.getLogger(CloudTrailReloadTriggerTask.class);
     private static final String SECRETSMANAGER_AMAZONAWS_COM = "secretsmanager.amazonaws.com";
@@ -132,18 +140,34 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
             throw new IllegalArgumentException("Secrets must be configured on AWS vault configuration");
         }
 
-        CloudTrailClientBuilder cloudTrailClientBuilder;
-        Region regionValue = Region.of(camelContext.getVaultConfiguration().aws().getRegion());
-        if (camelContext.getVaultConfiguration().aws().isDefaultCredentialsProvider()) {
-            cloudTrailClientBuilder = CloudTrailClient.builder()
-                    .region(regionValue)
-                    .credentialsProvider(ProfileCredentialsProvider.create());
-        } else {
-            AwsBasicCredentials cred = AwsBasicCredentials.create(camelContext.getVaultConfiguration().aws().getAccessKey(),
-                    camelContext.getVaultConfiguration().aws().getSecretKey());
-            cloudTrailClientBuilder = CloudTrailClient.builder().credentialsProvider(StaticCredentialsProvider.create(cred));
+        String accessKey = System.getenv(CAMEL_AWS_VAULT_ACCESS_KEY_ENV);
+        String secretKey = System.getenv(CAMEL_AWS_VAULT_SECRET_KEY_ENV);
+        String region = System.getenv(CAMEL_AWS_VAULT_REGION_ENV);
+        boolean useDefaultCredentialsProvider
+                = Boolean.parseBoolean(System.getenv(CAMEL_AWS_VAULT_USE_DEFAULT_CREDENTIALS_PROVIDER_ENV));
+        if (ObjectHelper.isEmpty(accessKey) && ObjectHelper.isEmpty(secretKey) && ObjectHelper.isEmpty(region)) {
+            AwsVaultConfiguration awsVaultConfiguration = getCamelContext().getVaultConfiguration().aws();
+            if (ObjectHelper.isNotEmpty(awsVaultConfiguration)) {
+                accessKey = awsVaultConfiguration.getAccessKey();
+                secretKey = awsVaultConfiguration.getSecretKey();
+                region = awsVaultConfiguration.getRegion();
+                useDefaultCredentialsProvider = awsVaultConfiguration.isDefaultCredentialsProvider();
+            }
         }
-        cloudTrailClient = cloudTrailClientBuilder.build();
+        if (ObjectHelper.isNotEmpty(accessKey) && ObjectHelper.isNotEmpty(secretKey) && ObjectHelper.isNotEmpty(region)) {
+            CloudTrailClientBuilder clientBuilder = CloudTrailClient.builder();
+            AwsBasicCredentials cred = AwsBasicCredentials.create(accessKey, secretKey);
+            clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
+            clientBuilder.region(Region.of(region));
+            cloudTrailClient = clientBuilder.build();
+        } else if (useDefaultCredentialsProvider && ObjectHelper.isNotEmpty(region)) {
+            CloudTrailClientBuilder clientBuilder = CloudTrailClient.builder();
+            clientBuilder.region(Region.of(region));
+            cloudTrailClient = clientBuilder.build();
+        } else {
+            throw new RuntimeCamelException(
+                    "Using the AWS Secrets Refresh Task requires setting AWS credentials as application properties or environment variables");
+        }
     }
 
     @Override
