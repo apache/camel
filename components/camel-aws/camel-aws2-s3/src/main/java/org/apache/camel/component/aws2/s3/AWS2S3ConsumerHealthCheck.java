@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
+import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.exception.SdkClientException;
@@ -62,6 +63,8 @@ public class AWS2S3ConsumerHealthCheck extends AbstractHealthCheck {
                 S3ClientBuilder clientBuilder = S3Client.builder();
                 client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred))
                         .region(Region.of(configuration.getRegion())).build();
+            } else if (ObjectHelper.isNotEmpty(configuration.getAmazonS3Client())) {
+                client = configuration.getAmazonS3Client();
             } else {
                 S3ClientBuilder clientBuilder = S3Client.builder();
                 client = clientBuilder.region(Region.of(configuration.getRegion())).build();
