@@ -1031,8 +1031,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
 
     /**
      * A list of cipher suites. This is a named combination of authentication, encryption, MAC and key exchange
-     * algorithm used to negotiate the security settings for a network connection using TLS or SSL network protocol.
-     * By default all the available cipher suites are supported.
+     * algorithm used to negotiate the security settings for a network connection using TLS or SSL network protocol. By
+     * default all the available cipher suites are supported.
      */
     public void setSslCipherSuites(String sslCipherSuites) {
         this.sslCipherSuites = sslCipherSuites;
@@ -1079,11 +1079,10 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * The list of protocols enabled for SSL connections.
-     * The default is TLSv1.2,TLSv1.3 when running with Java 11 or newer, TLSv1.2 otherwise. With the
-     * default value for Java 11, clients and servers will prefer TLSv1.3 if both support it and fallback
-     * to TLSv1.2 otherwise (assuming both support at least TLSv1.2). This default should be fine for most
-     * cases. Also see the config documentation for SslProtocol.
+     * The list of protocols enabled for SSL connections. The default is TLSv1.2,TLSv1.3 when running with Java 11 or
+     * newer, TLSv1.2 otherwise. With the default value for Java 11, clients and servers will prefer TLSv1.3 if both
+     * support it and fallback to TLSv1.2 otherwise (assuming both support at least TLSv1.2). This default should be
+     * fine for most cases. Also see the config documentation for SslProtocol.
      */
     public void setSslEnabledProtocols(String sslEnabledProtocols) {
         this.sslEnabledProtocols = sslEnabledProtocols;
@@ -1105,14 +1104,12 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * The SSL protocol used to generate the SSLContext.
-     * The default is TLSv1.3 when running with Java 11 or newer, TLSv1.2 otherwise.
-     * This value should be fine for most use cases.
-     * Allowed values in recent JVMs are TLSv1.2 and TLSv1.3. TLS, TLSv1.1, SSL, SSLv2 and SSLv3
-     * may be supported in older JVMs, but their usage is discouraged due to known security vulnerabilities.
-     * With the default value for this config and sslEnabledProtocols, clients will downgrade to TLSv1.2 if
-     * the server does not support TLSv1.3. If this config is set to TLSv1.2, clients will not use TLSv1.3 even
-     * if it is one of the values in sslEnabledProtocols and the server only supports TLSv1.3.
+     * The SSL protocol used to generate the SSLContext. The default is TLSv1.3 when running with Java 11 or newer,
+     * TLSv1.2 otherwise. This value should be fine for most use cases. Allowed values in recent JVMs are TLSv1.2 and
+     * TLSv1.3. TLS, TLSv1.1, SSL, SSLv2 and SSLv3 may be supported in older JVMs, but their usage is discouraged due to
+     * known security vulnerabilities. With the default value for this config and sslEnabledProtocols, clients will
+     * downgrade to TLSv1.2 if the server does not support TLSv1.3. If this config is set to TLSv1.2, clients will not
+     * use TLSv1.3 even if it is one of the values in sslEnabledProtocols and the server only supports TLSv1.3.
      */
     public void setSslProtocol(String sslProtocol) {
         this.sslProtocol = sslProtocol;
@@ -1208,8 +1205,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * The password of the private key in the key store file or
-     * the PEM key specified in sslKeystoreKey. This is required for clients only if two-way authentication is configured.
+     * The password of the private key in the key store file or the PEM key specified in sslKeystoreKey. This is
+     * required for clients only if two-way authentication is configured.
      */
     public void setSslKeyPassword(String sslKeyPassword) {
         this.sslKeyPassword = sslKeyPassword;
@@ -1232,9 +1229,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * The store password for the key store file.
-     * This is optional for client and only needed if sslKeystoreLocation' is configured.
-     * Key store password is not supported for PEM format.
+     * The store password for the key store file. This is optional for client and only needed if sslKeystoreLocation' is
+     * configured. Key store password is not supported for PEM format.
      */
     public void setSslKeystorePassword(String sslKeystorePassword) {
         this.sslKeystorePassword = sslKeystorePassword;
@@ -1256,9 +1252,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * The password for the trust store file.
-     * If a password is not set, trust store file configured will still be used, but integrity checking is disabled.
-     * Trust store password is not supported for PEM format.
+     * The password for the trust store file. If a password is not set, trust store file configured will still be used,
+     * but integrity checking is disabled. Trust store password is not supported for PEM format.
      */
     public void setSslTruststorePassword(String sslTruststorePassword) {
         this.sslTruststorePassword = sslTruststorePassword;
