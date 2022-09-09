@@ -95,8 +95,12 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "MapHeaders": target.setMapHeaders(property(camelContext, boolean.class, value)); return true;
         case "matchonuriprefix":
         case "MatchOnUriPrefix": target.setMatchOnUriPrefix(property(camelContext, boolean.class, value)); return true;
+        case "maxchunksize":
+        case "MaxChunkSize": target.setMaxChunkSize(property(camelContext, int.class, value)); return true;
         case "maxheadersize":
         case "MaxHeaderSize": target.setMaxHeaderSize(property(camelContext, int.class, value)); return true;
+        case "maxinitiallinelength":
+        case "MaxInitialLineLength": target.setMaxInitialLineLength(property(camelContext, int.class, value)); return true;
         case "muteexception":
         case "MuteException": target.setMuteException(property(camelContext, boolean.class, value)); return true;
         case "nativetransport":
@@ -282,8 +286,12 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "MapHeaders": return boolean.class;
         case "matchonuriprefix":
         case "MatchOnUriPrefix": return boolean.class;
+        case "maxchunksize":
+        case "MaxChunkSize": return int.class;
         case "maxheadersize":
         case "MaxHeaderSize": return int.class;
+        case "maxinitiallinelength":
+        case "MaxInitialLineLength": return int.class;
         case "muteexception":
         case "MuteException": return boolean.class;
         case "nativetransport":
@@ -470,8 +478,12 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "MapHeaders": return target.isMapHeaders();
         case "matchonuriprefix":
         case "MatchOnUriPrefix": return target.isMatchOnUriPrefix();
+        case "maxchunksize":
+        case "MaxChunkSize": return target.getMaxChunkSize();
         case "maxheadersize":
         case "MaxHeaderSize": return target.getMaxHeaderSize();
+        case "maxinitiallinelength":
+        case "MaxInitialLineLength": return target.getMaxInitialLineLength();
         case "muteexception":
         case "MuteException": return target.isMuteException();
         case "nativetransport":

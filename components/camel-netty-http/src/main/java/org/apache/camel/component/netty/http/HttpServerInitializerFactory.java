@@ -94,7 +94,7 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
             pipeline.addLast("ssl", sslHandler);
         }
 
-        pipeline.addLast("decoder", new HttpRequestDecoder(4096, configuration.getMaxHeaderSize(), 8192));
+        pipeline.addLast("decoder", new HttpRequestDecoder(configuration.getMaxInitialLineLength(), configuration.getMaxHeaderSize(), configuration.getMaxChunkSize()));
         List<ChannelHandler> decoders = consumer.getConfiguration().getDecodersAsList();
         for (int x = 0; x < decoders.size(); x++) {
             ChannelHandler decoder = decoders.get(x);

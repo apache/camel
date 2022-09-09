@@ -69,6 +69,10 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     private int chunkedMaxContentLength = 1024 * 1024;
     @UriParam(label = "consumer,advanced", defaultValue = "8192")
     private int maxHeaderSize = 8192;
+    @UriParam(label = "consumer,advanced", defaultValue = "4096")
+    private int maxInitialLineLength = 4096;
+    @UriParam(label = "consumer,advanced", defaultValue = "8192")
+    private int maxChunkSize = 8192;
     @UriParam(label = "producer,advanced", defaultValue = "200-299")
     private String okStatusCodeRange = "200-299";
     @UriParam(label = "producer,advanced", defaultValue = "true")
@@ -319,6 +323,37 @@ public class NettyHttpConfiguration extends NettyConfiguration {
 
     public int getMaxHeaderSize() {
         return maxHeaderSize;
+    }
+
+    /**
+     * The maximum length of the initial line (e.g. {@code "GET / HTTP/1.0"} or
+     * {@code "HTTP/1.0 200 OK"}) If the length of the initial line exceeds this value, a
+     * {@link TooLongFrameException} will be raised.
+     * 
+     * See {@link io.netty.handler.codec.http.HttpObjectDecoder}
+     */
+    public void setMaxInitialLineLength(int maxInitialLineLength) {
+        this.maxInitialLineLength = maxInitialLineLength;
+    }
+
+    public int getMaxInitialLineLength() {
+        return maxInitialLineLength;
+    }
+
+    /**
+     * The maximum length of the content or each chunk. If the content length
+     * (or the length of each chunk) exceeds this value, the content or chunk
+     * will be split into multiple {@link io.netty.handler.codec.http.HttpContent}s
+     * whose length is {@code maxChunkSize} at maximum.
+     * 
+     * See {@link io.netty.handler.codec.http.HttpObjectDecoder}
+     */
+    public void setMaxChunkSize(int maxChunkSize) {
+        this.maxChunkSize = maxChunkSize;
+    }
+
+    public int getMaxChunkSize() {
+        return maxChunkSize;
     }
 
     /**
