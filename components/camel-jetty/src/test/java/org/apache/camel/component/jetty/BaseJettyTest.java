@@ -67,19 +67,11 @@ public abstract class BaseJettyTest extends CamelTestSupport {
     }
 
     public void setSSLProps(JettyHttpComponent jetty, String path, String keyStorePasswd, String keyPasswd) {
-        if (jettyVersion() == 9) {
-            jetty.addSslSocketConnectorProperty("protocol", "TLSv1.2");
-            jetty.addSslSocketConnectorProperty("keyStorePassword", keyStorePasswd);
-            jetty.addSslSocketConnectorProperty("keyManagerPassword", keyPasswd);
-            jetty.addSslSocketConnectorProperty("keyStorePath", path);
-            jetty.addSslSocketConnectorProperty("trustStoreType", "JKS");
-        } else {
-            jetty.addSslSocketConnectorProperty("protocol", "TLSv1.2");
-            jetty.addSslSocketConnectorProperty("password", keyStorePasswd);
-            jetty.addSslSocketConnectorProperty("keyPassword", keyPasswd);
-            jetty.addSslSocketConnectorProperty("keystore", path);
-            jetty.addSslSocketConnectorProperty("truststoreType", "JKS");
-        }
+        jetty.addSslSocketConnectorProperty("protocol", "TLSv1.3");
+        jetty.addSslSocketConnectorProperty("keyStorePassword", keyStorePasswd);
+        jetty.addSslSocketConnectorProperty("keyManagerPassword", keyPasswd);
+        jetty.addSslSocketConnectorProperty("keyStorePath", path);
+        jetty.addSslSocketConnectorProperty("trustStoreType", "JKS");
     }
 
     protected int getPort() {
@@ -88,15 +80,6 @@ public abstract class BaseJettyTest extends CamelTestSupport {
 
     protected int getPort2() {
         return port2.getPort();
-    }
-
-    public int jettyVersion() {
-        try {
-            this.getClass().getClassLoader().loadClass("org.eclipse.jetty.server.ssl.SslSelectChannelConnector");
-            return 8;
-        } catch (ClassNotFoundException e) {
-            return 9;
-        }
     }
 
     protected void allowNullHeaders() {
