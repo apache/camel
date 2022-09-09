@@ -782,6 +782,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.CmisComponentBuilderFactory.CmisComponentBuilder cmis() {
         return org.apache.camel.builder.component.dsl.CmisComponentBuilderFactory.cmis();
     }

@@ -28,7 +28,7 @@
 
     <artifactId>camel-cmis</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: CMIS</name>
+    <name>Camel :: CMIS (deprecated)</name>
     <description>Camel CMIS which is based on Apache Chemistry support</description>
 
     <properties>

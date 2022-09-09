@@ -40,6 +40,7 @@ public interface CmisComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static CmisComponentBuilder cmis() {
         return new CmisComponentBuilderImpl();
     }
