@@ -12,6 +12,10 @@ Added `addClassLoader` method to `org.apache.camel.spi.ClassResolver`.
 
 The default TLS protocol is changed from `TLSv1.2` to `TLSv1.3` in Camel JSSE support.
 
+=== camel-ftp
+
+The default TLS protocol is changed from `TLSv1.2` to `TLSv1.3`.
+
 === camel-yaml-dsl
 
 Removed using `template` as a custom alias for `routeTemplate` or `route-template`.

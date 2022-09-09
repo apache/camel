@@ -27,9 +27,8 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class FtpsConfiguration extends FtpConfiguration {
 
-    @UriParam(defaultValue = "TLSv1.2", label = "security")
-    // TODO : switch to TLSv1.3 when we fully upgrade to JDK11
-    private String securityProtocol = "TLSv1.2";
+    @UriParam(defaultValue = "TLSv1.3", label = "security")
+    private String securityProtocol = "TLSv1.3";
     @UriParam(label = "security")
     private boolean implicit;
     @UriParam(label = "security")

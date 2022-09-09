@@ -33,7 +33,7 @@ public class FileToFtpsExplicitTLSWithoutClientAuthAndSSLContextParametersIT
         tmp.setKeyStore(ksp);
 
         SSLContextParameters sslContextParameters = new SSLContextParameters();
-        sslContextParameters.setSecureSocketProtocol("TLSv1.2");
+        sslContextParameters.setSecureSocketProtocol("TLSv1.3");
         sslContextParameters.setTrustManagers(tmp);
 
         return sslContextParameters;
