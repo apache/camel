@@ -21,7 +21,7 @@ public class NettyHttpEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(84);
+        Set<String> props = new HashSet<>(86);
         props.add("allowSerializedHeaders");
         props.add("backlog");
         props.add("bossCount");
@@ -56,7 +56,9 @@ public class NettyHttpEndpointUriFactory extends org.apache.camel.support.compon
         props.add("logWarnOnBadRequest");
         props.add("mapHeaders");
         props.add("matchOnUriPrefix");
+        props.add("maxChunkSize");
         props.add("maxHeaderSize");
+        props.add("maxInitialLineLength");
         props.add("muteException");
         props.add("nativeTransport");
         props.add("needClientAuth");

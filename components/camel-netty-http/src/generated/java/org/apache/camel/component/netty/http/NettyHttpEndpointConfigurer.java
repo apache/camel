@@ -41,8 +41,12 @@ public class NettyHttpEndpointConfigurer extends NettyEndpointConfigurer impleme
         case "mapHeaders": target.getConfiguration().setMapHeaders(property(camelContext, boolean.class, value)); return true;
         case "matchonuriprefix":
         case "matchOnUriPrefix": target.getConfiguration().setMatchOnUriPrefix(property(camelContext, boolean.class, value)); return true;
+        case "maxchunksize":
+        case "maxChunkSize": target.getConfiguration().setMaxChunkSize(property(camelContext, int.class, value)); return true;
         case "maxheadersize":
         case "maxHeaderSize": target.getConfiguration().setMaxHeaderSize(property(camelContext, int.class, value)); return true;
+        case "maxinitiallinelength":
+        case "maxInitialLineLength": target.getConfiguration().setMaxInitialLineLength(property(camelContext, int.class, value)); return true;
         case "muteexception":
         case "muteException": target.getConfiguration().setMuteException(property(camelContext, boolean.class, value)); return true;
         case "nettyhttpbinding":
@@ -94,8 +98,12 @@ public class NettyHttpEndpointConfigurer extends NettyEndpointConfigurer impleme
         case "mapHeaders": return boolean.class;
         case "matchonuriprefix":
         case "matchOnUriPrefix": return boolean.class;
+        case "maxchunksize":
+        case "maxChunkSize": return int.class;
         case "maxheadersize":
         case "maxHeaderSize": return int.class;
+        case "maxinitiallinelength":
+        case "maxInitialLineLength": return int.class;
         case "muteexception":
         case "muteException": return boolean.class;
         case "nettyhttpbinding":
@@ -148,8 +156,12 @@ public class NettyHttpEndpointConfigurer extends NettyEndpointConfigurer impleme
         case "mapHeaders": return target.getConfiguration().isMapHeaders();
         case "matchonuriprefix":
         case "matchOnUriPrefix": return target.getConfiguration().isMatchOnUriPrefix();
+        case "maxchunksize":
+        case "maxChunkSize": return target.getConfiguration().getMaxChunkSize();
         case "maxheadersize":
         case "maxHeaderSize": return target.getConfiguration().getMaxHeaderSize();
+        case "maxinitiallinelength":
+        case "maxInitialLineLength": return target.getConfiguration().getMaxInitialLineLength();
         case "muteexception":
         case "muteException": return target.getConfiguration().isMuteException();
         case "nettyhttpbinding":
