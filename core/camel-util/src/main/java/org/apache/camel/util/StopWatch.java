@@ -67,11 +67,20 @@ public final class StopWatch {
     public long taken() {
         if (start > 0) {
             long delta = System.nanoTime() - start;
-
             return Duration.ofNanos(delta).toMillis();
         }
-
         return 0;
+    }
+
+    /**
+     * Returns the time taken in millis and restarts the timer.
+     *
+     * @return time in millis, or <tt>0</tt> if not started yet.
+     */
+    public long takenAndRestart() {
+        long answer = taken();
+        restart();
+        return answer;
     }
 
     /**

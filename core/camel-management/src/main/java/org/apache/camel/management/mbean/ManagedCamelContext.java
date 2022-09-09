@@ -58,6 +58,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     private final CamelContext context;
     private final LoadTriplet load = new LoadTriplet();
+    private final LoadThroughput thp = new LoadThroughput();
     private final String jmxDomain;
 
     public ManagedCamelContext(CamelContext context) {
@@ -257,6 +258,17 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     @Override
+    public String getThroughput() {
+        double d = thp.getThroughput();
+        if (Double.isNaN(d)) {
+            // empty string if load statistics is disabled
+            return "";
+        } else {
+            return String.format("%.2f", d);
+        }
+    }
+
+    @Override
     public boolean isUseBreadcrumb() {
         return context.isUseBreadcrumb();
     }
@@ -289,6 +301,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     @Override
     public void onTimer() {
         load.update(getInflightExchanges());
+        thp.update(getExchangesTotal());
     }
 
     @Override

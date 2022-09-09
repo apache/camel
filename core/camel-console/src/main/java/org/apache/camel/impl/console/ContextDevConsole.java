@@ -129,6 +129,10 @@ public class ContextDevConsole extends AbstractDevConsole {
                     stats.put("load05", load5);
                     stats.put("load15", load15);
                 }
+                String thp = getThroughput(mb);
+                if (!thp.isEmpty()) {
+                    stats.put("exchangesThroughput", thp);
+                }
                 stats.put("exchangesTotal", mb.getExchangesTotal());
                 stats.put("exchangesFailed", mb.getExchangesFailed());
                 stats.put("exchangesInflight", mb.getExchangesInflight());
@@ -174,6 +178,13 @@ public class ContextDevConsole extends AbstractDevConsole {
 
     private String getLoad15(ManagedCamelContextMBean mb) {
         String s = mb.getLoad15();
+        // lets use dot as separator
+        s = s.replace(',', '.');
+        return s;
+    }
+
+    private String getThroughput(ManagedCamelContextMBean mb) {
+        String s = mb.getThroughput();
         // lets use dot as separator
         s = s.replace(',', '.');
         return s;

@@ -123,6 +123,9 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedAttribute(description = "Average load over the last fifteen minutes")
     String getLoad15();
 
+    @ManagedAttribute(description = "Throughput message/second")
+    String getThroughput();
+
     @ManagedAttribute(description = "Whether breadcrumbs is in use")
     boolean isUseBreadcrumb();
 

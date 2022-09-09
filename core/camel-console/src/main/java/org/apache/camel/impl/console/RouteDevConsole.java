@@ -121,6 +121,10 @@ public class RouteDevConsole extends AbstractDevConsole {
                 stats.put("load05", load5);
                 stats.put("load15", load15);
             }
+            String thp = getThroughput(mrb);
+            if (!thp.isEmpty()) {
+                stats.put("exchangesThroughput", thp);
+            }
             stats.put("exchangesTotal", mrb.getExchangesTotal());
             stats.put("exchangesFailed", mrb.getExchangesFailed());
             stats.put("exchangesInflight", mrb.getExchangesInflight());
@@ -202,6 +206,13 @@ public class RouteDevConsole extends AbstractDevConsole {
 
     private String getLoad15(ManagedRouteMBean mrb) {
         String s = mrb.getLoad15();
+        // lets use dot as separator
+        s = s.replace(',', '.');
+        return s;
+    }
+
+    private String getThroughput(ManagedRouteMBean mrb) {
+        String s = mrb.getThroughput();
         // lets use dot as separator
         s = s.replace(',', '.');
         return s;
