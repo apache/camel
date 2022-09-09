@@ -1096,7 +1096,7 @@ public interface NettyComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: TLSv1,TLSv1.1,TLSv1.2
+         * Default: TLSv1.2,TLSv1.3
          * Group: security
          * 
          * @param enabledProtocols the value to set

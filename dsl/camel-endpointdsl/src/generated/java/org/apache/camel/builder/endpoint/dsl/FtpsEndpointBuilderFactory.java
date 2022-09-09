@@ -2318,7 +2318,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: TLSv1.2
+         * Default: TLSv1.3
          * Group: security
          * 
          * @param securityProtocol the value to set
@@ -4238,7 +4238,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: TLSv1.2
+         * Default: TLSv1.3
          * Group: security
          * 
          * @param securityProtocol the value to set
@@ -5742,7 +5742,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: TLSv1.2
+         * Default: TLSv1.3
          * Group: security
          * 
          * @param securityProtocol the value to set
