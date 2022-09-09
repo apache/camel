@@ -75,7 +75,8 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-common</artifactId>
             <version>${project.version}</version>
-            <type>test-jar</type>
+	    <type>test-jar</type>
+	    <scope>test<scope>
         </dependency>
 
         <dependency>
@@ -83,6 +84,7 @@
             <artifactId>camel-test-infra-jetty</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
+	    <scope>test<scope>
         </dependency>
 
         <!-- Jetty8 for testing-->
