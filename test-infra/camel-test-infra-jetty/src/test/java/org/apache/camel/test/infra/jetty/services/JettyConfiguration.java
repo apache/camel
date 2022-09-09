@@ -22,10 +22,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.net.ssl.SSLContext;
 import javax.servlet.Servlet;
 
+import org.apache.camel.util.KeyValueHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
 
 /**
@@ -119,6 +121,8 @@ public class JettyConfiguration {
     private SSLContext sslContext;
     private List<ServletConfiguration<?>> servletConfigurations = new ArrayList<>();
     private String contextPath;
+    private String realm;
+    private List<KeyValueHolder<String, String>> userInfos = new ArrayList<>();
 
     public int getPort() {
         return port;
@@ -150,5 +154,22 @@ public class JettyConfiguration {
 
     public List<ServletConfiguration<?>> getServletConfigurations() {
         return Collections.unmodifiableList(servletConfigurations);
+    }
+
+    void addBasicAuthUser(String username, String password, String realm) {
+        this.realm = Objects.requireNonNull(realm);
+        addBasicAuthUser(new KeyValueHolder<>(username, password));
+    }
+
+    void addBasicAuthUser(KeyValueHolder<String, String> userInfo) {
+        userInfos.add(userInfo);
+    }
+
+    public List<KeyValueHolder<String, String>> getBasicUsers() {
+        return Collections.unmodifiableList(userInfos);
+    }
+
+    public String getRealm() {
+        return realm;
     }
 }
