@@ -39,7 +39,6 @@ import org.apache.camel.vault.AwsVaultConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudtrail.CloudTrailClient;
@@ -50,8 +49,6 @@ import software.amazon.awssdk.services.cloudtrail.model.LookupAttributeKey;
 import software.amazon.awssdk.services.cloudtrail.model.LookupEventsRequest;
 import software.amazon.awssdk.services.cloudtrail.model.LookupEventsResponse;
 import software.amazon.awssdk.services.cloudtrail.model.Resource;
-import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
-import software.amazon.awssdk.services.secretsmanager.SecretsManagerClientBuilder;
 
 /**
  * Period task which checks if AWS secrets has been updated and can trigger Camel to be reloaded.
