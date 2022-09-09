@@ -66,6 +66,10 @@ public class ContextDevConsole extends AbstractDevConsole {
                 if (!load1.isEmpty() || !load5.isEmpty() || !load15.isEmpty()) {
                     sb.append(String.format("\n    Load Average: %s %s %s\n", load1, load5, load15));
                 }
+                String thp = getThroughput(mb);
+                if (!thp.isEmpty()) {
+                    sb.append(String.format("\n    Messages/Sec: %s", thp));
+                }
                 sb.append(String.format("\n    Total: %s", mb.getExchangesTotal()));
                 sb.append(String.format("\n    Failed: %s", mb.getExchangesFailed()));
                 sb.append(String.format("\n    Inflight: %s", mb.getExchangesInflight()));
