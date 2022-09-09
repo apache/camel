@@ -139,7 +139,7 @@ public class KafkaComponentTest extends CamelTestSupport {
         assertEquals("testing", endpoint.getConfiguration().getSslTruststorePassword());
         assertEquals("test", endpoint.getConfiguration().getSaslKerberosServiceName());
         assertEquals("PLAINTEXT", endpoint.getConfiguration().getSecurityProtocol());
-        assertEquals("TLSv1.2", endpoint.getConfiguration().getSslEnabledProtocols());
+        assertEquals("TLSv1.3", endpoint.getConfiguration().getSslEnabledProtocols());
         assertEquals("JKS", endpoint.getConfiguration().getSslKeystoreType());
         assertEquals("TLS", endpoint.getConfiguration().getSslProtocol());
         assertEquals("test", endpoint.getConfiguration().getSslProvider());
@@ -212,7 +212,7 @@ public class KafkaComponentTest extends CamelTestSupport {
         Properties props = getProducerKeys();
 
         props.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SSL");
-        props.put(SslConfigs.SSL_ENABLED_PROTOCOLS_CONFIG, "TLSv1.2, TLSv1.1, TLSv1");
+        props.put(SslConfigs.SSL_ENABLED_PROTOCOLS_CONFIG, "TLSv1.3,TLSv1.2,TLSv1.1,TLSv1");
         props.put(SslConfigs.SSL_KEYSTORE_TYPE_CONFIG, "JKS");
         props.put(SslConfigs.SSL_PROTOCOL_CONFIG, "TLS");
         props.put(SslConfigs.SSL_TRUSTSTORE_TYPE_CONFIG, "JKS");
@@ -274,7 +274,7 @@ public class KafkaComponentTest extends CamelTestSupport {
         params.put("saslKerberosServiceName", "test");
         params.put("saslMechanism", "PLAIN");
         params.put("securityProtocol", "PLAINTEXT");
-        params.put("sslEnabledProtocols", "TLSv1.2");
+        params.put("sslEnabledProtocols", "TLSv1.3");
         params.put("sslKeystoreType", "JKS");
         params.put("sslProtocol", "TLS");
         params.put("sslProvider", "test");
