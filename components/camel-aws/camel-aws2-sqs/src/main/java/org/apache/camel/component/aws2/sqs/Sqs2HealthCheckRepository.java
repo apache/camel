@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.aws2.sqs;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Stream;
+
 import org.apache.camel.*;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.support.service.ServiceSupport;
-
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Stream;
 
 /**
  * Repository for camel-aws2-sqs {@link HealthCheck}s.
