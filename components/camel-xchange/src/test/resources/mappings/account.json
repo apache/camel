@@ -1,0 +1,40 @@
+{
+  "id" : "ac6f2724-72fa-4b2b-99fa-bb2f3626587f",
+  "name" : "api_v3_account",
+  "request" : {
+    "urlPattern" : "/api/v3/account?.*",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"makerCommission\":10,\"takerCommission\":10,\"buyerCommission\":0,\"sellerCommission\":0,\"canTrade\":true,\"canWithdraw\":true,\"canDeposit\":true,\"brokered\":false,\"updateTime\":1645730533098,\"accountType\":\"SPOT\",\"balances\":[{\"asset\":\"ETC\",\"free\":\"1.00000000\",\"locked\":\"0.00000000\"}],\"permissions\":[\"SPOT\"]}",
+    "headers" : {
+      "Content-Type" : "application/json;charset=UTF-8",
+      "Date" : "Thu, 08 Sep 2022 07:00:20 GMT",
+      "Server" : "nginx",
+      "Vary" : "Accept-Encoding",
+      "x-mbx-uuid" : "a66c5739-91a4-41d5-bed7-86611d3763a9",
+      "x-mbx-used-weight" : "20",
+      "x-mbx-used-weight-1m" : "20",
+      "Strict-Transport-Security" : "max-age=31536000; includeSubdomains",
+      "X-Frame-Options" : "SAMEORIGIN",
+      "X-Xss-Protection" : "1; mode=block",
+      "X-Content-Type-Options" : "nosniff",
+      "Content-Security-Policy" : "default-src 'self'",
+      "X-Content-Security-Policy" : "default-src 'self'",
+      "X-WebKit-CSP" : "default-src 'self'",
+      "Cache-Control" : "no-cache, no-store, must-revalidate",
+      "Pragma" : "no-cache",
+      "Expires" : "0",
+      "Access-Control-Allow-Origin" : "*",
+      "Access-Control-Allow-Methods" : "GET, HEAD, OPTIONS",
+      "X-Cache" : "Miss from cloudfront",
+      "Via" : "1.1 a5a1b1bd5c5ec5b1378fad5d0770b5e0.cloudfront.net (CloudFront)",
+      "X-Amz-Cf-Pop" : "CDG50-P2",
+      "X-Amz-Cf-Id" : "CJa6sVZma2nlgT0gEvGahWq_ZkPZb-r8wpm9ZkDmtl_WayDBm5l_fA=="
+    }
+  },
+  "uuid" : "ac6f2724-72fa-4b2b-99fa-bb2f3626587f",
+  "persistent" : true,
+  "insertionIndex" : 25
+}

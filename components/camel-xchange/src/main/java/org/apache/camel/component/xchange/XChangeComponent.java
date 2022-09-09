@@ -50,6 +50,10 @@ public class XChangeComponent extends DefaultComponent {
         return xchanges.get(name);
     }
 
+    void putXChange(String name, XChange xchange) {
+        xchanges.put(name, xchange);
+    }
+
     @Override
     protected void doShutdown() throws Exception {
         super.doShutdown();
