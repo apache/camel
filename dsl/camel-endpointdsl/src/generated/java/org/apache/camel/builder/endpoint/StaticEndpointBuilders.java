@@ -2526,6 +2526,7 @@ public class StaticEndpointBuilders {
      * @param path cmsUrl
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.CMISEndpointBuilderFactory.CMISEndpointBuilder cmis(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.CMISEndpointBuilderFactory.endpointBuilder("cmis", path);
@@ -2548,6 +2549,7 @@ public class StaticEndpointBuilders {
      * @param path cmsUrl
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.CMISEndpointBuilderFactory.CMISEndpointBuilder cmis(
             String componentName,
             String path) {

@@ -851,6 +851,7 @@ public interface CMISEndpointBuilderFactory {
          * @param path cmsUrl
          * @return the dsl builder
          */
+        @Deprecated
         default CMISEndpointBuilder cmis(String path) {
             return CMISEndpointBuilderFactory.endpointBuilder("cmis", path);
         }
@@ -873,6 +874,7 @@ public interface CMISEndpointBuilderFactory {
          * @param path cmsUrl
          * @return the dsl builder
          */
+        @Deprecated
         default CMISEndpointBuilder cmis(String componentName, String path) {
             return CMISEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
@@ -1089,6 +1091,7 @@ public interface CMISEndpointBuilderFactory {
             return "cmis:versioningState";
         }
     }
+    @Deprecated
     static CMISEndpointBuilder endpointBuilder(String componentName, String path) {
         class CMISEndpointBuilderImpl extends AbstractEndpointBuilder implements CMISEndpointBuilder, AdvancedCMISEndpointBuilder {
             public CMISEndpointBuilderImpl(String path) {
