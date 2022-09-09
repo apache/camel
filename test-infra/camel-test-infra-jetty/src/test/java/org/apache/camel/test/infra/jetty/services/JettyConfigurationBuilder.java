@@ -52,6 +52,12 @@ public final class JettyConfigurationBuilder {
         return this;
     }
 
+    public JettyConfigurationBuilder addBasicUser(String username, String password, String realm) {
+        jettyConfiguration.addBasicAuthUser(username, password, realm);
+
+        return this;
+    }
+
     public JettyConfigurationBuilder withContextPath(String contextPath) {
         jettyConfiguration.setContextPath(contextPath);
 
@@ -66,10 +72,15 @@ public final class JettyConfigurationBuilder {
         return new JettyConfigurationBuilder();
     }
 
-    public static JettyConfiguration bare() {
+    public static JettyConfigurationBuilder bareTemplate() {
         // Setups a very basic Jetty server with a randomly allocated port
         return emptyTemplate()
                 .withPort(0)
-                .build();
+                .withContextPath(JettyConfiguration.ROOT_CONTEXT_PATH);
+    }
+
+    public static JettyConfiguration bare() {
+        // Setups a very basic Jetty server with a randomly allocated port
+        return bareTemplate().build();
     }
 }
