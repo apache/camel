@@ -44,8 +44,6 @@ public class Sqs2Component extends DefaultComponent {
 
     public Sqs2Component(CamelContext context) {
         super(context);
-
-        registerExtension(new Sqs2ComponentVerifierExtension());
     }
 
     @Override
