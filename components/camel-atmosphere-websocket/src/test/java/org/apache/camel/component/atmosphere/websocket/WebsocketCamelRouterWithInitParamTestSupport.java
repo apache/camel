@@ -32,9 +32,10 @@ public abstract class WebsocketCamelRouterWithInitParamTestSupport extends Camel
 
     @BeforeEach
     void setupJetty() {
-        final JettyConfiguration.ServletConfiguration<CamelWebSocketServlet> servletConfiguration
-                = new JettyConfiguration.ServletConfiguration<>(
-                        new CamelWebSocketServlet(), JettyConfiguration.ServletConfiguration.ROOT_PATH_SPEC, "CamelWsServlet");
+        final JettyConfiguration.ServletHandlerConfiguration.ServletConfiguration<CamelWebSocketServlet> servletConfiguration
+                = new JettyConfiguration.ServletHandlerConfiguration.ServletConfiguration<>(
+                        new CamelWebSocketServlet(),
+                        JettyConfiguration.ServletHandlerConfiguration.ServletConfiguration.ROOT_PATH_SPEC, "CamelWsServlet");
 
         servletConfiguration.addInitParameter("events", "true");
 
@@ -42,7 +43,8 @@ public abstract class WebsocketCamelRouterWithInitParamTestSupport extends Camel
                 .emptyTemplate()
                 .withPort(PORT)
                 .withContextPath(JettyConfiguration.ROOT_CONTEXT_PATH)
-                .addServletConfiguration(servletConfiguration).build();
+                .withServletConfiguration().addServletConfiguration(servletConfiguration).build()
+                .build();
 
         service = new JettyEmbeddedService(jettyConfiguration);
         service.initialize();

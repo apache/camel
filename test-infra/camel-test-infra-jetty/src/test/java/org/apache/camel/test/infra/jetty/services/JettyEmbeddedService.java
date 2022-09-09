@@ -17,26 +17,16 @@
 
 package org.apache.camel.test.infra.jetty.services;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 
 import org.apache.camel.test.infra.jetty.common.JettyProperties;
-import org.apache.camel.util.KeyValueHolder;
 import org.awaitility.Awaitility;
-import org.eclipse.jetty.security.ConstraintMapping;
-import org.eclipse.jetty.security.ConstraintSecurityHandler;
-import org.eclipse.jetty.security.HashLoginService;
-import org.eclipse.jetty.security.SecurityHandler;
-import org.eclipse.jetty.security.UserStore;
-import org.eclipse.jetty.security.authentication.BasicAuthenticator;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.util.security.Constraint;
-import org.eclipse.jetty.util.security.Credential;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
@@ -75,38 +65,6 @@ public class JettyEmbeddedService implements JettyService, BeforeEachCallback, A
         return connector;
     }
 
-    private SecurityHandler basicAuth(List<KeyValueHolder<String, String>> userInfoList, String realm) {
-
-        HashLoginService l = new HashLoginService();
-        UserStore us = new UserStore();
-
-        for (var userInfo : userInfoList) {
-            // In order: data1 == username, data2 == password
-            us.addUser(userInfo.getKey(), Credential.getCredential(userInfo.getValue()), new String[] { "user" });
-
-        }
-
-        l.setName(realm);
-        l.setUserStore(us);
-
-        Constraint constraint = new Constraint();
-        constraint.setName(Constraint.__BASIC_AUTH);
-        constraint.setRoles(new String[] { "user" });
-        constraint.setAuthenticate(true);
-
-        ConstraintMapping cm = new ConstraintMapping();
-        cm.setConstraint(constraint);
-        cm.setPathSpec(JettyConfiguration.ServletConfiguration.ROOT_PATH_SPEC);
-
-        ConstraintSecurityHandler csh = new ConstraintSecurityHandler();
-        csh.setAuthenticator(new BasicAuthenticator());
-        csh.setRealmName("myrealm");
-        csh.addConstraintMapping(cm);
-        csh.setLoginService(l);
-
-        return csh;
-    }
-
     @Override
     public void registerProperties() {
         System.setProperty(JettyProperties.JETTY_ADDRESS, "localhost:" + getPort());
@@ -121,17 +79,8 @@ public class JettyEmbeddedService implements JettyService, BeforeEachCallback, A
 
             server.addConnector(connector);
 
-            ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
+            Handler contextHandler = jettyConfiguration.getContextHandlerConfiguration().resolve();
 
-            var basicUsers = jettyConfiguration.getBasicUsers();
-            if (!basicUsers.isEmpty()) {
-                contextHandler.setSecurityHandler(basicAuth(basicUsers, jettyConfiguration.getRealm()));
-            }
-
-            contextHandler.setContextPath(jettyConfiguration.getContextPath());
-            for (JettyConfiguration.ServletConfiguration servletConfiguration : jettyConfiguration.getServletConfigurations()) {
-                contextHandler.addServlet(servletConfiguration.buildServletHolder(), servletConfiguration.getPathSpec());
-            }
             server.setHandler(contextHandler);
 
             server.start();
