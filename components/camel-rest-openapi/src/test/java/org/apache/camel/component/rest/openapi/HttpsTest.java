@@ -177,7 +177,7 @@ public abstract class HttpsTest extends CamelTestSupport {
         final CipherSuitesParameters cipherSuites = new CipherSuitesParameters();
         cipherSuites.setCipherSuite(Collections.singletonList("TLS_DHE_RSA_WITH_AES_128_GCM_SHA256"));
         sslContextParameters.setCipherSuites(cipherSuites);
-        sslContextParameters.setSecureSocketProtocol("TLSv1.2");
+        sslContextParameters.setSecureSocketProtocol("TLSv1.3");
         return sslContextParameters;
     }
 
