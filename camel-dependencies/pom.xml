@@ -327,7 +327,7 @@
     <jira-guava-version>30.1.1-jre</jira-guava-version>
     <jira-rest-client-api-version>5.2.4</jira-rest-client-api-version>
     <jnats-version>2.15.6</jnats-version>
-    <jodatime2-version>2.10.11</jodatime2-version>
+    <jodatime2-version>2.11.1</jodatime2-version>
     <johnzon-version>1.2.19</johnzon-version>
     <jolokia-version>1.7.1</jolokia-version>
     <jolt-version>0.1.7</jolt-version>
@@ -495,7 +495,7 @@
     <solr-version-range>[8,9)</solr-version-range>
     <solr-zookeeper-version>3.6.2</solr-zookeeper-version>
     <spark-version>3.2.2</spark-version>
-    <splunk-version>1.6.5.0_1</splunk-version>
+    <splunk-version>1.9.0_1</splunk-version>
     <spock-version>2.1-groovy-3.0</spock-version>
     <spring-batch-version>4.3.6</spring-batch-version>
     <spring-data-redis-version>2.6.2</spring-data-redis-version>
