@@ -408,7 +408,7 @@
         <nessus-ipfs-version>1.0.0.Beta4</nessus-ipfs-version>
         <nessus-weka-version>1.0.1</nessus-weka-version>
         <neoscada-version>0.4.0</neoscada-version>
-        <netty-version>4.1.79.Final</netty-version>
+        <netty-version>4.1.81.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.0.72</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>8.9</nimbus-jose-jwt>
