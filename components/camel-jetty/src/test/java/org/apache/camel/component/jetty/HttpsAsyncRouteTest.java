@@ -136,7 +136,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         URL url = new URL("https://localhost:" + port1 + "/hello");
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-        SSLContext ssl = SSLContext.getInstance("TLSv1.2");
+        SSLContext ssl = SSLContext.getInstance("TLSv1.3");
         ssl.init(null, null, null);
         connection.setSSLSocketFactory(ssl.getSocketFactory());
         InputStream is = connection.getInputStream();

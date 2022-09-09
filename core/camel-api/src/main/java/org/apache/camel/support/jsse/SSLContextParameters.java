@@ -39,8 +39,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SSLContextParameters extends BaseSSLContextParameters {
 
-    // TODO : switch to TLSv1.3 when we fully upgrade to JDK11
-    protected static final String DEFAULT_SECURE_SOCKET_PROTOCOL = "TLSv1.2";
+    protected static final String DEFAULT_SECURE_SOCKET_PROTOCOL = "TLSv1.3";
 
     private static final Logger LOG = LoggerFactory.getLogger(SSLContextParameters.class);
 

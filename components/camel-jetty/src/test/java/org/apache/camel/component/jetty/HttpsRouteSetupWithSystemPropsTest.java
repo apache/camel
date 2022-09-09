@@ -43,7 +43,7 @@ public class HttpsRouteSetupWithSystemPropsTest extends HttpsRouteTest {
         setSystemProp("org.eclipse.jetty.ssl.keystore", "file://" + trustStoreUrl.getPath());
         setSystemProp("org.eclipse.jetty.ssl.keypassword", pwd);
         setSystemProp("org.eclipse.jetty.ssl.password", pwd);
-        setSystemProp("jdk.tls.client.protocols", "TLSv1.2");
+        setSystemProp("jdk.tls.client.protocols", "TLSv1.3");
         // END SNIPPET: e1
 
         super.setUp();

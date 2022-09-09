@@ -93,7 +93,7 @@ public class HttpsRouteTest extends BaseJettyTest {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         SSLContextParameters sslContextParameters = new SSLContextParameters();
-        sslContextParameters.setSecureSocketProtocol("TLSv1.2");
+        sslContextParameters.setSecureSocketProtocol("TLSv1.3");
         context.setSSLContextParameters(sslContextParameters);
         ((SSLContextParametersAware) context.getComponent("https")).setUseGlobalSslContextParameters(true);
         return context;
@@ -155,7 +155,7 @@ public class HttpsRouteTest extends BaseJettyTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         URL url = new URL("https://localhost:" + port1 + "/hello");
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-        SSLContext ssl = SSLContext.getInstance("TLSv1.2");
+        SSLContext ssl = SSLContext.getInstance("TLSv1.3");
         ssl.init(null, null, null);
         connection.setSSLSocketFactory(ssl.getSocketFactory());
         InputStream is = connection.getInputStream();
@@ -192,7 +192,7 @@ public class HttpsRouteTest extends BaseJettyTest {
             throw new RuntimeException(e.getMessage(), e);
         }
         sslContextFactory.setTrustStoreType("PKCS12");
-        sslContextFactory.setProtocol("TLSv1.2");
+        sslContextFactory.setProtocol("TLSv1.3");
     }
 
     @Override
