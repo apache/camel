@@ -1309,6 +1309,46 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * The maximum length of the content or each chunk. If the content
+         * length (or the length of each chunk) exceeds this value, the content
+         * or chunk will be split into multiple
+         * io.netty.handler.codec.http.HttpContents whose length is maxChunkSize
+         * at maximum. See io.netty.handler.codec.http.HttpObjectDecoder.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 8192
+         * Group: consumer (advanced)
+         * 
+         * @param maxChunkSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyHttpEndpointConsumerBuilder maxChunkSize(
+                int maxChunkSize) {
+            doSetProperty("maxChunkSize", maxChunkSize);
+            return this;
+        }
+        /**
+         * The maximum length of the content or each chunk. If the content
+         * length (or the length of each chunk) exceeds this value, the content
+         * or chunk will be split into multiple
+         * io.netty.handler.codec.http.HttpContents whose length is maxChunkSize
+         * at maximum. See io.netty.handler.codec.http.HttpObjectDecoder.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 8192
+         * Group: consumer (advanced)
+         * 
+         * @param maxChunkSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyHttpEndpointConsumerBuilder maxChunkSize(
+                String maxChunkSize) {
+            doSetProperty("maxChunkSize", maxChunkSize);
+            return this;
+        }
+        /**
          * The maximum length of all headers. If the sum of the length of each
          * header exceeds this value, a
          * io.netty.handler.codec.TooLongFrameException will be raised.
@@ -1345,9 +1385,10 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * The maximum length of the initial line (e.g. {@code "GET / HTTP/1.0"} or
-         * {@code "HTTP/1.0 200 OK"}) If the length of the initial line exceeds this value, a
-         * {@link TooLongFrameException} will be raised.
+         * The maximum length of the initial line (e.g. {code GET / HTTP/1.0} or
+         * {code HTTP/1.0 200 OK}) If the length of the initial line exceeds
+         * this value, a TooLongFrameException will be raised. See
+         * io.netty.handler.codec.http.HttpObjectDecoder.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1363,9 +1404,10 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * The maximum length of the initial line (e.g. {@code "GET / HTTP/1.0"} or
-         * {@code "HTTP/1.0 200 OK"}) If the length of the initial line exceeds this value, a
-         * {@link TooLongFrameException} will be raised.
+         * The maximum length of the initial line (e.g. {code GET / HTTP/1.0} or
+         * {code HTTP/1.0 200 OK}) If the length of the initial line exceeds
+         * this value, a TooLongFrameException will be raised. See
+         * io.netty.handler.codec.http.HttpObjectDecoder.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1378,44 +1420,6 @@ public interface NettyHttpEndpointBuilderFactory {
         default AdvancedNettyHttpEndpointConsumerBuilder maxInitialLineLength(
                 String maxInitialLineLength) {
             doSetProperty("maxInitialLineLength", maxInitialLineLength);
-            return this;
-        }
-        /**
-         * The maximum length of the content or each chunk. If the content length
-         * (or the length of each chunk) exceeds this value, the content or chunk
-         * will be split into multiple {@link io.netty.handler.codec.http.HttpContent}s
-         * whose length is {@code maxChunkSize} at maximum.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 8192
-         * Group: consumer (advanced)
-         * 
-         * @param maxChunkSize the value to set
-         * @return the dsl builder
-         */
-        default AdvancedNettyHttpEndpointConsumerBuilder maxChunkSize(
-                int maxChunkSize) {
-            doSetProperty("maxChunkSize", maxChunkSize);
-            return this;
-        }
-        /**
-         * The maximum length of the content or each chunk. If the content length
-         * (or the length of each chunk) exceeds this value, the content or chunk
-         * will be split into multiple {@link io.netty.handler.codec.http.HttpContent}s
-         * whose length is {@code maxChunkSize} at maximum.
-         * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 8192
-         * Group: consumer (advanced)
-         * 
-         * @param maxChunkSize the value to set
-         * @return the dsl builder
-         */
-        default AdvancedNettyHttpEndpointConsumerBuilder maxChunkSize(
-                String maxChunkSize) {
-            doSetProperty("maxChunkSize", maxChunkSize);
             return this;
         }
         /**
