@@ -26,7 +26,6 @@ public class NettySharedHttpServerBootstrapConfiguration extends NettyServerBoot
     private int maxHeaderSize = 8192;
     private int maxInitialLineLength = 4096;
     private int maxChunkSize = 8192;
-    
 
     public boolean isChunked() {
         return chunked;

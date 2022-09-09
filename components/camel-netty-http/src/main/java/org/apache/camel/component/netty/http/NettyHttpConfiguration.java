@@ -326,9 +326,8 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     }
 
     /**
-     * The maximum length of the initial line (e.g. {@code "GET / HTTP/1.0"} or
-     * {@code "HTTP/1.0 200 OK"}) If the length of the initial line exceeds this value, a
-     * {@link TooLongFrameException} will be raised.
+     * The maximum length of the initial line (e.g. {@code "GET / HTTP/1.0"} or {@code "HTTP/1.0 200 OK"}) If the length
+     * of the initial line exceeds this value, a {@link TooLongFrameException} will be raised.
      * 
      * See {@link io.netty.handler.codec.http.HttpObjectDecoder}
      */
@@ -341,10 +340,9 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     }
 
     /**
-     * The maximum length of the content or each chunk. If the content length
-     * (or the length of each chunk) exceeds this value, the content or chunk
-     * will be split into multiple {@link io.netty.handler.codec.http.HttpContent}s
-     * whose length is {@code maxChunkSize} at maximum.
+     * The maximum length of the content or each chunk. If the content length (or the length of each chunk) exceeds this
+     * value, the content or chunk will be split into multiple {@link io.netty.handler.codec.http.HttpContent}s whose
+     * length is {@code maxChunkSize} at maximum.
      * 
      * See {@link io.netty.handler.codec.http.HttpObjectDecoder}
      */
