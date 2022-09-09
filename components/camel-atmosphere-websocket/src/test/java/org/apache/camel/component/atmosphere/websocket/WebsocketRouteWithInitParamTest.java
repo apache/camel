@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithInitParamTestSupport {
@@ -278,7 +279,7 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
         Object eventType = exchange.getIn().getHeader(WebsocketConstants.EVENT_TYPE);
         Object msg = exchange.getIn().getBody();
 
-        assertEquals(null, msg);
+        assertNull(msg);
         assertNotNull(connectionKey);
 
         if (eventType instanceof Integer) {
@@ -293,7 +294,7 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
         Object eventType = exchange.getIn().getHeader(WebsocketConstants.EVENT_TYPE);
         Object msg = exchange.getIn().getBody();
 
-        assertEquals(null, msg);
+        assertNull(msg);
         assertNotNull(connectionKey);
 
         if (eventType instanceof Integer && eventType.equals(WebsocketConstants.ONOPEN_EVENT_TYPE)) {
