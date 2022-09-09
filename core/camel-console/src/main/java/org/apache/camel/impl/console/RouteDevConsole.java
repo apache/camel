@@ -69,6 +69,10 @@ public class RouteDevConsole extends AbstractDevConsole {
             if (!load1.isEmpty() || !load5.isEmpty() || !load15.isEmpty()) {
                 sb.append(String.format("\n    Load Average: %s %s %s\n", load1, load5, load15));
             }
+            String thp = getThroughput(mrb);
+            if (!thp.isEmpty()) {
+                sb.append(String.format("\n    Messages/Sec: %s", thp));
+            }
             sb.append(String.format("\n    Total: %s", mrb.getExchangesTotal()));
             sb.append(String.format("\n    Failed: %s", mrb.getExchangesFailed()));
             sb.append(String.format("\n    Inflight: %s", mrb.getExchangesInflight()));
@@ -120,6 +124,10 @@ public class RouteDevConsole extends AbstractDevConsole {
                 stats.put("load01", load1);
                 stats.put("load05", load5);
                 stats.put("load15", load15);
+            }
+            String thp = getThroughput(mrb);
+            if (!thp.isEmpty()) {
+                stats.put("exchangesThroughput", thp);
             }
             stats.put("exchangesTotal", mrb.getExchangesTotal());
             stats.put("exchangesFailed", mrb.getExchangesFailed());
@@ -202,6 +210,13 @@ public class RouteDevConsole extends AbstractDevConsole {
 
     private String getLoad15(ManagedRouteMBean mrb) {
         String s = mrb.getLoad15();
+        // lets use dot as separator
+        s = s.replace(',', '.');
+        return s;
+    }
+
+    private String getThroughput(ManagedRouteMBean mrb) {
+        String s = mrb.getThroughput();
         // lets use dot as separator
         s = s.replace(',', '.');
         return s;

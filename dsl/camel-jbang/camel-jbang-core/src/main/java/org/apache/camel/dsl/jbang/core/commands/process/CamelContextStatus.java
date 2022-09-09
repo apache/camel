@@ -74,6 +74,10 @@ public class CamelContextStatus extends ProcessBaseCommand {
                         row.camelVersion = context.getString("version");
                         Map<String, ?> stats = context.getMap("statistics");
                         if (stats != null) {
+                            Object thp = stats.get("exchangesThroughput");
+                            if (thp != null) {
+                                row.throughput = thp.toString();
+                            }
                             row.total = stats.get("exchangesTotal").toString();
                             row.inflight = stats.get("exchangesInflight").toString();
                             row.failed = stats.get("exchangesFailed").toString();
@@ -129,6 +133,7 @@ public class CamelContextStatus extends ProcessBaseCommand {
                             .with(r -> r.reloaded),
                     new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
                     new Column().header("ROUTE").with(this::getRoutes),
+                    new Column().header("MSG/S").with(this::getThroughput),
                     new Column().header("TOTAL").with(r -> r.total),
                     new Column().header("FAIL").with(r -> r.failed),
                     new Column().header("INFLIGHT").with(r -> r.inflight),
@@ -178,6 +183,14 @@ public class CamelContextStatus extends ProcessBaseCommand {
         return s1 + "/" + s2 + "/" + s3;
     }
 
+    private String getThroughput(Row r) {
+        String s = r.throughput;
+        if (s == null || s.isEmpty()) {
+            s = "";
+        }
+        return s;
+    }
+
     private String getRoutes(Row r) {
         return r.routeStarted + "/" + r.routeTotal;
     }
@@ -195,6 +208,7 @@ public class CamelContextStatus extends ProcessBaseCommand {
         String reloaded;
         String ago;
         long uptime;
+        String throughput;
         String total;
         String failed;
         String inflight;

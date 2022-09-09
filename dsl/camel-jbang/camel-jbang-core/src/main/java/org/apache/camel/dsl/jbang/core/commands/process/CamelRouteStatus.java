@@ -94,6 +94,10 @@ public class CamelRouteStatus extends ProcessBaseCommand {
                                 if (load != null) {
                                     row.load15 = load.toString();
                                 }
+                                Object thp = stats.get("exchangesThroughput");
+                                if (thp != null) {
+                                    row.throughput = thp.toString();
+                                }
                                 row.total = stats.get("exchangesTotal").toString();
                                 row.inflight = stats.get("exchangesInflight").toString();
                                 row.failed = stats.get("exchangesFailed").toString();
@@ -153,6 +157,7 @@ public class CamelRouteStatus extends ProcessBaseCommand {
                 new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
                         .with(r -> r.state),
                 new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
+                new Column().header("MSG/S").with(this::getThroughput),
                 new Column().header("TOTAL").with(r -> r.total),
                 new Column().header("FAIL").with(r -> r.failed),
                 new Column().header("INFLIGHT").with(r -> r.inflight),
@@ -182,6 +187,14 @@ public class CamelRouteStatus extends ProcessBaseCommand {
         }
     }
 
+    private String getThroughput(Row r) {
+        String s = r.throughput;
+        if (s == null || s.isEmpty()) {
+            s = "";
+        }
+        return s;
+    }
+
     static class Row {
         String pid;
         String name;
@@ -191,6 +204,7 @@ public class CamelRouteStatus extends ProcessBaseCommand {
         String source;
         String state;
         String age;
+        String throughput;
         String total;
         String failed;
         String inflight;

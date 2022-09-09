@@ -77,6 +77,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     protected final String sourceLocationShort;
     protected final CamelContext context;
     private final LoadTriplet load = new LoadTriplet();
+    private final LoadThroughput thp = new LoadThroughput();
     private final String jmxDomain;
 
     public ManagedRoute(CamelContext context, Route route) {
@@ -278,8 +279,20 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     }
 
     @Override
+    public String getThroughput() {
+        double d = thp.getThroughput();
+        if (Double.isNaN(d)) {
+            // empty string if load statistics is disabled
+            return "";
+        } else {
+            return String.format("%.2f", d);
+        }
+    }
+
+    @Override
     public void onTimer() {
         load.update(getInflightExchanges());
+        thp.update(getExchangesTotal());
     }
 
     @Override
