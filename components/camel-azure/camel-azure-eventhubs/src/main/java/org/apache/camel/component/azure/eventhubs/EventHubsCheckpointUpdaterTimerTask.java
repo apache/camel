@@ -31,8 +31,6 @@ public class EventHubsCheckpointUpdaterTimerTask extends TimerTask {
     private final AtomicInteger processedEvents;
 
     public EventHubsCheckpointUpdaterTimerTask(EventContext eventContext, AtomicInteger processedEvents) {
-        super();
-
         this.eventContext = eventContext;
         this.processedEvents = processedEvents;
     }

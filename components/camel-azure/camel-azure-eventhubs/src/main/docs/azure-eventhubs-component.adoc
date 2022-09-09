@@ -72,8 +72,9 @@ be generated through your Event Hubs Azure portal.
 - Provide `connectionString` string, if you provide the connection string, you don't supply `namespace`, `eventHubName`, `sharedAccessKey` and `sharedAccessName`
 as these data already included in the `connectionString`, therefore is the simplest option to get started. Learn more https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-get-connection-string[here] on how to generate the connection string.
 - Provide a https://docs.microsoft.com/en-us/java/api/com.azure.messaging.eventhubs.eventhubproducerasyncclient?view=azure-java-stable[EventHubProducerAsyncClient] instance which can be
-provided into `producerAsyncClient`. However, this is *only possible for camel producer*, for the camel consumer, is not possible to inject the client due to some design constrain by the `EventProcessorClient`.
-
+provided into `producerAsyncClient`. However, this is *only possible for camel producer*, for the camel consumer, is not possible to inject the client due to some design constraint by the `EventProcessorClient`.
+- Provide an implementation of `com.azure.core.credential.TokenCredential` into the Camel's Registry, e.g. using the `com.azure.identity.DefaultAzureCredentialBuilder().build();` API.
+See the documentation https://docs.microsoft.com/en-us/azure/active-directory/authentication/overview-authentication[here about Azure-AD authentication].
 
 == Checkpoint Store Information
 A checkpoint store stores and retrieves partition ownership information and checkpoint details for each partition in a given consumer group of an event hub instance. Users are not meant to implement an CheckpointStore.
@@ -160,6 +161,21 @@ from("direct:start")
 .to("azure-eventhubs:?connectionString=RAW({{connectionString}})"
 ----
 
+=== Azure-AD Authentication example
+The example below makes use of the Azure-AD authentication. See https://docs.microsoft.com/en-us/java/api/overview/azure/identity-readme?view=azure-java-stable#environment-variables[here]
+about what environment variables you need to set for this to work:
+
+[source,java]
+----
+@BindToRegistry("myTokenCredential")
+public com.azure.core.credential.TokenCredential myTokenCredential() {
+    return com.azure.identity.DefaultAzureCredentialBuilder().build();
+}
+
+from("direct:start")
+.to("azure-eventhubs:namespace/eventHubName?tokenCredential=#myTokenCredential)"
+----
+
 === Development Notes (Important)
 
 When developing on this component, you will need to obtain your Azure accessKey in order to run the integration tests. In addition to the mocked unit tests
@@ -168,7 +184,7 @@ To run the integration tests, on this component directory, run the following mav
 
 [source,bash]
 ----
-mvn verify -PfullTests -DconnectionString=string -DblobAccountName=blob -DblobAccessKey=key
+mvn verify -DconnectionString=string -DblobAccountName=blob -DblobAccessKey=key
 ----
 
 Whereby `blobAccountName` is your Azure account name and `blobAccessKey` is the access key being generated from Azure portal and `connectionString` is the eventHub connection string.
