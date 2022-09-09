@@ -57,6 +57,11 @@ public final class LoadThroughput {
         return thp;
     }
 
+    public void reset() {
+        last = 0;
+        thp = 0;
+    }
+
     @Override
     public String toString() {
         return "" + thp;

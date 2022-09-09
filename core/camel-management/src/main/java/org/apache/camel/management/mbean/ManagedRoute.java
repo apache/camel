@@ -617,6 +617,8 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     @Override
     public void reset(boolean includeProcessors) throws Exception {
         reset();
+        load.reset();
+        thp.reset();
 
         // and now reset all processors for this route
         if (includeProcessors) {

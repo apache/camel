@@ -57,6 +57,12 @@ public final class LoadTriplet {
         return load15;
     }
 
+    public void reset() {
+        load01 = Double.NaN;
+        load05 = Double.NaN;
+        load15 = Double.NaN;
+    }
+
     @Override
     public String toString() {
         return String.format("%.2f, %.2f, %.2f", getLoad1(), getLoad5(), getLoad15());

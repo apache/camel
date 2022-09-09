@@ -741,6 +741,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     @Override
     public void reset(boolean includeRoutes) throws Exception {
         reset();
+        load.reset();
+        thp.reset();
 
         // and now reset all routes for this route
         if (includeRoutes) {
