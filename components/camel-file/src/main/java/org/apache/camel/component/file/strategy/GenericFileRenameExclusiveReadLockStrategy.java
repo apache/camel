@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.strategy;
 
 import java.io.FileNotFoundException;
+import java.nio.file.FileSystemException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -79,7 +80,7 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
             try {
                 exclusive = operations.renameFile(file.getAbsoluteFilePath(), newFile.getAbsoluteFilePath());
             } catch (GenericFileOperationFailedException ex) {
-                if (ex.getCause() instanceof FileNotFoundException) {
+                if (ex.getCause() instanceof FileNotFoundException || ex.getCause() instanceof FileSystemException) {
                     exclusive = false;
                 } else {
                     throw ex;
