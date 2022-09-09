@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.sqs;
 
+import java.util.Map;
+
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.util.ObjectHelper;
@@ -25,8 +27,6 @@ import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.SqsClientBuilder;
-
-import java.util.Map;
 
 public class Sqs2ConsumerHealthCheck extends AbstractHealthCheck {
 
