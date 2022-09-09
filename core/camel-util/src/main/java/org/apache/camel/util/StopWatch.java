@@ -60,6 +60,13 @@ public final class StopWatch {
     }
 
     /**
+     * Whether the watch is started
+     */
+    public boolean isStarted() {
+        return start > 0;
+    }
+
+    /**
      * Returns the time taken in millis.
      *
      * @return time in millis, or <tt>0</tt> if not started yet.
@@ -79,7 +86,7 @@ public final class StopWatch {
      */
     public long takenAndRestart() {
         long answer = taken();
-        restart();
+        start = System.nanoTime();
         return answer;
     }
 

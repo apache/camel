@@ -25,7 +25,7 @@ public final class LoadThroughput {
 
     private final StopWatch watch = new StopWatch(false);
     private long last;
-    private double thp = Double.NaN;
+    private double thp;
 
     /**
      * Update the load statistics
@@ -33,7 +33,7 @@ public final class LoadThroughput {
      * @param currentReading the current reading
      */
     public void update(long currentReading) {
-        if (watch.taken() == 0) {
+        if (!watch.isStarted()) {
             watch.restart();
             thp = 0;
         } else {
@@ -41,7 +41,8 @@ public final class LoadThroughput {
             if (time > 0) {
                 long delta = currentReading - last;
                 if (delta > 0) {
-                    thp = (1000 / time) * delta;
+                    // need to calculate with fractions
+                    thp = (1000d / time) * delta;
                 } else {
                     thp = 0;
                 }

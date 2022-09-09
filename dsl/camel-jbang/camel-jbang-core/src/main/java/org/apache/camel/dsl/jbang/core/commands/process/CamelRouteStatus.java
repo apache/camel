@@ -189,8 +189,8 @@ public class CamelRouteStatus extends ProcessBaseCommand {
 
     private String getThroughput(Row r) {
         String s = r.throughput;
-        if ("0.00".equals(s) || s.isEmpty()) {
-            s = "-";
+        if (s == null || s.isEmpty()) {
+            s = "";
         }
         return s;
     }
