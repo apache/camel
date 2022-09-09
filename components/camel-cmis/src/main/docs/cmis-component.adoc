@@ -1,10 +1,11 @@
-= CMIS Component
+= CMIS Component (deprecated)
 :doctitle: CMIS
 :shortname: cmis
 :artifactid: camel-cmis
 :description: Read and write data from to/from a CMIS compliant content repositories.
 :since: 2.11
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: cmis

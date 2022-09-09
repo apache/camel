@@ -4,7 +4,7 @@
     "name": "cmis",
     "title": "CMIS",
     "description": "Read and write data from to\/from a CMIS compliant content repositories.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.11.0",
     "label": "cms,database",
     "javaType": "org.apache.camel.component.cmis.CMISComponent",
