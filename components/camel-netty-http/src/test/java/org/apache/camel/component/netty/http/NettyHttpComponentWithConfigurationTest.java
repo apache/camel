@@ -35,7 +35,8 @@ public class NettyHttpComponentWithConfigurationTest extends CamelTestSupport {
         assertSame(cfg, comp.getConfiguration());
 
         NettyHttpEndpoint e1 = (NettyHttpEndpoint) comp.createEndpoint("netty-http://http://localhost:4455");
-        NettyHttpEndpoint e2 = (NettyHttpEndpoint) comp.createEndpoint("netty-http://http://localhost:5566?sync=false&needClientAuth=true");
+        NettyHttpEndpoint e2
+                = (NettyHttpEndpoint) comp.createEndpoint("netty-http://http://localhost:5566?sync=false&needClientAuth=true");
 
         // should not be same
         assertNotSame(e1, e2);
@@ -67,7 +68,8 @@ public class NettyHttpComponentWithConfigurationTest extends CamelTestSupport {
     public void testNettyComponentWithExplicitConfiguration() throws Exception {
         NettyHttpComponent comp = context.getComponent("netty-http", NettyHttpComponent.class);
 
-        NettyHttpEndpoint e1 = (NettyHttpEndpoint) comp.createEndpoint("netty-http://tcp://localhost:8899?maxHeaderSize=1024&maxInitialLineLength=2048&maxChunkSize=4096");
+        NettyHttpEndpoint e1 = (NettyHttpEndpoint) comp.createEndpoint(
+                "netty-http://tcp://localhost:8899?maxHeaderSize=1024&maxInitialLineLength=2048&maxChunkSize=4096");
 
         e1.getConfiguration().setPort(8899);
 
