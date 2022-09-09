@@ -65,6 +65,8 @@ public class EventHubsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "sharedAccessKey": target.getConfiguration().setSharedAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "sharedaccessname":
         case "sharedAccessName": target.getConfiguration().setSharedAccessName(property(camelContext, java.lang.String.class, value)); return true;
+        case "tokencredential":
+        case "tokenCredential": target.getConfiguration().setTokenCredential(property(camelContext, com.azure.core.credential.TokenCredential.class, value)); return true;
         default: return false;
         }
     }
@@ -121,6 +123,8 @@ public class EventHubsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "sharedAccessKey": return java.lang.String.class;
         case "sharedaccessname":
         case "sharedAccessName": return java.lang.String.class;
+        case "tokencredential":
+        case "tokenCredential": return com.azure.core.credential.TokenCredential.class;
         default: return null;
         }
     }
@@ -173,6 +177,8 @@ public class EventHubsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "sharedAccessKey": return target.getConfiguration().getSharedAccessKey();
         case "sharedaccessname":
         case "sharedAccessName": return target.getConfiguration().getSharedAccessName();
+        case "tokencredential":
+        case "tokenCredential": return target.getConfiguration().getTokenCredential();
         default: return null;
         }
     }

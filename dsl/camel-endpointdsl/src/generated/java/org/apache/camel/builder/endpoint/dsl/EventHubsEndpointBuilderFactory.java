@@ -314,8 +314,7 @@ public interface EventHubsEndpointBuilderFactory {
         /**
          * Sets the name of the consumer group this consumer is associated with.
          * Events are read in the context of this group. The name of the
-         * consumer group that is created by default is {link
-         * #DEFAULT_CONSUMER_GROUP_NAME $Default}.
+         * consumer group that is created by default is {code $Default}.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -456,6 +455,46 @@ public interface EventHubsEndpointBuilderFactory {
         default EventHubsEndpointConsumerBuilder sharedAccessName(
                 String sharedAccessName) {
             doSetProperty("sharedAccessName", sharedAccessName);
+            return this;
+        }
+        /**
+         * Still another way of authentication (beside supplying namespace,
+         * sharedAccessKey, sharedAccessName or connection string) is through
+         * Azure-AD authentication using an implementation instance of
+         * TokenCredential.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.core.credential.TokenCredential&lt;/code&gt;
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param tokenCredential the value to set
+         * @return the dsl builder
+         */
+        default EventHubsEndpointConsumerBuilder tokenCredential(
+                com.azure.core.credential.TokenCredential tokenCredential) {
+            doSetProperty("tokenCredential", tokenCredential);
+            return this;
+        }
+        /**
+         * Still another way of authentication (beside supplying namespace,
+         * sharedAccessKey, sharedAccessName or connection string) is through
+         * Azure-AD authentication using an implementation instance of
+         * TokenCredential.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.core.credential.TokenCredential&lt;/code&gt;
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param tokenCredential the value to set
+         * @return the dsl builder
+         */
+        default EventHubsEndpointConsumerBuilder tokenCredential(
+                String tokenCredential) {
+            doSetProperty("tokenCredential", tokenCredential);
             return this;
         }
     }
@@ -800,6 +839,46 @@ public interface EventHubsEndpointBuilderFactory {
             doSetProperty("sharedAccessName", sharedAccessName);
             return this;
         }
+        /**
+         * Still another way of authentication (beside supplying namespace,
+         * sharedAccessKey, sharedAccessName or connection string) is through
+         * Azure-AD authentication using an implementation instance of
+         * TokenCredential.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.core.credential.TokenCredential&lt;/code&gt;
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param tokenCredential the value to set
+         * @return the dsl builder
+         */
+        default EventHubsEndpointProducerBuilder tokenCredential(
+                com.azure.core.credential.TokenCredential tokenCredential) {
+            doSetProperty("tokenCredential", tokenCredential);
+            return this;
+        }
+        /**
+         * Still another way of authentication (beside supplying namespace,
+         * sharedAccessKey, sharedAccessName or connection string) is through
+         * Azure-AD authentication using an implementation instance of
+         * TokenCredential.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.core.credential.TokenCredential&lt;/code&gt;
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param tokenCredential the value to set
+         * @return the dsl builder
+         */
+        default EventHubsEndpointProducerBuilder tokenCredential(
+                String tokenCredential) {
+            doSetProperty("tokenCredential", tokenCredential);
+            return this;
+        }
     }
 
     /**
@@ -992,6 +1071,45 @@ public interface EventHubsEndpointBuilderFactory {
             doSetProperty("sharedAccessName", sharedAccessName);
             return this;
         }
+        /**
+         * Still another way of authentication (beside supplying namespace,
+         * sharedAccessKey, sharedAccessName or connection string) is through
+         * Azure-AD authentication using an implementation instance of
+         * TokenCredential.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.core.credential.TokenCredential&lt;/code&gt;
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param tokenCredential the value to set
+         * @return the dsl builder
+         */
+        default EventHubsEndpointBuilder tokenCredential(
+                com.azure.core.credential.TokenCredential tokenCredential) {
+            doSetProperty("tokenCredential", tokenCredential);
+            return this;
+        }
+        /**
+         * Still another way of authentication (beside supplying namespace,
+         * sharedAccessKey, sharedAccessName or connection string) is through
+         * Azure-AD authentication using an implementation instance of
+         * TokenCredential.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.azure.core.credential.TokenCredential&lt;/code&gt;
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param tokenCredential the value to set
+         * @return the dsl builder
+         */
+        default EventHubsEndpointBuilder tokenCredential(String tokenCredential) {
+            doSetProperty("tokenCredential", tokenCredential);
+            return this;
+        }
     }
 
     /**
@@ -1031,10 +1149,10 @@ public interface EventHubsEndpointBuilderFactory {
          * Syntax: <code>azure-eventhubs:namespace/eventHubName</code>
          * 
          * Path parameter: namespace
-         * EventHubs namespace created in Azure Portal
+         * EventHubs namespace created in Azure Portal.
          * 
          * Path parameter: eventHubName
-         * EventHubs name under a specific namcespace
+         * EventHubs name under a specific namespace.
          * 
          * @param path namespace/eventHubName
          * @return the dsl builder
@@ -1053,10 +1171,10 @@ public interface EventHubsEndpointBuilderFactory {
          * Syntax: <code>azure-eventhubs:namespace/eventHubName</code>
          * 
          * Path parameter: namespace
-         * EventHubs namespace created in Azure Portal
+         * EventHubs namespace created in Azure Portal.
          * 
          * Path parameter: eventHubName
-         * EventHubs name under a specific namcespace
+         * EventHubs name under a specific namespace.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

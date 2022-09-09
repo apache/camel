@@ -250,8 +250,7 @@ public interface AzureEventhubsComponentBuilderFactory {
         /**
          * Sets the name of the consumer group this consumer is associated with.
          * Events are read in the context of this group. The name of the
-         * consumer group that is created by default is {link
-         * #DEFAULT_CONSUMER_GROUP_NAME $Default}.
+         * consumer group that is created by default is {code $Default}.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -463,6 +462,26 @@ public interface AzureEventhubsComponentBuilderFactory {
             doSetProperty("sharedAccessName", sharedAccessName);
             return this;
         }
+        /**
+         * Still another way of authentication (beside supplying namespace,
+         * sharedAccessKey, sharedAccessName or connection string) is through
+         * Azure-AD authentication using an implementation instance of
+         * TokenCredential.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.core.credential.TokenCredential&lt;/code&gt;
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param tokenCredential the value to set
+         * @return the dsl builder
+         */
+        default AzureEventhubsComponentBuilder tokenCredential(
+                com.azure.core.credential.TokenCredential tokenCredential) {
+            doSetProperty("tokenCredential", tokenCredential);
+            return this;
+        }
     }
 
     class AzureEventhubsComponentBuilderImpl
@@ -509,6 +528,7 @@ public interface AzureEventhubsComponentBuilderFactory {
             case "connectionString": getOrCreateConfiguration((EventHubsComponent) component).setConnectionString((java.lang.String) value); return true;
             case "sharedAccessKey": getOrCreateConfiguration((EventHubsComponent) component).setSharedAccessKey((java.lang.String) value); return true;
             case "sharedAccessName": getOrCreateConfiguration((EventHubsComponent) component).setSharedAccessName((java.lang.String) value); return true;
+            case "tokenCredential": getOrCreateConfiguration((EventHubsComponent) component).setTokenCredential((com.azure.core.credential.TokenCredential) value); return true;
             default: return false;
             }
         }

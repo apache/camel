@@ -52,7 +52,7 @@ public class EventHubsConsumer extends DefaultConsumer {
     public EventHubsConsumer(final EventHubsEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
 
-        this.processedEvents = new AtomicInteger(0);
+        this.processedEvents = new AtomicInteger();
         this.timer = new Timer();
     }
 
@@ -73,6 +73,7 @@ public class EventHubsConsumer extends DefaultConsumer {
         if (processorClient != null) {
             // shutdown the client
             processorClient.stop();
+            processorClient = null;
         }
 
         // shutdown camel consumer

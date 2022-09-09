@@ -43,37 +43,69 @@ public final class EventHubsClientFactory {
     }
 
     public static EventHubProducerAsyncClient createEventHubProducerAsyncClient(final EventHubsConfiguration configuration) {
-        return new EventHubClientBuilder()
-                .connectionString(buildConnectionString(configuration))
+        EventHubClientBuilder eventHubClientBuilder = new EventHubClientBuilder()
                 .transportType(configuration.getAmqpTransportType())
-                .retryOptions(configuration.getAmqpRetryOptions())
+                .retryOptions(configuration.getAmqpRetryOptions());
+
+        if (ObjectHelper.isEmpty(configuration.getTokenCredential())) {
+            return eventHubClientBuilder
+                    .connectionString(buildConnectionString(configuration))
+                    .buildAsyncProducerClient();
+        }
+
+        checkTokenCredentialConfiguration(configuration);
+        return eventHubClientBuilder
+                .fullyQualifiedNamespace(getFullyQualifiedNamespace(configuration))
+                .eventHubName(configuration.getEventHubName())
+                .credential(configuration.getTokenCredential())
                 .buildAsyncProducerClient();
     }
 
     public static EventHubConsumerAsyncClient createEventHubConsumerAsyncClient(final EventHubsConfiguration configuration) {
-        return new EventHubClientBuilder()
-                .connectionString(buildConnectionString(configuration))
+        EventHubClientBuilder eventHubClientBuilder = new EventHubClientBuilder()
                 .consumerGroup(configuration.getConsumerGroupName())
                 .prefetchCount(configuration.getPrefetchCount())
                 .transportType(configuration.getAmqpTransportType())
-                .retryOptions(configuration.getAmqpRetryOptions())
+                .retryOptions(configuration.getAmqpRetryOptions());
+
+        if (ObjectHelper.isEmpty(configuration.getTokenCredential())) {
+            return eventHubClientBuilder
+                    .connectionString(buildConnectionString(configuration))
+                    .buildAsyncConsumerClient();
+        }
+
+        checkTokenCredentialConfiguration(configuration);
+        return eventHubClientBuilder
+                .fullyQualifiedNamespace(getFullyQualifiedNamespace(configuration))
+                .eventHubName(configuration.getEventHubName())
+                .credential(configuration.getTokenCredential())
                 .buildAsyncConsumerClient();
     }
 
     public static EventProcessorClient createEventProcessorClient(
             final EventHubsConfiguration configuration, final Consumer<EventContext> processEvent,
             final Consumer<ErrorContext> processError) {
-        return new EventProcessorClientBuilder()
+        EventProcessorClientBuilder eventProcessorClientBuilder = new EventProcessorClientBuilder()
                 .initialPartitionEventPosition(configuration.getEventPosition())
-                .connectionString(buildConnectionString(configuration))
                 .checkpointStore(createCheckpointStore(configuration))
                 .consumerGroup(configuration.getConsumerGroupName())
                 .retryOptions(configuration.getAmqpRetryOptions())
                 .transportType(configuration.getAmqpTransportType())
                 .processError(processError)
-                .processEvent(processEvent)
-                .buildEventProcessorClient();
+                .processEvent(processEvent);
 
+        if (ObjectHelper.isEmpty(configuration.getTokenCredential())) {
+            return eventProcessorClientBuilder
+                    .connectionString(buildConnectionString(configuration))
+                    .buildEventProcessorClient();
+        }
+
+        checkTokenCredentialConfiguration(configuration);
+        return eventProcessorClientBuilder
+                .fullyQualifiedNamespace(getFullyQualifiedNamespace(configuration))
+                .eventHubName(configuration.getEventHubName())
+                .credential(configuration.getTokenCredential())
+                .buildEventProcessorClient();
     }
 
     // public for testing purposes
@@ -85,14 +117,19 @@ public final class EventHubsClientFactory {
                 .buildAsyncClient();
     }
 
+    private static void checkTokenCredentialConfiguration(final EventHubsConfiguration configuration) {
+        if (ObjectHelper.isEmpty(configuration.getNamespace()) || ObjectHelper.isEmpty(configuration.getEventHubName())) {
+            throw new IllegalArgumentException("EventHub's namespace and name is required for the Azure-AD authentication");
+        }
+    }
+
     private static CheckpointStore createCheckpointStore(final EventHubsConfiguration configuration) {
         if (ObjectHelper.isNotEmpty(configuration.getCheckpointStore())) {
             return configuration.getCheckpointStore();
         }
         // so we have no checkpoint store, we fallback to default BlobCheckpointStore
         // first we check if we have all required params for BlobCheckpointStore
-        if (ObjectHelper.isEmpty(configuration.getBlobContainerName())
-                || !isCredentialsSet(configuration)) {
+        if (ObjectHelper.isEmpty(configuration.getBlobContainerName()) || !isCredentialsSet(configuration)) {
             throw new IllegalArgumentException(
                     "Since there is no provided CheckpointStore, you will need to set blobAccountName, blobAccessName"
                                                + " or blobContainerName in order to use the default BlobCheckpointStore");
@@ -140,5 +177,9 @@ public final class EventHubsClientFactory {
         return ObjectHelper.isNotEmpty(configuration.getBlobStorageSharedKeyCredential())
                 ? configuration.getBlobStorageSharedKeyCredential().getAccountName()
                 : configuration.getBlobAccountName();
+    }
+
+    private static String getFullyQualifiedNamespace(EventHubsConfiguration configuration) {
+        return configuration.getNamespace() + "." + SERVICE_URI_SEGMENT;
     }
 }

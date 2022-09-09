@@ -18,6 +18,7 @@ package org.apache.camel.component.azure.eventhubs;
 
 import java.util.function.Consumer;
 
+import com.azure.identity.IntelliJCredentialBuilder;
 import com.azure.messaging.eventhubs.models.ErrorContext;
 import com.azure.messaging.eventhubs.models.EventContext;
 import org.apache.camel.component.azure.eventhubs.client.EventHubsClientFactory;
@@ -43,7 +44,7 @@ public class EventProcessorTest {
         assertThrows(IllegalArgumentException.class,
                 () -> EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError));
 
-        configuration.setBlobAccountName("testAcc");
+        configuration.setBlobAccountName("testAccount");
         assertThrows(IllegalArgumentException.class,
                 () -> EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError));
 
@@ -54,4 +55,30 @@ public class EventProcessorTest {
         assertThrows(IllegalArgumentException.class,
                 () -> EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError));
     }
+
+    @Test
+    public void testCreateEventProcessorWithTokenCredential() {
+        final EventHubsConfiguration configuration = new EventHubsConfiguration();
+        final Consumer<EventContext> onEvent = event -> {
+        };
+        final Consumer<ErrorContext> onError = error -> {
+        };
+
+        configuration.setBlobContainerName("testContainer");
+        configuration.setBlobAccountName("testAccount");
+        configuration.setBlobAccessKey("testAccess");
+        assertNotNull(EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError));
+
+        configuration.setTokenCredential(new IntelliJCredentialBuilder().tenantId("tenantId").build());
+        assertThrows(IllegalArgumentException.class,
+                () -> EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError));
+
+        configuration.setNamespace("namespace");
+        assertThrows(IllegalArgumentException.class,
+                () -> EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError));
+
+        configuration.setEventHubName("eventHubName");
+        assertNotNull(EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError));
+    }
+
 }

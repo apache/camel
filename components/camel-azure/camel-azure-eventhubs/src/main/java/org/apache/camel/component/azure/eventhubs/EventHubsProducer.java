@@ -61,6 +61,7 @@ public class EventHubsProducer extends DefaultAsyncProducer {
         if (producerAsyncClient != null) {
             // shutdown async client
             producerAsyncClient.close();
+            producerAsyncClient = null;
         }
 
         super.doStop();

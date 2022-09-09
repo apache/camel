@@ -17,7 +17,10 @@
 package org.apache.camel.component.azure.eventhubs;
 
 import java.util.Map;
+import java.util.Set;
 
+import com.azure.core.credential.TokenCredential;
+import com.azure.identity.DefaultAzureCredentialBuilder;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
@@ -42,19 +45,22 @@ public class EventHubsComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-
-        final EventHubsConfiguration configuration
-                = this.configuration != null ? this.configuration.copy() : new EventHubsConfiguration();
+        final EventHubsConfiguration configuration = this.configuration.copy();
 
         final EventHubsEndpoint endpoint = new EventHubsEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
 
-        // if we don't have client nor connectionString, we check for params
-        if (areAzureClientsNotSet(configuration) && ObjectHelper.isEmpty(configuration.getConnectionString())
-                && ObjectHelper.isEmpty(configuration.getProducerAsyncClient())) {
+        // if TokenCredential is set or we don't have client nor connectionString, we then check and use remaining
+        if (isTokenCredentialSet(configuration)
+                || !isProducerAsyncClientSet(configuration) && !isConnectionStringSet(configuration)) {
             checkAndSetNamespaceAndHubName(configuration, remaining);
-            validateConfigurations(configuration);
         }
+
+        if (isTokenCredentialSet(configuration)) {
+            setTokenCredential(configuration);
+        }
+
+        validateConfigurations(configuration);
 
         return endpoint;
     }
@@ -71,10 +77,10 @@ public class EventHubsComponent extends DefaultComponent {
     }
 
     private void validateConfigurations(final EventHubsConfiguration configuration) {
-        if (!isAccessKeyAndAccessNameSet(configuration)) {
+        if (!isAccessKeyAndAccessNameSet(configuration) && !isProducerAsyncClientSet(configuration)
+                && !isConnectionStringSet(configuration) && !isTokenCredentialSet(configuration)) {
             throw new IllegalArgumentException(
-                    "Azure EventHubs SharedAccessName/SharedAccessKey, ConsumerAsyncClient/ProducerAsyncClient "
-                                               + "or connectionString must be specified.");
+                    "Azure EventHubs SharedAccessName/SharedAccessKey, ProducerAsyncClient, ConnectionString or TokenCredential must be specified.");
         }
     }
 
@@ -83,22 +89,48 @@ public class EventHubsComponent extends DefaultComponent {
                 && ObjectHelper.isNotEmpty(configuration.getSharedAccessKey());
     }
 
-    private boolean areAzureClientsNotSet(final EventHubsConfiguration configuration) {
-        return ObjectHelper.isEmpty(configuration.getProducerAsyncClient());
+    private boolean isConnectionStringSet(final EventHubsConfiguration configuration) {
+        return ObjectHelper.isNotEmpty(configuration.getConnectionString());
+    }
+
+    private boolean isTokenCredentialSet(final EventHubsConfiguration configuration) {
+        return ObjectHelper.isNotEmpty(configuration.getTokenCredential());
+    }
+
+    private boolean isProducerAsyncClientSet(final EventHubsConfiguration configuration) {
+        return ObjectHelper.isNotEmpty(configuration.getProducerAsyncClient());
     }
 
     private void checkAndSetNamespaceAndHubName(final EventHubsConfiguration configuration, final String remaining) {
         // only set if clients are empty and remaining exists
+        final String errorMessage = "ConnectionString, ProducerAsyncClient or Namespace and EventHub name must be set";
         if (ObjectHelper.isEmpty(remaining)) {
-            throw new IllegalArgumentException("ConnectionString, AzureClients or Namespace and EventHub name must be set");
+            throw new IllegalArgumentException(errorMessage);
         }
 
         final String[] parts = remaining.split("/");
 
-        if (parts.length < 2) {
-            throw new IllegalArgumentException("ConnectionString, AzureClients or Namespace and EventHub name must be set");
+        if (parts.length != 2) {
+            throw new IllegalArgumentException(errorMessage);
         }
         configuration.setNamespace(parts[0]);
         configuration.setEventHubName(parts[1]);
     }
+
+    private void setTokenCredential(final EventHubsConfiguration configuration) {
+        final Set<TokenCredential> tokenCredentialFromRegistry
+                = getCamelContext().getRegistry().findByType(TokenCredential.class);
+
+        // find exactly one from the registry or create one
+        if (tokenCredentialFromRegistry.size() == 1) {
+            final TokenCredential tokenCredential = tokenCredentialFromRegistry.stream().findFirst().get();
+            configuration.setTokenCredential(tokenCredential);
+            LOG.debug("using the provided TokenCredential instance: {} for the Azure-AD authentication", tokenCredential);
+        } else {
+            final TokenCredential tokenCredential = new DefaultAzureCredentialBuilder().build();
+            configuration.setTokenCredential(tokenCredential);
+            LOG.debug("using the DefaultAzureCredential instance: {} for the Azure-AD authentication", tokenCredential);
+        }
+    }
+
 }
