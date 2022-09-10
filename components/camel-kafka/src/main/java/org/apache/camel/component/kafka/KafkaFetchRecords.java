@@ -307,7 +307,7 @@ public class KafkaFetchRecords implements Runnable {
                     kafkaConsumer, threadId, commitManager, consumerListener);
 
             Duration pollDuration = Duration.ofMillis(pollTimeoutMs);
-            while (isKafkaConsumerRunnable() && isConnected() && pollExceptionStrategy.canContinue()) {
+            while (isKafkaConsumerRunnableAndNotStopped() && isConnected() && pollExceptionStrategy.canContinue()) {
                 ConsumerRecords<Object, Object> allRecords = consumer.poll(pollDuration);
                 if (consumerListener != null) {
                     if (!consumerListener.afterConsume(consumer)) {
@@ -418,6 +418,10 @@ public class KafkaFetchRecords implements Runnable {
     private boolean isKafkaConsumerRunnable() {
         return kafkaConsumer.isRunAllowed() && !kafkaConsumer.isStoppingOrStopped()
                 && !kafkaConsumer.isSuspendingOrSuspended();
+    }
+
+    private boolean isKafkaConsumerRunnableAndNotStopped() {
+        return kafkaConsumer.isRunAllowed() && !kafkaConsumer.isStoppingOrStopped();
     }
 
     private boolean isReconnect() {
