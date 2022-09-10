@@ -58,6 +58,7 @@ public class EventHubsConsumer extends DefaultConsumer {
         if (processorClient != null) {
             // shutdown the client
             processorClient.stop();
+            processorClient = null;
         }
 
         // shutdown camel consumer
