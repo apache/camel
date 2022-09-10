@@ -83,7 +83,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         super.reset();
         exchangesCompleted.reset();
         exchangesFailed.reset();
-        exchangesInflight.reset();
+        // do not reset exchangesInflight
         failuresHandled.reset();
         redeliveries.reset();
         externalRedeliveries.reset();
