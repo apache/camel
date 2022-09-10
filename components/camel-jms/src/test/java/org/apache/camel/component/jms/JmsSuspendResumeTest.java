@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 public class JmsSuspendResumeTest extends AbstractPersistentJMSTest {
@@ -39,7 +40,8 @@ public class JmsSuspendResumeTest extends AbstractPersistentJMSTest {
         mock.expectedMessageCount(0);
 
         // sleep a bit to ensure its properly suspended
-        Thread.sleep(2000);
+        Awaitility.await().atMost(2, TimeUnit.SECONDS)
+                .until(context.getRouteController().getRouteStatus("JmsSuspendResumeTest")::isSuspended);
 
         template.sendBody("activemq:queue:JmsSuspendResumeTest", "Bye World");
 
