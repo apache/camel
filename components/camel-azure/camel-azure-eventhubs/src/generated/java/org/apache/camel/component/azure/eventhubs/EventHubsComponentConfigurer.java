@@ -67,6 +67,8 @@ public class EventHubsComponentConfigurer extends PropertyConfigurerSupport impl
         case "sharedAccessKey": getOrCreateConfiguration(target).setSharedAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "sharedaccessname":
         case "sharedAccessName": getOrCreateConfiguration(target).setSharedAccessName(property(camelContext, java.lang.String.class, value)); return true;
+        case "tokencredential":
+        case "tokenCredential": getOrCreateConfiguration(target).setTokenCredential(property(camelContext, com.azure.core.credential.TokenCredential.class, value)); return true;
         default: return false;
         }
     }
@@ -118,6 +120,8 @@ public class EventHubsComponentConfigurer extends PropertyConfigurerSupport impl
         case "sharedAccessKey": return java.lang.String.class;
         case "sharedaccessname":
         case "sharedAccessName": return java.lang.String.class;
+        case "tokencredential":
+        case "tokenCredential": return com.azure.core.credential.TokenCredential.class;
         default: return null;
         }
     }
@@ -165,6 +169,8 @@ public class EventHubsComponentConfigurer extends PropertyConfigurerSupport impl
         case "sharedAccessKey": return getOrCreateConfiguration(target).getSharedAccessKey();
         case "sharedaccessname":
         case "sharedAccessName": return getOrCreateConfiguration(target).getSharedAccessName();
+        case "tokencredential":
+        case "tokenCredential": return getOrCreateConfiguration(target).getTokenCredential();
         default: return null;
         }
     }
