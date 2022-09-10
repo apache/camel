@@ -22,7 +22,7 @@
 # The log file is archived by the action (see: action.yaml file)
 
 # Modify maven options here if needed
-MVN_DEFAULT_OPTS="-Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2 -Dfailsafe.rerunFailingTestsCount=2"
+MVN_DEFAULT_OPTS="-Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2 -Dfailsafe.rerunFailingTestsCount=2 -Dci.env.name=github.com"
 MVN_OPTS=${MVN_OPTS:-$MVN_DEFAULT_OPTS}
 
 # Script variables
