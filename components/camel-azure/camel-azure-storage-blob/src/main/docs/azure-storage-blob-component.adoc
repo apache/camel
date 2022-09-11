@@ -544,7 +544,7 @@ To run the integration tests, on this component directory, run the following mav
 
 [source,bash]
 ----
-mvn verify -PfullTests -DaccountName=myacc -DaccessKey=mykey -DcredentialType=SHARED_ACCOUNT_KEY
+mvn verify -DaccountName=myacc -DaccessKey=mykey -DcredentialType=SHARED_ACCOUNT_KEY
 ----
 
 Whereby `accountName` is your Azure account name and `accessKey` is the access key being generated from Azure portal.

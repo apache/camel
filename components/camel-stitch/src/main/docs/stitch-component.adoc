@@ -237,7 +237,7 @@ To run the integration tests, on this component directory, run the following mav
 
 [source,bash]
 ----
-mvn verify -PfullTests -Dtoken=stitchToken
+mvn verify -Dtoken=stitchToken
 ----
 
 Whereby `token` is your Stitch token that is generated for Stitch Import API integration.
