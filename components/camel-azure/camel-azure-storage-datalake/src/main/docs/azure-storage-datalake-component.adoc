@@ -378,7 +378,7 @@ can run the full test, on this component directory, by running the following mav
 
 [source,bash]
 ----
-mvn verify -PfullTests -Dazure.storage.account.name=<accountName> -Dazure.storage.account.key=<accessKey>
+mvn verify -Dazure.storage.account.name=<accountName> -Dazure.storage.account.key=<accessKey>
 ----
 
 You can also skip the integration test, and run only basic unit test by using the command
