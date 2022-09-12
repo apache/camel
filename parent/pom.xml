@@ -102,7 +102,7 @@
         <c3p0-version>0.9.5.5</c3p0-version>
         <caffeine-version>3.1.1</caffeine-version>
         <californium-version>2.7.2</californium-version>
-        <californium-scandium-version>2.7.2</californium-scandium-version>
+        <californium-scandium-version>2.7.3</californium-scandium-version>
         <cassandra-driver-version>4.14.1</cassandra-driver-version>
         <cassandra-version>4.0.3</cassandra-version>
         <cdi-api-2.0-version>2.0</cdi-api-2.0-version>
