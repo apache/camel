@@ -78,9 +78,9 @@
         <atmos-client-version>3.2.1</atmos-client-version>
         <atmosphere-version>2.6.4</atmosphere-version>
         <atmosphere-version-range>[2.6,3.0)</atmosphere-version-range>
-        <avro-version>1.11.0</avro-version>
-        <avro-ipc-jetty-version>1.11.0</avro-ipc-jetty-version>
-        <avro-ipc-netty-version>1.11.0</avro-ipc-netty-version>
+        <avro-version>1.11.1</avro-version>
+        <avro-ipc-jetty-version>1.11.1</avro-ipc-jetty-version>
+        <avro-ipc-netty-version>1.11.1</avro-ipc-netty-version>
         <awaitility-version>4.2.0</awaitility-version>
         <aws-java-sdk2-version>2.17.270</aws-java-sdk2-version>
         <aws-xray-version>2.6.1</aws-xray-version>
