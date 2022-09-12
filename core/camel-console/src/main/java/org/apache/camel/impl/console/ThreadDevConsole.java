@@ -39,6 +39,7 @@ public class ThreadDevConsole extends AbstractDevConsole {
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
+        boolean st = "true".equals(options.getOrDefault("stackTrace", "false"));
         ThreadMXBean tb = ManagementFactory.getThreadMXBean();
         if (tb != null) {
             sb.append(String.format("Threads: %s\n", tb.getThreadCount()));
@@ -49,10 +50,16 @@ public class ThreadDevConsole extends AbstractDevConsole {
             long[] ids = tb.getAllThreadIds();
             Arrays.sort(ids);
             for (long id : ids) {
-                ThreadInfo ti = tb.getThreadInfo(id);
+                ThreadInfo ti = st ? tb.getThreadInfo(id, Integer.MAX_VALUE) : tb.getThreadInfo(id);
                 if (ti != null) {
                     String lock = ti.getLockName() != null ? "locked: " + ti.getLockName() : "";
-                    sb.append(String.format("\n    Thread %s: %s (%s) %s", id, ti.getThreadName(), ti.getThreadState(), lock));
+                    sb.append(String.format("\n    Thread %s: %s (%s) %s", id, ti.getThreadName(), ti.getThreadState().name(),
+                            lock));
+                    if (st) {
+                        for (StackTraceElement e : ti.getStackTrace()) {
+                            sb.append(String.format("\n        %s", e));
+                        }
+                    }
                 }
             }
         }
@@ -64,6 +71,7 @@ public class ThreadDevConsole extends AbstractDevConsole {
     protected JsonObject doCallJson(Map<String, Object> options) {
         JsonObject root = new JsonObject();
 
+        boolean st = "true".equals(options.getOrDefault("stackTrace", "false"));
         ThreadMXBean tb = ManagementFactory.getThreadMXBean();
         if (tb != null) {
             root.put("threadCount", tb.getThreadCount());
@@ -77,18 +85,25 @@ public class ThreadDevConsole extends AbstractDevConsole {
             long[] ids = tb.getAllThreadIds();
             Arrays.sort(ids);
             for (long id : ids) {
-                ThreadInfo ti = tb.getThreadInfo(id);
+                ThreadInfo ti = st ? tb.getThreadInfo(id, Integer.MAX_VALUE) : tb.getThreadInfo(id);
                 if (ti != null) {
                     JsonObject jo = new JsonObject();
                     jo.put("id", ti.getThreadId());
                     jo.put("name", ti.getThreadName());
-                    jo.put("state", ti.getThreadState());
+                    jo.put("state", ti.getThreadState().name());
                     jo.put("blockedCount", ti.getBlockedCount());
                     jo.put("blockedTime", ti.getBlockedTime());
                     jo.put("waitedCount", ti.getWaitedCount());
                     jo.put("waitedTime", ti.getWaitedTime());
                     if (ti.getLockName() != null) {
                         jo.put("lockName", ti.getLockName());
+                    }
+                    if (st) {
+                        JsonArray arr2 = new JsonArray();
+                        jo.put("stackTrace", arr2);
+                        for (StackTraceElement e : ti.getStackTrace()) {
+                            arr2.add(e.toString());
+                        }
                     }
                     arr.add(jo);
                 }

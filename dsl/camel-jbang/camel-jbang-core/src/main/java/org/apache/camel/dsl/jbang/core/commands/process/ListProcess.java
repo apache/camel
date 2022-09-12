@@ -78,7 +78,7 @@ public class ListProcess extends ProcessBaseCommand {
         if (!rows.isEmpty()) {
             System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                     new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS)
+                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(r -> r.name),
                     new Column().header("READY").dataAlign(HorizontalAlign.CENTER).with(r -> r.ready),
                     new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)

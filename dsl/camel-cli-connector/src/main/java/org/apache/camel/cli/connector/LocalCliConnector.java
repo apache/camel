@@ -74,6 +74,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private File lockFile;
     private File statusFile;
     private File actionFile;
+    private File outputFile;
 
     public LocalCliConnector(CliConnectorFactory cliConnectorFactory) {
         this.cliConnectorFactory = cliConnectorFactory;
@@ -131,6 +132,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         if (lockFile != null) {
             statusFile = createLockFile(lockFile.getName() + "-status.json");
             actionFile = createLockFile(lockFile.getName() + "-action.json");
+            outputFile = createLockFile(lockFile.getName() + "-output.json");
             executor.scheduleWithFixedDelay(this::task, 0, delay, TimeUnit.MILLISECONDS);
             LOG.info("Camel CLI enabled (local)");
         } else {
@@ -178,7 +180,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     protected void actionTask() {
         try {
             JsonObject root = loadAction();
-            if (root.isEmpty()) {
+            if (root == null || root.isEmpty()) {
                 return;
             }
 
@@ -240,6 +242,14 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 if (mcc != null) {
                     mcc.getManagedCamelContext().reset(true);
                 }
+            } else if ("thread-dump".equals(action)) {
+                DevConsole dc = camelContext.adapt(ExtendedCamelContext.class)
+                        .getDevConsoleResolver().resolveDevConsole("thread");
+                if (dc != null) {
+                    JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("stackTrace", "true"));
+                    LOG.trace("Updating output file: {}", outputFile);
+                    IOHelper.writeText(json.toJson(), outputFile);
+                }
             }
 
             // action done so delete file
@@ -247,7 +257,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
 
         } catch (Throwable e) {
             // ignore
-            LOG.trace(
+            LOG.debug(
                     "Error executing action file: " + actionFile + " due to: " + e.getMessage()
                       + ". This exception is ignored.",
                     e);
@@ -408,6 +418,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         }
         if (actionFile != null) {
             FileUtil.deleteFile(actionFile);
+        }
+        if (outputFile != null) {
+            FileUtil.deleteFile(outputFile);
         }
         if (executor != null) {
             camelContext.getExecutorServiceManager().shutdown(executor);
