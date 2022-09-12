@@ -94,11 +94,11 @@ public class ListVault extends ProcessBaseCommand {
                             .with(r -> r.name),
                     new Column().header("VAULT").dataAlign(HorizontalAlign.LEFT).with(r -> r.vault),
                     new Column().header("REGION").dataAlign(HorizontalAlign.LEFT).with(r -> r.region),
-                    new Column().header("CHECK").headerAlign(HorizontalAlign.LEFT).with(this::getCheckAgo),
-                    new Column().header("UPDATE").headerAlign(HorizontalAlign.LEFT).with(this::getReloadAgo),
                     new Column().header("SECRET").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(r -> r.secret),
-                    new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(this::getAgo))));
+                    new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(this::getAgo),
+                    new Column().header("UPDATE").headerAlign(HorizontalAlign.LEFT).with(this::getReloadAgo),
+                    new Column().header("CHECK").headerAlign(HorizontalAlign.LEFT).with(this::getCheckAgo))));
         }
 
         return 0;
