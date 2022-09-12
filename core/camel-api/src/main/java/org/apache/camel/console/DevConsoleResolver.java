@@ -16,9 +16,9 @@
  */
 package org.apache.camel.console;
 
-import org.apache.camel.CamelContextAware;
-
 import java.util.Optional;
+
+import org.apache.camel.CamelContextAware;
 
 /**
  * A pluggable strategy for resolving dev consoles in a loosely coupled manner
