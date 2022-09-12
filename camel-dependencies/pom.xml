@@ -345,7 +345,7 @@
     <json-schema-validator-version>2.2.14</json-schema-validator-version>
     <json-unit-version>2.32.0</json-unit-version>
     <jsonassert-version>1.5.1</jsonassert-version>
-    <jsonata4java-version>1.5.8</jsonata4java-version>
+    <jsonata4java-version>1.7.9</jsonata4java-version>
     <jsoup-version>1.15.3</jsoup-version>
     <jt400-version>11.0</jt400-version>
     <jta-api-1.2-version>1.2</jta-api-1.2-version>
