@@ -321,7 +321,7 @@
     <jcr-version>2.0</jcr-version>
     <jedis-client-version>3.7.1</jedis-client-version>
     <jetcd-version>0.5.11</jetcd-version>
-    <jettison-version>1.4.1</jettison-version>
+    <jettison-version>1.5.0</jettison-version>
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
     <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
     <jetty-version>${jetty9-version}</jetty-version>
@@ -353,7 +353,7 @@
     <json-unit-version>2.32.0</json-unit-version>
     <jsonassert-version>1.5.1</jsonassert-version>
     <jsonata4java-version>1.5.8</jsonata4java-version>
-    <jsoup-version>1.14.3</jsoup-version>
+    <jsoup-version>1.15.3</jsoup-version>
     <jt400-version>11.0</jt400-version>
     <jta-api-1.2-version>1.2</jta-api-1.2-version>
     <junit-jupiter-version>5.8.2</junit-jupiter-version>
@@ -429,7 +429,7 @@
     <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
     <netty-version>4.1.79.Final</netty-version>
     <networknt-json-schema-validator-version>1.0.69</networknt-json-schema-validator-version>
-    <nimbus-jose-jwt>8.9</nimbus-jose-jwt>
+    <nimbus-jose-jwt>9.22</nimbus-jose-jwt>
     <nitrite-version>3.4.4</nitrite-version>
     <ognl-version>3.1.12</ognl-version>
     <okclient-version>3.14.9</okclient-version>
@@ -527,7 +527,7 @@
     <swagger-openapi3-version>2.1.13</swagger-openapi3-version>
     <templating-maven-plugin-version>1.0.0</templating-maven-plugin-version>
     <testcontainers-version>1.17.3</testcontainers-version>
-    <tika-version>2.4.0</tika-version>
+    <tika-version>2.4.1</tika-version>
     <trimStackTrace>false</trimStackTrace>
     <twilio-version>7.55.3</twilio-version>
     <twitter4j-version>4.0.7</twitter4j-version>
