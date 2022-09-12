@@ -37,6 +37,7 @@ import org.eclipse.jetty.security.UserStore;
 import org.eclipse.jetty.security.authentication.BasicAuthenticator;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.ErrorHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.security.Constraint;
@@ -52,6 +53,7 @@ public class JettyConfiguration {
     public abstract static class AbstractContextHandlerConfiguration<T> {
 
         protected final String contextPath;
+        protected Consumer<T> customizer;
 
         public AbstractContextHandlerConfiguration(String contextPath) {
             this.contextPath = contextPath;
@@ -61,40 +63,59 @@ public class JettyConfiguration {
             return contextPath;
         }
 
-        public void customize(Consumer<T> customizer, T handler) {
-            customizer.accept(handler);
+        public void customize(Consumer<T> customizer) {
+            this.customizer = customizer;
         }
 
         abstract T resolve();
     }
 
     public static class ContextHandlerConfiguration extends AbstractContextHandlerConfiguration<ContextHandler> {
+        private final ContextHandler contextHandler;
+
         public ContextHandlerConfiguration(String contextPath) {
             super(contextPath);
+
+            contextHandler = new ContextHandler(contextPath);
+        }
+
+        public void setErrorHandler(ErrorHandler errorHandler) {
+            contextHandler.setErrorHandler(errorHandler);
+        }
+
+        public void setHandler(Handler handler) {
+            contextHandler.setHandler(handler);
         }
 
         @Override
         ContextHandler resolve() {
-            ContextHandler contextHandler = new ContextHandler(contextPath);
+            if (customizer != null) {
+                customizer.accept(contextHandler);
+            }
 
             return contextHandler;
         }
     }
 
     public static class WebContextConfiguration extends AbstractContextHandlerConfiguration<WebAppContext> {
-        private final String webApp;
+        private String webApp;
 
-        public WebContextConfiguration(String webApp, String contextPath) {
+        public WebContextConfiguration(String contextPath) {
             super(contextPath);
+        }
+
+        public void setWebApp(String webApp) {
             this.webApp = webApp;
         }
 
-        public String getWebApp() {
-            return webApp;
-        }
-
         public WebAppContext resolve() {
-            return new WebAppContext(webApp, super.getContextPath());
+            final WebAppContext webAppContext = new WebAppContext(webApp, super.getContextPath());
+
+            if (customizer != null) {
+                customizer.accept(webAppContext);
+            }
+
+            return webAppContext;
         }
     }
 
@@ -257,6 +278,10 @@ public class JettyConfiguration {
 
             for (ServletConfiguration servletConfiguration : servletConfigurations) {
                 contextHandler.addServlet(servletConfiguration.buildServletHolder(), servletConfiguration.getPathSpec());
+            }
+
+            if (customizer != null) {
+                customizer.accept(contextHandler);
             }
 
             return contextHandler;
