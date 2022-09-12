@@ -27,6 +27,7 @@ import java.lang.management.ThreadMXBean;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -343,6 +344,10 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             if (gc != null) {
                 root.put("gc", gc);
             }
+            JsonObject vaults = collectVaults();
+            if (!vaults.isEmpty()) {
+                root.put("vaults", vaults);
+            }
             LOG.trace("Updating status file: {}", statusFile);
             IOHelper.writeText(root.toJson(), statusFile);
         } catch (Throwable e) {
@@ -405,6 +410,20 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             return root;
         }
         return null;
+    }
+
+    private JsonObject collectVaults() {
+        JsonObject root = new JsonObject();
+        // aws-secrets is optional
+        Optional<DevConsole> dc = camelContext.adapt(ExtendedCamelContext.class)
+                .getDevConsoleResolver().lookupDevConsole("aws-secrets");
+        if (dc.isPresent()) {
+            JsonObject json = (JsonObject) dc.get().call(DevConsole.MediaType.JSON);
+            if (json != null) {
+                root.put("aws-secrets", json);
+            }
+        }
+        return root;
     }
 
     @Override
