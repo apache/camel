@@ -21,8 +21,11 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.console.DevConsole;
+import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.console.DevConsoleResolver;
 import org.apache.camel.spi.FactoryFinder;
+
+import java.util.Optional;
 
 /**
  * Default dev console resolver that looks for dev consoles factories in
@@ -86,4 +89,9 @@ public class DefaultDevConsoleResolver implements DevConsoleResolver, CamelConte
         return devConsoleFactory.findOptionalClass(name).orElse(null);
     }
 
+    @Override
+    public Optional<DevConsole> lookupDevConsole(String id) {
+        DevConsoleRegistry dcr = camelContext.getExtension(DevConsoleRegistry.class);
+        return dcr.getConsole(id);
+    }
 }

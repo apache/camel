@@ -36,6 +36,7 @@ import org.apache.camel.dsl.jbang.core.commands.process.CamelTop;
 import org.apache.camel.dsl.jbang.core.commands.process.Hawtio;
 import org.apache.camel.dsl.jbang.core.commands.process.Jolokia;
 import org.apache.camel.dsl.jbang.core.commands.process.ListProcess;
+import org.apache.camel.dsl.jbang.core.commands.process.ListVault;
 import org.apache.camel.dsl.jbang.core.commands.process.StopProcess;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -53,7 +54,8 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("stop", new CommandLine(new StopProcess(main)))
                 .addSubcommand("get", new CommandLine(new CamelStatus(main))
                         .addSubcommand("context", new CommandLine(new CamelContextStatus(main)))
-                        .addSubcommand("route", new CommandLine(new CamelRouteStatus(main))))
+                        .addSubcommand("route", new CommandLine(new CamelRouteStatus(main)))
+                        .addSubcommand("vault", new CommandLine(new ListVault(main))))
                 .addSubcommand("top", new CommandLine(new CamelTop(main))
                         .addSubcommand("context", new CommandLine(new CamelContextTop(main)))
                         .addSubcommand("route", new CommandLine(new CamelRouteTop(main))))
