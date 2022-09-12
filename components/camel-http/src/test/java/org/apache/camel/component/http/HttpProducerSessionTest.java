@@ -16,25 +16,33 @@
  */
 package org.apache.camel.component.http;
 
-import java.net.InetSocketAddress;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.handler.SessionReflectionHandler;
 import org.apache.camel.http.base.cookie.ExchangeCookieHandler;
 import org.apache.camel.http.base.cookie.InstanceCookieHandler;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.infra.jetty.services.JettyConfiguration;
+import org.apache.camel.test.infra.jetty.services.JettyConfigurationBuilder;
+import org.apache.camel.test.infra.jetty.services.JettyEmbeddedService;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.session.SessionHandler;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class HttpProducerSessionTest extends CamelTestSupport {
-    private static volatile int port;
-    private static Server localServer;
+    private static final int PORT = AvailablePortFinder.getNextAvailable();
+
+    private final JettyConfiguration jettyConfiguration = JettyConfigurationBuilder
+            .emptyTemplate()
+            .withPort(PORT)
+            .withContextPath("/session")
+            .withContextHandlerConfiguration().withCustomizer(HttpProducerSessionTest::customizer)
+            .build().build();
+
+    @RegisterExtension
+    public JettyEmbeddedService service = new JettyEmbeddedService(jettyConfiguration);
 
     @BindToRegistry("instanceCookieHandler")
     private InstanceCookieHandler instanceHandler = new InstanceCookieHandler();
@@ -45,22 +53,10 @@ public class HttpProducerSessionTest extends CamelTestSupport {
     @BindToRegistry("noopCookieStore")
     private NoopCookieStore cookieStore = new NoopCookieStore();
 
-    @BeforeAll
-    public static void initServer() throws Exception {
-        port = AvailablePortFinder.getNextAvailable();
-        localServer = new Server(new InetSocketAddress("127.0.0.1", port));
-        ContextHandler contextHandler = new ContextHandler();
-        contextHandler.setContextPath("/session");
+    private static void customizer(ContextHandler contextHandler) {
         SessionHandler sessionHandler = new SessionHandler();
         sessionHandler.setHandler(new SessionReflectionHandler());
         contextHandler.setHandler(sessionHandler);
-        localServer.setHandler(contextHandler);
-        localServer.start();
-    }
-
-    @AfterAll
-    public static void shutdownServer() throws Exception {
-        localServer.stop();
     }
 
     @Test
@@ -89,7 +85,7 @@ public class HttpProducerSessionTest extends CamelTestSupport {
 
     private String getTestServerEndpointSessionUrl() {
         // session handling will not work for localhost
-        return "http://127.0.0.1:" + port + "/session/";
+        return "http://127.0.0.1:" + PORT + "/session/";
     }
 
     @Override
