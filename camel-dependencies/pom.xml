@@ -403,7 +403,7 @@
     <microprofile-fault-tolerance-version>3.0</microprofile-fault-tolerance-version>
     <microprofile-metrics-version>3.0.1</microprofile-metrics-version>
     <milo-guava-version>31.1-jre</milo-guava-version>
-    <milo-version>0.6.6</milo-version>
+    <milo-version>0.6.8</milo-version>
     <mina-version>2.1.6</mina-version>
     <minidns-version>0.3.4</minidns-version>
     <minimal-json-version>0.9.5</minimal-json-version>
