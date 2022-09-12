@@ -35,6 +35,7 @@ import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.LoadablePropertiesSource;
 import org.apache.camel.spi.PropertiesFunction;
@@ -56,6 +57,7 @@ import org.slf4j.LoggerFactory;
  */
 @ManagedResource(description = "Managed PropertiesComponent")
 @JdkService(org.apache.camel.spi.PropertiesComponent.FACTORY)
+@Configurer(bootstrap = true)
 public class PropertiesComponent extends ServiceSupport
         implements org.apache.camel.spi.PropertiesComponent, StaticService, CamelContextAware {
 
@@ -352,21 +354,6 @@ public class PropertiesComponent extends ServiceSupport
      * locations from this option.
      */
     public void setLocations(String[] locationStrings) {
-        List<PropertiesLocation> locations = new ArrayList<>();
-        if (locationStrings != null) {
-            for (String locationString : locationStrings) {
-                locations.add(new PropertiesLocation(locationString));
-            }
-        }
-
-        setLocations(locations);
-    }
-
-    /**
-     * A list of locations to load properties. This option will override any default locations and only use the
-     * locations from this option.
-     */
-    public void setLocations(Collection<String> locationStrings) {
         List<PropertiesLocation> locations = new ArrayList<>();
         if (locationStrings != null) {
             for (String locationString : locationStrings) {
