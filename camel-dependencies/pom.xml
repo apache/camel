@@ -424,7 +424,7 @@
     <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
     <netty-version>4.1.81.Final</netty-version>
     <networknt-json-schema-validator-version>1.0.72</networknt-json-schema-validator-version>
-    <nimbus-jose-jwt>8.9</nimbus-jose-jwt>
+    <nimbus-jose-jwt>9.22</nimbus-jose-jwt>
     <nitrite-version>3.4.4</nitrite-version>
     <ognl-version>3.1.12</ognl-version>
     <okclient-version>3.14.9</okclient-version>
