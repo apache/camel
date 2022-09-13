@@ -72,6 +72,8 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
     private List<Object> saxonExtensionFunctions;
     @UriParam(displayName = "Allow StAX", defaultValue = "true")
     private boolean allowStAX = true;
+    @UriParam(label = "advanced", defaultValue = "true")
+    private boolean secureProcessing = true;
 
     public XsltSaxonEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -146,6 +148,19 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
         this.allowStAX = allowStAX;
     }
 
+    public boolean isSecureProcessing() {
+        return secureProcessing;
+    }
+
+    /**
+     * Feature for XML secure processing (see javax.xml.XMLConstants).
+     * This is enabled by default. However, when using Saxon Professional you may need to turn this off
+     * to allow Saxon to be able to use Java extension functions.
+     */
+    public void setSecureProcessing(boolean secureProcessing) {
+        this.secureProcessing = secureProcessing;
+    }
+
     @Override
     protected void doInit() throws Exception {
         super.doInit();
@@ -199,7 +214,7 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
             TransformerFactoryImpl tf = (TransformerFactoryImpl) factory;
             XsltSaxonHelper.registerSaxonConfiguration(tf, saxonConfiguration);
             XsltSaxonHelper.registerSaxonConfigurationProperties(tf, saxonConfigurationProperties);
-            XsltSaxonHelper.registerSaxonExtensionFunctions(tf, saxonExtensionFunctions);
+            XsltSaxonHelper.registerSaxonExtensionFunctions(tf, saxonExtensionFunctions, secureProcessing);
         }
 
         if (factory != null) {
