@@ -55,9 +55,7 @@ public class Olingo2SampleServer {
 
         webappcontext.setWar(contextPath);
 
-        HandlerCollection handlers = new HandlerCollection();
-        handlers.setHandlers(new Handler[] { webappcontext, new DefaultHandler() });
-        server.setHandler(handlers);
+        server.setHandler(webappcontext);
     }
 
     public void start() throws Exception {
