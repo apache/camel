@@ -414,7 +414,7 @@ public abstract class BaseMainSupport extends BaseService {
                 scheduler.schedulePeriodTask(r, period);
             }
         }
-        
+
         if (vc.gcp().isRefreshEnabled()) {
             Optional<Runnable> task = camelContext.adapt(ExtendedCamelContext.class)
                     .getPeriodTaskResolver().newInstance("gcp-secret-refresh", Runnable.class);

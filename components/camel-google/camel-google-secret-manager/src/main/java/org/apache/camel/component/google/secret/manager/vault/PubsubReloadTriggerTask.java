@@ -24,6 +24,15 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.api.gax.core.FixedCredentialsProvider;
+import com.google.auth.Credentials;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.auth.oauth2.ServiceAccountCredentials;
+import com.google.cloud.pubsub.v1.AckReplyConsumer;
+import com.google.cloud.pubsub.v1.MessageReceiver;
+import com.google.cloud.pubsub.v1.Subscriber;
+import com.google.pubsub.v1.ProjectSubscriptionName;
+import com.google.pubsub.v1.PubsubMessage;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
@@ -39,16 +48,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.vault.GcpVaultConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.api.gax.core.FixedCredentialsProvider;
-import com.google.auth.Credentials;
-import com.google.auth.oauth2.GoogleCredentials;
-import com.google.auth.oauth2.ServiceAccountCredentials;
-import com.google.cloud.pubsub.v1.AckReplyConsumer;
-import com.google.cloud.pubsub.v1.MessageReceiver;
-import com.google.cloud.pubsub.v1.Subscriber;
-import com.google.pubsub.v1.ProjectSubscriptionName;
-import com.google.pubsub.v1.PubsubMessage;
 
 /**
  * Period task which checks if Google secrets has been updated and can trigger Camel to be reloaded.
@@ -131,19 +130,18 @@ public class PubsubReloadTriggerTask extends ServiceSupport implements CamelCont
                 subscription = gcpVaultConfiguration.getSubscriptionName();
             }
         }
-        if (ObjectHelper.isNotEmpty(serviceAccountKey) && ObjectHelper.isNotEmpty(projectId) && ObjectHelper.isNotEmpty(subscription)) {
+        if (ObjectHelper.isNotEmpty(serviceAccountKey) && ObjectHelper.isNotEmpty(projectId)
+                && ObjectHelper.isNotEmpty(subscription)) {
             InputStream resolveMandatoryResourceAsInputStream
                     = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), serviceAccountKey);
             Credentials myCredentials = ServiceAccountCredentials
                     .fromStream(resolveMandatoryResourceAsInputStream);
-            ProjectSubscriptionName subscriptionName =
-                    ProjectSubscriptionName.of(projectId, subscription);
+            ProjectSubscriptionName subscriptionName = ProjectSubscriptionName.of(projectId, subscription);
             Subscriber.Builder builder = Subscriber.newBuilder(subscriptionName, new FilteringEventMessageReceiver());
             builder.setCredentialsProvider(FixedCredentialsProvider.create(myCredentials));
             subscriber = builder.build();
         } else if (useDefaultInstance && ObjectHelper.isNotEmpty(projectId) && ObjectHelper.isNotEmpty(subscription)) {
-            ProjectSubscriptionName subscriptionName =
-                    ProjectSubscriptionName.of(projectId, subscription);
+            ProjectSubscriptionName subscriptionName = ProjectSubscriptionName.of(projectId, subscription);
             Subscriber.Builder builder = Subscriber.newBuilder(subscriptionName, new FilteringEventMessageReceiver());
             builder.setCredentialsProvider(FixedCredentialsProvider.create(GoogleCredentials.getApplicationDefault()));
             subscriber = builder.build();
@@ -171,7 +169,7 @@ public class PubsubReloadTriggerTask extends ServiceSupport implements CamelCont
 
     @Override
     public void run() {
-    	subscriber.startAsync().awaitRunning();
+        subscriber.startAsync().awaitRunning();
     }
 
     protected boolean matchSecret(String name) {
@@ -198,25 +196,25 @@ public class PubsubReloadTriggerTask extends ServiceSupport implements CamelCont
     public String toString() {
         return "Google Secrets Refresh Task";
     }
-    
+
     public class FilteringEventMessageReceiver implements MessageReceiver {
 
-    	private String SECRET_UPDATE = "SECRET_UPDATE";
-    	private String SECRET_VERSION_ADD = "SECRET_VERSION_ADD";
-    	
-    	private boolean triggerReloading;
-    	
-		@Override
-		public void receiveMessage(PubsubMessage message, AckReplyConsumer consumer) {
+        private String SECRET_UPDATE = "SECRET_UPDATE";
+        private String SECRET_VERSION_ADD = "SECRET_VERSION_ADD";
+
+        private boolean triggerReloading;
+
+        @Override
+        public void receiveMessage(PubsubMessage message, AckReplyConsumer consumer) {
             String secretId = message.getAttributesMap().get("secretId");
             String eventType = message.getAttributesMap().get("eventType");
             if (eventType.equalsIgnoreCase(SECRET_UPDATE) || eventType.equalsIgnoreCase(SECRET_VERSION_ADD)) {
-            	if (matchSecret(secretId)) {
+                if (matchSecret(secretId)) {
                     if (isReloadEnabled()) {
                         LOG.info("Update for GCP secret: {} detected, triggering CamelContext reload", secretId.toString());
                         triggerReloading = true;
                     }
-            	}
+                }
             }
             if (triggerReloading) {
                 ContextReloadStrategy reload = camelContext.hasService(ContextReloadStrategy.class);
@@ -226,8 +224,8 @@ public class PubsubReloadTriggerTask extends ServiceSupport implements CamelCont
                 }
             }
             consumer.ack();
-			
-		}
-    	
+
+        }
+
     }
 }

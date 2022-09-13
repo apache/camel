@@ -180,10 +180,10 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
     private String getSecretFromSource(
             String key, String subkey, String defaultValue, String version)
             throws JsonProcessingException {
-    	
+
         // capture name of secret
         secrets.add(key);
-        
+
         String returnValue = null;
         try {
             SecretVersionName secretVersionName
@@ -224,7 +224,7 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
     public CamelContext getCamelContext() {
         return camelContext;
     }
-    
+
     /**
      * Ids of the secrets in use
      */
