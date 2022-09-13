@@ -50,9 +50,10 @@ final class XsltSaxonHelper {
         }
     }
 
-    public static void registerSaxonExtensionFunctions(TransformerFactoryImpl factory,
-                                                       List<Object> saxonExtensionFunctions,
-                                                       boolean secureProcessing)
+    public static void registerSaxonExtensionFunctions(
+            TransformerFactoryImpl factory,
+            List<Object> saxonExtensionFunctions,
+            boolean secureProcessing)
             throws Exception {
         if (saxonExtensionFunctions != null && !saxonExtensionFunctions.isEmpty()) {
             factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, secureProcessing);

@@ -153,9 +153,8 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
     }
 
     /**
-     * Feature for XML secure processing (see javax.xml.XMLConstants).
-     * This is enabled by default. However, when using Saxon Professional you may need to turn this off
-     * to allow Saxon to be able to use Java extension functions.
+     * Feature for XML secure processing (see javax.xml.XMLConstants). This is enabled by default. However, when using
+     * Saxon Professional you may need to turn this off to allow Saxon to be able to use Java extension functions.
      */
     public void setSecureProcessing(boolean secureProcessing) {
         this.secureProcessing = secureProcessing;
