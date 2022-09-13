@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.olingo2;
 
+import java.io.IOException;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -24,12 +25,15 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.infra.jetty.services.JettyConfiguration;
+import org.apache.camel.test.infra.jetty.services.JettyEmbeddedService;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
+import static org.apache.camel.component.olingo2.AbstractOlingo2AppAPITestSupport.createConfiguration;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -48,7 +52,10 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
     private static final int PORT = AvailablePortFinder.getNextAvailable();
     private static final String TEST_SERVICE_URL = "http://localhost:" + PORT + "/MyFormula.svc";
 
-    private static Olingo2SampleServer server;
+    private static final JettyConfiguration JETTY_CONFIGURATION = createConfiguration(PORT);
+
+    @RegisterExtension
+    public static JettyEmbeddedService service = new JettyEmbeddedService(JETTY_CONFIGURATION);
 
     public Olingo2ComponentConsumerTest() {
         setDefaultTestProperty("serviceUri", "http://localhost:" + PORT + "/MyFormula.svc");
@@ -63,22 +70,9 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
     }
 
     @BeforeAll
-    public static void beforeClass() throws Exception {
-        startServers(PORT);
-        Olingo2SampleServer.generateSampleData(TEST_SERVICE_URL);
-    }
+    public static void beforeClass() throws IOException {
+        Olingo2TestUtil.generateSampleData(TEST_SERVICE_URL);
 
-    @AfterAll
-    public static void afterClass() throws Exception {
-        if (server != null) {
-            server.stop();
-            server.destroy();
-        }
-    }
-
-    protected static void startServers(int port) throws Exception {
-        server = new Olingo2SampleServer(port, "/olingo2_ref");
-        server.start();
     }
 
     private void addRouteAndStartContext(RouteBuilder builder) throws Exception {

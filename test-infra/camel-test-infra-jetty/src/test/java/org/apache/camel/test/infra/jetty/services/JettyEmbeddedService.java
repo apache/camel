@@ -92,6 +92,10 @@ public class JettyEmbeddedService implements JettyService, BeforeEachCallback, A
 
     @Override
     public void shutdown() {
+        if (server == null) {
+            return;
+        }
+
         try {
             server.stop();
 
@@ -106,12 +110,16 @@ public class JettyEmbeddedService implements JettyService, BeforeEachCallback, A
 
     @Override
     public void afterEach(ExtensionContext extensionContext) throws Exception {
-        shutdown();
+        if (server != null && server.isStarted()) {
+            shutdown();
+        }
     }
 
     @Override
     public void beforeEach(ExtensionContext extensionContext) throws Exception {
-        initialize();
+        if (server == null || server.isStopped()) {
+            initialize();
+        }
     }
 
     @Override

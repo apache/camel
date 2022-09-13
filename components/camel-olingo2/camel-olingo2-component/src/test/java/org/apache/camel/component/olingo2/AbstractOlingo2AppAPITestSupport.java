@@ -28,6 +28,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.component.olingo2.api.Olingo2ResponseHandler;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.infra.jetty.services.JettyConfiguration;
+import org.apache.camel.test.infra.jetty.services.JettyConfigurationBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
@@ -138,6 +140,21 @@ public class AbstractOlingo2AppAPITestSupport {
         // remove last line break
         b.deleteCharAt(b.length() - 1);
         return b.toString();
+    }
+
+    protected static JettyConfiguration createConfiguration() {
+        return createConfiguration(PORT);
+    }
+
+    protected static JettyConfiguration createConfiguration(int port) {
+        return JettyConfigurationBuilder
+                .emptyTemplate()
+                .withPort(port)
+                .withContextPath(JettyConfiguration.ROOT_CONTEXT_PATH)
+                .withWebAppContextConfiguration()
+                .withWebApp(AbstractOlingo2TestSupport.getWebResource())
+                .build()
+                .build();
     }
 
     protected static final class TestOlingo2ResponseHandler<T> implements Olingo2ResponseHandler<T> {
