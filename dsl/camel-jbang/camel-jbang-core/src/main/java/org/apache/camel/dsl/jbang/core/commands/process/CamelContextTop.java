@@ -75,6 +75,10 @@ public class CamelContextTop extends ProcessBaseCommand {
                         row.camelVersion = context.getString("version");
                         Map<String, ?> stats = context.getMap("statistics");
                         if (stats != null) {
+                            Object thp = stats.get("exchangesThroughput");
+                            if (thp != null) {
+                                row.throughput = thp.toString();
+                            }
                             Object load = stats.get("load01");
                             if (load != null) {
                                 row.load01 = load.toString();
@@ -135,8 +139,7 @@ public class CamelContextTop extends ProcessBaseCommand {
                     new Column().header("GC").headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.LEFT)
                             .with(this::getGC),
                     new Column().header("THREADS").headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER)
-                            .with(this::getThreads),
-                    new Column().header("CLASSES").headerAlign(HorizontalAlign.CENTER).with(this::getClassLoading))));
+                            .with(this::getThreads))));
         }
 
         return 0;
@@ -167,6 +170,14 @@ public class CamelContextTop extends ProcessBaseCommand {
             default:
                 return 0;
         }
+    }
+
+    protected String getThroughput(Row r) {
+        String s = r.throughput;
+        if (s == null || s.isEmpty()) {
+            s = "";
+        }
+        return s;
     }
 
     private String getPlatform(Row r) {
@@ -227,6 +238,9 @@ public class CamelContextTop extends ProcessBaseCommand {
         if ("0.00".equals(s3)) {
             s3 = "-";
         }
+        if (s1.equals("-") && s2.equals("-") && s3.equals("-")) {
+            return "0/0/0";
+        }
         return s1 + "/" + s2 + "/" + s3;
     }
 
@@ -244,6 +258,7 @@ public class CamelContextTop extends ProcessBaseCommand {
         int state;
         String ago;
         long uptime;
+        String throughput;
         String load01;
         String load05;
         String load15;

@@ -176,14 +176,14 @@ public class CamelContextStatus extends ProcessBaseCommand {
         }
     }
 
-    private String getSinceLast(Row r) {
+    protected String getSinceLast(Row r) {
         String s1 = r.sinceLastStarted != null ? r.sinceLastStarted : "-";
         String s2 = r.sinceLastCompleted != null ? r.sinceLastCompleted : "-";
         String s3 = r.sinceLastFailed != null ? r.sinceLastFailed : "-";
         return s1 + "/" + s2 + "/" + s3;
     }
 
-    private String getThroughput(Row r) {
+    protected String getThroughput(Row r) {
         String s = r.throughput;
         if (s == null || s.isEmpty()) {
             s = "";
@@ -191,7 +191,7 @@ public class CamelContextStatus extends ProcessBaseCommand {
         return s;
     }
 
-    private String getRoutes(Row r) {
+    protected String getRoutes(Row r) {
         return r.routeStarted + "/" + r.routeTotal;
     }
 
