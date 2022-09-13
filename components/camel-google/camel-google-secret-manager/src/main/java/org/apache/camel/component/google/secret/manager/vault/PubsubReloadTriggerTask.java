@@ -199,8 +199,8 @@ public class PubsubReloadTriggerTask extends ServiceSupport implements CamelCont
 
     public class FilteringEventMessageReceiver implements MessageReceiver {
 
-        private String SECRET_UPDATE = "SECRET_UPDATE";
-        private String SECRET_VERSION_ADD = "SECRET_VERSION_ADD";
+        private static final String SECRET_UPDATE = "SECRET_UPDATE";
+        private static final String SECRET_VERSION_ADD = "SECRET_VERSION_ADD";
 
         private boolean triggerReloading;
 
