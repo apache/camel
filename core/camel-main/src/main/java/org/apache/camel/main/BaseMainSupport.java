@@ -419,7 +419,7 @@ public abstract class BaseMainSupport extends BaseService {
             Optional<Runnable> task = camelContext.adapt(ExtendedCamelContext.class)
                     .getPeriodTaskResolver().newInstance("gcp-secret-refresh", Runnable.class);
             if (task.isPresent()) {
-                long period = vc.aws().getRefreshPeriod();
+                long period = vc.gcp().getRefreshPeriod();
                 Runnable r = task.get();
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Scheduling: {} (period: {})", r, TimeUtils.printDuration(period, false));
