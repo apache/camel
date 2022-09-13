@@ -26,6 +26,7 @@ import org.apache.camel.util.KeyValueHolder;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ErrorHandler;
+import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
 /**
@@ -151,8 +152,37 @@ public final class JettyConfigurationBuilder {
         }
     }
 
-    public static class HandlerContextConfigurationBuilder {
+    public static class HandlerContextConfigurationBuilder implements ConfigurationBuilderDelegate {
+        private final JettyConfiguration jettyConfiguration;
+        private final JettyConfigurationBuilder jettyConfigurationBuilder;
+        private final JettyConfiguration.HandlerCollectionConfiguration handlerCollectionConfiguration;
 
+        public HandlerContextConfigurationBuilder(JettyConfigurationBuilder jettyConfigurationBuilder,
+                                                  JettyConfiguration jettyConfiguration) {
+            this.jettyConfiguration = jettyConfiguration;
+            this.jettyConfigurationBuilder = jettyConfigurationBuilder;
+
+            handlerCollectionConfiguration
+                    = new JettyConfiguration.HandlerCollectionConfiguration(jettyConfiguration.getContextPath());
+        }
+
+        public HandlerContextConfigurationBuilder addHandlers(Handler handler) {
+            handlerCollectionConfiguration.addHandlers(handler);
+
+            return this;
+        }
+
+        public HandlerContextConfigurationBuilder withCustomizer(Consumer<HandlerCollection> contextHandlerCustomizer) {
+            handlerCollectionConfiguration.customize(contextHandlerCustomizer);
+            return this;
+        }
+
+        @Override
+        public JettyConfigurationBuilder build() {
+            jettyConfiguration.setContextHandlerConfiguration(handlerCollectionConfiguration);
+
+            return jettyConfigurationBuilder;
+        }
     }
 
     private JettyConfiguration jettyConfiguration = new JettyConfiguration();
@@ -186,6 +216,10 @@ public final class JettyConfigurationBuilder {
 
     public ContextHandlerConfigurationBuilder withContextHandlerConfiguration() {
         return new ContextHandlerConfigurationBuilder(this, jettyConfiguration);
+    }
+
+    public HandlerContextConfigurationBuilder withHandlerCollectionConfiguration() {
+        return new HandlerContextConfigurationBuilder(this, jettyConfiguration);
     }
 
     public JettyConfigurationBuilder withContextPath(String contextPath) {

@@ -289,11 +289,20 @@ public class JettyConfiguration {
         }
     }
 
-    public static class HandlerCollectionConfiguration {
+    public static class HandlerCollectionConfiguration extends AbstractContextHandlerConfiguration<HandlerCollection> {
         private final HandlerCollection handlers = new HandlerCollection();
 
-        public void setHandlers(Handler[] handlers) {
-            this.handlers.setHandlers(handlers);
+        public HandlerCollectionConfiguration(String contextPath) {
+            super(contextPath);
+        }
+
+        public void addHandlers(Handler handler) {
+            handlers.addHandler(handler);
+        }
+
+        @Override
+        HandlerCollection resolve() {
+            return handlers;
         }
     }
 

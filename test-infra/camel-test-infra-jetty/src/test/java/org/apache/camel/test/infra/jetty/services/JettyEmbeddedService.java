@@ -70,8 +70,7 @@ public class JettyEmbeddedService implements JettyService, BeforeEachCallback, A
         System.setProperty(JettyProperties.JETTY_ADDRESS, "localhost:" + getPort());
     }
 
-    @Override
-    public void initialize() {
+    private void doInitialize() {
         try {
             server = new Server(jettyConfiguration.getPort());
 
@@ -91,35 +90,47 @@ public class JettyEmbeddedService implements JettyService, BeforeEachCallback, A
     }
 
     @Override
-    public void shutdown() {
-        if (server == null) {
-            return;
+    public void initialize() {
+        if (server == null || server.isStopped()) {
+            doInitialize();
         }
+    }
 
+    @Override
+    public void shutdown() {
+        if (server != null && server.isStarted()) {
+            doShutdown();
+        }
+    }
+
+    private synchronized void doShutdown() {
         try {
-            server.stop();
-
-            Awaitility.await().atMost(10, TimeUnit.SECONDS).until(server::isStopped);
+            stop();
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            server.destroy();
+            if (server.isStopped()) {
+                server.destroy();
+            }
+
             server = null;
         }
     }
 
-    @Override
-    public void afterEach(ExtensionContext extensionContext) throws Exception {
-        if (server != null && server.isStarted()) {
-            shutdown();
-        }
+    public void stop() throws Exception {
+        server.stop();
+
+        Awaitility.await().atMost(10, TimeUnit.SECONDS).until(server::isStopped);
     }
 
     @Override
-    public void beforeEach(ExtensionContext extensionContext) throws Exception {
-        if (server == null || server.isStopped()) {
-            initialize();
-        }
+    public void afterEach(ExtensionContext extensionContext) {
+        shutdown();
+    }
+
+    @Override
+    public void beforeEach(ExtensionContext extensionContext) {
+        initialize();
     }
 
     @Override
