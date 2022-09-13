@@ -42,6 +42,10 @@ public class CamelRouteStatus extends ProcessBaseCommand {
                         description = "Sort by pid, name or age", defaultValue = "pid")
     String sort;
 
+    @CommandLine.Option(names = { "--source" },
+                        description = "Prefer to display source filename instead of route IDs")
+    boolean source;
+
     @CommandLine.Option(names = { "--limit" },
                         description = "Filter routes by limiting to the given number of rows")
     int limit;
@@ -151,7 +155,7 @@ public class CamelRouteStatus extends ProcessBaseCommand {
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(r -> r.name),
                 new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
-                        .with(r -> r.routeId),
+                        .with(this::getId),
                 new Column().header("FROM").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(r -> r.from),
                 new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
@@ -167,13 +171,6 @@ public class CamelRouteStatus extends ProcessBaseCommand {
                 new Column().header("SINCE-LAST").with(this::getSinceLast))));
     }
 
-    String getSinceLast(Row r) {
-        String s1 = r.sinceLastStarted != null ? r.sinceLastStarted : "-";
-        String s2 = r.sinceLastCompleted != null ? r.sinceLastCompleted : "-";
-        String s3 = r.sinceLastFailed != null ? r.sinceLastFailed : "-";
-        return s1 + "/" + s2 + "/" + s3;
-    }
-
     protected int sortRow(Row o1, Row o2) {
         switch (sort) {
             case "pid":
@@ -187,12 +184,27 @@ public class CamelRouteStatus extends ProcessBaseCommand {
         }
     }
 
-    private String getThroughput(Row r) {
+    protected String getSinceLast(Row r) {
+        String s1 = r.sinceLastStarted != null ? r.sinceLastStarted : "-";
+        String s2 = r.sinceLastCompleted != null ? r.sinceLastCompleted : "-";
+        String s3 = r.sinceLastFailed != null ? r.sinceLastFailed : "-";
+        return s1 + "/" + s2 + "/" + s3;
+    }
+
+    protected String getThroughput(Row r) {
         String s = r.throughput;
         if (s == null || s.isEmpty()) {
             s = "";
         }
         return s;
+    }
+
+    protected String getId(Row r) {
+        if (source && r.source != null) {
+            return sourceLocLine(r.source);
+        } else {
+            return r.routeId;
+        }
     }
 
     static class Row {
