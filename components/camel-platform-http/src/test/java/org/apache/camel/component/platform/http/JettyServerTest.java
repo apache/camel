@@ -16,30 +16,38 @@
  */
 package org.apache.camel.component.platform.http;
 
-import org.eclipse.jetty.server.Server;
+import org.apache.camel.test.infra.jetty.services.JettyConfiguration;
+import org.apache.camel.test.infra.jetty.services.JettyConfigurationBuilder;
+import org.apache.camel.test.infra.jetty.services.JettyEmbeddedService;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 
 public class JettyServerTest {
     public static final String JETTY_SERVER_NAME = "JettyServerTest";
 
-    private Server server;
-    private int port;
-    private HandlerCollection contextHandlerCollection;
+    private final int port;
+    private final HandlerCollection contextHandlerCollection;
+    private final JettyEmbeddedService service;
 
     public JettyServerTest(int port) {
-        this.server = new Server(port);
+        contextHandlerCollection = new HandlerCollection(true);
+
+        final JettyConfiguration configuration = JettyConfigurationBuilder.bareTemplate()
+                .withPort(port)
+                .withHandlerCollectionConfiguration().addHandlers(contextHandlerCollection).build().build();
+        this.service = new JettyEmbeddedService(configuration);
+
         this.port = port;
-        this.contextHandlerCollection = new HandlerCollection(true);
-        this.server.setHandler(contextHandlerCollection);
+
     }
 
     public void start() throws Exception {
-        server.start();
+        service.initialize();
+
     }
 
     public void stop() throws Exception {
-        server.stop();
+        service.stop();
     }
 
     public void addHandler(ContextHandler contextHandler) throws Exception {
