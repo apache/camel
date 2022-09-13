@@ -17,6 +17,8 @@
 package org.apache.camel.component.google.secret.manager;
 
 import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -79,6 +81,7 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
     private CamelContext camelContext;
     private SecretManagerServiceClient client;
     private String projectId;
+    private final Set<String> secrets = new HashSet<>();
 
     @Override
     protected void doStart() throws Exception {
@@ -116,6 +119,7 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
         if (client != null) {
             client.close();
         }
+        secrets.clear();
         super.doStop();
     }
 
@@ -176,6 +180,10 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
     private String getSecretFromSource(
             String key, String subkey, String defaultValue, String version)
             throws JsonProcessingException {
+    	
+        // capture name of secret
+        secrets.add(key);
+        
         String returnValue = null;
         try {
             SecretVersionName secretVersionName
@@ -215,5 +223,12 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
     @Override
     public CamelContext getCamelContext() {
         return camelContext;
+    }
+    
+    /**
+     * Ids of the secrets in use
+     */
+    public Set<String> getSecrets() {
+        return secrets;
     }
 }
