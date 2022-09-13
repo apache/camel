@@ -96,8 +96,10 @@ public final class JettyConfigurationBuilder {
             this.webContextConfiguration = new JettyConfiguration.WebContextConfiguration(jettyConfiguration.getContextPath());
         }
 
-        public String getContextPath() {
-            return webContextConfiguration.getContextPath();
+        public WebAppContextConfigurationBuilder withWebApp(String webApp) {
+            webContextConfiguration.setWebApp(webApp);
+
+            return this;
         }
 
         @Override
@@ -147,6 +149,10 @@ public final class JettyConfigurationBuilder {
 
             return jettyConfigurationBuilder;
         }
+    }
+
+    public static class HandlerContextConfigurationBuilder {
+
     }
 
     private JettyConfiguration jettyConfiguration = new JettyConfiguration();

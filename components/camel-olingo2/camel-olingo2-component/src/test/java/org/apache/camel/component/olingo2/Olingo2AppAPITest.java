@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.olingo2;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -33,6 +34,8 @@ import org.apache.camel.component.olingo2.api.batch.Olingo2BatchResponse;
 import org.apache.camel.component.olingo2.api.batch.Operation;
 import org.apache.camel.component.olingo2.api.impl.Olingo2AppImpl;
 import org.apache.camel.component.olingo2.api.impl.SystemQueryOption;
+import org.apache.camel.test.infra.jetty.services.JettyConfiguration;
+import org.apache.camel.test.infra.jetty.services.JettyEmbeddedService;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
@@ -47,6 +50,7 @@ import org.apache.olingo.odata2.api.servicedocument.ServiceDocument;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -64,29 +68,29 @@ public class Olingo2AppAPITest extends AbstractOlingo2AppAPITestSupport {
     private static Edm edm;
     private static Map<String, EdmEntitySet> edmEntitySetMap;
 
-    private static Olingo2SampleServer server;
+    private static final JettyConfiguration JETTY_CONFIGURATION = createConfiguration();
+
+    @RegisterExtension
+    public static JettyEmbeddedService service = new JettyEmbeddedService(JETTY_CONFIGURATION);
 
     @BeforeAll
-    public static void beforeClass() throws Exception {
-        startServers(PORT);
-        Olingo2SampleServer.generateSampleData(TEST_SERVICE_URL);
-        setupClient();
+    public static void beforeClass() {
+        try {
+            Olingo2TestUtil.generateSampleData(TEST_SERVICE_URL);
+            setupClient();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @AfterAll
-    public static void afterClass() throws Exception {
+    public static void afterClass() {
         if (olingoApp != null) {
             olingoApp.close();
         }
-        if (server != null) {
-            server.stop();
-            server.destroy();
-        }
-    }
 
-    protected static void startServers(int port) throws Exception {
-        server = new Olingo2SampleServer(port, "/olingo2_ref");
-        server.start();
     }
 
     protected static void setupClient() throws Exception {

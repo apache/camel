@@ -38,6 +38,7 @@ import org.eclipse.jetty.security.authentication.BasicAuthenticator;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ErrorHandler;
+import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.security.Constraint;
@@ -285,6 +286,14 @@ public class JettyConfiguration {
             }
 
             return contextHandler;
+        }
+    }
+
+    public static class HandlerCollectionConfiguration {
+        private final HandlerCollection handlers = new HandlerCollection();
+
+        public void setHandlers(Handler[] handlers) {
+            this.handlers.setHandlers(handlers);
         }
     }
 
