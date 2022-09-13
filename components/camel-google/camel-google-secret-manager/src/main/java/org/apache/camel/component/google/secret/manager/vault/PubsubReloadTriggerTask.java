@@ -59,6 +59,7 @@ public class PubsubReloadTriggerTask extends ServiceSupport implements CamelCont
     private static final String CAMEL_VAULT_GCP_SERVICE_ACCOUNT_KEY = "CAMEL_VAULT_GCP_SERVICE_ACCOUNT_KEY";
     private static final String CAMEL_VAULT_GCP_PROJECT_ID = "CAMEL_VAULT_GCP_PROJECT_ID";
     private static final String CAMEL_VAULT_GCP_USE_DEFAULT_INSTANCE = "CAMEL_VAULT_GCP_USE_DEFAULT_INSTANCE";
+    private static final String CAMEL_VAULT_GCP_SUBSCRIPTION_NAME = "CAMEL_VAULT_GCP_SUBSCRIPTION_NAME";
 
     private static final Logger LOG = LoggerFactory.getLogger(PubsubReloadTriggerTask.class);
 
@@ -120,16 +121,17 @@ public class PubsubReloadTriggerTask extends ServiceSupport implements CamelCont
         String serviceAccountKey = System.getenv(CAMEL_VAULT_GCP_SERVICE_ACCOUNT_KEY);
         boolean useDefaultInstance = Boolean.parseBoolean(System.getenv(CAMEL_VAULT_GCP_USE_DEFAULT_INSTANCE));
         String projectId = System.getenv(CAMEL_VAULT_GCP_PROJECT_ID);
-        String subscription = null;
-        if (ObjectHelper.isEmpty(serviceAccountKey) && ObjectHelper.isEmpty(projectId)) {
+        String subscription = System.getenv(CAMEL_VAULT_GCP_SUBSCRIPTION_NAME);
+        if (ObjectHelper.isEmpty(serviceAccountKey) && ObjectHelper.isEmpty(projectId) && ObjectHelper.isEmpty(subscription)) {
             GcpVaultConfiguration gcpVaultConfiguration = getCamelContext().getVaultConfiguration().gcp();
             if (ObjectHelper.isNotEmpty(gcpVaultConfiguration)) {
                 serviceAccountKey = gcpVaultConfiguration.getServiceAccountKey();
                 projectId = gcpVaultConfiguration.getProjectId();
                 useDefaultInstance = gcpVaultConfiguration.isUseDefaultInstance();
+                subscription = gcpVaultConfiguration.getSubscriptionName();
             }
         }
-        if (ObjectHelper.isNotEmpty(serviceAccountKey) && ObjectHelper.isNotEmpty(projectId)) {
+        if (ObjectHelper.isNotEmpty(serviceAccountKey) && ObjectHelper.isNotEmpty(projectId) && ObjectHelper.isNotEmpty(subscription)) {
             InputStream resolveMandatoryResourceAsInputStream
                     = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), serviceAccountKey);
             Credentials myCredentials = ServiceAccountCredentials
@@ -139,7 +141,7 @@ public class PubsubReloadTriggerTask extends ServiceSupport implements CamelCont
             Subscriber.Builder builder = Subscriber.newBuilder(subscriptionName, new FilteringEventMessageReceiver());
             builder.setCredentialsProvider(FixedCredentialsProvider.create(myCredentials));
             subscriber = builder.build();
-        } else if (useDefaultInstance && ObjectHelper.isNotEmpty(projectId)) {
+        } else if (useDefaultInstance && ObjectHelper.isNotEmpty(projectId) && ObjectHelper.isNotEmpty(subscription)) {
             ProjectSubscriptionName subscriptionName =
                     ProjectSubscriptionName.of(projectId, subscription);
             Subscriber.Builder builder = Subscriber.newBuilder(subscriptionName, new FilteringEventMessageReceiver());
@@ -147,7 +149,7 @@ public class PubsubReloadTriggerTask extends ServiceSupport implements CamelCont
             subscriber = builder.build();
         } else {
             throw new RuntimeCamelException(
-                    "Using the GCP Secret Manager Properties Function requires setting GCP service account key and project Id as application properties or environment variables");
+                    "Using the GCP Secret refresh task requires setting GCP service account key, project Id and Google Pubsub subscription name as application properties or environment variables");
         }
     }
 
@@ -170,7 +172,6 @@ public class PubsubReloadTriggerTask extends ServiceSupport implements CamelCont
     @Override
     public void run() {
     	subscriber.startAsync().awaitRunning();
-    	subscriber.awaitTerminated();
     }
 
     protected boolean matchSecret(String name) {
@@ -200,8 +201,8 @@ public class PubsubReloadTriggerTask extends ServiceSupport implements CamelCont
     
     public class FilteringEventMessageReceiver implements MessageReceiver {
 
-    	private static String SECRET_UPDATE = "SECRET_UPDATE";
-    	private static String SECRET_VERSION_ADD = "SECRET_VERSION_ADD";
+    	private String SECRET_UPDATE = "SECRET_UPDATE";
+    	private String SECRET_VERSION_ADD = "SECRET_VERSION_ADD";
     	
     	private boolean triggerReloading;
     	

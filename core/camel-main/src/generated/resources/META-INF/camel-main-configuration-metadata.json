@@ -218,7 +218,11 @@
     { "name": "camel.vault.azure.tenantId", "description": "The Tenant Id for accessing Azure Key Vault", "sourceType": "org.apache.camel.vault.AzureVaultConfiguration", "type": "string", "javaType": "java.lang.String" },
     { "name": "camel.vault.azure.vaultName", "description": "The vault Name in Azure Key Vault", "sourceType": "org.apache.camel.vault.AzureVaultConfiguration", "type": "string", "javaType": "java.lang.String" },
     { "name": "camel.vault.gcp.projectId", "description": "The GCP Project ID", "sourceType": "org.apache.camel.vault.GcpVaultConfiguration", "type": "string", "javaType": "java.lang.String" },
+    { "name": "camel.vault.gcp.refreshEnabled", "description": "Whether to automatically reload Camel upon secrets being updated in AWS.", "sourceType": "org.apache.camel.vault.GcpVaultConfiguration", "type": "boolean", "javaType": "boolean", "defaultValue": "false" },
+    { "name": "camel.vault.gcp.refreshPeriod", "description": "The period (millis) between checking Google for updated secrets.", "sourceType": "org.apache.camel.vault.GcpVaultConfiguration", "type": "integer", "javaType": "long", "defaultValue": 30000 },
+    { "name": "camel.vault.gcp.secrets", "description": "Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma.", "sourceType": "org.apache.camel.vault.GcpVaultConfiguration", "type": "string", "javaType": "java.lang.String" },
     { "name": "camel.vault.gcp.serviceAccountKey", "description": "The Service Account Key location", "sourceType": "org.apache.camel.vault.GcpVaultConfiguration", "type": "string", "javaType": "java.lang.String" },
+    { "name": "camel.vault.gcp.subscriptionName", "description": "Define the Google Pubsub subscription Name to be used when checking for updates", "sourceType": "org.apache.camel.vault.GcpVaultConfiguration", "type": "string", "javaType": "java.lang.String" },
     { "name": "camel.vault.gcp.useDefaultInstance", "description": "Define if we want to use the GCP Client Default Instance or not", "sourceType": "org.apache.camel.vault.GcpVaultConfiguration", "type": "boolean", "javaType": "boolean", "defaultValue": "false" }
   ]
 }

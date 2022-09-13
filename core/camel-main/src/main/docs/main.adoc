@@ -223,13 +223,17 @@ The camel.vault.aws supports 7 options, which are listed below.
 |===
 
 === Camel GCP Vault configurations
-The camel.vault.gcp supports 3 options, which are listed below.
+The camel.vault.gcp supports 7 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *camel.vault.gcp.projectId* | The GCP Project ID |  | String
+| *camel.vault.gcp.refreshEnabled* | Whether to automatically reload Camel upon secrets being updated in AWS. | false | boolean
+| *camel.vault.gcp.refreshPeriod* | The period (millis) between checking Google for updated secrets. | 30000 | long
+| *camel.vault.gcp.secrets* | Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma. |  | String
 | *camel.vault.gcp.serviceAccount{zwsp}Key* | The Service Account Key location |  | String
+| *camel.vault.gcp.subscription{zwsp}Name* | Define the Google Pubsub subscription Name to be used when checking for updates |  | String
 | *camel.vault.gcp.useDefault{zwsp}Instance* | Define if we want to use the GCP Client Default Instance or not | false | boolean
 |===
 
