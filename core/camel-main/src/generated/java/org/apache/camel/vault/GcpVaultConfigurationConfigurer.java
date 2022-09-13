@@ -31,8 +31,16 @@ public class GcpVaultConfigurationConfigurer extends org.apache.camel.support.co
         case "HashicorpVaultConfiguration": target.setHashicorpVaultConfiguration(property(camelContext, org.apache.camel.vault.HashicorpVaultConfiguration.class, value)); return true;
         case "projectid":
         case "ProjectId": target.setProjectId(property(camelContext, java.lang.String.class, value)); return true;
+        case "refreshenabled":
+        case "RefreshEnabled": target.setRefreshEnabled(property(camelContext, boolean.class, value)); return true;
+        case "refreshperiod":
+        case "RefreshPeriod": target.setRefreshPeriod(property(camelContext, long.class, value)); return true;
+        case "secrets":
+        case "Secrets": target.setSecrets(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceaccountkey":
         case "ServiceAccountKey": target.setServiceAccountKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "subscriptionname":
+        case "SubscriptionName": target.setSubscriptionName(property(camelContext, java.lang.String.class, value)); return true;
         case "usedefaultinstance":
         case "UseDefaultInstance": target.setUseDefaultInstance(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -52,8 +60,16 @@ public class GcpVaultConfigurationConfigurer extends org.apache.camel.support.co
         case "HashicorpVaultConfiguration": return org.apache.camel.vault.HashicorpVaultConfiguration.class;
         case "projectid":
         case "ProjectId": return java.lang.String.class;
+        case "refreshenabled":
+        case "RefreshEnabled": return boolean.class;
+        case "refreshperiod":
+        case "RefreshPeriod": return long.class;
+        case "secrets":
+        case "Secrets": return java.lang.String.class;
         case "serviceaccountkey":
         case "ServiceAccountKey": return java.lang.String.class;
+        case "subscriptionname":
+        case "SubscriptionName": return java.lang.String.class;
         case "usedefaultinstance":
         case "UseDefaultInstance": return boolean.class;
         default: return null;
@@ -74,8 +90,16 @@ public class GcpVaultConfigurationConfigurer extends org.apache.camel.support.co
         case "HashicorpVaultConfiguration": return target.getHashicorpVaultConfiguration();
         case "projectid":
         case "ProjectId": return target.getProjectId();
+        case "refreshenabled":
+        case "RefreshEnabled": return target.isRefreshEnabled();
+        case "refreshperiod":
+        case "RefreshPeriod": return target.getRefreshPeriod();
+        case "secrets":
+        case "Secrets": return target.getSecrets();
         case "serviceaccountkey":
         case "ServiceAccountKey": return target.getServiceAccountKey();
+        case "subscriptionname":
+        case "SubscriptionName": return target.getSubscriptionName();
         case "usedefaultinstance":
         case "UseDefaultInstance": return target.isUseDefaultInstance();
         default: return null;
