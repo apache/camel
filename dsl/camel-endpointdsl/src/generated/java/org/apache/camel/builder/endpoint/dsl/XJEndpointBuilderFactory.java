@@ -517,6 +517,45 @@ public interface XJEndpointBuilderFactory {
             return this;
         }
         /**
+         * Feature for XML secure processing (see javax.xml.XMLConstants). This
+         * is enabled by default. However, when using Saxon Professional you may
+         * need to turn this off to allow Saxon to be able to use Java extension
+         * functions.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param secureProcessing the value to set
+         * @return the dsl builder
+         */
+        default AdvancedXJEndpointBuilder secureProcessing(
+                boolean secureProcessing) {
+            doSetProperty("secureProcessing", secureProcessing);
+            return this;
+        }
+        /**
+         * Feature for XML secure processing (see javax.xml.XMLConstants). This
+         * is enabled by default. However, when using Saxon Professional you may
+         * need to turn this off to allow Saxon to be able to use Java extension
+         * functions.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param secureProcessing the value to set
+         * @return the dsl builder
+         */
+        default AdvancedXJEndpointBuilder secureProcessing(
+                String secureProcessing) {
+            doSetProperty("secureProcessing", secureProcessing);
+            return this;
+        }
+        /**
          * To use a custom XSLT transformer factory.
          * 
          * The option is a:
