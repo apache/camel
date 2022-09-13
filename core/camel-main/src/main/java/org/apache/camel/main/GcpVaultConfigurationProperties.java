@@ -72,7 +72,7 @@ public class GcpVaultConfigurationProperties extends GcpVaultConfiguration imple
         setUseDefaultInstance(useDefaultInstance);
         return this;
     }
-    
+
     /**
      * The Pubsub subscriptionName name
      */
@@ -80,7 +80,7 @@ public class GcpVaultConfigurationProperties extends GcpVaultConfiguration imple
         setSubscriptionName(subscriptionName);
         return this;
     }
-    
+
     /**
      * Whether to automatically reload Camel upon secrets being updated in Google.
      */

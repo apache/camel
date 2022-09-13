@@ -71,17 +71,16 @@ public class GcpVaultConfiguration extends VaultConfiguration {
         this.useDefaultInstance = useDefaultInstance;
     }
 
-	public String getSubscriptionName() {
-		return subscriptionName;
-	}
+    public String getSubscriptionName() {
+        return subscriptionName;
+    }
 
     /**
      * Define the Google Pubsub subscription Name to be used when checking for updates
      */
-	public void setSubscriptionName(String subscriptionName) {
-		this.subscriptionName = subscriptionName;
-	}
-	
+    public void setSubscriptionName(String subscriptionName) {
+        this.subscriptionName = subscriptionName;
+    }
 
     public boolean isRefreshEnabled() {
         return refreshEnabled;
