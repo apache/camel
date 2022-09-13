@@ -213,7 +213,7 @@ public class PubsubReloadTriggerTask extends ServiceSupport implements CamelCont
             if (eventType.equalsIgnoreCase(SECRET_UPDATE) || eventType.equalsIgnoreCase(SECRET_VERSION_ADD)) {
             	if (matchSecret(secretId)) {
                     if (isReloadEnabled()) {
-                        LOG.info("Update for AWS secret: {} detected, triggering CamelContext reload", secretId);
+                        LOG.info("Update for GCP secret: {} detected, triggering CamelContext reload", secretId.toString());
                         triggerReloading = true;
                     }
             	}
