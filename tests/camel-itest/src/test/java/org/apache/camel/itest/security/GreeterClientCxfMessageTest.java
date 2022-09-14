@@ -17,10 +17,13 @@
 package org.apache.camel.itest.security;
 
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.springframework.test.context.ContextConfiguration;
 
 @CamelSpringTest
 @ContextConfiguration(locations = { "CxfMessageCamelContext.xml" })
+@EnabledIf(value = "org.apache.camel.itest.security.GreeterClientTest#isPortAvailable",
+           disabledReason = "This test uses a fixed port that may not be available on certain hosts")
 public class GreeterClientCxfMessageTest extends GreeterClientTest {
 
 }
