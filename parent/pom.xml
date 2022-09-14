@@ -519,7 +519,6 @@
         <velocity-tools-version>3.1</velocity-tools-version>
         <velocity-version>2.3</velocity-version>
         <vertx-version>4.3.3</vertx-version>
-        <vertx-web-client-version>4.3.3</vertx-web-client-version>
         <vysper-version>0.7</vysper-version>
         <web3j-version>3.6.0</web3j-version>
         <web3j-quorum-version>0.8.0</web3j-quorum-version>
