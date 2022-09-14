@@ -44,6 +44,16 @@
             <groupId>org.eclipse.californium</groupId>
             <artifactId>californium-core</artifactId>
             <version>${californium-version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>element-connector</artifactId>
+                    <groupId>org.eclipse.californium</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>californium-legal</artifactId>
+                    <groupId>org.eclipse.californium</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.eclipse.californium</groupId>
@@ -54,7 +64,29 @@
             <groupId>org.eclipse.californium</groupId>
             <artifactId>element-connector-tcp-netty</artifactId>
             <version>${californium-version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>element-connector</artifactId>
+                    <groupId>org.eclipse.californium</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>californium-legal</artifactId>
+                    <groupId>org.eclipse.californium</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
+
+        <dependency>
+            <artifactId>element-connector</artifactId>
+            <groupId>org.eclipse.californium</groupId>
+            <version>${californium-scandium-version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>californium-legal</artifactId>
+            <groupId>org.eclipse.californium</groupId>
+            <version>${californium-scandium-version}</version>
+        </dependency>
+
 
         <!-- logging -->
         <dependency>
