@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.kubernetes.services;
 
+import java.util.List;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.ServiceBuilder;
 import io.fabric8.kubernetes.api.model.ServiceList;
 import io.fabric8.kubernetes.api.model.ServiceSpec;
+import io.fabric8.kubernetes.api.model.StatusDetails;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -165,8 +167,10 @@ public class KubernetesServicesProducer extends DefaultProducer {
             LOG.error("Delete a specific service require specify a namespace name");
             throw new IllegalArgumentException("Delete a specific service require specify a namespace name");
         }
-        boolean serviceDeleted
+
+        List<StatusDetails> statusDetails
                 = getEndpoint().getKubernetesClient().services().inNamespace(namespaceName).withName(serviceName).delete();
+        boolean serviceDeleted = ObjectHelper.isNotEmpty(statusDetails);
 
         prepareOutboundMessage(exchange, serviceDeleted);
     }

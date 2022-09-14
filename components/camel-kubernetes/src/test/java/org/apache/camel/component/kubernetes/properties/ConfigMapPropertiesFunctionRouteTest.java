@@ -69,7 +69,7 @@ public class ConfigMapPropertiesFunctionRouteTest extends KubernetesTestSupport 
 
         Map<String, String> data = Map.of("foo", "123", "bar", "Moes Bar");
         ConfigMap cm = new ConfigMapBuilder().editOrNewMetadata().withName("myconfig").endMetadata().withData(data).build();
-        this.cm = client.configMaps().createOrReplace(cm);
+        this.cm = client.resource(cm).createOrReplace();
 
         return context;
     }
@@ -78,7 +78,7 @@ public class ConfigMapPropertiesFunctionRouteTest extends KubernetesTestSupport 
     public void tearDown() throws Exception {
         if (client != null && cm != null) {
             try {
-                client.configMaps().delete(cm);
+                client.resource(cm).delete();
             } catch (Exception e) {
                 // ignore
             }

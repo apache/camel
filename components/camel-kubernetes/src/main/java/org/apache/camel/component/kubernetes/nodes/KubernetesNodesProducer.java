@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.kubernetes.nodes;
 
+import java.util.List;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.Node;
 import io.fabric8.kubernetes.api.model.NodeBuilder;
 import io.fabric8.kubernetes.api.model.NodeList;
 import io.fabric8.kubernetes.api.model.NodeSpec;
+import io.fabric8.kubernetes.api.model.StatusDetails;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -132,7 +134,9 @@ public class KubernetesNodesProducer extends DefaultProducer {
             LOG.error("Deleting a specific Node require specify a Node name");
             throw new IllegalArgumentException("Deleting a specific Node require specify a Node name");
         }
-        boolean nodeDeleted = getEndpoint().getKubernetesClient().nodes().withName(nodeName).delete();
+
+        List<StatusDetails> statusDetails = getEndpoint().getKubernetesClient().nodes().withName(nodeName).delete();
+        boolean nodeDeleted = ObjectHelper.isNotEmpty(statusDetails);
 
         prepareOutboundMessage(exchange, nodeDeleted);
     }

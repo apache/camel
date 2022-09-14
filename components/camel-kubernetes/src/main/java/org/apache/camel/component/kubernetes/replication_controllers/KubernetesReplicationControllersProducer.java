@@ -16,13 +16,14 @@
  */
 package org.apache.camel.component.kubernetes.replication_controllers;
 
+import java.util.List;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.ReplicationController;
 import io.fabric8.kubernetes.api.model.ReplicationControllerBuilder;
 import io.fabric8.kubernetes.api.model.ReplicationControllerList;
 import io.fabric8.kubernetes.api.model.ReplicationControllerSpec;
-import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
+import io.fabric8.kubernetes.api.model.StatusDetails;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.RollableScalableResource;
 import org.apache.camel.Exchange;
@@ -110,11 +111,11 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
 
             rcList = replicationControllers.withLabels(labels).list();
         } else {
-            FilterWatchListMultiDeletable<ReplicationController, ReplicationControllerList> replicationControllers
-                    = getEndpoint()
-                            .getKubernetesClient().replicationControllers().inAnyNamespace();
-
-            rcList = replicationControllers.withLabels(labels).list();
+            rcList = getEndpoint().getKubernetesClient()
+                    .replicationControllers()
+                    .inAnyNamespace()
+                    .withLabels(labels)
+                    .list();
         }
 
         prepareOutboundMessage(exchange, rcList.getItems());
@@ -180,8 +181,11 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
             LOG.error("Delete a specific replication controller require specify a namespace name");
             throw new IllegalArgumentException("Delete a specific replication controller require specify a namespace name");
         }
-        boolean rcDeleted = getEndpoint().getKubernetesClient().replicationControllers().inNamespace(namespaceName)
-                .withName(rcName).delete();
+
+        List<StatusDetails> statusDetails
+                = getEndpoint().getKubernetesClient().replicationControllers().inNamespace(namespaceName)
+                        .withName(rcName).delete();
+        boolean rcDeleted = ObjectHelper.isNotEmpty(statusDetails);
 
         prepareOutboundMessage(exchange, rcDeleted);
     }

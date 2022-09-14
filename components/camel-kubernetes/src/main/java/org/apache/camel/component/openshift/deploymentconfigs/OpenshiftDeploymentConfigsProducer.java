@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.openshift.deploymentconfigs;
 
+import java.util.List;
 import java.util.Map;
 
+import io.fabric8.kubernetes.api.model.StatusDetails;
 import io.fabric8.openshift.api.model.DeploymentConfig;
 import io.fabric8.openshift.api.model.DeploymentConfigBuilder;
 import io.fabric8.openshift.api.model.DeploymentConfigList;
@@ -123,11 +125,12 @@ public class OpenshiftDeploymentConfigsProducer extends DefaultProducer {
             throw new IllegalArgumentException("Delete a specific deployment config require specify a namespace name");
         }
 
-        Boolean deploymentConfig = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).deploymentConfigs()
+        List<StatusDetails> statusDetails = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).deploymentConfigs()
                 .inNamespace(namespaceName)
                 .withName(deploymentName).delete();
+        boolean deploymentConfigDeleted = ObjectHelper.isNotEmpty(statusDetails);
 
-        prepareOutboundMessage(exchange, deploymentConfig);
+        prepareOutboundMessage(exchange, deploymentConfigDeleted);
     }
 
     protected void doCreateDeployment(Exchange exchange) {

@@ -16,11 +16,13 @@
  */
 package org.apache.camel.component.kubernetes.namespaces;
 
+import java.util.List;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.Namespace;
 import io.fabric8.kubernetes.api.model.NamespaceBuilder;
 import io.fabric8.kubernetes.api.model.NamespaceList;
+import io.fabric8.kubernetes.api.model.StatusDetails;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -126,8 +128,10 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
             LOG.error("Delete a specific namespace require specify a namespace name");
             throw new IllegalArgumentException("Delete a specific namespace require specify a namespace name");
         }
-        Boolean namespace = getEndpoint().getKubernetesClient().namespaces().withName(namespaceName).delete();
 
-        prepareOutboundMessage(exchange, namespace);
+        List<StatusDetails> statusDetails = getEndpoint().getKubernetesClient().namespaces().withName(namespaceName).delete();
+        boolean namespaceDeleted = ObjectHelper.isNotEmpty(statusDetails);
+
+        prepareOutboundMessage(exchange, namespaceDeleted);
     }
 }

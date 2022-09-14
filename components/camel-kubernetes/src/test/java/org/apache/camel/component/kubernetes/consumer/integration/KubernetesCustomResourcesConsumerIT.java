@@ -16,6 +16,15 @@
  */
 package org.apache.camel.component.kubernetes.consumer.integration;
 
+import java.util.Collections;
+
+import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceDefinition;
+import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceDefinitionBuilder;
+import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceDefinitionVersionBuilder;
+import io.fabric8.kubernetes.api.model.apiextensions.v1.JSONSchemaPropsBuilder;
+import io.fabric8.kubernetes.client.DefaultKubernetesClient;
+import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.Watcher;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -24,91 +33,130 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Disabled("Requires a running Kubernetes Cluster")
+@EnabledIfSystemProperties({
+        @EnabledIfSystemProperty(named = "kubernetes.test.auth", matches = ".*", disabledReason = "Requires kubernetes"),
+        @EnabledIfSystemProperty(named = "kubernetes.test.host", matches = ".*", disabledReason = "Requires kubernetes"),
+        @EnabledIfSystemProperty(named = "kubernetes.test.host.k8s", matches = "true", disabledReason = "Requires kubernetes"),
+})
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class KubernetesCustomResourcesConsumerIT extends KubernetesTestSupport {
+
+    private static final KubernetesClient CLIENT = new DefaultKubernetesClient();
+    private static CustomResourceDefinition crd;
 
     @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
 
-    private String gitHubSourceString = "{" +
-                                        "\"apiVersion\": \"sources.knative.dev/v1alpha1\"," +
-                                        "\"kind\": \"GitHubSource\"," +
-                                        "\"metadata\": {" +
-                                        "   \"name\": \"test\"}," +
-                                        "\"spec\": {" +
-                                        "   \"eventTypes\": [issues, repository]," +
-                                        "   \"ownerAndRepository\": \"akihikokuroda/sample\"," +
-                                        "   \"accessToken\": {" +
-                                        "       \"secretKeyRef\": {" +
-                                        "           \"name\": \"githubsecret\"," +
-                                        "           \"key\": \"accessToken\"}}," +
-                                        "   \"secretToken\": {" +
-                                        "       \"secretKeyRef\": {" +
-                                        "           \"name\": \"githubsecret\"," +
-                                        "           \"key\": \"secretToken\"}}}," +
-                                        "\"githubAPIURL\": \"https://api.github.com/\"," +
-                                        "\"sink\": {" +
-                                        "    \"ref\": {" +
-                                        "       \"apiVersion\": \"messaging.knative.dev/v1beta1\"," +
-                                        "       \"kind\": \"Channel\"," +
-                                        "       \"name\": \"github\"}}" +
-                                        "}";
+    private String crdSourceString = "{\n" +
+                                     "  \"apiVersion\": \"camel.apache.org/v1\",\n" +
+                                     "  \"kind\": \"CamelTest\",\n" +
+                                     "  \"metadata\": {\n" +
+                                     "    \"name\": \"camel-crd-itest\"\n" +
+                                     "  },\n" +
+                                     "  \"spec\": {\n" +
+                                     "    \"message\": \"Apache Camel Rocks!\"\n" +
+                                     "  }\n" +
+                                     "}";
+
+    @BeforeAll
+    public static void beforeAll() {
+        crd = new CustomResourceDefinitionBuilder()
+                .withNewMetadata().withName("cameltests.camel.apache.org").endMetadata()
+                .withNewSpec()
+                .withGroup("camel.apache.org")
+                .addAllToVersions(Collections.singletonList(new CustomResourceDefinitionVersionBuilder()
+                        .withName("v1")
+                        .withServed(true)
+                        .withStorage(true)
+                        .withNewSchema()
+                        .withNewOpenAPIV3Schema()
+                        .withType("object")
+                        .addToProperties("spec", new JSONSchemaPropsBuilder()
+                                .withType("object")
+                                .addToProperties("message", new JSONSchemaPropsBuilder()
+                                        .withType("string")
+                                        .build())
+                                .build())
+                        .endOpenAPIV3Schema()
+                        .endSchema()
+                        .build()))
+                .withScope("Namespaced")
+                .withNewNames()
+                .withPlural("cameltests")
+                .withSingular("cameltest")
+                .withShortNames("ct")
+                .withKind("CamelTest")
+                .endNames()
+                .endSpec()
+                .build();
+
+        CLIENT.resource(crd).createOrReplace();
+    }
+
+    @AfterAll
+    public static void afterAll() {
+        if (crd != null) {
+            CLIENT.resource(crd).delete();
+        }
+    }
 
     @Test
     @Order(1)
-    public void createCustomResource() {
-        mockResultEndpoint.expectedMessageCount(2);
-        mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED",
-                "MODIFIED");
+    public void createCustomResource() throws Exception {
+        mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_CRD_EVENT_ACTION,
+                Watcher.Action.ADDED);
         Exchange ex = template.request("direct:createCustomResource", exchange -> {
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_NAME, "createtest");
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_NAME, "githubsources.sources.knative.dev");
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_GROUP, "sources.knative.dev");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE, crdSourceString);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE_NAME, "camel-crd-itest");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_NAME, "cameltests.camel.apache.org");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_GROUP, "camel.apache.org");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_SCOPE, "Namespaced");
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_VERSION, "v1alpha1");
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_PLURAL, "githubsources");
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE, gitHubSourceString);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_VERSION, "v1");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_PLURAL, "cameltests");
         });
 
-        // Maybe knative is not available
+        mockResultEndpoint.assertIsSatisfied(5000);
+
         assertNotNull(ex.getMessage());
         assertNotNull(ex.getMessage().getBody());
     }
 
     @Test
     @Order(2)
-    public void deleteCustomResource() {
-        mockResultEndpoint.expectedMessageCount(2);
-        mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED",
-                "MODIFIED");
+    public void deleteCustomResource() throws Exception {
+        mockResultEndpoint.reset();
+        mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_CRD_EVENT_ACTION,
+                Watcher.Action.ADDED, Watcher.Action.DELETED);
+
         Exchange ex = template.request("direct:deleteCustomResource", exchange -> {
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE_NAME, "createtest");
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_NAME, "githubsources.sources.knative.dev");
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_GROUP, "sources.knative.dev");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE_NAME, "camel-crd-itest");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_NAME, "cameltests.camel.apache.org");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_GROUP, "camel.apache.org");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_SCOPE, "Namespaced");
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_VERSION, "v1alpha1");
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_PLURAL, "githubsources");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_VERSION, "v1");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_PLURAL, "cameltests");
         });
 
-        Message message = ex.getMessage();
+        mockResultEndpoint.assertIsSatisfied(5000);
 
-        assertNotNull(message);
-        assertNotNull(message.getBody());
-
-        boolean cmDeleted = message.getBody(Boolean.class);
-        assertTrue(cmDeleted);
+        assertNotNull(ex);
+        assertNull(ex.getMessage().getBody());
+        assertTrue(ex.getMessage().getHeader(KubernetesConstants.KUBERNETES_DELETE_RESULT, Boolean.class));
     }
 
     @Override
@@ -120,8 +168,8 @@ public class KubernetesCustomResourcesConsumerIT extends KubernetesTestSupport {
                         .toF("kubernetes-custom-resources://%s/?oauthToken=%s&operation=createCustomResource", host, authToken);
                 from("direct:deleteCustomResource")
                         .toF("kubernetes-custom-resources://%s/?oauthToken=%s&operation=deleteCustomResource", host, authToken);
-                fromF("kubernetes-custom-resources://%s/?oauthToken=%s&namespace=test" +
-                      "&crdName=githubsources.sources.knative.dev&crdGroup=sources.knative.dev&crdScope=Namespaced&crdVersion=v1alpha1&crdPlural=githubsources&namespace=test",
+                fromF("kubernetes-custom-resources://%s/?oauthToken=%s&namespace=default" +
+                      "&crdName=cameltests.camel.apache.org&crdGroup=camel.apache.org&crdScope=Namespaced&crdVersion=v1&crdPlural=cameltests",
                         host, authToken)
                                 .process(new KubernetesProcessor()).to(mockResultEndpoint);
             }

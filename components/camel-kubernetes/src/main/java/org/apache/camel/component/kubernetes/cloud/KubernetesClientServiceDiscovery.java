@@ -23,8 +23,9 @@ import io.fabric8.kubernetes.api.model.EndpointAddress;
 import io.fabric8.kubernetes.api.model.EndpointPort;
 import io.fabric8.kubernetes.api.model.EndpointSubset;
 import io.fabric8.kubernetes.api.model.Endpoints;
-import io.fabric8.kubernetes.client.AutoAdaptableKubernetesClient;
 import io.fabric8.kubernetes.client.ConfigBuilder;
+import io.fabric8.kubernetes.client.DefaultKubernetesClient;
+import io.fabric8.kubernetes.client.KubernetesClient;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.impl.cloud.DefaultServiceDefinition;
@@ -38,7 +39,7 @@ public class KubernetesClientServiceDiscovery extends KubernetesServiceDiscovery
 
     private final String namespace;
     private final String portName;
-    private AutoAdaptableKubernetesClient client;
+    private KubernetesClient client;
 
     public KubernetesClientServiceDiscovery(KubernetesConfiguration configuration) {
         super(configuration);
@@ -121,7 +122,7 @@ public class KubernetesClientServiceDiscovery extends KubernetesServiceDiscovery
         ObjectHelper.ifNotEmpty(configuration.getClientKeyPassphrase(), builder::withClientKeyPassphrase);
         ObjectHelper.ifNotEmpty(configuration.getTrustCerts(), builder::withTrustCerts);
 
-        client = new AutoAdaptableKubernetesClient(builder.build());
+        client = new DefaultKubernetesClient(builder.build());
     }
 
     private boolean hasUsernameAndPassword(KubernetesConfiguration configuration) {
