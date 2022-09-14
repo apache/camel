@@ -2148,6 +2148,9 @@
           "slowCallRateThreshold" : {
             "type" : "number"
           },
+          "throwExceptionWhenHalfOpenOrOpenState" : {
+            "type" : "boolean"
+          },
           "waitDurationInOpenState" : {
             "type" : "number"
           },
