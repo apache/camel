@@ -140,8 +140,8 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
     }
 
     /**
-     * Whether to throw io.github.resilience4j.circuitbreaker.CallNotPermittedException when the call
-     * is rejected due circuit breaker is half open or open.
+     * Whether to throw io.github.resilience4j.circuitbreaker.CallNotPermittedException when the call is rejected due
+     * circuit breaker is half open or open.
      */
     public void setThrowExceptionWhenHalfOpenOrOpenState(String throwExceptionWhenHalfOpenOrOpenState) {
         this.throwExceptionWhenHalfOpenOrOpenState = throwExceptionWhenHalfOpenOrOpenState;

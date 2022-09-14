@@ -11548,6 +11548,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "sliding-window-type", type = "enum:TIME_BASED,COUNT_BASED"),
                     @YamlProperty(name = "slow-call-duration-threshold", type = "number"),
                     @YamlProperty(name = "slow-call-rate-threshold", type = "number"),
+                    @YamlProperty(name = "throw-exception-when-half-open-or-open-state", type = "boolean"),
                     @YamlProperty(name = "wait-duration-in-open-state", type = "number"),
                     @YamlProperty(name = "writable-stack-trace-enabled", type = "boolean")
             }
@@ -11619,6 +11620,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "slow-call-rate-threshold": {
                     String val = asText(node);
                     target.setSlowCallRateThreshold(val);
+                    break;
+                }
+                case "throw-exception-when-half-open-or-open-state": {
+                    String val = asText(node);
+                    target.setThrowExceptionWhenHalfOpenOrOpenState(val);
                     break;
                 }
                 case "wait-duration-in-open-state": {
