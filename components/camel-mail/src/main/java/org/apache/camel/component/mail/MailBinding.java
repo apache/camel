@@ -360,11 +360,11 @@ public class MailBinding {
                 String fileName = part.getFileName();
 
                 if (isAttachment(disposition) && (fileName == null || fileName.isEmpty())) {
-                    if (getGenerateMissingAttachmentNames().equalsIgnoreCase(MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_UUID)) {
+                    if (generateMissingAttachmentNames != null
+                            && generateMissingAttachmentNames.equalsIgnoreCase(MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_UUID)) {
                         fileName = UUID.randomUUID().toString();
                     }
                 }
-
                 if (fileName != null && decodeFilename) {
                     fileName = MimeUtility.decodeText(fileName);
                 }
@@ -386,7 +386,7 @@ public class MailBinding {
 
                 if (validDisposition(disposition, fileName)) {
                     LOG.debug("Mail contains file attachment: {}", fileName);
-                    if (handleDuplicateAttachmentNames
+                    if (handleDuplicateAttachmentNames != null && handleDuplicateAttachmentNames
                             .equalsIgnoreCase(MailConstants.MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_UUID_PREFIX)) {
                         fileName = handleDuplicateFilenames(map, fileName);
                     }
