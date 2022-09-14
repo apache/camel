@@ -142,6 +142,7 @@ public class RouteDevConsole extends AbstractDevConsole {
         for (ManagedProcessorMBean mp : mps) {
             sb.append("\n");
             sb.append(String.format("\n        Id: %s", mp.getProcessorId()));
+            sb.append(String.format("\n        Processor: %s", mp.getProcessorName()));
             if (mp.getSourceLocation() != null) {
                 String loc = mp.getSourceLocation();
                 if (mp.getSourceLineNumber() != null) {
@@ -267,6 +268,7 @@ public class RouteDevConsole extends AbstractDevConsole {
                 }
                 jo.put("source", loc);
             }
+            jo.put("processor", mp.getProcessorName());
             JsonObject stats = new JsonObject();
             stats.put("exchangesTotal", mp.getExchangesTotal());
             stats.put("exchangesFailed", mp.getExchangesFailed());
