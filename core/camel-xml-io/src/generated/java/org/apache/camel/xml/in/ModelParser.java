@@ -891,6 +891,7 @@ public class ModelParser extends BaseParser {
                 case "slidingWindowType": def.setSlidingWindowType(val); break;
                 case "slowCallDurationThreshold": def.setSlowCallDurationThreshold(val); break;
                 case "slowCallRateThreshold": def.setSlowCallRateThreshold(val); break;
+                case "throwExceptionWhenHalfOpenOrOpenState": def.setThrowExceptionWhenHalfOpenOrOpenState(val); break;
                 case "waitDurationInOpenState": def.setWaitDurationInOpenState(val); break;
                 case "writableStackTraceEnabled": def.setWritableStackTraceEnabled(val); break;
                 default: return identifiedTypeAttributeHandler().accept(def, key, val);

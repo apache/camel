@@ -33,6 +33,7 @@ public class Resilience4jConfigurationPropertiesConfigurer extends org.apache.ca
         map.put("SlidingWindowType", java.lang.String.class);
         map.put("SlowCallDurationThreshold", java.lang.Integer.class);
         map.put("SlowCallRateThreshold", java.lang.Float.class);
+        map.put("ThrowExceptionWhenHalfOpenOrOpenState", java.lang.Boolean.class);
         map.put("TimeoutCancelRunningFuture", java.lang.Boolean.class);
         map.put("TimeoutDuration", java.lang.Integer.class);
         map.put("TimeoutEnabled", java.lang.Boolean.class);
@@ -73,6 +74,8 @@ public class Resilience4jConfigurationPropertiesConfigurer extends org.apache.ca
         case "SlowCallDurationThreshold": target.setSlowCallDurationThreshold(property(camelContext, java.lang.Integer.class, value)); return true;
         case "slowcallratethreshold":
         case "SlowCallRateThreshold": target.setSlowCallRateThreshold(property(camelContext, java.lang.Float.class, value)); return true;
+        case "throwexceptionwhenhalfopenoropenstate":
+        case "ThrowExceptionWhenHalfOpenOrOpenState": target.setThrowExceptionWhenHalfOpenOrOpenState(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "timeoutcancelrunningfuture":
         case "TimeoutCancelRunningFuture": target.setTimeoutCancelRunningFuture(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "timeoutduration":
@@ -127,6 +130,8 @@ public class Resilience4jConfigurationPropertiesConfigurer extends org.apache.ca
         case "SlowCallDurationThreshold": return java.lang.Integer.class;
         case "slowcallratethreshold":
         case "SlowCallRateThreshold": return java.lang.Float.class;
+        case "throwexceptionwhenhalfopenoropenstate":
+        case "ThrowExceptionWhenHalfOpenOrOpenState": return java.lang.Boolean.class;
         case "timeoutcancelrunningfuture":
         case "TimeoutCancelRunningFuture": return java.lang.Boolean.class;
         case "timeoutduration":
@@ -173,6 +178,8 @@ public class Resilience4jConfigurationPropertiesConfigurer extends org.apache.ca
         case "SlowCallDurationThreshold": return target.getSlowCallDurationThreshold();
         case "slowcallratethreshold":
         case "SlowCallRateThreshold": return target.getSlowCallRateThreshold();
+        case "throwexceptionwhenhalfopenoropenstate":
+        case "ThrowExceptionWhenHalfOpenOrOpenState": return target.getThrowExceptionWhenHalfOpenOrOpenState();
         case "timeoutcancelrunningfuture":
         case "TimeoutCancelRunningFuture": return target.getTimeoutCancelRunningFuture();
         case "timeoutduration":

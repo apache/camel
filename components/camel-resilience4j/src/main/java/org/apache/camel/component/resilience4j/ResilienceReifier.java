@@ -37,6 +37,7 @@ import org.apache.camel.reifier.ProcessorReifier;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.function.Suppliers;
 
@@ -63,8 +64,14 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         CircuitBreakerConfig cbConfig = configureCircuitBreaker(config);
         BulkheadConfig bhConfig = configureBulkHead(config);
         TimeLimiterConfig tlConfig = configureTimeLimiter(config);
+        boolean throwExceptionWhenHalfOpenOrOpenState = false;
+        Boolean b = CamelContextHelper.parseBoolean(camelContext, config.getThrowExceptionWhenHalfOpenOrOpenState());
+        if (b != null) {
+            throwExceptionWhenHalfOpenOrOpenState = b;
+        }
 
-        ResilienceProcessor answer = new ResilienceProcessor(cbConfig, bhConfig, tlConfig, processor, fallback);
+        ResilienceProcessor answer = new ResilienceProcessor(
+                cbConfig, bhConfig, tlConfig, processor, fallback, throwExceptionWhenHalfOpenOrOpenState);
         configureTimeoutExecutorService(answer, config);
         // using any existing circuit breakers?
         if (config.getCircuitBreaker() != null) {
