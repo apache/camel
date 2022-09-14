@@ -128,7 +128,8 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
     @Test
     public void testSimpleLeaderElectionWithExistingConfigMap() {
         this.configMapLockSimulator = new ConfigMapLockSimulator("leaders");
-        configMapLockSimulator.setResource(new ConfigMapBuilder().withNewMetadata().withName("leaders").and().build(), true);
+        configMapLockSimulator.setResource(
+                new ConfigMapBuilder().withNewMetadata().withNamespace("test").withName("leaders").and().build(), true);
 
         LeaderRecorder mypod1 = addMember("mypod1", LeaseResourceType.ConfigMap);
         LeaderRecorder mypod2 = addMember("mypod2", LeaseResourceType.ConfigMap);
@@ -146,7 +147,7 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
     public void testSimpleLeaderElectionWithExistingLeases() {
         LeaseLockSimulator simulator = new LeaseLockSimulator("leaders-mygroup");
         simulator.setResource(new LeaseBuilder()
-                .withNewMetadata().withName("leaders-mygroup")
+                .withNewMetadata().withName("leaders-mygroup").withNamespace("test")
                 .and()
                 .build(), true);
         this.leaseLockSimulators.put("mygroup", simulator);

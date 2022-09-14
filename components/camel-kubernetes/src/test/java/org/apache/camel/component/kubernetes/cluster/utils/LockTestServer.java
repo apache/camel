@@ -114,6 +114,10 @@ public class LockTestServer<T extends HasMetadata> extends KubernetesMockServer 
                                 return 500;
                             }
 
+                            if (resource.getMetadata().getNamespace() == null) {
+                                resource.getMetadata().setNamespace("test");
+                            }
+
                             boolean done = lockSimulator.setResource(resource, true);
                             if (done) {
                                 lockNames.put(request.getSequenceNumber(), lockSimulator.getResourceName());

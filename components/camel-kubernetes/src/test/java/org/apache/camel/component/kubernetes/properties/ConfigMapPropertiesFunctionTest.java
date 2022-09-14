@@ -51,7 +51,7 @@ public class ConfigMapPropertiesFunctionTest extends KubernetesTestSupport {
 
         Map<String, String> data = Map.of("foo", "123", "bar", "Moes Bar");
         ConfigMap cm = new ConfigMapBuilder().editOrNewMetadata().withName("myconfig").endMetadata().withData(data).build();
-        client.configMaps().createOrReplace(cm);
+        client.resource(cm).createOrReplace();
 
         try {
             ConfigMapPropertiesFunction cmf = new ConfigMapPropertiesFunction();
@@ -73,7 +73,7 @@ public class ConfigMapPropertiesFunctionTest extends KubernetesTestSupport {
 
             cmf.stop();
         } finally {
-            client.configMaps().delete(cm);
+            client.resource(cm).delete();
         }
     }
 

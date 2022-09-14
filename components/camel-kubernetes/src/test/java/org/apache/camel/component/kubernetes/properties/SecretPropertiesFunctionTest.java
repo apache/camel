@@ -55,7 +55,7 @@ public class SecretPropertiesFunctionTest extends KubernetesTestSupport {
                 = Map.of("myuser", Base64.getEncoder().encodeToString("scott".getBytes(StandardCharsets.UTF_8)),
                         "mypass", Base64.getEncoder().encodeToString("tiger".getBytes(StandardCharsets.UTF_8)));
         Secret sec = new SecretBuilder().editOrNewMetadata().withName("mysecret").endMetadata().withData(data).build();
-        client.secrets().createOrReplace(sec);
+        client.resource(sec).createOrReplace();
 
         try {
             SecretPropertiesFunction cmf = new SecretPropertiesFunction();
@@ -77,7 +77,7 @@ public class SecretPropertiesFunctionTest extends KubernetesTestSupport {
 
             cmf.stop();
         } finally {
-            client.secrets().delete(sec);
+            client.resource(sec).delete();
         }
     }
 
