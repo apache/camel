@@ -36,6 +36,8 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
     private Float failureRateThreshold;
     @Metadata(defaultValue = "10")
     private Integer permittedNumberOfCallsInHalfOpenState;
+    @Metadata(defaultValue = "false")
+    private Boolean throwExceptionWhenHalfOpenOrOpenState;
     @Metadata(defaultValue = "100")
     private Integer slidingWindowSize;
     @Metadata(defaultValue = "COUNT_BASED", enums = "COUNT_BASED,TIME_BASED")
@@ -127,6 +129,18 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
      */
     public void setPermittedNumberOfCallsInHalfOpenState(Integer permittedNumberOfCallsInHalfOpenState) {
         this.permittedNumberOfCallsInHalfOpenState = permittedNumberOfCallsInHalfOpenState;
+    }
+
+    public Boolean getThrowExceptionWhenHalfOpenOrOpenState() {
+        return throwExceptionWhenHalfOpenOrOpenState;
+    }
+
+    /**
+     * Whether to throw io.github.resilience4j.circuitbreaker.CallNotPermittedException when the call
+     * is rejected due circuit breaker is half open or open.
+     */
+    public void setThrowExceptionWhenHalfOpenOrOpenState(Boolean throwExceptionWhenHalfOpenOrOpenState) {
+        this.throwExceptionWhenHalfOpenOrOpenState = throwExceptionWhenHalfOpenOrOpenState;
     }
 
     public Integer getSlidingWindowSize() {
@@ -371,6 +385,16 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
     public Resilience4jConfigurationProperties withPermittedNumberOfCallsInHalfOpenState(
             Integer permittedNumberOfCallsInHalfOpenState) {
         this.permittedNumberOfCallsInHalfOpenState = permittedNumberOfCallsInHalfOpenState;
+        return this;
+    }
+
+    /**
+     * Whether to throw io.github.resilience4j.circuitbreaker.CallNotPermittedException when the call
+     * is rejected due circuit breaker is half open or open.
+     */
+    public Resilience4jConfigurationProperties withThrowExceptionWhenHalfOpenOrOpenState(
+            Boolean throwExceptionWhenHalfOpenOrOpenState) {
+        this.throwExceptionWhenHalfOpenOrOpenState = throwExceptionWhenHalfOpenOrOpenState;
         return this;
     }
 

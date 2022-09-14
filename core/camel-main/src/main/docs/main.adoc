@@ -261,7 +261,7 @@ The camel.faulttolerance supports 13 options, which are listed below.
 |===
 
 === Resilience4j EIP Circuit Breaker configurations
-The camel.resilience4j supports 19 options, which are listed below.
+The camel.resilience4j supports 20 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -279,6 +279,7 @@ The camel.resilience4j supports 19 options, which are listed below.
 | *camel.resilience4j.sliding{zwsp}WindowType* | Configures the type of the sliding window which is used to record the outcome of calls when the CircuitBreaker is closed. Sliding window can either be count-based or time-based. If slidingWindowType is COUNT_BASED, the last slidingWindowSize calls are recorded and aggregated. If slidingWindowType is TIME_BASED, the calls of the last slidingWindowSize seconds are recorded and aggregated. Default slidingWindowType is COUNT_BASED. | COUNT_BASED | String
 | *camel.resilience4j.slowCall{zwsp}DurationThreshold* | Configures the duration threshold (seconds) above which calls are considered as slow and increase the slow calls percentage. Default value is 60 seconds. | 60 | Integer
 | *camel.resilience4j.slowCall{zwsp}RateThreshold* | Configures a threshold in percentage. The CircuitBreaker considers a call as slow when the call duration is greater than slowCallDurationThreshold(Duration. When the percentage of slow calls is equal or greater the threshold, the CircuitBreaker transitions to open and starts short-circuiting calls. The threshold must be greater than 0 and not greater than 100. Default value is 100 percentage which means that all recorded calls must be slower than slowCallDurationThreshold. | 100 | Float
+| *camel.resilience4j.throw{zwsp}ExceptionWhenHalfOpenOrOpen{zwsp}State* | Whether to throw io.github.resilience4j.circuitbreaker.CallNotPermittedException when the call is rejected due circuit breaker is half open or open. | false | Boolean
 | *camel.resilience4j.timeout{zwsp}CancelRunningFuture* | Configures whether cancel is called on the running future. Defaults to true. | true | Boolean
 | *camel.resilience4j.timeout{zwsp}Duration* | Configures the thread execution timeout (millis). Default value is 1000 millis (1 second). | 1000 | Integer
 | *camel.resilience4j.timeout{zwsp}Enabled* | Whether timeout is enabled or not on the circuit breaker. Default is false. | false | Boolean
