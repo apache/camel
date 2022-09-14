@@ -67,7 +67,11 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "foldername":
         case "folderName": target.getConfiguration().setFolderName(property(camelContext, java.lang.String.class, value)); return true;
         case "from": target.getConfiguration().setFrom(property(camelContext, java.lang.String.class, value)); return true;
+        case "generatemissingattachmentnames":
+        case "generateMissingAttachmentNames": target.getConfiguration().setGenerateMissingAttachmentNames(property(camelContext, java.lang.String.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "handleduplicateattachmentnames":
+        case "handleDuplicateAttachmentNames": target.getConfiguration().setHandleDuplicateAttachmentNames(property(camelContext, java.lang.String.class, value)); return true;
         case "handlefailedmessage":
         case "handleFailedMessage": target.getConfiguration().setHandleFailedMessage(property(camelContext, boolean.class, value)); return true;
         case "headerfilterstrategy":
@@ -191,7 +195,11 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "foldername":
         case "folderName": return java.lang.String.class;
         case "from": return java.lang.String.class;
+        case "generatemissingattachmentnames":
+        case "generateMissingAttachmentNames": return java.lang.String.class;
         case "greedy": return boolean.class;
+        case "handleduplicateattachmentnames":
+        case "handleDuplicateAttachmentNames": return java.lang.String.class;
         case "handlefailedmessage":
         case "handleFailedMessage": return boolean.class;
         case "headerfilterstrategy":
@@ -316,7 +324,11 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "foldername":
         case "folderName": return target.getConfiguration().getFolderName();
         case "from": return target.getConfiguration().getFrom();
+        case "generatemissingattachmentnames":
+        case "generateMissingAttachmentNames": return target.getConfiguration().getGenerateMissingAttachmentNames();
         case "greedy": return target.isGreedy();
+        case "handleduplicateattachmentnames":
+        case "handleDuplicateAttachmentNames": return target.getConfiguration().getHandleDuplicateAttachmentNames();
         case "handlefailedmessage":
         case "handleFailedMessage": return target.getConfiguration().isHandleFailedMessage();
         case "headerfilterstrategy":
