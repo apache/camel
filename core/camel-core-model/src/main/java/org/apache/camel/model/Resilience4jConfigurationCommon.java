@@ -40,6 +40,9 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
     @Metadata(label = "advanced", defaultValue = "10", javaType = "java.lang.Integer")
     private String permittedNumberOfCallsInHalfOpenState;
     @XmlAttribute
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    private String throwExceptionWhenHalfOpenOrOpenState;
+    @XmlAttribute
     @Metadata(defaultValue = "100", javaType = "java.lang.Integer")
     private String slidingWindowSize;
     @XmlAttribute
@@ -130,6 +133,18 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
      */
     public void setPermittedNumberOfCallsInHalfOpenState(String permittedNumberOfCallsInHalfOpenState) {
         this.permittedNumberOfCallsInHalfOpenState = permittedNumberOfCallsInHalfOpenState;
+    }
+
+    public String getThrowExceptionWhenHalfOpenOrOpenState() {
+        return throwExceptionWhenHalfOpenOrOpenState;
+    }
+
+    /**
+     * Whether to throw io.github.resilience4j.circuitbreaker.CallNotPermittedException when the call
+     * is rejected due circuit breaker is half open or open.
+     */
+    public void setThrowExceptionWhenHalfOpenOrOpenState(String throwExceptionWhenHalfOpenOrOpenState) {
+        this.throwExceptionWhenHalfOpenOrOpenState = throwExceptionWhenHalfOpenOrOpenState;
     }
 
     public String getSlidingWindowSize() {
