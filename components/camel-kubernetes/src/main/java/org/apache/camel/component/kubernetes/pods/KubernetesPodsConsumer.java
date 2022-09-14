@@ -86,7 +86,7 @@ public class KubernetesPodsConsumer extends DefaultConsumer {
 
         @Override
         public void run() {
-            MixedOperation<Pod, PodList, PodResource<Pod>> w = getEndpoint().getKubernetesClient().pods();
+            MixedOperation<Pod, PodList, PodResource> w = getEndpoint().getKubernetesClient().pods();
 
             ObjectHelper.ifNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespace(), w::inNamespace);
 

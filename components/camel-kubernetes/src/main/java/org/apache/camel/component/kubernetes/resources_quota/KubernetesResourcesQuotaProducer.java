@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.kubernetes.resources_quota;
 
+import java.util.List;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.ResourceQuota;
 import io.fabric8.kubernetes.api.model.ResourceQuotaBuilder;
 import io.fabric8.kubernetes.api.model.ResourceQuotaList;
 import io.fabric8.kubernetes.api.model.ResourceQuotaSpec;
+import io.fabric8.kubernetes.api.model.StatusDetails;
 import io.fabric8.kubernetes.client.dsl.MixedOperation;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.Resource;
@@ -166,8 +168,10 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
             LOG.error("Delete a specific resource quota require specify a namespace name");
             throw new IllegalArgumentException("Delete a specific resource quota require specify a namespace name");
         }
-        boolean rqDeleted
+
+        List<StatusDetails> statusDetails
                 = getEndpoint().getKubernetesClient().resourceQuotas().inNamespace(namespaceName).withName(rqName).delete();
+        boolean rqDeleted = ObjectHelper.isNotEmpty(statusDetails);
 
         prepareOutboundMessage(exchange, rqDeleted);
     }

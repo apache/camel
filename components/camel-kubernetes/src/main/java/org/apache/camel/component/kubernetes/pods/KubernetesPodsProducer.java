@@ -16,13 +16,14 @@
  */
 package org.apache.camel.component.kubernetes.pods;
 
+import java.util.List;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodBuilder;
 import io.fabric8.kubernetes.api.model.PodList;
 import io.fabric8.kubernetes.api.model.PodSpec;
-import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
+import io.fabric8.kubernetes.api.model.StatusDetails;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -97,9 +98,11 @@ public class KubernetesPodsProducer extends DefaultProducer {
             throw new IllegalArgumentException("Get pods by labels require specify a labels set");
         }
 
-        FilterWatchListMultiDeletable<Pod, PodList> pods = getEndpoint().getKubernetesClient().pods().inAnyNamespace();
-
-        PodList podList = pods.withLabels(labels).list();
+        PodList podList = getEndpoint().getKubernetesClient()
+                .pods()
+                .inAnyNamespace()
+                .withLabels(labels)
+                .list();
 
         prepareOutboundMessage(exchange, podList.getItems());
     }
@@ -157,7 +160,10 @@ public class KubernetesPodsProducer extends DefaultProducer {
             LOG.error("Delete a specific pod require specify a namespace name");
             throw new IllegalArgumentException("Delete a specific pod require specify a namespace name");
         }
-        boolean podDeleted = getEndpoint().getKubernetesClient().pods().inNamespace(namespaceName).withName(podName).delete();
+
+        List<StatusDetails> statusDetails
+                = getEndpoint().getKubernetesClient().pods().inNamespace(namespaceName).withName(podName).delete();
+        boolean podDeleted = ObjectHelper.isNotEmpty(statusDetails);
 
         prepareOutboundMessage(exchange, podDeleted);
     }

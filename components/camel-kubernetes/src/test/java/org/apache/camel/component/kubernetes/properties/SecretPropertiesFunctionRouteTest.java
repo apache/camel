@@ -73,7 +73,7 @@ public class SecretPropertiesFunctionRouteTest extends KubernetesTestSupport {
                 = Map.of("myuser", Base64.getEncoder().encodeToString("scott".getBytes(StandardCharsets.UTF_8)),
                         "mypass", Base64.getEncoder().encodeToString("tiger".getBytes(StandardCharsets.UTF_8)));
         Secret sec = new SecretBuilder().editOrNewMetadata().withName("mysecret").endMetadata().withData(data).build();
-        this.sec = client.secrets().createOrReplace(sec);
+        this.sec = client.resource(sec).createOrReplace();
 
         return context;
     }
@@ -82,7 +82,7 @@ public class SecretPropertiesFunctionRouteTest extends KubernetesTestSupport {
     public void tearDown() throws Exception {
         if (client != null && sec != null) {
             try {
-                client.secrets().delete(sec);
+                client.resource(sec).delete();
             } catch (Exception e) {
                 // ignore
             }
