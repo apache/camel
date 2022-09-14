@@ -473,7 +473,7 @@
         <smack-version>4.3.5</smack-version>
         <smallrye-config-version>2.12.0</smallrye-config-version>
         <smallrye-metrics-version>3.0.5</smallrye-metrics-version>
-        <smallrye-health-version>3.2.1</smallrye-health-version>
+        <smallrye-health-version>3.3.0</smallrye-health-version>
         <smallrye-fault-tolerance-version>5.5.0</smallrye-fault-tolerance-version>
         <snakeyaml-version>1.31</snakeyaml-version>
         <snakeyaml-engine-version>2.3</snakeyaml-engine-version>
