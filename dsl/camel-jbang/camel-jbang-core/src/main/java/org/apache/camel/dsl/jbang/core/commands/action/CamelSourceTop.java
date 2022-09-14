@@ -147,7 +147,8 @@ public class CamelSourceTop extends ActionBaseCommand {
 
     protected void printSource(List<Row> rows) {
         for (Row row : rows) {
-            System.out.printf("Route: %s\tSource: %s Total: %s Mean: %s Max: %s Min: %s Last: %s%n", row.routeId, row.location, row.total, row.mean != null ? row.mean : "", row.max,
+            System.out.printf("Route: %s\tSource: %s Total: %s Mean: %s Max: %s Min: %s Last: %s%n", row.routeId, row.location,
+                    row.total, row.mean != null ? row.mean : "", row.max,
                     row.min, row.last != null ? row.last : "");
             for (int i = 0; i < row.code.size(); i++) {
                 Code code = row.code.get(i);
