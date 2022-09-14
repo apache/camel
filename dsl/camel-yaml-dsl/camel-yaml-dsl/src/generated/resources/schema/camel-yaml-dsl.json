@@ -1010,30 +1010,6 @@
           }
         }
       },
-      "org.apache.camel.model.FromDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "description" : {
-            "type" : "string"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "parameters" : {
-            "type" : "object"
-          },
-          "steps" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
-            }
-          },
-          "uri" : {
-            "type" : "string"
-          }
-        },
-        "required" : [ "steps", "uri" ]
-      },
       "org.apache.camel.model.GlobalOptionDefinition" : {
         "type" : "object",
         "properties" : {
