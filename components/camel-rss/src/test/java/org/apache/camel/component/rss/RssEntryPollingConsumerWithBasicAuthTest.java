@@ -18,12 +18,29 @@ package org.apache.camel.component.rss;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.infra.jetty.services.JettyConfiguration;
+import org.apache.camel.test.infra.jetty.services.JettyConfigurationBuilder;
+import org.apache.camel.test.infra.jetty.services.JettyEmbeddedService;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class RssEntryPollingConsumerWithBasicAuthTest extends CamelTestSupport {
+
+    private static final int PORT = AvailablePortFinder.getNextAvailable();
+
+    @RegisterExtension
+    public JettyEmbeddedService service = new JettyEmbeddedService(
+            JettyConfigurationBuilder.bareTemplate()
+                    .withPort(PORT)
+                    .withServletConfiguration()
+                    .addServletConfiguration(new JettyConfiguration.ServletHandlerConfiguration.ServletConfiguration<>(
+                            new MyHttpServlet(),
+                            JettyConfiguration.ServletHandlerConfiguration.ServletConfiguration.ROOT_PATH_SPEC))
+                    .addBasicAuthUser("camel", "camelPass", "Private!")
+                    .build()
+                    .build());
 
     @Test
     public void testListOfEntriesIsSplitIntoPieces() throws Exception {
@@ -37,19 +54,10 @@ public class RssEntryPollingConsumerWithBasicAuthTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("rss:http://localhost:" + JettyTestServer.getInstance().port
-                     + "/?splitEntries=true&sortEntries=true&delay=100&username=camel&password=camelPass").to("mock:result");
+                fromF("rss:http://localhost:%d/?splitEntries=true&sortEntries=true&delay=100&username=camel&password=camelPass",
+                        PORT)
+                                .to("mock:result");
             }
         };
-    }
-
-    @BeforeAll
-    public static void startServer() {
-        JettyTestServer.getInstance().startServer();
-    }
-
-    @AfterAll
-    public static void stopServer() {
-        JettyTestServer.getInstance().stopServer();
     }
 }
