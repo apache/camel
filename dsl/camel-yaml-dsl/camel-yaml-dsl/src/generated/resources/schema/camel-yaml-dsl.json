@@ -2244,6 +2244,9 @@
           "slow-call-rate-threshold" : {
             "type" : "number"
           },
+          "throw-exception-when-half-open-or-open-state" : {
+            "type" : "boolean"
+          },
           "wait-duration-in-open-state" : {
             "type" : "number"
           },
