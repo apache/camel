@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.mail;
 
-import static org.apache.camel.component.mail.MailConstants.MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_UUID;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
@@ -64,6 +62,8 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.mail.MailConstants.MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_UUID;
+
 /**
  * A Strategy used to convert between a Camel {@link Exchange} and {@link Message} to and from a Mail
  * {@link MimeMessage}
@@ -86,7 +86,7 @@ public class MailBinding {
     @Deprecated
     public MailBinding(HeaderFilterStrategy headerFilterStrategy, ContentTypeResolver contentTypeResolver,
                        boolean decodeFilename) {
-        this(headerFilterStrategy, contentTypeResolver, decodeFilename, true, false,"never", "never");
+        this(headerFilterStrategy, contentTypeResolver, decodeFilename, true, false, "never", "never");
     }
 
     public MailBinding(HeaderFilterStrategy headerFilterStrategy, ContentTypeResolver contentTypeResolver,
@@ -94,8 +94,10 @@ public class MailBinding {
         this(headerFilterStrategy, contentTypeResolver, decodeFilename, mapMailMessage, false, "never", "never");
     }
 
-    public MailBinding(HeaderFilterStrategy headerFilterStrategy, ContentTypeResolver contentTypeResolver, boolean decodeFilename, boolean mapMailMessage,
-                       boolean failOnDuplicateAttachment, String generateMissingAttachmentNames, String handleDuplicateAttachmentNames) {
+    public MailBinding(HeaderFilterStrategy headerFilterStrategy, ContentTypeResolver contentTypeResolver,
+                       boolean decodeFilename, boolean mapMailMessage,
+                       boolean failOnDuplicateAttachment, String generateMissingAttachmentNames,
+                       String handleDuplicateAttachmentNames) {
         this.headerFilterStrategy = headerFilterStrategy;
         this.contentTypeResolver = contentTypeResolver;
         this.decodeFilename = decodeFilename;
@@ -357,8 +359,8 @@ public class MailBinding {
                 String disposition = part.getDisposition();
                 String fileName = part.getFileName();
 
-                if(isAttachment(disposition) && (fileName == null || fileName.isEmpty())){
-                    if(getGenerateMissingAttachmentNames().equalsIgnoreCase(MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_UUID)){
+                if (isAttachment(disposition) && (fileName == null || fileName.isEmpty())) {
+                    if (getGenerateMissingAttachmentNames().equalsIgnoreCase(MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_UUID)) {
                         fileName = UUID.randomUUID().toString();
                     }
                 }
@@ -384,7 +386,8 @@ public class MailBinding {
 
                 if (validDisposition(disposition, fileName)) {
                     LOG.debug("Mail contains file attachment: {}", fileName);
-                    if(handleDuplicateAttachmentNames.equalsIgnoreCase(MailConstants.MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_UUID_PREFIX)){
+                    if (handleDuplicateAttachmentNames
+                            .equalsIgnoreCase(MailConstants.MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_UUID_PREFIX)) {
                         fileName = handleDuplicateFilenames(map, fileName);
                     }
                     if (!map.containsKey(fileName)) {
@@ -426,12 +429,13 @@ public class MailBinding {
 
     /**
      * Updates already existing filenames in the map and prefixes the current filename
-     * @param map
-     * @param fileName
+     * 
+     * @param  map
+     * @param  fileName
      * @return
      */
     private String handleDuplicateFilenames(Map<String, Attachment> map, String fileName) {
-        if(map.containsKey(fileName)){
+        if (map.containsKey(fileName)) {
             Attachment obj = map.remove(fileName);
             map.put(prefixWithUUID(fileName), obj);
             return prefixWithUUID(fileName);
@@ -452,7 +456,7 @@ public class MailBinding {
 
     private boolean isAttachment(String disposition) {
         return disposition != null
-               && (disposition.equalsIgnoreCase(Part.ATTACHMENT) || disposition.equalsIgnoreCase(Part.INLINE));
+                && (disposition.equalsIgnoreCase(Part.ATTACHMENT) || disposition.equalsIgnoreCase(Part.INLINE));
     }
 
     /**

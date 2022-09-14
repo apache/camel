@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.mail;
 
-import static org.apache.camel.component.mail.MailConstants.MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER;
-import static org.apache.camel.component.mail.MailConstants.MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER;
-
 import javax.mail.Message;
 import javax.mail.search.SearchTerm;
 
@@ -34,6 +31,9 @@ import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
+
+import static org.apache.camel.component.mail.MailConstants.MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER;
+import static org.apache.camel.component.mail.MailConstants.MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER;
 
 /**
  * Send and receive emails using imap, pop3 and smtp protocols.
@@ -144,12 +144,14 @@ public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterS
             boolean decode = getConfiguration() != null && getConfiguration().isDecodeFilename();
             boolean mapMailMessage = getConfiguration() != null && getConfiguration().isMapMailMessage();
             boolean failDuplicate = getConfiguration() != null && getConfiguration().isFailOnDuplicateFileAttachment();
-            String generateMissingAttachmentNames =
-                getConfiguration() != null ? getConfiguration().getGenerateMissingAttachmentNames() : MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER;
-            String handleDuplicateAttachmentNames =
-                getConfiguration() != null ? getConfiguration().getHandleDuplicateAttachmentNames() : MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER;
-            binding = new MailBinding(headerFilterStrategy, contentTypeResolver, decode, mapMailMessage, failDuplicate, generateMissingAttachmentNames,
-                                      handleDuplicateAttachmentNames);
+            String generateMissingAttachmentNames = getConfiguration() != null
+                    ? getConfiguration().getGenerateMissingAttachmentNames() : MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER;
+            String handleDuplicateAttachmentNames = getConfiguration() != null
+                    ? getConfiguration().getHandleDuplicateAttachmentNames() : MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER;
+            binding = new MailBinding(
+                    headerFilterStrategy, contentTypeResolver, decode, mapMailMessage, failDuplicate,
+                    generateMissingAttachmentNames,
+                    handleDuplicateAttachmentNames);
         }
         return binding;
     }

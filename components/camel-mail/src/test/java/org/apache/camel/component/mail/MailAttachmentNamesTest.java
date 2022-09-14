@@ -67,16 +67,16 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
 
     @Override
     protected RoutesBuilder[] createRouteBuilders() throws Exception {
-        return new RoutesBuilder[] {new RouteBuilder() {
+        return new RoutesBuilder[] { new RouteBuilder() {
             public void configure() {
                 from("pop3://james@localhost?password=foo&initialDelay=100&delay=100&generateMissingAttachmentNames=uuid&handleDuplicateAttachmentNames=uuidPrefix")
-                    .to("mock:result");
+                        .to("mock:result");
             }
         }, new RouteBuilder() {
             public void configure() {
                 from("pop3://default@localhost?password=foo&initialDelay=100&delay=100").to("mock:resultDefault");
             }
-        }};
+        } };
     }
 
     @Test
@@ -87,9 +87,10 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
         Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);
         Assert.assertNotNull(exchange.getIn(AttachmentMessage.class));
         Assert.assertNotNull(exchange.getIn(AttachmentMessage.class).getAttachmentObjects());
-        Assert.assertEquals(1,exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
+        Assert.assertEquals(1, exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
 
-        Map.Entry<String, Attachment> entry = exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().iterator().next();
+        Map.Entry<String, Attachment> entry
+                = exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().iterator().next();
         String name = entry.getKey();
         Assert.assertTrue(isUUID(name));
     }
@@ -100,9 +101,10 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
 
         resultEndpoint.assertIsSatisfied();
         Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);
-        Assert.assertEquals(1,exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
+        Assert.assertEquals(1, exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
 
-        Map.Entry<String, Attachment> entry = exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().iterator().next();
+        Map.Entry<String, Attachment> entry
+                = exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().iterator().next();
         String name = entry.getKey();
         Assert.assertTrue(isUUID(name));
     }
@@ -113,7 +115,7 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
 
         resultEndpoint.assertIsSatisfied();
         Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);
-        Assert.assertEquals(2,exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
+        Assert.assertEquals(2, exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
 
         Map<String, Attachment> attachments = exchange.getIn(AttachmentMessage.class).getAttachmentObjects();
         for (Map.Entry<String, Attachment> entry : attachments.entrySet()) {
@@ -125,6 +127,7 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
 
     /**
      * Duplicate filenames are ignored, same as handleDuplicateAttachmentNames=never
+     * 
      * @throws Exception
      */
     @Test
@@ -133,7 +136,7 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
 
         resultDefaultEndpoint.assertIsSatisfied();
         Exchange exchange = resultDefaultEndpoint.getReceivedExchanges().get(0);
-        Assert.assertEquals(1,exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
+        Assert.assertEquals(1, exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
         Map<String, Attachment> attachments = exchange.getIn(AttachmentMessage.class).getAttachmentObjects();
 
         Assert.assertNotNull(attachments.get("Capture.PNG"));
@@ -141,6 +144,7 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
 
     /**
      * Attachment with empty filename are ignored, same as generateMissingAttachmentNames=never
+     * 
      * @throws Exception
      */
     @Test
@@ -155,6 +159,7 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
 
     /**
      * Attachment with no filename are ignored, same as generateMissingAttachmentNames=never
+     * 
      * @throws Exception
      */
     @Test
