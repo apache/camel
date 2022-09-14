@@ -320,6 +320,41 @@ public interface ImapsComponentBuilderFactory {
             return this;
         }
         /**
+         * Set this to 'uuid' to set a UUID for the filename of the attachment
+         * if no filename was set.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param generateMissingAttachmentNames the value to set
+         * @return the dsl builder
+         */
+        default ImapsComponentBuilder generateMissingAttachmentNames(
+                java.lang.String generateMissingAttachmentNames) {
+            doSetProperty("generateMissingAttachmentNames", generateMissingAttachmentNames);
+            return this;
+        }
+        /**
+         * Set the strategy to handle duplicate filenames of attachments never:
+         * attachments that have a filename which is already present in the
+         * attachments will be ignored unless failOnDuplicateFileAttachment is
+         * set to true uuidPrefix: this will prefix the duplicate attachment
+         * filenames each with a uuid and underscore (uuid_).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param handleDuplicateAttachmentNames the value to set
+         * @return the dsl builder
+         */
+        default ImapsComponentBuilder handleDuplicateAttachmentNames(
+                java.lang.String handleDuplicateAttachmentNames) {
+            doSetProperty("handleDuplicateAttachmentNames", handleDuplicateAttachmentNames);
+            return this;
+        }
+        /**
          * Specifies whether Camel should map the received mail message to Camel
          * body/headers/attachments. If set to true, the body of the mail
          * message is mapped to the body of the Camel IN message, the mail
@@ -847,6 +882,8 @@ public interface ImapsComponentBuilderFactory {
             case "failOnDuplicateFileAttachment": getOrCreateConfiguration((MailComponent) component).setFailOnDuplicateFileAttachment((boolean) value); return true;
             case "fetchSize": getOrCreateConfiguration((MailComponent) component).setFetchSize((int) value); return true;
             case "folderName": getOrCreateConfiguration((MailComponent) component).setFolderName((java.lang.String) value); return true;
+            case "generateMissingAttachmentNames": getOrCreateConfiguration((MailComponent) component).setGenerateMissingAttachmentNames((java.lang.String) value); return true;
+            case "handleDuplicateAttachmentNames": getOrCreateConfiguration((MailComponent) component).setHandleDuplicateAttachmentNames((java.lang.String) value); return true;
             case "mapMailMessage": getOrCreateConfiguration((MailComponent) component).setMapMailMessage((boolean) value); return true;
             case "bcc": getOrCreateConfiguration((MailComponent) component).setBcc((java.lang.String) value); return true;
             case "cc": getOrCreateConfiguration((MailComponent) component).setCc((java.lang.String) value); return true;
