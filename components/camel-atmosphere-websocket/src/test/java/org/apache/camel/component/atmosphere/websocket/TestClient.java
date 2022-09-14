@@ -16,20 +16,16 @@
  */
 package org.apache.camel.component.atmosphere.websocket;
 
-import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.WebSocket;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.AsyncHttpClientConfig;
-import org.asynchttpclient.DefaultAsyncHttpClient;
-import org.asynchttpclient.ws.WebSocket;
-import org.asynchttpclient.ws.WebSocketListener;
-import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,44 +33,33 @@ public class TestClient {
     private static final Logger LOG = LoggerFactory.getLogger(TestClient.class);
 
     private final List<Object> received;
-    private final AsyncHttpClient client;
+    private final HttpClient modernClient;
     private final String url;
 
     private CountDownLatch latch;
     private WebSocket websocket;
 
-    public TestClient(String url, AsyncHttpClientConfig conf) {
-        this(url, conf, 1);
+    public TestClient(String url) {
+        this(url, 1);
     }
 
     public TestClient(String url, int count) {
-        this(url, null, count);
-    }
-
-    public TestClient(String url) {
-        this(url, null, 1);
-    }
-
-    public TestClient(String url, AsyncHttpClientConfig conf, int count) {
         this.received = new ArrayList<>();
         this.latch = new CountDownLatch(count);
-        this.client = conf == null ? new DefaultAsyncHttpClient() : new DefaultAsyncHttpClient(conf);
+        this.modernClient = HttpClient.newHttpClient();
         this.url = url;
     }
 
-    public void connect() throws InterruptedException, ExecutionException {
-        websocket = client.prepareGet(url).execute(
-                new WebSocketUpgradeHandler.Builder()
-                        .addWebSocketListener(new TestWebSocketListener()).build())
-                .get();
+    public void connect() {
+        websocket = modernClient.newWebSocketBuilder().buildAsync(URI.create(url), new TestWebSocketListener()).join();
     }
 
     public void sendTextMessage(String message) {
-        websocket.sendTextFrame(message);
+        websocket.sendText(message, true);
     }
 
     public void sendBytesMessage(byte[] message) {
-        websocket.sendBinaryFrame(message);
+        websocket.sendBinary(ByteBuffer.wrap(message), true);
     }
 
     public boolean await(int secs) throws InterruptedException {
@@ -116,41 +101,58 @@ public class TestClient {
         return null;
     }
 
-    public void close() throws IOException {
-        websocket.sendCloseFrame();
-        client.close();
+    public void close() {
+        websocket.sendClose(WebSocket.NORMAL_CLOSURE, "ok");
     }
 
-    private class TestWebSocketListener implements WebSocketListener {
+    private class TestWebSocketListener implements WebSocket.Listener {
 
         @Override
         public void onOpen(WebSocket websocket) {
             LOG.info("[ws] opened");
+            websocket.request(1);
         }
 
         @Override
-        public void onClose(WebSocket websocket, int code, String reason) {
+        public CompletionStage<?> onClose(WebSocket webSocket, int statusCode, String reason) {
             LOG.info("[ws] closed");
+
+            return WebSocket.Listener.super.onClose(webSocket, statusCode, reason);
         }
 
         @Override
-        public void onError(Throwable t) {
-            LOG.error("[ws] error: {}", t.getMessage(), t);
+        public void onError(WebSocket webSocket, Throwable error) {
+            LOG.error("[ws] error: {}", error.getMessage(), error);
         }
 
         @Override
-        public void onBinaryFrame(byte[] message, boolean finalFragment, int rsv) {
+        public CompletionStage<?> onBinary(WebSocket webSocket, ByteBuffer data, boolean last) {
+            final String message = readString(data);
+
             received.add(message);
-            LOG.info("[ws] received bytes --> {}", Arrays.toString(message));
+            LOG.info("[ws] received bytes --> {}", message);
             latch.countDown();
+
+            return WebSocket.Listener.super.onBinary(webSocket, data, last);
+        }
+
+        private String readString(ByteBuffer data) {
+            int remaining = data.remaining();
+            byte[] tmp = new byte[remaining];
+            data.get(tmp);
+
+            return new String(tmp);
         }
 
         @Override
-        public void onTextFrame(String message, boolean finalFragment, int rsv) {
+        public CompletionStage<?> onText(WebSocket webSocket, CharSequence data, boolean last) {
+            final String message = data.toString();
+
             received.add(message);
             LOG.info("[ws] received --> {}", message);
             latch.countDown();
-        }
 
+            return WebSocket.Listener.super.onText(webSocket, data, last);
+        }
     }
 }
