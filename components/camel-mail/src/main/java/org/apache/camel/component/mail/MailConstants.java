@@ -52,8 +52,8 @@ public final class MailConstants {
     public static final int MAIL_DEFAULT_CONNECTION_TIMEOUT = 30000;
     public static final String MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER = "never";
     public static final String MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_UUID = "uuid";
-    public static final String MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER  = "never";
-    public static final String MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_UUID_PREFIX  = "uuidPrefix";
+    public static final String MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER = "never";
+    public static final String MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_UUID_PREFIX = "uuidPrefix";
 
     private MailConstants() {
         // utility class

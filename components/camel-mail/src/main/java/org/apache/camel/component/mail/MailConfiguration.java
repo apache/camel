@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.mail;
 
-import static org.apache.camel.component.mail.MailConstants.MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER;
-import static org.apache.camel.component.mail.MailConstants.MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER;
-
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +34,9 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
+
+import static org.apache.camel.component.mail.MailConstants.MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER;
+import static org.apache.camel.component.mail.MailConstants.MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER;
 
 /**
  * Represents the configuration data for communicating over email
@@ -857,6 +857,7 @@ public class MailConfiguration implements Cloneable {
 
     /**
      * Set this to 'uuid' to set a UUID for the filename of the attachment if no filename was set
+     * 
      * @param generateMissingAttachmentNames
      */
     public void setGenerateMissingAttachmentNames(String generateMissingAttachmentNames) {
@@ -868,10 +869,10 @@ public class MailConfiguration implements Cloneable {
     }
 
     /**
-     * Set the strategy to handle duplicate filenames of attachments
-     * never: attachments that have a filename which is already present in the attachments will be ignored
-     * unless failOnDuplicateFileAttachment is set to true
+     * Set the strategy to handle duplicate filenames of attachments never: attachments that have a filename which is
+     * already present in the attachments will be ignored unless failOnDuplicateFileAttachment is set to true
      * uuidPrefix: this will prefix the duplicate attachment filenames each with a uuid and underscore (uuid_)
+     * 
      * @param handleDuplicateAttachmentNames
      */
     public void setHandleDuplicateAttachmentNames(String handleDuplicateAttachmentNames) {
