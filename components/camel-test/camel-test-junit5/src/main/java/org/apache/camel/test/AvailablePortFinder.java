@@ -181,10 +181,24 @@ public final class AvailablePortFinder {
      * @return                       the port number itself if the port is free or, in case of port 0, the first
      *                               available port number.
      */
-    private static int probePort(int port) {
+    public static int probePort(int port) {
+        return probePort(null, port);
+    }
+
+    /**
+     * Probe a port to see if it is free
+     *
+     * @param  port                  an integer port number to be tested. If port is 0, then the next available port is
+     *                               returned.
+     * @throws IllegalStateException if the port is not free or, in case of port 0, if there are no ports available at
+     *                               all.
+     * @return                       the port number itself if the port is free or, in case of port 0, the first
+     *                               available port number.
+     */
+    public static int probePort(InetAddress address, int port) {
         try (ServerSocket ss = new ServerSocket()) {
             ss.setReuseAddress(true);
-            ss.bind(new InetSocketAddress((InetAddress) null, port), 1);
+            ss.bind(new InetSocketAddress(address, port), 1);
             int probedPort = ss.getLocalPort();
             LOG.info("Available port is -> {}", probedPort);
             return probedPort;

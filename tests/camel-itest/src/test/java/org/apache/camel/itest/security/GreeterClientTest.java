@@ -16,6 +16,8 @@
  */
 package org.apache.camel.itest.security;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +26,7 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
@@ -32,6 +35,7 @@ import org.apache.hello_world_soap_http.Greeter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -41,6 +45,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 @CamelSpringTest
 @ContextConfiguration(locations = { "camel-context.xml" })
+@EnabledIf(value = "org.apache.camel.itest.security.GreeterClientTest#isPortAvailable",
+           disabledReason = "This test uses a fixed port that may not be available on certain hosts")
 public class GreeterClientTest {
     private static final java.net.URL WSDL_LOC;
     static {
@@ -120,4 +126,13 @@ public class GreeterClientTest {
         }
     }
 
+    public static boolean isPortAvailable() {
+        try {
+            AvailablePortFinder.probePort(InetAddress.getByName("localhost"), 9000);
+        } catch (IllegalStateException | UnknownHostException e) {
+            return false;
+        }
+
+        return true;
+    }
 }
