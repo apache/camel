@@ -5546,18 +5546,6 @@ The size must be greater than 0. Default size is 10. Default value: 10
           </xs:annotation>
         </xs:attribute>
                 
-        <xs:attribute name="throwExceptionWhenHalfOpenOrOpenState" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-              <![CDATA[
-Whether to throw io.github.resilience4j.circuitbreaker.CallNotPermittedException
-when the call is rejected due circuit breaker is half open or open. Default
-value: false
-            ]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
         <xs:attribute name="slidingWindowSize" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">

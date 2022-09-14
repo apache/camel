@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.api.management.ManagedCamelContext;
@@ -248,6 +249,14 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                         .getDevConsoleResolver().resolveDevConsole("thread");
                 if (dc != null) {
                     JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("stackTrace", "true"));
+                    LOG.trace("Updating output file: {}", outputFile);
+                    IOHelper.writeText(json.toJson(), outputFile);
+                }
+            } else if ("top-processors".equals(action)) {
+                DevConsole dc = camelContext.adapt(ExtendedCamelContext.class)
+                        .getDevConsoleResolver().resolveDevConsole("top");
+                if (dc != null) {
+                    JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of(Exchange.HTTP_PATH, "/*"));
                     LOG.trace("Updating output file: {}", outputFile);
                     IOHelper.writeText(json.toJson(), outputFile);
                 }

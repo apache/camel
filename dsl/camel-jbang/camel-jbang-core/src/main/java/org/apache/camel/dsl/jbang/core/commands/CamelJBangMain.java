@@ -26,6 +26,7 @@ import org.apache.camel.dsl.jbang.core.commands.action.CamelReloadAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelResetStatsAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteStartAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteStopAction;
+import org.apache.camel.dsl.jbang.core.commands.action.CamelSourceTop;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelThreadDump;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelContextStatus;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelContextTop;
@@ -62,7 +63,8 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("top", new CommandLine(new CamelTop(main))
                         .addSubcommand("context", new CommandLine(new CamelContextTop(main)))
                         .addSubcommand("route", new CommandLine(new CamelRouteTop(main)))
-                        .addSubcommand("processor", new CommandLine(new CamelProcessorTop(main))))
+                        .addSubcommand("processor", new CommandLine(new CamelProcessorTop(main)))
+                        .addSubcommand("source", new CommandLine(new CamelSourceTop(main))))
                 .addSubcommand("cmd", new CommandLine(new CamelAction(main))
                         .addSubcommand("start-route", new CommandLine(new CamelRouteStartAction(main)))
                         .addSubcommand("stop-route", new CommandLine(new CamelRouteStopAction(main)))

@@ -85,6 +85,8 @@ public class TopDevConsole extends AbstractDevConsole {
                     sb.append(String.format("\n    Max Time: %s", TimeUtils.printDuration(mrb.getMaxProcessingTime(), true)));
                     sb.append(String.format("\n    Min Time: %s", TimeUtils.printDuration(mrb.getMinProcessingTime(), true)));
                     sb.append(
+                            String.format("\n    Last Time: %s", TimeUtils.printDuration(mrb.getLastProcessingTime(), true)));
+                    sb.append(
                             String.format("\n    Delta Time: %s", TimeUtils.printDuration(mrb.getDeltaProcessingTime(), true)));
                     sb.append(
                             String.format("\n    Total Time: %s", TimeUtils.printDuration(mrb.getTotalProcessingTime(), true)));
@@ -140,6 +142,8 @@ public class TopDevConsole extends AbstractDevConsole {
                     sb.append(String.format("\n    Max Time: %s", TimeUtils.printDuration(mpb.getMaxProcessingTime(), true)));
                     sb.append(String.format("\n    Min Time: %s", TimeUtils.printDuration(mpb.getMinProcessingTime(), true)));
                     sb.append(
+                            String.format("\n    Last Time: %s", TimeUtils.printDuration(mpb.getLastProcessingTime(), true)));
+                    sb.append(
                             String.format("\n    Delta Time: %s", TimeUtils.printDuration(mpb.getDeltaProcessingTime(), true)));
                     sb.append(
                             String.format("\n    Total Time: %s", TimeUtils.printDuration(mpb.getTotalProcessingTime(), true)));
@@ -185,6 +189,7 @@ public class TopDevConsole extends AbstractDevConsole {
                     stats.put("meanProcessingTime", mrb.getMeanProcessingTime());
                     stats.put("maxProcessingTime", mrb.getMaxProcessingTime());
                     stats.put("minProcessingTime", mrb.getMinProcessingTime());
+                    stats.put("lastProcessingTime", mrb.getLastProcessingTime());
                     stats.put("deltaProcessingTime", mrb.getDeltaProcessingTime());
                     stats.put("totalProcessingTime", mrb.getTotalProcessingTime());
                     jo.put("statistics", stats);
@@ -246,6 +251,7 @@ public class TopDevConsole extends AbstractDevConsole {
                     stats.put("meanProcessingTime", mpb.getMeanProcessingTime());
                     stats.put("maxProcessingTime", mpb.getMaxProcessingTime());
                     stats.put("minProcessingTime", mpb.getMinProcessingTime());
+                    stats.put("lastProcessingTime", mpb.getLastProcessingTime());
                     stats.put("deltaProcessingTime", mpb.getDeltaProcessingTime());
                     stats.put("totalProcessingTime", mpb.getTotalProcessingTime());
                     jo.put("statistics", stats);
