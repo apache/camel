@@ -84,13 +84,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.asynchttpclient</groupId>
-            <artifactId>async-http-client</artifactId>
-            <version>${ahc-version}</version>
-            <scope>test</scope>
-        </dependency>
-
         <!-- test infra -->
         <dependency>
             <groupId>org.apache.camel</groupId>
