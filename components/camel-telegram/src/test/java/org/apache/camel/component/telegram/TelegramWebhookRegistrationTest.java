@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.telegram;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -27,8 +31,6 @@ import org.apache.camel.component.telegram.util.TelegramMockRoutes.MockProcessor
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.apache.camel.component.telegram.util.TelegramTestUtil;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.asynchttpclient.Dsl;
-import org.asynchttpclient.Response;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
@@ -52,10 +54,12 @@ public class TelegramWebhookRegistrationTest extends TelegramTestSupport {
             Awaitility.await()
                     .atMost(5, TimeUnit.SECONDS)
                     .until(() -> {
-                        final Response testResponse = Dsl.asyncHttpClient()
-                                .prepareGet("http://localhost:" + port + "/botmock-token/getTest")
-                                .execute().get();
-                        return testResponse.getStatusCode() == 200;
+                        HttpClient client = HttpClient.newBuilder().build();
+                        HttpRequest request = HttpRequest.newBuilder()
+                                .uri(URI.create("http://localhost:" + port + "/botmock-token/getTest")).GET().build();
+
+                        final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                        return response.statusCode() == 200;
                     });
 
             context().addRoutes(new RouteBuilder() {
@@ -92,10 +96,12 @@ public class TelegramWebhookRegistrationTest extends TelegramTestSupport {
             Awaitility.await()
                     .atMost(5, TimeUnit.SECONDS)
                     .until(() -> {
-                        final Response testResponse = Dsl.asyncHttpClient()
-                                .prepareGet("http://localhost:" + port + "/botmock-token/getTest")
-                                .execute().get();
-                        return testResponse.getStatusCode() == 200;
+                        HttpClient client = HttpClient.newBuilder().build();
+                        HttpRequest request = HttpRequest.newBuilder()
+                                .uri(URI.create("http://localhost:" + port + "/botmock-token/getTest")).GET().build();
+
+                        final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                        return response.statusCode() == 200;
                     });
 
             context().addRoutes(new RouteBuilder() {
