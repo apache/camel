@@ -52,8 +52,12 @@ public class MllpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "lenientbind":
         case "lenientBind": target.getConfiguration().setLenientBind(property(camelContext, boolean.class, value)); return true;
+        case "maxbuffersize":
+        case "maxBufferSize": target.getConfiguration().setMaxBufferSize(property(camelContext, int.class, value)); return true;
         case "maxconcurrentconsumers":
         case "maxConcurrentConsumers": target.getConfiguration().setMaxConcurrentConsumers(property(camelContext, int.class, value)); return true;
+        case "minbuffersize":
+        case "minBufferSize": target.getConfiguration().setMinBufferSize(property(camelContext, int.class, value)); return true;
         case "readtimeout":
         case "readTimeout": target.getConfiguration().setReadTimeout(property(camelContext, int.class, value)); return true;
         case "receivebuffersize":
@@ -110,8 +114,12 @@ public class MllpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": return boolean.class;
         case "lenientbind":
         case "lenientBind": return boolean.class;
+        case "maxbuffersize":
+        case "maxBufferSize": return int.class;
         case "maxconcurrentconsumers":
         case "maxConcurrentConsumers": return int.class;
+        case "minbuffersize":
+        case "minBufferSize": return int.class;
         case "readtimeout":
         case "readTimeout": return int.class;
         case "receivebuffersize":
@@ -169,8 +177,12 @@ public class MllpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "lenientbind":
         case "lenientBind": return target.getConfiguration().isLenientBind();
+        case "maxbuffersize":
+        case "maxBufferSize": return target.getConfiguration().getMaxBufferSize();
         case "maxconcurrentconsumers":
         case "maxConcurrentConsumers": return target.getConfiguration().getMaxConcurrentConsumers();
+        case "minbuffersize":
+        case "minBufferSize": return target.getConfiguration().getMinBufferSize();
         case "readtimeout":
         case "readTimeout": return target.getConfiguration().getReadTimeout();
         case "receivebuffersize":

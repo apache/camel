@@ -30,6 +30,10 @@ import static org.junit.jupiter.api.Assertions.fail;
  * Tests for the overridden methods in the MllpSocketBuffer class.
  */
 public class MllpSocketBufferWriteTest extends SocketBufferTestSupport {
+
+    static final int MIN_BUFFER_SIZE = 2048;
+    static final int MAX_BUFFER_SIZE = 0x40000000;  // Approximately 1-GB
+
     /**
      * Description of test.
      *
@@ -288,11 +292,11 @@ public class MllpSocketBufferWriteTest extends SocketBufferTestSupport {
      */
     @Test
     public void testEnsureCapacityWithNegativeRequiredAvailability() {
-        assertEquals(MllpSocketBuffer.MIN_BUFFER_SIZE, instance.capacity());
+        assertEquals(MIN_BUFFER_SIZE, instance.capacity());
 
         instance.ensureCapacity(-1);
 
-        assertEquals(MllpSocketBuffer.MIN_BUFFER_SIZE, instance.capacity());
+        assertEquals(MIN_BUFFER_SIZE, instance.capacity());
     }
 
     /**
@@ -301,7 +305,7 @@ public class MllpSocketBufferWriteTest extends SocketBufferTestSupport {
      */
     @Test
     public void testEnsureCapacityWithOutOfRangeRequiredAvailability() {
-        assertEquals(MllpSocketBuffer.MIN_BUFFER_SIZE, instance.capacity());
+        assertEquals(MIN_BUFFER_SIZE, instance.capacity());
 
         try {
             instance.ensureCapacity(Integer.MAX_VALUE);
@@ -314,7 +318,7 @@ public class MllpSocketBufferWriteTest extends SocketBufferTestSupport {
         }
 
         try {
-            instance.ensureCapacity(MllpSocketBuffer.MAX_BUFFER_SIZE + 1);
+            instance.ensureCapacity(MAX_BUFFER_SIZE + 1);
             fail("Should have thrown an exception");
         } catch (IllegalStateException expectedEx) {
             String expectedMessage
@@ -325,7 +329,7 @@ public class MllpSocketBufferWriteTest extends SocketBufferTestSupport {
 
         instance.write("BLAH".getBytes());
         IllegalStateException expectedEx = assertThrows(IllegalStateException.class,
-                () -> instance.ensureCapacity(MllpSocketBuffer.MAX_BUFFER_SIZE));
+                () -> instance.ensureCapacity(MAX_BUFFER_SIZE));
         String expectedMessage
                 = "Cannot increase the buffer size <2048> in order to increase the available capacity from <2044> to <1073741824>"
                   + " because the required buffer size <1073741828> exceeds the maximum buffer size <1073741824>";
@@ -338,12 +342,12 @@ public class MllpSocketBufferWriteTest extends SocketBufferTestSupport {
      */
     @Test
     public void testEnsureCapacityWithAlreadyAllocateMaxBufferSize() {
-        assertEquals(MllpSocketBuffer.MIN_BUFFER_SIZE, instance.capacity());
+        assertEquals(MIN_BUFFER_SIZE, instance.capacity());
 
-        instance.ensureCapacity(MllpSocketBuffer.MAX_BUFFER_SIZE);
+        instance.ensureCapacity(MAX_BUFFER_SIZE);
 
         IllegalStateException expectedEx = assertThrows(IllegalStateException.class,
-                () -> instance.ensureCapacity(MllpSocketBuffer.MAX_BUFFER_SIZE + 1));
+                () -> instance.ensureCapacity(MAX_BUFFER_SIZE + 1));
         String expectedMessage
                 = "Cannot increase the buffer size from <1073741824> to <1073741825> in order to increase the available capacity"
                   + " from <1073741824> to <1073741825> because the buffer is already the maximum size <1073741824>";
