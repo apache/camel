@@ -181,14 +181,7 @@ public class ElasticsearchProducer extends DefaultProducer {
                 throw new IllegalArgumentException("Wrong body type. Only String or GetRequest is allowed as a type");
             }
             message.setBody(restHighLevelClient.get(getRequest, RequestOptions.DEFAULT));
-        } else if (operation == ElasticsearchOperation.Bulk) {
-            BulkRequest bulkRequest = message.getBody(BulkRequest.class);
-            if (bulkRequest == null) {
-                throw new IllegalArgumentException(
-                        "Wrong body type. Only List, Collection or BulkRequest is allowed as a type");
-            }
-            message.setBody(restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT).getItems());
-        } else if (operation == ElasticsearchOperation.BulkIndex) {
+        } else if (operation == ElasticsearchOperation.Bulk || operation == ElasticsearchOperation.BulkIndex) {
             BulkRequest bulkRequest = message.getBody(BulkRequest.class);
             if (bulkRequest == null) {
                 throw new IllegalArgumentException(
@@ -282,7 +275,6 @@ public class ElasticsearchProducer extends DefaultProducer {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void doStart() throws Exception {
         super.doStart();
         if (!configuration.isDisconnect()) {
@@ -344,7 +336,7 @@ public class ElasticsearchProducer extends DefaultProducer {
 
     private static final class HighLevelClient extends RestHighLevelClient {
         private HighLevelClient(RestClient restClient) {
-            super(restClient, client -> {
+            super(restClient, c -> {
             }, Collections.emptyList());
         }
     }

@@ -76,10 +76,9 @@ public class ElasticsearchBulkIT extends ElasticsearchTestSupport {
         // given
         BulkRequest request = new BulkRequest();
         request.add(
-                new IndexRequest(prefix + "foo", prefix + "bar", prefix + "baz").source(prefix + "content", prefix + "hello"));
+                new IndexRequest(prefix + "foo").id(prefix + "baz").source(prefix + "content", prefix + "hello"));
 
         // when
-        @SuppressWarnings("unchecked")
         BulkItemResponse[] response = template.requestBody("direct:bulk_index", request, BulkItemResponse[].class);
 
         // then
@@ -96,7 +95,7 @@ public class ElasticsearchBulkIT extends ElasticsearchTestSupport {
         // given
         BulkRequest request = new BulkRequest();
         request.add(
-                new IndexRequest(prefix + "foo", prefix + "bar", prefix + "baz").source(prefix + "content", prefix + "hello"));
+                new IndexRequest(prefix + "foo").id(prefix + "baz").source(prefix + "content", prefix + "hello"));
 
         // when
         BulkItemResponse[] response = (BulkItemResponse[]) template.requestBody("direct:bulk", request);

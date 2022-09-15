@@ -145,10 +145,8 @@ public class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTes
         //now, verify GET succeeded
         SearchRequest req = new SearchRequest();
         req.indices("twitter");
-        req.types("tweet");
         SearchRequest req1 = new SearchRequest();
         req.indices("twitter");
-        req.types("tweets");
         MultiSearchRequest request = new MultiSearchRequest().add(req1).add(req);
         Item[] response = template.requestBody("direct:search", request, Item[].class);
         assertNotNull(response, "response should not be null");
@@ -275,11 +273,11 @@ public class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTes
         String prefix = createPrefix();
 
         // given
-        GetRequest request = new GetRequest(prefix + "foo").type(prefix + "bar");
+        GetRequest request = new GetRequest(prefix + "foo");
 
         // when
         String documentId = template.requestBody("direct:index",
-                new IndexRequest(prefix + "foo", prefix + "bar", prefix + "testId")
+                new IndexRequest(prefix + "foo").id(prefix + "testId")
                         .source(prefix + "content", prefix + "hello"),
                 String.class);
         GetResponse response = template.requestBody("direct:get",
@@ -296,11 +294,11 @@ public class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTes
         String prefix = createPrefix();
 
         // given
-        DeleteRequest request = new DeleteRequest(prefix + "foo").type(prefix + "bar");
+        DeleteRequest request = new DeleteRequest(prefix + "foo");
 
         // when
         String documentId = template.requestBody("direct:index",
-                new IndexRequest("" + prefix + "foo", "" + prefix + "bar", "" + prefix + "testId")
+                new IndexRequest("" + prefix + "foo").id("" + prefix + "testId")
                         .source(prefix + "content", prefix + "hello"),
                 String.class);
         DeleteResponse.Result response
