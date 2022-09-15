@@ -106,6 +106,11 @@ public class MllpConfiguration implements Cloneable {
     @UriParam(label = "advanced,producer", defaultValue = "RESET")
     MllpIdleTimeoutStrategy idleTimeoutStrategy = MllpIdleTimeoutStrategy.RESET;
 
+    @UriParam(label = "advanced", defaultValue = "2048")
+    int minBufferSize = 2048;
+    @UriParam(label = "advanced", defaultValue = "" + 0x40000000)
+    int maxBufferSize = 0x40000000;
+
     public MllpConfiguration() {
     }
 
@@ -530,6 +535,28 @@ public class MllpConfiguration implements Cloneable {
         this.idleTimeoutStrategy = idleTimeoutStrategy;
     }
 
+    public int getMinBufferSize() {
+        return minBufferSize;
+    }
+
+    /**
+     * Minimum buffer size used when receiving or sending data over the wire.
+     */
+    public void setMinBufferSize(int minBufferSize) {
+        this.minBufferSize = minBufferSize;
+    }
+
+    /**
+     * Maximum buffer size used when receiving or sending data over the wire.
+     */
+    public int getMaxBufferSize() {
+        return maxBufferSize;
+    }
+
+    public void setMaxBufferSize(int maxBufferSize) {
+        this.maxBufferSize = maxBufferSize;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(bridgeErrorHandler,
@@ -554,7 +581,9 @@ public class MllpConfiguration implements Cloneable {
                 requireEndOfData,
                 stringPayload,
                 validatePayload,
-                charsetName);
+                charsetName,
+                minBufferSize,
+                maxBufferSize);
     }
 
     @Override
@@ -583,6 +612,8 @@ public class MllpConfiguration implements Cloneable {
                 && stringPayload == rhs.stringPayload
                 && validatePayload == rhs.validatePayload
                 && idleTimeoutStrategy == rhs.idleTimeoutStrategy
+                && minBufferSize == rhs.minBufferSize
+                && maxBufferSize == rhs.maxBufferSize
                 && Objects.equals(backlog, rhs.backlog)
                 && Objects.equals(maxConcurrentConsumers, rhs.maxConcurrentConsumers)
                 && Objects.equals(idleTimeout, rhs.idleTimeout)
@@ -619,6 +650,8 @@ public class MllpConfiguration implements Cloneable {
                + ", requireEndOfData=" + requireEndOfData
                + ", stringPayload=" + stringPayload
                + ", validatePayload=" + validatePayload
+               + ", minBufferSize=" + minBufferSize
+               + ", maxBufferSize=" + maxBufferSize
                + ", charsetName='" + charsetName + '\''
                + '}';
     }
