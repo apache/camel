@@ -93,7 +93,7 @@ class Run extends CamelCommand {
                 arity = "0..9")
     String[] files;
 
-    @CommandLine.Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "application",
+    @Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "application",
             description = "Profile to use, which refers to loading properties file with the given profile name. By default application.properties is loaded.")
     String profile;
 
