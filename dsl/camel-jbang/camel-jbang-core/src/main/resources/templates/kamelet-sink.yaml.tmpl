@@ -1,0 +1,33 @@
+apiVersion: camel.apache.org/v1alpha1
+kind: Kamelet
+metadata:
+  name: {{ .Name }}
+  labels:
+    camel.apache.org/kamelet.type: "sink"
+spec:
+  definition:
+    title: "Log Sink"
+    description: A sink that logs all data that it receives, useful for debugging purposes.
+    properties:
+      showHeaders:
+        title: Show Headers
+        description: Show the headers received
+        type: boolean
+        default: false
+      showStreams:
+        title: Show Streams
+        description: Show the stream bodies (they may not be available in following steps)
+        type: boolean
+        default: false
+  dependencies:
+  - "camel:kamelet"
+  - "camel:log"
+  template:
+    from:
+      uri: "kamelet:source"
+      steps:
+      - to:
+          uri: "log:info"
+          parameters:
+            showHeaders: "{{?showHeaders}}"
+            showStreams: "{{?showStreams}}"
