@@ -241,6 +241,8 @@ class KameletBindingLoaderTest extends YamlTestSupport {
               - uri: mock:dummy
               - uri: kamelet:prefix-action?prefix=Apache
               - uri: mock:dummy2
+                properties:
+                  reportGroup: 5
               sink:
                 uri: log:info
                 ''')
@@ -258,7 +260,7 @@ class KameletBindingLoaderTest extends YamlTestSupport {
                 name == 'prefix-action?prefix=Apache'
             }
             with (outputs[2], ToDefinition) {
-                endpointUri == 'mock:dummy2'
+                endpointUri == 'mock:dummy2?reportGroup=5'
             }
             with (outputs[3], ToDefinition) {
                 endpointUri == 'log:info'
