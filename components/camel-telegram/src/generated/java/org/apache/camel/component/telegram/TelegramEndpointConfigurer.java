@@ -37,8 +37,7 @@ public class TelegramEndpointConfigurer extends PropertyConfigurerSupport implem
         case "bufferSize": target.setBufferSize(property(camelContext, int.class, value)); return true;
         case "chatid":
         case "chatId": target.getConfiguration().setChatId(property(camelContext, java.lang.String.class, value)); return true;
-        case "clientconfig":
-        case "clientConfig": target.setClientConfig(property(camelContext, org.asynchttpclient.AsyncHttpClientConfig.class, value)); return true;
+        case "client": target.setClient(property(camelContext, java.net.http.HttpClient.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
@@ -99,8 +98,7 @@ public class TelegramEndpointConfigurer extends PropertyConfigurerSupport implem
         case "bufferSize": return int.class;
         case "chatid":
         case "chatId": return java.lang.String.class;
-        case "clientconfig":
-        case "clientConfig": return org.asynchttpclient.AsyncHttpClientConfig.class;
+        case "client": return java.net.http.HttpClient.class;
         case "delay": return long.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
@@ -162,8 +160,7 @@ public class TelegramEndpointConfigurer extends PropertyConfigurerSupport implem
         case "bufferSize": return target.getBufferSize();
         case "chatid":
         case "chatId": return target.getConfiguration().getChatId();
-        case "clientconfig":
-        case "clientConfig": return target.getClientConfig();
+        case "client": return target.getClient();
         case "delay": return target.getDelay();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();

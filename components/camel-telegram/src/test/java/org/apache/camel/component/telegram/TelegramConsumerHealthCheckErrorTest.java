@@ -83,7 +83,7 @@ public class TelegramConsumerHealthCheckErrorTest extends TelegramTestSupport {
                 rc.getDetails().get(HealthCheck.ENDPOINT_URI));
 
         Throwable e = rc.getError().get();
-        Assertions.assertTrue(e.getMessage().contains("401 Unauthorized"));
+        Assertions.assertTrue(e.getMessage().contains("401"));
         Assertions.assertEquals(401, rc.getDetails().get(HealthCheck.HTTP_RESPONSE_CODE));
     }
 
