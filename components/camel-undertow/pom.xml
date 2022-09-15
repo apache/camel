@@ -130,11 +130,11 @@
         </dependency>
 
         <dependency>
-            <groupId>org.asynchttpclient</groupId>
-            <artifactId>async-http-client</artifactId>
-            <version>${ahc-version}</version>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-handler</artifactId>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
