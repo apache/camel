@@ -36,7 +36,7 @@ public class BulkRequestAggregationStrategy implements AggregationStrategy {
             throw new InvalidPayloadRuntimeException(newExchange, DocWriteRequest[].class);
         }
 
-        DocWriteRequest[] newBody = (DocWriteRequest[]) objBody;
+        DocWriteRequest<?>[] newBody = (DocWriteRequest<?>[]) objBody;
         BulkRequest request;
         if (oldExchange == null) {
             request = new BulkRequest();
