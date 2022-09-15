@@ -209,7 +209,7 @@ public class WebsocketTestClient {
         public CompletionStage<?> onBinary(WebSocket webSocket, ByteBuffer data, boolean last) {
             final String message = readString(data);
 
-            received.add(message);
+            received.add(message.getBytes());
             LOG.info("[ws] received bytes --> {}", message);
             latch.countDown();
 
