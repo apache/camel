@@ -26,6 +26,7 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.infra.common.http.WebsocketTestClient;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,7 +39,7 @@ public class WebsocketRouteTest extends WebsocketCamelRouterTestSupport {
 
     @Test
     void testWebsocketSingleClient() throws Exception {
-        TestClient wsclient = new TestClient("ws://localhost:" + PORT + "/hola");
+        WebsocketTestClient wsclient = new WebsocketTestClient("ws://localhost:" + PORT + "/hola");
         wsclient.connect();
 
         wsclient.sendTextMessage("Cerveza");
@@ -52,7 +53,7 @@ public class WebsocketRouteTest extends WebsocketCamelRouterTestSupport {
 
     @Test
     void testWebsocketSingleClientForBytes() throws Exception {
-        TestClient wsclient = new TestClient("ws://localhost:" + PORT + "/hola");
+        WebsocketTestClient wsclient = new WebsocketTestClient("ws://localhost:" + PORT + "/hola");
         wsclient.connect();
 
         wsclient.sendBytesMessage("Cerveza".getBytes("UTF-8"));
@@ -66,7 +67,7 @@ public class WebsocketRouteTest extends WebsocketCamelRouterTestSupport {
 
     @Test
     void testWebsocketSingleClientForReader() throws Exception {
-        TestClient wsclient = new TestClient("ws://localhost:" + PORT + "/hola3");
+        WebsocketTestClient wsclient = new WebsocketTestClient("ws://localhost:" + PORT + "/hola3");
         wsclient.connect();
 
         wsclient.sendTextMessage("Cerveza");
@@ -80,7 +81,7 @@ public class WebsocketRouteTest extends WebsocketCamelRouterTestSupport {
 
     @Test
     void testWebsocketSingleClientForInputStream() throws Exception {
-        TestClient wsclient = new TestClient("ws://localhost:" + PORT + "/hola3");
+        WebsocketTestClient wsclient = new WebsocketTestClient("ws://localhost:" + PORT + "/hola3");
         wsclient.connect();
 
         wsclient.sendBytesMessage("Cerveza".getBytes("UTF-8"));
@@ -94,8 +95,8 @@ public class WebsocketRouteTest extends WebsocketCamelRouterTestSupport {
 
     @Test
     void testWebsocketBroadcastClient() throws Exception {
-        TestClient wsclient1 = new TestClient("ws://localhost:" + PORT + "/hola2", 2);
-        TestClient wsclient2 = new TestClient("ws://localhost:" + PORT + "/hola2", 2);
+        WebsocketTestClient wsclient1 = new WebsocketTestClient("ws://localhost:" + PORT + "/hola2", 2);
+        WebsocketTestClient wsclient2 = new WebsocketTestClient("ws://localhost:" + PORT + "/hola2", 2);
         wsclient1.connect();
         wsclient2.connect();
 
@@ -122,7 +123,7 @@ public class WebsocketRouteTest extends WebsocketCamelRouterTestSupport {
 
     @Test
     void testWebsocketEventsResendingDisabled() throws Exception {
-        TestClient wsclient = new TestClient("ws://localhost:" + PORT + "/hola4");
+        WebsocketTestClient wsclient = new WebsocketTestClient("ws://localhost:" + PORT + "/hola4");
         wsclient.connect();
         assertFalse(wsclient.await(10));
         wsclient.close();
