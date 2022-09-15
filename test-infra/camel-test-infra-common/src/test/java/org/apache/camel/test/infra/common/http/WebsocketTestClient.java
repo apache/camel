@@ -21,14 +21,20 @@ import java.net.http.HttpClient;
 import java.net.http.WebSocket;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import javax.net.ssl.SSLContext;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A websocket client for using with tests
+ */
 public class WebsocketTestClient {
     private static final Logger LOG = LoggerFactory.getLogger(WebsocketTestClient.class);
 
@@ -39,31 +45,100 @@ public class WebsocketTestClient {
     private CountDownLatch latch;
     private WebSocket websocket;
 
+    /**
+     * Creates a new client instance for the given URL
+     * 
+     * @param url the url to connect to
+     */
     public WebsocketTestClient(String url) {
         this(url, 1);
     }
 
+    /**
+     * Creates a new client instance for the given URL
+     * 
+     * @param url   the url to connect to
+     * @param count the number of expected messages
+     */
     public WebsocketTestClient(String url, int count) {
+        this(url, count, HttpClient.newBuilder());
+    }
+
+    /**
+     * Creates a new client instance for the given URL
+     * 
+     * @param url     the url to connect to
+     * @param count   the number of expected messages
+     * @param builder a builder used to configure the client
+     */
+    public WebsocketTestClient(String url, int count, HttpClient.Builder builder) {
         this.received = new ArrayList<>();
         this.latch = new CountDownLatch(count);
-        this.modernClient = HttpClient.newHttpClient();
+        this.modernClient = builder.build();
         this.url = url;
     }
 
+    /**
+     * Creates a new client instance for the given URL
+     * 
+     * @param url     the url to connect to
+     * @param count   the number of expected messages
+     * @param context the SSL context for the client
+     */
+
+    public WebsocketTestClient(String url, int count, SSLContext context) {
+        this.received = new ArrayList<>();
+        this.latch = new CountDownLatch(count);
+        this.modernClient = HttpClient.newBuilder().sslContext(context).build();
+        this.url = url;
+    }
+
+    /**
+     * Connects to the host using a builtin listener
+     */
     public void connect() {
         websocket = modernClient.newWebSocketBuilder().buildAsync(URI.create(url), new TestWebSocketListener()).join();
     }
 
+    /**
+     * Sends a text message
+     * 
+     * @param message the message to send
+     */
     public void sendTextMessage(String message) {
         websocket.sendText(message, true);
     }
 
+    /**
+     * Sends a binary / bytes message
+     * 
+     * @param message the message to send
+     */
     public void sendBytesMessage(byte[] message) {
         websocket.sendBinary(ByteBuffer.wrap(message), true);
     }
 
+    /**
+     * Waits for the expected number of messages to arrive
+     * 
+     * @param  secs                 seconds to wait
+     * @return                      true if all the messages arrive in time or false otherwise
+     * @throws InterruptedException
+     */
     public boolean await(int secs) throws InterruptedException {
-        return latch.await(secs, TimeUnit.SECONDS);
+        return await(secs, TimeUnit.SECONDS);
+    }
+
+    /**
+     * Waits for the expected number of messages to arrive
+     * 
+     * @param  duration             seconds to wait
+     * @param  timeUnit             the duration time unit
+     * @return                      true if all the messages arrive in time or false otherwise
+     * @throws InterruptedException
+     */
+    public boolean await(int duration, TimeUnit timeUnit) throws InterruptedException {
+        return latch.await(duration, timeUnit);
     }
 
     public void reset(int count) {
@@ -71,8 +146,13 @@ public class WebsocketTestClient {
         received.clear();
     }
 
+    /**
+     * Gets all the received messages
+     * 
+     * @return
+     */
     public List<Object> getReceived() {
-        return received;
+        return Collections.unmodifiableList(received);
     }
 
     public <T> List<T> getReceived(Class<T> cls) {
