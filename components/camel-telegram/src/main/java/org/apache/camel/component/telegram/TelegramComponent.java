@@ -16,14 +16,13 @@
  */
 package org.apache.camel.component.telegram;
 
+import java.net.http.HttpClient;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.AsyncHttpClientConfig;
 
 @Component("telegram")
 public class TelegramComponent extends DefaultComponent {
@@ -33,9 +32,7 @@ public class TelegramComponent extends DefaultComponent {
     private String authorizationToken;
 
     @Metadata(label = "advanced")
-    private AsyncHttpClient client;
-    @Metadata(label = "advanced")
-    private AsyncHttpClientConfig clientConfig;
+    private HttpClient client;
 
     @Metadata(label = "advanced", defaultValue = BOT_API_DEFAULT_URL,
               description = "Can be used to set an alternative base URI, e.g. when you want to test the component against a mock Telegram API")
@@ -61,7 +58,7 @@ public class TelegramComponent extends DefaultComponent {
             configuration.setBaseUri(baseUri);
         }
 
-        TelegramEndpoint endpoint = new TelegramEndpoint(uri, this, configuration, client, clientConfig);
+        TelegramEndpoint endpoint = new TelegramEndpoint(uri, this, configuration, client);
         configuration.setAuthorizationToken(authorizationToken);
         setProperties(endpoint, parameters);
 
@@ -84,26 +81,15 @@ public class TelegramComponent extends DefaultComponent {
         this.authorizationToken = authorizationToken;
     }
 
-    public AsyncHttpClient getClient() {
+    public HttpClient getClient() {
         return client;
     }
 
     /**
-     * To use a custom {@link AsyncHttpClient}
+     * To use a custom {@link java.net.http.HttpClient}
      */
-    public void setClient(AsyncHttpClient client) {
+    public void setClient(HttpClient client) {
         this.client = client;
-    }
-
-    public AsyncHttpClientConfig getClientConfig() {
-        return clientConfig;
-    }
-
-    /**
-     * To configure the AsyncHttpClient to use a custom com.ning.http.client.AsyncHttpClientConfig instance.
-     */
-    public void setClientConfig(AsyncHttpClientConfig clientConfig) {
-        this.clientConfig = clientConfig;
     }
 
     public String getBaseUri() {

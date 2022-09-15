@@ -134,37 +134,18 @@ public interface TelegramComponentBuilderFactory {
             return this;
         }
         /**
-         * To use a custom AsyncHttpClient.
+         * To use a custom java.net.http.HttpClient.
          * 
-         * The option is a:
-         * &lt;code&gt;org.asynchttpclient.AsyncHttpClient&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.net.http.HttpClient&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
          * 
          * @param client the value to set
          * @return the dsl builder
          */
-        default TelegramComponentBuilder client(
-                org.asynchttpclient.AsyncHttpClient client) {
+        default TelegramComponentBuilder client(java.net.http.HttpClient client) {
             doSetProperty("client", client);
-            return this;
-        }
-        /**
-         * To configure the AsyncHttpClient to use a custom
-         * com.ning.http.client.AsyncHttpClientConfig instance.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.asynchttpclient.AsyncHttpClientConfig&lt;/code&gt;
-         * type.
-         * 
-         * Group: advanced
-         * 
-         * @param clientConfig the value to set
-         * @return the dsl builder
-         */
-        default TelegramComponentBuilder clientConfig(
-                org.asynchttpclient.AsyncHttpClientConfig clientConfig) {
-            doSetProperty("clientConfig", clientConfig);
             return this;
         }
         /**
@@ -204,8 +185,7 @@ public interface TelegramComponentBuilderFactory {
             case "lazyStartProducer": ((TelegramComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((TelegramComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "baseUri": ((TelegramComponent) component).setBaseUri((java.lang.String) value); return true;
-            case "client": ((TelegramComponent) component).setClient((org.asynchttpclient.AsyncHttpClient) value); return true;
-            case "clientConfig": ((TelegramComponent) component).setClientConfig((org.asynchttpclient.AsyncHttpClientConfig) value); return true;
+            case "client": ((TelegramComponent) component).setClient((java.net.http.HttpClient) value); return true;
             case "authorizationToken": ((TelegramComponent) component).setAuthorizationToken((java.lang.String) value); return true;
             default: return false;
             }
