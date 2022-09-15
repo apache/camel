@@ -675,24 +675,6 @@ class Run extends CamelCommand {
         }
     }
 
-    public File createLockFile(String name) {
-        File answer = null;
-        if (name != null) {
-            File dir = new File(System.getProperty("user.home"), ".camel");
-            try {
-                dir.mkdirs();
-                answer = new File(dir, name);
-                if (!answer.exists()) {
-                    answer.createNewFile();
-                }
-                answer.deleteOnExit();
-            } catch (Exception e) {
-                answer = null;
-            }
-        }
-        return answer;
-    }
-
     private boolean knownFile(String file) throws Exception {
         // always include kamelets
         String ext = FileUtil.onlyExt(file, false);
