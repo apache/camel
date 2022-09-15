@@ -433,6 +433,25 @@ public abstract class BaseMainSupport extends BaseService {
                 scheduler.schedulePeriodTask(r, period);
             }
         }
+        
+        if (vc.azure().isRefreshEnabled()) {
+            Optional<Runnable> task = camelContext.adapt(ExtendedCamelContext.class)
+                    .getPeriodTaskResolver().newInstance("azure-secret-refresh", Runnable.class);
+            if (task.isPresent()) {
+                long period = vc.azure().getRefreshPeriod();
+                Runnable r = task.get();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Scheduling: {} (period: {})", r, TimeUtils.printDuration(period, false));
+                }
+                if (camelContext.hasService(ContextReloadStrategy.class) == null) {
+                    // refresh is enabled then we need to automatically enable context-reload as well
+                    ContextReloadStrategy reloader = new DefaultContextReloadStrategy();
+                    camelContext.addService(reloader);
+                }
+                PeriodTaskScheduler scheduler = getCamelContext().adapt(ExtendedCamelContext.class).getPeriodTaskScheduler();
+                scheduler.schedulePeriodTask(r, period);
+            }
+        }
     }
 
     protected void autoconfigure(CamelContext camelContext) throws Exception {
