@@ -171,7 +171,7 @@ class Run extends CamelCommand {
     String jfrProfile;
 
     @Option(names = { "--local-kamelet-dir" },
-            description = "Local directory for loading Kamelets (takes precedence)")
+            description = "Local directory for loading Kamelets (takes precedence). Multiple directories can be specified separateed by comma.")
     String localKameletDir;
 
     @Option(names = { "--port" }, description = "Embeds a local HTTP server on this port")
@@ -669,11 +669,20 @@ class Run extends CamelCommand {
 
     private KameletMain createMainInstance() {
         KameletMain main;
-        if (localKameletDir == null) {
+        if (localKameletDir == null || localKameletDir.isEmpty()) {
             main = new KameletMain();
         } else {
-            main = new KameletMain("file:" + localKameletDir);
-            writeSettings("camel.jbang.localKameletDir", localKameletDir);
+            StringJoiner sj = new StringJoiner(",");
+            String[] parts = localKameletDir.split(",");
+            for (String part : parts) {
+                part = FileUtil.compactPath(part);
+                if (!ResourceHelper.hasScheme(part)) {
+                    part = "file:" + part;
+                }
+                sj.add(part);
+            }
+            main = new KameletMain(sj.toString());
+            writeSettings("camel.jbang.localKameletDir", sj.toString());
         }
         return main;
     }
