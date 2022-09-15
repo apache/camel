@@ -1,0 +1,27 @@
+apiVersion: camel.apache.org/v1alpha1
+kind: Kamelet
+metadata:
+  name: {{ .Name }}
+  labels:
+    camel.apache.org/kamelet.type: "action"
+spec:
+  definition:
+    title: "Delay Action"
+    description: Delay the processing using a specific amount of time
+    required:
+      - milliseconds
+    properties:
+      milliseconds:
+        title: Milliseconds
+        description: The number of milliseconds of delay
+        type: integer
+        example: 1000
+  dependencies:
+  - "camel:core"
+  - "camel:kamelet"
+  template:
+    from:
+      uri: "kamelet:source"
+      steps:
+      - delay:
+          constant: "{{milliseconds}}"
