@@ -238,13 +238,20 @@ The camel.vault.gcp supports 7 options, which are listed below.
 |===
 
 === Camel Azure Key Vault configurations
-The camel.vault.azure supports 4 options, which are listed below.
+The camel.vault.azure supports 11 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.vault.azure.blobAccess{zwsp}Key* | The Eventhubs Blob Access Key for CheckpointStore purpose |  | String
+| *camel.vault.azure.blobAccount{zwsp}Name* | The Eventhubs Blob Account Name for CheckpointStore purpose |  | String
+| *camel.vault.azure.blob{zwsp}ContainerName* | The Eventhubs Blob Container Name for CheckpointStore purpose |  | String
 | *camel.vault.azure.clientId* | The client Id for accessing Azure Key Vault |  | String
 | *camel.vault.azure.clientSecret* | The client Secret for accessing Azure Key Vault |  | String
+| *camel.vault.azure.eventhub{zwsp}ConnectionString* | The Eventhubs connection String for Key Vault Secret events notifications |  | String
+| *camel.vault.azure.refresh{zwsp}Enabled* | Whether to automatically reload Camel upon secrets being updated in Azure. | false | boolean
+| *camel.vault.azure.refresh{zwsp}Period* | The period (millis) between checking Azure for updated secrets. | 30000 | long
+| *camel.vault.azure.secrets* | Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma. |  | String
 | *camel.vault.azure.tenantId* | The Tenant Id for accessing Azure Key Vault |  | String
 | *camel.vault.azure.vaultName* | The vault Name in Azure Key Vault |  | String
 |===
