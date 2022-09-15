@@ -18,16 +18,10 @@ package org.apache.camel.component.websocket;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 
-import io.netty.handler.ssl.ClientAuth;
-import io.netty.handler.ssl.JdkSslContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
@@ -35,31 +29,18 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.SSLContextServerParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.infra.common.http.WebsocketTestClient;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.AsyncHttpClientConfig;
-import org.asynchttpclient.DefaultAsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClientConfig;
-import org.asynchttpclient.ws.WebSocket;
-import org.asynchttpclient.ws.WebSocketListener;
-import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WebsocketSSLClientAuthRouteExampleTest extends CamelTestSupport {
 
-    private static List<String> received = new ArrayList<>();
-    private static CountDownLatch latch = new CountDownLatch(10);
-
-    private Properties originalValues = new Properties();
     private String pwd = "changeit";
     private int port;
-    private Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
     @BeforeEach
@@ -69,13 +50,7 @@ public class WebsocketSSLClientAuthRouteExampleTest extends CamelTestSupport {
         super.setUp();
     }
 
-    protected AsyncHttpClient createAsyncHttpSSLClient() throws IOException, GeneralSecurityException {
-
-        AsyncHttpClient c;
-        AsyncHttpClientConfig config;
-
-        DefaultAsyncHttpClientConfig.Builder builder = new DefaultAsyncHttpClientConfig.Builder();
-
+    private SSLContext createSSLContext() throws GeneralSecurityException, IOException {
         SSLContextParameters sslContextParameters = new SSLContextParameters();
 
         KeyStoreParameters truststoreParameters = new KeyStoreParameters();
@@ -94,14 +69,7 @@ public class WebsocketSSLClientAuthRouteExampleTest extends CamelTestSupport {
         clientAuthClientSSLKeyManagers.setKeyStore(keystoreParameters);
         sslContextParameters.setKeyManagers(clientAuthClientSSLKeyManagers);
 
-        SSLContext sslContext = sslContextParameters.createSSLContext(context());
-        JdkSslContext ssl = new JdkSslContext(sslContext, true, ClientAuth.REQUIRE);
-        builder.setSslContext(ssl);
-        builder.setDisableHttpsEndpointIdentificationAlgorithm(true);
-        config = builder.build();
-        c = new DefaultAsyncHttpClient(config);
-
-        return c;
+        return sslContextParameters.createSSLContext(context());
     }
 
     protected SSLContextParameters defineSSLContextParameters() {
@@ -130,63 +98,23 @@ public class WebsocketSSLClientAuthRouteExampleTest extends CamelTestSupport {
 
     @Test
     public void testWSHttpCall() throws Exception {
-
-        AsyncHttpClient c = createAsyncHttpSSLClient();
-        WebSocket websocket = c.prepareGet("wss://127.0.0.1:" + port + "/test").execute(
-                new WebSocketUpgradeHandler.Builder()
-                        .addWebSocketListener(new WebSocketListener() {
-
-                            @Override
-                            public void onOpen(WebSocket websocket) {
-                            }
-
-                            @Override
-                            public void onClose(WebSocket websocket, int code, String reason) {
-                            }
-
-                            @Override
-                            public void onError(Throwable t) {
-                                log.warn("Unhandled exception: {}", t.getMessage(), t);
-                            }
-
-                            @Override
-                            public void onBinaryFrame(byte[] payload, boolean finalFragment, int rsv) {
-
-                            }
-
-                            @Override
-                            public void onTextFrame(String payload, boolean finalFragment, int rsv) {
-                                received.add(payload);
-                                log.info("received --> " + payload);
-                                latch.countDown();
-                            }
-
-                            @Override
-                            public void onPingFrame(byte[] payload) {
-
-                            }
-
-                            @Override
-                            public void onPongFrame(byte[] payload) {
-
-                            }
-                        }).build())
-                .get();
+        SSLContext sslContext = createSSLContext();
+        WebsocketTestClient testClient = new WebsocketTestClient("wss://localhost:" + port + "/test", 10, sslContext);
+        testClient.connect();
 
         getMockEndpoint("mock:client").expectedBodiesReceived("Hello from WS client");
 
-        websocket.sendTextFrame("Hello from WS client");
-        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        testClient.sendTextMessage("Hello from WS client");
+        assertTrue(testClient.await(10, TimeUnit.SECONDS));
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(10, received.size());
+        assertEquals(10, testClient.getReceived().size());
         for (int i = 0; i < 10; i++) {
-            assertEquals(">> Welcome on board!", received.get(i));
+            assertEquals(">> Welcome on board!", testClient.getReceived().get(i));
         }
 
-        websocket.sendCloseFrame();
-        c.close();
+        testClient.close();
     }
 
     @Override

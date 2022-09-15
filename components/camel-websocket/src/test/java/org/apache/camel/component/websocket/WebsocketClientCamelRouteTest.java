@@ -16,34 +16,21 @@
  */
 package org.apache.camel.component.websocket;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.infra.common.http.WebsocketTestClient;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClient;
-import org.asynchttpclient.ws.WebSocket;
-import org.asynchttpclient.ws.WebSocketListener;
-import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WebsocketClientCamelRouteTest extends CamelTestSupport {
 
-    private static List<String> received = new ArrayList<>();
-    private static CountDownLatch latch = new CountDownLatch(10);
-
     private int port;
-    private Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
     @BeforeEach
@@ -54,61 +41,22 @@ public class WebsocketClientCamelRouteTest extends CamelTestSupport {
 
     @Test
     public void testWSHttpCall() throws Exception {
-        AsyncHttpClient c = new DefaultAsyncHttpClient();
-
-        WebSocket websocket = c.prepareGet("ws://127.0.0.1:" + port + "/test").execute(
-                new WebSocketUpgradeHandler.Builder()
-                        .addWebSocketListener(new WebSocketListener() {
-
-                            @Override
-                            public void onOpen(WebSocket websocket) {
-                            }
-
-                            @Override
-                            public void onClose(WebSocket websocket, int code, String reason) {
-
-                            }
-
-                            @Override
-                            public void onError(Throwable t) {
-                                log.warn("Unhandled exception: {}", t.getMessage(), t);
-                            }
-
-                            @Override
-                            public void onBinaryFrame(byte[] payload, boolean finalFragment, int rsv) {
-                            }
-
-                            @Override
-                            public void onTextFrame(String payload, boolean finalFragment, int rsv) {
-                                received.add(payload);
-                                log.info("received --> " + payload);
-                                latch.countDown();
-                            }
-
-                            @Override
-                            public void onPingFrame(byte[] payload) {
-                            }
-
-                            @Override
-                            public void onPongFrame(byte[] payload) {
-                            }
-                        }).build())
-                .get();
+        WebsocketTestClient testClient = new WebsocketTestClient("ws://localhost:" + port + "/test", 10);
+        testClient.connect();
 
         getMockEndpoint("mock:client").expectedBodiesReceived("Hello from WS client");
 
-        websocket.sendTextFrame("Hello from WS client");
-        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        testClient.sendTextMessage("Hello from WS client");
+        assertTrue(testClient.await(10, TimeUnit.SECONDS));
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(10, received.size());
+        assertEquals(10, testClient.getReceived().size());
         for (int i = 0; i < 10; i++) {
-            assertEquals(">> Welcome on board!", received.get(i));
+            assertEquals(">> Welcome on board!", testClient.getReceived().get(i));
         }
 
-        websocket.sendCloseFrame();
-        c.close();
+        testClient.close();
     }
 
     @Override
