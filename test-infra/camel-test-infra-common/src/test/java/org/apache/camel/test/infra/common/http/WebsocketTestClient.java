@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.atmosphere.websocket;
+package org.apache.camel.test.infra.common.http;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -29,8 +29,8 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TestClient {
-    private static final Logger LOG = LoggerFactory.getLogger(TestClient.class);
+public class WebsocketTestClient {
+    private static final Logger LOG = LoggerFactory.getLogger(WebsocketTestClient.class);
 
     private final List<Object> received;
     private final HttpClient modernClient;
@@ -39,11 +39,11 @@ public class TestClient {
     private CountDownLatch latch;
     private WebSocket websocket;
 
-    public TestClient(String url) {
+    public WebsocketTestClient(String url) {
         this(url, 1);
     }
 
-    public TestClient(String url, int count) {
+    public WebsocketTestClient(String url, int count) {
         this.received = new ArrayList<>();
         this.latch = new CountDownLatch(count);
         this.modernClient = HttpClient.newHttpClient();
