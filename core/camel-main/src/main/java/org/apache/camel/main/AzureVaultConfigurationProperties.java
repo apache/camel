@@ -72,7 +72,7 @@ public class AzureVaultConfigurationProperties extends AzureVaultConfiguration i
         setClientSecret(clientSecret);
         return this;
     }
-    
+
     /**
      * The Azure Key Vault Tenant Id
      */
@@ -104,7 +104,7 @@ public class AzureVaultConfigurationProperties extends AzureVaultConfiguration i
         setSecrets(secrets);
         return this;
     }
-    
+
     /**
      * The Azure Eventhub connection String for Key Vault Event notification
      */
@@ -112,7 +112,7 @@ public class AzureVaultConfigurationProperties extends AzureVaultConfiguration i
         setEventhubConnectionString(connectionString);
         return this;
     }
-    
+
     /**
      * The Azure Eventhub Blob Access Key for Checkpoint Store purpose
      */
@@ -120,7 +120,7 @@ public class AzureVaultConfigurationProperties extends AzureVaultConfiguration i
         setBlobAccessKey(accessKey);
         return this;
     }
-    
+
     /**
      * The Azure Eventhub Blob Account Name for Checkpoint Store purpose
      */
@@ -129,7 +129,6 @@ public class AzureVaultConfigurationProperties extends AzureVaultConfiguration i
         return this;
     }
 
-    
     /**
      * The Azure Eventhub Blob Container Name for Checkpoint Store purpose
      */
