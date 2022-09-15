@@ -621,6 +621,74 @@ public interface MllpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Maximum buffer size used when receiving or sending data over the
+         * wire.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1073741824
+         * Group: advanced
+         * 
+         * @param maxBufferSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMllpEndpointConsumerBuilder maxBufferSize(
+                int maxBufferSize) {
+            doSetProperty("maxBufferSize", maxBufferSize);
+            return this;
+        }
+        /**
+         * Maximum buffer size used when receiving or sending data over the
+         * wire.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1073741824
+         * Group: advanced
+         * 
+         * @param maxBufferSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMllpEndpointConsumerBuilder maxBufferSize(
+                String maxBufferSize) {
+            doSetProperty("maxBufferSize", maxBufferSize);
+            return this;
+        }
+        /**
+         * Minimum buffer size used when receiving or sending data over the
+         * wire.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 2048
+         * Group: advanced
+         * 
+         * @param minBufferSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMllpEndpointConsumerBuilder minBufferSize(
+                int minBufferSize) {
+            doSetProperty("minBufferSize", minBufferSize);
+            return this;
+        }
+        /**
+         * Minimum buffer size used when receiving or sending data over the
+         * wire.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 2048
+         * Group: advanced
+         * 
+         * @param minBufferSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMllpEndpointConsumerBuilder minBufferSize(
+                String minBufferSize) {
+            doSetProperty("minBufferSize", minBufferSize);
+            return this;
+        }
+        /**
          * The SO_TIMEOUT value (in milliseconds) used after the start of an
          * MLLP frame has been received.
          * 
@@ -1202,6 +1270,74 @@ public interface MllpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Maximum buffer size used when receiving or sending data over the
+         * wire.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1073741824
+         * Group: advanced
+         * 
+         * @param maxBufferSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMllpEndpointProducerBuilder maxBufferSize(
+                int maxBufferSize) {
+            doSetProperty("maxBufferSize", maxBufferSize);
+            return this;
+        }
+        /**
+         * Maximum buffer size used when receiving or sending data over the
+         * wire.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1073741824
+         * Group: advanced
+         * 
+         * @param maxBufferSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMllpEndpointProducerBuilder maxBufferSize(
+                String maxBufferSize) {
+            doSetProperty("maxBufferSize", maxBufferSize);
+            return this;
+        }
+        /**
+         * Minimum buffer size used when receiving or sending data over the
+         * wire.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 2048
+         * Group: advanced
+         * 
+         * @param minBufferSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMllpEndpointProducerBuilder minBufferSize(
+                int minBufferSize) {
+            doSetProperty("minBufferSize", minBufferSize);
+            return this;
+        }
+        /**
+         * Minimum buffer size used when receiving or sending data over the
+         * wire.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 2048
+         * Group: advanced
+         * 
+         * @param minBufferSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMllpEndpointProducerBuilder minBufferSize(
+                String minBufferSize) {
+            doSetProperty("minBufferSize", minBufferSize);
+            return this;
+        }
+        /**
          * The SO_TIMEOUT value (in milliseconds) used after the start of an
          * MLLP frame has been received.
          * 
@@ -1595,6 +1731,70 @@ public interface MllpEndpointBuilderFactory {
                 AdvancedMllpEndpointProducerBuilder {
         default MllpEndpointBuilder basic() {
             return (MllpEndpointBuilder) this;
+        }
+        /**
+         * Maximum buffer size used when receiving or sending data over the
+         * wire.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1073741824
+         * Group: advanced
+         * 
+         * @param maxBufferSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMllpEndpointBuilder maxBufferSize(int maxBufferSize) {
+            doSetProperty("maxBufferSize", maxBufferSize);
+            return this;
+        }
+        /**
+         * Maximum buffer size used when receiving or sending data over the
+         * wire.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1073741824
+         * Group: advanced
+         * 
+         * @param maxBufferSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMllpEndpointBuilder maxBufferSize(String maxBufferSize) {
+            doSetProperty("maxBufferSize", maxBufferSize);
+            return this;
+        }
+        /**
+         * Minimum buffer size used when receiving or sending data over the
+         * wire.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 2048
+         * Group: advanced
+         * 
+         * @param minBufferSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMllpEndpointBuilder minBufferSize(int minBufferSize) {
+            doSetProperty("minBufferSize", minBufferSize);
+            return this;
+        }
+        /**
+         * Minimum buffer size used when receiving or sending data over the
+         * wire.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 2048
+         * Group: advanced
+         * 
+         * @param minBufferSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMllpEndpointBuilder minBufferSize(String minBufferSize) {
+            doSetProperty("minBufferSize", minBufferSize);
+            return this;
         }
         /**
          * The SO_TIMEOUT value (in milliseconds) used after the start of an

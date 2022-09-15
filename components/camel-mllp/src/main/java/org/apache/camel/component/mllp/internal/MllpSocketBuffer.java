@@ -36,8 +36,6 @@ import org.slf4j.LoggerFactory;
  * An OutputStream modeled after the ByteArrayOutputStream specifically for MLLP operations.
  */
 public class MllpSocketBuffer {
-    static final int MIN_BUFFER_SIZE = 2048;
-    static final int MAX_BUFFER_SIZE = 0x40000000;  // Approximately 1-GB
 
     private static final Logger LOG = LoggerFactory.getLogger(MllpSocketBuffer.class);
     final MllpEndpoint endpoint;
@@ -49,6 +47,8 @@ public class MllpSocketBuffer {
     int endOfBlockIndex = -1;
     String charset;
     Hl7Util hl7Util;
+    int minBufferSize;
+    int maxBufferSize;
 
     public MllpSocketBuffer(MllpEndpoint endpoint) {
         if (endpoint == null) {
@@ -58,8 +58,10 @@ public class MllpSocketBuffer {
         this.charset = endpoint.getCharsetName();
         MllpComponent component = endpoint.getComponent();
         this.hl7Util = new Hl7Util(component.getLogPhiMaxBytes(), component.getLogPhi());
+        this.minBufferSize = endpoint.getConfiguration().getMinBufferSize();
+        this.maxBufferSize = endpoint.getConfiguration().getMaxBufferSize();
 
-        buffer = new byte[MIN_BUFFER_SIZE];
+        buffer = new byte[minBufferSize];
     }
 
     public boolean isEndOfDataRequired() {
@@ -179,7 +181,7 @@ public class MllpSocketBuffer {
             throws MllpSocketException, SocketTimeoutException {
         if (socket != null && socket.isConnected() && !socket.isClosed()) {
             LOG.trace("readFrom({}, {}, {}) - entering", socket, receiveTimeout, readTimeout);
-            ensureCapacity(MIN_BUFFER_SIZE);
+            ensureCapacity(minBufferSize);
 
             try {
                 InputStream socketInputStream = socket.getInputStream();
@@ -191,7 +193,7 @@ public class MllpSocketBuffer {
                     socket.setSoTimeout(readTimeout);
 
                     while (!hasCompleteEnvelope()) {
-                        ensureCapacity(Math.max(MIN_BUFFER_SIZE, socketInputStream.available()));
+                        ensureCapacity(Math.max(minBufferSize, socketInputStream.available()));
                         readSocketInputStream(socketInputStream, socket);
                     }
                 }
@@ -507,20 +509,20 @@ public class MllpSocketBuffer {
         if (requiredAvailableCapacity > currentAvailableCapacity) {
             int requiredBufferSize = buffer.length + (requiredAvailableCapacity - currentAvailableCapacity);
 
-            if (buffer.length >= MAX_BUFFER_SIZE) {
+            if (buffer.length >= maxBufferSize) {
                 final String exceptionMessageFormat = "Cannot increase the buffer size from <%d> to <%d>"
                                                       + " in order to increase the available capacity from <%d> to <%d> because the buffer is already the maximum size <%d>";
                 throw new IllegalStateException(
                         String.format(exceptionMessageFormat, buffer.length, requiredBufferSize, currentAvailableCapacity,
-                                requiredAvailableCapacity, MAX_BUFFER_SIZE));
-            } else if (requiredBufferSize > MAX_BUFFER_SIZE) {
+                                requiredAvailableCapacity, maxBufferSize));
+            } else if (requiredBufferSize > maxBufferSize) {
                 final String exceptionMessageFormat = "Cannot increase the buffer size <%d>"
                                                       + " in order to increase the available capacity from <%d> to <%d> because the required buffer size <%d> exceeds the maximum buffer size <%d>";
                 throw new IllegalStateException(
                         String.format(exceptionMessageFormat, buffer.length, currentAvailableCapacity,
-                                requiredAvailableCapacity, requiredBufferSize, MAX_BUFFER_SIZE));
+                                requiredAvailableCapacity, requiredBufferSize, maxBufferSize));
             }
-            int newBufferSize = Math.min(buffer.length + Math.max(MIN_BUFFER_SIZE, requiredAvailableCapacity), MAX_BUFFER_SIZE);
+            int newBufferSize = Math.min(buffer.length + Math.max(minBufferSize, requiredAvailableCapacity), maxBufferSize);
 
             buffer = Arrays.copyOf(buffer, newBufferSize);
         }
