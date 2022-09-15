@@ -16,20 +16,16 @@
  */
 package org.apache.camel.component.websocket;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.infra.common.http.WebsocketTestClient;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClient;
-import org.asynchttpclient.Response;
-import org.asynchttpclient.ws.WebSocket;
-import org.asynchttpclient.ws.WebSocketListener;
-import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -40,12 +36,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WebsocketStaticTest extends CamelTestSupport {
-
-    private static List<String> received = new ArrayList<>();
-    private static CountDownLatch latch = new CountDownLatch(1);
+    private static final Logger LOG = LoggerFactory.getLogger(WebsocketStaticTest.class);
 
     private int port;
-    private Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
     @BeforeEach
@@ -56,65 +49,33 @@ public class WebsocketStaticTest extends CamelTestSupport {
 
     @Test
     public void testStaticResource() throws Exception {
-        AsyncHttpClient c = new DefaultAsyncHttpClient();
+        WebsocketTestClient testClient = new WebsocketTestClient("ws://127.0.0.1:" + port + "/echo", 1);
+        testClient.connect();
 
-        WebSocket websocket = c.prepareGet("ws://127.0.0.1:" + port + "/echo").execute(
-                new WebSocketUpgradeHandler.Builder()
-                        .addWebSocketListener(new WebSocketListener() {
-                            @Override
-                            public void onOpen(WebSocket websocket) {
-                            }
+        testClient.sendTextMessage("Beer");
+        assertTrue(testClient.await(10, TimeUnit.SECONDS));
 
-                            @Override
-                            public void onClose(WebSocket websocket, int code, String reason) {
-                            }
-
-                            @Override
-                            public void onError(Throwable t) {
-                                log.warn("Unhandled exception: {}", t.getMessage(), t);
-                            }
-
-                            @Override
-                            public void onBinaryFrame(byte[] payload, boolean finalFragment, int rsv) {
-                            }
-
-                            @Override
-                            public void onTextFrame(String payload, boolean finalFragment, int rsv) {
-                                received.add(payload);
-                                log.info("received --> " + payload);
-                                latch.countDown();
-                            }
-
-                            @Override
-                            public void onPingFrame(byte[] payload) {
-
-                            }
-
-                            @Override
-                            public void onPongFrame(byte[] payload) {
-
-                            }
-                        }).build())
-                .get();
-
-        websocket.sendTextFrame("Beer");
-        assertTrue(latch.await(10, TimeUnit.SECONDS));
-
-        assertEquals(1, received.size());
-        assertEquals("BeerBeer", received.get(0));
+        assertEquals(1, testClient.getReceived().size());
+        assertEquals("BeerBeer", testClient.getReceived().get(0));
 
         // now call static html
-        Response response = c.prepareGet("http://127.0.0.1:" + port + "/hello.html").execute().get(5, TimeUnit.SECONDS);
-        assertNotNull(response);
-        assertEquals(200, response.getStatusCode());
-        String body = response.getResponseBody();
-        assertNotNull(body);
-        log.info(body);
-        assertTrue(body.contains("Hello World"));
-        c.close();
+        HttpClient client = HttpClient.newBuilder().build();
 
-        websocket.sendCloseFrame();
-        c.close();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://127.0.0.1:" + port + "/hello.html"))
+                .GET()
+                .build();
+
+        final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        assertNotNull(response);
+        assertEquals(200, response.statusCode());
+        String body = response.body();
+        assertNotNull(body);
+        LOG.info(body);
+        assertTrue(body.contains("Hello World"));
+
+        testClient.close();
     }
 
     @Override
