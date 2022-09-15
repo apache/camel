@@ -26,6 +26,7 @@ import java.util.concurrent.ExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.infra.common.http.WebsocketTestClient;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -41,7 +42,7 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
     private static Map<String, String> connectionKeyUserMap = new HashMap<>();
 
     private void runtTest(String s) throws InterruptedException, ExecutionException, IOException {
-        TestClient wsclient = new TestClient("ws://localhost:" + PORT + s);
+        WebsocketTestClient wsclient = new WebsocketTestClient("ws://localhost:" + PORT + s);
         wsclient.connect();
         wsclient.close();
     }
@@ -62,9 +63,9 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
         final int awaitTime = 5;
         connectionKeyUserMap.clear();
 
-        TestClient wsclient1 = new TestClient("ws://localhost:" + PORT + "/hola2", 2);
-        TestClient wsclient2 = new TestClient("ws://localhost:" + PORT + "/hola2", 2);
-        TestClient wsclient3 = new TestClient("ws://localhost:" + PORT + "/hola2", 2);
+        WebsocketTestClient wsclient1 = new WebsocketTestClient("ws://localhost:" + PORT + "/hola2", 2);
+        WebsocketTestClient wsclient2 = new WebsocketTestClient("ws://localhost:" + PORT + "/hola2", 2);
+        WebsocketTestClient wsclient3 = new WebsocketTestClient("ws://localhost:" + PORT + "/hola2", 2);
 
         wsclient1.connect();
         wsclient1.await(awaitTime);
@@ -109,9 +110,9 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
         final int awaitTime = 5;
         connectionKeyUserMap.clear();
 
-        TestClient wsclient1 = new TestClient("ws://localhost:" + PORT + "/hola3", 2);
-        TestClient wsclient2 = new TestClient("ws://localhost:" + PORT + "/hola3", 2);
-        TestClient wsclient3 = new TestClient("ws://localhost:" + PORT + "/hola3", 2);
+        WebsocketTestClient wsclient1 = new WebsocketTestClient("ws://localhost:" + PORT + "/hola3", 2);
+        WebsocketTestClient wsclient2 = new WebsocketTestClient("ws://localhost:" + PORT + "/hola3", 2);
+        WebsocketTestClient wsclient3 = new WebsocketTestClient("ws://localhost:" + PORT + "/hola3", 2);
 
         wsclient1.connect();
         wsclient1.await(awaitTime);
