@@ -19,20 +19,12 @@ package org.apache.camel.component.websocket;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.infra.common.http.WebsocketTestClient;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClient;
-import org.asynchttpclient.ws.WebSocket;
-import org.asynchttpclient.ws.WebSocketListener;
-import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class WebsocketConsumerRouteTest extends CamelTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(WebsocketConsumerRouteTest.class);
-
     private int port;
 
     @Override
@@ -44,106 +36,33 @@ public class WebsocketConsumerRouteTest extends CamelTestSupport {
 
     @Test
     public void testWSHttpCall() throws Exception {
-        AsyncHttpClient c = new DefaultAsyncHttpClient();
-
-        WebSocket websocket = c.prepareGet("ws://127.0.0.1:" + port + "/echo").execute(
-                new WebSocketUpgradeHandler.Builder()
-                        .addWebSocketListener(new WebSocketListener() {
-                            @Override
-                            public void onOpen(WebSocket websocket) {
-                            }
-
-                            @Override
-                            public void onClose(WebSocket websocket, int code, String reason) {
-
-                            }
-
-                            @Override
-                            public void onError(Throwable t) {
-                                LOG.warn("Unhandled exception: {}", t.getMessage(), t);
-                            }
-
-                            @Override
-                            public void onBinaryFrame(byte[] payload, boolean finalFragment, int rsv) {
-
-                            }
-
-                            @Override
-                            public void onTextFrame(String payload, boolean finalFragment, int rsv) {
-
-                            }
-
-                            @Override
-                            public void onPingFrame(byte[] payload) {
-
-                            }
-
-                            @Override
-                            public void onPongFrame(byte[] payload) {
-
-                            }
-                        }).build())
-                .get();
+        WebsocketTestClient testClient = new WebsocketTestClient("ws://localhost:" + port + "/echo", 1);
+        testClient.connect();
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Test");
 
-        websocket.sendTextFrame("Test");
+        testClient.sendTextMessage("Test");
 
         result.assertIsSatisfied();
 
-        websocket.sendCloseFrame();
-        c.close();
+        testClient.close();
     }
 
     @Test
     public void testWSBytesHttpCall() throws Exception {
-        AsyncHttpClient c = new DefaultAsyncHttpClient();
-
-        WebSocket websocket = c.prepareGet("ws://127.0.0.1:" + port + "/echo").execute(
-                new WebSocketUpgradeHandler.Builder()
-                        .addWebSocketListener(new WebSocketListener() {
-                            @Override
-                            public void onOpen(WebSocket websocket) {
-                            }
-
-                            @Override
-                            public void onClose(WebSocket websocket, int code, String reason) {
-                            }
-
-                            @Override
-                            public void onError(Throwable t) {
-                                LOG.warn("Unhandled exception: {}", t.getMessage(), t);
-                            }
-
-                            @Override
-                            public void onBinaryFrame(byte[] payload, boolean finalFragment, int rsv) {
-                            }
-
-                            @Override
-                            public void onTextFrame(String payload, boolean finalFragment, int rsv) {
-                            }
-
-                            @Override
-                            public void onPingFrame(byte[] payload) {
-                            }
-
-                            @Override
-                            public void onPongFrame(byte[] payload) {
-                            }
-                        }).build())
-                .get();
+        WebsocketTestClient testClient = new WebsocketTestClient("ws://localhost:" + port + "/echo", 1);
+        testClient.connect();
 
         MockEndpoint result = getMockEndpoint("mock:result");
-        final byte[] testmessage = "Test".getBytes("utf-8");
-        result.expectedBodiesReceived(testmessage);
+        final byte[] testMessage = "Test".getBytes("utf-8");
+        result.expectedBodiesReceived(testMessage);
 
-        websocket.sendBinaryFrame(testmessage);
+        testClient.sendBytesMessage(testMessage);
 
         result.assertIsSatisfied();
 
-        websocket.sendCloseFrame();
-        c.close();
+        testClient.close();
     }
 
     @Override

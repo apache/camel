@@ -16,34 +16,20 @@
  */
 package org.apache.camel.component.websocket;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.infra.common.http.WebsocketTestClient;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClient;
-import org.asynchttpclient.ws.WebSocket;
-import org.asynchttpclient.ws.WebSocketListener;
-import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WebsocketTwoRoutesToSIndividualAndBroadcastEndpointExampleTest extends CamelTestSupport {
-
-    private static List<String> received = new ArrayList<>();
-    private static CountDownLatch latch;
-
     private int port;
-    private Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
     @BeforeEach
@@ -54,65 +40,19 @@ public class WebsocketTwoRoutesToSIndividualAndBroadcastEndpointExampleTest exte
 
     @Test
     public void testWSHttpCallEcho() throws Exception {
+        WebsocketTestClient testClient = new WebsocketTestClient("ws://127.0.0.1:" + port + "/bar", 2);
+        testClient.connect();
 
-        // We call the route WebSocket BAR
-        received.clear();
-        latch = new CountDownLatch(2);
+        testClient.sendTextMessage("Beer");
+        assertTrue(testClient.await(10, TimeUnit.SECONDS));
 
-        AsyncHttpClient c = new DefaultAsyncHttpClient();
-
-        WebSocket websocket = c.prepareGet("ws://localhost:" + port + "/bar").execute(
-                new WebSocketUpgradeHandler.Builder()
-                        .addWebSocketListener(new WebSocketListener() {
-                            @Override
-                            public void onOpen(WebSocket websocket) {
-                            }
-
-                            @Override
-                            public void onClose(WebSocket websocket, int code, String reason) {
-
-                            }
-
-                            @Override
-                            public void onError(Throwable t) {
-                                log.warn("Unhandled exception: {}", t.getMessage(), t);
-                            }
-
-                            @Override
-                            public void onBinaryFrame(byte[] payload, boolean finalFragment, int rsv) {
-
-                            }
-
-                            @Override
-                            public void onTextFrame(String payload, boolean finalFragment, int rsv) {
-                                received.add(payload);
-                                log.info("received --> " + payload);
-                                latch.countDown();
-                            }
-
-                            @Override
-                            public void onPingFrame(byte[] payload) {
-
-                            }
-
-                            @Override
-                            public void onPongFrame(byte[] payload) {
-
-                            }
-                        }).build())
-                .get();
-
-        websocket.sendTextFrame("Beer");
-        assertTrue(latch.await(10, TimeUnit.SECONDS));
-
-        assertEquals(2, received.size());
+        assertEquals(2, testClient.getReceived().size());
 
         //Cannot guarantee the order in which messages are received
-        assertTrue(received.contains("The bar has Beer"));
-        assertTrue(received.contains("Broadcasting to Bar"));
+        assertTrue(testClient.getReceived().contains("The bar has Beer"));
+        assertTrue(testClient.getReceived().contains("Broadcasting to Bar"));
 
-        websocket.sendCloseFrame();
-        c.close();
+        testClient.close();
     }
 
     @Override
