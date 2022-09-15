@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.azure.key.vault;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.azure.core.exception.ResourceNotFoundException;
 import com.azure.identity.ClientSecretCredential;
 import com.azure.identity.ClientSecretCredentialBuilder;
@@ -25,10 +28,6 @@ import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.util.HashSet;
-import java.util.Set;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
@@ -121,7 +120,7 @@ public class KeyVaultPropertiesFunction extends ServiceSupport implements Proper
                     "Using the Azure Key Vault Properties Function requires setting Azure credentials as application properties or environment variables");
         }
     }
-    
+
     @Override
     protected void doStop() throws Exception {
         secrets.clear();
@@ -186,10 +185,10 @@ public class KeyVaultPropertiesFunction extends ServiceSupport implements Proper
             String key, String subkey, String defaultValue, String version)
             throws JsonProcessingException {
         String returnValue;
-        
+
         // capture name of secret
         secrets.add(key);
-        
+
         try {
             KeyVaultSecret secret = client.getSecret(key, ObjectHelper.isNotEmpty(version) ? version : "");
             returnValue = secret.getValue();
@@ -225,7 +224,7 @@ public class KeyVaultPropertiesFunction extends ServiceSupport implements Proper
     public CamelContext getCamelContext() {
         return camelContext;
     }
-    
+
     /**
      * Ids of the secrets in use
      */

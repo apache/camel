@@ -433,7 +433,7 @@ public abstract class BaseMainSupport extends BaseService {
                 scheduler.schedulePeriodTask(r, period);
             }
         }
-        
+
         if (vc.azure().isRefreshEnabled()) {
             Optional<Runnable> task = camelContext.adapt(ExtendedCamelContext.class)
                     .getPeriodTaskResolver().newInstance("azure-secret-refresh", Runnable.class);
