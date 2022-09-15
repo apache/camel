@@ -40,11 +40,7 @@ import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.apache.camel.component.undertow.UndertowConstants;
 import org.apache.camel.component.undertow.UndertowConstants.EventType;
 import org.apache.camel.converter.IOConverter;
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClient;
-import org.asynchttpclient.ws.WebSocket;
-import org.asynchttpclient.ws.WebSocketListener;
-import org.asynchttpclient.ws.WebSocketUpgradeHandler;
+import org.apache.camel.test.infra.common.http.WebsocketTestClient;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,74 +58,29 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
 
     @Test
     public void wsClientSingleText() throws Exception {
-        AsyncHttpClient c = new DefaultAsyncHttpClient();
-
-        WebSocket websocket = c.prepareGet("ws://localhost:" + getPort() + "/app1")
-                .execute(new WebSocketUpgradeHandler.Builder().addWebSocketListener(new WebSocketListener() {
-
-                    @Override
-                    public void onTextFrame(String message, boolean finalFragment, int rsv) {
-                        System.out.println("got message " + message);
-                    }
-
-                    @Override
-                    public void onOpen(WebSocket webSocket) {
-                    }
-
-                    @Override
-                    public void onClose(WebSocket webSocket, int code, String reason) {
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-                        LOG.warn("Unhandled exception: {}", t.getMessage(), t);
-                    }
-
-                }).build()).get();
+        WebsocketTestClient testClient = new WebsocketTestClient("ws://localhost:" + getPort() + "/app1");
+        testClient.connect();
 
         MockEndpoint result = getMockEndpoint("mock:result1");
         result.expectedBodiesReceived("Test");
 
-        websocket.sendTextFrame("Test");
+        testClient.sendTextMessage("Test");
 
         result.await(60, TimeUnit.SECONDS);
         result.assertIsSatisfied();
 
-        websocket.sendCloseFrame();
-        c.close();
+        testClient.close();
     }
 
     @Test
     public void wsClientSingleTextStreaming() throws Exception {
-        AsyncHttpClient c = new DefaultAsyncHttpClient();
-
-        WebSocket websocket = c.prepareGet("ws://localhost:" + getPort() + "/app2")
-                .execute(new WebSocketUpgradeHandler.Builder().addWebSocketListener(new WebSocketListener() {
-
-                    @Override
-                    public void onTextFrame(String message, boolean finalFragment, int rsv) {
-                        System.out.println("got message " + message);
-                    }
-
-                    @Override
-                    public void onOpen(WebSocket webSocket) {
-                    }
-
-                    @Override
-                    public void onClose(WebSocket webSocket, int code, String reason) {
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-                        LOG.warn("Unhandled exception: {}", t.getMessage(), t);
-                    }
-
-                }).build()).get();
+        WebsocketTestClient testClient = new WebsocketTestClient("ws://localhost:" + getPort() + "/app2");
+        testClient.connect();
 
         MockEndpoint result = getMockEndpoint("mock:result2");
         result.expectedMessageCount(1);
 
-        websocket.sendTextFrame("Test");
+        testClient.sendTextMessage("Test");
 
         result.await(60, TimeUnit.SECONDS);
         List<Exchange> exchanges = result.getReceivedExchanges();
@@ -141,80 +92,35 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         Reader r = (Reader) body;
         assertEquals("Test", IOConverter.toString(r));
 
-        websocket.sendCloseFrame();
-        c.close();
+        testClient.close();
     }
 
     @Test
     public void wsClientSingleBytes() throws Exception {
-        AsyncHttpClient c = new DefaultAsyncHttpClient();
-
-        WebSocket websocket = c.prepareGet("ws://localhost:" + getPort() + "/app1")
-                .execute(new WebSocketUpgradeHandler.Builder().addWebSocketListener(new WebSocketListener() {
-
-                    @Override
-                    public void onOpen(WebSocket webSocket) {
-                    }
-
-                    @Override
-                    public void onClose(WebSocket webSocket, int code, String reason) {
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-                        LOG.warn("Unhandled exception: {}", t.getMessage(), t);
-                    }
-
-                    @Override
-                    public void onBinaryFrame(byte[] message, boolean finalFragment, int rsv) {
-                        System.out.println("got byte[] message");
-                    }
-                }).build()).get();
+        WebsocketTestClient testClient = new WebsocketTestClient("ws://localhost:" + getPort() + "/app1");
+        testClient.connect();
 
         MockEndpoint result = getMockEndpoint("mock:result1");
         final byte[] testmessage = "Test".getBytes("utf-8");
         result.expectedBodiesReceived(testmessage);
 
-        websocket.sendBinaryFrame(testmessage);
+        testClient.sendBytesMessage(testmessage);
 
         result.assertIsSatisfied();
 
-        websocket.sendCloseFrame();
-        c.close();
+        testClient.close();
     }
 
     @Test
     public void wsClientSingleBytesStreaming() throws Exception {
-        AsyncHttpClient c = new DefaultAsyncHttpClient();
-
-        WebSocket websocket = c.prepareGet("ws://localhost:" + getPort() + "/app2")
-                .execute(new WebSocketUpgradeHandler.Builder().addWebSocketListener(new WebSocketListener() {
-
-                    @Override
-                    public void onBinaryFrame(byte[] message, boolean finalFragment, int rsv) {
-                        System.out.println("got message " + message);
-                    }
-
-                    @Override
-                    public void onOpen(WebSocket webSocket) {
-                    }
-
-                    @Override
-                    public void onClose(WebSocket webSocket, int code, String reason) {
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-                        LOG.warn("Unhandled exception: {}", t.getMessage(), t);
-                    }
-
-                }).build()).get();
+        WebsocketTestClient testClient = new WebsocketTestClient("ws://localhost:" + getPort() + "/app2");
+        testClient.connect();
 
         MockEndpoint result = getMockEndpoint("mock:result2");
         result.expectedMessageCount(1);
 
         final byte[] testmessage = "Test".getBytes("utf-8");
-        websocket.sendBinaryFrame(testmessage);
+        testClient.sendBytesMessage(testmessage);
 
         result.await(60, TimeUnit.SECONDS);
         List<Exchange> exchanges = result.getReceivedExchanges();
@@ -226,66 +132,22 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         InputStream in = (InputStream) body;
         assertArrayEquals(testmessage, IOConverter.toBytes(in));
 
-        websocket.sendCloseFrame();
-        c.close();
+        testClient.close();
     }
 
     @Test
     public void wsClientMultipleText() throws Exception {
-        AsyncHttpClient c1 = new DefaultAsyncHttpClient();
+        WebsocketTestClient testClient1 = new WebsocketTestClient("ws://localhost:" + getPort() + "/app1");
+        testClient1.connect();
 
-        WebSocket websocket1 = c1.prepareGet("ws://localhost:" + getPort() + "/app1")
-                .execute(new WebSocketUpgradeHandler.Builder().addWebSocketListener(new WebSocketListener() {
-
-                    @Override
-                    public void onTextFrame(String message, boolean finalFragment, int rsv) {
-                        System.out.println("got message " + message);
-                    }
-
-                    @Override
-                    public void onOpen(WebSocket webSocket) {
-                    }
-
-                    @Override
-                    public void onClose(WebSocket webSocket, int code, String reason) {
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-                        LOG.warn("Unhandled exception: {}", t.getMessage(), t);
-                    }
-
-                }).build()).get();
-        AsyncHttpClient c2 = new DefaultAsyncHttpClient();
-
-        WebSocket websocket2 = c2.prepareGet("ws://localhost:" + getPort() + "/app1")
-                .execute(new WebSocketUpgradeHandler.Builder().addWebSocketListener(new WebSocketListener() {
-
-                    @Override
-                    public void onTextFrame(String message, boolean finalFragment, int rsv) {
-                        System.out.println("got message " + message);
-                    }
-
-                    @Override
-                    public void onOpen(WebSocket webSocket) {
-                    }
-
-                    @Override
-                    public void onClose(WebSocket webSocket, int code, String reason) {
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-                        LOG.warn("Unhandled exception: {}", t.getMessage(), t);
-                    }
-
-                }).build()).get();
+        WebsocketTestClient testClient2 = new WebsocketTestClient("ws://localhost:" + getPort() + "/app1");
+        testClient2.connect();
 
         MockEndpoint result = getMockEndpoint("mock:result1");
         result.expectedMessageCount(2);
 
-        websocket1.sendTextFrame("Test1");
-        websocket2.sendTextFrame("Test2");
+        testClient1.sendTextMessage("Test1");
+        testClient2.sendTextMessage("Test2");
 
         result.await(60, TimeUnit.SECONDS);
         result.assertIsSatisfied();
@@ -295,15 +157,13 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         actual.add(exchanges.get(1).getIn().getBody(String.class));
         assertEquals(new HashSet<>(Arrays.asList("Test1", "Test2")), actual);
 
-        websocket1.sendCloseFrame();
-        websocket2.sendCloseFrame();
-        c1.close();
-        c2.close();
+        testClient1.close();
+        testClient2.close();
     }
 
     @Test
     public void echo() throws Exception {
-        TestClient wsclient1 = new TestClient("ws://localhost:" + getPort() + "/app3", 2);
+        WebsocketTestClient wsclient1 = new WebsocketTestClient("ws://localhost:" + getPort() + "/app3", 2);
         wsclient1.connect();
 
         wsclient1.sendTextMessage("Test1");
@@ -318,8 +178,8 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
 
     @Test
     public void echoMulti() throws Exception {
-        TestClient wsclient1 = new TestClient("ws://localhost:" + getPort() + "/app3", 1);
-        TestClient wsclient2 = new TestClient("ws://localhost:" + getPort() + "/app3", 1);
+        WebsocketTestClient wsclient1 = new WebsocketTestClient("ws://localhost:" + getPort() + "/app3", 1);
+        WebsocketTestClient wsclient2 = new WebsocketTestClient("ws://localhost:" + getPort() + "/app3", 1);
         wsclient1.connect();
         wsclient2.connect();
 
@@ -338,8 +198,8 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
 
     @Test
     public void sendToAll() throws Exception {
-        TestClient wsclient1 = new TestClient("ws://localhost:" + getPort() + "/app4", 2);
-        TestClient wsclient2 = new TestClient("ws://localhost:" + getPort() + "/app4", 2);
+        WebsocketTestClient wsclient1 = new WebsocketTestClient("ws://localhost:" + getPort() + "/app4", 2);
+        WebsocketTestClient wsclient2 = new WebsocketTestClient("ws://localhost:" + getPort() + "/app4", 2);
         wsclient1.connect();
         wsclient2.connect();
 
@@ -370,8 +230,8 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         MockEndpoint result = getMockEndpoint("mock:result5");
         result.expectedMessageCount(6);
 
-        TestClient wsclient1 = new TestClient("ws://localhost:" + getPort() + "/app5", 2);
-        TestClient wsclient2 = new TestClient("ws://localhost:" + getPort() + "/app5", 2);
+        WebsocketTestClient wsclient1 = new WebsocketTestClient("ws://localhost:" + getPort() + "/app5", 2);
+        WebsocketTestClient wsclient2 = new WebsocketTestClient("ws://localhost:" + getPort() + "/app5", 2);
         wsclient1.connect();
         wsclient2.connect();
 
@@ -424,9 +284,9 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
     @Test
     public void connectionKeyList() throws Exception {
 
-        TestClient wsclient1 = new TestClient("ws://localhost:" + getPort() + "/app6", 1);
-        TestClient wsclient2 = new TestClient("ws://localhost:" + getPort() + "/app6", 1);
-        TestClient wsclient3 = new TestClient("ws://localhost:" + getPort() + "/app6", 1);
+        WebsocketTestClient wsclient1 = new WebsocketTestClient("ws://localhost:" + getPort() + "/app6", 1);
+        WebsocketTestClient wsclient2 = new WebsocketTestClient("ws://localhost:" + getPort() + "/app6", 1);
+        WebsocketTestClient wsclient3 = new WebsocketTestClient("ws://localhost:" + getPort() + "/app6", 1);
         wsclient1.connect();
         wsclient2.connect();
         wsclient3.connect();
@@ -459,7 +319,7 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
 
     }
 
-    private String assertConnected(TestClient wsclient1) {
+    private String assertConnected(WebsocketTestClient wsclient1) {
         final String msg0 = wsclient1.getReceived(String.class).get(0);
         assertTrue(msg0.startsWith(CONNECTED_PREFIX), "'" + msg0 + "' should start with '" + CONNECTED_PREFIX + "'");
         return msg0.substring(CONNECTED_PREFIX.length());
