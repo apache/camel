@@ -21,7 +21,6 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckResultBuilder;
 
 /**
@@ -63,7 +62,7 @@ public class RouteHealthCheck extends AbstractHealthCheck {
                     builder.message(String.format("Route %s has status %s", route.getId(), status.name()));
                 }
             } else {
-                if (route.isAutoStartup()) {
+                if (!route.isAutoStartup()) {
                     // if a route is configured to not to automatically start, then the
                     // route is always up as it is externally managed.
                     builder.up();
