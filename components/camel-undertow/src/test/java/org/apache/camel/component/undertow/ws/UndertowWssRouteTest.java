@@ -16,16 +16,10 @@
  */
 package org.apache.camel.component.undertow.ws;
 
-import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
-import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.SslContextBuilder;
-import io.netty.handler.ssl.SslProvider;
+import javax.net.ssl.SSLContext;
+
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.SSLContextParametersAware;
@@ -37,26 +31,15 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.SSLContextServerParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.AsyncHttpClientConfig;
-import org.asynchttpclient.DefaultAsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClientConfig;
-import org.asynchttpclient.ws.WebSocket;
-import org.asynchttpclient.ws.WebSocketListener;
-import org.asynchttpclient.ws.WebSocketUpgradeHandler;
+import org.apache.camel.test.infra.common.http.WebsocketTestClient;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UndertowWssRouteTest extends BaseUndertowTest {
-
-    private static final Logger LOG = LoggerFactory.getLogger(UndertowWssRouteTest.class);
-
     @BeforeAll
     public static void setUpJaas() throws Exception {
         URL trustStoreUrl = UndertowHttpsSpringTest.class.getClassLoader().getResource("ssl/keystore.jks");
@@ -96,71 +79,29 @@ public class UndertowWssRouteTest extends BaseUndertowTest {
         return context;
     }
 
-    protected AsyncHttpClient createAsyncHttpSSLClient() throws IOException {
-
-        AsyncHttpClient c;
-        AsyncHttpClientConfig config;
-
-        DefaultAsyncHttpClientConfig.Builder builder = new DefaultAsyncHttpClientConfig.Builder();
-
-        SslContext sslContext = SslContextBuilder
-                .forClient()
-                .sslProvider(SslProvider.JDK)
-                .trustManager(InsecureTrustManagerFactory.INSTANCE)
-                .build();
-        builder.setSslContext(sslContext);
-        builder.setUseInsecureTrustManager(true);
-        config = builder.build();
-        c = new DefaultAsyncHttpClient(config);
-
-        return c;
-    }
-
     @Test
     public void testWSHttpCall() throws Exception {
-        final List<String> received = new ArrayList<>();
-        final CountDownLatch latch = new CountDownLatch(10);
+        SSLContext sc = SSLContext.getInstance("SSL");
+        sc.init(null, InsecureTrustManagerFactory.INSTANCE.getTrustManagers(), new java.security.SecureRandom());
 
-        AsyncHttpClient c = createAsyncHttpSSLClient();
-        WebSocket websocket = c.prepareGet("wss://localhost:" + getPort() + "/test").execute(
-                new WebSocketUpgradeHandler.Builder()
-                        .addWebSocketListener(new WebSocketListener() {
-                            @Override
-                            public void onTextFrame(String message, boolean finalFragment, int rsv) {
-                                received.add(message);
-                                LOG.info("received --> " + message);
-                                latch.countDown();
-                            }
-
-                            @Override
-                            public void onOpen(WebSocket websocket) {
-                            }
-
-                            @Override
-                            public void onClose(WebSocket websocket, int code, String reason) {
-                            }
-
-                            @Override
-                            public void onError(Throwable t) {
-                                LOG.warn("Unhandled exception: {}", t.getMessage(), t);
-                            }
-                        }).build())
-                .get();
+        WebsocketTestClient testClient = new WebsocketTestClient(
+                "wss://localhost:" + getPort() + "/test",
+                10, sc);
+        testClient.connect();
 
         getMockEndpoint("mock:client").expectedBodiesReceived("Hello from WS client");
 
-        websocket.sendTextFrame("Hello from WS client");
-        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        testClient.sendTextMessage("Hello from WS client");
+        assertTrue(testClient.await(10));
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(10, received.size());
+        assertEquals(10, testClient.getReceived().size());
         for (int i = 0; i < 10; i++) {
-            assertEquals(">> Welcome on board!", received.get(i));
+            assertEquals(">> Welcome on board!", testClient.getReceived().get(i));
         }
 
-        websocket.sendCloseFrame();
-        c.close();
+        testClient.close();
     }
 
     @Override

@@ -16,74 +16,34 @@
  */
 package org.apache.camel.component.undertow.ws;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.apache.camel.component.undertow.UndertowConstants;
-import org.asynchttpclient.DefaultAsyncHttpClient;
-import org.asynchttpclient.ws.WebSocket;
-import org.asynchttpclient.ws.WebSocketListener;
-import org.asynchttpclient.ws.WebSocketUpgradeHandler;
+import org.apache.camel.test.infra.common.http.WebsocketTestClient;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UndertowWsTwoRoutesToSameEndpointSendToAllHeaderTest extends BaseUndertowTest {
-
-    private static final Logger LOG = LoggerFactory.getLogger(UndertowWsTwoRoutesToSameEndpointSendToAllHeaderTest.class);
-
     @Test
     public void testWSHttpCallEcho() throws Exception {
 
-        // We call the route WebSocket BAR
-        final List<String> received = new ArrayList<>();
-        final CountDownLatch latch = new CountDownLatch(2);
+        WebsocketTestClient testClient = new WebsocketTestClient("ws://localhost:" + getPort() + "/bar", 2);
+        testClient.connect();
 
-        DefaultAsyncHttpClient c = new DefaultAsyncHttpClient();
+        testClient.sendTextMessage("Beer");
+        assertTrue(testClient.await(10, TimeUnit.SECONDS));
 
-        WebSocket websocket = c.prepareGet("ws://localhost:" + getPort() + "/bar").execute(
-                new WebSocketUpgradeHandler.Builder()
-                        .addWebSocketListener(new WebSocketListener() {
-                            @Override
-                            public void onTextFrame(String message, boolean finalFragment, int rsv) {
-                                received.add(message);
-                                LOG.info("received --> " + message);
-                                latch.countDown();
-                            }
-
-                            @Override
-                            public void onOpen(WebSocket websocket) {
-                            }
-
-                            @Override
-                            public void onClose(WebSocket websocket, int code, String reason) {
-                            }
-
-                            @Override
-                            public void onError(Throwable t) {
-                                LOG.warn("Unhandled exception: {}", t.getMessage(), t);
-                            }
-                        }).build())
-                .get();
-
-        websocket.sendTextFrame("Beer");
-        assertTrue(latch.await(10, TimeUnit.SECONDS));
-
-        assertEquals(2, received.size());
+        assertEquals(2, testClient.getReceived().size());
 
         //Cannot guarantee the order in which messages are received
-        assertTrue(received.contains("The bar has Beer"));
-        assertTrue(received.contains("Broadcasting to Bar"));
+        assertTrue(testClient.getReceived().contains("The bar has Beer"));
+        assertTrue(testClient.getReceived().contains("Broadcasting to Bar"));
 
-        websocket.sendCloseFrame();
-        c.close();
+        testClient.close();
     }
 
     @Override
