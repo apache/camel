@@ -16,9 +16,8 @@
  */
 package org.apache.camel.support.startup;
 
-import java.util.Arrays;
-
 import org.apache.camel.StartupStep;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,22 +36,11 @@ public class LoggingStartupStepRecorder extends DefaultStartupStepRecorder {
     protected void onEndStep(StartupStep step) {
         if (LOG.isInfoEnabled()) {
             long delta = System.currentTimeMillis() - step.getBeginTime();
-            String pad = padString(step.getLevel());
+            String pad = StringHelper.padString(step.getLevel());
             String out = String.format("%s", pad + step.getType());
             String out2 = String.format("%6s ms", delta);
             String out3 = String.format("%s(%s)", step.getDescription(), step.getName());
             LOG.info("{} : {} - {}", out2, out, out3);
-        }
-    }
-
-    public static String padString(int level) {
-        if (level == 0) {
-            return "";
-        } else {
-            byte[] arr = new byte[level * 2];
-            byte space = ' ';
-            Arrays.fill(arr, space);
-            return new String(arr);
         }
     }
 

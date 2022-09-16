@@ -45,6 +45,9 @@ public interface ManagedProcessorMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Processor Index")
     Integer getIndex();
 
+    @ManagedAttribute(description = "Processor Level in the route tree")
+    int getLevel();
+
     @ManagedAttribute(description = "Source file Location")
     String getSourceLocation();
 

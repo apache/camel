@@ -40,6 +40,7 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
     private final Processor processor;
     private final ProcessorDefinition<?> definition;
     private final String id;
+    private final int nodeLevel;
     private String stepId;
     private Route route;
     private String sourceLocation;
@@ -48,6 +49,7 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
         this.context = context;
         this.processor = processor;
         this.definition = definition;
+        this.nodeLevel = ProcessorDefinitionHelper.getNodeLevel(definition);
         this.id = definition.idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory());
         StepDefinition step;
         if (definition instanceof StepDefinition) {
@@ -99,6 +101,11 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
     @Override
     public Integer getIndex() {
         return definition.getIndex();
+    }
+
+    @Override
+    public int getLevel() {
+        return nodeLevel;
     }
 
     @Override
