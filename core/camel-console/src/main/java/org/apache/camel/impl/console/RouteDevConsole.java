@@ -143,6 +143,7 @@ public class RouteDevConsole extends AbstractDevConsole {
             sb.append("\n");
             sb.append(String.format("\n        Id: %s", mp.getProcessorId()));
             sb.append(String.format("\n        Processor: %s", mp.getProcessorName()));
+            sb.append(String.format("\n        Level: %d", mp.getLevel()));
             if (mp.getSourceLocation() != null) {
                 String loc = mp.getSourceLocation();
                 if (mp.getSourceLineNumber() != null) {
@@ -269,6 +270,7 @@ public class RouteDevConsole extends AbstractDevConsole {
                 jo.put("source", loc);
             }
             jo.put("processor", mp.getProcessorName());
+            jo.put("level", mp.getLevel());
             JsonObject stats = new JsonObject();
             stats.put("exchangesTotal", mp.getExchangesTotal());
             stats.put("exchangesFailed", mp.getExchangesFailed());

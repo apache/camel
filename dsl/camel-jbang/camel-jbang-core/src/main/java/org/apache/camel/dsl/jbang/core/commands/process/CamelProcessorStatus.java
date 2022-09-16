@@ -26,6 +26,7 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
@@ -141,6 +142,7 @@ public class CamelProcessorStatus extends ProcessBaseCommand {
             rows.add(row);
             row.processorId = o.getString("id");
             row.processor = o.getString("processor");
+            row.level = o.getIntegerOrDefault("level", 0);
             row.source = o.getString("source");
             Map<String, ?> stats = o.getMap("statistics");
             if (stats != null) {
@@ -215,7 +217,8 @@ public class CamelProcessorStatus extends ProcessBaseCommand {
             answer = r.processorId != null ? r.processorId : r.routeId;
         }
         if (r.processorId != null) {
-            answer = "  " + answer;
+            String pad = StringHelper.padString(r.level, 1);
+            answer = pad + answer;
         }
         return answer;
     }
@@ -229,11 +232,8 @@ public class CamelProcessorStatus extends ProcessBaseCommand {
     }
 
     protected String getProcessor(Row r) {
-        String answer = r.processor;
-        if (r.processorId != null) {
-            answer = "  " + answer;
-        }
-        return answer;
+        String pad = StringHelper.padString(r.level, 1);
+        return pad + r.processor;
     }
 
     static class Row {
@@ -243,6 +243,7 @@ public class CamelProcessorStatus extends ProcessBaseCommand {
         String routeId;
         String processorId;
         String processor;
+        int level;
         String source;
         String state;
         String total;
