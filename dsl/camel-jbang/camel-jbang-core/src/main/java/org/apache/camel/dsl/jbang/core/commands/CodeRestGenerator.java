@@ -16,8 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,6 +31,8 @@ import org.apache.camel.generator.openapi.RestDslGenerator;
 import org.apache.camel.impl.lw.LightweightCamelContext;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "rest", description = "Generate REST DSL source code from OpenApi specification")
@@ -48,12 +53,11 @@ public class CodeRestGenerator extends CamelCommand {
 
     @Override
     public Integer call() throws Exception {
-        final ObjectMapper mapper = new ObjectMapper();
-        final JsonNode node = mapper.readTree(Paths.get(input).toFile());
+        final JsonNode node = input.endsWith("json") ? readNodeFromJson() : readNodeFromYaml();
         OasDocument document = (OasDocument) Library.readDocument(node);
         Configurator.setRootLevel(Level.OFF);
         try (CamelContext context = new LightweightCamelContext()) {
-            final String yaml = type.equals("yaml")
+            final String yaml = type.equalsIgnoreCase("yaml")
                     ? RestDslGenerator.toYaml(document).generate(context, generateRoutes)
                     : RestDslGenerator.toXml(document).generate(context);
             if (output == null) {
@@ -63,5 +67,17 @@ public class CodeRestGenerator extends CamelCommand {
             }
         }
         return 0;
+    }
+
+    private JsonNode readNodeFromJson() throws Exception {
+        final ObjectMapper mapper = new ObjectMapper();
+        return mapper.readTree(Paths.get(input).toFile());
+    }
+
+    private JsonNode readNodeFromYaml() throws FileNotFoundException {
+        final ObjectMapper mapper = new ObjectMapper();
+        Yaml loader = new Yaml(new SafeConstructor());
+        Map map = loader.load(new FileInputStream(Paths.get(input).toFile()));
+        return mapper.convertValue(map, JsonNode.class);
     }
 }
