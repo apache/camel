@@ -216,10 +216,6 @@ public class CamelProcessorStatus extends ProcessBaseCommand {
         } else {
             answer = r.processorId != null ? r.processorId : r.routeId;
         }
-        if (r.processorId != null) {
-            String pad = StringHelper.padString(r.level, 1);
-            answer = pad + answer;
-        }
         return answer;
     }
 
