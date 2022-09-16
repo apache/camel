@@ -29,6 +29,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -108,7 +109,7 @@ public class CamelProcessorStatus extends ProcessBaseCommand {
                             }
 
                             boolean add = true;
-                            if (mean > 0 && row.mean != null && Long.parseLong(row.mean) < mean) {
+                            if (mean > 0 && (row.mean == null || Long.parseLong(row.mean) < mean)) {
                                 add = false;
                             }
                             if (limit > 0 && rows.size() >= limit) {
@@ -164,18 +165,30 @@ public class CamelProcessorStatus extends ProcessBaseCommand {
                     row.sinceLastFailed = last.toString();
                 }
             }
+            if (source) {
+                List<JsonObject> lines = o.getCollection("code");
+                for (JsonObject line : lines) {
+                    Code code = new Code();
+                    code.line = line.getInteger("line");
+                    code.code = line.getString("code");
+                    if (line.getBooleanOrDefault("match", false)) {
+                        code.match = true;
+                    }
+                    row.code.add(code);
+                }
+            }
         }
     }
 
     protected void printTable(List<Row> rows) {
-        // need to flatten list
         System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                 new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(this::getPid),
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getName),
                 new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getId),
-                new Column().header("PROCESSOR").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                new Column().header("PROCESSOR").dataAlign(HorizontalAlign.LEFT).minWidth(25)
+                        .maxWidth(45, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getProcessor),
                 new Column().header("TOTAL").with(r -> r.total),
                 new Column().header("FAIL").with(r -> r.failed),
@@ -228,8 +241,16 @@ public class CamelProcessorStatus extends ProcessBaseCommand {
     }
 
     protected String getProcessor(Row r) {
-        String pad = StringHelper.padString(r.level, 1);
-        return pad + r.processor;
+        String answer = r.processor;
+        if (source) {
+            answer = r.code.stream()
+                    .filter(l -> l.match)
+                    .findFirst()
+                    .map(l -> Jsoner.unescape(l.code).trim())
+                    .orElse(r.processor);
+        }
+        String pad = StringHelper.padString(r.level, 2);
+        return pad + answer;
     }
 
     static class Row {
@@ -251,6 +272,13 @@ public class CamelProcessorStatus extends ProcessBaseCommand {
         String sinceLastStarted;
         String sinceLastCompleted;
         String sinceLastFailed;
+        List<Code> code = new ArrayList<>();
+    }
+
+    private static class Code {
+        int line;
+        String code;
+        boolean match;
     }
 
 }

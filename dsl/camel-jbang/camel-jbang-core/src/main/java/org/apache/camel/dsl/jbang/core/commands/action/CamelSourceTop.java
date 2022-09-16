@@ -117,7 +117,7 @@ public class CamelSourceTop extends ActionBaseCommand {
                 }
 
                 boolean add = true;
-                if (mean > 0 && row.mean != null && Long.parseLong(row.mean) < mean) {
+                if (mean > 0 && (row.mean == null || Long.parseLong(row.mean) < mean)) {
                     add = false;
                 }
                 if (limit > 0 && rows.size() >= limit) {
@@ -207,9 +207,9 @@ public class CamelSourceTop extends ActionBaseCommand {
     }
 
     private static class Code {
-        private int line;
-        private String code;
-        private boolean match;
+        int line;
+        String code;
+        boolean match;
     }
 
 }

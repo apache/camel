@@ -130,7 +130,7 @@ public class CamelRouteStatus extends ProcessBaseCommand {
                             }
 
                             boolean add = true;
-                            if (mean > 0 && row.mean != null && Long.parseLong(row.mean) < mean) {
+                            if (mean > 0 && (row.mean == null || Long.parseLong(row.mean) < mean)) {
                                 add = false;
                             }
                             if (limit > 0 && rows.size() >= limit) {

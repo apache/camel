@@ -429,7 +429,7 @@ public final class ProcessorDefinitionHelper {
     public static int getNodeLevel(NamedNode node) {
         int level = 0;
         while (node != null && node.getParent() != null) {
-            boolean shallow = node instanceof OutputExpressionNode || node instanceof OtherwiseDefinition;
+            boolean shallow = node instanceof WhenDefinition || node instanceof OtherwiseDefinition;
             node = node.getParent();
             if (!shallow) {
                 level++;

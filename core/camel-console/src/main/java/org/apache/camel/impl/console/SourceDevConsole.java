@@ -34,7 +34,6 @@ import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonObject;
-import org.apache.camel.util.json.Jsoner;
 
 @DevConsole("source")
 public class SourceDevConsole extends AbstractDevConsole {
@@ -115,34 +114,9 @@ public class SourceDevConsole extends AbstractDevConsole {
             }
 
             String loc = mrb.getSourceLocation();
-            if (loc != null) {
-                List<JsonObject> code = new ArrayList<>();
-                try {
-                    loc = LoggerHelper.stripSourceLocationLineNumber(loc);
-                    Resource resource = getCamelContext().adapt(ExtendedCamelContext.class).getResourceLoader()
-                            .resolveResource(loc);
-                    if (resource != null) {
-                        LineNumberReader reader = new LineNumberReader(resource.getReader());
-                        int i = 0;
-                        String t;
-                        do {
-                            t = reader.readLine();
-                            if (t != null) {
-                                i++;
-                                JsonObject c = new JsonObject();
-                                c.put("line", i);
-                                c.put("code", Jsoner.escape(t));
-                                code.add(c);
-                            }
-                        } while (t != null);
-                        IOHelper.close(reader);
-                    }
-                } catch (Exception e) {
-                    // ignore
-                }
-                if (!code.isEmpty()) {
-                    jo.put("code", code);
-                }
+            List<JsonObject> code = ConsoleHelper.loadSourceAsJson(getCamelContext(), loc);
+            if (code != null) {
+                jo.put("code", code);
             }
             return null;
         };
