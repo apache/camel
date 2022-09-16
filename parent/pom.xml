@@ -162,7 +162,7 @@
         <ehcache3-version>3.9.6</ehcache3-version>
         <elasticsearch-rest-sniffer-version>7.10.2</elasticsearch-rest-sniffer-version>
         <elasticsearch-rest-version>7.10.2</elasticsearch-rest-version>
-        <elytron-web>1.8.0.Final</elytron-web>
+        <elytron-web>1.10.2.Final</elytron-web>
         <exec-maven-plugin-version>1.6.0</exec-maven-plugin-version>
         <facebook4j-core-version>2.4.13</facebook4j-core-version>
         <fastjson-version>1.2.83</fastjson-version>
@@ -523,7 +523,7 @@
         <web3j-version>3.6.0</web3j-version>
         <web3j-quorum-version>0.8.0</web3j-quorum-version>
         <weld3-version>3.1.8.Final</weld3-version>
-        <wildfly-elytron>1.11.4.Final</wildfly-elytron>
+        <wildfly-elytron>1.15.4.Final</wildfly-elytron>
         <wiremock-version>2.32.0</wiremock-version>
         <woodstox-version>4.4.1</woodstox-version>
         <woodstox-core-version>6.3.1</woodstox-core-version>
