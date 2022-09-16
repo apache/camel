@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.apache.camel.NamedNode;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.FileUtil;
 
 /**
@@ -402,7 +403,17 @@ public final class ProcessorDefinitionHelper {
                     // when we are no longer in model/RouteBuilder, we have found the location:line-number
                     node.setLineNumber(e.getLineNumber());
                     if (node.getLocation() == null) {
-                        String name = e.getClassName();
+                        String name = e.getFileName();
+                        if (name == null) {
+                            name = e.getClassName();
+                        }
+                        // find out what scheme for location as it can be file, classpath etc
+                        if (!ResourceHelper.hasScheme(name)) {
+                            String scheme = findParentSourceLocationScheme(node);
+                            if (scheme != null) {
+                                name = scheme + name;
+                            }
+                        }
                         node.setLocation(name);
                     }
                     return;
@@ -425,6 +436,20 @@ public final class ProcessorDefinitionHelper {
             }
         }
         return level;
+    }
+
+    /**
+     * Finds the source location scheme from the parent nodes.
+     */
+    public static String findParentSourceLocationScheme(NamedNode node) {
+        while (node != null && node.getParent() != null) {
+            String location = node.getLocation();
+            if (ResourceHelper.hasScheme(location)) {
+                return ResourceHelper.getScheme(location);
+            }
+            node = node.getParent();
+        }
+        return null;
     }
 
 }
