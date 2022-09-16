@@ -35,6 +35,7 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 @DevConsole("route")
 public class RouteDevConsole extends AbstractDevConsole {
@@ -268,6 +269,18 @@ public class RouteDevConsole extends AbstractDevConsole {
                     loc += ":" + mp.getSourceLineNumber();
                 }
                 jo.put("source", loc);
+            }
+            String line = ConsoleHelper.loadSourceLine(getCamelContext(), mp.getSourceLocation(), mp.getSourceLineNumber());
+            if (line != null) {
+                JsonArray ca = new JsonArray();
+                jo.put("code", ca);
+                JsonObject c = new JsonObject();
+                if (mp.getSourceLineNumber() != null) {
+                    c.put("line", mp.getSourceLineNumber());
+                }
+                c.put("code", Jsoner.escape(line));
+                c.put("match", true);
+                ca.add(c);
             }
             jo.put("processor", mp.getProcessorName());
             jo.put("level", mp.getLevel());

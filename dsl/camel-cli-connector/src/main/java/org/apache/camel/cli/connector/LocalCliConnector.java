@@ -323,7 +323,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     .getDevConsoleResolver().resolveDevConsole("route");
             if (dc != null && dc2 != null) {
                 JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON);
-                JsonObject json2 = (JsonObject) dc2.call(DevConsole.MediaType.JSON, Map.of("processors", "true"));
+                JsonObject json2 = (JsonObject) dc2.call(DevConsole.MediaType.JSON, Map.of("processors", "true", "source", "true"));
                 if (json != null && json2 != null) {
                     root.put("context", json);
                     root.put("routes", json2.get("routes"));
