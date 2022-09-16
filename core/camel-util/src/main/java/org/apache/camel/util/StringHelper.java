@@ -1125,7 +1125,7 @@ public final class StringHelper {
     /**
      * Pad the string with leading spaces
      *
-     * @param level level
+     * @param level  level
      * @param blanks number of blanks per level
      */
     public static String padString(int level, int blanks) {
