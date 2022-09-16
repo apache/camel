@@ -52,8 +52,8 @@ public class RouteHealthCheckTest {
         context.stop();
     }
 
-     @Test
-     public void testHealthCheckIsUpWhenRouteIsNotAutoStartup() throws Exception {
+    @Test
+    public void testHealthCheckIsUpWhenRouteIsNotAutoStartup() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
