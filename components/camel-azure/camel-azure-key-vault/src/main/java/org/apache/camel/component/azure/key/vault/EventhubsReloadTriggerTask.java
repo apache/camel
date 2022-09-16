@@ -60,6 +60,8 @@ public class EventhubsReloadTriggerTask extends ServiceSupport implements CamelC
     private static final Logger LOG = LoggerFactory.getLogger(EventhubsReloadTriggerTask.class);
 
     private static final String BLOB_SERVICE_URI_SEGMENT = ".blob.core.windows.net";
+    private static final String SECRET_VERSION_ADD = "Microsoft.KeyVault.SecretNewVersionCreated";
+
     private CamelContext camelContext;
     private boolean reloadEnabled = true;
     private String secrets;
@@ -196,7 +198,6 @@ public class EventhubsReloadTriggerTask extends ServiceSupport implements CamelC
     }
 
     protected void onEventListener(final EventContext eventContext) {
-        final String SECRET_VERSION_ADD = "Microsoft.KeyVault.SecretNewVersionCreated";
         boolean triggerReloading = false;
 
         ObjectMapper mapper = new ObjectMapper();

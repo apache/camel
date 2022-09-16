@@ -49,14 +49,14 @@ class Bind extends CamelCommand {
     String source;
 
     @CommandLine.Option(names = { "--step" }, description = "Optional steps such as a Kamelet or Camel endpoint uri")
-    private String[] steps;
+    String[] steps;
 
     @CommandLine.Option(names = { "--sink" }, description = "Sink (to) such as a Kamelet or Camel endpoint uri",
                         required = true)
     String sink;
 
     @CommandLine.Parameters(description = "Name of binding file to be saved", arity = "1")
-    private String file;
+    String file;
 
     public Bind(CamelJBangMain main) {
         super(main);
