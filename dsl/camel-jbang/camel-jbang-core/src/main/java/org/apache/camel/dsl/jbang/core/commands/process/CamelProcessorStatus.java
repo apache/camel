@@ -44,7 +44,7 @@ public class CamelProcessorStatus extends ProcessBaseCommand {
     String sort;
 
     @CommandLine.Option(names = { "--source" },
-                        description = "Prefer to display source filename instead of processor IDs")
+                        description = "Prefer to display source filename/code instead of IDs")
     boolean source;
 
     @CommandLine.Option(names = { "--limit" },
