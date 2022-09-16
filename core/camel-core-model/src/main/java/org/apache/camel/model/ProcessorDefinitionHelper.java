@@ -423,8 +423,8 @@ public final class ProcessorDefinitionHelper {
     }
 
     /**
-     * Returns the level of the node in the route tree.
-     * Level 1 is the root level, level 2 is a child of an EIP, and so forth
+     * Returns the level of the node in the route tree. Level 1 is the root level, level 2 is a child of an EIP, and so
+     * forth
      */
     public static int getNodeLevel(NamedNode node) {
         int level = 0;
