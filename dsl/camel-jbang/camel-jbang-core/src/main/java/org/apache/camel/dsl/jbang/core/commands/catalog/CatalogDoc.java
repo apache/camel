@@ -28,6 +28,10 @@ import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.LanguageModel;
+import org.apache.camel.tooling.model.OtherModel;
+import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "doc",
@@ -46,13 +50,45 @@ public class CatalogDoc extends CamelCommand {
 
     @Override
     public Integer call() throws Exception {
-        ComponentModel cm = catalog.componentModel(name);
-        if (cm != null) {
-            docComponent(cm);
-            return 0;
+        String prefix = StringHelper.before(name, ":");
+        if (prefix != null) {
+            name = StringHelper.after(name, ":");
         }
 
-        System.out.println("Camel resource: " + name + " not found");
+        if (prefix == null || "component".equals(prefix)) {
+            ComponentModel cm = catalog.componentModel(name);
+            if (cm != null) {
+                docComponent(cm);
+                return 0;
+            }
+        }
+        if (prefix == null || "dataformat".equals(prefix)) {
+            DataFormatModel dm = catalog.dataFormatModel(name);
+            if (dm != null) {
+                docDataFormat(dm);
+                return 0;
+            }
+        }
+        if (prefix == null || "language".equals(prefix)) {
+            LanguageModel lm = catalog.languageModel(name);
+            if (lm != null) {
+                docLanguage(lm);
+                return 0;
+            }
+        }
+        if (prefix == null || "other".equals(prefix)) {
+            OtherModel om = catalog.otherModel(name);
+            if (om != null) {
+                docOther(om);
+                return 0;
+            }
+        }
+
+        if (prefix == null) {
+            System.out.println("Camel resource: " + name + " not found");
+        } else {
+            System.out.println("Camel " + prefix + ": " + name + " not found");
+        }
         return 1;
     }
 
@@ -74,6 +110,12 @@ public class CatalogDoc extends CamelCommand {
 
         System.out.println("");
         System.out.printf("%s%n", cm.getDescription());
+        System.out.println("");
+        System.out.println("    <dependency>");
+        System.out.println("        <groupId>" + cm.getGroupId() + "</groupId>");
+        System.out.println("        <artifactId>" + cm.getArtifactId() + "</artifactId>");
+        System.out.println("        <version>" + cm.getVersion() + "</version>");
+        System.out.println("    </dependency>");
         System.out.println("");
         System.out.printf("The %s endpoint is configured using URI syntax:%n", cm.getName());
         System.out.println("");
@@ -98,6 +140,81 @@ public class CatalogDoc extends CamelCommand {
                 new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.NEWLINE)
                         .with(r -> r.getShortDefaultValue(40)),
                 new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).with(BaseOptionModel::getShortJavaType))));
+        System.out.println("");
+    }
+
+    private void docDataFormat(DataFormatModel dm) {
+        if (dm.isDeprecated()) {
+            System.out.printf("Dataformat Name: %s (deprecated)%n", dm.getName());
+        } else {
+            System.out.printf("Dataformat Name: %s%n", dm.getName());
+        }
+        System.out.printf("Since: %s%n", dm.getFirstVersionShort());
+        System.out.println("");
+        System.out.printf("%s%n", dm.getDescription());
+        System.out.println("");
+        System.out.println("    <dependency>");
+        System.out.println("        <groupId>" + dm.getGroupId() + "</groupId>");
+        System.out.println("        <artifactId>" + dm.getArtifactId() + "</artifactId>");
+        System.out.println("        <version>" + dm.getVersion() + "</version>");
+        System.out.println("    </dependency>");
+        System.out.println("");
+        System.out.printf("The %s dataformat supports %s options, which are listed below.%n%n", dm.getName(),
+                dm.getOptions().size());
+        System.out.println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, dm.getOptions(), Arrays.asList(
+                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20).maxWidth(30, OverflowBehaviour.NEWLINE)
+                        .with(this::getName),
+                new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::getDescription),
+                new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.NEWLINE)
+                        .with(r -> r.getShortDefaultValue(40)),
+                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).with(BaseOptionModel::getShortJavaType))));
+        System.out.println("");
+    }
+
+    private void docLanguage(LanguageModel lm) {
+        if (lm.isDeprecated()) {
+            System.out.printf("Language Name: %s (deprecated)%n", lm.getName());
+        } else {
+            System.out.printf("Language Name: %s%n", lm.getName());
+        }
+        System.out.printf("Since: %s%n", lm.getFirstVersionShort());
+        System.out.println("");
+        System.out.printf("%s%n", lm.getDescription());
+        System.out.println("");
+        System.out.println("    <dependency>");
+        System.out.println("        <groupId>" + lm.getGroupId() + "</groupId>");
+        System.out.println("        <artifactId>" + lm.getArtifactId() + "</artifactId>");
+        System.out.println("        <version>" + lm.getVersion() + "</version>");
+        System.out.println("    </dependency>");
+        System.out.println("");
+        System.out.printf("The %s language supports %s options, which are listed below.%n%n", lm.getName(),
+                lm.getOptions().size());
+        System.out.println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, lm.getOptions(), Arrays.asList(
+                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20).maxWidth(30, OverflowBehaviour.NEWLINE)
+                        .with(this::getName),
+                new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::getDescription),
+                new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.NEWLINE)
+                        .with(r -> r.getShortDefaultValue(40)),
+                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).with(BaseOptionModel::getShortJavaType))));
+        System.out.println("");
+    }
+
+    private void docOther(OtherModel om) {
+        if (om.isDeprecated()) {
+            System.out.printf("Miscellaneous Name: %s (deprecated)%n", om.getName());
+        } else {
+            System.out.printf("Miscellaneous Name: %s%n", om.getName());
+        }
+        System.out.printf("Since: %s%n", om.getFirstVersionShort());
+        System.out.println("");
+        System.out.printf("%s%n", om.getDescription());
+        System.out.println("");
+        System.out.println("    <dependency>");
+        System.out.println("        <groupId>" + om.getGroupId() + "</groupId>");
+        System.out.println("        <artifactId>" + om.getArtifactId() + "</artifactId>");
+        System.out.println("        <version>" + om.getVersion() + "</version>");
+        System.out.println("    </dependency>");
+        System.out.println("");
     }
 
     String getName(BaseOptionModel o) {
