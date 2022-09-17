@@ -37,10 +37,13 @@ public class CatalogComponent extends CatalogBaseCommand {
         for (String name : catalog.findComponentNames()) {
             ComponentModel model = catalog.componentModel(name);
             Row row = new Row();
-            row.name = model.getName();
+            row.name = model.getScheme();
+            row.title = model.getTitle();
             row.level = model.getSupportLevel().name();
             row.description = model.getDescription();
             row.label = model.getLabel() != null ? model.getLabel() : "";
+            row.deprecated = model.isDeprecated();
+            row.gav = getGAV(model);
             rows.add(row);
         }
         return rows;
