@@ -31,6 +31,7 @@ import org.apache.camel.dsl.jbang.core.commands.action.CamelThreadDump;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogCommand;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogComponent;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogDataFormat;
+import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogDoc;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogKamelet;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogLanguage;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogOther;
@@ -86,6 +87,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("language", new CommandLine(new CatalogLanguage(main)))
                         .addSubcommand("other", new CommandLine(new CatalogOther(main)))
                         .addSubcommand("kamelet", new CommandLine(new CatalogKamelet(main))))
+                .addSubcommand("doc", new CommandLine(new CatalogDoc(main)))
                 .addSubcommand("jolokia", new CommandLine(new Jolokia(main)))
                 .addSubcommand("hawtio", new CommandLine(new Hawtio(main)))
                 .addSubcommand("bind", new CommandLine(new Bind(main)))
