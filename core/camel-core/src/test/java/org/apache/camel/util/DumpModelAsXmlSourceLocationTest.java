@@ -42,7 +42,7 @@ public class DumpModelAsXmlSourceLocationTest extends ContextTestSupport {
         log.info(xml);
 
         Assertions.assertTrue(xml.contains(
-                "sourceLineNumber=\"66\" sourceLocation=\"org.apache.camel.util.DumpModelAsXmlSourceLocationTest$1\""));
+                "sourceLineNumber=\"66\" sourceLocation=\"DumpModelAsXmlSourceLocationTest.java\""));
     }
 
     @Test
@@ -53,8 +53,8 @@ public class DumpModelAsXmlSourceLocationTest extends ContextTestSupport {
         log.info(xml);
 
         Assertions.assertTrue(xml.contains(
-                "<from sourceLineNumber=\"25\" sourceLocation=\"org.apache.camel.util.MyCoolRoute\" uri=\"direct:cool\"/>"));
-        Assertions.assertTrue(xml.contains("sourceLineNumber=\"26\" sourceLocation=\"org.apache.camel.util.MyCoolRoute\""));
+                "<from sourceLineNumber=\"25\" sourceLocation=\"MyCoolRoute.java\" uri=\"direct:cool\"/>"));
+        Assertions.assertTrue(xml.contains("sourceLineNumber=\"26\" sourceLocation=\"MyCoolRoute.java\""));
     }
 
     @Override
