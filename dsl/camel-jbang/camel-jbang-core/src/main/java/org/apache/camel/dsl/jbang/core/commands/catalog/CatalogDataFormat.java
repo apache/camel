@@ -20,22 +20,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.DataFormatModel;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "component", aliases = { "component", "components" },
-                     description = "List components from the Camel Catalog")
-public class CatalogComponent extends CatalogBaseCommand {
+@CommandLine.Command(name = "dataformat", aliases = { "dataformat", "dataformats" },
+                     description = "List data formats from the Camel Catalog")
+public class CatalogDataFormat extends CatalogBaseCommand {
 
-    public CatalogComponent(CamelJBangMain main) {
+    public CatalogDataFormat(CamelJBangMain main) {
         super(main);
     }
 
     @Override
-    List<CatalogBaseCommand.Row> collectRows() {
+    List<Row> collectRows() {
         List<Row> rows = new ArrayList<>();
-        for (String name : catalog.findComponentNames()) {
-            ComponentModel model = catalog.componentModel(name);
+        for (String name : catalog.findDataFormatNames()) {
+            DataFormatModel model = catalog.dataFormatModel(name);
             Row row = new Row();
             row.name = model.getName();
             row.level = model.getSupportLevel().name();

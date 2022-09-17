@@ -20,22 +20,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.OtherModel;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "component", aliases = { "component", "components" },
-                     description = "List components from the Camel Catalog")
-public class CatalogComponent extends CatalogBaseCommand {
+@CommandLine.Command(name = "other", aliases = { "other", "others" },
+                     description = "List miscellaneous components from the Camel Catalog")
+public class CatalogOther extends CatalogBaseCommand {
 
-    public CatalogComponent(CamelJBangMain main) {
+    public CatalogOther(CamelJBangMain main) {
         super(main);
     }
 
     @Override
-    List<CatalogBaseCommand.Row> collectRows() {
+    List<Row> collectRows() {
         List<Row> rows = new ArrayList<>();
-        for (String name : catalog.findComponentNames()) {
-            ComponentModel model = catalog.componentModel(name);
+        for (String name : catalog.findOtherNames()) {
+            OtherModel model = catalog.otherModel(name);
             Row row = new Row();
             row.name = model.getName();
             row.level = model.getSupportLevel().name();

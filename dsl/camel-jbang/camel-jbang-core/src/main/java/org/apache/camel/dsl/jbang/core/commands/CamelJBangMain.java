@@ -30,7 +30,10 @@ import org.apache.camel.dsl.jbang.core.commands.action.CamelSourceTop;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelThreadDump;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogCommand;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogComponent;
+import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogDataFormat;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogKamelet;
+import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogLanguage;
+import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogOther;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelContextStatus;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelContextTop;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelProcessorStatus;
@@ -79,6 +82,9 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("rest", new CommandLine(new CodeRestGenerator(main))))
                 .addSubcommand("catalog", new CommandLine(new CatalogCommand(main))
                         .addSubcommand("component", new CommandLine(new CatalogComponent(main)))
+                        .addSubcommand("dataformat", new CommandLine(new CatalogDataFormat(main)))
+                        .addSubcommand("language", new CommandLine(new CatalogLanguage(main)))
+                        .addSubcommand("other", new CommandLine(new CatalogOther(main)))
                         .addSubcommand("kamelet", new CommandLine(new CatalogKamelet(main))))
                 .addSubcommand("jolokia", new CommandLine(new Jolokia(main)))
                 .addSubcommand("hawtio", new CommandLine(new Hawtio(main)))

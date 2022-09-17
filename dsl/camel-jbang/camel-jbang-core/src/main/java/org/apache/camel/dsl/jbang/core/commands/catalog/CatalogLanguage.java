@@ -20,22 +20,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.LanguageModel;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "component", aliases = { "component", "components" },
-                     description = "List components from the Camel Catalog")
-public class CatalogComponent extends CatalogBaseCommand {
+@CommandLine.Command(name = "language", aliases = { "language", "languages" },
+                     description = "List expression languages from the Camel Catalog")
+public class CatalogLanguage extends CatalogBaseCommand {
 
-    public CatalogComponent(CamelJBangMain main) {
+    public CatalogLanguage(CamelJBangMain main) {
         super(main);
     }
 
     @Override
-    List<CatalogBaseCommand.Row> collectRows() {
+    List<Row> collectRows() {
         List<Row> rows = new ArrayList<>();
-        for (String name : catalog.findComponentNames()) {
-            ComponentModel model = catalog.componentModel(name);
+        for (String name : catalog.findLanguageNames()) {
+            LanguageModel model = catalog.languageModel(name);
             Row row = new Row();
             row.name = model.getName();
             row.level = model.getSupportLevel().name();
