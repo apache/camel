@@ -269,7 +269,7 @@ public abstract class BaseOptionModel {
     }
 
     public String getShortGroup() {
-        if (group.endsWith(" (advanced)")) {
+        if (group != null && group.endsWith(" (advanced)")) {
             return group.substring(0, group.length() - 11);
         }
         return group;
