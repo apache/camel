@@ -21,32 +21,13 @@ public class WhatsAppEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(28);
+        Set<String> props = new HashSet<>(9);
         props.add("apiVersion");
         props.add("authorizationToken");
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
         props.add("baseUri");
-        props.add("bridgeErrorHandler");
-        props.add("delay");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("greedy");
         props.add("httpClient");
-        props.add("initialDelay");
         props.add("lazyStartProducer");
         props.add("phoneNumberId");
-        props.add("pollStrategy");
-        props.add("repeatCount");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("startScheduler");
-        props.add("timeUnit");
-        props.add("useFixedDelay");
         props.add("webhookPath");
         props.add("webhookVerifyToken");
         props.add("whatsappService");
@@ -54,9 +35,7 @@ public class WhatsAppEndpointUriFactory extends org.apache.camel.support.compone
         Set<String> secretProps = new HashSet<>(1);
         secretProps.add("authorizationToken");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
+        MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
     @Override
