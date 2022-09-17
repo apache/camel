@@ -35,9 +35,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Send messages.
+ * Send messages to WhatsApp.
  */
 @UriEndpoint(firstVersion = "3.18.0", scheme = "whatsapp", title = "WhatsApp", syntax = "whatsapp:phoneNumberId",
+             producerOnly = true,
              category = {
                      Category.CLOUD, Category.API,
                      Category.CHAT },
@@ -91,7 +92,7 @@ public class WhatsAppEndpoint extends ScheduledPollEndpoint implements WebhookCa
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return null;
+        throw new UnsupportedOperationException("consumer not supported");
     }
 
     @Override
@@ -111,7 +112,6 @@ public class WhatsAppEndpoint extends ScheduledPollEndpoint implements WebhookCa
     @Override
     public void setWebhookConfiguration(WebhookConfiguration webhookConfiguration) {
         webhookConfiguration.setWebhookPath(configuration.getWebhookPath());
-
         this.webhookConfiguration = webhookConfiguration;
     }
 

@@ -4505,7 +4505,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * WhatsApp (camel-whatsapp)
-     * Send messages.
+     * Send messages to WhatsApp.
      * 
      * Category: cloud,api,chat
      * Since: 3.18

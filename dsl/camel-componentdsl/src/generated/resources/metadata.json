@@ -7433,7 +7433,7 @@
     "kind": "component",
     "name": "whatsapp",
     "title": "WhatsApp",
-    "description": "Send messages.",
+    "description": "Send messages to WhatsApp.",
     "deprecated": false,
     "firstVersion": "3.18.0",
     "label": "cloud,api,chat",
@@ -7448,7 +7448,7 @@
     "async": false,
     "api": false,
     "consumerOnly": false,
-    "producerOnly": false,
+    "producerOnly": true,
     "lenientProperties": false
   },
   "WordpressComponentBuilderFactory": {

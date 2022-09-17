@@ -15582,7 +15582,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * WhatsApp (camel-whatsapp)
-     * Send messages.
+     * Send messages to WhatsApp.
      * 
      * Category: cloud,api,chat
      * Since: 3.18
@@ -15602,7 +15602,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * WhatsApp (camel-whatsapp)
-     * Send messages.
+     * Send messages to WhatsApp.
      * 
      * Category: cloud,api,chat
      * Since: 3.18
