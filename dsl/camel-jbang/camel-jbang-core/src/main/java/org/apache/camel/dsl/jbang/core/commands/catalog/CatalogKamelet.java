@@ -40,7 +40,7 @@ import picocli.CommandLine;
 public class CatalogKamelet extends CamelCommand {
 
     @CommandLine.Option(names = { "--sort" },
-                        description = "Sort by name, type, level, or description", defaultValue = "name")
+                        description = "Sort by name, type, support-level, or description", defaultValue = "name")
     String sort;
 
     @CommandLine.Option(names = { "--type", "--filter-type" },
@@ -127,6 +127,7 @@ public class CatalogKamelet extends CamelCommand {
             case "type":
                 return o1.type.compareToIgnoreCase(o2.type) * negate;
             case "level":
+            case "support-level":
                 return o1.level.compareToIgnoreCase(o2.level) * negate;
             case "description":
                 return o1.description.compareToIgnoreCase(o2.description) * negate;
