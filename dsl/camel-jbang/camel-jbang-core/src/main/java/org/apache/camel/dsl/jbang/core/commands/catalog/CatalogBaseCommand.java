@@ -28,6 +28,8 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.main.download.MavenGav;
+import org.apache.camel.tooling.model.ArtifactModel;
 import picocli.CommandLine;
 
 public abstract class CatalogBaseCommand extends CamelCommand {
@@ -35,6 +37,10 @@ public abstract class CatalogBaseCommand extends CamelCommand {
     @CommandLine.Option(names = { "--sort" },
                         description = "Sort by name, support-level, or description", defaultValue = "name")
     String sort;
+
+    @CommandLine.Option(names = { "--gav" },
+                        description = "Include column with Maven GAV", defaultValue = "false")
+    boolean gav;
 
     @CommandLine.Option(names = { "--filter" },
                         description = "Filter by name or description")
@@ -47,6 +53,10 @@ public abstract class CatalogBaseCommand extends CamelCommand {
     }
 
     abstract List<Row> collectRows();
+
+    String getGAV(ArtifactModel<?> model) {
+        return model.getGroupId() + ":" + model.getArtifactId() + ":" + model.getVersion();
+    }
 
     @Override
     public Integer call() throws Exception {
@@ -64,10 +74,18 @@ public abstract class CatalogBaseCommand extends CamelCommand {
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).with(r -> r.name),
-                    new Column().header("LEVEL").dataAlign(HorizontalAlign.LEFT).with(r -> r.level),
-                    new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(r -> r.description))));
+            if (gav) {
+                System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).with(r -> r.name),
+                        new Column().header("ARTIFACT-ID").dataAlign(HorizontalAlign.LEFT).with(this::shortGav),
+                        new Column().header("LEVEL").dataAlign(HorizontalAlign.LEFT).with(r -> r.level),
+                        new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::shortDescription))));
+            } else {
+                System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).with(r -> r.name),
+                        new Column().header("LEVEL").dataAlign(HorizontalAlign.LEFT).with(r -> r.level),
+                        new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::shortDescription))));
+            }
         }
 
         return 0;
@@ -93,11 +111,27 @@ public abstract class CatalogBaseCommand extends CamelCommand {
         }
     }
 
+    String shortGav(Row r) {
+        // only output artifact id
+        return MavenGav.parseGav(r.gav).getArtifactId();
+    }
+
+    String shortDescription(Row r) {
+        if (r.deprecated) {
+            return "DEPRECATED: " + r.description;
+        } else {
+            return r.description;
+        }
+    }
+
     static class Row {
         String name;
+        String title;
         String level;
         String description;
         String label;
+        String gav;
+        boolean deprecated;
     }
 
 }
