@@ -1647,10 +1647,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>azure-eventhubs:namespace/eventHubName</code>
      * 
      * Path parameter: namespace
-     * EventHubs namespace created in Azure Portal
+     * EventHubs namespace created in Azure Portal.
      * 
      * Path parameter: eventHubName
-     * EventHubs name under a specific namcespace
+     * EventHubs name under a specific namespace.
      * 
      * @param path namespace/eventHubName
      * @return the dsl builder
@@ -1670,10 +1670,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>azure-eventhubs:namespace/eventHubName</code>
      * 
      * Path parameter: namespace
-     * EventHubs namespace created in Azure Portal
+     * EventHubs namespace created in Azure Portal.
      * 
      * Path parameter: eventHubName
-     * EventHubs name under a specific namcespace
+     * EventHubs name under a specific namespace.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
