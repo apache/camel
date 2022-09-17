@@ -29,6 +29,7 @@ import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteStopAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelSourceTop;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelThreadDump;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogCommand;
+import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogComponent;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogKamelet;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelContextStatus;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelContextTop;
@@ -77,6 +78,7 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("generate", new CommandLine(new CodeGenerator(main))
                         .addSubcommand("rest", new CommandLine(new CodeRestGenerator(main))))
                 .addSubcommand("catalog", new CommandLine(new CatalogCommand(main))
+                        .addSubcommand("component", new CommandLine(new CatalogComponent(main)))
                         .addSubcommand("kamelet", new CommandLine(new CatalogKamelet(main))))
                 .addSubcommand("jolokia", new CommandLine(new Jolokia(main)))
                 .addSubcommand("hawtio", new CommandLine(new Hawtio(main)))
