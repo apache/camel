@@ -49,8 +49,13 @@ public class CatalogDoc extends CamelCommand {
                         description = "Filter option listed in tables by name, description, or group")
     String filter;
 
+    @CommandLine.Option(names = { "--header" },
+                        description = "Whether to display component message headers", defaultValue = "true")
+    boolean headers;
+
     // TODO: kamelet
     // TODO: endpoint uri to document the uri only
+    // TODO: header options
 
     final CamelCatalog catalog = new DefaultCamelCatalog(true);
 
@@ -158,6 +163,20 @@ public class CatalogDoc extends CamelCommand {
                         .with(r -> r.getShortDefaultValue(40)),
                 new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).with(BaseOptionModel::getShortJavaType))));
         System.out.println("");
+
+        if (headers && !cm.getEndpointHeaders().isEmpty()) {
+            System.out.printf("The %s component supports (total: %s) message headers, which are listed below.%n%n",
+                    cm.getName(), cm.getEndpointHeaders().size());
+            System.out.println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, cm.getEndpointHeaders(), Arrays.asList(
+                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20)
+                            .maxWidth(30, OverflowBehaviour.NEWLINE)
+                            .with(this::getName),
+                    new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::getDescription),
+                    new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.NEWLINE)
+                            .with(r -> r.getShortDefaultValue(40)),
+                    new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).with(BaseOptionModel::getShortJavaType))));
+            System.out.println("");
+        }
     }
 
     private void docDataFormat(DataFormatModel dm) {
