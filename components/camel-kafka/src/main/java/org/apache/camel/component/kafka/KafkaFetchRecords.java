@@ -16,22 +16,11 @@
  */
 package org.apache.camel.component.kafka;
 
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.regex.Pattern;
-
 import org.apache.camel.component.kafka.consumer.CommitManager;
 import org.apache.camel.component.kafka.consumer.CommitManagers;
 import org.apache.camel.component.kafka.consumer.errorhandler.KafkaConsumerListener;
 import org.apache.camel.component.kafka.consumer.errorhandler.KafkaErrorStrategies;
-import org.apache.camel.component.kafka.consumer.support.KafkaConsumerResumeAdapter;
-import org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessorFacade;
-import org.apache.camel.component.kafka.consumer.support.PartitionAssignmentListener;
-import org.apache.camel.component.kafka.consumer.support.ProcessingResult;
-import org.apache.camel.component.kafka.consumer.support.ResumeStrategyFactory;
+import org.apache.camel.component.kafka.consumer.support.*;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.support.task.ForegroundTask;
 import org.apache.camel.support.task.Tasks;
@@ -41,11 +30,20 @@ import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.consumer.internals.ConsumerNetworkClient;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.InterruptException;
 import org.apache.kafka.common.errors.WakeupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.regex.Pattern;
 
 public class KafkaFetchRecords implements Runnable {
     /*
@@ -167,7 +165,7 @@ public class KafkaFetchRecords implements Runnable {
         String time = TimeUtils.printDuration(task.elapsed(), true);
         String topic = getPrintableTopic();
         String msg = "Gave up subscribing org.apache.kafka.clients.consumer.KafkaConsumer " +
-                     threadId + " to " + topic + " after " + max + " attempts (elapsed: " + time + ").";
+                threadId + " to " + topic + " after " + max + " attempts (elapsed: " + time + ").";
         LOG.warn(msg);
         setLastError(new KafkaConsumerFatalException(msg, lastError));
     }
@@ -176,7 +174,7 @@ public class KafkaFetchRecords implements Runnable {
         String time = TimeUtils.printDuration(task.elapsed(), true);
         String topic = getPrintableTopic();
         String msg = "Gave up creating org.apache.kafka.clients.consumer.KafkaConsumer "
-                     + threadId + " to " + topic + " after " + max + " attempts (elapsed: " + time + ").";
+                + threadId + " to " + topic + " after " + max + " attempts (elapsed: " + time + ").";
 
         setLastError(new KafkaConsumerFatalException(msg, lastError));
     }
@@ -378,6 +376,14 @@ public class KafkaFetchRecords implements Runnable {
                 break;
             case RESUME_REQUESTED:
                 LOG.info("Resuming the consumer as a response to a resume request");
+                if (consumer.committed(this.consumer.assignment()) != null) {
+                    consumer.committed(this.consumer.assignment()).forEach((k, v) -> {
+                                final TopicPartition tp = (TopicPartition) k;
+                                LOG.info("Resuming from the offset {} for the topic {} with partition {}", ((OffsetAndMetadata) v).offset(), tp.topic(), tp.partition());
+                                consumer.seek(tp, ((OffsetAndMetadata) v).offset());
+                            }
+                    );
+                }
                 consumer.resume(consumer.assignment());
                 state = State.RUNNING;
                 break;
@@ -421,7 +427,7 @@ public class KafkaFetchRecords implements Runnable {
     }
 
     private boolean isKafkaConsumerRunnableAndNotStopped() {
-        return kafkaConsumer.isRunAllowed() && !kafkaConsumer.isStoppingOrStopped();
+        return kafkaConsumer."isRunAllowed() && !kafkaConsumer.isStoppingOrStopped();
     }
 
     private boolean isReconnect() {
@@ -504,7 +510,7 @@ public class KafkaFetchRecords implements Runnable {
         } catch (Exception e) {
             // ignore
             LOG.debug("Cannot check hasReadyNodes on KafkaConsumer client (ConsumerNetworkClient) due to: "
-                      + e.getMessage() + ". This exception is ignored.",
+                            + e.getMessage() + ". This exception is ignored.",
                     e);
         }
         return ready;
