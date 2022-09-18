@@ -16,32 +16,18 @@
  */
 package org.apache.camel.component.undertow.ws;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.apache.camel.component.undertow.UndertowConstants;
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClient;
-import org.asynchttpclient.ws.WebSocket;
-import org.asynchttpclient.ws.WebSocketListener;
-import org.asynchttpclient.ws.WebSocketUpgradeHandler;
+import org.apache.camel.test.infra.common.http.WebsocketTestClient;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UndertowWsProducerRouteRestartTest extends BaseUndertowTest {
-
-    private static final Logger LOG = LoggerFactory.getLogger(UndertowWsProducerRouteRestartTest.class);
-
     private static final String ROUTE_ID = UndertowWsProducerRouteRestartTest.class.getSimpleName();
 
     @Produce("direct:shop")
@@ -70,46 +56,19 @@ public class UndertowWsProducerRouteRestartTest extends BaseUndertowTest {
     }
 
     private void doTestWSHttpCall() throws Exception {
-        final List<Object> received = new ArrayList<>();
-        final CountDownLatch latch = new CountDownLatch(1);
+        WebsocketTestClient testClient = new WebsocketTestClient("ws://localhost:" + getPort() + "/shop");
+        testClient.connect();
 
-        AsyncHttpClient c = new DefaultAsyncHttpClient();
-
-        WebSocket websocket = c.prepareGet("ws://localhost:" + getPort() + "/shop")
-                .execute(new WebSocketUpgradeHandler.Builder().addWebSocketListener(new WebSocketListener() {
-                    @Override
-                    public void onTextFrame(String message, boolean finalFragment, int rsv) {
-                        received.add(message);
-                        LOG.info("received --> " + message);
-                        latch.countDown();
-                    }
-
-                    @Override
-                    public void onOpen(WebSocket websocket) {
-                    }
-
-                    @Override
-                    public void onClose(WebSocket websocket, int code, String reason) {
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-                        LOG.warn("Unhandled exception: {}", t.getMessage(), t);
-                    }
-                }).build()).get();
-
-        // Send message to the direct endpoint
         producer.sendBodyAndHeader("Beer on stock at Apache Mall", UndertowConstants.SEND_TO_ALL, "true");
 
-        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        assertTrue(testClient.await(10));
 
-        assertEquals(1, received.size());
-        Object r = received.get(0);
+        assertEquals(1, testClient.getReceived().size());
+        Object r = testClient.getReceived().get(0);
         assertTrue(r instanceof String);
         assertEquals("Beer on stock at Apache Mall", r);
 
-        websocket.sendCloseFrame();
-        c.close();
+        testClient.close();
 
     }
 

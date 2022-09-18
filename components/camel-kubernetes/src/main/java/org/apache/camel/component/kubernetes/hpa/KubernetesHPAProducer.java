@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.kubernetes.hpa;
 
+import java.util.List;
 import java.util.Map;
 
+import io.fabric8.kubernetes.api.model.StatusDetails;
 import io.fabric8.kubernetes.api.model.autoscaling.v1.HorizontalPodAutoscaler;
 import io.fabric8.kubernetes.api.model.autoscaling.v1.HorizontalPodAutoscalerBuilder;
 import io.fabric8.kubernetes.api.model.autoscaling.v1.HorizontalPodAutoscalerList;
@@ -159,8 +161,10 @@ public class KubernetesHPAProducer extends DefaultProducer {
             LOG.error("Delete a specific hpa require specify a namespace name");
             throw new IllegalArgumentException("Delete a specific hpa require specify a namespace name");
         }
-        boolean hpaDeleted = getEndpoint().getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers()
+
+        List<StatusDetails> statusDetails = getEndpoint().getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers()
                 .inNamespace(namespaceName).withName(hpaName).delete();
+        boolean hpaDeleted = ObjectHelper.isNotEmpty(statusDetails);
 
         prepareOutboundMessage(exchange, hpaDeleted);
     }

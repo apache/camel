@@ -33,9 +33,12 @@ public class AtomEntryPollingConsumerWithBasicAuthTest extends AtomEntryPollingC
     public JettyEmbeddedService service = new JettyEmbeddedService(
             JettyConfigurationBuilder.bareTemplate()
                     .withPort(PORT)
-                    .addBasicUser("camel", "camelPass", "Private!")
-                    .addServletConfiguration(new JettyConfiguration.ServletConfiguration<>(
-                            new MyHttpServlet(), JettyConfiguration.ServletConfiguration.ROOT_PATH_SPEC))
+                    .withServletConfiguration()
+                    .addServletConfiguration(new JettyConfiguration.ServletHandlerConfiguration.ServletConfiguration<>(
+                            new MyHttpServlet(),
+                            JettyConfiguration.ServletHandlerConfiguration.ServletConfiguration.ROOT_PATH_SPEC))
+                    .addBasicAuthUser("camel", "camelPass", "Private!")
+                    .build()
                     .build());
 
     @Override

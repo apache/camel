@@ -50,7 +50,7 @@
         <!-- dependency versions -->
         <abdera-version>1.1.3</abdera-version>
         <!-- Note that activemq dependency is only used for testing! -->
-        <activemq-version>5.17.1</activemq-version>
+        <activemq-version>5.17.2</activemq-version>
         <activemq-artemis-version>2.24.0</activemq-artemis-version>
         <ahc-version>2.12.3</ahc-version>
         <apacheds-version>2.0.0.AM26</apacheds-version>
@@ -68,7 +68,7 @@
         <arquillian-jetty-embedded-9-version>1.0.0.CR3</arquillian-jetty-embedded-9-version>
         <arquillian-version>1.6.0.Final</arquillian-version>
         <arquillian-weld-embedded-version>2.0.0.Final</arquillian-weld-embedded-version>
-        <ascii-table-version>1.4.0</ascii-table-version>
+        <ascii-table-version>1.6.0</ascii-table-version>
         <asm-version>8.0.1</asm-version>
         <asn1bean-version>1.13.0</asn1bean-version>
         <assertj-version>3.23.1</assertj-version>
@@ -78,11 +78,11 @@
         <atmos-client-version>3.2.1</atmos-client-version>
         <atmosphere-version>2.6.4</atmosphere-version>
         <atmosphere-version-range>[2.6,3.0)</atmosphere-version-range>
-        <avro-version>1.11.0</avro-version>
-        <avro-ipc-jetty-version>1.11.0</avro-ipc-jetty-version>
-        <avro-ipc-netty-version>1.11.0</avro-ipc-netty-version>
+        <avro-version>1.11.1</avro-version>
+        <avro-ipc-jetty-version>1.11.1</avro-ipc-jetty-version>
+        <avro-ipc-netty-version>1.11.1</avro-ipc-netty-version>
         <awaitility-version>4.2.0</awaitility-version>
-        <aws-java-sdk2-version>2.17.270</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.17.275</aws-java-sdk2-version>
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
         <azure-sdk-bom-version>1.2.5</azure-sdk-bom-version>
@@ -95,7 +95,7 @@
         <c3p0-version>0.9.5.5</c3p0-version>
         <caffeine-version>3.1.1</caffeine-version>
         <californium-version>2.7.2</californium-version>
-        <californium-scandium-version>2.7.2</californium-scandium-version>
+        <californium-scandium-version>2.7.3</californium-scandium-version>
         <cassandra-driver-version>4.14.1</cassandra-driver-version>
         <cassandra-version>4.0.3</cassandra-version>
         <cdi-api-2.0-version>2.0</cdi-api-2.0-version>
@@ -148,7 +148,7 @@
         <directory-watcher-version>0.16.1</directory-watcher-version>
         <disruptor-version>3.4.4</disruptor-version>
         <dnsjava-version>3.5.1</dnsjava-version>
-        <djl-version>0.16.0</djl-version>
+        <djl-version>0.19.0</djl-version>
         <djl-mxnet-native-version>1.8.0</djl-mxnet-native-version>
         <djl-pytorch-native-version>1.8.1</djl-pytorch-native-version>
         <djl-tensorflow-native-version>2.4.1</djl-tensorflow-native-version>
@@ -162,7 +162,7 @@
         <ehcache3-version>3.9.6</ehcache3-version>
         <elasticsearch-rest-sniffer-version>7.10.2</elasticsearch-rest-sniffer-version>
         <elasticsearch-rest-version>7.10.2</elasticsearch-rest-version>
-        <elytron-web>1.8.0.Final</elytron-web>
+        <elytron-web>1.10.2.Final</elytron-web>
         <exec-maven-plugin-version>1.6.0</exec-maven-plugin-version>
         <facebook4j-core-version>2.4.13</facebook4j-core-version>
         <fastjson-version>1.2.83</fastjson-version>
@@ -227,13 +227,13 @@
         <hapi-fhir-version>4.2.0</hapi-fhir-version>
         <hawtbuf-version>1.11</hawtbuf-version>
         <hawtdispatch-version>1.22</hawtdispatch-version>
-        <hazelcast-version>5.1.2</hazelcast-version>
+        <hazelcast-version>5.1.3</hazelcast-version>
         <hbase-version>2.4.12</hbase-version>
         <hdrhistrogram-version>2.1.11</hdrhistrogram-version>
         <hibernate-validator-version>6.2.4.Final</hibernate-validator-version>
         <hibernate-version>5.6.10.Final</hibernate-version>
         <hk2-version>2.6.1</hk2-version>
-        <hsqldb-version>2.6.1</hsqldb-version>
+        <hsqldb-version>2.7.0</hsqldb-version>
         <httpunit-version>1.7</httpunit-version>
         <httpcore4-version>4.4.15</httpcore4-version>
         <httpclient4-version>4.5.13</httpclient4-version>
@@ -328,7 +328,7 @@
         <jsonassert-version>1.5.1</jsonassert-version>
         <json-path-version>2.7.0</json-path-version>
         <json-patch-version>1.13</json-patch-version>
-        <jsonata4java-version>1.5.8</jsonata4java-version>
+        <jsonata4java-version>1.7.9</jsonata4java-version>
         <json-schema-validator-version>2.2.14</json-schema-validator-version>
         <json-unit-version>2.32.0</json-unit-version>
         <jsoup-version>1.15.3</jsoup-version>
@@ -344,8 +344,8 @@
         <kafka-version>3.2.1</kafka-version>
         <kafka-vertx-version>2.8.1</kafka-vertx-version>
         <kotlin-version>1.7.10</kotlin-version>
-        <kubernetes-client-version>5.12.3</kubernetes-client-version>
-        <kubernetes-model-version>5.12.3</kubernetes-model-version>
+        <kubernetes-client-version>6.1.1</kubernetes-client-version>
+        <kubernetes-model-version>6.1.1</kubernetes-model-version>
         <kudu-version>1.15.0</kudu-version>
         <leveldbjni-version>1.8</leveldbjni-version>
         <leveldb-api-version>0.12</leveldb-api-version>
@@ -389,7 +389,7 @@
         <microprofile-config-version>2.0.1</microprofile-config-version>
         <microprofile-metrics-version>3.0.1</microprofile-metrics-version>
         <microprofile-fault-tolerance-version>3.0</microprofile-fault-tolerance-version>
-        <milo-version>0.6.6</milo-version>
+        <milo-version>0.6.8</milo-version>
         <milo-guava-version>31.1-jre</milo-guava-version>
         <mina-version>2.1.6</mina-version>
         <minidns-version>0.3.4</minidns-version>
@@ -408,10 +408,10 @@
         <nessus-ipfs-version>1.0.0.Beta4</nessus-ipfs-version>
         <nessus-weka-version>1.0.1</nessus-weka-version>
         <neoscada-version>0.4.0</neoscada-version>
-        <netty-version>4.1.81.Final</netty-version>
+        <netty-version>4.1.82.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.0.72</networknt-json-schema-validator-version>
-        <nimbus-jose-jwt>8.9</nimbus-jose-jwt>
+        <nimbus-jose-jwt>9.22</nimbus-jose-jwt>
         <nitrite-version>3.4.4</nitrite-version>
         <okclient-version>3.14.9</okclient-version>
         <olingo2-version>2.0.11</olingo2-version>
@@ -419,7 +419,7 @@
         <ognl-version>3.1.12</ognl-version>
         <openjpa-version>3.2.2</openjpa-version>
         <openstack4j-version>3.10</openstack4j-version>
-        <opentelemetry-version>1.16.0</opentelemetry-version>
+        <opentelemetry-version>1.17.0</opentelemetry-version>
         <opentelemetry-alpha-version>${opentelemetry-version}-alpha</opentelemetry-alpha-version>
         <opentracing-version>0.33.0</opentracing-version>
         <opentracing-tracerresolver-version>0.1.8</opentracing-tracerresolver-version>
@@ -471,11 +471,11 @@
         <slf4j-api-version>1.7.36</slf4j-api-version>
         <slf4j-version>1.7.36</slf4j-version>
         <smack-version>4.3.5</smack-version>
-        <smallrye-config-version>2.10.1</smallrye-config-version>
+        <smallrye-config-version>2.12.0</smallrye-config-version>
         <smallrye-metrics-version>3.0.5</smallrye-metrics-version>
-        <smallrye-health-version>3.2.1</smallrye-health-version>
-        <smallrye-fault-tolerance-version>5.4.0</smallrye-fault-tolerance-version>
-        <snakeyaml-version>1.31</snakeyaml-version>
+        <smallrye-health-version>3.3.0</smallrye-health-version>
+        <smallrye-fault-tolerance-version>5.5.0</smallrye-fault-tolerance-version>
+        <snakeyaml-version>1.32</snakeyaml-version>
         <snakeyaml-engine-version>2.3</snakeyaml-engine-version>
         <snmp4j-version>2.6.3_1</snmp4j-version>
         <!-- solr version aligned with lucene -->
@@ -492,7 +492,7 @@
         <spring-vault-core-version>2.3.2</spring-vault-core-version>
         <spring-version-range>[5,6)</spring-version-range>
         <spring-version>${spring5-version}</spring-version>
-        <spring5-version>5.3.22</spring5-version>
+        <spring5-version>5.3.23</spring5-version>
         <spring-rabbitmq-version>2.4.6</spring-rabbitmq-version>
         <spring-security-version>5.7.3</spring-security-version>
         <spring-ws-version>3.1.3</spring-ws-version>
@@ -519,12 +519,11 @@
         <velocity-tools-version>3.1</velocity-tools-version>
         <velocity-version>2.3</velocity-version>
         <vertx-version>4.3.3</vertx-version>
-        <vertx-web-client-version>4.3.3</vertx-web-client-version>
         <vysper-version>0.7</vysper-version>
         <web3j-version>3.6.0</web3j-version>
         <web3j-quorum-version>0.8.0</web3j-quorum-version>
         <weld3-version>3.1.8.Final</weld3-version>
-        <wildfly-elytron>1.11.4.Final</wildfly-elytron>
+        <wildfly-elytron>1.15.4.Final</wildfly-elytron>
         <wiremock-version>2.32.0</wiremock-version>
         <woodstox-version>4.4.1</woodstox-version>
         <woodstox-core-version>6.3.1</woodstox-core-version>

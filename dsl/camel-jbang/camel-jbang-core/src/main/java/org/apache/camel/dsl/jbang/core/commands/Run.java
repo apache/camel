@@ -85,7 +85,6 @@ class Run extends CamelCommand {
     private static final Pattern CLASS_PATTERN = Pattern.compile(
             "^\\s*public class\\s+([a-zA-Z0-9]*)[\\s+|;].*$", Pattern.MULTILINE);
 
-    private CamelContext context;
     private boolean silentRun;
     private boolean pipeRun;
 
@@ -94,7 +93,7 @@ class Run extends CamelCommand {
                 arity = "0..9")
     String[] files;
 
-    @CommandLine.Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "application",
+    @Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "application",
             description = "Profile to use, which refers to loading properties file with the given profile name. By default application.properties is loaded.")
     String profile;
 
@@ -162,7 +161,7 @@ class Run extends CamelCommand {
     String jfrProfile;
 
     @Option(names = { "--local-kamelet-dir" },
-            description = "Local directory for loading Kamelets (takes precedence)")
+            description = "Local directory for loading Kamelets (takes precedence). Multiple directories can be specified separateed by comma.")
     String localKameletDir;
 
     @Option(names = { "--port" }, description = "Embeds a local HTTP server on this port")
@@ -544,9 +543,6 @@ class Run extends CamelCommand {
         }
 
         main.start();
-
-        context = main.getCamelContext();
-
         main.run();
 
         return main.getExitCode();
@@ -636,11 +632,20 @@ class Run extends CamelCommand {
 
     private KameletMain createMainInstance() {
         KameletMain main;
-        if (localKameletDir == null) {
+        if (localKameletDir == null || localKameletDir.isEmpty()) {
             main = new KameletMain();
         } else {
-            main = new KameletMain("file:" + localKameletDir);
-            writeSettings("camel.jbang.localKameletDir", localKameletDir);
+            StringJoiner sj = new StringJoiner(",");
+            String[] parts = localKameletDir.split(",");
+            for (String part : parts) {
+                part = FileUtil.compactPath(part);
+                if (!ResourceHelper.hasScheme(part)) {
+                    part = "file:" + part;
+                }
+                sj.add(part);
+            }
+            main = new KameletMain(sj.toString());
+            writeSettings("camel.jbang.localKameletDir", sj.toString());
         }
         return main;
     }
@@ -668,24 +673,6 @@ class Run extends CamelCommand {
             String out = RestDslGenerator.toYaml(document).generate(context, false);
             Files.write(Paths.get(OPENAPI_GENERATED_FILE), out.getBytes());
         }
-    }
-
-    public File createLockFile(String name) {
-        File answer = null;
-        if (name != null) {
-            File dir = new File(System.getProperty("user.home"), ".camel");
-            try {
-                dir.mkdirs();
-                answer = new File(dir, name);
-                if (!answer.exists()) {
-                    answer.createNewFile();
-                }
-                answer.deleteOnExit();
-            } catch (Exception e) {
-                answer = null;
-            }
-        }
-        return answer;
     }
 
     private boolean knownFile(String file) throws Exception {

@@ -25,10 +25,12 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 
 @UriEndpoint(firstVersion = "3.8.0", scheme = "kamelet", syntax = "kamelet:templateId/routeId", title = "Kamelet",
@@ -165,4 +167,19 @@ public class KameletEndpoint extends DefaultEndpoint {
         return answer;
     }
 
+    @Override
+    public void setProperties(Object bean, Map<String, Object> parameters) {
+        if (parameters == null || parameters.isEmpty()) {
+            return;
+        }
+
+        PropertyConfigurer configurer = null;
+        if (bean instanceof KameletEndpoint) {
+            configurer = getComponent().getEndpointPropertyConfigurer();
+        }
+        PropertyBindingSupport.build().withConfigurer(configurer).withIgnoreCase(true)
+                .withOptional(isLenientProperties())
+                .withReflection(false) // avoid reflection as additional parameters are for the actual kamelet and not this endpoint
+                .bind(getCamelContext(), bean, parameters);
+    }
 }

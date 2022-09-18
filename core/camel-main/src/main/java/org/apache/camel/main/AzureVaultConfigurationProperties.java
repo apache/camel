@@ -81,4 +81,59 @@ public class AzureVaultConfigurationProperties extends AzureVaultConfiguration i
         return this;
     }
 
+    /**
+     * Whether to automatically reload Camel upon secrets being updated in Azure.
+     */
+    public AzureVaultConfigurationProperties withRefreshEnabled(boolean refreshEnabled) {
+        setRefreshEnabled(refreshEnabled);
+        return this;
+    }
+
+    /**
+     * The period (millis) between checking Azure for updated secrets.
+     */
+    public AzureVaultConfigurationProperties withRefreshPeriod(long refreshPeriod) {
+        setRefreshPeriod(refreshPeriod);
+        return this;
+    }
+
+    /**
+     * Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma.
+     */
+    public AzureVaultConfigurationProperties withSecrets(String secrets) {
+        setSecrets(secrets);
+        return this;
+    }
+
+    /**
+     * The Azure Eventhub connection String for Key Vault Event notification
+     */
+    public AzureVaultConfigurationProperties withEventhubConnectionString(String connectionString) {
+        setEventhubConnectionString(connectionString);
+        return this;
+    }
+
+    /**
+     * The Azure Eventhub Blob Access Key for Checkpoint Store purpose
+     */
+    public AzureVaultConfigurationProperties withBlobAccessKey(String accessKey) {
+        setBlobAccessKey(accessKey);
+        return this;
+    }
+
+    /**
+     * The Azure Eventhub Blob Account Name for Checkpoint Store purpose
+     */
+    public AzureVaultConfigurationProperties withBlobAccountName(String accountName) {
+        setBlobAccountName(accountName);
+        return this;
+    }
+
+    /**
+     * The Azure Eventhub Blob Container Name for Checkpoint Store purpose
+     */
+    public AzureVaultConfigurationProperties withBlobContainerName(String containerName) {
+        setBlobContainerName(containerName);
+        return this;
+    }
 }

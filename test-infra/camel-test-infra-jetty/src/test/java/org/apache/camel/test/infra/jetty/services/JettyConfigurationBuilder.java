@@ -17,14 +17,174 @@
 
 package org.apache.camel.test.infra.jetty.services;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import javax.net.ssl.SSLContext;
+
+import org.apache.camel.util.KeyValueHolder;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.ErrorHandler;
+import org.eclipse.jetty.server.handler.HandlerCollection;
+import org.eclipse.jetty.servlet.ServletContextHandler;
 
 /**
  * This builder can be used to build and configure a configuration holder for embedded Jetty instances
  */
 public final class JettyConfigurationBuilder {
+    private interface ConfigurationBuilderDelegate {
+        JettyConfigurationBuilder build();
+    }
+
+    public static class ServletConfigurationBuilder implements ConfigurationBuilderDelegate {
+        private final JettyConfiguration jettyConfiguration;
+        private final JettyConfigurationBuilder jettyConfigurationBuilder;
+
+        private JettyConfiguration.ServletHandlerConfiguration servletHandlerConfiguration;
+
+        public ServletConfigurationBuilder(JettyConfigurationBuilder builder, JettyConfiguration jettyConfiguration) {
+            this.jettyConfigurationBuilder = builder;
+            this.jettyConfiguration = jettyConfiguration;
+
+            servletHandlerConfiguration
+                    = new JettyConfiguration.ServletHandlerConfiguration(jettyConfiguration.getContextPath());
+        }
+
+        public ServletConfigurationBuilder customize(Consumer<ServletContextHandler> customizer) {
+            servletHandlerConfiguration.customize(customizer);
+
+            return this;
+        }
+
+        public ServletConfigurationBuilder addBasicAuthUser(String username, String password, String realm) {
+            servletHandlerConfiguration.addBasicAuthUser(username, password, realm);
+
+            return this;
+        }
+
+        public ServletConfigurationBuilder addBasicAuthUser(KeyValueHolder<String, String> userInfo) {
+            servletHandlerConfiguration.addBasicAuthUser(userInfo);
+
+            return this;
+        }
+
+        public ServletConfigurationBuilder addServletConfiguration(
+                JettyConfiguration.ServletHandlerConfiguration.ServletConfiguration<?> servletConfiguration) {
+            servletHandlerConfiguration.addServletConfiguration(servletConfiguration);
+
+            return this;
+        }
+
+        @Override
+        public JettyConfigurationBuilder build() {
+            jettyConfiguration.setContextHandlerConfiguration(servletHandlerConfiguration);
+            return jettyConfigurationBuilder;
+        }
+    }
+
+    public static class WebAppContextConfigurationBuilder implements ConfigurationBuilderDelegate {
+        private final JettyConfiguration jettyConfiguration;
+        private final JettyConfigurationBuilder jettyConfigurationBuilder;
+
+        private final JettyConfiguration.WebContextConfiguration webContextConfiguration;
+
+        public WebAppContextConfigurationBuilder(JettyConfigurationBuilder jettyConfigurationBuilder,
+                                                 JettyConfiguration jettyConfiguration) {
+            this.jettyConfigurationBuilder = jettyConfigurationBuilder;
+            this.jettyConfiguration = jettyConfiguration;
+
+            this.webContextConfiguration = new JettyConfiguration.WebContextConfiguration(jettyConfiguration.getContextPath());
+        }
+
+        public WebAppContextConfigurationBuilder withWebApp(String webApp) {
+            webContextConfiguration.setWebApp(webApp);
+
+            return this;
+        }
+
+        @Override
+        public JettyConfigurationBuilder build() {
+            jettyConfiguration.setContextHandlerConfiguration(webContextConfiguration);
+
+            return jettyConfigurationBuilder;
+        }
+    }
+
+    public static class ContextHandlerConfigurationBuilder implements ConfigurationBuilderDelegate {
+        private final JettyConfiguration jettyConfiguration;
+        private final JettyConfigurationBuilder jettyConfigurationBuilder;
+
+        private final JettyConfiguration.ContextHandlerConfiguration contextHandlerConfiguration;
+        private Consumer<ContextHandler> contextHandlerCustomizer;
+
+        public ContextHandlerConfigurationBuilder(JettyConfigurationBuilder jettyConfigurationBuilder,
+                                                  JettyConfiguration jettyConfiguration) {
+            this.jettyConfiguration = jettyConfiguration;
+            this.jettyConfigurationBuilder = jettyConfigurationBuilder;
+
+            contextHandlerConfiguration
+                    = new JettyConfiguration.ContextHandlerConfiguration(jettyConfiguration.getContextPath());
+        }
+
+        public ContextHandlerConfigurationBuilder withErrorHandler(ErrorHandler errorHandler) {
+            contextHandlerConfiguration.setErrorHandler(errorHandler);
+
+            return this;
+        }
+
+        public ContextHandlerConfigurationBuilder withHandler(Handler handler) {
+            contextHandlerConfiguration.setHandler(handler);
+
+            return this;
+        }
+
+        public ContextHandlerConfigurationBuilder withCustomizer(Consumer<ContextHandler> contextHandlerCustomizer) {
+            contextHandlerConfiguration.customize(contextHandlerCustomizer);
+            return this;
+        }
+
+        @Override
+        public JettyConfigurationBuilder build() {
+            jettyConfiguration.setContextHandlerConfiguration(contextHandlerConfiguration);
+
+            return jettyConfigurationBuilder;
+        }
+    }
+
+    public static class HandlerContextConfigurationBuilder implements ConfigurationBuilderDelegate {
+        private final JettyConfiguration jettyConfiguration;
+        private final JettyConfigurationBuilder jettyConfigurationBuilder;
+        private final JettyConfiguration.HandlerCollectionConfiguration handlerCollectionConfiguration;
+
+        public HandlerContextConfigurationBuilder(JettyConfigurationBuilder jettyConfigurationBuilder,
+                                                  JettyConfiguration jettyConfiguration) {
+            this.jettyConfiguration = jettyConfiguration;
+            this.jettyConfigurationBuilder = jettyConfigurationBuilder;
+
+            handlerCollectionConfiguration
+                    = new JettyConfiguration.HandlerCollectionConfiguration(jettyConfiguration.getContextPath());
+        }
+
+        public HandlerContextConfigurationBuilder addHandlers(Handler handler) {
+            handlerCollectionConfiguration.addHandlers(handler);
+
+            return this;
+        }
+
+        public HandlerContextConfigurationBuilder withCustomizer(Consumer<HandlerCollection> contextHandlerCustomizer) {
+            handlerCollectionConfiguration.customize(contextHandlerCustomizer);
+            return this;
+        }
+
+        @Override
+        public JettyConfigurationBuilder build() {
+            jettyConfiguration.setContextHandlerConfiguration(handlerCollectionConfiguration);
+
+            return jettyConfigurationBuilder;
+        }
+    }
+
     private JettyConfiguration jettyConfiguration = new JettyConfiguration();
 
     private JettyConfigurationBuilder() {
@@ -46,16 +206,20 @@ public final class JettyConfigurationBuilder {
         return withSslContext(contextSupplier::get);
     }
 
-    public JettyConfigurationBuilder addServletConfiguration(JettyConfiguration.ServletConfiguration servletConfiguration) {
-        jettyConfiguration.addServletConfiguration(servletConfiguration);
-
-        return this;
+    public ServletConfigurationBuilder withServletConfiguration() {
+        return new ServletConfigurationBuilder(this, jettyConfiguration);
     }
 
-    public JettyConfigurationBuilder addBasicUser(String username, String password, String realm) {
-        jettyConfiguration.addBasicAuthUser(username, password, realm);
+    public WebAppContextConfigurationBuilder withWebAppContextConfiguration() {
+        return new WebAppContextConfigurationBuilder(this, jettyConfiguration);
+    }
 
-        return this;
+    public ContextHandlerConfigurationBuilder withContextHandlerConfiguration() {
+        return new ContextHandlerConfigurationBuilder(this, jettyConfiguration);
+    }
+
+    public HandlerContextConfigurationBuilder withHandlerCollectionConfiguration() {
+        return new HandlerContextConfigurationBuilder(this, jettyConfiguration);
     }
 
     public JettyConfigurationBuilder withContextPath(String contextPath) {

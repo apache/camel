@@ -84,6 +84,7 @@ public class ResilienceProcessor extends AsyncProcessorSupport
     private TimeLimiter timeLimiter;
     private final Processor processor;
     private final Processor fallback;
+    private final boolean throwExceptionWhenHalfOpenOrOpenState;
     private boolean shutdownExecutorService;
     private ExecutorService executorService;
     private ProcessorExchangeFactory processorExchangeFactory;
@@ -92,12 +93,13 @@ public class ResilienceProcessor extends AsyncProcessorSupport
 
     public ResilienceProcessor(CircuitBreakerConfig circuitBreakerConfig, BulkheadConfig bulkheadConfig,
                                TimeLimiterConfig timeLimiterConfig, Processor processor,
-                               Processor fallback) {
+                               Processor fallback, boolean throwExceptionWhenHalfOpenOrOpenState) {
         this.circuitBreakerConfig = circuitBreakerConfig;
         this.bulkheadConfig = bulkheadConfig;
         this.timeLimiterConfig = timeLimiterConfig;
         this.processor = processor;
         this.fallback = fallback;
+        this.throwExceptionWhenHalfOpenOrOpenState = throwExceptionWhenHalfOpenOrOpenState;
     }
 
     @Override
@@ -636,12 +638,13 @@ public class ResilienceProcessor extends AsyncProcessorSupport
                     return exchange;
                 } else if (throwable instanceof CallNotPermittedException) {
                     // the circuit breaker triggered a call rejected
-                    // where the circuit breaker is half-open / open and therefore
-                    // we should just set properties and do not set any exception
                     exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, false);
                     exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
                     exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SHORT_CIRCUITED, true);
                     exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_REJECTED, true);
+                    if (throwExceptionWhenHalfOpenOrOpenState) {
+                        exchange.setException(throwable);
+                    }
                     return exchange;
                 } else if (throwable instanceof BulkheadFullException) {
                     // the circuit breaker bulkhead is full

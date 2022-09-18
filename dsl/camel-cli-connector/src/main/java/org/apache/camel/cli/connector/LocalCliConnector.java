@@ -27,6 +27,7 @@ import java.lang.management.ThreadMXBean;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -36,6 +37,7 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.api.management.ManagedCamelContext;
@@ -74,6 +76,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private File lockFile;
     private File statusFile;
     private File actionFile;
+    private File outputFile;
 
     public LocalCliConnector(CliConnectorFactory cliConnectorFactory) {
         this.cliConnectorFactory = cliConnectorFactory;
@@ -131,6 +134,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         if (lockFile != null) {
             statusFile = createLockFile(lockFile.getName() + "-status.json");
             actionFile = createLockFile(lockFile.getName() + "-action.json");
+            outputFile = createLockFile(lockFile.getName() + "-output.json");
             executor.scheduleWithFixedDelay(this::task, 0, delay, TimeUnit.MILLISECONDS);
             LOG.info("Camel CLI enabled (local)");
         } else {
@@ -178,7 +182,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     protected void actionTask() {
         try {
             JsonObject root = loadAction();
-            if (root.isEmpty()) {
+            if (root == null || root.isEmpty()) {
                 return;
             }
 
@@ -240,6 +244,22 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 if (mcc != null) {
                     mcc.getManagedCamelContext().reset(true);
                 }
+            } else if ("thread-dump".equals(action)) {
+                DevConsole dc = camelContext.adapt(ExtendedCamelContext.class)
+                        .getDevConsoleResolver().resolveDevConsole("thread");
+                if (dc != null) {
+                    JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("stackTrace", "true"));
+                    LOG.trace("Updating output file: {}", outputFile);
+                    IOHelper.writeText(json.toJson(), outputFile);
+                }
+            } else if ("top-processors".equals(action)) {
+                DevConsole dc = camelContext.adapt(ExtendedCamelContext.class)
+                        .getDevConsoleResolver().resolveDevConsole("top");
+                if (dc != null) {
+                    JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of(Exchange.HTTP_PATH, "/*"));
+                    LOG.trace("Updating output file: {}", outputFile);
+                    IOHelper.writeText(json.toJson(), outputFile);
+                }
             }
 
             // action done so delete file
@@ -247,7 +267,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
 
         } catch (Throwable e) {
             // ignore
-            LOG.trace(
+            LOG.debug(
                     "Error executing action file: " + actionFile + " due to: " + e.getMessage()
                       + ". This exception is ignored.",
                     e);
@@ -303,7 +323,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     .getDevConsoleResolver().resolveDevConsole("route");
             if (dc != null && dc2 != null) {
                 JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON);
-                JsonObject json2 = (JsonObject) dc2.call(DevConsole.MediaType.JSON);
+                JsonObject json2 = (JsonObject) dc2.call(DevConsole.MediaType.JSON, Map.of("processors", "true"));
                 if (json != null && json2 != null) {
                     root.put("context", json);
                     root.put("routes", json2.get("routes"));
@@ -332,6 +352,10 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             JsonObject gc = collectGC();
             if (gc != null) {
                 root.put("gc", gc);
+            }
+            JsonObject vaults = collectVaults();
+            if (!vaults.isEmpty()) {
+                root.put("vaults", vaults);
             }
             LOG.trace("Updating status file: {}", statusFile);
             IOHelper.writeText(root.toJson(), statusFile);
@@ -397,6 +421,20 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         return null;
     }
 
+    private JsonObject collectVaults() {
+        JsonObject root = new JsonObject();
+        // aws-secrets is optional
+        Optional<DevConsole> dc = camelContext.adapt(ExtendedCamelContext.class)
+                .getDevConsoleResolver().lookupDevConsole("aws-secrets");
+        if (dc.isPresent()) {
+            JsonObject json = (JsonObject) dc.get().call(DevConsole.MediaType.JSON);
+            if (json != null) {
+                root.put("aws-secrets", json);
+            }
+        }
+        return root;
+    }
+
     @Override
     protected void doStop() throws Exception {
         // cleanup
@@ -408,6 +446,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         }
         if (actionFile != null) {
             FileUtil.deleteFile(actionFile);
+        }
+        if (outputFile != null) {
+            FileUtil.deleteFile(outputFile);
         }
         if (executor != null) {
             camelContext.getExecutorServiceManager().shutdown(executor);

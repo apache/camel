@@ -163,7 +163,7 @@ public interface ElasticsearchRestComponentBuilderFactory {
         }
         /**
          * To use an existing configured Elasticsearch client, instead of
-         * creating a client per endpoint. This allow to customize the client
+         * creating a client per endpoint. This allows to customize the client
          * with specific settings.
          * 
          * The option is a:

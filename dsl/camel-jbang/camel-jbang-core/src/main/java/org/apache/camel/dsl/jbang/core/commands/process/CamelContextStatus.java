@@ -122,7 +122,7 @@ public class CamelContextStatus extends ProcessBaseCommand {
         if (!rows.isEmpty()) {
             System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                     new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS)
+                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(r -> r.name),
                     new Column().header("CAMEL").dataAlign(HorizontalAlign.LEFT).with(r -> r.camelVersion),
                     new Column().header("PLATFORM").dataAlign(HorizontalAlign.LEFT).with(this::getPlatform),
@@ -176,14 +176,14 @@ public class CamelContextStatus extends ProcessBaseCommand {
         }
     }
 
-    private String getSinceLast(Row r) {
+    protected String getSinceLast(Row r) {
         String s1 = r.sinceLastStarted != null ? r.sinceLastStarted : "-";
         String s2 = r.sinceLastCompleted != null ? r.sinceLastCompleted : "-";
         String s3 = r.sinceLastFailed != null ? r.sinceLastFailed : "-";
         return s1 + "/" + s2 + "/" + s3;
     }
 
-    private String getThroughput(Row r) {
+    protected String getThroughput(Row r) {
         String s = r.throughput;
         if (s == null || s.isEmpty()) {
             s = "";
@@ -191,7 +191,7 @@ public class CamelContextStatus extends ProcessBaseCommand {
         return s;
     }
 
-    private String getRoutes(Row r) {
+    protected String getRoutes(Row r) {
         return r.routeStarted + "/" + r.routeTotal;
     }
 

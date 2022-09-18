@@ -39,11 +39,10 @@ public class EndpointsDevConsole extends AbstractDevConsole {
 
         EndpointRegistry reg = getCamelContext().getEndpointRegistry();
         sb.append(
-                String.format("\n    Endpoints: %s (static: %s dynamic: %s", reg.size(), reg.staticSize(), reg.dynamicSize()));
-        sb.append(String.format("\n    Maximum Cache Size: %s", reg.getMaximumCacheSize()));
+                String.format("    Endpoints: %s (static: %s dynamic: %s\n", reg.size(), reg.staticSize(), reg.dynamicSize()));
+        sb.append(String.format("    Maximum Cache Size: %s\n", reg.getMaximumCacheSize()));
         Collection<Endpoint> col = reg.getReadOnlyValues();
         if (!col.isEmpty()) {
-            sb.append("\n");
             for (Endpoint e : col) {
                 sb.append(String.format("\n    %s", e.toString()));
             }

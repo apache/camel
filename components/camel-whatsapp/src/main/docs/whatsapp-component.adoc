@@ -2,17 +2,17 @@
 :doctitle: WhatsApp
 :shortname: whatsapp
 :artifactid: camel-whatsapp
-:description: Send messages.
+:description: Send messages to WhatsApp.
 :since: 3.18
 :supportlevel: Preview
-:component-header: Both producer and consumer are supported
+:component-header: Only producer is supported
 
 *Since Camel {since}*
 
 *{component-header}*
 
 The WhatsApp component provides access to the https://developers.facebook.com/docs/whatsapp/cloud-api[WhatsApp Cloud API].
-It allows a Camel-based application to send messages using a cloud-hosted version of the WhatsApp Business Platform..
+It allows a Camel-based application to send messages using a cloud-hosted version of the WhatsApp Business Platform.
 
 Before using this component you have to set up Developer Assets and Platform Access, following the instructions at the
 https://developers.facebook.com/docs/whatsapp/cloud-api/get-started#set-up-developer-assets[Register WhatsApp Business Cloud API account].

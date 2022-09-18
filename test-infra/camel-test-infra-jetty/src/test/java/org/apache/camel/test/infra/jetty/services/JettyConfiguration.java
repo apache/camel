@@ -23,12 +23,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import javax.net.ssl.SSLContext;
 import javax.servlet.Servlet;
 
 import org.apache.camel.util.KeyValueHolder;
+import org.eclipse.jetty.security.ConstraintMapping;
+import org.eclipse.jetty.security.ConstraintSecurityHandler;
+import org.eclipse.jetty.security.HashLoginService;
+import org.eclipse.jetty.security.SecurityHandler;
+import org.eclipse.jetty.security.UserStore;
+import org.eclipse.jetty.security.authentication.BasicAuthenticator;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.ErrorHandler;
+import org.eclipse.jetty.server.handler.HandlerCollection;
+import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.security.Constraint;
+import org.eclipse.jetty.util.security.Credential;
+import org.eclipse.jetty.webapp.WebAppContext;
 
 /**
  * A configuration holder for embedded Jetty instances
@@ -36,93 +51,268 @@ import org.eclipse.jetty.servlet.ServletHolder;
 public class JettyConfiguration {
     public static final String ROOT_CONTEXT_PATH = "/";
 
-    /**
-     * A configuration holder for Jetty servlet holders
-     * 
-     * @param <T>
-     */
-    public static class ServletConfiguration<T> {
-        public static final String ROOT_PATH_SPEC = "/*";
+    public abstract static class AbstractContextHandlerConfiguration<T> {
 
-        private final T servlet;
-        private final String pathSpec;
-        private Map<String, String> initParameters = new HashMap<>();
-        private String name;
+        protected final String contextPath;
+        protected Consumer<T> customizer;
 
-        public ServletConfiguration(T servlet, String pathSpec) {
-            this.servlet = servlet;
-            this.pathSpec = pathSpec;
-            this.name = null;
+        public AbstractContextHandlerConfiguration(String contextPath) {
+            this.contextPath = contextPath;
         }
 
-        public ServletConfiguration(T servlet, String pathSpec, String name) {
-            this.servlet = servlet;
-            this.pathSpec = pathSpec;
-            this.name = name;
+        public String getContextPath() {
+            return contextPath;
         }
 
-        public T getServlet() {
-            return servlet;
+        public void customize(Consumer<T> customizer) {
+            this.customizer = customizer;
         }
 
-        public String getPathSpec() {
-            return pathSpec;
+        abstract T resolve();
+    }
+
+    public static class ContextHandlerConfiguration extends AbstractContextHandlerConfiguration<ContextHandler> {
+        private final ContextHandler contextHandler;
+
+        public ContextHandlerConfiguration(String contextPath) {
+            super(contextPath);
+
+            contextHandler = new ContextHandler(contextPath);
         }
 
-        public void addInitParameter(String param, String value) {
-            initParameters.put(param, value);
+        public void setErrorHandler(ErrorHandler errorHandler) {
+            contextHandler.setErrorHandler(errorHandler);
         }
 
-        public Map<String, String> getInitParameters() {
-            return Collections.unmodifiableMap(initParameters);
+        public void setHandler(Handler handler) {
+            contextHandler.setHandler(handler);
         }
 
-        public ServletHolder buildServletHolder() {
-            ServletHolder servletHolder = resolveServletHolder();
-
-            if (!initParameters.isEmpty()) {
-                servletHolder.setInitParameters(initParameters);
+        @Override
+        ContextHandler resolve() {
+            if (customizer != null) {
+                customizer.accept(contextHandler);
             }
 
-            return servletHolder;
+            return contextHandler;
+        }
+    }
+
+    public static class WebContextConfiguration extends AbstractContextHandlerConfiguration<WebAppContext> {
+        private String webApp;
+
+        public WebContextConfiguration(String contextPath) {
+            super(contextPath);
         }
 
-        public String getName() {
-            return name;
+        public void setWebApp(String webApp) {
+            this.webApp = webApp;
         }
 
-        private ServletHolder resolveServletHolder() {
-            if (servlet instanceof ServletHolder) {
-                return (ServletHolder) servlet;
+        public WebAppContext resolve() {
+            final WebAppContext webAppContext = new WebAppContext(webApp, super.getContextPath());
+
+            if (customizer != null) {
+                customizer.accept(webAppContext);
             }
 
-            ServletHolder servletHolder = new ServletHolder();
+            return webAppContext;
+        }
+    }
 
-            if (name != null) {
-                servletHolder.setName(name);
+    public static class ServletHandlerConfiguration extends AbstractContextHandlerConfiguration<ServletContextHandler> {
+        /**
+         * A configuration holder for Jetty servlet holders
+         *
+         * @param <T>
+         */
+        public static class ServletConfiguration<T> {
+            public static final String ROOT_PATH_SPEC = "/*";
+
+            private final T servlet;
+            private final String pathSpec;
+            private Map<String, String> initParameters = new HashMap<>();
+            private String name;
+
+            public ServletConfiguration(T servlet, String pathSpec) {
+                this.servlet = servlet;
+                this.pathSpec = pathSpec;
+                this.name = null;
             }
 
-            if (servlet instanceof String) {
-                servletHolder.setClassName((String) servlet);
-            } else {
-                if (servlet instanceof Servlet) {
-                    servletHolder.setServlet((Servlet) servlet);
-                } else {
-                    throw new IllegalArgumentException(
-                            "Unknown servlet type: " + (servlet == null ? "null" : servlet.getClass()));
+            public ServletConfiguration(T servlet, String pathSpec, String name) {
+                this.servlet = servlet;
+                this.pathSpec = pathSpec;
+                this.name = name;
+            }
+
+            public T getServlet() {
+                return servlet;
+            }
+
+            public String getPathSpec() {
+                return pathSpec;
+            }
+
+            public void addInitParameter(String param, String value) {
+                initParameters.put(param, value);
+            }
+
+            public Map<String, String> getInitParameters() {
+                return Collections.unmodifiableMap(initParameters);
+            }
+
+            public ServletHolder buildServletHolder() {
+                ServletHolder servletHolder = resolveServletHolder();
+
+                if (!initParameters.isEmpty()) {
+                    servletHolder.setInitParameters(initParameters);
                 }
+
+                return servletHolder;
             }
 
-            return servletHolder;
+            public String getName() {
+                return name;
+            }
+
+            private ServletHolder resolveServletHolder() {
+                if (servlet instanceof ServletHolder) {
+                    return (ServletHolder) servlet;
+                }
+
+                ServletHolder servletHolder = new ServletHolder();
+
+                if (name != null) {
+                    servletHolder.setName(name);
+                }
+
+                if (servlet instanceof String) {
+                    servletHolder.setClassName((String) servlet);
+                } else {
+                    if (servlet instanceof Servlet) {
+                        servletHolder.setServlet((Servlet) servlet);
+                    } else {
+                        throw new IllegalArgumentException(
+                                "Unknown servlet type: " + (servlet == null ? "null" : servlet.getClass()));
+                    }
+                }
+
+                return servletHolder;
+            }
+        }
+
+        private String realm;
+        private List<KeyValueHolder<String, String>> userInfos = new ArrayList<>();
+        private List<ServletConfiguration<?>> servletConfigurations = new ArrayList<>();
+
+        public ServletHandlerConfiguration(String contextPath) {
+            super(contextPath);
+        }
+
+        public void addBasicAuthUser(String username, String password, String realm) {
+            this.realm = Objects.requireNonNull(realm);
+            addBasicAuthUser(new KeyValueHolder<>(username, password));
+        }
+
+        public void addBasicAuthUser(KeyValueHolder<String, String> userInfo) {
+            userInfos.add(userInfo);
+        }
+
+        public List<KeyValueHolder<String, String>> getBasicUsers() {
+            return Collections.unmodifiableList(userInfos);
+        }
+
+        public String getRealm() {
+            return realm;
+        }
+
+        void addServletConfiguration(ServletConfiguration<?> servletConfiguration) {
+            servletConfigurations.add(servletConfiguration);
+        }
+
+        public List<ServletConfiguration<?>> getServletConfigurations() {
+            return Collections.unmodifiableList(servletConfigurations);
+        }
+
+        private SecurityHandler basicAuth(List<KeyValueHolder<String, String>> userInfoList, String realm) {
+
+            HashLoginService l = new HashLoginService();
+            UserStore us = new UserStore();
+
+            for (var userInfo : userInfoList) {
+                // In order: data1 == username, data2 == password
+                us.addUser(userInfo.getKey(), Credential.getCredential(userInfo.getValue()), new String[] { "user" });
+
+            }
+
+            l.setName(realm);
+            l.setUserStore(us);
+
+            Constraint constraint = new Constraint();
+            constraint.setName(Constraint.__BASIC_AUTH);
+            constraint.setRoles(new String[] { "user" });
+            constraint.setAuthenticate(true);
+
+            ConstraintMapping cm = new ConstraintMapping();
+            cm.setConstraint(constraint);
+            cm.setPathSpec(ServletConfiguration.ROOT_PATH_SPEC);
+
+            ConstraintSecurityHandler csh = new ConstraintSecurityHandler();
+            csh.setAuthenticator(new BasicAuthenticator());
+            csh.setRealmName("myrealm");
+            csh.addConstraintMapping(cm);
+            csh.setLoginService(l);
+
+            return csh;
+        }
+
+        @Override
+        ServletContextHandler resolve() {
+            ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
+
+            if (!userInfos.isEmpty()) {
+                contextHandler.setSecurityHandler(basicAuth(userInfos, realm));
+            }
+
+            contextHandler.setContextPath(super.getContextPath());
+
+            for (ServletConfiguration servletConfiguration : servletConfigurations) {
+                contextHandler.addServlet(servletConfiguration.buildServletHolder(), servletConfiguration.getPathSpec());
+            }
+
+            if (customizer != null) {
+                customizer.accept(contextHandler);
+            }
+
+            return contextHandler;
+        }
+    }
+
+    public static class HandlerCollectionConfiguration extends AbstractContextHandlerConfiguration<HandlerCollection> {
+        private final HandlerCollection handlers = new HandlerCollection();
+
+        public HandlerCollectionConfiguration(String contextPath) {
+            super(contextPath);
+        }
+
+        public void addHandlers(Handler handler) {
+            handlers.addHandler(handler);
+        }
+
+        @Override
+        HandlerCollection resolve() {
+            return handlers;
         }
     }
 
     private int port;
     private SSLContext sslContext;
-    private List<ServletConfiguration<?>> servletConfigurations = new ArrayList<>();
+
     private String contextPath;
-    private String realm;
-    private List<KeyValueHolder<String, String>> userInfos = new ArrayList<>();
+    private AbstractContextHandlerConfiguration<? extends Handler> contextHandlerConfiguration;
+
+    private WebContextConfiguration webContextConfiguration;
 
     public int getPort() {
         return port;
@@ -148,28 +338,20 @@ public class JettyConfiguration {
         this.contextPath = contextPath;
     }
 
-    void addServletConfiguration(ServletConfiguration<?> servletConfiguration) {
-        servletConfigurations.add(servletConfiguration);
+    public void setContextHandlerConfiguration(
+            AbstractContextHandlerConfiguration<? extends Handler> contextHandlerConfiguration) {
+        this.contextHandlerConfiguration = contextHandlerConfiguration;
     }
 
-    public List<ServletConfiguration<?>> getServletConfigurations() {
-        return Collections.unmodifiableList(servletConfigurations);
+    public WebContextConfiguration getWebContextConfiguration() {
+        return webContextConfiguration;
     }
 
-    void addBasicAuthUser(String username, String password, String realm) {
-        this.realm = Objects.requireNonNull(realm);
-        addBasicAuthUser(new KeyValueHolder<>(username, password));
+    void setWebContextConfiguration(WebContextConfiguration webContextConfiguration) {
+        this.webContextConfiguration = webContextConfiguration;
     }
 
-    void addBasicAuthUser(KeyValueHolder<String, String> userInfo) {
-        userInfos.add(userInfo);
-    }
-
-    public List<KeyValueHolder<String, String>> getBasicUsers() {
-        return Collections.unmodifiableList(userInfos);
-    }
-
-    public String getRealm() {
-        return realm;
+    public AbstractContextHandlerConfiguration<? extends Handler> getContextHandlerConfiguration() {
+        return contextHandlerConfiguration;
     }
 }

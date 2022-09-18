@@ -261,7 +261,7 @@ public final class VertxHttpServer {
                         int p2 = id.indexOf(o2.getId());
                         return Integer.compare(p1, p2);
                     }).forEach(c -> {
-                        boolean include = "all".equals(id) || id.contains(c.getId());
+                        boolean include = "all".equals(id) || c.getId().equalsIgnoreCase(id);
                         if (include && c.supportMediaType(mediaType)) {
                             Object out = c.call(mediaType, params);
                             if (out != null && mediaType == DevConsole.MediaType.TEXT) {

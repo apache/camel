@@ -38,7 +38,7 @@ public class ElasticsearchScrollRequestIterator implements Iterator<SearchHit>, 
     private final RestHighLevelClient restHighLevelClient;
     private Iterator<SearchHit> currentSearchHits;
     private final int scrollKeepAliveMs;
-    private Exchange exchange;
+    private final Exchange exchange;
     private String scrollId;
     private boolean closed;
     private int requestCount;
@@ -52,7 +52,7 @@ public class ElasticsearchScrollRequestIterator implements Iterator<SearchHit>, 
         this.closed = false;
         this.requestCount = 0;
 
-        // add scroll option on the the first query
+        // add scroll option on the first query
         searchRequest.scroll(TimeValue.timeValueMillis(scrollKeepAliveMs));
 
         setFirstCurrentSearchHits();

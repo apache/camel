@@ -50,6 +50,10 @@ public final class MailConstants {
     @Metadata(description = "The message ID.", javaType = "String")
     public static final String MAIL_MESSAGE_ID = "CamelMailMessageId";
     public static final int MAIL_DEFAULT_CONNECTION_TIMEOUT = 30000;
+    public static final String MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER = "never";
+    public static final String MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_UUID = "uuid";
+    public static final String MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER = "never";
+    public static final String MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_UUID_PREFIX = "uuidPrefix";
 
     private MailConstants() {
         // utility class

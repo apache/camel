@@ -65,6 +65,10 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "foldername":
         case "folderName": getOrCreateConfiguration(target).setFolderName(property(camelContext, java.lang.String.class, value)); return true;
         case "from": getOrCreateConfiguration(target).setFrom(property(camelContext, java.lang.String.class, value)); return true;
+        case "generatemissingattachmentnames":
+        case "generateMissingAttachmentNames": getOrCreateConfiguration(target).setGenerateMissingAttachmentNames(property(camelContext, java.lang.String.class, value)); return true;
+        case "handleduplicateattachmentnames":
+        case "handleDuplicateAttachmentNames": getOrCreateConfiguration(target).setHandleDuplicateAttachmentNames(property(camelContext, java.lang.String.class, value)); return true;
         case "handlefailedmessage":
         case "handleFailedMessage": getOrCreateConfiguration(target).setHandleFailedMessage(property(camelContext, boolean.class, value)); return true;
         case "headerfilterstrategy":
@@ -146,6 +150,10 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "foldername":
         case "folderName": return java.lang.String.class;
         case "from": return java.lang.String.class;
+        case "generatemissingattachmentnames":
+        case "generateMissingAttachmentNames": return java.lang.String.class;
+        case "handleduplicateattachmentnames":
+        case "handleDuplicateAttachmentNames": return java.lang.String.class;
         case "handlefailedmessage":
         case "handleFailedMessage": return boolean.class;
         case "headerfilterstrategy":
@@ -228,6 +236,10 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "foldername":
         case "folderName": return getOrCreateConfiguration(target).getFolderName();
         case "from": return getOrCreateConfiguration(target).getFrom();
+        case "generatemissingattachmentnames":
+        case "generateMissingAttachmentNames": return getOrCreateConfiguration(target).getGenerateMissingAttachmentNames();
+        case "handleduplicateattachmentnames":
+        case "handleDuplicateAttachmentNames": return getOrCreateConfiguration(target).getHandleDuplicateAttachmentNames();
         case "handlefailedmessage":
         case "handleFailedMessage": return getOrCreateConfiguration(target).isHandleFailedMessage();
         case "headerfilterstrategy":

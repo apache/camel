@@ -42,6 +42,10 @@ public class CamelRouteStatus extends ProcessBaseCommand {
                         description = "Sort by pid, name or age", defaultValue = "pid")
     String sort;
 
+    @CommandLine.Option(names = { "--source" },
+                        description = "Prefer to display source filename/code instead of IDs")
+    boolean source;
+
     @CommandLine.Option(names = { "--limit" },
                         description = "Filter routes by limiting to the given number of rows")
     int limit;
@@ -98,6 +102,10 @@ public class CamelRouteStatus extends ProcessBaseCommand {
                                 if (thp != null) {
                                     row.throughput = thp.toString();
                                 }
+                                Object coverage = stats.get("coverage");
+                                if (coverage != null) {
+                                    row.coverage = coverage.toString();
+                                }
                                 row.total = stats.get("exchangesTotal").toString();
                                 row.inflight = stats.get("exchangesInflight").toString();
                                 row.failed = stats.get("exchangesFailed").toString();
@@ -122,7 +130,7 @@ public class CamelRouteStatus extends ProcessBaseCommand {
                             }
 
                             boolean add = true;
-                            if (mean > 0 && row.mean != null && Long.parseLong(row.mean) < mean) {
+                            if (mean > 0 && (row.mean == null || Long.parseLong(row.mean) < mean)) {
                                 add = false;
                             }
                             if (limit > 0 && rows.size() >= limit) {
@@ -148,15 +156,16 @@ public class CamelRouteStatus extends ProcessBaseCommand {
     protected void printTable(List<Row> rows) {
         System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                 new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS)
+                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(r -> r.name),
-                new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.ELLIPSIS)
-                        .with(r -> r.routeId),
-                new Column().header("FROM").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS)
+                new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        .with(this::getId),
+                new Column().header("FROM").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(r -> r.from),
                 new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
                         .with(r -> r.state),
                 new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
+                new Column().header("COVER").dataAlign(HorizontalAlign.CENTER).with(this::getCoverage),
                 new Column().header("MSG/S").with(this::getThroughput),
                 new Column().header("TOTAL").with(r -> r.total),
                 new Column().header("FAIL").with(r -> r.failed),
@@ -165,13 +174,6 @@ public class CamelRouteStatus extends ProcessBaseCommand {
                 new Column().header("MIN").with(r -> r.min),
                 new Column().header("MAX").with(r -> r.max),
                 new Column().header("SINCE-LAST").with(this::getSinceLast))));
-    }
-
-    String getSinceLast(Row r) {
-        String s1 = r.sinceLastStarted != null ? r.sinceLastStarted : "-";
-        String s2 = r.sinceLastCompleted != null ? r.sinceLastCompleted : "-";
-        String s3 = r.sinceLastFailed != null ? r.sinceLastFailed : "-";
-        return s1 + "/" + s2 + "/" + s3;
     }
 
     protected int sortRow(Row o1, Row o2) {
@@ -187,12 +189,35 @@ public class CamelRouteStatus extends ProcessBaseCommand {
         }
     }
 
-    private String getThroughput(Row r) {
+    protected String getSinceLast(Row r) {
+        String s1 = r.sinceLastStarted != null ? r.sinceLastStarted : "-";
+        String s2 = r.sinceLastCompleted != null ? r.sinceLastCompleted : "-";
+        String s3 = r.sinceLastFailed != null ? r.sinceLastFailed : "-";
+        return s1 + "/" + s2 + "/" + s3;
+    }
+
+    protected String getThroughput(Row r) {
         String s = r.throughput;
         if (s == null || s.isEmpty()) {
             s = "";
         }
         return s;
+    }
+
+    protected String getCoverage(Row r) {
+        String s = r.coverage;
+        if (s == null || s.isEmpty()) {
+            s = "";
+        }
+        return s;
+    }
+
+    protected String getId(Row r) {
+        if (source && r.source != null) {
+            return sourceLocLine(r.source);
+        } else {
+            return r.routeId;
+        }
     }
 
     static class Row {
@@ -204,6 +229,7 @@ public class CamelRouteStatus extends ProcessBaseCommand {
         String source;
         String state;
         String age;
+        String coverage;
         String throughput;
         String total;
         String failed;

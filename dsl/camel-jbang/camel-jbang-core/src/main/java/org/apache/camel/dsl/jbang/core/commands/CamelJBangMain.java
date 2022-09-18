@@ -26,8 +26,19 @@ import org.apache.camel.dsl.jbang.core.commands.action.CamelReloadAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelResetStatsAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteStartAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteStopAction;
+import org.apache.camel.dsl.jbang.core.commands.action.CamelSourceTop;
+import org.apache.camel.dsl.jbang.core.commands.action.CamelThreadDump;
+import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogCommand;
+import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogComponent;
+import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogDataFormat;
+import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogDoc;
+import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogKamelet;
+import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogLanguage;
+import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogOther;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelContextStatus;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelContextTop;
+import org.apache.camel.dsl.jbang.core.commands.process.CamelProcessorStatus;
+import org.apache.camel.dsl.jbang.core.commands.process.CamelProcessorTop;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelRouteStatus;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelRouteTop;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelStatus;
@@ -35,6 +46,7 @@ import org.apache.camel.dsl.jbang.core.commands.process.CamelTop;
 import org.apache.camel.dsl.jbang.core.commands.process.Hawtio;
 import org.apache.camel.dsl.jbang.core.commands.process.Jolokia;
 import org.apache.camel.dsl.jbang.core.commands.process.ListProcess;
+import org.apache.camel.dsl.jbang.core.commands.process.ListVault;
 import org.apache.camel.dsl.jbang.core.commands.process.StopProcess;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -52,18 +64,30 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("stop", new CommandLine(new StopProcess(main)))
                 .addSubcommand("get", new CommandLine(new CamelStatus(main))
                         .addSubcommand("context", new CommandLine(new CamelContextStatus(main)))
-                        .addSubcommand("route", new CommandLine(new CamelRouteStatus(main))))
+                        .addSubcommand("route", new CommandLine(new CamelRouteStatus(main)))
+                        .addSubcommand("processor", new CommandLine(new CamelProcessorStatus(main)))
+                        .addSubcommand("vault", new CommandLine(new ListVault(main))))
                 .addSubcommand("top", new CommandLine(new CamelTop(main))
                         .addSubcommand("context", new CommandLine(new CamelContextTop(main)))
-                        .addSubcommand("route", new CommandLine(new CamelRouteTop(main))))
+                        .addSubcommand("route", new CommandLine(new CamelRouteTop(main)))
+                        .addSubcommand("processor", new CommandLine(new CamelProcessorTop(main)))
+                        .addSubcommand("source", new CommandLine(new CamelSourceTop(main))))
                 .addSubcommand("cmd", new CommandLine(new CamelAction(main))
                         .addSubcommand("start-route", new CommandLine(new CamelRouteStartAction(main)))
                         .addSubcommand("stop-route", new CommandLine(new CamelRouteStopAction(main)))
                         .addSubcommand("reset-stats", new CommandLine(new CamelResetStatsAction(main)))
                         .addSubcommand("reload", new CommandLine(new CamelReloadAction(main)))
+                        .addSubcommand("thread-dump", new CommandLine(new CamelThreadDump(main)))
                         .addSubcommand("gc", new CommandLine(new CamelGCAction(main))))
                 .addSubcommand("generate", new CommandLine(new CodeGenerator(main))
                         .addSubcommand("rest", new CommandLine(new CodeRestGenerator(main))))
+                .addSubcommand("catalog", new CommandLine(new CatalogCommand(main))
+                        .addSubcommand("component", new CommandLine(new CatalogComponent(main)))
+                        .addSubcommand("dataformat", new CommandLine(new CatalogDataFormat(main)))
+                        .addSubcommand("language", new CommandLine(new CatalogLanguage(main)))
+                        .addSubcommand("other", new CommandLine(new CatalogOther(main)))
+                        .addSubcommand("kamelet", new CommandLine(new CatalogKamelet(main))))
+                .addSubcommand("doc", new CommandLine(new CatalogDoc(main)))
                 .addSubcommand("jolokia", new CommandLine(new Jolokia(main)))
                 .addSubcommand("hawtio", new CommandLine(new Hawtio(main)))
                 .addSubcommand("bind", new CommandLine(new Bind(main)))

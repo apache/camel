@@ -1,0 +1,199 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.mail;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
+
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.MimeMessage;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.RoutesBuilder;
+import org.apache.camel.attachment.Attachment;
+import org.apache.camel.attachment.AttachmentMessage;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.Assert;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.jvnet.mock_javamail.Mailbox;
+
+public class MailAttachmentNamesTest extends CamelTestSupport {
+
+    MockEndpoint resultEndpoint;
+    MockEndpoint resultDefaultEndpoint;
+    Session session;
+
+    @Override
+    @BeforeEach
+    public void setUp() throws Exception {
+        session = Session.getInstance(new Properties(), null);
+
+        super.setUp();
+
+        Mailbox.clearAll();
+        resultEndpoint = getMockEndpoint("mock:result");
+        resultEndpoint.expectedMinimumMessageCount(1);
+        resultEndpoint.setResultWaitTime(TimeUnit.SECONDS.toMillis(5));
+
+        resultDefaultEndpoint = getMockEndpoint("mock:resultDefault");
+        resultDefaultEndpoint.expectedMinimumMessageCount(1);
+        resultDefaultEndpoint.setResultWaitTime(TimeUnit.SECONDS.toMillis(5));
+    }
+
+    @Override
+    protected RoutesBuilder[] createRouteBuilders() throws Exception {
+        return new RoutesBuilder[] { new RouteBuilder() {
+            public void configure() {
+                from("pop3://james@localhost?password=foo&initialDelay=100&delay=100&generateMissingAttachmentNames=uuid&handleDuplicateAttachmentNames=uuidPrefix")
+                        .to("mock:result");
+            }
+        }, new RouteBuilder() {
+            public void configure() {
+                from("pop3://default@localhost?password=foo&initialDelay=100&delay=100").to("mock:resultDefault");
+            }
+        } };
+    }
+
+    @Test
+    public void testAttachmentWithEmptyFilename() throws Exception {
+        sendTestMessage("filename_empty.txt", "james@localhost");
+
+        resultEndpoint.assertIsSatisfied();
+        Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);
+        Assert.assertNotNull(exchange.getIn(AttachmentMessage.class));
+        Assert.assertNotNull(exchange.getIn(AttachmentMessage.class).getAttachmentObjects());
+        Assert.assertEquals(1, exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
+
+        Map.Entry<String, Attachment> entry
+                = exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().iterator().next();
+        String name = entry.getKey();
+        Assert.assertTrue(isUUID(name));
+    }
+
+    @Test
+    public void testAttachmentWithNoFilename() throws Exception {
+        sendTestMessage("filename_none.txt", "james@localhost");
+
+        resultEndpoint.assertIsSatisfied();
+        Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);
+        Assert.assertEquals(1, exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
+
+        Map.Entry<String, Attachment> entry
+                = exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().iterator().next();
+        String name = entry.getKey();
+        Assert.assertTrue(isUUID(name));
+    }
+
+    @Test
+    public void testAttachmentWithDuplicateFilename() throws Exception {
+        sendTestMessage("filename_duplicate.txt", "james@localhost");
+
+        resultEndpoint.assertIsSatisfied();
+        Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);
+        Assert.assertEquals(2, exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
+
+        Map<String, Attachment> attachments = exchange.getIn(AttachmentMessage.class).getAttachmentObjects();
+        for (Map.Entry<String, Attachment> entry : attachments.entrySet()) {
+            Assert.assertEquals(48, entry.getKey().length());
+            Assert.assertTrue(startsWithUUID(entry.getKey()));
+            Assert.assertTrue(entry.getKey().endsWith("Capture.PNG"));
+        }
+    }
+
+    /**
+     * Duplicate filenames are ignored, same as handleDuplicateAttachmentNames=never
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testAttachmentWithDuplicateFilenameDefaultBehavior() throws Exception {
+        sendTestMessage("filename_duplicate.txt", "default@localhost");
+
+        resultDefaultEndpoint.assertIsSatisfied();
+        Exchange exchange = resultDefaultEndpoint.getReceivedExchanges().get(0);
+        Assert.assertEquals(1, exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
+        Map<String, Attachment> attachments = exchange.getIn(AttachmentMessage.class).getAttachmentObjects();
+
+        Assert.assertNotNull(attachments.get("Capture.PNG"));
+    }
+
+    /**
+     * Attachment with empty filename are ignored, same as generateMissingAttachmentNames=never
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testAttachmentWithEmptyFilenameDefaultBehavior() throws Exception {
+        sendTestMessage("filename_empty.txt", "default@localhost");
+
+        resultDefaultEndpoint.assertIsSatisfied();
+        Exchange exchange = resultDefaultEndpoint.getReceivedExchanges().get(0);
+        Assert.assertNotNull(exchange.getIn(AttachmentMessage.class));
+        Assert.assertNull(exchange.getIn(AttachmentMessage.class).getAttachmentObjects());
+    }
+
+    /**
+     * Attachment with no filename are ignored, same as generateMissingAttachmentNames=never
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testAttachmentWithNoFilenameDefaultBehavior() throws Exception {
+        sendTestMessage("filename_none.txt", "default@localhost");
+
+        resultDefaultEndpoint.assertIsSatisfied();
+        Exchange exchange = resultDefaultEndpoint.getReceivedExchanges().get(0);
+        Assert.assertNotNull(exchange.getIn(AttachmentMessage.class));
+        Assert.assertNull(exchange.getIn(AttachmentMessage.class).getAttachmentObjects());
+    }
+
+    private void sendTestMessage(String filename, String recipient) throws MessagingException, FileNotFoundException {
+        MimeMessage message = populateMimeMessage(session, filename);
+        message.setRecipients(Message.RecipientType.TO, recipient);
+        Transport.send(message);
+    }
+
+    private MimeMessage populateMimeMessage(Session session, String filename) throws MessagingException, FileNotFoundException {
+        ClassLoader classLoader = getClass().getClassLoader();
+        String path = classLoader.getResource(filename).getFile();
+        InputStream is = new FileInputStream(path);
+        MimeMessage message = new MimeMessage(session, is);
+        return message;
+    }
+
+    private boolean isUUID(String id) {
+        Pattern guidPattern = Pattern.compile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$");
+        return guidPattern.matcher(id).matches();
+    }
+
+    private boolean startsWithUUID(String id) {
+        Pattern guidPattern = Pattern.compile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\\_.*$");
+        return guidPattern.matcher(id).matches();
+    }
+
+}

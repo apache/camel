@@ -35,7 +35,7 @@ public class LineNumberProcessorTest extends ContextTestSupport {
 
     @Test
     public void testLineNumber() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("org.apache.camel.processor.LineNumberProcessorTest$1:51");
+        getMockEndpoint("mock:result").expectedBodiesReceived("LineNumberProcessorTest.java:51");
 
         template.sendBody("direct:start", "Hello World");
 

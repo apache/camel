@@ -73,4 +73,36 @@ public class GcpVaultConfigurationProperties extends GcpVaultConfiguration imple
         return this;
     }
 
+    /**
+     * The Pubsub subscriptionName name
+     */
+    public GcpVaultConfigurationProperties withSubscriptionName(String subscriptionName) {
+        setSubscriptionName(subscriptionName);
+        return this;
+    }
+
+    /**
+     * Whether to automatically reload Camel upon secrets being updated in Google.
+     */
+    public GcpVaultConfigurationProperties withRefreshEnabled(boolean refreshEnabled) {
+        setRefreshEnabled(refreshEnabled);
+        return this;
+    }
+
+    /**
+     * The period (millis) between checking Google for updated secrets.
+     */
+    public GcpVaultConfigurationProperties withRefreshPeriod(long refreshPeriod) {
+        setRefreshPeriod(refreshPeriod);
+        return this;
+    }
+
+    /**
+     * Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma.
+     */
+    public GcpVaultConfigurationProperties withSecrets(String secrets) {
+        setSecrets(secrets);
+        return this;
+    }
+
 }

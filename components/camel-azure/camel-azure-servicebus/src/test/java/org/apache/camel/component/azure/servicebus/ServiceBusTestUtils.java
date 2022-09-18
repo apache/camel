@@ -51,7 +51,7 @@ public final class ServiceBusTestUtils {
         final Properties properties = new Properties();
         if (System.getProperty(CONNECTION_STRING) == null) {
             throw new Exception(
-                    "Make sure to supply azure servicebus connectionString, e.g:  mvn verify -PfullTests -DconnectionString=string");
+                    "Make sure to supply azure servicebus connectionString, e.g:  mvn verify -DconnectionString=string");
         }
         properties.setProperty(CONNECTION_STRING, System.getProperty(CONNECTION_STRING));
         properties.setProperty(TOPIC_NAME, System.getProperty(TOPIC_NAME));

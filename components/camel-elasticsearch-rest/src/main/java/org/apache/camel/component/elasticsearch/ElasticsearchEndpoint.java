@@ -36,7 +36,7 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
     @UriParam
     private final ElasticsearchConfiguration configuration;
 
-    private RestClient client;
+    private final RestClient client;
 
     public ElasticsearchEndpoint(String uri, ElasticsearchComponent component, ElasticsearchConfiguration config,
                                  RestClient client) {
@@ -50,12 +50,12 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public Producer createProducer() throws Exception {
+    public Producer createProducer() {
         return new ElasticsearchProducer(this, configuration);
     }
 
     @Override
-    public Consumer createConsumer(Processor processor) throws Exception {
+    public Consumer createConsumer(Processor processor) {
         throw new UnsupportedOperationException("Cannot consume from an ElasticsearchEndpoint: " + getEndpointUri());
     }
 

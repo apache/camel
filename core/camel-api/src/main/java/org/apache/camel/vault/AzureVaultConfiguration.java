@@ -31,6 +31,20 @@ public class AzureVaultConfiguration extends VaultConfiguration {
     private String clientSecret;
     @Metadata(secret = true)
     private String tenantId;
+    @Metadata
+    private boolean refreshEnabled;
+    @Metadata(defaultValue = "30000")
+    private long refreshPeriod = 30000;
+    @Metadata
+    private String secrets;
+    @Metadata(secret = true)
+    private String eventhubConnectionString;
+    @Metadata(secret = true)
+    private String blobAccessKey;
+    @Metadata
+    private String blobAccountName;
+    @Metadata
+    private String blobContainerName;
 
     public String getVaultName() {
         return vaultName;
@@ -74,5 +88,82 @@ public class AzureVaultConfiguration extends VaultConfiguration {
      */
     public void setTenantId(String tenantId) {
         this.tenantId = tenantId;
+    }
+
+    public boolean isRefreshEnabled() {
+        return refreshEnabled;
+    }
+
+    /**
+     * Whether to automatically reload Camel upon secrets being updated in Azure.
+     */
+    public void setRefreshEnabled(boolean refreshEnabled) {
+        this.refreshEnabled = refreshEnabled;
+    }
+
+    public long getRefreshPeriod() {
+        return refreshPeriod;
+    }
+
+    /**
+     * The period (millis) between checking Azure for updated secrets.
+     */
+    public void setRefreshPeriod(long refreshPeriod) {
+        this.refreshPeriod = refreshPeriod;
+    }
+
+    public String getSecrets() {
+        return secrets;
+    }
+
+    /**
+     * Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma.
+     */
+    public void setSecrets(String secrets) {
+        this.secrets = secrets;
+    }
+
+    public String getEventhubConnectionString() {
+        return eventhubConnectionString;
+    }
+
+    /**
+     * The Eventhubs connection String for Key Vault Secret events notifications
+     */
+    public void setEventhubConnectionString(String eventhubConnectionString) {
+        this.eventhubConnectionString = eventhubConnectionString;
+    }
+
+    public String getBlobAccessKey() {
+        return blobAccessKey;
+    }
+
+    /**
+     * The Eventhubs Blob Access Key for CheckpointStore purpose
+     */
+    public void setBlobAccessKey(String blobAccessKey) {
+        this.blobAccessKey = blobAccessKey;
+    }
+
+    public String getBlobAccountName() {
+        return blobAccountName;
+    }
+
+    /**
+     * The Eventhubs Blob Account Name for CheckpointStore purpose
+     */
+    public void setBlobAccountName(String blobAccountName) {
+        this.blobAccountName = blobAccountName;
+    }
+
+    public String getBlobContainerName() {
+        return blobContainerName;
+    }
+
+    /**
+     * The Eventhubs Blob Container Name for CheckpointStore purpose
+     */
+    public void setBlobContainerName(String blobContainerName) {
+        this.blobContainerName = blobContainerName;
     }
 }

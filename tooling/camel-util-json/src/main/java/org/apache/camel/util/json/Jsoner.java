@@ -33,23 +33,31 @@ import java.util.Set;
  * strings, and serializing data to strings in JSON format.
  */
 public final class Jsoner {
-    /** Flags to tweak the behavior of the primary deserialization method. */
+    /**
+     * Flags to tweak the behavior of the primary deserialization method.
+     */
     private enum DeserializationOptions {
         /**
          * Whether a multiple JSON values can be deserialized as a root element.
          */
         ALLOW_CONCATENATED_JSON_VALUES,
-        /** Whether a JsonArray can be deserialized as a root element. */
+        /**
+         * Whether a JsonArray can be deserialized as a root element.
+         */
         ALLOW_JSON_ARRAYS,
         /**
          * Whether a boolean, null, Number, or String can be deserialized as a root element.
          */
         ALLOW_JSON_DATA,
-        /** Whether a JsonObject can be deserialized as a root element. */
+        /**
+         * Whether a JsonObject can be deserialized as a root element.
+         */
         ALLOW_JSON_OBJECTS;
     }
 
-    /** Flags to tweak the behavior of the primary serialization method. */
+    /**
+     * Flags to tweak the behavior of the primary serialization method.
+     */
     private enum SerializationOptions {
         /**
          * Instead of aborting serialization on non-JSON values that are Enums it will continue serialization with the
@@ -78,16 +86,26 @@ public final class Jsoner {
         ALLOW_UNDEFINEDS;
     }
 
-    /** The possible States of a JSON deserializer. */
+    /**
+     * The possible States of a JSON deserializer.
+     */
     private enum States {
-        /** Post-parsing state. */
+        /**
+         * Post-parsing state.
+         */
         DONE,
-        /** Pre-parsing state. */
+        /**
+         * Pre-parsing state.
+         */
         INITIAL,
-        /** Parsing error, ParsingException should be thrown. */
+        /**
+         * Parsing error, ParsingException should be thrown.
+         */
         PARSED_ERROR,
         PARSING_ARRAY,
-        /** Parsing a key-value pair inside of an object. */
+        /**
+         * Parsing a key-value pair inside of an object.
+         */
         PARSING_ENTRY,
         PARSING_OBJECT;
     }
@@ -209,13 +227,13 @@ public final class Jsoner {
                             break;
                         case DATUM:
                             /* The parse found an element of the array. */
-                            JsonArray val = (JsonArray)valueStack.getLast();
+                            JsonArray val = (JsonArray) valueStack.getLast();
                             val.add(token.getValue());
                             stateStack.addLast(currentState);
                             break;
                         case LEFT_BRACE:
                             /* The parse found an object in the array. */
-                            val = (JsonArray)valueStack.getLast();
+                            val = (JsonArray) valueStack.getLast();
                             final JsonObject object = new JsonObject();
                             val.add(object);
                             valueStack.addLast(object);
@@ -224,7 +242,7 @@ public final class Jsoner {
                             break;
                         case LEFT_SQUARE:
                             /* The parse found another array in the array. */
-                            val = (JsonArray)valueStack.getLast();
+                            val = (JsonArray) valueStack.getLast();
                             final JsonArray array = new JsonArray();
                             val.add(array);
                             valueStack.addLast(array);
@@ -264,7 +282,7 @@ public final class Jsoner {
                                  * JSON keys but it is going to be treated as one.
                                  * Continue parsing the object.
                                  */
-                                final String key = (String)token.getValue();
+                                final String key = (String) token.getValue();
                                 valueStack.addLast(key);
                                 stateStack.addLast(currentState);
                                 stateStack.addLast(States.PARSING_ENTRY);
@@ -304,14 +322,14 @@ public final class Jsoner {
                             break;
                         case DATUM:
                             /* The parse has found a value for the parsed pair key. */
-                            String key = (String)valueStack.removeLast();
-                            JsonObject parent = (JsonObject)valueStack.getLast();
+                            String key = (String) valueStack.removeLast();
+                            JsonObject parent = (JsonObject) valueStack.getLast();
                             parent.put(key, token.getValue());
                             break;
                         case LEFT_BRACE:
                             /* The parse has found an object for the parsed pair key. */
-                            key = (String)valueStack.removeLast();
-                            parent = (JsonObject)valueStack.getLast();
+                            key = (String) valueStack.removeLast();
+                            parent = (JsonObject) valueStack.getLast();
                             final JsonObject object = new JsonObject();
                             parent.put(key, object);
                             valueStack.addLast(object);
@@ -319,8 +337,8 @@ public final class Jsoner {
                             break;
                         case LEFT_SQUARE:
                             /* The parse has found an array for the parsed pair key. */
-                            key = (String)valueStack.removeLast();
-                            parent = (JsonObject)valueStack.getLast();
+                            key = (String) valueStack.removeLast();
+                            parent = (JsonObject) valueStack.getLast();
                             final JsonArray array = new JsonArray();
                             parent.put(key, array);
                             valueStack.addLast(array);
@@ -500,6 +518,59 @@ public final class Jsoner {
             }
         }
         return builder.toString();
+    }
+
+    /**
+     * Un-escapes a JSon string provided.
+     *
+     * @param  json a escaped string.
+     * @return      an unescaped JSon string (plain string)
+     */
+    public static String unescape(String json) {
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        while (i < json.length()) {
+            char delimiter = json.charAt(i);
+            i++;
+            if (delimiter == '\\' && i < json.length()) {
+                char ch = json.charAt(i);
+                i++;
+                if (ch == '\\' || ch == '/' || ch == '"' || ch == '\'') {
+                    sb.append(ch);
+                } else if (ch == 'n') {
+                    sb.append('\n');
+                } else if (ch == 'r') {
+                    sb.append('\r');
+                } else if (ch == 't') {
+                    sb.append('\t');
+                } else if (ch == 'b') {
+                    sb.append('\b');
+                } else if (ch == 'f') {
+                    sb.append('\f');
+                } else if (ch == 'u') {
+                    StringBuilder hex = new StringBuilder();
+                    // expect 4 digits
+                    if (i + 4 > json.length()) {
+                        throw new RuntimeException("Not enough unicode digits! ");
+                    }
+                    for (char x : json.substring(i, i + 4).toCharArray()) {
+                        if (!Character.isLetterOrDigit(x)) {
+                            throw new RuntimeException("Bad character in unicode escape.");
+                        }
+                        hex.append(Character.toLowerCase(x));
+                    }
+                    i += 4; // consume those four digits.
+                    int code = Integer.parseInt(hex.toString(), 16);
+                    sb.append((char) code);
+                } else {
+                    throw new RuntimeException("Illegal escape sequence: \\" + ch);
+                }
+            } else {
+                // it's not a backslash, or it's the last character.
+                sb.append(delimiter);
+            }
+        }
+        return sb.toString();
     }
 
     /**
@@ -713,15 +784,14 @@ public final class Jsoner {
             writableDestination.write("null");
         } else if (jsonSerializable instanceof Jsonable && flags.contains(SerializationOptions.ALLOW_JSONABLES)) {
             /* Writes the writable as defined by the writable. */
-            writableDestination.write(((Jsonable)jsonSerializable).toJson());
+            writableDestination.write(((Jsonable) jsonSerializable).toJson());
         } else if (jsonSerializable instanceof Enum && flags.contains(SerializationOptions.ALLOW_FULLY_QUALIFIED_ENUMERATIONS)) {
             /*
              * Writes the enum as a special case of string. All enums (unless
              * they implement Jsonable) will be the string literal
              * "${DECLARING_CLASS_NAME}.${ENUM_NAME}" as their value.
              */
-            @SuppressWarnings("rawtypes")
-            final Enum e = (Enum)jsonSerializable;
+            @SuppressWarnings("rawtypes") final Enum e = (Enum) jsonSerializable;
             writableDestination.write('"');
             writableDestination.write(e.getDeclaringClass().getName());
             writableDestination.write('.');
@@ -730,10 +800,10 @@ public final class Jsoner {
         } else if (jsonSerializable instanceof String) {
             /* Make sure the string is properly escaped. */
             writableDestination.write('"');
-            writableDestination.write(Jsoner.escape((String)jsonSerializable));
+            writableDestination.write(Jsoner.escape((String) jsonSerializable));
             writableDestination.write('"');
         } else if (jsonSerializable instanceof Double) {
-            if (((Double)jsonSerializable).isInfinite() || ((Double)jsonSerializable).isNaN()) {
+            if (((Double) jsonSerializable).isInfinite() || ((Double) jsonSerializable).isNaN()) {
                 /*
                  * Infinite and not a number are not supported by the JSON
                  * specification, so null is used instead.
@@ -743,7 +813,7 @@ public final class Jsoner {
                 writableDestination.write(jsonSerializable.toString());
             }
         } else if (jsonSerializable instanceof Float) {
-            if (((Float)jsonSerializable).isInfinite() || ((Float)jsonSerializable).isNaN()) {
+            if (((Float) jsonSerializable).isInfinite() || ((Float) jsonSerializable).isNaN()) {
                 /*
                  * Infinite and not a number are not supported by the JSON
                  * specification, so null is used instead.
@@ -759,8 +829,7 @@ public final class Jsoner {
         } else if (jsonSerializable instanceof Map) {
             /* Writes the map in JSON object format. */
             boolean isFirstEntry = true;
-            @SuppressWarnings("rawtypes")
-            final Iterator entries = ((Map)jsonSerializable).entrySet().iterator();
+            @SuppressWarnings("rawtypes") final Iterator entries = ((Map) jsonSerializable).entrySet().iterator();
             writableDestination.write('{');
             while (entries.hasNext()) {
                 if (isFirstEntry) {
@@ -768,8 +837,7 @@ public final class Jsoner {
                 } else {
                     writableDestination.write(',');
                 }
-                @SuppressWarnings("rawtypes")
-                final Map.Entry entry = (Map.Entry)entries.next();
+                @SuppressWarnings("rawtypes") final Map.Entry entry = (Map.Entry) entries.next();
                 Jsoner.serialize(entry.getKey(), writableDestination, flags);
                 writableDestination.write(':');
                 Jsoner.serialize(entry.getValue(), writableDestination, flags);
@@ -778,8 +846,7 @@ public final class Jsoner {
         } else if (jsonSerializable instanceof Collection) {
             /* Writes the collection in JSON array format. */
             boolean isFirstElement = true;
-            @SuppressWarnings("rawtypes")
-            final Iterator elements = ((Collection)jsonSerializable).iterator();
+            @SuppressWarnings("rawtypes") final Iterator elements = ((Collection) jsonSerializable).iterator();
             writableDestination.write('[');
             while (elements.hasNext()) {
                 if (isFirstElement) {
@@ -792,7 +859,7 @@ public final class Jsoner {
             writableDestination.write(']');
         } else if (jsonSerializable instanceof byte[]) {
             /* Writes the array in JSON array format. */
-            final byte[] writableArray = (byte[])jsonSerializable;
+            final byte[] writableArray = (byte[]) jsonSerializable;
             final int numberOfElements = writableArray.length;
             writableDestination.write('[');
             for (int i = 0; i < numberOfElements; i++) {
@@ -806,7 +873,7 @@ public final class Jsoner {
             writableDestination.write(']');
         } else if (jsonSerializable instanceof short[]) {
             /* Writes the array in JSON array format. */
-            final short[] writableArray = (short[])jsonSerializable;
+            final short[] writableArray = (short[]) jsonSerializable;
             final int numberOfElements = writableArray.length;
             writableDestination.write('[');
             for (int i = 0; i < numberOfElements; i++) {
@@ -820,7 +887,7 @@ public final class Jsoner {
             writableDestination.write(']');
         } else if (jsonSerializable instanceof int[]) {
             /* Writes the array in JSON array format. */
-            final int[] writableArray = (int[])jsonSerializable;
+            final int[] writableArray = (int[]) jsonSerializable;
             final int numberOfElements = writableArray.length;
             writableDestination.write('[');
             for (int i = 0; i < numberOfElements; i++) {
@@ -834,7 +901,7 @@ public final class Jsoner {
             writableDestination.write(']');
         } else if (jsonSerializable instanceof long[]) {
             /* Writes the array in JSON array format. */
-            final long[] writableArray = (long[])jsonSerializable;
+            final long[] writableArray = (long[]) jsonSerializable;
             final int numberOfElements = writableArray.length;
             writableDestination.write('[');
             for (int i = 0; i < numberOfElements; i++) {
@@ -848,7 +915,7 @@ public final class Jsoner {
             writableDestination.write(']');
         } else if (jsonSerializable instanceof float[]) {
             /* Writes the array in JSON array format. */
-            final float[] writableArray = (float[])jsonSerializable;
+            final float[] writableArray = (float[]) jsonSerializable;
             final int numberOfElements = writableArray.length;
             writableDestination.write('[');
             for (int i = 0; i < numberOfElements; i++) {
@@ -862,7 +929,7 @@ public final class Jsoner {
             writableDestination.write(']');
         } else if (jsonSerializable instanceof double[]) {
             /* Writes the array in JSON array format. */
-            final double[] writableArray = (double[])jsonSerializable;
+            final double[] writableArray = (double[]) jsonSerializable;
             final int numberOfElements = writableArray.length;
             writableDestination.write('[');
             for (int i = 0; i < numberOfElements; i++) {
@@ -876,7 +943,7 @@ public final class Jsoner {
             writableDestination.write(']');
         } else if (jsonSerializable instanceof boolean[]) {
             /* Writes the array in JSON array format. */
-            final boolean[] writableArray = (boolean[])jsonSerializable;
+            final boolean[] writableArray = (boolean[]) jsonSerializable;
             final int numberOfElements = writableArray.length;
             writableDestination.write('[');
             for (int i = 0; i < numberOfElements; i++) {
@@ -890,7 +957,7 @@ public final class Jsoner {
             writableDestination.write(']');
         } else if (jsonSerializable instanceof char[]) {
             /* Writes the array in JSON array format. */
-            final char[] writableArray = (char[])jsonSerializable;
+            final char[] writableArray = (char[]) jsonSerializable;
             final int numberOfElements = writableArray.length;
             writableDestination.write("[\"");
             for (int i = 0; i < numberOfElements; i++) {
@@ -904,7 +971,7 @@ public final class Jsoner {
             writableDestination.write("\"]");
         } else if (jsonSerializable instanceof Object[]) {
             /* Writes the array in JSON array format. */
-            final Object[] writableArray = (Object[])jsonSerializable;
+            final Object[] writableArray = (Object[]) jsonSerializable;
             final int numberOfElements = writableArray.length;
             writableDestination.write('[');
             for (int i = 0; i < numberOfElements; i++) {

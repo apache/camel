@@ -150,6 +150,9 @@
                         <goals>
                             <goal>generate-configurer</goal>
                         </goals>
+                        <configuration>
+                            <classes>org.apache.camel.vault.AwsVaultConfiguration,org.apache.camel.vault.AzureVaultConfiguration,org.apache.camel.vault.GcpVaultConfiguration,org.apache.camel.vault.HashicorpVaultConfiguration</classes>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>generate-test-configurer</id>

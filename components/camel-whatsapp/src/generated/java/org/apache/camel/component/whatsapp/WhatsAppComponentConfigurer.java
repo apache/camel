@@ -29,8 +29,6 @@ public class WhatsAppComponentConfigurer extends PropertyConfigurerSupport imple
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "baseuri":
         case "baseUri": target.setBaseUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "client": target.setClient(property(camelContext, java.net.http.HttpClient.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -53,8 +51,6 @@ public class WhatsAppComponentConfigurer extends PropertyConfigurerSupport imple
         case "autowiredEnabled": return boolean.class;
         case "baseuri":
         case "baseUri": return java.lang.String.class;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": return boolean.class;
         case "client": return java.net.http.HttpClient.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
@@ -78,8 +74,6 @@ public class WhatsAppComponentConfigurer extends PropertyConfigurerSupport imple
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "baseuri":
         case "baseUri": return target.getBaseUri();
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "client": return target.getClient();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();

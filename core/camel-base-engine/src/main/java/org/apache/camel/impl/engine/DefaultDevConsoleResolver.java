@@ -16,11 +16,14 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.util.Optional;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.console.DevConsole;
+import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.console.DevConsoleResolver;
 import org.apache.camel.spi.FactoryFinder;
 
@@ -86,4 +89,9 @@ public class DefaultDevConsoleResolver implements DevConsoleResolver, CamelConte
         return devConsoleFactory.findOptionalClass(name).orElse(null);
     }
 
+    @Override
+    public Optional<DevConsole> lookupDevConsole(String id) {
+        DevConsoleRegistry dcr = camelContext.getExtension(DevConsoleRegistry.class);
+        return dcr.getConsole(id);
+    }
 }

@@ -267,18 +267,18 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         Assertions.assertNotNull(xml);
 
         Assertions.assertTrue(xml.contains(
-                "sourceLocation=\"org.apache.camel.management.ManagedCamelContextTest$1\" sourceLineNumber=\"289\"/>"));
+                "sourceLocation=\"ManagedCamelContextTest.java\" sourceLineNumber=\"289\"/>"));
         Assertions.assertTrue(xml.contains(
-                "sourceLocation=\"org.apache.camel.management.ManagedCamelContextTest$1\" sourceLineNumber=\"290\"/>"));
+                "sourceLocation=\"ManagedCamelContextTest.java\" sourceLineNumber=\"290\"/>"));
         Assertions.assertTrue(xml.contains(
-                "sourceLocation=\"org.apache.camel.management.ManagedCamelContextTest$1\" sourceLineNumber=\"291\"/>"));
+                "sourceLocation=\"ManagedCamelContextTest.java\" sourceLineNumber=\"291\"/>"));
 
         Assertions.assertTrue(xml.contains(
-                "sourceLocation=\"org.apache.camel.management.ManagedCamelContextTest$1\" sourceLineNumber=\"293\"/>"));
+                "sourceLocation=\"ManagedCamelContextTest.java\" sourceLineNumber=\"293\"/>"));
         Assertions.assertTrue(xml.contains(
-                "sourceLocation=\"org.apache.camel.management.ManagedCamelContextTest$1\" sourceLineNumber=\"294\"/>"));
+                "sourceLocation=\"ManagedCamelContextTest.java\" sourceLineNumber=\"294\"/>"));
         Assertions.assertTrue(xml.contains(
-                "sourceLocation=\"org.apache.camel.management.ManagedCamelContextTest$1\" sourceLineNumber=\"295\"/>"));
+                "sourceLocation=\"ManagedCamelContextTest.java\" sourceLineNumber=\"295\"/>"));
     }
 
     @Override

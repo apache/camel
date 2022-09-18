@@ -47,7 +47,7 @@ public class LineNumberProcessorTracingTest extends ContextTestSupport {
         ProducerTemplate template = context.createProducerTemplate();
 
         Object out = template.requestBody("direct:start", "Hello World");
-        Assertions.assertEquals("org.apache.camel.processor.LineNumberProcessorTracingTest$1:41", out);
+        Assertions.assertEquals("LineNumberProcessorTracingTest.java:41", out);
     }
 
     private static class MyProcessor implements Processor, LineNumberAware {

@@ -177,11 +177,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                 }
             }
         }
-        if (context != null && (context.isSourceLocationEnabled() || context.isDebugging() || context.isTracing())) {
-            // we want to capture source location:line for every output
-            Resource resource = this instanceof ResourceAware ? ((ResourceAware) this).getResource() : null;
-            ProcessorDefinitionHelper.prepareSourceLocation(resource, output);
-        }
 
         // inject context
         CamelContextAware.trySetCamelContext(output, context);
@@ -210,6 +205,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         output.setParent(this);
         configureChild(output);
         getOutputs().add(output);
+
+        if (context != null && (context.isSourceLocationEnabled() || context.isDebugging() || context.isTracing())) {
+            // we want to capture source location:line for every output
+            Resource resource = this instanceof ResourceAware ? ((ResourceAware) this).getResource() : null;
+            ProcessorDefinitionHelper.prepareSourceLocation(resource, output);
+        }
     }
 
     public void clearOutput() {

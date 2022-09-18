@@ -959,6 +959,81 @@ You can then use the Integrated Development Environment (IDE) of your choice. Fo
 
 A specific how-to is available for VS Code, see this https://youtu.be/owNhWxf42qk[video] or this /blog/2022/05/start-camel-quarkus-application-with-camel-textual-debug-in-vscode/[blogpost].
 
+== Listing what Camel components is available
+
+Camel comes with a lot of artifacts out of the box which comes as:
+
+- components
+- data formats
+- expression languages
+- miscellaneous components
+- kamelets
+
+You can use the Camel CLI to list what Camel provides via the `camel catalog` command.
+For example to list all the components
+
+[source,bash]
+----
+camel catalog components
+----
+
+And to see which Kamelets are available:
+
+[source,bash]
+----
+camel catalog kamelets
+----
+
+TIP: Use `camel catalog --help` to see all possible commands.
+
+=== Displaying component documentation
+
+The `doc` goal can show quick documentation for every component, dataformat, kamelets etc.
+For example to see the kafka component you run
+
+[source,bash]
+----
+camel doc kafka
+----
+
+NOTE: The documentation is not the full documentation as shown on the website, as the Camel CLI does not have direct
+access to this information and can only show a basic description of the component, but include tables for every
+configuration option.
+
+To see the documentation for jackson dataformat:
+
+[source,bash]
+----
+camel doc jackson
+----
+
+In some rare cases then there may be a component and dataformat with the same name, and the `doc` goal prioritizes
+components. In such a situation you can prefix the name with dataformat, i.e:
+
+[source,bash]
+----
+camel doc dataformat:thrift
+----
+
+==== Filtering options listed in the tables
+
+Some components may have many options, and in such cases you may use `--filter` to only list options that match the filter
+in either name, description, or the group (producer, security, advanced etc).
+
+For example to list only security related options:
+
+[source,bash]
+----
+camel doc kafka --filter=security
+----
+
+And to list only something about _timeout_:
+
+[source,bash]
+----
+camel doc kafka --filter=timeout
+----
+
 == Open API
 
 Camel JBang allows to quickly expose an Open API service using _contract first_ approach,

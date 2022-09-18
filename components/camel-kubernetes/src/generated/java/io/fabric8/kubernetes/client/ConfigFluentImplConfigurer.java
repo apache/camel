@@ -49,6 +49,8 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "CurrentContext": target.withCurrentContext(property(camelContext, io.fabric8.kubernetes.api.model.NamedContext.class, value)); return true;
         case "customheaders":
         case "CustomHeaders": target.withCustomHeaders(property(camelContext, java.util.Map.class, value)); return true;
+        case "defaultnamespace":
+        case "DefaultNamespace": target.withDefaultNamespace(property(camelContext, boolean.class, value)); return true;
         case "disablehostnameverification":
         case "DisableHostnameVerification": target.withDisableHostnameVerification(property(camelContext, boolean.class, value)); return true;
         case "errormessages":
@@ -61,8 +63,6 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "HttpsProxy": target.withHttpsProxy(property(camelContext, java.lang.String.class, value)); return true;
         case "impersonateextras":
         case "ImpersonateExtras": target.withImpersonateExtras(property(camelContext, java.util.Map.class, value)); return true;
-        case "impersonategroup":
-        case "ImpersonateGroup": target.withImpersonateGroup(property(camelContext, java.lang.String.class, value)); return true;
         case "impersonategroups":
         case "ImpersonateGroups": target.withImpersonateGroups(property(camelContext, java.lang.String[].class, value)); return true;
         case "impersonateusername":
@@ -162,6 +162,8 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "CurrentContext": return io.fabric8.kubernetes.api.model.NamedContext.class;
         case "customheaders":
         case "CustomHeaders": return java.util.Map.class;
+        case "defaultnamespace":
+        case "DefaultNamespace": return boolean.class;
         case "disablehostnameverification":
         case "DisableHostnameVerification": return boolean.class;
         case "errormessages":
@@ -174,8 +176,6 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "HttpsProxy": return java.lang.String.class;
         case "impersonateextras":
         case "ImpersonateExtras": return java.util.Map.class;
-        case "impersonategroup":
-        case "ImpersonateGroup": return java.lang.String.class;
         case "impersonategroups":
         case "ImpersonateGroups": return java.lang.String[].class;
         case "impersonateusername":
@@ -276,6 +276,8 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "CurrentContext": return target.getCurrentContext();
         case "customheaders":
         case "CustomHeaders": return target.getCustomHeaders();
+        case "defaultnamespace":
+        case "DefaultNamespace": return target.isDefaultNamespace();
         case "disablehostnameverification":
         case "DisableHostnameVerification": return target.isDisableHostnameVerification();
         case "errormessages":
@@ -288,8 +290,6 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "HttpsProxy": return target.getHttpsProxy();
         case "impersonateextras":
         case "ImpersonateExtras": return target.getImpersonateExtras();
-        case "impersonategroup":
-        case "ImpersonateGroup": return target.getImpersonateGroup();
         case "impersonategroups":
         case "ImpersonateGroups": return target.getImpersonateGroups();
         case "impersonateusername":

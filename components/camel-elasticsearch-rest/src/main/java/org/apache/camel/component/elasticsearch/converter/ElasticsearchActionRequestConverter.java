@@ -85,7 +85,7 @@ public final class ElasticsearchActionRequestConverter {
         if (document instanceof byte[]) {
             indexRequest.source((byte[]) document, XContentFactory.xContentType((byte[]) document));
         } else if (document instanceof Map) {
-            indexRequest.source((Map<String, Object>) document);
+            indexRequest.source((Map<String, ?>) document);
         } else if (document instanceof String) {
             indexRequest.source((String) document, XContentFactory.xContentType((String) document));
         } else if (document instanceof XContentBuilder) {
@@ -187,17 +187,17 @@ public final class ElasticsearchActionRequestConverter {
         String queryText = null;
 
         if (queryObject instanceof Map<?, ?>) {
-            Map<String, Object> mapQuery = (Map<String, Object>) queryObject;
+            Map<String, ?> mapQuery = (Map<String, ?>) queryObject;
             // Remove 'query' prefix from the query object for backward
             // compatibility
             if (mapQuery.containsKey(ES_QUERY_DSL_PREFIX)) {
-                mapQuery = (Map<String, Object>) mapQuery.get(ES_QUERY_DSL_PREFIX);
+                mapQuery = (Map<String, ?>) mapQuery.get(ES_QUERY_DSL_PREFIX);
             }
-            try {
-                XContentBuilder contentBuilder = XContentFactory.contentBuilder(XContentType.JSON);
+            try (XContentBuilder contentBuilder = XContentFactory.contentBuilder(XContentType.JSON)) {
                 queryText = Strings.toString(contentBuilder.map(mapQuery));
             } catch (IOException e) {
                 LOG.error("Cannot build the QueryText from the map.", e);
+                return null;
             }
         } else if (queryObject instanceof String) {
             queryText = (String) queryObject;
@@ -231,7 +231,7 @@ public final class ElasticsearchActionRequestConverter {
         }
         if (documents instanceof List) {
             BulkRequest request = new BulkRequest();
-            for (Object document : (List<Object>) documents) {
+            for (Object document : (List<?>) documents) {
                 request.add(createIndexRequest(document, exchange));
             }
             return request;

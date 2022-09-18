@@ -66,8 +66,12 @@ public class MllpComponentConfigurer extends PropertyConfigurerSupport implement
         case "logPhi": target.setLogPhi(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "logphimaxbytes":
         case "logPhiMaxBytes": target.setLogPhiMaxBytes(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "maxbuffersize":
+        case "maxBufferSize": getOrCreateConfiguration(target).setMaxBufferSize(property(camelContext, int.class, value)); return true;
         case "maxconcurrentconsumers":
         case "maxConcurrentConsumers": getOrCreateConfiguration(target).setMaxConcurrentConsumers(property(camelContext, int.class, value)); return true;
+        case "minbuffersize":
+        case "minBufferSize": getOrCreateConfiguration(target).setMinBufferSize(property(camelContext, int.class, value)); return true;
         case "readtimeout":
         case "readTimeout": getOrCreateConfiguration(target).setReadTimeout(property(camelContext, int.class, value)); return true;
         case "receivebuffersize":
@@ -131,8 +135,12 @@ public class MllpComponentConfigurer extends PropertyConfigurerSupport implement
         case "logPhi": return java.lang.Boolean.class;
         case "logphimaxbytes":
         case "logPhiMaxBytes": return java.lang.Integer.class;
+        case "maxbuffersize":
+        case "maxBufferSize": return int.class;
         case "maxconcurrentconsumers":
         case "maxConcurrentConsumers": return int.class;
+        case "minbuffersize":
+        case "minBufferSize": return int.class;
         case "readtimeout":
         case "readTimeout": return int.class;
         case "receivebuffersize":
@@ -197,8 +205,12 @@ public class MllpComponentConfigurer extends PropertyConfigurerSupport implement
         case "logPhi": return target.getLogPhi();
         case "logphimaxbytes":
         case "logPhiMaxBytes": return target.getLogPhiMaxBytes();
+        case "maxbuffersize":
+        case "maxBufferSize": return getOrCreateConfiguration(target).getMaxBufferSize();
         case "maxconcurrentconsumers":
         case "maxConcurrentConsumers": return getOrCreateConfiguration(target).getMaxConcurrentConsumers();
+        case "minbuffersize":
+        case "minBufferSize": return getOrCreateConfiguration(target).getMinBufferSize();
         case "readtimeout":
         case "readTimeout": return getOrCreateConfiguration(target).getReadTimeout();
         case "receivebuffersize":

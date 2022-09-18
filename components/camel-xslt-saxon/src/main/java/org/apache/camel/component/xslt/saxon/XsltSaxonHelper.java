@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 final class XsltSaxonHelper {
+
     private static final Logger LOG = LoggerFactory.getLogger(XsltSaxonHelper.class);
 
     private XsltSaxonHelper() {
@@ -49,10 +50,13 @@ final class XsltSaxonHelper {
         }
     }
 
-    public static void registerSaxonExtensionFunctions(TransformerFactoryImpl factory, List<Object> saxonExtensionFunctions)
+    public static void registerSaxonExtensionFunctions(
+            TransformerFactoryImpl factory,
+            List<Object> saxonExtensionFunctions,
+            boolean secureProcessing)
             throws Exception {
         if (saxonExtensionFunctions != null && !saxonExtensionFunctions.isEmpty()) {
-            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, secureProcessing);
             for (Object extensionFunction : saxonExtensionFunctions) {
                 if (extensionFunction instanceof ExtensionFunctionDefinition) {
                     LOG.debug("Saxon.registerExtensionFunction {}", extensionFunction);

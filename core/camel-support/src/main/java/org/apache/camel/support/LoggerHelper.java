@@ -98,4 +98,19 @@ public final class LoggerHelper {
         }
     }
 
+    public static Integer extractSourceLocationLineNumber(String location) {
+        int cnt = StringHelper.countChar(location, ':');
+        if (cnt > 1) {
+            int pos = location.lastIndexOf(':');
+            String num = location.substring(pos);
+            try {
+                return Integer.valueOf(num);
+            } catch (Exception e) {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
 }

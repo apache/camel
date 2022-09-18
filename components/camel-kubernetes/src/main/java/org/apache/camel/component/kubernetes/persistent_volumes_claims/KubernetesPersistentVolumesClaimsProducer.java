@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.kubernetes.persistent_volumes_claims;
 
+import java.util.List;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaim;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaimBuilder;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaimList;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaimSpec;
+import io.fabric8.kubernetes.api.model.StatusDetails;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -167,8 +169,11 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
             LOG.error("Delete a specific Persistent Volume Claim require specify a namespace name");
             throw new IllegalArgumentException("Delete a specific Persistent Volume Claim require specify a namespace name");
         }
-        boolean pvcDeleted = getEndpoint().getKubernetesClient().persistentVolumeClaims().inNamespace(namespaceName)
-                .withName(pvcName).delete();
+
+        List<StatusDetails> statusDetails
+                = getEndpoint().getKubernetesClient().persistentVolumeClaims().inNamespace(namespaceName)
+                        .withName(pvcName).delete();
+        boolean pvcDeleted = ObjectHelper.isNotEmpty(statusDetails);
 
         prepareOutboundMessage(exchange, pvcDeleted);
     }

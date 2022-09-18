@@ -223,24 +223,35 @@ The camel.vault.aws supports 7 options, which are listed below.
 |===
 
 === Camel GCP Vault configurations
-The camel.vault.gcp supports 3 options, which are listed below.
+The camel.vault.gcp supports 7 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *camel.vault.gcp.projectId* | The GCP Project ID |  | String
+| *camel.vault.gcp.refreshEnabled* | Whether to automatically reload Camel upon secrets being updated in AWS. | false | boolean
+| *camel.vault.gcp.refreshPeriod* | The period (millis) between checking Google for updated secrets. | 30000 | long
+| *camel.vault.gcp.secrets* | Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma. |  | String
 | *camel.vault.gcp.serviceAccount{zwsp}Key* | The Service Account Key location |  | String
+| *camel.vault.gcp.subscription{zwsp}Name* | Define the Google Pubsub subscription Name to be used when checking for updates |  | String
 | *camel.vault.gcp.useDefault{zwsp}Instance* | Define if we want to use the GCP Client Default Instance or not | false | boolean
 |===
 
 === Camel Azure Key Vault configurations
-The camel.vault.azure supports 4 options, which are listed below.
+The camel.vault.azure supports 11 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.vault.azure.blobAccess{zwsp}Key* | The Eventhubs Blob Access Key for CheckpointStore purpose |  | String
+| *camel.vault.azure.blobAccount{zwsp}Name* | The Eventhubs Blob Account Name for CheckpointStore purpose |  | String
+| *camel.vault.azure.blob{zwsp}ContainerName* | The Eventhubs Blob Container Name for CheckpointStore purpose |  | String
 | *camel.vault.azure.clientId* | The client Id for accessing Azure Key Vault |  | String
 | *camel.vault.azure.clientSecret* | The client Secret for accessing Azure Key Vault |  | String
+| *camel.vault.azure.eventhub{zwsp}ConnectionString* | The Eventhubs connection String for Key Vault Secret events notifications |  | String
+| *camel.vault.azure.refresh{zwsp}Enabled* | Whether to automatically reload Camel upon secrets being updated in Azure. | false | boolean
+| *camel.vault.azure.refresh{zwsp}Period* | The period (millis) between checking Azure for updated secrets. | 30000 | long
+| *camel.vault.azure.secrets* | Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma. |  | String
 | *camel.vault.azure.tenantId* | The Tenant Id for accessing Azure Key Vault |  | String
 | *camel.vault.azure.vaultName* | The vault Name in Azure Key Vault |  | String
 |===
@@ -267,7 +278,7 @@ The camel.faulttolerance supports 13 options, which are listed below.
 |===
 
 === Resilience4j EIP Circuit Breaker configurations
-The camel.resilience4j supports 19 options, which are listed below.
+The camel.resilience4j supports 20 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -285,6 +296,7 @@ The camel.resilience4j supports 19 options, which are listed below.
 | *camel.resilience4j.sliding{zwsp}WindowType* | Configures the type of the sliding window which is used to record the outcome of calls when the CircuitBreaker is closed. Sliding window can either be count-based or time-based. If slidingWindowType is COUNT_BASED, the last slidingWindowSize calls are recorded and aggregated. If slidingWindowType is TIME_BASED, the calls of the last slidingWindowSize seconds are recorded and aggregated. Default slidingWindowType is COUNT_BASED. | COUNT_BASED | String
 | *camel.resilience4j.slowCall{zwsp}DurationThreshold* | Configures the duration threshold (seconds) above which calls are considered as slow and increase the slow calls percentage. Default value is 60 seconds. | 60 | Integer
 | *camel.resilience4j.slowCall{zwsp}RateThreshold* | Configures a threshold in percentage. The CircuitBreaker considers a call as slow when the call duration is greater than slowCallDurationThreshold(Duration. When the percentage of slow calls is equal or greater the threshold, the CircuitBreaker transitions to open and starts short-circuiting calls. The threshold must be greater than 0 and not greater than 100. Default value is 100 percentage which means that all recorded calls must be slower than slowCallDurationThreshold. | 100 | Float
+| *camel.resilience4j.throw{zwsp}ExceptionWhenHalfOpenOrOpen{zwsp}State* | Whether to throw io.github.resilience4j.circuitbreaker.CallNotPermittedException when the call is rejected due circuit breaker is half open or open. | false | Boolean
 | *camel.resilience4j.timeout{zwsp}CancelRunningFuture* | Configures whether cancel is called on the running future. Defaults to true. | true | Boolean
 | *camel.resilience4j.timeout{zwsp}Duration* | Configures the thread execution timeout (millis). Default value is 1000 millis (1 second). | 1000 | Integer
 | *camel.resilience4j.timeout{zwsp}Enabled* | Whether timeout is enabled or not on the circuit breaker. Default is false. | false | Boolean

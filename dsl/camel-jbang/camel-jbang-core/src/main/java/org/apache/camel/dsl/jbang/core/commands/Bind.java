@@ -44,14 +44,19 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.nodeAt;
 @Command(name = "bind", description = "Bind source and sink Kamelets as a new Camel integration")
 class Bind extends CamelCommand {
 
-    @CommandLine.Parameters(description = "Source such as a Kamelet or Camel endpoint uri", arity = "1")
-    private String source;
+    @CommandLine.Option(names = { "--source" }, description = "Source (from) such as a Kamelet or Camel endpoint uri",
+                        required = true)
+    String source;
 
-    @CommandLine.Parameters(description = "Sink such as a Kamelet or Camel endpoint uri", arity = "1")
-    private String sink;
+    @CommandLine.Option(names = { "--step" }, description = "Optional steps such as a Kamelet or Camel endpoint uri")
+    String[] steps;
+
+    @CommandLine.Option(names = { "--sink" }, description = "Sink (to) such as a Kamelet or Camel endpoint uri",
+                        required = true)
+    String sink;
 
     @CommandLine.Parameters(description = "Name of binding file to be saved", arity = "1")
-    private String file;
+    String file;
 
     public Bind(CamelJBangMain main) {
         super(main);
@@ -73,10 +78,35 @@ class Bind extends CamelCommand {
         String context = IOHelper.loadText(is);
         IOHelper.close(is);
 
+        String stepsContext = "";
+        if (steps != null) {
+            StringBuilder sb = new StringBuilder("\n  steps:\n");
+            for (String step : steps) {
+                boolean uri = step.contains(":");
+                String text;
+                if (uri) {
+                    is = Bind.class.getClassLoader().getResourceAsStream("templates/step-uri.yaml.tmpl");
+                    text = IOHelper.loadText(is);
+                    IOHelper.close(is);
+                    text = text.replaceFirst("\\{\\{ \\.Name }}", step);
+                } else {
+                    is = Bind.class.getClassLoader().getResourceAsStream("templates/step-kamelet.yaml.tmpl");
+                    text = IOHelper.loadText(is);
+                    IOHelper.close(is);
+                    text = text.replaceFirst("\\{\\{ \\.Name }}", step);
+                    String props = kameletProperties(step);
+                    text = text.replaceFirst("\\{\\{ \\.StepProperties }}", props);
+                }
+                sb.append(text);
+            }
+            stepsContext = sb.toString();
+        }
+
         String name = FileUtil.onlyName(file, false);
         context = context.replaceFirst("\\{\\{ \\.Name }}", name);
         context = context.replaceFirst("\\{\\{ \\.Source }}", source);
         context = context.replaceFirst("\\{\\{ \\.Sink }}", sink);
+        context = context.replaceFirst("\\{\\{ \\.Steps }}", stepsContext);
 
         if ("kamelet".equals(in)) {
             String props = kameletProperties(source);

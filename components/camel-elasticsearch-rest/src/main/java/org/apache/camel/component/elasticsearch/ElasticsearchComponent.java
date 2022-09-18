@@ -114,7 +114,7 @@ public class ElasticsearchComponent extends DefaultComponent {
     }
 
     /**
-     * To use an existing configured Elasticsearch client, instead of creating a client per endpoint. This allow to
+     * To use an existing configured Elasticsearch client, instead of creating a client per endpoint. This allows to
      * customize the client with specific settings.
      */
     public void setClient(RestClient client) {

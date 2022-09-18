@@ -89,6 +89,16 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
     }
 
     /**
+     * Whether to throw io.github.resilience4j.circuitbreaker.CallNotPermittedException when the call is rejected due
+     * circuit breaker is half open or open.
+     */
+    public Resilience4jConfigurationDefinition throwExceptionWhenHalfOpenOrOpenState(
+            boolean throwExceptionWhenHalfOpenOrOpenState) {
+        setThrowExceptionWhenHalfOpenOrOpenState(Boolean.toString(throwExceptionWhenHalfOpenOrOpenState));
+        return this;
+    }
+
+    /**
      * Configures the size of the sliding window which is used to record the outcome of calls when the CircuitBreaker is
      * closed. {@code slidingWindowSize} configures the size of the sliding window. Sliding window can either be
      * count-based or time-based.

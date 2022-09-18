@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.kubernetes.service_accounts;
 
+import java.util.List;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.ServiceAccount;
 import io.fabric8.kubernetes.api.model.ServiceAccountList;
+import io.fabric8.kubernetes.api.model.StatusDetails;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -151,8 +153,10 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
             LOG.error("Delete a specific Service Account require specify a namespace name");
             throw new IllegalArgumentException("Delete a specific Service Account require specify a namespace name");
         }
-        boolean saDeleted
+
+        List<StatusDetails> statusDetails
                 = getEndpoint().getKubernetesClient().serviceAccounts().inNamespace(namespaceName).withName(saName).delete();
+        boolean saDeleted = ObjectHelper.isNotEmpty(statusDetails);
 
         prepareOutboundMessage(exchange, saDeleted);
     }

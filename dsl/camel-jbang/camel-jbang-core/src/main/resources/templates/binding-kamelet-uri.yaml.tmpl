@@ -9,6 +9,7 @@ spec:
       apiVersion: camel.apache.org/v1
       name: {{ .Source }}
     {{ .SourceProperties }}
+{{ .Steps }}
   sink:
     uri: {{ .Sink }}
     #properties:

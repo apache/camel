@@ -29,6 +29,14 @@ public class GcpVaultConfiguration extends VaultConfiguration {
     private String projectId;
     @Metadata
     private boolean useDefaultInstance;
+    @Metadata
+    private String subscriptionName;
+    @Metadata
+    private boolean refreshEnabled;
+    @Metadata(defaultValue = "30000")
+    private long refreshPeriod = 30000;
+    @Metadata
+    private String secrets;
 
     public String getServiceAccountKey() {
         return serviceAccountKey;
@@ -63,4 +71,47 @@ public class GcpVaultConfiguration extends VaultConfiguration {
         this.useDefaultInstance = useDefaultInstance;
     }
 
+    public String getSubscriptionName() {
+        return subscriptionName;
+    }
+
+    /**
+     * Define the Google Pubsub subscription Name to be used when checking for updates
+     */
+    public void setSubscriptionName(String subscriptionName) {
+        this.subscriptionName = subscriptionName;
+    }
+
+    public boolean isRefreshEnabled() {
+        return refreshEnabled;
+    }
+
+    /**
+     * Whether to automatically reload Camel upon secrets being updated in AWS.
+     */
+    public void setRefreshEnabled(boolean refreshEnabled) {
+        this.refreshEnabled = refreshEnabled;
+    }
+
+    public long getRefreshPeriod() {
+        return refreshPeriod;
+    }
+
+    /**
+     * The period (millis) between checking Google for updated secrets.
+     */
+    public void setRefreshPeriod(long refreshPeriod) {
+        this.refreshPeriod = refreshPeriod;
+    }
+
+    public String getSecrets() {
+        return secrets;
+    }
+
+    /**
+     * Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma.
+     */
+    public void setSecrets(String secrets) {
+        this.secrets = secrets;
+    }
 }

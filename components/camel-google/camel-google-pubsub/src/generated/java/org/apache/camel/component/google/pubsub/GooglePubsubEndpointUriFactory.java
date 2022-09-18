@@ -21,7 +21,7 @@ public class GooglePubsubEndpointUriFactory extends org.apache.camel.support.com
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(16);
+        Set<String> props = new HashSet<>(17);
         props.add("ackMode");
         props.add("authenticate");
         props.add("bridgeErrorHandler");
@@ -31,6 +31,7 @@ public class GooglePubsubEndpointUriFactory extends org.apache.camel.support.com
         props.add("exchangePattern");
         props.add("lazyStartProducer");
         props.add("loggerId");
+        props.add("maxAckExtensionPeriod");
         props.add("maxMessagesPerPoll");
         props.add("messageOrderingEnabled");
         props.add("projectId");

@@ -19,11 +19,15 @@ package org.apache.camel.component.resilience4j;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ResilienceRouteRejectedTest extends CamelTestSupport {
 
@@ -44,6 +48,19 @@ public class ResilienceRouteRejectedTest extends CamelTestSupport {
     @Test
     public void testResilienceWithTimeOut() throws Exception {
         test("direct:start.with.timeout.enabled", "myResilienceWithTimeout");
+    }
+
+    @Test
+    public void testResilienceWithThrowException() throws Exception {
+        try {
+            test("direct:start-throw-exception", "myResilienceWithThrowException");
+            fail("Should throw exception");
+        } catch (CamelExecutionException e) {
+            CallNotPermittedException ce = assertInstanceOf(CallNotPermittedException.class, e.getCause());
+            assertEquals("myResilienceWithThrowException", ce.getCausingCircuitBreakerName());
+            assertEquals("CircuitBreaker 'myResilienceWithThrowException' is FORCED_OPEN and does not permit further calls",
+                    ce.getMessage());
+        }
     }
 
     private void test(String endPointUri, String circuitBreakerName) throws Exception {
@@ -81,6 +98,11 @@ public class ResilienceRouteRejectedTest extends CamelTestSupport {
                 from("direct:start.with.timeout.enabled").circuitBreaker().resilience4jConfiguration()
                         .timeoutEnabled(true).timeoutDuration(2000).end()
                         .id("myResilienceWithTimeout").to("direct:foo").to("log:foo").end().to("log:result")
+                        .to("mock:result");
+
+                from("direct:start-throw-exception")
+                        .circuitBreaker().resilience4jConfiguration().throwExceptionWhenHalfOpenOrOpenState(true).end()
+                        .id("myResilienceWithThrowException").to("direct:foo").to("log:foo").end().to("log:result")
                         .to("mock:result");
 
                 from("direct:foo").transform().constant("Bye World");

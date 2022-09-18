@@ -55,6 +55,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.threeten.bp.Duration;
 
 /**
  * Represents the component that manages {@link GooglePubsubEndpoint}.
@@ -187,6 +188,7 @@ public class GooglePubsubComponent extends DefaultComponent {
             builder.setChannelProvider(channelProvider);
         }
         builder.setCredentialsProvider(getCredentialsProvider(googlePubsubEndpoint));
+        builder.setMaxAckExtensionPeriod(Duration.ofSeconds(googlePubsubEndpoint.getMaxAckExtensionPeriod()));
         return builder.build();
     }
 

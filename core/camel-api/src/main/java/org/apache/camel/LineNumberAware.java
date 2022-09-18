@@ -42,7 +42,7 @@ public interface LineNumberAware {
     String getLocation();
 
     /**
-     * Sets the location of the entity (such as classname, XML file name, etc.)
+     * Sets the location of the entity (source file name, i.e. foo.java, bar.xml, etc.)
      */
     void setLocation(String location);
 

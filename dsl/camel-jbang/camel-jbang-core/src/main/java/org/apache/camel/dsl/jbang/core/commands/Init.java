@@ -73,6 +73,16 @@ class Init extends CamelCommand {
             ext = "integration.yaml";
         }
 
+        if ("kamelet.yaml".equals(ext)) {
+            if (file.contains("source")) {
+                ext = "kamelet-source.yaml";
+            } else if (file.contains("sink")) {
+                ext = "kamelet-sink.yaml";
+            } else {
+                ext = "kamelet-action.yaml";
+            }
+        }
+
         String name = FileUtil.onlyName(file, false);
         InputStream is = Init.class.getClassLoader().getResourceAsStream("templates/" + ext + ".tmpl");
         if (is == null) {

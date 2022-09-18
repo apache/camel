@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.kubernetes.secrets;
 
+import java.util.List;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.Secret;
 import io.fabric8.kubernetes.api.model.SecretList;
+import io.fabric8.kubernetes.api.model.StatusDetails;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -148,8 +150,10 @@ public class KubernetesSecretsProducer extends DefaultProducer {
             LOG.error("Delete a specific secret require specify a namespace name");
             throw new IllegalArgumentException("Delete a specific secret require specify a namespace name");
         }
-        boolean secretDeleted
+
+        List<StatusDetails> statusDetails
                 = getEndpoint().getKubernetesClient().secrets().inNamespace(namespaceName).withName(secretName).delete();
+        boolean secretDeleted = ObjectHelper.isNotEmpty(statusDetails);
 
         prepareOutboundMessage(exchange, secretDeleted);
     }

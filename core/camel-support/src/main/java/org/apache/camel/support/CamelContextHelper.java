@@ -17,11 +17,15 @@
 package org.apache.camel.support;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
@@ -645,6 +649,33 @@ public final class CamelContextHelper {
         validateRestConfigurationComponent(producerComponent, configuration.getProducerComponent());
 
         return configuration;
+    }
+
+    /**
+     * Gets the components from the given {@code CamelContext} that match with the given predicate.
+     *
+     * @param  camelContext the camel context
+     * @param  predicate    the predicate to evaluate to know whether a given component should be returned or not.
+     * @return              the existing components that match the predicate.
+     */
+    public static List<Component> getComponents(CamelContext camelContext, Predicate<Component> predicate) {
+        return camelContext.getComponentNames().stream()
+                .map(camelContext::getComponent)
+                .filter(predicate)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Gets the endpoints from the given {@code CamelContext} that match with the given predicate
+     *
+     * @param  camelContext the camel context
+     * @param  predicate    the predicate to evaluate to know whether a given endpoint should be returned or not.
+     * @return              the existing endpoints that match the predicate.
+     */
+    public static List<Endpoint> getEndpoints(CamelContext camelContext, Predicate<Endpoint> predicate) {
+        return camelContext.getEndpoints().stream()
+                .filter(predicate)
+                .collect(Collectors.toList());
     }
 
     private static void validateRestConfigurationComponent(String component, String configurationComponent) {

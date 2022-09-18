@@ -179,6 +179,40 @@ public interface GooglePubsubEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set the maximum period a message ack deadline will be extended. Value
+         * in seconds.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 3600
+         * Group: consumer
+         * 
+         * @param maxAckExtensionPeriod the value to set
+         * @return the dsl builder
+         */
+        default GooglePubsubEndpointConsumerBuilder maxAckExtensionPeriod(
+                int maxAckExtensionPeriod) {
+            doSetProperty("maxAckExtensionPeriod", maxAckExtensionPeriod);
+            return this;
+        }
+        /**
+         * Set the maximum period a message ack deadline will be extended. Value
+         * in seconds.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 3600
+         * Group: consumer
+         * 
+         * @param maxAckExtensionPeriod the value to set
+         * @return the dsl builder
+         */
+        default GooglePubsubEndpointConsumerBuilder maxAckExtensionPeriod(
+                String maxAckExtensionPeriod) {
+            doSetProperty("maxAckExtensionPeriod", maxAckExtensionPeriod);
+            return this;
+        }
+        /**
          * The max number of messages to receive from the server in a single API
          * call.
          * 

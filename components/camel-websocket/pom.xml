@@ -91,6 +91,16 @@
             <artifactId>camel-test-junit5</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- test infra -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-common</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -99,13 +109,6 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.asynchttpclient</groupId>
-            <artifactId>async-http-client</artifactId>
-            <!-- 2.0.17 onwards has TSL/SSL problems -->
-            <version>2.11.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>

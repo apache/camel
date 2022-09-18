@@ -51,7 +51,7 @@ public final class CosmosDbTestUtils {
         final Properties properties = new Properties();
         if (System.getProperty("endpoint") == null || System.getProperty("accessKey") == null) {
             throw new Exception(
-                    "Make sure to supply azure CosmosDB endpoint and accessKey, e.g:  mvn verify -PfullTests -Dendpoint=myacc-azure.com -DaccessKey=mykey");
+                    "Make sure to supply azure CosmosDB endpoint and accessKey, e.g:  mvn verify -Dendpoint=myacc-azure.com -DaccessKey=mykey");
         }
         properties.setProperty("endpoint", System.getProperty("endpoint"));
         properties.setProperty("access_key", System.getProperty("accessKey"));

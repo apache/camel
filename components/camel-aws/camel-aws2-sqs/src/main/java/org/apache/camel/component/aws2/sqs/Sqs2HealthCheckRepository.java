@@ -20,7 +20,11 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Stream;
 
-import org.apache.camel.*;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.DeferredContextBinding;
+import org.apache.camel.NonManagedService;
+import org.apache.camel.StaticService;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.support.service.ServiceSupport;

@@ -48,6 +48,14 @@
         </dependency>
         <dependency>
             <groupId>com.azure</groupId>
+            <artifactId>azure-messaging-eventhubs</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-messaging-eventhubs-checkpointstore-blob</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.azure</groupId>
             <artifactId>azure-identity</artifactId>
         </dependency>
 

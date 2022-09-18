@@ -157,7 +157,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
     @Override
     public String getSourceLocationShort() {
-        return null;
+        return sourceLocationShort;
     }
 
     @Override

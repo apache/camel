@@ -18,59 +18,18 @@ package org.apache.camel.component.olingo2;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.net.URISyntaxException;
 
-import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.handler.DefaultHandler;
-import org.eclipse.jetty.server.handler.HandlerCollection;
-import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * The embedded server for hosting the olingo2 sample service during the tests
  */
-public class Olingo2SampleServer {
-    private static final Logger LOG = LoggerFactory.getLogger(Olingo2SampleServer.class);
+public final class Olingo2TestUtil {
+    private static final Logger LOG = LoggerFactory.getLogger(Olingo2TestUtil.class);
 
-    private org.eclipse.jetty.server.Server server;
-    private int port;
+    private Olingo2TestUtil() {
 
-    /**
-     * @param port
-     * @param resourcePath
-     */
-    public Olingo2SampleServer(int port, String resourcePath) {
-        this.port = port;
-        server = new org.eclipse.jetty.server.Server(port);
-
-        WebAppContext webappcontext = new WebAppContext();
-        String contextPath = null;
-        try {
-            contextPath = Olingo2SampleServer.class.getResource(resourcePath).toURI().getPath();
-        } catch (URISyntaxException e) {
-            LOG.error("Unable to read the resource at {}", resourcePath, e);
-        }
-        webappcontext.setContextPath("/");
-
-        webappcontext.setWar(contextPath);
-
-        HandlerCollection handlers = new HandlerCollection();
-        handlers.setHandlers(new Handler[] { webappcontext, new DefaultHandler() });
-        server.setHandler(handlers);
-    }
-
-    public void start() throws Exception {
-        server.start();
-        LOG.debug("Olingo sample server started at port {}", port);
-    }
-
-    public void stop() throws Exception {
-        server.stop();
-    }
-
-    public void destroy() {
-        server.destroy();
     }
 
     static void generateSampleData(String serviceUrl) throws IOException {

@@ -39,8 +39,11 @@ public class WssProducerTest extends WsProducerTestBase {
             .emptyTemplate()
             .withPort(AvailablePortFinder.getNextAvailable())
             .withContextPath(JettyConfiguration.ROOT_CONTEXT_PATH)
-            .addServletConfiguration(new JettyConfiguration.ServletConfiguration(
-                    TestServletFactory.class.getName(), JettyConfiguration.ServletConfiguration.ROOT_PATH_SPEC))
+            .withServletConfiguration()
+            .addServletConfiguration(new JettyConfiguration.ServletHandlerConfiguration.ServletConfiguration<>(
+                    TestServletFactory.class.getName(),
+                    JettyConfiguration.ServletHandlerConfiguration.ServletConfiguration.ROOT_PATH_SPEC))
+            .build()
             .withSslContext(() -> {
                 try {
                     return WssProducerTest.defineSSLContextServerParameters().createSSLContext(null);

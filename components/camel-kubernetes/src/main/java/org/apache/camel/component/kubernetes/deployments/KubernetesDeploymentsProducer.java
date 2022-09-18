@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.kubernetes.deployments;
 
+import java.util.List;
 import java.util.Map;
 
+import io.fabric8.kubernetes.api.model.StatusDetails;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
 import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
 import io.fabric8.kubernetes.api.model.apps.DeploymentList;
@@ -125,10 +127,11 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
             throw new IllegalArgumentException("Delete a specific deployment require specify a namespace name");
         }
 
-        Boolean deployment = getEndpoint().getKubernetesClient().apps().deployments().inNamespace(namespaceName)
+        List<StatusDetails> statusDetails = getEndpoint().getKubernetesClient().apps().deployments().inNamespace(namespaceName)
                 .withName(deploymentName).delete();
+        boolean deploymentDeleted = ObjectHelper.isNotEmpty(statusDetails);
 
-        prepareOutboundMessage(exchange, deployment);
+        prepareOutboundMessage(exchange, deploymentDeleted);
     }
 
     protected void doCreateDeployment(Exchange exchange) {

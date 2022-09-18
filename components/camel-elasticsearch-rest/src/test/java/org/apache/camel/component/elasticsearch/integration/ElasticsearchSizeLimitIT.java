@@ -23,12 +23,10 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.builder.RouteBuilder;
 import org.awaitility.Awaitility;
 import org.elasticsearch.search.SearchHits;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class ElasticsearchSizeLimitIT extends ElasticsearchTestSupport {
 
-    @Disabled("Looks like there were some assumption related to test executed before")
     @Test
     public void testSize() {
         //put 4
