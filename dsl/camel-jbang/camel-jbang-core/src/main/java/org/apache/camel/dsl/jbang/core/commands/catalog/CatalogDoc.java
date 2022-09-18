@@ -55,7 +55,6 @@ public class CatalogDoc extends CamelCommand {
 
     // TODO: kamelet
     // TODO: endpoint uri to document the uri only
-    // TODO: header options
 
     final CamelCatalog catalog = new DefaultCamelCatalog(true);
 
