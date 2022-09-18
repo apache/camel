@@ -17,6 +17,9 @@
 package org.apache.camel.dsl.jbang.core.commands.catalog;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -41,6 +44,13 @@ public class CatalogDoc extends CamelCommand {
     @CommandLine.Parameters(description = "Name of kamelet, component, dataformat, or other Camel resource",
                             arity = "1")
     String name;
+
+    @CommandLine.Option(names = { "--filter" },
+                        description = "Filter option listed in tables by name, description, or group")
+    String filter;
+
+    // TODO: kamelet
+    // TODO: endpoint uri to document the uri only
 
     final CamelCatalog catalog = new DefaultCamelCatalog(true);
 
@@ -132,8 +142,15 @@ public class CatalogDoc extends CamelCommand {
                         .with(r -> r.getShortDefaultValue(40)),
                 new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).with(BaseOptionModel::getShortJavaType))));
         System.out.println("");
-        System.out.printf("Query parameters (%s):%n", cm.getEndpointParameterOptions().size());
-        System.out.println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, cm.getEndpointParameterOptions(), Arrays.asList(
+        var filtered = filter(filter, cm.getEndpointParameterOptions());
+        var total1 = cm.getEndpointParameterOptions().size();
+        var total2 = filtered.size();
+        if (total1 == total2) {
+            System.out.printf("Query parameters (total: %s):%n", total1);
+        } else {
+            System.out.printf("Query parameters (total: %s match-filter: %s):%n", total1, total2);
+        }
+        System.out.println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, filtered, Arrays.asList(
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20).maxWidth(30, OverflowBehaviour.NEWLINE)
                         .with(this::getName),
                 new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::getDescription),
@@ -159,9 +176,17 @@ public class CatalogDoc extends CamelCommand {
         System.out.println("        <version>" + dm.getVersion() + "</version>");
         System.out.println("    </dependency>");
         System.out.println("");
-        System.out.printf("The %s dataformat supports %s options, which are listed below.%n%n", dm.getName(),
-                dm.getOptions().size());
-        System.out.println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, dm.getOptions(), Arrays.asList(
+        var filtered = filter(filter, dm.getOptions());
+        var total1 = dm.getOptions().size();
+        var total2 = filtered.size();
+        if (total1 == total2) {
+            System.out.printf("The %s dataformat supports (total: %s) options, which are listed below.%n%n", dm.getName(),
+                    total1);
+        } else {
+            System.out.printf("The %s dataformat supports (total: %s match-filter: %s) options, which are listed below.%n%n",
+                    dm.getName(), total1, total2);
+        }
+        System.out.println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, filtered, Arrays.asList(
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20).maxWidth(30, OverflowBehaviour.NEWLINE)
                         .with(this::getName),
                 new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::getDescription),
@@ -187,9 +212,17 @@ public class CatalogDoc extends CamelCommand {
         System.out.println("        <version>" + lm.getVersion() + "</version>");
         System.out.println("    </dependency>");
         System.out.println("");
-        System.out.printf("The %s language supports %s options, which are listed below.%n%n", lm.getName(),
-                lm.getOptions().size());
-        System.out.println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, lm.getOptions(), Arrays.asList(
+        var filtered = filter(filter, lm.getOptions());
+        var total1 = lm.getOptions().size();
+        var total2 = filtered.size();
+        if (total1 == total2) {
+            System.out.printf("The %s language supports (total: %s) options, which are listed below.%n%n", lm.getName(),
+                    total1);
+        } else {
+            System.out.printf("The %s language supports (total: %s match-filter: %s) options, which are listed below.%n%n",
+                    lm.getName(), total1, total2);
+        }
+        System.out.println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, filtered, Arrays.asList(
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20).maxWidth(30, OverflowBehaviour.NEWLINE)
                         .with(this::getName),
                 new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::getDescription),
@@ -238,6 +271,17 @@ public class CatalogDoc extends CamelCommand {
             suffix = "\n\nEnum values:\n- " + String.join("\n- ", o.getEnums());
         }
         return prefix + o.getDescription() + suffix;
+    }
+
+    List<? extends BaseOptionModel> filter(String name, List<? extends BaseOptionModel> options) {
+        if (name == null || name.isEmpty()) {
+            return options;
+        }
+        String target = name.toLowerCase(Locale.ROOT);
+        return options.stream().filter(
+                r -> r.getName().equalsIgnoreCase(target) || r.getDescription().toLowerCase(Locale.ROOT).contains(target)
+                        || r.getShortGroup() != null && r.getShortGroup().toLowerCase(Locale.ROOT).contains(target))
+                .collect(Collectors.toList());
     }
 
 }
