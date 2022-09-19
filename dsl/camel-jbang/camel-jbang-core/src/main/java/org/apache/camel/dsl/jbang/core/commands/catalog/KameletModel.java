@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.catalog;
 
+import java.util.List;
 import java.util.Map;
 
 public class KameletModel {
@@ -25,5 +26,6 @@ public class KameletModel {
     String supportLevel;
     String description;
     Map<String, KameletOptionModel> properties;
+    List<String> dependencies;
 
 }
