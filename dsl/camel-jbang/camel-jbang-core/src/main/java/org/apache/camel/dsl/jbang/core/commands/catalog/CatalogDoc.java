@@ -30,6 +30,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.main.download.MavenGav;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
@@ -124,6 +125,26 @@ public class CatalogDoc extends CamelCommand {
         System.out.println("");
         System.out.printf("%s%n", km.description);
         System.out.println("");
+        if (km.dependencies != null && !km.dependencies.isEmpty()) {
+            System.out.println("");
+            for (String dep : km.dependencies) {
+                MavenGav gav = MavenGav.parseGav(dep);
+                if ("camel-core".equals(gav.getArtifactId())) {
+                    // camel-core is implied so skip
+                    continue;
+                }
+                System.out.println("    <dependency>");
+                System.out.println("        <groupId>" + gav.getGroupId() + "</groupId>");
+                System.out.println("        <artifactId>" + gav.getArtifactId() + "</artifactId>");
+                String v = gav.getVersion();
+                if (v == null) {
+                    v = catalog.getCatalogVersion();
+                }
+                System.out.println("        <version>" + v + "</version>");
+                System.out.println("    </dependency>");
+            }
+            System.out.println("");
+        }
         if (km.properties != null && !km.properties.isEmpty()) {
             var filtered = filterKameletOptions(filter, km.properties.values());
             int total1 = km.properties.size();

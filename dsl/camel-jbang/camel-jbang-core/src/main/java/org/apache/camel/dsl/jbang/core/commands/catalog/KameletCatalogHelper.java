@@ -39,6 +39,8 @@ public final class KameletCatalogHelper {
         km.supportLevel = getSupportLevel(kamelet);
         km.description = getDescription(kamelet);
         if (all) {
+            km.dependencies = getDependencies(kamelet);
+
             Map<String, Object> props = getProperties(kamelet);
             if (props != null) {
                 km.properties = new LinkedHashMap<>();
@@ -201,4 +203,21 @@ public final class KameletCatalogHelper {
         m = def.getClass().getMethod("getProperties");
         return (Map<String, Object>) ObjectHelper.invokeMethod(m, def);
     }
+
+    private static List<String> getDependencies(Object kamelet) throws Exception {
+        List<String> answer = new ArrayList<>();
+        Method m = kamelet.getClass().getMethod("getSpec");
+        Object spec = ObjectHelper.invokeMethod(m, kamelet);
+        m = spec.getClass().getMethod("getDependencies");
+        List<Object> list = (List<Object>) ObjectHelper.invokeMethod(m, spec);
+        if (list != null && !list.isEmpty()) {
+            for (var en : list) {
+                String t = en.toString();
+                t = StringHelper.removeLeadingAndEndingQuotes(t);
+                answer.add(t);
+            }
+        }
+        return answer.isEmpty() ? null : answer;
+    }
+
 }
