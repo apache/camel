@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.catalog;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -57,7 +58,6 @@ public class CatalogDoc extends CamelCommand {
             "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "0.9.0")
     String kameletsVersion;
 
-    // TODO: kamelet
     // TODO: endpoint uri to document the uri only
 
     final CamelCatalog catalog = new DefaultCamelCatalog(true);
@@ -117,7 +117,34 @@ public class CatalogDoc extends CamelCommand {
         return 1;
     }
 
-    private void docKamelet(KameletModel model) {
+    private void docKamelet(KameletModel km) {
+        System.out.printf("Kamelet Name: %s%n", km.name);
+        System.out.printf("Kamelet Type: %s%n", km.type);
+        System.out.println("Support Level: " + km.supportLevel);
+        System.out.println("");
+        System.out.printf("%s%n", km.description);
+        System.out.println("");
+        if (km.properties != null && !km.properties.isEmpty()) {
+            var filtered = filterKameletOptions(filter, km.properties.values());
+            int total1 = km.properties.size();
+            var total2 = filtered.size();
+            if (total1 == total2) {
+                System.out.printf("The %s kamelet supports (total: %s) options, which are listed below.%n%n", km.name, total1);
+            } else {
+                System.out.printf("The %s kamelet supports (total: %s match-filter: %s) options, which are listed below.%n%n",
+                        km.name, total1, total2);
+            }
+            System.out.println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, filtered, Arrays.asList(
+                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20)
+                            .maxWidth(30, OverflowBehaviour.NEWLINE)
+                            .with(r -> r.name),
+                    new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::getDescription),
+                    new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.NEWLINE)
+                            .with(r -> r.defaultValue),
+                    new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).with(r -> r.type),
+                    new Column().header("EXAMPLE").dataAlign(HorizontalAlign.LEFT).with(r -> r.example))));
+            System.out.println("");
+        }
 
     }
 
@@ -306,6 +333,18 @@ public class CatalogDoc extends CamelCommand {
         return prefix + o.getDescription() + suffix;
     }
 
+    String getDescription(KameletOptionModel o) {
+        String prefix = "";
+        String suffix = "";
+        if (o.required) {
+            prefix = "REQUIRED: " + prefix;
+        }
+        if (o.enumValues != null) {
+            suffix = "\n\nEnum values:\n- " + String.join("\n- ", o.enumValues);
+        }
+        return prefix + o.description + suffix;
+    }
+
     List<? extends BaseOptionModel> filter(String name, List<? extends BaseOptionModel> options) {
         if (name == null || name.isEmpty()) {
             return options;
@@ -314,6 +353,16 @@ public class CatalogDoc extends CamelCommand {
         return options.stream().filter(
                 r -> r.getName().equalsIgnoreCase(target) || r.getDescription().toLowerCase(Locale.ROOT).contains(target)
                         || r.getShortGroup() != null && r.getShortGroup().toLowerCase(Locale.ROOT).contains(target))
+                .collect(Collectors.toList());
+    }
+
+    Collection<KameletOptionModel> filterKameletOptions(String name, Collection<KameletOptionModel> options) {
+        if (name == null || name.isEmpty()) {
+            return options;
+        }
+        String target = name.toLowerCase(Locale.ROOT);
+        return options.stream().filter(
+                r -> r.name.equalsIgnoreCase(target) || r.description.toLowerCase(Locale.ROOT).contains(target))
                 .collect(Collectors.toList());
     }
 
