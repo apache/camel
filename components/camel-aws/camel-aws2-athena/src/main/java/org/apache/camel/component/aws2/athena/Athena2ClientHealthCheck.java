@@ -56,17 +56,15 @@ public class Athena2ClientHealthCheck extends AbstractHealthCheck {
                 return;
             }
             AthenaClient client;
-            if(!athena2Endpoint.getConfiguration().isUseDefaultCredentialsProvider()){
+            if (!athena2Endpoint.getConfiguration().isUseDefaultCredentialsProvider()) {
                 AwsBasicCredentials cred = AwsBasicCredentials.create(athena2Endpoint.getConfiguration().getAccessKey(),
                         athena2Endpoint.getConfiguration().getSecretKey());
                 AthenaClientBuilder clientBuilder = AthenaClient.builder();
                 client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred))
                         .region(Region.of(athena2Endpoint.getConfiguration().getRegion())).build();
-            }
-            else if(ObjectHelper.isNotEmpty(athena2Endpoint.getConfiguration().getAmazonAthenaClient())){
+            } else if (ObjectHelper.isNotEmpty(athena2Endpoint.getConfiguration().getAmazonAthenaClient())) {
                 client = athena2Endpoint.getConfiguration().getAmazonAthenaClient();
-            }
-            else{
+            } else {
                 AthenaClientBuilder clientBuilder = AthenaClient.builder();
                 client = clientBuilder.region(Region.of(athena2Endpoint.getConfiguration().getRegion())).build();
             }
