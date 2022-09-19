@@ -34,9 +34,9 @@ import org.slf4j.LoggerFactory;
 
 import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
-public class Athena2ClientHealthCheckTest extends CamelTestSupport {
+public class Athena2ClientHealthCheckProfileCredsTest extends CamelTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Athena2ClientHealthCheckTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Athena2ClientHealthCheckProfileCredsTest.class);
 
     CamelContext context;
 
@@ -66,7 +66,7 @@ public class Athena2ClientHealthCheckTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:getQueryExecution")
-                        .to("aws2-athena://label?accessKey=xxx&secretKey=yyy&region=l");
+                        .to("aws2-athena://label?region=l&useDefaultCredentialsProvider=true");
             }
         };
     }
