@@ -53,6 +53,10 @@ public class CatalogDoc extends CamelCommand {
                         description = "Whether to display component message headers", defaultValue = "true")
     boolean headers;
 
+    @CommandLine.Option(names = {
+            "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "0.9.0")
+    String kameletsVersion;
+
     // TODO: kamelet
     // TODO: endpoint uri to document the uri only
 
@@ -69,6 +73,13 @@ public class CatalogDoc extends CamelCommand {
             name = StringHelper.after(name, ":");
         }
 
+        if (prefix == null || "kamelet".equals(prefix)) {
+            KameletModel km = KameletCatalogHelper.loadKameletModel(name, kameletsVersion);
+            if (km != null) {
+                docKamelet(km);
+                return 0;
+            }
+        }
         if (prefix == null || "component".equals(prefix)) {
             ComponentModel cm = catalog.componentModel(name);
             if (cm != null) {
@@ -104,6 +115,10 @@ public class CatalogDoc extends CamelCommand {
             System.out.println("Camel " + prefix + ": " + name + " not found");
         }
         return 1;
+    }
+
+    private void docKamelet(KameletModel model) {
+
     }
 
     private void docComponent(ComponentModel cm) {
