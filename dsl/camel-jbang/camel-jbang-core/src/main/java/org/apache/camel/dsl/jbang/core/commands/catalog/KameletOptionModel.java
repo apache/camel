@@ -16,14 +16,16 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.catalog;
 
-import java.util.Map;
+import java.util.List;
 
-public class KameletModel {
+public class KameletOptionModel {
 
     String name;
-    String type;
-    String supportLevel;
+    boolean required;
     String description;
-    Map<String, KameletOptionModel> properties;
+    String type;
+    String defaultValue;
+    String example;
+    List<String> enumValues;
 
 }

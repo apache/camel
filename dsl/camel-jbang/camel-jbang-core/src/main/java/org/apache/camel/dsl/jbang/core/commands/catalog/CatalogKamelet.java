@@ -82,7 +82,7 @@ public class CatalogKamelet extends CamelCommand {
         }
 
         for (Object o : kamelets.values()) {
-            KameletModel row = KameletCatalogHelper.createModel(o);
+            KameletModel row = KameletCatalogHelper.createModel(o, false);
             rows.add(row);
         }
 

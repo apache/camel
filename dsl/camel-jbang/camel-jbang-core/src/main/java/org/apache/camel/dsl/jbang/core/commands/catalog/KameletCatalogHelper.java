@@ -17,24 +17,112 @@
 package org.apache.camel.dsl.jbang.core.commands.catalog;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.main.download.DependencyDownloaderClassLoader;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 public final class KameletCatalogHelper {
 
     private KameletCatalogHelper() {
     }
 
-    public static KameletModel createModel(Object kamelet) throws Exception {
+    public static KameletModel createModel(Object kamelet, boolean all) throws Exception {
         KameletModel km = new KameletModel();
         km.name = getName(kamelet);
         km.type = getType(kamelet);
         km.supportLevel = getSupportLevel(kamelet);
         km.description = getDescription(kamelet);
+        if (all) {
+            Map<String, Object> props = getProperties(kamelet);
+            if (props != null) {
+                km.properties = new LinkedHashMap<>();
+                for (var es : props.entrySet()) {
+                    KameletOptionModel om = createOptionModel(es.getKey(), es.getValue());
+                    km.properties.put(om.name, om);
+                }
+                // some options are required
+                List<String> required = getRequired(kamelet);
+                if (required != null && !required.isEmpty()) {
+                    for (var r : required) {
+                        KameletOptionModel om = km.properties.get(r);
+                        if (om != null) {
+                            om.required = true;
+                        }
+                    }
+                }
+            }
+        }
         return km;
+    }
+
+    private static KameletOptionModel createOptionModel(String name, Object prop) throws Exception {
+        KameletOptionModel om = new KameletOptionModel();
+        om.name = name;
+        om.description = getPropertyDescription(prop);
+        om.type = getPropertyType(prop);
+        om.defaultValue = getPropertyDefaultValue(prop);
+        om.example = getPropertyExample(prop);
+        om.enumValues = getPropertyEnum(prop);
+        return om;
+    }
+
+    private static List<String> getRequired(Object kamelet) throws Exception {
+        Method m = kamelet.getClass().getMethod("getSpec");
+        Object spec = ObjectHelper.invokeMethod(m, kamelet);
+        m = spec.getClass().getMethod("getDefinition");
+        Object def = ObjectHelper.invokeMethod(m, spec);
+        m = def.getClass().getMethod("getRequired");
+        return (List<String>) ObjectHelper.invokeMethod(m, def);
+    }
+
+    private static String getPropertyDescription(Object prop) throws Exception {
+        Method m = prop.getClass().getMethod("getDescription");
+        return (String) ObjectHelper.invokeMethod(m, prop);
+    }
+
+    private static String getPropertyType(Object prop) throws Exception {
+        Method m = prop.getClass().getMethod("getType");
+        return (String) ObjectHelper.invokeMethod(m, prop);
+    }
+
+    private static String getPropertyExample(Object prop) throws Exception {
+        Method m = prop.getClass().getMethod("getExample");
+        Object en = ObjectHelper.invokeMethod(m, prop);
+        if (en != null) {
+            String t = en.toString();
+            return StringHelper.removeLeadingAndEndingQuotes(t);
+        }
+        return null;
+    }
+
+    private static String getPropertyDefaultValue(Object prop) throws Exception {
+        Method m = prop.getClass().getMethod("getDefault");
+        Object dn = ObjectHelper.invokeMethod(m, prop);
+        if (dn != null) {
+            String t = dn.toString();
+            return StringHelper.removeLeadingAndEndingQuotes(t);
+        }
+        return null;
+    }
+
+    private static List<String> getPropertyEnum(Object prop) throws Exception {
+        List<String> answer = new ArrayList<>();
+        Method m = prop.getClass().getMethod("getEnum");
+        List<Object> list = (List<Object>) ObjectHelper.invokeMethod(m, prop);
+        if (list != null && !list.isEmpty()) {
+            for (var en : list) {
+                String t = en.toString();
+                t = StringHelper.removeLeadingAndEndingQuotes(t);
+                answer.add(t);
+            }
+        }
+        return answer.isEmpty() ? null : answer;
     }
 
     private static String getName(Object kamelet) throws Exception {
@@ -63,7 +151,7 @@ public final class KameletCatalogHelper {
         if (kamelets != null) {
             Object k = kamelets.get(name);
             if (k != null) {
-                return createModel(k);
+                return createModel(k, true);
             }
         }
         return null;
@@ -103,5 +191,14 @@ public final class KameletCatalogHelper {
         Object def = ObjectHelper.invokeMethod(m, spec);
         m = def.getClass().getMethod("getDescription");
         return (String) ObjectHelper.invokeMethod(m, def);
+    }
+
+    private static Map<String, Object> getProperties(Object kamelet) throws Exception {
+        Method m = kamelet.getClass().getMethod("getSpec");
+        Object spec = ObjectHelper.invokeMethod(m, kamelet);
+        m = spec.getClass().getMethod("getDefinition");
+        Object def = ObjectHelper.invokeMethod(m, spec);
+        m = def.getClass().getMethod("getProperties");
+        return (Map<String, Object>) ObjectHelper.invokeMethod(m, def);
     }
 }
