@@ -61,7 +61,7 @@ public class CatalogKamelet extends CamelCommand {
 
     @Override
     public Integer call() throws Exception {
-        List<Row> rows = new ArrayList<>();
+        List<KameletModel> rows = new ArrayList<>();
 
         Map<String, Object> kamelets;
         try {
@@ -82,11 +82,7 @@ public class CatalogKamelet extends CamelCommand {
         }
 
         for (Object o : kamelets.values()) {
-            Row row = new Row();
-            row.name = getName(o);
-            row.type = getType(o);
-            row.level = getLevel(o);
-            row.description = getDescription(o);
+            KameletModel row = KameletCatalogHelper.createModel(o);
             rows.add(row);
         }
 
@@ -107,14 +103,14 @@ public class CatalogKamelet extends CamelCommand {
             System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                     new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).with(r -> r.name),
                     new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).with(r -> r.type),
-                    new Column().header("LEVEL").dataAlign(HorizontalAlign.LEFT).with(r -> r.level),
+                    new Column().header("LEVEL").dataAlign(HorizontalAlign.LEFT).with(r -> r.supportLevel),
                     new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::getDescription))));
         }
 
         return 0;
     }
 
-    protected int sortRow(Row o1, Row o2) {
+    protected int sortRow(KameletModel o1, KameletModel o2) {
         String s = sort;
         int negate = 1;
         if (s.startsWith("-")) {
@@ -128,7 +124,7 @@ public class CatalogKamelet extends CamelCommand {
                 return o1.type.compareToIgnoreCase(o2.type) * negate;
             case "level":
             case "support-level":
-                return o1.level.compareToIgnoreCase(o2.level) * negate;
+                return o1.supportLevel.compareToIgnoreCase(o2.supportLevel) * negate;
             case "description":
                 return o1.description.compareToIgnoreCase(o2.description) * negate;
             default:
@@ -141,52 +137,7 @@ public class CatalogKamelet extends CamelCommand {
         return new DependencyDownloaderClassLoader(parentCL);
     }
 
-    private String getName(Object kamelet) throws Exception {
-        Method m = kamelet.getClass().getMethod("getMetadata");
-        Object meta = ObjectHelper.invokeMethod(m, kamelet);
-        m = meta.getClass().getMethod("getName");
-        return (String) ObjectHelper.invokeMethod(m, meta);
-    }
-
-    private String getType(Object kamelet) throws Exception {
-        Method m = kamelet.getClass().getMethod("getMetadata");
-        Object meta = ObjectHelper.invokeMethod(m, kamelet);
-        m = meta.getClass().getMethod("getLabels");
-        Map labels = (Map) ObjectHelper.invokeMethod(m, meta);
-        if (labels != null) {
-            return (String) labels.get("camel.apache.org/kamelet.type");
-        }
-        return null;
-    }
-
-    private String getLevel(Object kamelet) throws Exception {
-        Method m = kamelet.getClass().getMethod("getMetadata");
-        Object meta = ObjectHelper.invokeMethod(m, kamelet);
-        m = meta.getClass().getMethod("getAnnotations");
-        Map anns = (Map) ObjectHelper.invokeMethod(m, meta);
-        if (anns != null) {
-            return (String) anns.get("camel.apache.org/kamelet.support.level");
-        }
-        return null;
-    }
-
-    private String getDescription(Object kamelet) throws Exception {
-        Method m = kamelet.getClass().getMethod("getSpec");
-        Object spec = ObjectHelper.invokeMethod(m, kamelet);
-        m = spec.getClass().getMethod("getDefinition");
-        Object def = ObjectHelper.invokeMethod(m, spec);
-        m = def.getClass().getMethod("getDescription");
-        return (String) ObjectHelper.invokeMethod(m, def);
-    }
-
-    private static class Row {
-        private String name;
-        private String type;
-        private String level;
-        private String description;
-    }
-
-    private String getDescription(Row r) {
+    private String getDescription(KameletModel r) {
         String d = r.description;
         if (d != null && d.contains(".")) {
             // grab first sentence
