@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
+import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
@@ -54,11 +55,21 @@ public class Athena2ClientHealthCheck extends AbstractHealthCheck {
                 builder.down();
                 return;
             }
-            AwsBasicCredentials cred = AwsBasicCredentials.create(athena2Endpoint.getConfiguration().getAccessKey(),
-                    athena2Endpoint.getConfiguration().getSecretKey());
-            AthenaClientBuilder clientBuilder = AthenaClient.builder();
-            AthenaClient client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred))
-                    .region(Region.of(athena2Endpoint.getConfiguration().getRegion())).build();
+            AthenaClient client;
+            if(!athena2Endpoint.getConfiguration().isUseDefaultCredentialsProvider()){
+                AwsBasicCredentials cred = AwsBasicCredentials.create(athena2Endpoint.getConfiguration().getAccessKey(),
+                        athena2Endpoint.getConfiguration().getSecretKey());
+                AthenaClientBuilder clientBuilder = AthenaClient.builder();
+                client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred))
+                        .region(Region.of(athena2Endpoint.getConfiguration().getRegion())).build();
+            }
+            else if(ObjectHelper.isNotEmpty(athena2Endpoint.getConfiguration().getAmazonAthenaClient())){
+                client = athena2Endpoint.getConfiguration().getAmazonAthenaClient();
+            }
+            else{
+                AthenaClientBuilder clientBuilder = AthenaClient.builder();
+                client = clientBuilder.region(Region.of(athena2Endpoint.getConfiguration().getRegion())).build();
+            }
             client.listQueryExecutions();
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
