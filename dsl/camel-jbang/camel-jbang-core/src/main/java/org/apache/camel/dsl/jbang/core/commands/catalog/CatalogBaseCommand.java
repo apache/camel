@@ -74,18 +74,11 @@ public abstract class CatalogBaseCommand extends CamelCommand {
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            if (gav) {
-                System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).with(r -> r.name),
-                        new Column().header("ARTIFACT-ID").dataAlign(HorizontalAlign.LEFT).with(this::shortGav),
-                        new Column().header("LEVEL").dataAlign(HorizontalAlign.LEFT).with(r -> r.level),
-                        new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::shortDescription))));
-            } else {
-                System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).with(r -> r.name),
-                        new Column().header("LEVEL").dataAlign(HorizontalAlign.LEFT).with(r -> r.level),
-                        new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::shortDescription))));
-            }
+            System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).with(r -> r.name),
+                    new Column().header("ARTIFACT-ID").visible(gav).dataAlign(HorizontalAlign.LEFT).with(this::shortGav),
+                    new Column().header("LEVEL").dataAlign(HorizontalAlign.LEFT).with(r -> r.level),
+                    new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::shortDescription))));
         }
 
         return 0;
