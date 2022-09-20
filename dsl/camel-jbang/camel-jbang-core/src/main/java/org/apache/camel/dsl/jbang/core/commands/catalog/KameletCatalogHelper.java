@@ -32,6 +32,11 @@ public final class KameletCatalogHelper {
     private KameletCatalogHelper() {
     }
 
+    public static List<String> findKameletNames(String version) throws Exception {
+        Map<String, Object> kamelets = loadKamelets(version);
+        return new ArrayList<>(kamelets.keySet());
+    }
+
     public static KameletModel createModel(Object kamelet, boolean all) throws Exception {
         KameletModel km = new KameletModel();
         km.name = getName(kamelet);

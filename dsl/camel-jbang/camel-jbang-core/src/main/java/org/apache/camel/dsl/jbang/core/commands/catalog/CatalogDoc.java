@@ -31,6 +31,7 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.main.download.MavenGav;
+import org.apache.camel.main.util.SuggestSimilarHelper;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
@@ -111,9 +112,40 @@ public class CatalogDoc extends CamelCommand {
         }
 
         if (prefix == null) {
-            System.out.println("Camel resource: " + name + " not found");
+            // guess if a kamelet
+            List<String> suggestions;
+            boolean kamelet = name.endsWith("-sink") || name.endsWith("-source") || name.endsWith("-action");
+            if (kamelet) {
+                // kamelet names
+                suggestions = SuggestSimilarHelper.didYouMean(KameletCatalogHelper.findKameletNames(kameletsVersion), name);
+            } else {
+                // assume its a component
+                suggestions = SuggestSimilarHelper.didYouMean(catalog.findComponentNames(), name);
+            }
+            if (suggestions != null) {
+                String type = kamelet ? "kamelet" : "component";
+                System.out.printf("Camel %s: %s not found. Did you mean? %s%n", type, name, String.join(", ", suggestions));
+            } else {
+                System.out.println("Camel resource: " + name + " not found");
+            }
         } else {
-            System.out.println("Camel " + prefix + ": " + name + " not found");
+            List<String> suggestions = null;
+            if ("kamelet".equals(prefix)) {
+                suggestions = SuggestSimilarHelper.didYouMean(KameletCatalogHelper.findKameletNames(kameletsVersion), name);
+            } else if ("component".equals(prefix)) {
+                suggestions = SuggestSimilarHelper.didYouMean(catalog.findComponentNames(), name);
+            } else if ("dataformat".equals(prefix)) {
+                suggestions = SuggestSimilarHelper.didYouMean(catalog.findDataFormatNames(), name);
+            } else if ("language".equals(prefix)) {
+                suggestions = SuggestSimilarHelper.didYouMean(catalog.findLanguageNames(), name);
+            } else if ("other".equals(prefix)) {
+                suggestions = SuggestSimilarHelper.didYouMean(catalog.findOtherNames(), name);
+            }
+            if (suggestions != null) {
+                System.out.printf("Camel %s: %s not found. Did you mean? %s%n", prefix, name, String.join(", ", suggestions));
+            } else {
+                System.out.printf("Camel %s: %s not found.%n", prefix, name);
+            }
         }
         return 1;
     }
