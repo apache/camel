@@ -67,6 +67,8 @@ public class PubsubReloadTriggerTask extends ServiceSupport implements CamelCont
     private String secrets;
     private Subscriber subscriber;
     private GoogleSecretManagerPropertiesFunction propertiesFunction;
+    private volatile Instant lastCheckTime;
+    private volatile Instant lastReloadTime;
     private final Map<String, Instant> updates = new HashMap<>();
 
     public PubsubReloadTriggerTask() {
@@ -98,6 +100,20 @@ public class PubsubReloadTriggerTask extends ServiceSupport implements CamelCont
      */
     public Map<String, Instant> getUpdates() {
         return Collections.unmodifiableMap(updates);
+    }
+    
+    /**
+     * Last time this task checked GCP for updated secrets.
+     */
+    public Instant getLastCheckTime() {
+        return lastCheckTime;
+    }
+
+    /**
+     * Last time GCP secrets update triggered reload.
+     */
+    public Instant getLastReloadTime() {
+        return lastReloadTime;
     }
 
     @Override
@@ -169,6 +185,8 @@ public class PubsubReloadTriggerTask extends ServiceSupport implements CamelCont
 
     @Override
     public void run() {
+        lastCheckTime = Instant.now();
+        
         subscriber.startAsync().awaitRunning();
     }
 
@@ -220,6 +238,7 @@ public class PubsubReloadTriggerTask extends ServiceSupport implements CamelCont
                 ContextReloadStrategy reload = camelContext.hasService(ContextReloadStrategy.class);
                 if (reload != null) {
                     // trigger reload
+                	lastReloadTime = Instant.now();
                     reload.onReload(this);
                 }
             }
