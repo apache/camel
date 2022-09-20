@@ -989,7 +989,7 @@ TIP: Use `camel catalog --help` to see all possible commands.
 === Displaying component documentation
 
 The `doc` goal can show quick documentation for every component, dataformat, kamelets etc.
-For example to see the kafka component you run
+For example to see the kafka component you run:
 
 [source,bash]
 ----
@@ -1013,6 +1013,13 @@ components. In such a situation you can prefix the name with dataformat, i.e:
 [source,bash]
 ----
 camel doc dataformat:thrift
+----
+
+You can also see the kamelet documentation such as shown:
+
+[source,bash]
+----
+camel doc aws-kinesis-sink
 ----
 
 ==== Filtering options listed in the tables
