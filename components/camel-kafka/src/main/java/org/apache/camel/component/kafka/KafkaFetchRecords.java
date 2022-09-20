@@ -427,7 +427,7 @@ public class KafkaFetchRecords implements Runnable {
     }
 
     private boolean isKafkaConsumerRunnableAndNotStopped() {
-        return kafkaConsumer."isRunAllowed() && !kafkaConsumer.isStoppingOrStopped();
+        return kafkaConsumer.isRunAllowed() && !kafkaConsumer.isStoppingOrStopped();
     }
 
     private boolean isReconnect() {
