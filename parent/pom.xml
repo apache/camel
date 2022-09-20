@@ -51,7 +51,7 @@
         <abdera-version>1.1.3</abdera-version>
         <!-- Note that activemq dependency is only used for testing! -->
         <activemq-version>5.17.2</activemq-version>
-        <activemq-artemis-version>2.24.0</activemq-artemis-version>
+        <activemq-artemis-version>2.25.0</activemq-artemis-version>
         <ahc-version>2.12.3</ahc-version>
         <apacheds-version>2.0.0.AM26</apacheds-version>
         <apache-any23-version>2.7</apache-any23-version>
