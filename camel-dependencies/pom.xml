@@ -51,7 +51,7 @@
     <arquillian-jetty-embedded-9-version>1.0.0.CR3</arquillian-jetty-embedded-9-version>
     <arquillian-version>1.6.0.Final</arquillian-version>
     <arquillian-weld-embedded-version>2.0.0.Final</arquillian-weld-embedded-version>
-    <ascii-table-version>1.6.0</ascii-table-version>
+    <ascii-table-version>1.7.0</ascii-table-version>
     <asm-version>8.0.1</asm-version>
     <asn1bean-version>1.13.0</asn1bean-version>
     <assertj-version>3.23.1</assertj-version>
@@ -65,7 +65,7 @@
     <avro-ipc-netty-version>1.11.1</avro-ipc-netty-version>
     <avro-version>1.11.1</avro-version>
     <awaitility-version>4.2.0</awaitility-version>
-    <aws-java-sdk2-version>2.17.275</aws-java-sdk2-version>
+    <aws-java-sdk2-version>2.17.276</aws-java-sdk2-version>
     <aws-xray-version>2.6.1</aws-xray-version>
     <axiom-version>1.2.14</axiom-version>
     <azure-sdk-bom-version>1.2.5</azure-sdk-bom-version>
@@ -217,13 +217,13 @@
     <google-api-services-drive-version>v2-rev20220110-1.32.1</google-api-services-drive-version>
     <google-api-services-mail-version>v1-rev20211108-1.32.1</google-api-services-mail-version>
     <google-api-services-sheets-version>v4-rev20210629-1.32.1</google-api-services-sheets-version>
-    <google-auth-library-oauth2-http-version>1.4.0</google-auth-library-oauth2-http-version>
+    <google-auth-library-oauth2-http-version>1.7.0</google-auth-library-oauth2-http-version>
     <google-cloud-bom-version>25.4.0</google-cloud-bom-version>
     <google-cloud-functions-bom-version>1.0.8</google-cloud-functions-bom-version>
     <google-cloud-functions-gax-grpc-version>1.62.0</google-cloud-functions-gax-grpc-version>
     <google-cloud-guava-version>${google-cloud-guava-version-prefix}-jre</google-cloud-guava-version>
     <google-cloud-guava-version-prefix>30.1</google-cloud-guava-version-prefix>
-    <google-cloud-secretmanager-bom-version>2.1.1</google-cloud-secretmanager-bom-version>
+    <google-cloud-secretmanager-bom-version>2.2.0</google-cloud-secretmanager-bom-version>
     <google-guava-version>20.0</google-guava-version>
     <google-maps-services-version>0.10.1</google-maps-services-version>
     <google-oauth-client-version>1.34.0</google-oauth-client-version>
@@ -263,7 +263,7 @@
     <icu4j-version>70.1</icu4j-version>
     <ignite-version>2.12.0</ignite-version>
     <impsort-maven-plugin-version>1.6.0</impsort-maven-plugin-version>
-    <infinispan-version>13.0.10.Final</infinispan-version>
+    <infinispan-version>13.0.11.Final</infinispan-version>
     <influx-guava-version>20.0</influx-guava-version>
     <influx-java-driver-version>2.22</influx-java-driver-version>
     <irclib-version>1.10</irclib-version>
@@ -326,7 +326,7 @@
     <jib-version>0.21.0</jib-version>
     <jira-guava-version>30.1.1-jre</jira-guava-version>
     <jira-rest-client-api-version>5.2.4</jira-rest-client-api-version>
-    <jnats-version>2.15.6</jnats-version>
+    <jnats-version>2.15.7</jnats-version>
     <jodatime2-version>2.11.1</jodatime2-version>
     <johnzon-version>1.2.19</johnzon-version>
     <jolokia-version>1.7.1</jolokia-version>
