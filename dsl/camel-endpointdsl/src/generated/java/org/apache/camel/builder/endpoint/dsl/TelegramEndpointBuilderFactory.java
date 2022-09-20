@@ -895,6 +895,71 @@ public interface TelegramEndpointBuilderFactory {
             doSetProperty("baseUri", baseUri);
             return this;
         }
+        /**
+         * The initial in-memory buffer size used when transferring data between
+         * Camel and AHC Client.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1048576
+         * Group: advanced
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedTelegramEndpointConsumerBuilder bufferSize(
+                int bufferSize) {
+            doSetProperty("bufferSize", bufferSize);
+            return this;
+        }
+        /**
+         * The initial in-memory buffer size used when transferring data between
+         * Camel and AHC Client.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1048576
+         * Group: advanced
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedTelegramEndpointConsumerBuilder bufferSize(
+                String bufferSize) {
+            doSetProperty("bufferSize", bufferSize);
+            return this;
+        }
+        /**
+         * To use a custom HttpClient.
+         * 
+         * The option is a: &lt;code&gt;java.net.http.HttpClient&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param client the value to set
+         * @return the dsl builder
+         */
+        default AdvancedTelegramEndpointConsumerBuilder client(
+                java.net.http.HttpClient client) {
+            doSetProperty("client", client);
+            return this;
+        }
+        /**
+         * To use a custom HttpClient.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.net.http.HttpClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param client the value to set
+         * @return the dsl builder
+         */
+        default AdvancedTelegramEndpointConsumerBuilder client(String client) {
+            doSetProperty("client", client);
+            return this;
+        }
     }
 
     /**
@@ -1092,6 +1157,71 @@ public interface TelegramEndpointBuilderFactory {
             doSetProperty("baseUri", baseUri);
             return this;
         }
+        /**
+         * The initial in-memory buffer size used when transferring data between
+         * Camel and AHC Client.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1048576
+         * Group: advanced
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedTelegramEndpointProducerBuilder bufferSize(
+                int bufferSize) {
+            doSetProperty("bufferSize", bufferSize);
+            return this;
+        }
+        /**
+         * The initial in-memory buffer size used when transferring data between
+         * Camel and AHC Client.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1048576
+         * Group: advanced
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedTelegramEndpointProducerBuilder bufferSize(
+                String bufferSize) {
+            doSetProperty("bufferSize", bufferSize);
+            return this;
+        }
+        /**
+         * To use a custom HttpClient.
+         * 
+         * The option is a: &lt;code&gt;java.net.http.HttpClient&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param client the value to set
+         * @return the dsl builder
+         */
+        default AdvancedTelegramEndpointProducerBuilder client(
+                java.net.http.HttpClient client) {
+            doSetProperty("client", client);
+            return this;
+        }
+        /**
+         * To use a custom HttpClient.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.net.http.HttpClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param client the value to set
+         * @return the dsl builder
+         */
+        default AdvancedTelegramEndpointProducerBuilder client(String client) {
+            doSetProperty("client", client);
+            return this;
+        }
     }
 
     /**
@@ -1221,6 +1351,69 @@ public interface TelegramEndpointBuilderFactory {
          */
         default AdvancedTelegramEndpointBuilder baseUri(String baseUri) {
             doSetProperty("baseUri", baseUri);
+            return this;
+        }
+        /**
+         * The initial in-memory buffer size used when transferring data between
+         * Camel and AHC Client.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1048576
+         * Group: advanced
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedTelegramEndpointBuilder bufferSize(int bufferSize) {
+            doSetProperty("bufferSize", bufferSize);
+            return this;
+        }
+        /**
+         * The initial in-memory buffer size used when transferring data between
+         * Camel and AHC Client.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1048576
+         * Group: advanced
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedTelegramEndpointBuilder bufferSize(String bufferSize) {
+            doSetProperty("bufferSize", bufferSize);
+            return this;
+        }
+        /**
+         * To use a custom HttpClient.
+         * 
+         * The option is a: &lt;code&gt;java.net.http.HttpClient&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param client the value to set
+         * @return the dsl builder
+         */
+        default AdvancedTelegramEndpointBuilder client(
+                java.net.http.HttpClient client) {
+            doSetProperty("client", client);
+            return this;
+        }
+        /**
+         * To use a custom HttpClient.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.net.http.HttpClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param client the value to set
+         * @return the dsl builder
+         */
+        default AdvancedTelegramEndpointBuilder client(String client) {
+            doSetProperty("client", client);
             return this;
         }
     }
