@@ -101,7 +101,8 @@
         <build-helper-maven-plugin-version>3.2.0</build-helper-maven-plugin-version>
         <c3p0-version>0.9.5.5</c3p0-version>
         <caffeine-version>3.1.1</caffeine-version>
-        <californium-version>2.6.6</californium-version>
+        <californium-version>2.7.2</californium-version>
+        <californium-scandium-version>2.7.3</californium-scandium-version>
         <cassandra-driver-version>4.14.1</cassandra-driver-version>
         <cassandra-version>4.0.3</cassandra-version>
         <cdi-api-2.0-version>2.0</cdi-api-2.0-version>
@@ -309,7 +310,7 @@
         <jetty-version>${jetty9-version}</jetty-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
-        <jettison-version>1.4.1</jettison-version>
+        <jettison-version>1.5.0</jettison-version>
         <jgit-version>6.1.0.202203080745-r</jgit-version>
         <jgroups-version>4.2.17.Final</jgroups-version>
         <jgroups-raft-version>0.5.3.Final</jgroups-raft-version>
@@ -337,7 +338,7 @@
         <jsonata4java-version>1.5.8</jsonata4java-version>
         <json-schema-validator-version>2.2.14</json-schema-validator-version>
         <json-unit-version>2.32.0</json-unit-version>
-        <jsoup-version>1.14.3</jsoup-version>
+        <jsoup-version>1.15.3</jsoup-version>
         <jt400-version>11.0</jt400-version>
         <junit-toolbox-version>2.4</junit-toolbox-version>
         <junit-version>4.13.2</junit-version>
@@ -415,7 +416,7 @@
         <netty-version>4.1.79.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.0.69</networknt-json-schema-validator-version>
-        <nimbus-jose-jwt>8.9</nimbus-jose-jwt>
+        <nimbus-jose-jwt>9.22</nimbus-jose-jwt>
         <nitrite-version>3.4.4</nitrite-version>
         <okclient-version>3.14.9</okclient-version>
         <olingo2-version>2.0.11</olingo2-version>
@@ -432,7 +433,7 @@
         <paho-version>1.2.5</paho-version>
         <partial-build-plugin-version>2.7</partial-build-plugin-version>
         <pdfbox-version>2.0.26</pdfbox-version>
-        <pgjdbc-driver-version>42.3.3</pgjdbc-driver-version>
+        <pgjdbc-driver-version>42.4.1</pgjdbc-driver-version>
         <pgjdbc-ng-driver-version>0.8.9</pgjdbc-ng-driver-version>
         <picocli-version>4.6.3</picocli-version>
         <powermock-version>2.0.7</powermock-version>
@@ -468,7 +469,7 @@
         <scala-datasonnet-version>2.13.3</scala-datasonnet-version>
         <servicemix-specs-version>2.9.0</servicemix-specs-version>
         <servlet-version-range>[3,4)</servlet-version-range>
-        <shiro-version>1.9.0</shiro-version>
+        <shiro-version>1.9.1</shiro-version>
         <shrinkwrap-descriptors-version>2.0.0</shrinkwrap-descriptors-version>
         <shrinkwrap-resolver-version>3.1.4</shrinkwrap-resolver-version>
         <shrinkwrap-version>1.2.6</shrinkwrap-version>
@@ -514,7 +515,7 @@
         <stringtemplate-version>4.3.3</stringtemplate-version>
         <templating-maven-plugin-version>1.0.0</templating-maven-plugin-version>
         <testcontainers-version>1.17.3</testcontainers-version>
-        <tika-version>2.4.0</tika-version>
+        <tika-version>2.4.1</tika-version>
         <twilio-version>7.55.3</twilio-version>
         <twitter4j-version>4.0.7</twitter4j-version>
         <undertow-version>2.2.19.Final</undertow-version>

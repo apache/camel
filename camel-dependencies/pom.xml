@@ -84,7 +84,8 @@
     <build-helper-maven-plugin-version>3.2.0</build-helper-maven-plugin-version>
     <c3p0-version>0.9.5.5</c3p0-version>
     <caffeine-version>3.1.1</caffeine-version>
-    <californium-version>2.6.6</californium-version>
+    <californium-scandium-version>2.7.3</californium-scandium-version>
+    <californium-version>2.7.2</californium-version>
     <camel.failsafe.forkTimeout>600</camel.failsafe.forkTimeout>
     <camel.osgi.activator></camel.osgi.activator>
     <camel.osgi.dynamic></camel.osgi.dynamic>
@@ -320,7 +321,7 @@
     <jcr-version>2.0</jcr-version>
     <jedis-client-version>3.7.1</jedis-client-version>
     <jetcd-version>0.5.11</jetcd-version>
-    <jettison-version>1.4.1</jettison-version>
+    <jettison-version>1.5.0</jettison-version>
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
     <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
     <jetty-version>${jetty9-version}</jetty-version>
@@ -352,7 +353,7 @@
     <json-unit-version>2.32.0</json-unit-version>
     <jsonassert-version>1.5.1</jsonassert-version>
     <jsonata4java-version>1.5.8</jsonata4java-version>
-    <jsoup-version>1.14.3</jsoup-version>
+    <jsoup-version>1.15.3</jsoup-version>
     <jt400-version>11.0</jt400-version>
     <jta-api-1.2-version>1.2</jta-api-1.2-version>
     <junit-jupiter-version>5.8.2</junit-jupiter-version>
@@ -428,7 +429,7 @@
     <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
     <netty-version>4.1.79.Final</netty-version>
     <networknt-json-schema-validator-version>1.0.69</networknt-json-schema-validator-version>
-    <nimbus-jose-jwt>8.9</nimbus-jose-jwt>
+    <nimbus-jose-jwt>9.22</nimbus-jose-jwt>
     <nitrite-version>3.4.4</nitrite-version>
     <ognl-version>3.1.12</ognl-version>
     <okclient-version>3.14.9</okclient-version>
@@ -445,7 +446,7 @@
     <paho-version>1.2.5</paho-version>
     <partial-build-plugin-version>2.7</partial-build-plugin-version>
     <pdfbox-version>2.0.26</pdfbox-version>
-    <pgjdbc-driver-version>42.3.3</pgjdbc-driver-version>
+    <pgjdbc-driver-version>42.4.1</pgjdbc-driver-version>
     <pgjdbc-ng-driver-version>0.8.9</pgjdbc-ng-driver-version>
     <picocli-version>4.6.3</picocli-version>
     <powermock-version>2.0.7</powermock-version>
@@ -481,7 +482,7 @@
     <scala-version>2.11.12</scala-version>
     <servicemix-specs-version>2.9.0</servicemix-specs-version>
     <servlet-version-range>[3,4)</servlet-version-range>
-    <shiro-version>1.9.0</shiro-version>
+    <shiro-version>1.9.1</shiro-version>
     <shrinkwrap-descriptors-version>2.0.0</shrinkwrap-descriptors-version>
     <shrinkwrap-resolver-version>3.1.4</shrinkwrap-resolver-version>
     <shrinkwrap-version>1.2.6</shrinkwrap-version>
@@ -526,7 +527,7 @@
     <swagger-openapi3-version>2.1.13</swagger-openapi3-version>
     <templating-maven-plugin-version>1.0.0</templating-maven-plugin-version>
     <testcontainers-version>1.17.3</testcontainers-version>
-    <tika-version>2.4.0</tika-version>
+    <tika-version>2.4.1</tika-version>
     <trimStackTrace>false</trimStackTrace>
     <twilio-version>7.55.3</twilio-version>
     <twitter4j-version>4.0.7</twitter4j-version>
