@@ -61,6 +61,8 @@ public class CatalogDoc extends CamelCommand {
     String kameletsVersion;
 
     // TODO: endpoint uri to document the uri only
+    // TODO: --url to output url to website doc
+    // TODO: --open-url to open the url in a browser
 
     final CamelCatalog catalog = new DefaultCamelCatalog(true);
 
