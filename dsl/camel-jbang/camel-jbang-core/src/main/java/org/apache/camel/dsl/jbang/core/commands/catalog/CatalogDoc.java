@@ -137,10 +137,12 @@ public class CatalogDoc extends CamelCommand {
                 System.out.println("        <groupId>" + gav.getGroupId() + "</groupId>");
                 System.out.println("        <artifactId>" + gav.getArtifactId() + "</artifactId>");
                 String v = gav.getVersion();
-                if (v == null) {
+                if (v == null && "org.apache.camel".equals(gav.getGroupId())) {
                     v = catalog.getCatalogVersion();
                 }
-                System.out.println("        <version>" + v + "</version>");
+                if (v != null) {
+                    System.out.println("        <version>" + v + "</version>");
+                }
                 System.out.println("    </dependency>");
             }
             System.out.println("");
@@ -157,13 +159,16 @@ public class CatalogDoc extends CamelCommand {
             }
             System.out.println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, filtered, Arrays.asList(
                     new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20)
-                            .maxWidth(30, OverflowBehaviour.NEWLINE)
+                            .maxWidth(35, OverflowBehaviour.NEWLINE)
                             .with(r -> r.name),
-                    new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::getDescription),
-                    new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.NEWLINE)
+                    new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
+                            .with(this::getDescription),
+                    new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
                             .with(r -> r.defaultValue),
-                    new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).with(r -> r.type),
-                    new Column().header("EXAMPLE").dataAlign(HorizontalAlign.LEFT).with(r -> r.example))));
+                    new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
+                            .with(r -> r.type),
+                    new Column().header("EXAMPLE").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.NEWLINE)
+                            .with(r -> r.example))));
             System.out.println("");
         }
 
@@ -202,12 +207,14 @@ public class CatalogDoc extends CamelCommand {
         System.out.println("");
         System.out.printf("Path parameters (%s):%n", cm.getEndpointPathOptions().size());
         System.out.println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, cm.getEndpointPathOptions(), Arrays.asList(
-                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20).maxWidth(30, OverflowBehaviour.NEWLINE)
+                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20).maxWidth(35, OverflowBehaviour.NEWLINE)
                         .with(this::getName),
-                new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::getDescription),
-                new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.NEWLINE)
-                        .with(r -> r.getShortDefaultValue(40)),
-                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).with(BaseOptionModel::getShortJavaType))));
+                new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
+                        .with(this::getDescription),
+                new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
+                        .with(r -> r.getShortDefaultValue(25)),
+                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
+                        .with(BaseOptionModel::getShortJavaType))));
         System.out.println("");
         var filtered = filter(filter, cm.getEndpointParameterOptions());
         var total1 = cm.getEndpointParameterOptions().size();
@@ -218,12 +225,14 @@ public class CatalogDoc extends CamelCommand {
             System.out.printf("Query parameters (total: %s match-filter: %s):%n", total1, total2);
         }
         System.out.println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, filtered, Arrays.asList(
-                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20).maxWidth(30, OverflowBehaviour.NEWLINE)
+                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20).maxWidth(35, OverflowBehaviour.NEWLINE)
                         .with(this::getName),
-                new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::getDescription),
-                new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.NEWLINE)
-                        .with(r -> r.getShortDefaultValue(40)),
-                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).with(BaseOptionModel::getShortJavaType))));
+                new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
+                        .with(this::getDescription),
+                new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
+                        .with(r -> r.getShortDefaultValue(25)),
+                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
+                        .with(BaseOptionModel::getShortJavaType))));
         System.out.println("");
 
         if (headers && !cm.getEndpointHeaders().isEmpty()) {
@@ -231,12 +240,14 @@ public class CatalogDoc extends CamelCommand {
                     cm.getName(), cm.getEndpointHeaders().size());
             System.out.println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, cm.getEndpointHeaders(), Arrays.asList(
                     new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20)
-                            .maxWidth(30, OverflowBehaviour.NEWLINE)
+                            .maxWidth(35, OverflowBehaviour.NEWLINE)
                             .with(this::getName),
-                    new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::getDescription),
-                    new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.NEWLINE)
-                            .with(r -> r.getShortDefaultValue(40)),
-                    new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).with(BaseOptionModel::getShortJavaType))));
+                    new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
+                            .with(this::getDescription),
+                    new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
+                            .with(r -> r.getShortDefaultValue(25)),
+                    new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
+                            .with(BaseOptionModel::getShortJavaType))));
             System.out.println("");
         }
     }
@@ -268,12 +279,14 @@ public class CatalogDoc extends CamelCommand {
                     dm.getName(), total1, total2);
         }
         System.out.println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, filtered, Arrays.asList(
-                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20).maxWidth(30, OverflowBehaviour.NEWLINE)
+                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20).maxWidth(35, OverflowBehaviour.NEWLINE)
                         .with(this::getName),
-                new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::getDescription),
-                new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.NEWLINE)
-                        .with(r -> r.getShortDefaultValue(40)),
-                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).with(BaseOptionModel::getShortJavaType))));
+                new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
+                        .with(this::getDescription),
+                new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
+                        .with(r -> r.getShortDefaultValue(25)),
+                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
+                        .with(BaseOptionModel::getShortJavaType))));
         System.out.println("");
     }
 
@@ -304,12 +317,14 @@ public class CatalogDoc extends CamelCommand {
                     lm.getName(), total1, total2);
         }
         System.out.println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, filtered, Arrays.asList(
-                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20).maxWidth(30, OverflowBehaviour.NEWLINE)
+                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20).maxWidth(35, OverflowBehaviour.NEWLINE)
                         .with(this::getName),
-                new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::getDescription),
-                new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.NEWLINE)
-                        .with(r -> r.getShortDefaultValue(40)),
-                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).with(BaseOptionModel::getShortJavaType))));
+                new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
+                        .with(this::getDescription),
+                new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
+                        .with(r -> r.getShortDefaultValue(25)),
+                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
+                        .with(BaseOptionModel::getShortJavaType))));
         System.out.println("");
     }
 
