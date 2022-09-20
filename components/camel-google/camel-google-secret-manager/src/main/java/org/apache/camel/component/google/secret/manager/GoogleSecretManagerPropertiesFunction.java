@@ -82,12 +82,13 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
     private SecretManagerServiceClient client;
     private String projectId;
     private final Set<String> secrets = new HashSet<>();
-
+    boolean useDefaultInstance;
+    
     @Override
     protected void doStart() throws Exception {
         super.doStart();
         String serviceAccountKey = System.getenv(CAMEL_VAULT_GCP_SERVICE_ACCOUNT_KEY);
-        boolean useDefaultInstance = Boolean.parseBoolean(System.getenv(CAMEL_VAULT_GCP_USE_DEFAULT_INSTANCE));
+        useDefaultInstance = Boolean.parseBoolean(System.getenv(CAMEL_VAULT_GCP_USE_DEFAULT_INSTANCE));
         projectId = System.getenv(CAMEL_VAULT_GCP_PROJECT_ID);
         if (ObjectHelper.isEmpty(serviceAccountKey) && ObjectHelper.isEmpty(projectId)) {
             GcpVaultConfiguration gcpVaultConfiguration = getCamelContext().getVaultConfiguration().gcp();
@@ -230,5 +231,12 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
      */
     public Set<String> getSecrets() {
         return secrets;
+    }
+    
+    /**
+     * Whether login is using default instance or service account key file
+     */
+    public boolean isUseDefaultInstance() {
+        return useDefaultInstance;
     }
 }
