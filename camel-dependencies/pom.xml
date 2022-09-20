@@ -178,6 +178,8 @@
     <eddsa-version>0.3.0</eddsa-version>
     <egit-github-core-version>2.1.5</egit-github-core-version>
     <ehcache3-version>3.9.6</ehcache3-version>
+    <elasticsearch-java-client-sniffer-version>8.4.1</elasticsearch-java-client-sniffer-version>
+    <elasticsearch-java-client-version>8.4.1</elasticsearch-java-client-version>
     <elasticsearch-rest-sniffer-version>7.10.2</elasticsearch-rest-sniffer-version>
     <elasticsearch-rest-version>7.10.2</elasticsearch-rest-version>
     <elytron-web>1.10.2.Final</elytron-web>

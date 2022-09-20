@@ -2084,6 +2084,28 @@
     "producerOnly": false,
     "lenientProperties": false
   },
+  "ElasticsearchComponentBuilderFactory": {
+    "kind": "component",
+    "name": "elasticsearch",
+    "title": "Elasticsearch",
+    "description": "Send requests to ElasticSearch via Java Client API.",
+    "deprecated": false,
+    "firstVersion": "3.19.0",
+    "label": "search,monitoring",
+    "javaType": "org.apache.camel.component.es.ElasticsearchComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-elasticsearch",
+    "version": "3.19.0-SNAPSHOT",
+    "scheme": "elasticsearch",
+    "extendsScheme": "",
+    "syntax": "elasticsearch:clusterName",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false
+  },
   "ElasticsearchRestComponentBuilderFactory": {
     "kind": "component",
     "name": "elasticsearch-rest",

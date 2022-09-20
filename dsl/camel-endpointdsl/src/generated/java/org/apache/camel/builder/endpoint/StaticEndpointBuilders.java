@@ -4281,6 +4281,49 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.EhcacheEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Elasticsearch (camel-elasticsearch)
+     * Send requests to ElasticSearch via Java Client API.
+     * 
+     * Category: search,monitoring
+     * Since: 3.19
+     * Maven coordinates: org.apache.camel:camel-elasticsearch
+     * 
+     * Syntax: <code>elasticsearch:clusterName</code>
+     * 
+     * Path parameter: clusterName (required)
+     * Name of the cluster
+     * 
+     * @param path clusterName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.ElasticsearchEndpointBuilderFactory.ElasticsearchEndpointBuilder elasticsearch(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.ElasticsearchEndpointBuilderFactory.endpointBuilder("elasticsearch", path);
+    }
+    /**
+     * Elasticsearch (camel-elasticsearch)
+     * Send requests to ElasticSearch via Java Client API.
+     * 
+     * Category: search,monitoring
+     * Since: 3.19
+     * Maven coordinates: org.apache.camel:camel-elasticsearch
+     * 
+     * Syntax: <code>elasticsearch:clusterName</code>
+     * 
+     * Path parameter: clusterName (required)
+     * Name of the cluster
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path clusterName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.ElasticsearchEndpointBuilderFactory.ElasticsearchEndpointBuilder elasticsearch(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.ElasticsearchEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Elasticsearch Rest (camel-elasticsearch-rest)
      * Send requests to ElasticSearch via REST API
      * 
