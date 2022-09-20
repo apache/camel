@@ -94,3 +94,7 @@ The component was migrated from the Async HTTP Client to the builtin HTTP client
 The xtokenize language has moved from `camel-xml-jaxp` to `camel-stax` JAR because
 a stax parser was needed anyway to use the language.
 
+
+=== camel-karaf
+
+Upgraded from Karaf 4.3.x to Karaf 4.4.x, which requires JDK11+.
