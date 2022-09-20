@@ -83,7 +83,7 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
     private String projectId;
     private final Set<String> secrets = new HashSet<>();
     boolean useDefaultInstance;
-    
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
@@ -232,7 +232,7 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
     public Set<String> getSecrets() {
         return secrets;
     }
-    
+
     /**
      * Whether login is using default instance or service account key file
      */
