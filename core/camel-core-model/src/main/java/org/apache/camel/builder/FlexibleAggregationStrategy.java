@@ -58,7 +58,7 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
     @SuppressWarnings("unchecked")
     private Class<E> castAs = (Class<E>) Object.class;
     private boolean storeNulls;
-    private boolean ignoreInvalidCasts; // = false
+    private boolean ignoreInvalidCasts;
     private FlexibleAggregationStrategyInjector injector = new BodyInjector(castAs);
     private TimeoutAwareMixin timeoutMixin;
     private CompletionAwareMixin completionMixin;
@@ -189,7 +189,7 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
     /**
      * Plugs in logic to execute when a timeout occurs.
      * 
-     * @param  timeoutMixin
+     * @param  timeoutMixin custom logic on timeout
      * @return              This instance.
      */
     public FlexibleAggregationStrategy<E> timeoutAware(TimeoutAwareMixin timeoutMixin) {
@@ -200,7 +200,7 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
     /**
      * Plugs in logic to execute when an aggregation batch completes.
      * 
-     * @param  completionMixin
+     * @param  completionMixin custom logic on completion
      * @return                 This instance.
      */
     public FlexibleAggregationStrategy<E> completionAware(CompletionAwareMixin completionMixin) {
