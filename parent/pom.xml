@@ -52,7 +52,6 @@
         <!-- Note that activemq dependency is only used for testing! -->
         <activemq-version>5.17.2</activemq-version>
         <activemq-artemis-version>2.25.0</activemq-artemis-version>
-        <ahc-version>2.12.3</ahc-version>
         <apacheds-version>2.0.0.AM26</apacheds-version>
         <apache-any23-version>2.7</apache-any23-version>
         <apache-drill-version>1.19.0</apache-drill-version>
@@ -725,16 +724,6 @@
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-activemq</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-ahc-ws</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-ahc</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
