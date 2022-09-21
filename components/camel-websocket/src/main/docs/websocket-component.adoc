@@ -70,8 +70,7 @@ message, we need to send the transformed message to the same endpoint
 
 This example is part of an unit test, which you can find
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-websocket/src/test/java/org/apache/camel/component/websocket/WebsocketRouteExampleTest.java[here].
-As a client we use the xref:ahc-component.adoc[AHC] library which offers support
-for web socket as well.
+As a client we use Java's own HTTP client which offers support for web socket as well.
 
 Here is another example where webapp resources location have been
 defined to allow the Jetty Application Server to not only register the
