@@ -106,7 +106,11 @@ class Init extends CamelCommand {
             is = Init.class.getClassLoader().getResourceAsStream("templates/" + ext + ".tmpl");
         }
         if (is == null) {
-            System.out.println("Error: unsupported file type: " + ext);
+            if (fromKamelet != null) {
+                System.out.println("Error: Existing Kamelet does not exist: " + fromKamelet);
+            } else {
+                System.out.println("Error: Unsupported file type: " + ext);
+            }
             return 1;
         }
         String content = IOHelper.loadText(is);
