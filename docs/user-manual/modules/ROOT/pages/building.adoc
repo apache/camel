@@ -4,14 +4,11 @@ Camel uses http://maven.apache.org/[Maven] as its build and management
 tool. If you don't fancy using Maven you can use your IDE directly or
 Download a distribution or JAR.
 
-== Prequisites
+== Prerequisites
 
-*Required:*
+* Java 11
 
-* Java
-** 1.8 or 11
-
-* https://github.com/takari/maven-wrapper[Maven Wrapper] can be used and bundled.
+* https://github.com/takari/maven-wrapper[Maven Wrapper] can be used and are bundled.
 
 * Otherwise, http://maven.apache.org/download.html[download and install Maven]
 ** Maven 3.8.x or newer is required to build Camel 3 onwards
@@ -20,21 +17,8 @@ Download a distribution or JAR.
 
 == Maven options
 
-To build camel maven has to be configured to use more memory
-
-Unix/Linux/Mac
-
-[source,bash]
-------------------------------------------------------------
-export MAVEN_OPTS="-Xms2048m -Xmx3584m"
-------------------------------------------------------------
-
-Windows
-
-[source,bash]
--------------------------------------------------------
-set MAVEN_OPTS="-Xms2048m -Xmx3584m"
--------------------------------------------------------
+To build Camel maven has to be configured to use more memory, which is done automatically via
+the `.mvn/jvm.config` file.
 
 == A normal build
 
