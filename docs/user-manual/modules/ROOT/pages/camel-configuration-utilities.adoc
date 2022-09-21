@@ -9,7 +9,6 @@ of custom transport layer security (TLS) settings on Camel components.
 
 A number of Camel components support this (such as but not limited to):
 
-* xref:components::ahc-component.adoc[AHC]
 * xref:components::cometd-component.adoc[Cometd]
 * xref:components::http-component.adoc[HTTP]
 * xref:components::irc-component.adoc[IRC]
