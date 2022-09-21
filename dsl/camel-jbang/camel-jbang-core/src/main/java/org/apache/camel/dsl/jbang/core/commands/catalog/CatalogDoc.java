@@ -48,6 +48,11 @@ public class CatalogDoc extends CamelCommand {
                             arity = "1")
     String name;
 
+    @CommandLine.Option(names = { "--url" },
+                        description = "Prints the link to the online documentation on the Camel website",
+                        defaultValue = "false")
+    boolean url;
+
     @CommandLine.Option(names = { "--filter" },
                         description = "Filter option listed in tables by name, description, or group")
     String filter;
@@ -61,7 +66,6 @@ public class CatalogDoc extends CamelCommand {
     String kameletsVersion;
 
     // TODO: endpoint uri to document the uri only
-    // TODO: --url to output url to website doc
     // TODO: --open-url to open the url in a browser
 
     final CamelCatalog catalog = new DefaultCamelCatalog(true);
@@ -153,6 +157,14 @@ public class CatalogDoc extends CamelCommand {
     }
 
     private void docKamelet(KameletModel km) {
+        String link = websiteLink("kamelet", name, kameletsVersion);
+        if (url) {
+            if (link != null) {
+                System.out.println(link);
+            }
+            return;
+        }
+
         System.out.printf("Kamelet Name: %s%n", km.name);
         System.out.printf("Kamelet Type: %s%n", km.type);
         System.out.println("Support Level: " + km.supportLevel);
@@ -206,9 +218,21 @@ public class CatalogDoc extends CamelCommand {
             System.out.println("");
         }
 
+        if (link != null) {
+            System.out.println(link);
+            System.out.println("");
+        }
     }
 
     private void docComponent(ComponentModel cm) {
+        String link = websiteLink("component", name, catalog.getCatalogVersion());
+        if (url) {
+            if (link != null) {
+                System.out.println(link);
+            }
+            return;
+        }
+
         if (cm.isDeprecated()) {
             System.out.printf("Component Name: %s (deprecated)%n", cm.getName());
         } else {
@@ -284,9 +308,22 @@ public class CatalogDoc extends CamelCommand {
                             .with(BaseOptionModel::getShortJavaType))));
             System.out.println("");
         }
+
+        if (link != null) {
+            System.out.println(link);
+            System.out.println("");
+        }
     }
 
     private void docDataFormat(DataFormatModel dm) {
+        String link = websiteLink("dataformat", name, catalog.getCatalogVersion());
+        if (url) {
+            if (link != null) {
+                System.out.println(link);
+            }
+            return;
+        }
+
         if (dm.isDeprecated()) {
             System.out.printf("Dataformat Name: %s (deprecated)%n", dm.getName());
         } else {
@@ -322,9 +359,22 @@ public class CatalogDoc extends CamelCommand {
                 new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
                         .with(BaseOptionModel::getShortJavaType))));
         System.out.println("");
+
+        if (link != null) {
+            System.out.println(link);
+            System.out.println("");
+        }
     }
 
     private void docLanguage(LanguageModel lm) {
+        String link = websiteLink("language", name, catalog.getCatalogVersion());
+        if (url) {
+            if (link != null) {
+                System.out.println(link);
+            }
+            return;
+        }
+
         if (lm.isDeprecated()) {
             System.out.printf("Language Name: %s (deprecated)%n", lm.getName());
         } else {
@@ -360,9 +410,22 @@ public class CatalogDoc extends CamelCommand {
                 new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
                         .with(BaseOptionModel::getShortJavaType))));
         System.out.println("");
+
+        if (link != null) {
+            System.out.println(link);
+            System.out.println("");
+        }
     }
 
     private void docOther(OtherModel om) {
+        String link = websiteLink("other", name, catalog.getCatalogVersion());
+        if (url) {
+            if (link != null) {
+                System.out.println(link);
+            }
+            return;
+        }
+
         if (om.isDeprecated()) {
             System.out.printf("Miscellaneous Name: %s (deprecated)%n", om.getName());
         } else {
@@ -378,6 +441,11 @@ public class CatalogDoc extends CamelCommand {
         System.out.println("        <version>" + om.getVersion() + "</version>");
         System.out.println("    </dependency>");
         System.out.println("");
+
+        if (link != null) {
+            System.out.println(link);
+            System.out.println("");
+        }
     }
 
     String getName(BaseOptionModel o) {
@@ -434,6 +502,28 @@ public class CatalogDoc extends CamelCommand {
         return options.stream().filter(
                 r -> r.name.equalsIgnoreCase(target) || r.description.toLowerCase(Locale.ROOT).contains(target))
                 .collect(Collectors.toList());
+    }
+
+    String websiteLink(String prefix, String name, String version) {
+        String v = "next";
+        if (version != null && !version.endsWith("-SNAPSHOT")) {
+            // 3.18.2 -> 3.18.x
+            int pos = version.lastIndexOf('.');
+            v = version.substring(0, pos) + ".x";
+        }
+        if ("component".equals(prefix)) {
+            return String.format("https://camel.apache.org/components/%s/%s-component.html", v, name);
+        } else if ("dataformat".equals(prefix)) {
+            return String.format("https://camel.apache.org/components/%s/dataformats/%s-dataformat.html", v, name);
+        } else if ("language".equals(prefix)) {
+            return String.format("https://camel.apache.org/components/%s/languages/%s-language.html", v, name);
+        } else if ("other".equals(prefix)) {
+            return String.format("https://camel.apache.org/components/%s/others/%s.html", v, name);
+        } else if ("kamelet".equals(prefix)) {
+            return String.format("https://camel.apache.org/camel-kamelets/%s/%s.html", v, name);
+        }
+
+        return null;
     }
 
 }
