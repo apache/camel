@@ -179,9 +179,11 @@ public abstract class TimeoutCorrelationManagerSupport extends ServiceSupport
         if (scheduledExecutorService == null) {
             scheduledExecutorService = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
                     "NettyTimeoutCorrelationManager");
+            stopScheduledExecutorService = true;
         }
         if (workerPool == null) {
             workerPool = camelContext.getExecutorServiceManager().newDefaultThreadPool(this, "NettyTimeoutWorkerPool");
+            stopWorkerPool = true;
         }
 
         map = new DefaultTimeoutMap<>(scheduledExecutorService, timeoutChecker);
