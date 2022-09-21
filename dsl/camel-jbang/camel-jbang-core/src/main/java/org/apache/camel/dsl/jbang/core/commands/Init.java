@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.util.StringJoiner;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.dsl.jbang.core.commands.catalog.KameletCatalogHelper;
 import org.apache.camel.dsl.jbang.core.common.ResourceDoesNotExist;
 import org.apache.camel.github.GistResourceResolver;
 import org.apache.camel.github.GitHubResourceResolver;
@@ -48,7 +49,15 @@ class Init extends CamelCommand {
             description = "When creating a yaml file should it be created as a Camel K Integration CRD")
     private boolean integration;
 
-    @CommandLine.Option(names = {
+    @Option(names = { "--from-kamelet" },
+            description = "To be used for extending an existing Kamelet")
+    private String fromKamelet;
+
+    @Option(names = {
+            "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "0.9.0")
+    private String kameletsVersion;
+
+    @Option(names = {
             "-dir",
             "--directory" }, description = "Directory where the project will be saved", defaultValue = ".")
     private String directory;
@@ -73,8 +82,18 @@ class Init extends CamelCommand {
             ext = "integration.yaml";
         }
 
+        if (fromKamelet != null && !"kamelet.yaml".equals(ext)) {
+            System.out.println("When extending from an existing Kamelet then file must have extension .kamelet.yaml");
+            return 1;
+        }
+
+        String name = FileUtil.onlyName(file, false);
+        InputStream is = null;
         if ("kamelet.yaml".equals(ext)) {
-            if (file.contains("source")) {
+            if (fromKamelet != null) {
+                // load existing kamelet
+                is = KameletCatalogHelper.loadKameletYamlSchema(fromKamelet, kameletsVersion);
+            } else if (file.contains("source")) {
                 ext = "kamelet-source.yaml";
             } else if (file.contains("sink")) {
                 ext = "kamelet-sink.yaml";
@@ -83,13 +102,14 @@ class Init extends CamelCommand {
             }
         }
 
-        String name = FileUtil.onlyName(file, false);
-        InputStream is = Init.class.getClassLoader().getResourceAsStream("templates/" + ext + ".tmpl");
+        if (is == null) {
+            is = Init.class.getClassLoader().getResourceAsStream("templates/" + ext + ".tmpl");
+        }
         if (is == null) {
             System.out.println("Error: unsupported file type: " + ext);
             return 1;
         }
-        String context = IOHelper.loadText(is);
+        String content = IOHelper.loadText(is);
         IOHelper.close(is);
 
         if (!directory.equals(".")) {
@@ -99,8 +119,28 @@ class Init extends CamelCommand {
             dir.mkdirs();
         }
         File target = new File(directory, file);
-        context = context.replaceFirst("\\{\\{ \\.Name }}", name);
-        IOHelper.writeText(context, new FileOutputStream(target, false));
+        content = content.replaceFirst("\\{\\{ \\.Name }}", name);
+        if (fromKamelet != null) {
+            content = content.replaceFirst("\\s\\sname:\\s" + fromKamelet, "  name: " + name);
+            content = content.replaceFirst("camel.apache.org/provider: \"Apache Software Foundation\"",
+                    "camel.apache.org/provider: \"Custom\"");
+
+            StringBuilder sb = new StringBuilder();
+            String[] lines = content.split("\n");
+            boolean top = true;
+            boolean ann = false;
+            for (String line : lines) {
+                // remove top license header
+                if (top && line.startsWith("#")) {
+                    continue;
+                }
+                top = false;
+                sb.append(line);
+                sb.append("\n");
+            }
+            content = sb.toString();
+        }
+        IOHelper.writeText(content, new FileOutputStream(target, false));
         return 0;
     }
 
