@@ -19,7 +19,7 @@ package org.apache.camel.vault;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Configuration for access to AWS Secret.
+ * Configuration for access to GCP Secret Manager.
  */
 public class GcpVaultConfiguration extends VaultConfiguration {
 
