@@ -34,6 +34,7 @@ import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -87,7 +88,13 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
 
             try {
                 String json = PackageHelper.loadText(file.toFile());
-                JsonObject obj = (JsonObject) Jsoner.deserialize(json);
+                Object jo = Jsoner.deserialize(json);
+                JsonObject obj;
+                if (jo instanceof JsonObject) {
+                    obj = (JsonObject) jo;
+                } else {
+                    continue;
+                }
 
                 Map<String, Object> model;
                 boolean isComponent = (model = obj.getMap("component")) != null;
@@ -149,9 +156,14 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
             } else {
                 getLog().debug("No changes to camel-util/src/main/java/org/apache/camel/util/SensitiveUtils.java file");
             }
-
         } catch (Exception e) {
             throw new MojoExecutionException("Error updating SensitiveUtils.java", e);
+        }
+
+        try {
+            updateSensitiveJsonSchema(baseDir, secrets);
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error updating sensitive-keys.json", e);
         }
     }
 
@@ -227,6 +239,14 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
         }
 
         return false;
+    }
+
+    private void updateSensitiveJsonSchema(File camelDir, Set<String> secrets) throws Exception {
+        File target = new File(camelDir, "src/generated/resources/org/apache/camel/catalog/main/sensitive-keys.json");
+        JsonArray arr = new JsonArray();
+        arr.addAll(secrets);
+        String json = JsonMapper.serialize(arr);
+        PackageHelper.writeText(target, json);
     }
 
 }
