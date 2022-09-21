@@ -104,7 +104,7 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
         Map<RoutesBuilderLoader, List<Resource>> groups = new LinkedHashMap<>();
         for (Resource resource : resources) {
             RoutesBuilderLoader loader = resolveRoutesBuilderLoader(resource);
-            List<Resource> list = groups.getOrDefault(loader, new ArrayList<Resource>());
+            List<Resource> list = groups.getOrDefault(loader, new ArrayList<>());
             list.add(resource);
             groups.put(loader, list);
         }
