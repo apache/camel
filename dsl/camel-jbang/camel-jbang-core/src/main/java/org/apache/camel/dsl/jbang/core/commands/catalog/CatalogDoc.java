@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.catalog;
 
+import java.awt.*;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -53,6 +55,11 @@ public class CatalogDoc extends CamelCommand {
                         defaultValue = "false")
     boolean url;
 
+    @CommandLine.Option(names = { "--open-url" },
+                        description = "Opens the online documentation form the Camel website in the web browser",
+                        defaultValue = "false")
+    boolean openUrl;
+
     @CommandLine.Option(names = { "--filter" },
                         description = "Filter option listed in tables by name, description, or group")
     String filter;
@@ -64,9 +71,6 @@ public class CatalogDoc extends CamelCommand {
     @CommandLine.Option(names = {
             "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "0.9.0")
     String kameletsVersion;
-
-    // TODO: endpoint uri to document the uri only
-    // TODO: --open-url to open the url in a browser
 
     final CamelCatalog catalog = new DefaultCamelCatalog(true);
 
@@ -156,8 +160,14 @@ public class CatalogDoc extends CamelCommand {
         return 1;
     }
 
-    private void docKamelet(KameletModel km) {
+    private void docKamelet(KameletModel km) throws Exception {
         String link = websiteLink("kamelet", name, kameletsVersion);
+        if (openUrl) {
+            if (link != null) {
+                Desktop.getDesktop().browse(new URI(link));
+            }
+            return;
+        }
         if (url) {
             if (link != null) {
                 System.out.println(link);
@@ -224,8 +234,14 @@ public class CatalogDoc extends CamelCommand {
         }
     }
 
-    private void docComponent(ComponentModel cm) {
+    private void docComponent(ComponentModel cm) throws Exception {
         String link = websiteLink("component", name, catalog.getCatalogVersion());
+        if (openUrl) {
+            if (link != null) {
+                Desktop.getDesktop().browse(new URI(link));
+            }
+            return;
+        }
         if (url) {
             if (link != null) {
                 System.out.println(link);
@@ -315,8 +331,14 @@ public class CatalogDoc extends CamelCommand {
         }
     }
 
-    private void docDataFormat(DataFormatModel dm) {
+    private void docDataFormat(DataFormatModel dm) throws Exception {
         String link = websiteLink("dataformat", name, catalog.getCatalogVersion());
+        if (openUrl) {
+            if (link != null) {
+                Desktop.getDesktop().browse(new URI(link));
+            }
+            return;
+        }
         if (url) {
             if (link != null) {
                 System.out.println(link);
@@ -366,8 +388,14 @@ public class CatalogDoc extends CamelCommand {
         }
     }
 
-    private void docLanguage(LanguageModel lm) {
+    private void docLanguage(LanguageModel lm) throws Exception {
         String link = websiteLink("language", name, catalog.getCatalogVersion());
+        if (openUrl) {
+            if (link != null) {
+                Desktop.getDesktop().browse(new URI(link));
+            }
+            return;
+        }
         if (url) {
             if (link != null) {
                 System.out.println(link);
@@ -417,8 +445,14 @@ public class CatalogDoc extends CamelCommand {
         }
     }
 
-    private void docOther(OtherModel om) {
+    private void docOther(OtherModel om) throws Exception {
         String link = websiteLink("other", name, catalog.getCatalogVersion());
+        if (openUrl) {
+            if (link != null) {
+                Desktop.getDesktop().browse(new URI(link));
+            }
+            return;
+        }
         if (url) {
             if (link != null) {
                 System.out.println(link);
