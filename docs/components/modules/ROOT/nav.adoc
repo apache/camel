@@ -7,8 +7,6 @@
 ** xref:arangodb-component.adoc[ArangoDb]
 ** xref:as2-component.adoc[AS2]
 ** xref:asterisk-component.adoc[Asterisk]
-** xref:ahc-component.adoc[Async HTTP Client (AHC)]
-** xref:ahc-ws-component.adoc[Async HTTP Client (AHC) Websocket]
 ** xref:atlasmap-component.adoc[AtlasMap]
 ** xref:atmos-component.adoc[Atmos]
 ** xref:atmosphere-websocket-component.adoc[Atmosphere Websocket]
