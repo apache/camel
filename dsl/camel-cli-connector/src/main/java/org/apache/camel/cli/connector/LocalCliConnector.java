@@ -424,12 +424,21 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private JsonObject collectVaults() {
         JsonObject root = new JsonObject();
         // aws-secrets is optional
-        Optional<DevConsole> dc = camelContext.adapt(ExtendedCamelContext.class)
+        Optional<DevConsole> dcAws = camelContext.adapt(ExtendedCamelContext.class)
                 .getDevConsoleResolver().lookupDevConsole("aws-secrets");
-        if (dc.isPresent()) {
-            JsonObject json = (JsonObject) dc.get().call(DevConsole.MediaType.JSON);
+        if (dcAws.isPresent()) {
+            JsonObject json = (JsonObject) dcAws.get().call(DevConsole.MediaType.JSON);
             if (json != null) {
                 root.put("aws-secrets", json);
+            }
+        }
+        // gcp-secrets is optional
+        Optional<DevConsole> dcGcp = camelContext.adapt(ExtendedCamelContext.class)
+                .getDevConsoleResolver().lookupDevConsole("gcp-secrets");
+        if (dcGcp.isPresent()) {
+            JsonObject json = (JsonObject) dcGcp.get().call(DevConsole.MediaType.JSON);
+            if (json != null) {
+                root.put("gcp-secrets", json);
             }
         }
         return root;
