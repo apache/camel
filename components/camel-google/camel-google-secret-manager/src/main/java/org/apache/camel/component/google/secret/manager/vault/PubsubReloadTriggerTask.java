@@ -228,8 +228,8 @@ public class PubsubReloadTriggerTask extends ServiceSupport implements CamelCont
             String eventType = message.getAttributesMap().get("eventType");
             if (eventType.equalsIgnoreCase(SECRET_UPDATE) || eventType.equalsIgnoreCase(SECRET_VERSION_ADD)) {
                 if (matchSecret(secretId)) {
-                	int secretNameBeginInd = secretId.lastIndexOf("/") + 1;
-                	updates.put(secretId.substring(secretNameBeginInd), Instant.ofEpochSecond(message.getPublishTime().getSeconds(), message.getPublishTime().getNanos()));
+                    int secretNameBeginInd = secretId.lastIndexOf("/") + 1;
+                    updates.put(secretId.substring(secretNameBeginInd), Instant.ofEpochSecond(message.getPublishTime().getSeconds(), message.getPublishTime().getNanos()));
                     if (isReloadEnabled()) {
                         LOG.info("Update for GCP secret: {} detected, triggering CamelContext reload", secretId.toString());
                         triggerReloading = true;
