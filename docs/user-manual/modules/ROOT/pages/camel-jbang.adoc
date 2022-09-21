@@ -1022,6 +1022,25 @@ You can also see the kamelet documentation such as shown:
 camel doc aws-kinesis-sink
 ----
 
+==== Browsing online documentation from the Camel website
+
+You can use the `doc` command to quickly open the url in the web browser for the online documentation.
+For example to browse the kafka component, you use `--open-url`:
+
+[source,bash]
+----
+camel doc kafka --open-url
+----
+
+This also works for data formats, languages, kamelets etc.
+
+[source,bash]
+----
+camel doc aws-kinesis-sink --open-url
+----
+
+TIP: To just get the link to the online documentation, then use `camel doc kafka --url`.
+
 ==== Filtering options listed in the tables
 
 Some components may have many options, and in such cases you may use `--filter` to only list options that match the filter
