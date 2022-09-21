@@ -167,3 +167,13 @@ public interface KnativeTransport extends Service {
         KnativeEnvironment.KnativeServiceDefinition service, Processor processor);
 }
 ----
+
+== Using ProducerTemplate
+When using Knative producer with a ProducerTemplate, it is necessary to specify a value for the CloudEvent source, simply by setting a value for the header 'CamelCloudEventSource'.
+
+=== Example
+
+[source,java]
+----
+producerTemplate.sendBodyAndHeader("knative:event/broker-test", body, CloudEvent.CAMEL_CLOUD_EVENT_SOURCE, "my-source-name");
+----
