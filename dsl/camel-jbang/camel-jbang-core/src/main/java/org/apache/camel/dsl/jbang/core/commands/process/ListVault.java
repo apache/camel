@@ -80,6 +80,23 @@ public class ListVault extends ProcessBaseCommand {
                                     rows.add(row);
                                 }
                             }
+                            JsonObject gcp = (JsonObject) vaults.get("gcp-secrets");
+                            if (gcp != null) {
+                                row.vault = "GCP";
+                                row.lastCheck = gcp.getLongOrDefault("lastCheckTimestamp", 0);
+                                row.lastReload = gcp.getLongOrDefault("lastReloadTimestamp", 0);
+                                JsonArray arr = (JsonArray) gcp.get("secrets");
+                                for (int i = 0; i < arr.size(); i++) {
+                                    if (i > 0) {
+                                        // create a copy for 2+ secrets
+                                        row = row.copy();
+                                    }
+                                    JsonObject jo = (JsonObject) arr.get(i);
+                                    row.secret = jo.getString("name");
+                                    row.timestamp = jo.getLongOrDefault("timestamp", 0);
+                                    rows.add(row);
+                                }
+                            }
                         }
                     }
                 });
