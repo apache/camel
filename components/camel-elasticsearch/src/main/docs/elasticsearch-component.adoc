@@ -6,6 +6,8 @@
 :since: 3.19
 :supportlevel: Preview
 :component-header: Only producer is supported
+//Manually maintained attributes
+:camel-spring-boot-name: elasticsearch
 
 *Since Camel {since}*
 
@@ -275,3 +277,16 @@ List<MultiSearchResponseItem<?>> response = template.requestBody("direct:multiSe
 For all the search operations, it is possible to indicate the type of document to retrieve in order to get the result already unmarshalled with the expected type.
 
 The document type can be set using the header "documentClass" or via the uri parameter of the same name.
+
+== Disable Sniffer when using Spring Boot
+
+When Spring Boot is on the classpath the Sniffer client for Elasticsearch is enabled by default. This option can be disabled in the Spring Boot Configuration:
+
+[source,yaml]
+----
+spring:
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchRestClientAutoConfiguration
+----
+
+include::spring-boot:partial$starter.adoc[]
