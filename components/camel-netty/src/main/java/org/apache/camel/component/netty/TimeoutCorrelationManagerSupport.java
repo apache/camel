@@ -113,12 +113,12 @@ public abstract class TimeoutCorrelationManagerSupport extends ServiceSupport
     }
 
     /**
-     * Implement this method to extract the correaltion id from the request message body.
+     * Implement this method to extract the correlation id from the request message body.
      */
     public abstract String getRequestCorrelationId(Object request);
 
     /**
-     * Implement this method to extract the correaltion id from the response message body.
+     * Implement this method to extract the correlation id from the response message body.
      */
     public abstract String getResponseCorrelationId(Object response);
 
