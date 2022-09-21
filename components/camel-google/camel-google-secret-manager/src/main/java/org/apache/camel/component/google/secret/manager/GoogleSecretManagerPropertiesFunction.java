@@ -78,11 +78,13 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
     private static final String CAMEL_VAULT_GCP_SERVICE_ACCOUNT_KEY = "CAMEL_VAULT_GCP_SERVICE_ACCOUNT_KEY";
     private static final String CAMEL_VAULT_GCP_PROJECT_ID = "CAMEL_VAULT_GCP_PROJECT_ID";
     private static final String CAMEL_VAULT_GCP_USE_DEFAULT_INSTANCE = "CAMEL_VAULT_GCP_USE_DEFAULT_INSTANCE";
+
+    boolean useDefaultInstance;
+
     private CamelContext camelContext;
     private SecretManagerServiceClient client;
     private String projectId;
     private final Set<String> secrets = new HashSet<>();
-    boolean useDefaultInstance;
 
     @Override
     protected void doStart() throws Exception {
