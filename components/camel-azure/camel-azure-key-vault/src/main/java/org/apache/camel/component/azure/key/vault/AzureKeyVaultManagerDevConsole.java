@@ -52,7 +52,7 @@ public class AzureKeyVaultManagerDevConsole extends AbstractDevConsole {
                 propertiesFunction = (KeyVaultPropertiesFunction) pf;
             }
         }
-         AzureVaultConfiguration azure = getCamelContext().getVaultConfiguration().getAzureVaultConfiguration();
+        AzureVaultConfiguration azure = getCamelContext().getVaultConfiguration().getAzureVaultConfiguration();
         if (azure != null && azure.isRefreshEnabled()) {
             PeriodTaskScheduler scheduler = getCamelContext().adapt(ExtendedCamelContext.class).getPeriodTaskScheduler();
             secretsRefreshTask = scheduler.getTaskByType(EventhubsReloadTriggerTask.class);
