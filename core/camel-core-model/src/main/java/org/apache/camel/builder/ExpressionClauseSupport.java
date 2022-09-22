@@ -691,7 +691,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     }
 
     /**
-     *  Evaluates a Python expression.
+     * Evaluates a Python expression.
      *
      * @param  text the expression to be evaluated
      * @return      the builder to continue processing the DSL
