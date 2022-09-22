@@ -17,7 +17,6 @@
 package org.apache.camel.component.kafka.producer.support;
 
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -25,7 +24,6 @@ import org.apache.camel.component.kafka.KafkaConfiguration;
 import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.header.Header;
 
 import static org.apache.camel.component.kafka.producer.support.ProducerUtil.tryConvertToSerializedType;
 
@@ -34,15 +32,15 @@ public class KeyValueHolderIterator implements Iterator<KeyValueHolder<Object, P
     private final Exchange exchange;
     private final KafkaConfiguration kafkaConfiguration;
     private final String msgTopic;
-    private final List<Header> propagatedHeaders;
+    private final PropagatedHeadersProvider propagatedHeadersProvider;
 
     public KeyValueHolderIterator(Iterator<Object> msgList, Exchange exchange, KafkaConfiguration kafkaConfiguration,
-                                  String msgTopic, List<Header> propagatedHeaders) {
+                                  String msgTopic, PropagatedHeadersProvider propagatedHeadersProvider) {
         this.msgList = msgList;
         this.exchange = exchange;
         this.kafkaConfiguration = kafkaConfiguration;
         this.msgTopic = msgTopic;
-        this.propagatedHeaders = propagatedHeaders;
+        this.propagatedHeadersProvider = propagatedHeadersProvider;
     }
 
     @Override
@@ -73,13 +71,14 @@ public class KeyValueHolderIterator implements Iterator<KeyValueHolder<Object, P
             return new KeyValueHolder<>(
                     body,
                     new ProducerRecord<>(
-                            innerTopic, innerPartitionKey, innerTimestamp, innerKey, value, propagatedHeaders));
+                            innerTopic, innerPartitionKey, innerTimestamp, innerKey, value,
+                            propagatedHeadersProvider.getHeaders(ex, innerMessage)));
         }
 
         return new KeyValueHolder<>(
                 body,
                 new ProducerRecord<>(
-                        msgTopic, null, null, null, body, propagatedHeaders));
+                        msgTopic, null, null, null, body, propagatedHeadersProvider.getDefaultHeaders()));
     }
 
     private Message getInnerMessage(Object body) {
