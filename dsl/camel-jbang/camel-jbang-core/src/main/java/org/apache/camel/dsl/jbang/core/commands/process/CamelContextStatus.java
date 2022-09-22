@@ -66,7 +66,7 @@ public class CamelContextStatus extends ProcessBaseCommand {
                         }
                         row.pid = "" + ph.pid();
                         row.uptime = extractSince(ph);
-                        row.ago = TimeUtils.printSince(row.uptime);
+                        row.age = TimeUtils.printSince(row.uptime);
                         JsonObject runtime = (JsonObject) root.get("runtime");
                         row.platform = extractPlatform(ph, runtime);
                         row.platformVersion = runtime != null ? runtime.getString("platformVersion") : null;
@@ -131,7 +131,7 @@ public class CamelContextStatus extends ProcessBaseCommand {
                             .with(r -> extractState(r.state)),
                     new Column().header("RELOAD").headerAlign(HorizontalAlign.CENTER)
                             .with(r -> r.reloaded),
-                    new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
+                    new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
                     new Column().header("ROUTE").with(this::getRoutes),
                     new Column().header("MSG/S").with(this::getThroughput),
                     new Column().header("TOTAL").with(r -> r.total),
@@ -162,7 +162,7 @@ public class CamelContextStatus extends ProcessBaseCommand {
             s = s.substring(1);
             negate = -1;
         }
-        switch (sort) {
+        switch (s) {
             case "pid":
                 return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid)) * negate;
             case "name":
@@ -212,7 +212,7 @@ public class CamelContextStatus extends ProcessBaseCommand {
         int routeTotal;
         int state;
         String reloaded;
-        String ago;
+        String age;
         long uptime;
         String throughput;
         String total;

@@ -37,6 +37,7 @@ import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogLanguage;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogOther;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelContextStatus;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelContextTop;
+import org.apache.camel.dsl.jbang.core.commands.process.CamelEndpointStatus;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelProcessorStatus;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelProcessorTop;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelRouteStatus;
@@ -66,6 +67,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("context", new CommandLine(new CamelContextStatus(main)))
                         .addSubcommand("route", new CommandLine(new CamelRouteStatus(main)))
                         .addSubcommand("processor", new CommandLine(new CamelProcessorStatus(main)))
+                        .addSubcommand("endpoint", new CommandLine(new CamelEndpointStatus(main)))
                         .addSubcommand("vault", new CommandLine(new ListVault(main))))
                 .addSubcommand("top", new CommandLine(new CamelTop(main))
                         .addSubcommand("context", new CommandLine(new CamelContextTop(main)))
