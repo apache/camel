@@ -1,0 +1,1 @@
+../../../../../components/camel-python/src/main/docs/python-language.adoc

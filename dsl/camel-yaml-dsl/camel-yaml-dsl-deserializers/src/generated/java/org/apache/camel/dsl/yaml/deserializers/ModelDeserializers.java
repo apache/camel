@@ -184,6 +184,7 @@ import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.model.language.MvelExpression;
 import org.apache.camel.model.language.OgnlExpression;
+import org.apache.camel.model.language.PythonExpression;
 import org.apache.camel.model.language.RefExpression;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.language.SpELExpression;
@@ -10751,6 +10752,68 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 default: {
                     return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = "python",
+            inline = true,
+            types = org.apache.camel.model.language.PythonExpression.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            properties = {
+                    @YamlProperty(name = "expression", type = "string", required = true),
+                    @YamlProperty(name = "id", type = "string"),
+                    @YamlProperty(name = "trim", type = "boolean")
+            }
+    )
+    public static class PythonExpressionDeserializer extends YamlDeserializerBase<PythonExpression> {
+        public PythonExpressionDeserializer() {
+            super(PythonExpression.class);
+        }
+
+        @Override
+        protected PythonExpression newInstance() {
+            return new PythonExpression();
+        }
+
+        @Override
+        protected PythonExpression newInstance(String value) {
+            return new PythonExpression(value);
+        }
+
+        @Override
+        protected boolean setProperty(PythonExpression target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "expression": {
+                    String val = asText(node);
+                    target.setExpression(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "trim": {
+                    String val = asText(node);
+                    target.setTrim(val);
+                    break;
+                }
+                default: {
+                    ExpressionDefinition ed = target.getExpressionType();
+                    if (ed != null) {
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
+                    }
+                    ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
+                    if (ed != null) {
+                        target.setExpressionType(ed);
+                    } else {
+                        return false;
+                    }
                 }
             }
             return true;

@@ -14,6 +14,7 @@ LanguageExpression
 MethodCallExpression
 MvelExpression
 OgnlExpression
+PythonExpression
 RefExpression
 SimpleExpression
 SpELExpression

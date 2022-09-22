@@ -1339,6 +1339,16 @@ Rest PUT command
     </xs:annotation>
   </xs:element>
     
+  <xs:element name="python" type="tns:pythonExpression">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        <![CDATA[
+Evaluates a Python expression.
+      ]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+    
   <xs:element name="random" type="tns:randomLoadBalancerDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -4480,6 +4490,8 @@ CamelContext or the route using it. Default value: false
             
       <xs:element ref="tns:ognl"/>
             
+      <xs:element ref="tns:python"/>
+            
       <xs:element ref="tns:ref"/>
             
       <xs:element ref="tns:simple"/>
@@ -4943,6 +4955,8 @@ should be intercepted by this exception type or not.
             <xs:element ref="tns:mvel"/>
                         
             <xs:element ref="tns:ognl"/>
+                        
+            <xs:element ref="tns:python"/>
                         
             <xs:element ref="tns:ref"/>
                         
@@ -6082,6 +6096,8 @@ To use a specific charset when converting.
                     
           <xs:element ref="tns:ognl"/>
                     
+          <xs:element ref="tns:python"/>
+                    
           <xs:element ref="tns:ref"/>
                     
           <xs:element ref="tns:simple"/>
@@ -6173,6 +6189,8 @@ To use a custom Thread Pool if asyncDelay has been enabled.
           <xs:element ref="tns:mvel"/>
                     
           <xs:element ref="tns:ognl"/>
+                    
+          <xs:element ref="tns:python"/>
                     
           <xs:element ref="tns:ref"/>
                     
@@ -6277,6 +6295,8 @@ producers.
           <xs:element ref="tns:mvel"/>
                     
           <xs:element ref="tns:ognl"/>
+                    
+          <xs:element ref="tns:python"/>
                     
           <xs:element ref="tns:ref"/>
                     
@@ -7078,6 +7098,8 @@ default WARN. Default value: WARN
                         
             <xs:element ref="tns:ognl"/>
                         
+            <xs:element ref="tns:python"/>
+                        
             <xs:element ref="tns:ref"/>
                         
             <xs:element ref="tns:simple"/>
@@ -7504,6 +7526,8 @@ Global option value.
             <xs:element ref="tns:mvel"/>
                         
             <xs:element ref="tns:ognl"/>
+                        
+            <xs:element ref="tns:python"/>
                         
             <xs:element ref="tns:ref"/>
                         
@@ -8850,6 +8874,8 @@ To refer to a custom logger instance to lookup from the registry.
             <xs:element ref="tns:mvel"/>
                         
             <xs:element ref="tns:ognl"/>
+                        
+            <xs:element ref="tns:python"/>
                         
             <xs:element ref="tns:ref"/>
                         
@@ -14602,6 +14628,8 @@ Sets a reference to use for lookup the policy in the registry.
                     
           <xs:element ref="tns:ognl"/>
                     
+          <xs:element ref="tns:python"/>
+                    
           <xs:element ref="tns:ref"/>
                     
           <xs:element ref="tns:simple"/>
@@ -14798,6 +14826,8 @@ by their type in the registry by prefixing with #type: syntax, eg
             
       <xs:element ref="tns:ognl"/>
             
+      <xs:element ref="tns:python"/>
+            
       <xs:element ref="tns:ref"/>
             
       <xs:element ref="tns:simple"/>
@@ -14863,6 +14893,8 @@ Property key.
           <xs:element ref="tns:mvel"/>
                     
           <xs:element ref="tns:ognl"/>
+                    
+          <xs:element ref="tns:python"/>
                     
           <xs:element ref="tns:ref"/>
                     
@@ -15251,6 +15283,8 @@ Name of property to remove.
             <xs:element ref="tns:mvel"/>
                         
             <xs:element ref="tns:ognl"/>
+                        
+            <xs:element ref="tns:python"/>
                         
             <xs:element ref="tns:ref"/>
                         
@@ -16237,6 +16271,8 @@ Description of the parameter.
                     
           <xs:element ref="tns:ognl"/>
                     
+          <xs:element ref="tns:python"/>
+                    
           <xs:element ref="tns:ref"/>
                     
           <xs:element ref="tns:simple"/>
@@ -16633,6 +16669,8 @@ after this many received.
                     
           <xs:element ref="tns:ognl"/>
                     
+          <xs:element ref="tns:python"/>
+                    
           <xs:element ref="tns:ref"/>
                     
           <xs:element ref="tns:simple"/>
@@ -16692,6 +16730,8 @@ after this many received.
           <xs:element ref="tns:mvel"/>
                     
           <xs:element ref="tns:ognl"/>
+                    
+          <xs:element ref="tns:python"/>
                     
           <xs:element ref="tns:ref"/>
                     
@@ -16778,6 +16818,8 @@ forward.
                     
           <xs:element ref="tns:ognl"/>
                     
+          <xs:element ref="tns:python"/>
+                    
           <xs:element ref="tns:ref"/>
                     
           <xs:element ref="tns:simple"/>
@@ -16849,6 +16891,8 @@ will be used.
           <xs:element ref="tns:mvel"/>
                     
           <xs:element ref="tns:ognl"/>
+                    
+          <xs:element ref="tns:python"/>
                     
           <xs:element ref="tns:ref"/>
                     
@@ -16922,6 +16966,8 @@ constant name will be used.
                     
           <xs:element ref="tns:ognl"/>
                     
+          <xs:element ref="tns:python"/>
+                    
           <xs:element ref="tns:ref"/>
                     
           <xs:element ref="tns:simple"/>
@@ -16993,6 +17039,8 @@ Sets the comparator to use for sorting.
             <xs:element ref="tns:mvel"/>
                         
             <xs:element ref="tns:ognl"/>
+                        
+            <xs:element ref="tns:python"/>
                         
             <xs:element ref="tns:ref"/>
                         
@@ -17853,6 +17901,8 @@ rejection handler. Is by default true. Default value: true
                         
             <xs:element ref="tns:ognl"/>
                         
+            <xs:element ref="tns:python"/>
+                        
             <xs:element ref="tns:ref"/>
                         
             <xs:element ref="tns:simple"/>
@@ -18303,6 +18353,8 @@ Sets a reference to use for lookup the policy in the registry.
                     
           <xs:element ref="tns:ognl"/>
                     
+          <xs:element ref="tns:python"/>
+                    
           <xs:element ref="tns:ref"/>
                     
           <xs:element ref="tns:simple"/>
@@ -18625,6 +18677,8 @@ value: false
           <xs:element ref="tns:mvel"/>
                     
           <xs:element ref="tns:ognl"/>
+                    
+          <xs:element ref="tns:python"/>
                     
           <xs:element ref="tns:ref"/>
                     
@@ -19651,6 +19705,8 @@ Set the base path to store in ZK.
                         
             <xs:element ref="tns:ognl"/>
                         
+            <xs:element ref="tns:python"/>
+                        
             <xs:element ref="tns:ref"/>
                         
             <xs:element ref="tns:simple"/>
@@ -20394,6 +20450,16 @@ implementation. Default value: Singleton
   </xs:complexType>
     
   <xs:complexType name="ognlExpression">
+        
+    <xs:simpleContent>
+            
+      <xs:extension base="tns:expression"/>
+          
+    </xs:simpleContent>
+      
+  </xs:complexType>
+    
+  <xs:complexType name="pythonExpression">
         
     <xs:simpleContent>
             
@@ -22448,6 +22514,8 @@ To configure a special tag for the operations within this rest definition.
           <xs:element ref="tns:mvel"/>
                     
           <xs:element ref="tns:ognl"/>
+                    
+          <xs:element ref="tns:python"/>
                     
           <xs:element ref="tns:ref"/>
                     

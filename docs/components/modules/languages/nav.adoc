@@ -16,6 +16,7 @@
 ** xref:jsonpath-language.adoc[JSONPath]
 ** xref:mvel-language.adoc[MVEL]
 ** xref:ognl-language.adoc[OGNL]
+** xref:python-language.adoc[Python]
 ** xref:ref-language.adoc[Ref]
 ** xref:simple-language.adoc[Simple]
 ** xref:spel-language.adoc[SpEL]

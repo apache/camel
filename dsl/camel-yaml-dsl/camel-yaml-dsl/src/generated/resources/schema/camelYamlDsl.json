@@ -795,6 +795,9 @@
           "ognl" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.OgnlExpression"
           },
+          "python" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.PythonExpression"
+          },
           "ref" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.RefExpression"
           },
@@ -5962,6 +5965,9 @@
           "ognl" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.OgnlExpression"
           },
+          "python" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.PythonExpression"
+          },
           "ref" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.RefExpression"
           },
@@ -6202,6 +6208,25 @@
         "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.OgnlExpression" : {
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "expression" : {
+              "type" : "string"
+            },
+            "id" : {
+              "type" : "string"
+            },
+            "trim" : {
+              "type" : "boolean"
+            }
+          }
+        } ],
+        "required" : [ "expression" ]
+      },
+      "org.apache.camel.model.language.PythonExpression" : {
         "oneOf" : [ {
           "type" : "string"
         }, {
