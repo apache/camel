@@ -26,8 +26,6 @@ import org.apache.kafka.common.header.Header;
 
 /**
  * Used to provide individual kafka header values if feature "batchWithIndividualHeaders" is enabled.
- *
- * @author r.wiedmann@bitproquo.org
  */
 public class PropagatedHeadersProvider {
 
