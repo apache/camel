@@ -102,8 +102,8 @@ public class CatalogKamelet extends CamelCommand {
         if (!rows.isEmpty()) {
             System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                     new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).with(r -> r.name),
-                    new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).with(r -> r.type),
-                    new Column().header("LEVEL").dataAlign(HorizontalAlign.LEFT).with(r -> r.supportLevel),
+                    new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).minWidth(10).with(r -> r.type),
+                    new Column().header("LEVEL").dataAlign(HorizontalAlign.LEFT).minWidth(12).with(r -> r.supportLevel),
                     new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::getDescription))));
         }
 
