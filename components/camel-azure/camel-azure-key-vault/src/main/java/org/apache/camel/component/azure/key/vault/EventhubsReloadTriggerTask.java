@@ -131,7 +131,7 @@ public class EventhubsReloadTriggerTask extends ServiceSupport implements CamelC
 		// specific secrets
 		secrets = camelContext.getVaultConfiguration().azure().getSecrets();
 		if (ObjectHelper.isEmpty(secrets) && propertiesFunction == null) {
-			throw new IllegalArgumentException("Secrets must be configured on Azure vault configuration");
+			throw new IllegalArgumentException("Secrets must be configured on Azure Key vault configuration");
 		}
 
 		String eventhubConnectionString = null;
