@@ -90,7 +90,7 @@ public class EventhubsReloadTriggerTask extends ServiceSupport implements CamelC
 	}
 
 	/**
-	 * Whether Camel should be reloaded on Azure secret updated
+	 * Whether Camel should be reloaded on Azure Key Vault secret updated
 	 */
 	public void setReloadEnabled(boolean reloadEnabled) {
 		this.reloadEnabled = reloadEnabled;
