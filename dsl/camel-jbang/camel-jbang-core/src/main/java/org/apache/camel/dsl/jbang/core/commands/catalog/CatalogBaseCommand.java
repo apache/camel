@@ -39,7 +39,7 @@ public abstract class CatalogBaseCommand extends CamelCommand {
     String sort;
 
     @CommandLine.Option(names = { "--gav" },
-                        description = "Include column with Maven GAV", defaultValue = "false")
+                        description = "Display Maven GAV instead of name", defaultValue = "false")
     boolean gav;
 
     @CommandLine.Option(names = { "--filter" },
@@ -75,9 +75,9 @@ public abstract class CatalogBaseCommand extends CamelCommand {
 
         if (!rows.isEmpty()) {
             System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).with(r -> r.name),
+                    new Column().header("NAME").visible(!gav).dataAlign(HorizontalAlign.LEFT).with(r -> r.name),
                     new Column().header("ARTIFACT-ID").visible(gav).dataAlign(HorizontalAlign.LEFT).with(this::shortGav),
-                    new Column().header("LEVEL").dataAlign(HorizontalAlign.LEFT).with(r -> r.level),
+                    new Column().header("LEVEL").dataAlign(HorizontalAlign.LEFT).minWidth(12).with(r -> r.level),
                     new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::shortDescription))));
         }
 
