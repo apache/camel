@@ -104,14 +104,14 @@ public class EventhubsReloadTriggerTask extends ServiceSupport implements CamelC
 	}
 
 	/**
-	 * Last time this task checked GCP for updated secrets.
+	 * Last time this task checked Azure Key Vault for updated secrets.
 	 */
 	public Instant getLastCheckTime() {
 		return lastCheckTime;
 	}
 
 	/**
-	 * Last time GCP secrets update triggered reload.
+	 * Last time Azure Key Vault secrets update triggered reload.
 	 */
 	public Instant getLastReloadTime() {
 		return lastReloadTime;
