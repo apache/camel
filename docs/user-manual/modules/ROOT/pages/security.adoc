@@ -503,3 +503,88 @@ This approach will return the route secret value with version '2' or default val
 This approach will return the username field of the database secret with version '2' or admin in case the secret doesn't exist or the version doesn't exist.
 
 The only requirement is adding the camel-hashicorp-vault jar to your Camel application.
+
+==== Automatic Camel context reloading on Secret Refresh while using AWS Secrets Manager
+
+Being able to reload Camel context on a Secret Refresh, could be done by specifying the usual credentials (the same used for AWS Secret Manager Property Function).
+
+With Environment variables:
+
+[source,bash]
+----
+export $CAMEL_VAULT_AWS_USE_DEFAULT_CREDENTIALS_PROVIDER=accessKey
+export $CAMEL_VAULT_AWS_REGION=region
+----
+
+or as plain Camel main properties:
+
+[source,properties]
+----
+camel.vault.aws.useDefaultCredentialProvider = true
+camel.vault.aws.region = region
+----
+
+Or by specifying accessKey/SecretKey and region, instead of using the default credentials provider chain.
+
+To enable the automatic refresh you'll need additional properties to set:
+
+[source,properties]
+----
+camel.vault.aws.refreshEnabled=true
+camel.vault.aws.refreshPeriod=60000
+camel.vault.aws.secrets=Secret
+camel.main.context-reload-enabled = true
+----
+
+where `camel.vault.aws.refreshEnabled` will enable the automatic context reload, `camel.vault.aws.refreshPeriod` is the interval of time between two different checks for update events and `camel.vault.aws.secrets` is a regex representing the secrets we want to track for updates.
+
+Note that `camel.vault.aws.secrets` is not mandatory: if not specified the task responsible for checking updates events will take into accounts or the properties with an `aws:` prefix.
+
+The only requirement is adding the camel-aws-secrets-manager jar to your Camel application.
+
+==== Automatic Camel context reloading on Secret Refresh while using Google Secret Manager
+
+Being able to reload Camel context on a Secret Refresh, could be done by specifying the usual credentials (the same used for Google Secret Manager Property Function).
+
+With Environment variables:
+
+[source,bash]
+----
+export $CAMEL_VAULT_GCP_USE_DEFAULT_INSTANCE=true
+export $CAMEL_VAULT_GCP_PROJECT_ID=projectId
+----
+
+or as plain Camel main properties:
+
+[source,properties]
+----
+camel.vault.gcp.useDefaultInstance = true
+camel.vault.aws.projectId = projectId
+----
+
+Or by specifying a path to a service account key file, instead of using the default instance.
+
+To enable the automatic refresh you'll need additional properties to set:
+
+[source,properties]
+----
+camel.vault.gcp.projectId= projectId
+camel.vault.gcp.refreshEnabled=true
+camel.vault.gcp.refreshPeriod=60000
+camel.vault.gcp.secrets=hello*
+camel.vault.gcp.subscriptionName=subscriptionName
+camel.main.context-reload-enabled = true
+----
+
+where `camel.vault.gcp.refreshEnabled` will enable the automatic context reload, `camel.vault.gcp.refreshPeriod` is the interval of time between two different checks for update events and `camel.vault.gcp.secrets` is a regex representing the secrets we want to track for updates.
+
+Note that `camel.vault.gcp.secrets` is not mandatory: if not specified the task responsible for checking updates events will take into accounts or the properties with an `gcp:` prefix.
+
+The `camel.vault.gcp.subscriptionName` is the subscription name created in relation to the Google PubSub topic associated with the tracked secrets.
+
+This mechanism while make use of the notification system related to Google Secret Manager: through this feature, every secret could be associated to one up to ten Google Pubsub Topics. These topics will receive 
+events related to life cycle of the secret.
+
+There are only two requirements: 
+- Adding `camel-google-secret-manager` JAR to your Camel application.
+- Give the service account used permissions to do operation at secret management level (for example accessing the secret payload, or being admin of secret manager service and also have permission over the Pubsub service)
