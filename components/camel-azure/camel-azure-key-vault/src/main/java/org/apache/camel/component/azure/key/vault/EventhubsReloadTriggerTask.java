@@ -52,187 +52,205 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Period task which checks if Azure Key Vaults secrets has been updated and can trigger Camel to be reloaded.
+ * Period task which checks if Azure Key Vaults secrets has been updated and can
+ * trigger Camel to be reloaded.
  */
 @PeriodicTask("azure-secret-refresh")
 public class EventhubsReloadTriggerTask extends ServiceSupport implements CamelContextAware, Runnable {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EventhubsReloadTriggerTask.class);
+	private static final Logger LOG = LoggerFactory.getLogger(EventhubsReloadTriggerTask.class);
 
-    private static final String BLOB_SERVICE_URI_SEGMENT = ".blob.core.windows.net";
-    private static final String SECRET_VERSION_ADD = "Microsoft.KeyVault.SecretNewVersionCreated";
+	private static final String BLOB_SERVICE_URI_SEGMENT = ".blob.core.windows.net";
+	private static final String SECRET_VERSION_ADD = "Microsoft.KeyVault.SecretNewVersionCreated";
 
-    private CamelContext camelContext;
-    private boolean reloadEnabled = true;
-    private String secrets;
-    private EventProcessorClient eventProcessorClient;
-    private KeyVaultPropertiesFunction propertiesFunction;
-    private final Map<String, Instant> updates = new HashMap<>();
+	private CamelContext camelContext;
+	private boolean reloadEnabled = true;
+	private String secrets;
+	private EventProcessorClient eventProcessorClient;
+	private KeyVaultPropertiesFunction propertiesFunction;
+	private volatile Instant lastCheckTime;
+	private volatile Instant lastReloadTime;
+	private final Map<String, Instant> updates = new HashMap<>();
 
-    public EventhubsReloadTriggerTask() {
-    }
+	public EventhubsReloadTriggerTask() {
+	}
 
-    @Override
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
+	@Override
+	public CamelContext getCamelContext() {
+		return camelContext;
+	}
 
-    @Override
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
-    }
+	@Override
+	public void setCamelContext(CamelContext camelContext) {
+		this.camelContext = camelContext;
+	}
 
-    public boolean isReloadEnabled() {
-        return reloadEnabled;
-    }
+	public boolean isReloadEnabled() {
+		return reloadEnabled;
+	}
 
-    /**
-     * Whether Camel should be reloaded on Azure secret updated
-     */
-    public void setReloadEnabled(boolean reloadEnabled) {
-        this.reloadEnabled = reloadEnabled;
-    }
+	/**
+	 * Whether Camel should be reloaded on Azure secret updated
+	 */
+	public void setReloadEnabled(boolean reloadEnabled) {
+		this.reloadEnabled = reloadEnabled;
+	}
 
-    /**
-     * A map of the updated secrets with the latest updated time.
-     */
-    public Map<String, Instant> getUpdates() {
-        return Collections.unmodifiableMap(updates);
-    }
+	/**
+	 * A map of the updated secrets with the latest updated time.
+	 */
+	public Map<String, Instant> getUpdates() {
+		return Collections.unmodifiableMap(updates);
+	}
 
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+	/**
+	 * Last time this task checked GCP for updated secrets.
+	 */
+	public Instant getLastCheckTime() {
+		return lastCheckTime;
+	}
 
-        // auto-detect secrets in-use
-        PropertiesComponent pc = camelContext.getPropertiesComponent();
-        PropertiesFunction pf = pc.getPropertiesFunction("azure");
-        if (pf instanceof KeyVaultPropertiesFunction) {
-            propertiesFunction = (KeyVaultPropertiesFunction) pf;
-            LOG.debug("Auto-detecting secrets from properties-function: {}", pf.getName());
-        }
-        // specific secrets
-        secrets = camelContext.getVaultConfiguration().azure().getSecrets();
-        if (ObjectHelper.isEmpty(secrets) && propertiesFunction == null) {
-            throw new IllegalArgumentException("Secrets must be configured on Azure vault configuration");
-        }
+	/**
+	 * Last time GCP secrets update triggered reload.
+	 */
+	public Instant getLastReloadTime() {
+		return lastReloadTime;
+	}
 
-        String eventhubConnectionString = null;
-        String blobAccessKey = null;
-        String blobAccountName = null;
-        String blobContainerName = null;
-        AzureVaultConfiguration azureVaultConfiguration = getCamelContext().getVaultConfiguration().azure();
-        if (ObjectHelper.isNotEmpty(azureVaultConfiguration)) {
-            eventhubConnectionString = azureVaultConfiguration.getEventhubConnectionString();
-            blobAccessKey = azureVaultConfiguration.getBlobAccessKey();
-            blobAccountName = azureVaultConfiguration.getBlobAccountName();
-            blobContainerName = azureVaultConfiguration.getBlobContainerName();
-        }
-        if (ObjectHelper.isNotEmpty(eventhubConnectionString) && ObjectHelper.isNotEmpty(blobAccessKey)
-                && ObjectHelper.isNotEmpty(blobAccountName) && ObjectHelper.isNotEmpty(blobContainerName)) {
-            BlobContainerAsyncClient c = new BlobContainerClientBuilder()
-                    .endpoint(String.format(Locale.ROOT, "https://%s" + BLOB_SERVICE_URI_SEGMENT, blobAccountName))
-                    .containerName(blobContainerName)
-                    .credential(new StorageSharedKeyCredential(blobAccountName, blobAccessKey))
-                    .buildAsyncClient();
+	@Override
+	protected void doStart() throws Exception {
+		super.doStart();
 
-            EventProcessorClientBuilder eventProcessorClientBuilder = new EventProcessorClientBuilder()
-                    .checkpointStore(new BlobCheckpointStore(c))
-                    .consumerGroup("$Default")
-                    .connectionString(eventhubConnectionString)
-                    .processEvent(this::onEventListener)
-                    .processError(this::onErrorListener)
-                    .transportType(AmqpTransportType.AMQP);
+		// auto-detect secrets in-use
+		PropertiesComponent pc = camelContext.getPropertiesComponent();
+		PropertiesFunction pf = pc.getPropertiesFunction("azure");
+		if (pf instanceof KeyVaultPropertiesFunction) {
+			propertiesFunction = (KeyVaultPropertiesFunction) pf;
+			LOG.debug("Auto-detecting secrets from properties-function: {}", pf.getName());
+		}
+		// specific secrets
+		secrets = camelContext.getVaultConfiguration().azure().getSecrets();
+		if (ObjectHelper.isEmpty(secrets) && propertiesFunction == null) {
+			throw new IllegalArgumentException("Secrets must be configured on Azure vault configuration");
+		}
 
-            eventProcessorClient = eventProcessorClientBuilder.buildEventProcessorClient();
-            eventProcessorClient.start();
-        } else {
-            throw new RuntimeCamelException(
-                    "Using the Azure Key Vault Secret refresh task requires setting eventhubs connection String, Blob Account Name, Blob Access Key and Blob Container Name  as application properties ");
-        }
-    }
+		String eventhubConnectionString = null;
+		String blobAccessKey = null;
+		String blobAccountName = null;
+		String blobContainerName = null;
+		AzureVaultConfiguration azureVaultConfiguration = getCamelContext().getVaultConfiguration().azure();
+		if (ObjectHelper.isNotEmpty(azureVaultConfiguration)) {
+			eventhubConnectionString = azureVaultConfiguration.getEventhubConnectionString();
+			blobAccessKey = azureVaultConfiguration.getBlobAccessKey();
+			blobAccountName = azureVaultConfiguration.getBlobAccountName();
+			blobContainerName = azureVaultConfiguration.getBlobContainerName();
+		}
+		if (ObjectHelper.isNotEmpty(eventhubConnectionString) && ObjectHelper.isNotEmpty(blobAccessKey)
+				&& ObjectHelper.isNotEmpty(blobAccountName) && ObjectHelper.isNotEmpty(blobContainerName)) {
+			BlobContainerAsyncClient c = new BlobContainerClientBuilder()
+					.endpoint(String.format(Locale.ROOT, "https://%s" + BLOB_SERVICE_URI_SEGMENT, blobAccountName))
+					.containerName(blobContainerName)
+					.credential(new StorageSharedKeyCredential(blobAccountName, blobAccessKey)).buildAsyncClient();
 
-    @Override
-    protected void doShutdown() throws Exception {
-        super.doShutdown();
+			EventProcessorClientBuilder eventProcessorClientBuilder = new EventProcessorClientBuilder()
+					.checkpointStore(new BlobCheckpointStore(c)).consumerGroup("$Default")
+					.connectionString(eventhubConnectionString).processEvent(this::onEventListener)
+					.processError(this::onErrorListener).transportType(AmqpTransportType.AMQP);
 
-        if (eventProcessorClient != null) {
-            try {
-                eventProcessorClient.stop();
-            } catch (Exception e) {
-                // ignore
-            }
-            eventProcessorClient = null;
-        }
+			eventProcessorClient = eventProcessorClientBuilder.buildEventProcessorClient();
+			eventProcessorClient.start();
+		} else {
+			throw new RuntimeCamelException(
+					"Using the Azure Key Vault Secret refresh task requires setting eventhubs connection String, Blob Account Name, Blob Access Key and Blob Container Name  as application properties ");
+		}
+	}
 
-        updates.clear();
-    }
+	@Override
+	protected void doShutdown() throws Exception {
+		super.doShutdown();
 
-    @Override
-    public void run() {
-    }
+		if (eventProcessorClient != null) {
+			try {
+				eventProcessorClient.stop();
+			} catch (Exception e) {
+				// ignore
+			}
+			eventProcessorClient = null;
+		}
 
-    protected boolean matchSecret(String name) {
-        Set<String> set = new HashSet<>();
-        if (secrets != null) {
-            Collections.addAll(set, secrets.split(","));
-        }
-        if (propertiesFunction != null) {
-            set.addAll(propertiesFunction.getSecrets());
-        }
+		updates.clear();
+	}
 
-        for (String part : set) {
-            boolean result = name.contains(part) || PatternHelper.matchPattern(name, part);
-            LOG.trace("Matching secret id: {}={} -> {}", name, part, result);
-            if (result) {
-                return true;
-            }
-        }
+	@Override
+	public void run() {
+		lastCheckTime = Instant.now();
+	}
 
-        return false;
-    }
+	protected boolean matchSecret(String name) {
+		Set<String> set = new HashSet<>();
+		if (secrets != null) {
+			Collections.addAll(set, secrets.split(","));
+		}
+		if (propertiesFunction != null) {
+			set.addAll(propertiesFunction.getSecrets());
+		}
 
-    @Override
-    public String toString() {
-        return "Azure Secrets Refresh Task";
-    }
+		for (String part : set) {
+			boolean result = name.contains(part) || PatternHelper.matchPattern(name, part);
+			LOG.trace("Matching secret id: {}={} -> {}", name, part, result);
+			if (result) {
+				return true;
+			}
+		}
 
-    protected void onEventListener(final EventContext eventContext) {
-        boolean triggerReloading = false;
+		return false;
+	}
 
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode actualObj = null;
-        try {
-            actualObj = mapper.readTree(eventContext.getEventData().getBodyAsString());
-        } catch (JsonMappingException e) {
-            e.printStackTrace();
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        for (int i = 0; i < actualObj.size(); i++) {
-            String secret = actualObj.get(i).get("subject").textValue();
-            String eventType = actualObj.get(i).get("eventType").textValue();
-            if (ObjectHelper.isNotEmpty(secret) && ObjectHelper.isNotEmpty(eventType)) {
-                if (eventType.equalsIgnoreCase(SECRET_VERSION_ADD)) {
-                    if (matchSecret(secret)) {
-                        if (isReloadEnabled()) {
-                            LOG.info("Update for Azure secret: {} detected, triggering CamelContext reload", secret);
-                            triggerReloading = true;
-                        }
-                    }
-                }
-            }
-        }
-        if (triggerReloading) {
-            ContextReloadStrategy reload = camelContext.hasService(ContextReloadStrategy.class);
-            if (reload != null) {
-                // trigger reload
-                reload.onReload(this);
-            }
-        }
-    }
+	@Override
+	public String toString() {
+		return "Azure Secrets Refresh Task";
+	}
 
-    public void onErrorListener(final ErrorContext errorContext) {
-        //NOOP
-    }
+	protected void onEventListener(final EventContext eventContext) {
+		boolean triggerReloading = false;
+
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode actualObj = null;
+		try {
+			actualObj = mapper.readTree(eventContext.getEventData().getBodyAsString());
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		for (int i = 0; i < actualObj.size(); i++) {
+			String secret = actualObj.get(i).get("subject").textValue();
+			String eventType = actualObj.get(i).get("eventType").textValue();
+			if (ObjectHelper.isNotEmpty(secret) && ObjectHelper.isNotEmpty(eventType)) {
+				if (eventType.equalsIgnoreCase(SECRET_VERSION_ADD)) {
+					if (matchSecret(secret)) {
+						if (ObjectHelper.isNotEmpty(eventContext.getEventData().getEnqueuedTime())) {
+							updates.put(secret, eventContext.getEventData().getEnqueuedTime());
+						}
+						if (isReloadEnabled()) {
+							LOG.info("Update for Azure secret: {} detected, triggering CamelContext reload", secret);
+							triggerReloading = true;
+						}
+					}
+				}
+			}
+		}
+		if (triggerReloading) {
+			ContextReloadStrategy reload = camelContext.hasService(ContextReloadStrategy.class);
+			if (reload != null) {
+				// trigger reload
+				lastReloadTime = Instant.now();
+				reload.onReload(this);
+			}
+		}
+	}
+
+	public void onErrorListener(final ErrorContext errorContext) {
+		// NOOP
+	}
 }
