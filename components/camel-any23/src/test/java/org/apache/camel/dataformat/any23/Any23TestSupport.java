@@ -16,9 +16,8 @@
  */
 package org.apache.camel.dataformat.any23;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 
 import org.apache.camel.util.IOHelper;
 
@@ -29,17 +28,8 @@ public final class Any23TestSupport {
     }
 
     public static String loadFileAsString(File file) throws Exception {
-        StringBuilder fileContent = new StringBuilder();
-        BufferedReader input = IOHelper.buffered(new FileReader(file));
-        try {
-            String line = null;
-            while ((line = input.readLine()) != null) {
-                fileContent.append(line);
-                fileContent.append(System.lineSeparator());
-            }
-        } finally {
-            input.close();
+        try (FileInputStream inputStream = new FileInputStream(file)) {
+            return IOHelper.loadText(inputStream);
         }
-        return fileContent.toString();
     }
 }
