@@ -161,7 +161,7 @@ public class EventhubsReloadTriggerTask extends ServiceSupport implements CamelC
 			eventProcessorClient.start();
 		} else {
 			throw new RuntimeCamelException(
-					"Using the Azure Key Vault Secret refresh task requires setting eventhubs connection String, Blob Account Name, Blob Access Key and Blob Container Name  as application properties ");
+					"Using the Azure Key Vault Secret refresh task requires setting Eventhub connection String, Blob Account Name, Blob Access Key and Blob Container Name  as application properties ");
 		}
 	}
 
