@@ -330,10 +330,16 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 }
             }
             DevConsole dc3 = camelContext.adapt(ExtendedCamelContext.class)
-                    .getDevConsoleResolver().resolveDevConsole("health");
+                    .getDevConsoleResolver().resolveDevConsole("endpoint");
             if (dc3 != null) {
+                JsonObject json = (JsonObject) dc3.call(DevConsole.MediaType.JSON);
+                root.put("endpoints", json);
+            }
+            DevConsole dc4 = camelContext.adapt(ExtendedCamelContext.class)
+                    .getDevConsoleResolver().resolveDevConsole("health");
+            if (dc4 != null) {
                 // include full details in health checks
-                JsonObject json = (JsonObject) dc3.call(DevConsole.MediaType.JSON, Map.of("exposureLevel", "full"));
+                JsonObject json = (JsonObject) dc4.call(DevConsole.MediaType.JSON, Map.of("exposureLevel", "full"));
                 root.put("healthChecks", json);
             }
             // various details

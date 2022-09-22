@@ -164,7 +164,7 @@ public class CamelContextTop extends ProcessBaseCommand {
             s = s.substring(1);
             negate = -1;
         }
-        switch (sort) {
+        switch (s) {
             case "pid":
                 return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid)) * negate;
             case "name":

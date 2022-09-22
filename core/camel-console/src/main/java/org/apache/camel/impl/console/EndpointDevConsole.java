@@ -29,11 +29,11 @@ import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole("endpoints")
-public class EndpointsDevConsole extends AbstractDevConsole {
+@DevConsole("endpoint")
+public class EndpointDevConsole extends AbstractDevConsole {
 
-    public EndpointsDevConsole() {
-        super("camel", "endpoints", "Endpoints", "Endpoint Registry information");
+    public EndpointDevConsole() {
+        super("camel", "endpoint", "Endpoints", "Endpoint Registry information");
     }
 
     @Override
@@ -88,7 +88,7 @@ public class EndpointsDevConsole extends AbstractDevConsole {
         Collection<Endpoint> col = reg.getReadOnlyValues();
         for (Endpoint e : col) {
             JsonObject jo = new JsonObject();
-            jo.put("uri", jo.toString());
+            jo.put("uri", e.toString());
             var stat = findStats(stats, e.getEndpointUri());
             if (stat.isPresent()) {
                 var st = stat.get();
@@ -102,7 +102,8 @@ public class EndpointsDevConsole extends AbstractDevConsole {
         return root;
     }
 
-    private static Optional<RuntimeEndpointRegistry.Statistic> findStats(List<RuntimeEndpointRegistry.Statistic> stats, String uri) {
+    private static Optional<RuntimeEndpointRegistry.Statistic> findStats(
+            List<RuntimeEndpointRegistry.Statistic> stats, String uri) {
         if (stats == null) {
             return Optional.empty();
         }

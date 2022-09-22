@@ -184,7 +184,7 @@ public class CamelThreadDump extends ActionBaseCommand {
             s = s.substring(1);
             negate = -1;
         }
-        switch (sort) {
+        switch (s) {
             case "id":
                 return Long.compare(o1.id, o2.id) * negate;
             case "name":
