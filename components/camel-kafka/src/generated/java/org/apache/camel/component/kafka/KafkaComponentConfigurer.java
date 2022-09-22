@@ -40,6 +40,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "autoOffsetReset": getOrCreateConfiguration(target).setAutoOffsetReset(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "batchwithindividualheaders":
+        case "batchWithIndividualHeaders": getOrCreateConfiguration(target).setBatchWithIndividualHeaders(property(camelContext, boolean.class, value)); return true;
         case "breakonfirsterror":
         case "breakOnFirstError": getOrCreateConfiguration(target).setBreakOnFirstError(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -260,6 +262,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "autoOffsetReset": return java.lang.String.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "batchwithindividualheaders":
+        case "batchWithIndividualHeaders": return boolean.class;
         case "breakonfirsterror":
         case "breakOnFirstError": return boolean.class;
         case "bridgeerrorhandler":
@@ -476,6 +480,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "autoOffsetReset": return getOrCreateConfiguration(target).getAutoOffsetReset();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "batchwithindividualheaders":
+        case "batchWithIndividualHeaders": return getOrCreateConfiguration(target).isBatchWithIndividualHeaders();
         case "breakonfirsterror":
         case "breakOnFirstError": return getOrCreateConfiguration(target).isBreakOnFirstError();
         case "bridgeerrorhandler":
