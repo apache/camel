@@ -184,6 +184,9 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     // retries
     @UriParam(label = "producer", defaultValue = "0")
     private Integer retries = 0;
+    // use individual headers if exchange.body contains Iterable or similar of Message or Exchange
+    @UriParam(label = "producer", defaultValue = "false")
+    private boolean batchWithIndividualHeaders;
     // batch.size
     @UriParam(label = "producer", defaultValue = "16384")
     private Integer producerBatchSize = 16384;
@@ -1350,6 +1353,20 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      */
     public void setProducerBatchSize(Integer producerBatchSize) {
         this.producerBatchSize = producerBatchSize;
+    }
+
+    public boolean isBatchWithIndividualHeaders() {
+        return batchWithIndividualHeaders;
+    }
+
+    /**
+     * If this feature is enabled and a single element of a batch is an Exchange or Message, the producer will generate
+     * individual kafka header values for it by using the batch Message to determine the values. Normal behaviour
+     * consists in always using the same header values (which are determined by the parent Exchange which contains the
+     * Iterable or Iterator).
+     */
+    public void setBatchWithIndividualHeaders(boolean batchWithIndividualHeaders) {
+        this.batchWithIndividualHeaders = batchWithIndividualHeaders;
     }
 
     public Integer getConnectionMaxIdleMs() {
