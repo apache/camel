@@ -20,9 +20,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.EndpointRegistry;
+import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.util.json.JsonObject;
 
@@ -37,14 +40,26 @@ public class EndpointsDevConsole extends AbstractDevConsole {
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
-        EndpointRegistry reg = getCamelContext().getEndpointRegistry();
+        // runtime registry is optional but if enabled we have additional statistics to use in output
+        List<RuntimeEndpointRegistry.Statistic> stats = null;
+        RuntimeEndpointRegistry runtimeReg = getCamelContext().adapt(ExtendedCamelContext.class).getRuntimeEndpointRegistry();
+        if (runtimeReg != null) {
+            stats = runtimeReg.getEndpointStatistics();
+        }
+        EndpointRegistry<?> reg = getCamelContext().getEndpointRegistry();
         sb.append(
-                String.format("    Endpoints: %s (static: %s dynamic: %s\n", reg.size(), reg.staticSize(), reg.dynamicSize()));
+                String.format("    Endpoints: %s (static: %s dynamic: %s)\n", reg.size(), reg.staticSize(), reg.dynamicSize()));
         sb.append(String.format("    Maximum Cache Size: %s\n", reg.getMaximumCacheSize()));
         Collection<Endpoint> col = reg.getReadOnlyValues();
         if (!col.isEmpty()) {
             for (Endpoint e : col) {
-                sb.append(String.format("\n    %s", e.toString()));
+                var stat = findStats(stats, e.getEndpointUri());
+                if (stat.isPresent()) {
+                    var st = stat.get();
+                    sb.append(String.format("\n    %s (direction: %s, usage: %s)", e, st.getDirection(), st.getHits()));
+                } else {
+                    sb.append(String.format("\n    %s", e));
+                }
             }
         }
         sb.append("\n");
@@ -56,7 +71,13 @@ public class EndpointsDevConsole extends AbstractDevConsole {
     protected JsonObject doCallJson(Map<String, Object> options) {
         JsonObject root = new JsonObject();
 
-        EndpointRegistry reg = getCamelContext().getEndpointRegistry();
+        // runtime registry is optional but if enabled we have additional statistics to use in output
+        List<RuntimeEndpointRegistry.Statistic> stats = null;
+        RuntimeEndpointRegistry runtimeReg = getCamelContext().adapt(ExtendedCamelContext.class).getRuntimeEndpointRegistry();
+        if (runtimeReg != null) {
+            stats = runtimeReg.getEndpointStatistics();
+        }
+        EndpointRegistry<?> reg = getCamelContext().getEndpointRegistry();
         root.put("size", reg.size());
         root.put("staticSize", reg.staticSize());
         root.put("dynamicSize", reg.dynamicSize());
@@ -66,11 +87,27 @@ public class EndpointsDevConsole extends AbstractDevConsole {
         root.put("endpoints", list);
         Collection<Endpoint> col = reg.getReadOnlyValues();
         for (Endpoint e : col) {
-            JsonObject uri = new JsonObject();
-            uri.put("uri", e.toString());
-            list.add(uri);
+            JsonObject jo = new JsonObject();
+            jo.put("uri", jo.toString());
+            var stat = findStats(stats, e.getEndpointUri());
+            if (stat.isPresent()) {
+                var st = stat.get();
+                jo.put("direction", st.getDirection());
+                jo.put("hits", st.getHits());
+                jo.put("routeId", st.getRouteId());
+            }
+            list.add(jo);
         }
 
         return root;
+    }
+
+    private static Optional<RuntimeEndpointRegistry.Statistic> findStats(List<RuntimeEndpointRegistry.Statistic> stats, String uri) {
+        if (stats == null) {
+            return Optional.empty();
+        }
+        return stats.stream()
+                .filter(s -> uri.equals(s.getUri()))
+                .findFirst();
     }
 }
