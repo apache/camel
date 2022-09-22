@@ -447,6 +447,15 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 root.put("gcp-secrets", json);
             }
         }
+        // azure-secrets is optional
+        Optional<DevConsole> dcAzure = camelContext.adapt(ExtendedCamelContext.class)
+                .getDevConsoleResolver().lookupDevConsole("azure-secrets");
+        if (dcAzure.isPresent()) {
+            JsonObject json = (JsonObject) dcAzure.get().call(DevConsole.MediaType.JSON);
+            if (json != null) {
+                root.put("azure-secrets", json);
+            }
+        }
         return root;
     }
 
