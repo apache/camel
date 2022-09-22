@@ -1,0 +1,23 @@
+{
+  "language": {
+    "kind": "language",
+    "name": "python",
+    "title": "Python",
+    "description": "Evaluates a Python expression.",
+    "deprecated": false,
+    "firstVersion": "3.9.0",
+    "label": "language,python",
+    "javaType": "org.apache.camel.language.python.PythonLanguage",
+    "supportLevel": "Experimental",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-python",
+    "version": "3.19.0-SNAPSHOT",
+    "modelName": "python",
+    "modelJavaType": "org.apache.camel.model.language.PythonExpression"
+  },
+  "properties": {
+    "expression": { "kind": "value", "displayName": "Expression", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The expression value in your chosen language syntax" },
+    "trim": { "kind": "attribute", "displayName": "Trim", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of this node" }
+  }
+}

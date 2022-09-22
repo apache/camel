@@ -81,6 +81,9 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
             case "ognl": {
                 return asType(node, org.apache.camel.model.language.OgnlExpression.class);
             }
+            case "python": {
+                return asType(node, org.apache.camel.model.language.PythonExpression.class);
+            }
             case "ref": {
                 return asType(node, org.apache.camel.model.language.RefExpression.class);
             }
@@ -134,6 +137,7 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "method", type = "object:org.apache.camel.model.language.MethodCallExpression"),
                     @YamlProperty(name = "mvel", type = "object:org.apache.camel.model.language.MvelExpression"),
                     @YamlProperty(name = "ognl", type = "object:org.apache.camel.model.language.OgnlExpression"),
+                    @YamlProperty(name = "python", type = "object:org.apache.camel.model.language.PythonExpression"),
                     @YamlProperty(name = "ref", type = "object:org.apache.camel.model.language.RefExpression"),
                     @YamlProperty(name = "simple", type = "object:org.apache.camel.model.language.SimpleExpression"),
                     @YamlProperty(name = "spel", type = "object:org.apache.camel.model.language.SpELExpression"),
@@ -169,6 +173,7 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "method", type = "object:org.apache.camel.model.language.MethodCallExpression"),
                     @YamlProperty(name = "mvel", type = "object:org.apache.camel.model.language.MvelExpression"),
                     @YamlProperty(name = "ognl", type = "object:org.apache.camel.model.language.OgnlExpression"),
+                    @YamlProperty(name = "python", type = "object:org.apache.camel.model.language.PythonExpression"),
                     @YamlProperty(name = "ref", type = "object:org.apache.camel.model.language.RefExpression"),
                     @YamlProperty(name = "simple", type = "object:org.apache.camel.model.language.SimpleExpression"),
                     @YamlProperty(name = "spel", type = "object:org.apache.camel.model.language.SpELExpression"),

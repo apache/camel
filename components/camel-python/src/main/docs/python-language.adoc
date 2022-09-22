@@ -1,0 +1,65 @@
+= Python Language
+:doctitle: Python
+:shortname: python
+:artifactid: camel-python
+:description: Evaluates a Python expression.
+:since: 3.9
+:supportlevel: Experimental
+//Manually maintained attributes
+:camel-spring-boot-name: python
+
+*Since Camel {since}*
+
+Camel allows https://www.jython.org/[Python] to be
+used as an xref:manual::expression.adoc[Expression] or xref:manual::predicate.adoc[Predicate]
+in Camel routes.
+
+For example, you can use Python in a xref:manual::predicate.adoc[Predicate]
+with the xref:eips:choice-eip.adoc[Content Based Router] EIP.
+
+== Python Options
+
+
+// language options: START
+include::partial$language-options.adoc[]
+// language options: END
+
+
+
+
+== Variables
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Variable |Type |Description
+|*this* |Exchange |the Exchange is the root object
+|context |CamelContext |the CamelContext
+|exchange |Exchange |the Exchange
+|exchangeId |String |the exchange id
+|message |Message |the message
+|body |Message |the message body
+|headers |Map |the message headers
+|properties |Map |the exchange properties
+|=======================================================================
+
+
+== Dependencies
+
+To use Python in your camel routes you need to add the dependency on
+*camel-python* which implements the Python language.
+
+If you use maven you could just add the following to your pom.xml,
+substituting the version number for the latest & greatest release (see
+the download page for the latest versions).
+
+[source,xml]
+-------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-python</artifactId>
+  <version>x.x.x</version>
+</dependency>
+-------------------------------------
+
+
+include::spring-boot:partial$starter.adoc[]
