@@ -892,6 +892,27 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
+         * If this feature is enabled and a single element of a batch is an
+         * Exchange or Message, the producer will generate individual kafka
+         * header values for it by using the batch Message to determine the
+         * values. Normal behaviour consists in always using the same header
+         * values (which are determined by the parent Exchange which contains
+         * the Iterable or Iterator).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param batchWithIndividualHeaders the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder batchWithIndividualHeaders(
+                boolean batchWithIndividualHeaders) {
+            doSetProperty("batchWithIndividualHeaders", batchWithIndividualHeaders);
+            return this;
+        }
+        /**
          * The total bytes of memory the producer can use to buffer records
          * waiting to be sent to the server. If records are sent faster than
          * they can be delivered to the server the producer will either block or
@@ -2128,6 +2149,7 @@ public interface KafkaComponentBuilderFactory {
             case "pollExceptionStrategy": ((KafkaComponent) component).setPollExceptionStrategy((org.apache.camel.component.kafka.PollExceptionStrategy) value); return true;
             case "subscribeConsumerBackoffInterval": ((KafkaComponent) component).setSubscribeConsumerBackoffInterval((long) value); return true;
             case "subscribeConsumerBackoffMaxAttempts": ((KafkaComponent) component).setSubscribeConsumerBackoffMaxAttempts((int) value); return true;
+            case "batchWithIndividualHeaders": getOrCreateConfiguration((KafkaComponent) component).setBatchWithIndividualHeaders((boolean) value); return true;
             case "bufferMemorySize": getOrCreateConfiguration((KafkaComponent) component).setBufferMemorySize((java.lang.Integer) value); return true;
             case "compressionCodec": getOrCreateConfiguration((KafkaComponent) component).setCompressionCodec((java.lang.String) value); return true;
             case "connectionMaxIdleMs": getOrCreateConfiguration((KafkaComponent) component).setConnectionMaxIdleMs((java.lang.Integer) value); return true;
