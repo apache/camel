@@ -6661,6 +6661,9 @@
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ResponseMessageDefinition"
             }
           },
+          "routeId" : {
+            "type" : "string"
+          },
           "security" : {
             "type" : "array",
             "items" : {
@@ -6727,6 +6730,9 @@
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ResponseMessageDefinition"
             }
           },
+          "routeId" : {
+            "type" : "string"
+          },
           "security" : {
             "type" : "array",
             "items" : {
@@ -6792,6 +6798,9 @@
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ResponseMessageDefinition"
             }
+          },
+          "routeId" : {
+            "type" : "string"
           },
           "security" : {
             "type" : "array",
@@ -6964,6 +6973,9 @@
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ResponseMessageDefinition"
             }
           },
+          "routeId" : {
+            "type" : "string"
+          },
           "security" : {
             "type" : "array",
             "items" : {
@@ -7030,6 +7042,9 @@
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ResponseMessageDefinition"
             }
           },
+          "routeId" : {
+            "type" : "string"
+          },
           "security" : {
             "type" : "array",
             "items" : {
@@ -7095,6 +7110,9 @@
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ResponseMessageDefinition"
             }
+          },
+          "routeId" : {
+            "type" : "string"
           },
           "security" : {
             "type" : "array",
@@ -7288,6 +7306,9 @@
           "hostNameResolver" : {
             "type" : "string",
             "enum" : [ "allLocalIp", "localHostName", "localIp" ]
+          },
+          "inlineRoutes" : {
+            "type" : "boolean"
           },
           "jsonDataFormat" : {
             "type" : "string"

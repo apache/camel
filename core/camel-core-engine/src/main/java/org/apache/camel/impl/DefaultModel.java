@@ -180,7 +180,6 @@ public class DefaultModel implements Model {
 
         removeRouteDefinitions(list);
 
-
         // special if rest-dsl is inlining routes
         if (camelContext.getRestConfiguration().isInlineRoutes()) {
             List<RouteDefinition> allRoutes = new ArrayList<>();
