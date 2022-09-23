@@ -21,7 +21,8 @@ public class ZendeskEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(140);
+        Set<String> props = new HashSet<>(142);
+        props.add("active");
         props.add("article");
         props.add("articleAttachments");
         props.add("articleId");
@@ -39,6 +40,7 @@ public class ZendeskEndpointUriFactory extends org.apache.camel.support.componen
         props.add("bridgeErrorHandler");
         props.add("category");
         props.add("categoryId");
+        props.add("categoryId0");
         props.add("category_id");
         props.add("comment");
         props.add("commentId");
@@ -50,6 +52,8 @@ public class ZendeskEndpointUriFactory extends org.apache.camel.support.componen
         props.add("exceptionHandler");
         props.add("exchangePattern");
         props.add("externalId");
+        props.add("externalId0");
+        props.add("externalId0s");
         props.add("field");
         props.add("file");
         props.add("fileName");
@@ -97,12 +101,11 @@ public class ZendeskEndpointUriFactory extends org.apache.camel.support.componen
         props.add("organization_membership_id");
         props.add("organizations");
         props.add("page");
-        props.add("parameters");
-        props.add("params");
         props.add("password");
         props.add("permissionGroup");
         props.add("pollStrategy");
         props.add("query");
+        props.add("queryParams");
         props.add("repeatCount");
         props.add("request");
         props.add("requestId");
@@ -146,7 +149,6 @@ public class ZendeskEndpointUriFactory extends org.apache.camel.support.componen
         props.add("triggerId");
         props.add("triggerId0");
         props.add("tweetId");
-        props.add("type");
         props.add("unixEpochTime");
         props.add("upload");
         props.add("useFixedDelay");
