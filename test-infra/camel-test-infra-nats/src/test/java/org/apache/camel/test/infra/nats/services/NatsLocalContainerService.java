@@ -24,7 +24,7 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 public class NatsLocalContainerService implements NatsService, ContainerService<GenericContainer> {
-    public static final String CONTAINER_IMAGE = "nats:2.9.0";
+    public static final String CONTAINER_IMAGE = "nats:2.8.4";
     public static final String CONTAINER_NAME = "nats";
     private static final int PORT = 4222;
 
