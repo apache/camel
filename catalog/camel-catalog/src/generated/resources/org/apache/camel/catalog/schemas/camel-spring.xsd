@@ -21120,6 +21120,16 @@ false
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+                
+        <xs:attribute name="routeId" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+              <![CDATA[
+Sets the id of the route.
+            ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
               
       </xs:extension>
           
@@ -22044,6 +22054,21 @@ Status 400 if validation error. Default value: false
           <![CDATA[
 Whether to enable CORS headers in the HTTP response. The default value is false.
 Default value: false
+        ]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+        
+    <xs:attribute name="inlineRoutes" type="xs:boolean">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+          <![CDATA[
+Inline routes in rest-dsl which are linked using direct endpoints. By default,
+each service in Rest DSL is an individual route, meaning that you would have at
+least two routes per service (rest-dsl, and the route linked from rest-dsl).
+Enabling this allows Camel to optimize and inline this as a single route,
+however this requires to use direct endpoints, which must be unique per service.
+This option is default false. Default value: false
         ]]>
         </xs:documentation>
       </xs:annotation>

@@ -6760,6 +6760,9 @@
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ResponseMessageDefinition"
             }
           },
+          "route-id" : {
+            "type" : "string"
+          },
           "security" : {
             "type" : "array",
             "items" : {
@@ -6826,6 +6829,9 @@
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ResponseMessageDefinition"
             }
           },
+          "route-id" : {
+            "type" : "string"
+          },
           "security" : {
             "type" : "array",
             "items" : {
@@ -6891,6 +6897,9 @@
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ResponseMessageDefinition"
             }
+          },
+          "route-id" : {
+            "type" : "string"
           },
           "security" : {
             "type" : "array",
@@ -7063,6 +7072,9 @@
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ResponseMessageDefinition"
             }
           },
+          "route-id" : {
+            "type" : "string"
+          },
           "security" : {
             "type" : "array",
             "items" : {
@@ -7129,6 +7141,9 @@
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ResponseMessageDefinition"
             }
           },
+          "route-id" : {
+            "type" : "string"
+          },
           "security" : {
             "type" : "array",
             "items" : {
@@ -7194,6 +7209,9 @@
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.rest.ResponseMessageDefinition"
             }
+          },
+          "route-id" : {
+            "type" : "string"
           },
           "security" : {
             "type" : "array",
@@ -7387,6 +7405,9 @@
           "host-name-resolver" : {
             "type" : "string",
             "enum" : [ "allLocalIp", "localHostName", "localIp" ]
+          },
+          "inline-routes" : {
+            "type" : "boolean"
           },
           "json-data-format" : {
             "type" : "string"
