@@ -41,9 +41,9 @@ public class HttpSendDynamicAwareUriWithSpacesTest extends BaseHttpTest {
     @Override
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
-            .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-            .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
-            .registerHandler("/users/*", new BasicValidationHandler("GET", null, null, "a user")).create();
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/users/*", new BasicValidationHandler("GET", null, null, "a user")).create();
         localServer.start();
 
         super.setUp();
@@ -65,20 +65,20 @@ public class HttpSendDynamicAwareUriWithSpacesTest extends BaseHttpTest {
             @Override
             public void configure() throws Exception {
                 from("direct:usersDrink")
-                    .toD("http:localhost:" + localServer.getLocalPort()
-                        + "/users/${exchangeProperty.user}");
+                        .toD("http:localhost:" + localServer.getLocalPort()
+                             + "/users/${exchangeProperty.user}");
             }
         };
     }
-    
+
     @Test
     public void testDynamicAware() throws Exception {
         Exchange out = fluentTemplate.to("direct:usersDrink")
-            .withExchange(ExchangeBuilder.anExchange(context).withProperty("user", "joes moes").build()).send();
+                .withExchange(ExchangeBuilder.anExchange(context).withProperty("user", "joes moes").build()).send();
         assertEquals("a user", out.getMessage().getBody(String.class));
 
         out = fluentTemplate.to("direct:usersDrink")
-            .withExchange(ExchangeBuilder.anExchange(context).withProperty("user", "moes joes").build()).send();
+                .withExchange(ExchangeBuilder.anExchange(context).withProperty("user", "moes joes").build()).send();
         assertEquals("a user", out.getMessage().getBody(String.class));
 
         // and there should only be one http endpoint as they are both on same host
@@ -87,5 +87,5 @@ public class HttpSendDynamicAwareUriWithSpacesTest extends BaseHttpTest {
         assertTrue(endpointMap.containsKey("http://localhost:" + localServer.getLocalPort()), "Should find static uri");
         assertTrue(endpointMap.containsKey("direct://usersDrink"), "Should find direct");
     }
-    
+
 }
