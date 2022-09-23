@@ -81,6 +81,8 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String deprecated;
+    @XmlAttribute
+    private String routeId;
     @XmlElement(required = true)
     private ToDefinition to;
 
@@ -109,6 +111,18 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
         this.deprecated = "true";
         return this;
     }
+
+    public String getRouteId() {
+        return routeId;
+    }
+
+    /**
+     * Sets the id of the route
+     */
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
+    }
+
 
     public List<ParamDefinition> getParams() {
         return params;

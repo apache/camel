@@ -204,7 +204,59 @@ metrics about the routes, such as number of message processed, and their
 performance statistics.
 
 There is also a Rest Registry JMX MBean that contains a registry of all
-REST services which has been defined. 
+REST services which has been defined.
+
+== Inline Rest DSL as a single route
+
+Each of the rest services becomes a Camel route, and this means, that if the rest
+service is calling another Camel route via `direct`, which is a very common practice.
+This means that each rest service then becomes 2 routes. This can become harder to manage
+if you have many rest services.
+
+When you use `direct` endpoints then you can enable Rest DSL to automatically _inline_ the direct
+route in the rest route, meaning that there is only 1 route per rest service.
+
+To do this you *MUST* use `direct` endpoints, and each endpoint must be unique name per service.
+And the option `inlineRoutes` must be enabled.
+
+For example in the Java DSL below we have enabled inline routes and each rest service
+uses `direct` endpoints with unique names.
+
+[source,java]
+----
+restConfiguration().inlineRoutes(true);
+
+rest("/customers/")
+    .get("/{id}").to("direct:customerDetail")
+    .get("/{id}/orders").to("direct:customerOrders")
+    .post("/neworder").to("direct:customerNewOrder");
+----
+
+And in XML:
+
+[source,xml]
+----
+<restConfiguration inlineRoutes="true"/>
+
+<rest>
+  <get uri="/customers/{id}">
+    <to uri="direct:customerDetail"/>
+  </get>
+  <get uri="/customers/{id}/orders">
+    <to uri="direct:customerOrders"/>
+  </get>
+  <post uri="/customers/neworder">
+    <to uri="direct:customerNewOrder"/>
+  </post>
+</rest>
+----
+
+If you use Camel Main / Spring Boot / Quarkus / or Camel JBang you can also enable this in `application.properties` such as:
+
+[source,properties]
+----
+camel.rest.inline-routes = true
+----
 
 == Binding to POJOs using
 
@@ -431,13 +483,12 @@ The Rest DSL supports the following options:
 |===
 | Name | Description | Default | Type
 | *apiComponent* | Sets the name of the Camel component to use as the REST API (such as swagger or openapi) |  | String
-| *apiContextIdPattern* | Optional CamelContext id pattern to only allow Rest APIs from rest services within CamelContext's which name matches the pattern. The pattern #name# refers to the CamelContext name, to match on the current CamelContext only. For any other value, the pattern uses the rules from org.apache.camel.support.EndpointHelper#matchPattern(String,String) |  | String
 | *apiContextPath* | Sets a leading API context-path the REST API services will be using. This can be used when using components such as camel-servlet where the deployed web application is deployed using a context-path. |  | String
 | *apiHost* | To use a specific hostname for the API documentation (such as swagger or openapi) This can be used to override the generated host with this configured hostname |  | String
 | *apiProperties* | Sets additional options on api level |  | Map
 | *apiVendorExtension* | Whether vendor extension is enabled in the Rest APIs. If enabled then Camel will include additional information as vendor extension (eg keys starting with x-) such as route ids, class names etc. Not all 3rd party API gateways and tools supports vendor-extensions when importing your API docs. | false | boolean
 | *bindingMode* | Sets the binding mode to be used by the REST consumer | RestBindingMode.off | RestBindingMode
-| *clientRequestValidation* | Whether to enable validation of the client request to check whether the Content-Type and Accept headers from the client is supported by the Rest-DSL configuration of its consumes/produces settings. This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is returned. The default value is false. | false | boolean
+| *clientRequestValidation* | Whether to enable validation of the client request to check: 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error. | false | boolean
 | *component* | Sets the name of the Camel component to use as the REST consumer |  | String
 | *componentProperties* | Sets additional options on component level |  | Map
 | *consumerProperties* | Sets additional options on consumer level |  | Map
@@ -448,6 +499,7 @@ The Rest DSL supports the following options:
 | *endpointProperties* | Sets additional options on endpoint level |  | Map
 | *host* | Sets the hostname to use by the REST consumer |  | String
 | *hostNameResolver* | Sets the resolver to use for resolving hostname | RestHostNameResolver.allLocalIp | RestHostNameResolver
+| *inlineRoutes* | Inline routes in rest-dsl which are linked using direct endpoints. By default, each service in Rest DSL is an individual route, meaning that you would have at least two routes per service (rest-dsl, and the route linked from rest-dsl). Enabling this allows Camel to optimize and inline this as a single route, however this requires to use direct endpoints, which must be unique per service. This option is default false. | false | boolean
 | *jsonDataFormat* | Sets a custom json data format to be used Important: This option is only for setting a custom name of the data format, not to refer to an existing data format instance. |  | String
 | *port* | Sets the port to use by the REST consumer |  | int
 | *producerApiDoc* | Sets the location of the api document (swagger api) the REST producer will use to validate the REST uri and query parameters are valid accordingly to the api document. This requires adding camel-swagger-java to the classpath, and any miss configuration will let Camel fail on startup and report the error(s). The location of the api document is loaded from classpath by default, but you can use file: or http: to refer to resources to load from file or http url. |  | String

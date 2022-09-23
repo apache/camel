@@ -64,6 +64,7 @@ public class RestConfiguration {
     private RestBindingMode bindingMode = RestBindingMode.off;
     private boolean skipBindingOnErrorCode = true;
     private boolean clientRequestValidation;
+    private boolean inlineRoutes;
     private boolean enableCORS;
     private String jsonDataFormat;
     private String xmlDataFormat;
@@ -400,6 +401,24 @@ public class RestConfiguration {
      */
     public void setEnableCORS(boolean enableCORS) {
         this.enableCORS = enableCORS;
+    }
+
+    public boolean isInlineRoutes() {
+        return inlineRoutes;
+    }
+
+    /**
+     * Inline routes in rest-dsl which are linked using direct endpoints.
+     *
+     * By default, each service in Rest DSL is an individual route, meaning that you would
+     * have at least two routes per service (rest-dsl, and the route linked from rest-dsl).
+     * Enabling this allows Camel to optimize and inline this as a single route, however
+     * this requires to use direct endpoints, which must be unique per service.
+     *
+     * This option is default <tt>false</tt>.
+     */
+    public void setInlineRoutes(boolean inlineRoutes) {
+        this.inlineRoutes = inlineRoutes;
     }
 
     /**

@@ -2903,6 +2903,7 @@ public class ModelParser extends BaseParser {
                 case "outType": def.setOutType(val); break;
                 case "path": def.setPath(val); break;
                 case "produces": def.setProduces(val); break;
+                case "routeId": def.setRouteId(val); break;
                 case "skipBindingOnErrorCode": def.setSkipBindingOnErrorCode(val); break;
                 case "type": def.setType(val); break;
                 default: return optionalIdentifiedDefinitionAttributeHandler().accept(def, key, val);
@@ -3070,6 +3071,7 @@ public class ModelParser extends BaseParser {
                 case "enableCORS": def.setEnableCORS(Boolean.valueOf(val)); break;
                 case "host": def.setHost(val); break;
                 case "hostNameResolver": def.setHostNameResolver(RestHostNameResolver.valueOf(val)); break;
+                case "inlineRoutes": def.setInlineRoutes(Boolean.valueOf(val)); break;
                 case "jsonDataFormat": def.setJsonDataFormat(val); break;
                 case "port": def.setPort(val); break;
                 case "producerApiDoc": def.setProducerApiDoc(val); break;
