@@ -65,11 +65,6 @@
             <version>${jetty-version}</version>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-jmx</artifactId>
-            <version>${jetty-version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.cometd.java</groupId>
             <artifactId>cometd-java-server</artifactId>
             <version>${cometd-java-server}</version>
