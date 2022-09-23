@@ -488,17 +488,20 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
 
     private JsonObject collectServices() {
         JsonObject root = new JsonObject();
+
         // platform-http is optional
-        Optional<DevConsole> dc = camelContext.adapt(ExtendedCamelContext.class)
-                .getDevConsoleResolver().lookupDevConsole("platform-http");
-        if (dc.isPresent()) {
-            JsonObject json = (JsonObject) dc.get().call(DevConsole.MediaType.JSON);
-            if (json != null) {
-                root.put("platform-http", json);
+        if (camelContext.hasComponent("platform-http") != null) {
+            Optional<DevConsole> dc = camelContext.adapt(ExtendedCamelContext.class)
+                    .getDevConsoleResolver().lookupDevConsole("platform-http");
+            if (dc.isPresent()) {
+                JsonObject json = (JsonObject) dc.get().call(DevConsole.MediaType.JSON);
+                if (json != null) {
+                    root.put("platform-http", json);
+                }
             }
         }
         // netty is optional
-        dc = camelContext.adapt(ExtendedCamelContext.class)
+        Optional<DevConsole> dc = camelContext.adapt(ExtendedCamelContext.class)
                 .getDevConsoleResolver().lookupDevConsole("netty");
         if (dc.isPresent()) {
             JsonObject json = (JsonObject) dc.get().call(DevConsole.MediaType.JSON);
@@ -506,6 +509,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 root.put("netty", json);
             }
         }
+
         return root;
     }
 
