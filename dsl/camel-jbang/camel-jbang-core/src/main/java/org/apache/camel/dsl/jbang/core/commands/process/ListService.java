@@ -73,17 +73,33 @@ public class ListService extends ProcessBaseCommand {
                         }
                         if (jo != null) {
                             JsonArray arr = (JsonArray) jo.get("endpoints");
-                            for (int i = 0; i < arr.size(); i++) {
-                                if (i > 0) {
-                                    // create a copy for 2+ secrets
+                            if (arr != null) {
+                                for (int i = 0; i < arr.size(); i++) {
                                     row = row.copy();
+                                    jo = (JsonObject) arr.get(i);
+                                    row.component = "platform-http";
+                                    row.protocol = "http";
+                                    row.service = jo.getString("url");
+                                    row.verbs = jo.getString("verbs");
+                                    rows.add(row);
                                 }
-                                jo = (JsonObject) arr.get(i);
-                                row.component = "platform-http";
-                                row.protocol = "http";
-                                row.service = jo.getString("url");
-                                row.verbs = jo.getString("verbs");
-                                rows.add(row);
+                            }
+                        }
+                        jo = (JsonObject) root.get("services");
+                        if (jo != null) {
+                            jo = (JsonObject) jo.get("netty");
+                        }
+                        if (jo != null) {
+                            JsonArray arr = (JsonArray) jo.get("endpoints");
+                            if (arr != null) {
+                                for (int i = 0; i < arr.size(); i++) {
+                                    row = row.copy();
+                                    jo = (JsonObject) arr.get(i);
+                                    row.component = "netty";
+                                    row.protocol = jo.getString("protocol");
+                                    row.service = row.protocol + ":" + jo.getString("host") + ":" + jo.getInteger("port");
+                                    rows.add(row);
+                                }
                             }
                         }
                     }
