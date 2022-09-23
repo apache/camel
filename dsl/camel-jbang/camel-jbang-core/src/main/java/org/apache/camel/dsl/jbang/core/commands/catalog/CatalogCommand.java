@@ -20,7 +20,8 @@ import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "catalog", description = "List artifacts from Camel Catalog (use --help to see sub commands)")
+@CommandLine.Command(name = "catalog",
+                     description = "List artifacts from Camel Catalog (use catalog --help to see sub commands)")
 public class CatalogCommand extends CamelCommand {
 
     public CatalogCommand(CamelJBangMain main) {

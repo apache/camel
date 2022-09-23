@@ -342,6 +342,14 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 JsonObject json = (JsonObject) dc4.call(DevConsole.MediaType.JSON, Map.of("exposureLevel", "full"));
                 root.put("healthChecks", json);
             }
+            DevConsole dc5 = camelContext.adapt(ExtendedCamelContext.class)
+                    .getDevConsoleResolver().resolveDevConsole("log");
+            if (dc5 != null) {
+                JsonObject json = (JsonObject) dc5.call(DevConsole.MediaType.JSON);
+                if (json != null && !json.isEmpty()) {
+                    root.put("logger", json);
+                }
+            }
             // various details
             JsonObject mem = collectMemory();
             if (mem != null) {
