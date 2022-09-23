@@ -21,7 +21,7 @@ inputs:
   version:
     description: 'The version of the maven daemon to install'
     required: true
-    default: '0.8.0'
+    default: '0.8.1'
 outputs:
   mvnd-dir:
     description: "The directory where the command mvnd is located"
@@ -39,5 +39,5 @@ runs:
     - run: unzip mvnd.zip -d /tmp/
       shell: bash
     - id: mvnd-location
-      run: echo "::set-output name=mvnd-dir::/tmp/mvnd-${{ inputs.version }}-linux-amd64/bin"
+      run: echo "::set-output name=mvnd-dir::/tmp/maven-mvnd-${{ inputs.version }}-linux-amd64/bin"
       shell: bash
