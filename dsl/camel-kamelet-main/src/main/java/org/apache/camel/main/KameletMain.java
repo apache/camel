@@ -334,12 +334,12 @@ public class KameletMain extends MainCommandLineSupport {
             VertxHttpServer.registerServer(answer, 8080, stub);
         }
         if (console) {
-            // turn on developer console
-            configure().withDevConsoleEnabled(true);
-            // and include timestamps in events so we can see when they happened
-            configure().withCamelEventsTimestampEnabled(true);
             VertxHttpServer.registerConsole(answer);
         }
+        // always enable developer console as it is needed by camel-cli-connector
+        configure().withDevConsoleEnabled(true);
+        // and include timestamps in events, so we can see when they happened
+        configure().withCamelEventsTimestampEnabled(true);
         configure().withLoadHealthChecks(true);
         configure().withModeline(true);
         configure().withLoadStatisticsEnabled(true);

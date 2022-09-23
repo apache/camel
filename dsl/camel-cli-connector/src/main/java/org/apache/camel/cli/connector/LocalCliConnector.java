@@ -366,6 +366,10 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 }
             }
             // various details
+            JsonObject services = collectServices();
+            if (!services.isEmpty()) {
+                root.put("services", services);
+            }
             JsonObject mem = collectMemory();
             if (mem != null) {
                 root.put("memory", mem);
@@ -477,6 +481,20 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             JsonObject json = (JsonObject) dcAzure.get().call(DevConsole.MediaType.JSON);
             if (json != null) {
                 root.put("azure-secrets", json);
+            }
+        }
+        return root;
+    }
+
+    private JsonObject collectServices() {
+        JsonObject root = new JsonObject();
+        // platform-http is optional
+        Optional<DevConsole> dc = camelContext.adapt(ExtendedCamelContext.class)
+                .getDevConsoleResolver().lookupDevConsole("platform-http");
+        if (dc.isPresent()) {
+            JsonObject json = (JsonObject) dc.get().call(DevConsole.MediaType.JSON);
+            if (json != null) {
+                root.put("platform-http", json);
             }
         }
         return root;
