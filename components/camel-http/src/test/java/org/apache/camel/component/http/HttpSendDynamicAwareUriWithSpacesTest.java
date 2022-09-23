@@ -28,13 +28,11 @@ import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Disabled("https://issues.apache.org/jira/browse/CAMEL-18544")
 public class HttpSendDynamicAwareUriWithSpacesTest extends BaseHttpTest {
 
     private HttpServer localServer;
