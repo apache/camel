@@ -713,6 +713,28 @@ camel cmd start-route --all
 TIP: You can stop one or more route by their ids by separating using
 comma such as: camel cmd start-route --id=route1,hello. Use `camel cmd start-route --help` for more details.
 
+==== Configuring logging levels
+
+You can see the current logging levels of the running Camel integrations by:
+
+[source,bash]
+----
+camel cmd logger
+  PID   NAME   AGE   LOGGER  LEVEL
+ 90857  bar   2m48s  root    INFO
+ 91103  foo     20s  root    INFO
+----
+
+The logging level can be change at runtime, for example to change foo to DEBUG you execute:
+
+[source,bash]
+----
+camel cmd logger --level=DEBUG foo
+----
+
+TIP: You can use `--all` to change logging levels for all running integrations.
+
+
 === Using Jolokia and Hawtio
 
 The https://hawt.io/[Hawtio] web console allows inspecting running Camel integrations, such

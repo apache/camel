@@ -230,6 +230,17 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                         // ignore
                     }
                 }
+            } else if ("logger".equals(action)) {
+                try {
+                    String command = root.getString("command");
+                    if ("set-logging-level".equals(command)) {
+                        String logger = root.getString("logger-name");
+                        String level = root.getString("logging-level");
+                        LoggerHelper.changeLoggingLevel(logger, level);
+                    }
+                } catch (Exception e) {
+                    // ignore
+                }
             } else if ("gc".equals(action)) {
                 System.gc();
             } else if ("reload".equals(action)) {
@@ -272,6 +283,10 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                       + ". This exception is ignored.",
                     e);
         }
+    }
+
+    private void changeLoggingLevel(String level) {
+
     }
 
     JsonObject loadAction() {

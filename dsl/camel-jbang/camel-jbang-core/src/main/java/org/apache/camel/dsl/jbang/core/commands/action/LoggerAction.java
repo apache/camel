@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +27,7 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
@@ -38,13 +40,52 @@ public class LoggerAction extends ActionBaseCommand {
                         description = "Sort by pid, name or age", defaultValue = "pid")
     String sort;
 
+    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    String name;
+
+    @CommandLine.Option(names = { "--all" },
+                        description = "To select all running Camel integrations")
+    boolean all;
+
+    @CommandLine.Option(names = { "--level", "--logging-level" },
+                        description = "To change logging level")
+    String loggingLevel;
+
+    @CommandLine.Option(names = { "--logger" },
+                        description = "The logger name", defaultValue = "root")
+    String logger;
+
     public LoggerAction(CamelJBangMain main) {
         super(main);
     }
 
     @Override
     public Integer call() throws Exception {
-        return callList();
+        if (loggingLevel == null) {
+            return callList();
+        }
+        if (!all && name == null) {
+            return 0;
+        } else if (all) {
+            name = "*";
+        }
+        return callChangeLoggingLevel();
+    }
+
+    protected Integer callChangeLoggingLevel() throws Exception {
+        List<Long> pids = findPids(name);
+
+        for (long pid : pids) {
+            JsonObject root = new JsonObject();
+            root.put("action", "logger");
+            File f = getActionFile("" + pid);
+            root.put("command", "set-logging-level");
+            root.put("logger-name", logger);
+            root.put("logging-level", loggingLevel);
+            IOHelper.writeText(root.toJson(), f);
+        }
+
+        return 0;
     }
 
     protected Integer callList() throws Exception {
