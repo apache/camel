@@ -734,6 +734,27 @@ camel cmd logger --level=DEBUG foo
 
 TIP: You can use `--all` to change logging levels for all running integrations.
 
+==== Listing services
+
+Some Camel integrations may host a service which clients can call, such as REST, or SOAP-WS, or socket-level services using TCP protocols.
+
+You can list the available services as shown in the example below:
+
+[source,bash]
+----
+camel get service
+ PID   NAME       COMPONENT      PROTOCOL  SERVICE
+ 1912  netty      netty          tcp       tcp:localhost:4444
+ 2023  greetings  platform-http  rest      http://0.0.0.0:7777/camel/greetings/{name} (GET)
+ 2023  greetings  platform-http  http      http://0.0.0.0:7777/q/dev
+----
+
+Here you can see 2 Camel integrations. The netty integration hosts a TCP service that is available on port 4444.
+The other Camel integration hosts a REST service that can be called via GET only.
+And finally the integration comes with embedded web console (started with the `--console` option).
+
+NOTE: For a service to be listed then Camel components must be able to advertise the services using xref:camel-console.adoc[].
+
 
 === Using Jolokia and Hawtio
 
