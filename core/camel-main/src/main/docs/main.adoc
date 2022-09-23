@@ -175,7 +175,7 @@ The camel.health supports 7 options, which are listed below.
 |===
 
 === Camel Rest-DSL configurations
-The camel.rest supports 25 options, which are listed below.
+The camel.rest supports 26 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -197,6 +197,7 @@ The camel.rest supports 25 options, which are listed below.
 | *camel.rest.endpointProperties* | Sets additional options on endpoint level |  | Map
 | *camel.rest.host* | Sets the hostname to use by the REST consumer |  | String
 | *camel.rest.hostNameResolver* | Sets the resolver to use for resolving hostname | RestHostNameResolver.allLocalIp | RestHostNameResolver
+| *camel.rest.inlineRoutes* | Inline routes in rest-dsl which are linked using direct endpoints. By default, each service in Rest DSL is an individual route, meaning that you would have at least two routes per service (rest-dsl, and the route linked from rest-dsl). Enabling this allows Camel to optimize and inline this as a single route, however this requires to use direct endpoints, which must be unique per service. This option is default false. | false | boolean
 | *camel.rest.jsonDataFormat* | Sets a custom json data format to be used Important: This option is only for setting a custom name of the data format, not to refer to an existing data format instance. |  | String
 | *camel.rest.port* | Sets the port to use by the REST consumer |  | int
 | *camel.rest.producerApiDoc* | Sets the location of the api document (swagger api) the REST producer will use to validate the REST uri and query parameters are valid accordingly to the api document. This requires adding camel-swagger-java to the classpath, and any miss configuration will let Camel fail on startup and report the error(s). The location of the api document is loaded from classpath by default, but you can use file: or http: to refer to resources to load from file or http url. |  | String

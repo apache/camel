@@ -55,6 +55,8 @@ public class RestConfigurationConfigurer extends org.apache.camel.support.compon
         case "Host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "hostnameresolver":
         case "HostNameResolver": target.setHostNameResolver(property(camelContext, java.lang.String.class, value)); return true;
+        case "inlineroutes":
+        case "InlineRoutes": target.setInlineRoutes(property(camelContext, boolean.class, value)); return true;
         case "jsondataformat":
         case "JsonDataFormat": target.setJsonDataFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "port":
@@ -112,6 +114,8 @@ public class RestConfigurationConfigurer extends org.apache.camel.support.compon
         case "Host": return java.lang.String.class;
         case "hostnameresolver":
         case "HostNameResolver": return java.lang.String.class;
+        case "inlineroutes":
+        case "InlineRoutes": return boolean.class;
         case "jsondataformat":
         case "JsonDataFormat": return java.lang.String.class;
         case "port":
@@ -170,6 +174,8 @@ public class RestConfigurationConfigurer extends org.apache.camel.support.compon
         case "Host": return target.getHost();
         case "hostnameresolver":
         case "HostNameResolver": return target.getHostNameResolver();
+        case "inlineroutes":
+        case "InlineRoutes": return target.isInlineRoutes();
         case "jsondataformat":
         case "JsonDataFormat": return target.getJsonDataFormat();
         case "port":

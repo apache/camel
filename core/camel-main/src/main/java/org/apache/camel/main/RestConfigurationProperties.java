@@ -233,6 +233,21 @@ public class RestConfigurationProperties extends RestConfiguration implements Bo
     }
 
     /**
+     * Inline routes in rest-dsl which are linked using direct endpoints.
+     *
+     * By default, each service in Rest DSL is an individual route, meaning that you would
+     * have at least two routes per service (rest-dsl, and the route linked from rest-dsl).
+     * Enabling this allows Camel to optimize and inline this as a single route, however
+     * this requires to use direct endpoints, which must be unique per service.
+     *
+     * This option is default <tt>false</tt>.
+     */
+    public RestConfigurationProperties withInlineRoutes(boolean inlineRoutes) {
+        setInlineRoutes(inlineRoutes);
+        return this;
+    }
+
+    /**
      * Name of specific json data format to use. By default jackson will be used. Important: This option is only for
      * setting a custom name of the data format, not to refer to an existing data format instance.
      */
