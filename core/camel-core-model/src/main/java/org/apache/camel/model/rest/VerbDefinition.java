@@ -123,7 +123,6 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
         this.routeId = routeId;
     }
 
-
     public List<ParamDefinition> getParams() {
         return params;
     }
