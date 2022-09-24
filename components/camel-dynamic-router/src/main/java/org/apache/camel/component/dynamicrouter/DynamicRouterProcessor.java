@@ -16,10 +16,7 @@
  */
 package org.apache.camel.component.dynamicrouter;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -65,9 +62,10 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport implements Tra
     private static final String LOG_ENDPOINT = "log:%s.%s?level=%s&showAll=true&multiline=true";
 
     /**
-     * {@link FilterProcessor}s to determine if the incoming exchange should be routed, based on the content.
+     * {@link FilterProcessor}s, mapped by subscription ID, to determine if the incoming exchange
+     * should be routed based on the content.
      */
-    private final ArrayList<PrioritizedFilterProcessor> filters;
+    private final TreeMap<String, PrioritizedFilterProcessor> filterMap;
 
     /**
      * The camel context.
@@ -130,7 +128,7 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport implements Tra
                                   final boolean warnDroppedMessage,
                                   final Supplier<PrioritizedFilterProcessorFactory> filterProcessorFactorySupplier) {
         this.id = id;
-        this.filters = new ArrayList<>();
+        this.filterMap = new TreeMap<>();
         this.camelContext = camelContext;
         this.recipientMode = recipientMode;
         this.producerTemplate = camelContext.createProducerTemplate();
@@ -196,10 +194,9 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport implements Tra
      * @param filter the filter to add
      */
     public void addFilter(final PrioritizedFilterProcessor filter) {
-        synchronized (filters) {
+        synchronized (filterMap) {
             if (filter != null) {
-                filters.add(filter);
-                filters.sort(PrioritizedFilterProcessor.COMPARATOR);
+                filterMap.put(filter.getId(), filter);
                 LOG.debug("Added subscription: {}", filter);
             }
         }
@@ -212,10 +209,7 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport implements Tra
      * @return          the filter with the supplied ID, or null
      */
     public PrioritizedFilterProcessor getFilter(final String filterId) {
-        return filters.stream()
-                .filter(f -> filterId.equals(f.getId()))
-                .findFirst()
-                .orElse(null);
+        return filterMap.get(filterId);
     }
 
     /**
@@ -224,22 +218,16 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport implements Tra
      * @param filterId the ID of the filter to remove
      */
     public void removeFilter(final String filterId) {
-        synchronized (filters) {
-            PrioritizedFilterProcessor toRemove = filters.stream()
-                    .filter(f -> filterId.equals(f.getId()))
-                    .findFirst()
-                    .orElse(null);
-            Optional.ofNullable(toRemove)
-                    .ifPresent(f -> {
-                        if (filters.remove(f)) {
-                            LOG.debug("Removed subscription: {}", f);
-                        }
-                    });
+        synchronized (filterMap) {
+            Optional.ofNullable(filterMap.remove(filterId))
+                    .ifPresentOrElse(
+                            f -> LOG.debug("Removed subscription: {}", f),
+                            () -> LOG.debug("No subscription exists with ID: {}", filterId));
         }
     }
 
     /**
-     * Match the exchange against all {@link #filters} to determine if any of them are suitable to handle the exchange.
+     * Match the exchange against all {@link #filterMap} to determine if any of them are suitable to handle the exchange.
      *
      * @param  exchange the message exchange
      * @return          list of filters that match for the exchange; if "firstMatch" mode, it is a singleton list of
@@ -247,7 +235,7 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport implements Tra
      */
     List<PrioritizedFilterProcessor> matchFilters(final Exchange exchange) {
         return Optional.of(
-                filters.stream()
+                filterMap.values().stream()
                         .filter(f -> f.matches(exchange))
                         .limit(MODE_FIRST_MATCH.equals(recipientMode) ? 1 : Integer.MAX_VALUE)
                         .collect(Collectors.toList()))
@@ -257,7 +245,7 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport implements Tra
 
     /**
      * Processes the message exchange, where the caller supports having the exchange asynchronously processed. The
-     * exchange is matched against all {@link #filters} to determine if any of them are suitable to handle the exchange.
+     * exchange is matched against all {@link #filterMap} to determine if any of them are suitable to handle the exchange.
      * When the first suitable filter is found, it processes the exchange.
      * <p/>
      * If there was any failure in processing, then the caused {@link Exception} would be set on the {@link Exchange}.
