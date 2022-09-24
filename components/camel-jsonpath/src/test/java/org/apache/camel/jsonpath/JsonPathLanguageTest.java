@@ -16,7 +16,11 @@
  */
 package org.apache.camel.jsonpath;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,8 +29,11 @@ import com.jayway.jsonpath.Option;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.converter.stream.ByteArrayInputStreamCache;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.SimpleTypeConverter;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -87,12 +94,162 @@ public class JsonPathLanguageTest extends CamelTestSupport {
     }
 
     @Test
-    public void testExpressionPojo() {
+    public void testExpressionInputStream() {
         Exchange exchange = new DefaultExchange(context);
-        Map pojo = new HashMap();
+        exchange.getIn().setBody(
+                new ByteArrayInputStreamCache(
+                        new ByteArrayInputStream(
+                                "{\"kind\": \"full\", \"type\": \"customer\"}".getBytes(StandardCharsets.UTF_8))));
+
+        Language lan = context.resolveLanguage("jsonpath");
+        Expression exp = lan.createExpression("$.kind");
+        String kind = exp.evaluate(exchange, String.class);
+
+        assertNotNull(kind);
+        assertEquals("full", kind);
+
+        exp = lan.createExpression("$.type");
+        String type = exp.evaluate(exchange, String.class);
+        assertNotNull(type);
+        assertEquals("customer", type);
+    }
+
+    @Test
+    public void testExpressionInputStreamWithEncoding() {
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(
+                new ByteArrayInputStreamCache(
+                        new ByteArrayInputStream(
+                                "{\"kind\": \"full\", \"type\": \"customer\"}".getBytes(StandardCharsets.UTF_8))));
+        exchange.getIn().setHeader(JsonPathConstants.HEADER_JSON_ENCODING, "UTF-8");
+
+        Language lan = context.resolveLanguage("jsonpath");
+        Expression exp = lan.createExpression("$.kind");
+        String kind = exp.evaluate(exchange, String.class);
+
+        assertNotNull(kind);
+        assertEquals("full", kind);
+
+        exp = lan.createExpression("$.type");
+        String type = exp.evaluate(exchange, String.class);
+        assertNotNull(type);
+        assertEquals("customer", type);
+    }
+
+    @Test
+    public void testExpressionGenericFile() {
+        Exchange exchange = new DefaultExchange(context);
+        GenericFile<File> body = new GenericFile<>();
+        body.setFile(new File("src/test/resources/type.json"));
+        exchange.getIn().setBody(body);
+
+        Language lan = context.resolveLanguage("jsonpath");
+        Expression exp = lan.createExpression("$.kind");
+        String kind = exp.evaluate(exchange, String.class);
+
+        assertNotNull(kind);
+        assertEquals("full", kind);
+
+        exp = lan.createExpression("$.type");
+        String type = exp.evaluate(exchange, String.class);
+        assertNotNull(type);
+        assertEquals("customer", type);
+    }
+
+    @Test
+    public void testExpressionGenericFileWithCharset() {
+        Exchange exchange = new DefaultExchange(context);
+        GenericFile<File> body = new GenericFile<>();
+        body.setCharset("UTF-8");
+        body.setFile(new File("src/test/resources/type.json"));
+        exchange.getIn().setBody(body);
+
+        Language lan = context.resolveLanguage("jsonpath");
+        Expression exp = lan.createExpression("$.kind");
+        String kind = exp.evaluate(exchange, String.class);
+
+        assertNotNull(kind);
+        assertEquals("full", kind);
+
+        exp = lan.createExpression("$.type");
+        String type = exp.evaluate(exchange, String.class);
+        assertNotNull(type);
+        assertEquals("customer", type);
+    }
+
+    @Test
+    public void testExpressionMap() {
+        Exchange exchange = new DefaultExchange(context);
+        Map<String, String> pojo = new HashMap<>();
         pojo.put("kind", "full");
         pojo.put("type", "customer");
         exchange.getIn().setBody(pojo);
+
+        Language lan = context.resolveLanguage("jsonpath");
+        Expression exp = lan.createExpression("$.kind");
+        String kind = exp.evaluate(exchange, String.class);
+
+        assertNotNull(kind);
+        assertEquals("full", kind);
+
+        exp = lan.createExpression("$.type");
+        String type = exp.evaluate(exchange, String.class);
+        assertNotNull(type);
+        assertEquals("customer", type);
+    }
+
+    @Test
+    public void testExpressionListOfMap() {
+        Exchange exchange = new DefaultExchange(context);
+        Map<String, String> pojo = new HashMap<>();
+        pojo.put("kind", "full");
+        pojo.put("type", "customer");
+        exchange.getIn().setBody(List.of(pojo));
+
+        Language lan = context.resolveLanguage("jsonpath");
+        Expression exp = lan.createExpression("$..kind");
+        List<?> kinds = exp.evaluate(exchange, List.class);
+
+        assertNotNull(kinds);
+        assertEquals(1, kinds.size());
+        assertEquals("full", kinds.get(0));
+
+        exp = lan.createExpression("$..type");
+        List<?> types = exp.evaluate(exchange, List.class);
+        assertNotNull(types);
+        assertEquals(1, types.size());
+        assertEquals("customer", types.get(0));
+    }
+
+    @Test
+    public void testExpressionListOfCustomList() {
+        context.getTypeConverterRegistry().addTypeConverter(
+                InputStream.class, CustomList.class,
+                new SimpleTypeConverter(
+                        false,
+                        (Class<?> type, Exchange exchange, Object value) -> new ByteArrayInputStream(
+                                ((String) (((List<?>) value).get(0))).getBytes(StandardCharsets.UTF_8))));
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(new CustomList("{\"kind\": \"full\", \"type\": \"customer\"}"));
+
+        JsonPathLanguage lan = (JsonPathLanguage) context.resolveLanguage("jsonpath");
+        lan.setSupportPojoAsMapAndList(false);
+        Expression exp = lan.createExpression("$.kind");
+        String kind = exp.evaluate(exchange, String.class);
+
+        assertNotNull(kind);
+        assertEquals("full", kind);
+
+        exp = lan.createExpression("$.type");
+        String type = exp.evaluate(exchange, String.class);
+        assertNotNull(type);
+        assertEquals("customer", type);
+    }
+
+    @Test
+    public void testExpressionString() {
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody("{\"kind\": \"full\", \"type\": \"customer\"}");
 
         Language lan = context.resolveLanguage("jsonpath");
         Expression exp = lan.createExpression("$.kind");
@@ -137,4 +294,9 @@ public class JsonPathLanguageTest extends CamelTestSupport {
         assertNull(nofoo);
     }
 
+    public static class CustomList extends ArrayList<String> {
+        public CustomList(String value) {
+            add(value);
+        }
+    }
 }

@@ -19,9 +19,12 @@ package org.apache.camel.component.cxf.jaxrs;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.jaxrs.testbean.ServiceUtil;
+import org.apache.camel.jsonpath.JsonPathLanguage;
+import org.apache.camel.spi.LanguageCustomizer;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -31,7 +34,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CxfRsConsumerWithBeanTest extends CamelTestSupport {
+class CxfRsConsumerWithBeanTest extends CamelTestSupport {
     private static final String CXT = CXFTestSupport.getPort1() + "/CxfRsConsumerWithBeanTest";
     private static final String CXF_RS_ENDPOINT_URI
             = "cxfrs://http://localhost:" + CXT
@@ -39,10 +42,15 @@ public class CxfRsConsumerWithBeanTest extends CamelTestSupport {
     private static final String CXF_RS_ENDPOINT_URI_2
             = "cxfrs://http://localhost:" + CXT
               + "/rest2?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerServiceResource";
+    private static final String CXF_RS_ENDPOINT_URI_3
+            = "cxfrs://http://localhost:" + CXT
+              + "/rest3?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerServiceResource";
 
     @Override
     protected void bindToRegistry(Registry registry) throws Exception {
         registry.bind("service", new ServiceUtil());
+        registry.bind("jsonpath-language",
+                LanguageCustomizer.builder(JsonPathLanguage.class).build(l -> l.setSupportPojoAsMapAndList(false)));
     }
 
     @Override
@@ -51,12 +59,26 @@ public class CxfRsConsumerWithBeanTest extends CamelTestSupport {
             public void configure() {
                 from(CXF_RS_ENDPOINT_URI).to("bean://service?method=invoke(${body[0]}, ${body[1]})");
                 from(CXF_RS_ENDPOINT_URI_2).bean(ServiceUtil.class, "invoke(${body[0]}, ${body[1]})");
+                from(CXF_RS_ENDPOINT_URI_3).setBody().jsonpath("$.name");
             }
         };
     }
 
     @Test
-    public void testPutConsumer() throws Exception {
+    void testPostConsumer() throws Exception {
+        HttpPost post = new HttpPost("http://localhost:" + CXT + "/rest3/customerservice/customer");
+        StringEntity entity = new StringEntity("{\"name\":\"John\", \"age\":30, \"car\":null}");
+        post.setEntity(entity);
+        entity.setContentType("application/json");
+        try (CloseableHttpClient httpclient = HttpClientBuilder.create().build()) {
+            HttpResponse response = httpclient.execute(post);
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            assertEquals("John", EntityUtils.toString(response.getEntity()));
+        }
+    }
+
+    @Test
+    void testPutConsumer() throws Exception {
         sendPutRequest("http://localhost:" + CXT + "/rest/customerservice/c20");
         sendPutRequest("http://localhost:" + CXT + "/rest2/customerservice/c20");
     }
@@ -66,14 +88,10 @@ public class CxfRsConsumerWithBeanTest extends CamelTestSupport {
         StringEntity entity = new StringEntity("string");
         entity.setContentType("text/plain");
         put.setEntity(entity);
-        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
-
-        try {
+        try (CloseableHttpClient httpclient = HttpClientBuilder.create().build()) {
             HttpResponse response = httpclient.execute(put);
             assertEquals(200, response.getStatusLine().getStatusCode());
             assertEquals("c20string", EntityUtils.toString(response.getEntity()));
-        } finally {
-            httpclient.close();
         }
     }
 }

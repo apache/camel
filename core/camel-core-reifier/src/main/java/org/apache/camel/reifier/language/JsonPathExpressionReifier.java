@@ -43,7 +43,7 @@ public class JsonPathExpressionReifier extends ExpressionReifier<JsonPathExpress
     }
 
     private Object[] createProperties() {
-        Object[] properties = new Object[7];
+        Object[] properties = new Object[8];
         properties[0] = definition.getResultType();
         properties[1] = parseBoolean(definition.getSuppressExceptions());
         properties[2] = parseBoolean(definition.getAllowSimple());
@@ -51,6 +51,7 @@ public class JsonPathExpressionReifier extends ExpressionReifier<JsonPathExpress
         properties[4] = parseBoolean(definition.getWriteAsString());
         properties[5] = parseString(definition.getHeaderName());
         properties[6] = parseString(definition.getOption());
+        properties[7] = parseBoolean(definition.getSupportPojoAsMapAndList());
         return properties;
     }
 

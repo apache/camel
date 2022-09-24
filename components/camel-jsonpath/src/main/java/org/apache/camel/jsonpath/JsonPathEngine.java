@@ -58,16 +58,17 @@ public class JsonPathEngine {
     private final String headerName;
     private final Configuration configuration;
     private final boolean hasSimple;
+    private final boolean supportPojoAsMapAndList;
     private JsonPathAdapter adapter;
     private volatile boolean initJsonAdapter;
 
     @Deprecated
     public JsonPathEngine(String expression) {
-        this(expression, false, false, true, null, null, null);
+        this(expression, false, false, true, true, null, null, null);
     }
 
     public JsonPathEngine(String expression, boolean writeAsString, boolean suppressExceptions, boolean allowSimple,
-                          String headerName, Option[] options, CamelContext context) {
+                          boolean supportPojoAsMapAndList, String headerName, Option[] options, CamelContext context) {
         this.expression = expression;
         this.writeAsString = writeAsString;
         this.headerName = headerName;
@@ -100,6 +101,7 @@ public class JsonPathEngine {
             }
         }
         this.hasSimple = simpleInUse;
+        this.supportPojoAsMapAndList = supportPojoAsMapAndList;
     }
 
     private ObjectMapper findRegisteredMapper(CamelContext context) {
@@ -189,24 +191,25 @@ public class JsonPathEngine {
             LOG.trace("JSonPath: {} is read as String: {}", path, json);
             String str = (String) json;
             return JsonPath.using(configuration).parse(str).read(path);
-        } else if (json instanceof Map) {
-            LOG.trace("JSonPath: {} is read as Map: {}", path, json);
-            Map map = (Map) json;
-            return JsonPath.using(configuration).parse(map).read(path);
-        } else if (json instanceof List) {
-            LOG.trace("JSonPath: {} is read as List: {}", path, json);
-            List list = (List) json;
-            return JsonPath.using(configuration).parse(list).read(path);
-        } else {
-            //try to auto convert into inputStream
-            Object answer = readWithInputStream(path, exchange);
-            if (answer == null) {
-                // fallback and attempt an adapter which can read the message body/header
-                answer = readWithAdapter(path, exchange);
+        } else if (supportPojoAsMapAndList) {
+            if (json instanceof Map) {
+                LOG.trace("JSonPath: {} is read as Map: {}", path, json);
+                Map<?, ?> map = (Map<?, ?>) json;
+                return JsonPath.using(configuration).parse(map).read(path);
+            } else if (json instanceof List) {
+                LOG.trace("JSonPath: {} is read as List: {}", path, json);
+                List<?> list = (List<?>) json;
+                return JsonPath.using(configuration).parse(list).read(path);
             }
-            if (answer != null) {
-                return answer;
-            }
+        }
+        //try to auto convert into inputStream
+        Object answer = readWithInputStream(path, exchange);
+        if (answer == null) {
+            // fallback and attempt an adapter which can read the message body/header
+            answer = readWithAdapter(path, exchange);
+        }
+        if (answer != null) {
+            return answer;
         }
 
         // is json path configured to suppress exceptions

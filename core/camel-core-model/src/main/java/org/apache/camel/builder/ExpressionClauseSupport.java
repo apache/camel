@@ -509,6 +509,24 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     /**
      * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path expression</a>
      *
+     * @param  text                    the expression to be evaluated
+     * @param  suppressExceptions      whether to suppress exceptions such as PathNotFoundException
+     * @param  allowSimple             whether to allow in inlined simple exceptions in the json path expression
+     * @param  supportPojoAsMapAndList whether a {@code Map} or {@code List} should be processed natively or the default
+     *                                 behavior is expected (Auto converted into {@code InputStream})
+     * @return                         the builder to continue processing the DSL
+     */
+    public T jsonpath(String text, boolean suppressExceptions, boolean allowSimple, boolean supportPojoAsMapAndList) {
+        JsonPathExpression expression = new JsonPathExpression(text);
+        expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
+        expression.setAllowSimple(Boolean.toString(allowSimple));
+        expression.setSupportPojoAsMapAndList(Boolean.toString(supportPojoAsMapAndList));
+        return expression(expression);
+    }
+
+    /**
+     * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path expression</a>
+     *
      * @param  text       the expression to be evaluated
      * @param  resultType the return type expected by the expression
      * @return            the builder to continue processing the DSL
@@ -557,6 +575,29 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     /**
      * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path expression</a>
      *
+     * @param  text                    the expression to be evaluated
+     * @param  suppressExceptions      whether to suppress exceptions such as PathNotFoundException
+     * @param  allowSimple             whether to allow in inlined simple exceptions in the json path expression
+     * @param  supportPojoAsMapAndList whether a {@code Map} or {@code List} should be processed natively or the default
+     *                                 behavior is expected (Auto converted into {@code InputStream})
+     * @param  resultType              the return type expected by the expression
+     * @return                         the builder to continue processing the DSL
+     */
+    public T jsonpath(
+            String text, boolean suppressExceptions, boolean allowSimple, boolean supportPojoAsMapAndList,
+            Class<?> resultType) {
+        JsonPathExpression expression = new JsonPathExpression(text);
+        expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
+        expression.setAllowSimple(Boolean.toString(allowSimple));
+        expression.setSupportPojoAsMapAndList(Boolean.toString(supportPojoAsMapAndList));
+        expression.setResultType(resultType);
+        expression(expression);
+        return result;
+    }
+
+    /**
+     * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path expression</a>
+     *
      * @param  text               the expression to be evaluated
      * @param  suppressExceptions whether to suppress exceptions such as PathNotFoundException
      * @param  allowSimple        whether to allow in inlined simple exceptions in the json path expression
@@ -568,6 +609,31 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
         JsonPathExpression expression = new JsonPathExpression(text);
         expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
         expression.setAllowSimple(Boolean.toString(allowSimple));
+        expression.setResultType(resultType);
+        expression.setHeaderName(headerName);
+        expression(expression);
+        return result;
+    }
+
+    /**
+     * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path expression</a>
+     *
+     * @param  text                    the expression to be evaluated
+     * @param  suppressExceptions      whether to suppress exceptions such as PathNotFoundException
+     * @param  allowSimple             whether to allow in inlined simple exceptions in the json path expression
+     * @param  supportPojoAsMapAndList whether a {@code Map} or {@code List} should be processed natively or the default
+     *                                 behavior is expected (Auto converted into {@code InputStream})
+     * @param  resultType              the return type expected by the expression
+     * @param  headerName              the name of the header to apply the expression to
+     * @return                         the builder to continue processing the DSL
+     */
+    public T jsonpath(
+            String text, boolean suppressExceptions, boolean allowSimple, boolean supportPojoAsMapAndList, Class<?> resultType,
+            String headerName) {
+        JsonPathExpression expression = new JsonPathExpression(text);
+        expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
+        expression.setAllowSimple(Boolean.toString(allowSimple));
+        expression.setSupportPojoAsMapAndList(Boolean.toString(supportPojoAsMapAndList));
         expression.setResultType(resultType);
         expression.setHeaderName(headerName);
         expression(expression);
@@ -644,6 +710,26 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     /**
      * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path expression</a> with writeAsString enabled.
      *
+     * @param  text                    the expression to be evaluated
+     * @param  suppressExceptions      whether to suppress exceptions such as PathNotFoundException
+     * @param  allowSimple             whether to allow in inlined simple exceptions in the json path expression
+     * @param  supportPojoAsMapAndList whether a {@code Map} or {@code List} should be processed natively or the default
+     *                                 behavior is expected (Auto converted into {@code InputStream})
+     * @return                         the builder to continue processing the DSL
+     */
+    public T jsonpathWriteAsString(
+            String text, boolean suppressExceptions, boolean allowSimple, boolean supportPojoAsMapAndList) {
+        JsonPathExpression expression = new JsonPathExpression(text);
+        expression.setWriteAsString(Boolean.toString(true));
+        expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
+        expression.setAllowSimple(Boolean.toString(allowSimple));
+        expression.setSupportPojoAsMapAndList(Boolean.toString(supportPojoAsMapAndList));
+        return expression(expression);
+    }
+
+    /**
+     * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path expression</a> with writeAsString enabled.
+     *
      * @param  text               the expression to be evaluated
      * @param  suppressExceptions whether to suppress exceptions such as PathNotFoundException
      * @param  allowSimple        whether to allow in inlined simple exceptions in the json path expression
@@ -655,6 +741,28 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
         expression.setWriteAsString(Boolean.toString(true));
         expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
         expression.setAllowSimple(Boolean.toString(allowSimple));
+        expression.setHeaderName(headerName);
+        return expression(expression);
+    }
+
+    /**
+     * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path expression</a> with writeAsString enabled.
+     *
+     * @param  text                    the expression to be evaluated
+     * @param  suppressExceptions      whether to suppress exceptions such as PathNotFoundException
+     * @param  allowSimple             whether to allow in inlined simple exceptions in the json path expression
+     * @param  supportPojoAsMapAndList whether a {@code Map} or {@code List} should be processed natively or the default
+     *                                 behavior is expected (Auto converted into {@code InputStream})
+     * @param  headerName              the name of the header to apply the expression to
+     * @return                         the builder to continue processing the DSL
+     */
+    public T jsonpathWriteAsString(
+            String text, boolean suppressExceptions, boolean allowSimple, boolean supportPojoAsMapAndList, String headerName) {
+        JsonPathExpression expression = new JsonPathExpression(text);
+        expression.setWriteAsString(Boolean.toString(true));
+        expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
+        expression.setAllowSimple(Boolean.toString(allowSimple));
+        expression.setSupportPojoAsMapAndList(Boolean.toString(supportPojoAsMapAndList));
         expression.setHeaderName(headerName);
         return expression(expression);
     }
@@ -675,6 +783,31 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
         expression.setWriteAsString(Boolean.toString(true));
         expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
         expression.setAllowSimple(Boolean.toString(allowSimple));
+        expression.setHeaderName(headerName);
+        expression.setResultType(resultType);
+        return expression(expression);
+    }
+
+    /**
+     * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path expression</a> with writeAsString enabled.
+     *
+     * @param  text                    the expression to be evaluated
+     * @param  suppressExceptions      whether to suppress exceptions such as PathNotFoundException
+     * @param  allowSimple             whether to allow in inlined simple exceptions in the json path expression
+     * @param  supportPojoAsMapAndList whether a {@code Map} or {@code List} should be processed natively or the default
+     *                                 behavior is expected (Auto converted into {@code InputStream})
+     * @param  headerName              the name of the header to apply the expression to
+     * @param  resultType              the return type expected by the expression
+     * @return                         the builder to continue processing the DSL
+     */
+    public T jsonpathWriteAsString(
+            String text, boolean suppressExceptions, boolean allowSimple, boolean supportPojoAsMapAndList, String headerName,
+            Class<?> resultType) {
+        JsonPathExpression expression = new JsonPathExpression(text);
+        expression.setWriteAsString(Boolean.toString(true));
+        expression.setSuppressExceptions(Boolean.toString(suppressExceptions));
+        expression.setAllowSimple(Boolean.toString(allowSimple));
+        expression.setSupportPojoAsMapAndList(Boolean.toString(supportPojoAsMapAndList));
         expression.setHeaderName(headerName);
         expression.setResultType(resultType);
         return expression(expression);

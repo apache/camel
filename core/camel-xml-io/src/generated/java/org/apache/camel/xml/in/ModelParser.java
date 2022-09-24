@@ -2670,6 +2670,7 @@ public class ModelParser extends BaseParser {
                 case "headerName": def.setHeaderName(val); break;
                 case "option": def.setOption(val); break;
                 case "resultType": def.setResultTypeName(val); break;
+                case "supportPojoAsMapAndList": def.setSupportPojoAsMapAndList(val); break;
                 case "suppressExceptions": def.setSuppressExceptions(val); break;
                 case "writeAsString": def.setWriteAsString(val); break;
                 default: return expressionDefinitionAttributeHandler().accept(def, key, val);
@@ -2704,10 +2705,6 @@ public class ModelParser extends BaseParser {
     }
     protected OgnlExpression doParseOgnlExpression() throws IOException, XmlPullParserException {
         return doParse(new OgnlExpression(),
-            expressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
-    }
-    protected PythonExpression doParsePythonExpression() throws IOException, XmlPullParserException {
-        return doParse(new PythonExpression(),
             expressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
     }
     protected RefExpression doParseRefExpression() throws IOException, XmlPullParserException {
@@ -2903,7 +2900,6 @@ public class ModelParser extends BaseParser {
                 case "outType": def.setOutType(val); break;
                 case "path": def.setPath(val); break;
                 case "produces": def.setProduces(val); break;
-                case "routeId": def.setRouteId(val); break;
                 case "skipBindingOnErrorCode": def.setSkipBindingOnErrorCode(val); break;
                 case "type": def.setType(val); break;
                 default: return optionalIdentifiedDefinitionAttributeHandler().accept(def, key, val);
@@ -3071,7 +3067,6 @@ public class ModelParser extends BaseParser {
                 case "enableCORS": def.setEnableCORS(Boolean.valueOf(val)); break;
                 case "host": def.setHost(val); break;
                 case "hostNameResolver": def.setHostNameResolver(RestHostNameResolver.valueOf(val)); break;
-                case "inlineRoutes": def.setInlineRoutes(Boolean.valueOf(val)); break;
                 case "jsonDataFormat": def.setJsonDataFormat(val); break;
                 case "port": def.setPort(val); break;
                 case "producerApiDoc": def.setProducerApiDoc(val); break;
@@ -3339,7 +3334,6 @@ public class ModelParser extends BaseParser {
             case "method": return doParseMethodCallExpression();
             case "mvel": return doParseMvelExpression();
             case "ognl": return doParseOgnlExpression();
-            case "python": return doParsePythonExpression();
             case "ref": return doParseRefExpression();
             case "simple": return doParseSimpleExpression();
             case "spel": return doParseSpELExpression();

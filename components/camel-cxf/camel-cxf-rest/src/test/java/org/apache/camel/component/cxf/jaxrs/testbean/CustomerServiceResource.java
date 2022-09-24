@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf.jaxrs.testbean;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -47,5 +48,11 @@ public interface CustomerServiceResource {
     Object invoke(
             @PathParam("id") String id,
             String payload);
+
+    @Path("/customer")
+    @POST
+    @Consumes({ "application/json" })
+    @Produces({ "application/json" })
+    Object createCustomer(String payload);
 }
 // END SNIPPET: example

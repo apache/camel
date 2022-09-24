@@ -46,6 +46,9 @@ public class JsonPathExpression extends ExpressionDefinition {
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String allowEasyPredicate;
     @XmlAttribute
+    @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
+    private String supportPojoAsMapAndList;
+    @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String writeAsString;
     @XmlAttribute
@@ -149,6 +152,18 @@ public class JsonPathExpression extends ExpressionDefinition {
      */
     public void setOption(String option) {
         this.option = option;
+    }
+
+    public String getSupportPojoAsMapAndList() {
+        return supportPojoAsMapAndList;
+    }
+
+    /**
+     * To indicate whether a {@code Map} or {@code List} should be processed natively or the default behavior is
+     * expected (Auto converted into {@code InputStream}). This flag has been added for backward compatibility reasons.
+     */
+    public void setSupportPojoAsMapAndList(String supportPojoAsMapAndList) {
+        this.supportPojoAsMapAndList = supportPojoAsMapAndList;
     }
 
     @Override

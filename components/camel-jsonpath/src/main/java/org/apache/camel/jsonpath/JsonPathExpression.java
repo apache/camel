@@ -42,6 +42,7 @@ public class JsonPathExpression extends ExpressionAdapter {
     private boolean allowSimple = true;
     private boolean allowEasyPredicate = true;
     private boolean writeAsString;
+    private boolean supportPojoAsMapAndList = true;
     private String headerName;
     private Option[] options;
 
@@ -138,6 +139,18 @@ public class JsonPathExpression extends ExpressionAdapter {
         this.options = options;
     }
 
+    public boolean isSupportPojoAsMapAndList() {
+        return supportPojoAsMapAndList;
+    }
+
+    /**
+     * To indicate whether a {@code Map} or {@code List} should be processed natively or the default behavior is
+     * expected (Auto converted into {@code InputStream}). This flag has been added for backward compatibility reasons.
+     */
+    public void setSupportPojoAsMapAndList(boolean supportPojoAsMapAndList) {
+        this.supportPojoAsMapAndList = supportPojoAsMapAndList;
+    }
+
     @Override
     public Object evaluate(Exchange exchange) {
         try {
@@ -175,7 +188,9 @@ public class JsonPathExpression extends ExpressionAdapter {
 
         LOG.debug("Initializing {} using: {}", predicate ? "predicate" : "expression", exp);
         try {
-            engine = new JsonPathEngine(exp, writeAsString, suppressExceptions, allowSimple, headerName, options, context);
+            engine = new JsonPathEngine(
+                    exp, writeAsString, suppressExceptions, allowSimple, supportPojoAsMapAndList, headerName,
+                    options, context);
         } catch (Exception e) {
             throw new ExpressionIllegalSyntaxException(exp, e);
         }

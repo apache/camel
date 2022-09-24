@@ -37,6 +37,7 @@ public class JsonPathLanguage extends LanguageSupport implements PropertyConfigu
     private boolean suppressExceptions;
     private boolean allowSimple = true;
     private boolean allowEasyPredicate = true;
+    private boolean supportPojoAsMapAndList = true;
     private boolean writeAsString;
     private String headerName;
     private Option[] options;
@@ -97,6 +98,14 @@ public class JsonPathLanguage extends LanguageSupport implements PropertyConfigu
         this.options = options;
     }
 
+    public boolean isSupportPojoAsMapAndList() {
+        return supportPojoAsMapAndList;
+    }
+
+    public void setSupportPojoAsMapAndList(boolean supportPojoAsMapAndList) {
+        this.supportPojoAsMapAndList = supportPojoAsMapAndList;
+    }
+
     @Override
     public Predicate createPredicate(String expression) {
         JsonPathExpression answer = (JsonPathExpression) createExpression(expression);
@@ -113,8 +122,8 @@ public class JsonPathLanguage extends LanguageSupport implements PropertyConfigu
         answer.setAllowEasyPredicate(allowEasyPredicate);
         answer.setHeaderName(headerName);
         answer.setWriteAsString(writeAsString);
-        answer.setHeaderName(headerName);
         answer.setOptions(options);
+        answer.setSupportPojoAsMapAndList(supportPojoAsMapAndList);
         answer.init(getCamelContext());
         return answer;
     }
@@ -141,8 +150,9 @@ public class JsonPathLanguage extends LanguageSupport implements PropertyConfigu
             for (String s : option.split(",")) {
                 list.add(getCamelContext().getTypeConverter().convertTo(Option.class, s));
             }
-            answer.setOptions(list.toArray(new Option[list.size()]));
+            answer.setOptions(list.toArray(new Option[0]));
         }
+        answer.setSupportPojoAsMapAndList(property(boolean.class, properties, 7, supportPojoAsMapAndList));
         answer.init(getCamelContext());
         return answer;
     }
@@ -191,6 +201,10 @@ public class JsonPathLanguage extends LanguageSupport implements PropertyConfigu
             case "writeasstring":
             case "writeAsString":
                 setWriteAsString(PropertyConfigurerSupport.property(camelContext, boolean.class, value));
+                return true;
+            case "supportpojoasmapandlist":
+            case "supportPojoAsMapAndList":
+                setSupportPojoAsMapAndList(PropertyConfigurerSupport.property(camelContext, boolean.class, value));
                 return true;
             case "options":
                 setOptions(PropertyConfigurerSupport.property(camelContext, Option[].class, value));
