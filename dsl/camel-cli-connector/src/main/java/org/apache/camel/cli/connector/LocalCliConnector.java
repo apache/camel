@@ -509,6 +509,15 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 root.put("netty", json);
             }
         }
+        // mina is optional
+        dc = camelContext.adapt(ExtendedCamelContext.class)
+                .getDevConsoleResolver().lookupDevConsole("mina");
+        if (dc.isPresent()) {
+            JsonObject json = (JsonObject) dc.get().call(DevConsole.MediaType.JSON);
+            if (json != null) {
+                root.put("mina", json);
+            }
+        }
 
         return root;
     }

@@ -67,6 +67,7 @@ public class ListService extends ProcessBaseCommand {
                         row.uptime = extractSince(ph);
                         row.age = TimeUtils.printSince(row.uptime);
 
+                        // platform-http is special
                         JsonObject jo = (JsonObject) root.get("services");
                         if (jo != null) {
                             jo = (JsonObject) jo.get("platform-http");
@@ -85,23 +86,8 @@ public class ListService extends ProcessBaseCommand {
                                 }
                             }
                         }
-                        jo = (JsonObject) root.get("services");
-                        if (jo != null) {
-                            jo = (JsonObject) jo.get("netty");
-                        }
-                        if (jo != null) {
-                            JsonArray arr = (JsonArray) jo.get("endpoints");
-                            if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
-                                    row = row.copy();
-                                    jo = (JsonObject) arr.get(i);
-                                    row.component = "netty";
-                                    row.protocol = jo.getString("protocol");
-                                    row.service = row.protocol + ":" + jo.getString("host") + ":" + jo.getInteger("port");
-                                    rows.add(row);
-                                }
-                            }
-                        }
+                        fetchServices(root, row, "netty", rows);
+                        fetchServices(root, row, "mina", rows);
                     }
                 });
 
@@ -121,16 +107,24 @@ public class ListService extends ProcessBaseCommand {
         return 0;
     }
 
-    private String extractPlatform(ProcessHandle ph, JsonObject runtime) {
-        String answer = runtime != null ? runtime.getString("platform") : null;
-        if ("Camel".equals(answer)) {
-            // generic camel, we need to check if we run in JBang
-            String cl = ph.info().commandLine().orElse("");
-            if (cl.contains("main.CamelJBang run")) {
-                answer = "JBang";
+    private static void fetchServices(JsonObject root, Row row, String component, List<Row> rows) {
+        JsonObject jo = (JsonObject) root.get("services");
+        if (jo != null) {
+            jo = (JsonObject) jo.get(component);
+        }
+        if (jo != null) {
+            JsonArray arr = (JsonArray) jo.get("endpoints");
+            if (arr != null) {
+                for (Object o : arr) {
+                    row = row.copy();
+                    jo = (JsonObject) o;
+                    row.component = component;
+                    row.protocol = jo.getString("protocol");
+                    row.service = row.protocol + ":" + jo.getString("host") + ":" + jo.getInteger("port");
+                    rows.add(row);
+                }
             }
         }
-        return answer;
     }
 
     protected int sortRow(Row o1, Row o2) {
