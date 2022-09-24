@@ -88,6 +88,7 @@ public class ListService extends ProcessBaseCommand {
                         }
                         fetchServices(root, row, "netty", rows);
                         fetchServices(root, row, "mina", rows);
+                        fetchServices(root, row, "mllp", rows);
                     }
                 });
 
