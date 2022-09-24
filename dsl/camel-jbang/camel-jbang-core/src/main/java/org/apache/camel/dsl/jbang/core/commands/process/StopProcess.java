@@ -61,7 +61,7 @@ public class StopProcess extends ProcessBaseCommand {
                 FileUtil.deleteFile(pidFile);
             }
             if (kill) {
-                ProcessHandle.of(pid).ifPresent((ph) -> {
+                ProcessHandle.of(pid).ifPresent(ph -> {
                     System.out.println("Killing Camel integration (pid: " + pid + ")");
                     ph.destroyForcibly();
                 });
