@@ -518,6 +518,15 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 root.put("mina", json);
             }
         }
+        // mllp is optional
+        dc = camelContext.adapt(ExtendedCamelContext.class)
+                .getDevConsoleResolver().lookupDevConsole("mllp");
+        if (dc.isPresent()) {
+            JsonObject json = (JsonObject) dc.get().call(DevConsole.MediaType.JSON);
+            if (json != null) {
+                root.put("mllp", json);
+            }
+        }
 
         return root;
     }
