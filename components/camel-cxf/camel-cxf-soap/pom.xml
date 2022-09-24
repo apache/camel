@@ -151,23 +151,11 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- test for the cxf jms transport -->
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-broker</artifactId>
-            <scope>test</scope>
-        </dependency>
-
         <!-- test for cxf failover feature -->
 
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-features-clustering</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-kahadb-store</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -226,12 +214,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpmime</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
             <scope>test</scope>
@@ -269,13 +251,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib-nodep</artifactId>
-            <version>${cglib-version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>commons-net</groupId>
             <artifactId>commons-net</artifactId>
             <version>${commons-net-version}</version>
@@ -283,23 +258,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.codehaus.jettison</groupId>
-            <artifactId>jettison</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3-version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- needed by jetty http server to load class: org.jvnet.staxex.util.XMLStreamReaderToXMLStreamWriter -->
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-osgi</artifactId>
-            <version>${jaxb-osgi-version}</version>
             <scope>test</scope>
         </dependency>
 
