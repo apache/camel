@@ -62,8 +62,8 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport implements Tra
     private static final String LOG_ENDPOINT = "log:%s.%s?level=%s&showAll=true&multiline=true";
 
     /**
-     * {@link FilterProcessor}s, mapped by subscription ID, to determine if the incoming exchange
-     * should be routed based on the content.
+     * {@link FilterProcessor}s, mapped by subscription ID, to determine if the incoming exchange should be routed based
+     * on the content.
      */
     private final TreeMap<String, PrioritizedFilterProcessor> filterMap;
 
@@ -227,7 +227,8 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport implements Tra
     }
 
     /**
-     * Match the exchange against all {@link #filterMap} to determine if any of them are suitable to handle the exchange.
+     * Match the exchange against all {@link #filterMap} to determine if any of them are suitable to handle the
+     * exchange.
      *
      * @param  exchange the message exchange
      * @return          list of filters that match for the exchange; if "firstMatch" mode, it is a singleton list of
@@ -245,8 +246,8 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport implements Tra
 
     /**
      * Processes the message exchange, where the caller supports having the exchange asynchronously processed. The
-     * exchange is matched against all {@link #filterMap} to determine if any of them are suitable to handle the exchange.
-     * When the first suitable filter is found, it processes the exchange.
+     * exchange is matched against all {@link #filterMap} to determine if any of them are suitable to handle the
+     * exchange. When the first suitable filter is found, it processes the exchange.
      * <p/>
      * If there was any failure in processing, then the caused {@link Exception} would be set on the {@link Exchange}.
      *
