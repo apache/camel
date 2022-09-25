@@ -58,6 +58,10 @@ public class CamelEndpointStatus extends ProcessBaseCommand {
                         description = "Filter endpoints that must be higher than the given usage")
     long filterTotal;
 
+    @CommandLine.Option(names = { "--short-uri" },
+                        description = "List endpoint URI without query parameters (short)")
+    boolean shortUri;
+
     public CamelEndpointStatus(CamelJBangMain main) {
         super(main);
     }
@@ -101,8 +105,19 @@ public class CamelEndpointStatus extends ProcessBaseCommand {
                                 if (filterDirection != null && !filterDirection.equals(row.direction)) {
                                     add = false;
                                 }
-                                if (filter != null && !PatternHelper.matchPattern(row.endpoint, filter)) {
-                                    add = false;
+                                if (filter != null) {
+                                    String f = filter;
+                                    boolean negate = filter.startsWith("-");
+                                    if (negate) {
+                                        f = f.substring(1);
+                                    }
+                                    boolean match = PatternHelper.matchPattern(row.endpoint, f);
+                                    if (negate) {
+                                        match = !match;
+                                    }
+                                    if (!match) {
+                                        add = false;
+                                    }
                                 }
                                 if (limit > 0 && rows.size() >= limit) {
                                     add = false;
@@ -132,9 +147,20 @@ public class CamelEndpointStatus extends ProcessBaseCommand {
                         .with(r -> r.name),
                 new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
                 new Column().header("DIR").with(r -> r.direction),
-                new Column().header("URI").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
-                        .with(r -> r.endpoint),
-                new Column().header("TOTAL").with(r -> r.total))));
+                new Column().header("TOTAL").with(r -> r.total),
+                new Column().header("URI").dataAlign(HorizontalAlign.LEFT).maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        .with(this::getUri))));
+    }
+
+    private String getUri(Row r) {
+        String u = r.endpoint;
+        if (shortUri) {
+            int pos = u.indexOf('?');
+            if (pos > 0) {
+                u = u.substring(0, pos);
+            }
+        }
+        return u;
     }
 
     protected int sortRow(Row o1, Row o2) {
