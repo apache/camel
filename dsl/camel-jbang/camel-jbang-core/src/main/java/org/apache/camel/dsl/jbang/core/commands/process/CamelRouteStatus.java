@@ -46,6 +46,10 @@ public class CamelRouteStatus extends ProcessBaseCommand {
                         description = "Prefer to display source filename/code instead of IDs")
     boolean source;
 
+    @CommandLine.Option(names = { "--short-uri" },
+                        description = "List endpoint URI without query parameters (short)")
+    boolean shortUri;
+
     @CommandLine.Option(names = { "--limit" },
                         description = "Filter routes by limiting to the given number of rows")
     int limit;
@@ -161,11 +165,11 @@ public class CamelRouteStatus extends ProcessBaseCommand {
                 new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getId),
                 new Column().header("FROM").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
-                        .with(r -> r.from),
+                        .with(this::getFrom),
                 new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
                         .with(r -> r.state),
                 new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
-                new Column().header("COVER").dataAlign(HorizontalAlign.CENTER).with(this::getCoverage),
+                new Column().header("COVER").with(this::getCoverage),
                 new Column().header("MSG/S").with(this::getThroughput),
                 new Column().header("TOTAL").with(r -> r.total),
                 new Column().header("FAIL").with(r -> r.failed),
@@ -193,6 +197,17 @@ public class CamelRouteStatus extends ProcessBaseCommand {
             default:
                 return 0;
         }
+    }
+
+    private String getFrom(Row r) {
+        String u = r.from;
+        if (shortUri) {
+            int pos = u.indexOf('?');
+            if (pos > 0) {
+                u = u.substring(0, pos);
+            }
+        }
+        return u;
     }
 
     protected String getSinceLast(Row r) {
