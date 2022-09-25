@@ -271,6 +271,15 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     LOG.trace("Updating output file: {}", outputFile);
                     IOHelper.writeText(json.toJson(), outputFile);
                 }
+            } else if ("source".equals(action)) {
+                DevConsole dc = camelContext.adapt(ExtendedCamelContext.class)
+                        .getDevConsoleResolver().resolveDevConsole("source");
+                if (dc != null) {
+                    String filter = root.getString("filter");
+                    JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("filter", filter));
+                    LOG.trace("Updating output file: {}", outputFile);
+                    IOHelper.writeText(json.toJson(), outputFile);
+                }
             }
 
             // action done so delete file
@@ -283,10 +292,6 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                       + ". This exception is ignored.",
                     e);
         }
-    }
-
-    private void changeLoggingLevel(String level) {
-
     }
 
     JsonObject loadAction() {
