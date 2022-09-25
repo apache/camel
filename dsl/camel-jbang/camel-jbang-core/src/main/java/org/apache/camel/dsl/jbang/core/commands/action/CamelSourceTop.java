@@ -101,8 +101,11 @@ public class CamelSourceTop extends ActionBaseCommand {
                     Object last = stats.get("lastProcessingTime");
                     if (last != null) {
                         row.last = last.toString();
+                        if ("-1".equals(row.last)) {
+                            row.last = null;
+                        }
                     } else {
-                        row.last = "";
+                        row.last = null;
                     }
                 }
                 List<JsonObject> lines = o.getCollection("code");
