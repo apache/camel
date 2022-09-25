@@ -136,10 +136,8 @@ public class CamelContextTop extends ProcessBaseCommand {
                             .with(this::getLoad),
                     new Column().header("HEAP").headerAlign(HorizontalAlign.CENTER).with(this::getHeapMemory),
                     new Column().header("NON-HEAP").headerAlign(HorizontalAlign.CENTER).with(this::getNonHeapMemory),
-                    new Column().header("GC").headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.LEFT)
-                            .with(this::getGC),
-                    new Column().header("THREADS").headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER)
-                            .with(this::getThreads))));
+                    new Column().header("GC").headerAlign(HorizontalAlign.CENTER).with(this::getGC),
+                    new Column().header("THREADS").headerAlign(HorizontalAlign.CENTER).with(this::getThreads))));
         }
 
         return 0;
