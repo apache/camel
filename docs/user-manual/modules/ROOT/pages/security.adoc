@@ -634,5 +634,3 @@ where `camel.vault.azure.eventhubConnectionString` is the eventhub connection st
 Note that `camel.vault.azure.secrets` is not mandatory: if not specified the task responsible for checking updates events will take into accounts or the properties with an `azure:` prefix.
 
 The only requirement is adding the camel-azure-key-vault jar to your Camel application.
-
-
