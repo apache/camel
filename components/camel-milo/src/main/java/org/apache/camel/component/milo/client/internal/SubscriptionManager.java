@@ -904,7 +904,7 @@ public class SubscriptionManager {
                 if (e != null) {
                     handleConnectionFailure(e);
                 }
-                return null;
+                return status;
             }, this.executor);
         }
     }
