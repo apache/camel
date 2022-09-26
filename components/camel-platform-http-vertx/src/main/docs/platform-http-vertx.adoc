@@ -60,3 +60,17 @@ context.addRoutes(new RouteBuilder() {
 
 context.start();
 ----
+
+== Implementing a reverse proxy
+
+Platform HTTP component can act as a reverse proxy, in that case `Exchange.HTTP_URI`, `Exchange.HTTP_HOST` headers are populated from the absolute URL received on the request line of the HTTP request.
+
+Here's an example of a HTTP proxy that simply redirects the Exchange to the origin server.
+
+[source,java]
+------------------------------------------------------------------------------------------
+from("platform-http:proxy")
+    .toD("http://"
+        + "${headers." + Exchange.HTTP_HOST + "}");
+
+-------------------------------------------------------------------------------------
