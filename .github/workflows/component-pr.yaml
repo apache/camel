@@ -32,6 +32,7 @@ on:
 permissions: {}
 jobs:
   process:
+    if: github.repository == 'apache/camel'
     permissions:
       pull-requests: write # to comment on a pull request
       actions: read # to download artifact
