@@ -349,6 +349,11 @@ public class DefaultUnitOfWork implements UnitOfWork {
     }
 
     @Override
+    public int routeStackLevel() {
+        return routes.size();
+    }
+
+    @Override
     public boolean isBeforeAfterProcess() {
         return false;
     }

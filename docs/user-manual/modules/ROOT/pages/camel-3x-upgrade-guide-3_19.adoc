@@ -12,6 +12,14 @@ Added `addClassLoader` method to `org.apache.camel.spi.ClassResolver`.
 
 The default TLS protocol is changed from `TLSv1.2` to `TLSv1.3` in Camel JSSE support.
 
+=== camel-management
+
+The context MBean (`ManagedCamelContextMBean`) total counter is changed to count only once
+while an _exchange_ is being routed through multiple routes. Previously the counter was
+a total aggregation of all the routes the _exchange_ was processed. For example if an _exchange_
+is routed via A, B and C; then previously the total counter was +3 (+1 for route A, +1 for route B, +1 for route C).
+This is now corrected so the total is +1 on the context MBean.
+
 === camel-main
 
 The option `camel.main.eager-classloading` has been removed.
