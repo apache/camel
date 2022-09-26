@@ -588,3 +588,51 @@ events related to life cycle of the secret.
 There are only two requirements: 
 - Adding `camel-google-secret-manager` JAR to your Camel application.
 - Give the service account used permissions to do operation at secret management level (for example accessing the secret payload, or being admin of secret manager service and also have permission over the Pubsub service)
+
+==== Automatic Camel context reloading on Secret Refresh while using Azure Key Vault
+
+Being able to reload Camel context on a Secret Refresh, could be done by specifying the usual credentials (the same used for Azure Key Vault Property Function).
+
+With Environment variables:
+
+[source,bash]
+----
+export $CAMEL_VAULT_AZURE_TENANT_ID=tenantId
+export $CAMEL_VAULT_AZURE_CLIENT_ID=clientId
+export $CAMEL_VAULT_AZURE_CLIENT_SECRET=clientSecret
+export $CAMEL_VAULT_AZURE_VAULT_NAME=vaultName
+----
+
+or as plain Camel main properties:
+
+[source,properties]
+----
+camel.vault.azure.tenantId = accessKey
+camel.vault.azure.clientId = clientId
+camel.vault.azure.clientSecret = clientSecret
+camel.vault.azure.vaultName = vaultName
+----
+
+To enable the automatic refresh you'll need additional properties to set:
+
+[source,properties]
+----
+camel.vault.azure.refreshEnabled=true
+camel.vault.azure.refreshPeriod=60000
+camel.vault.azure.secrets=Secret
+camel.vault.azure.eventhubConnectionString=eventhub_conn_string
+camel.vault.azure.blobAccountName=blob_account_name
+camel.vault.azure.blobContainerName=blob_container_name
+camel.vault.azure.blobAccessKey=blob_access_key
+camel.main.context-reload-enabled = true
+----
+
+where `camel.vault.azure.refreshEnabled` will enable the automatic context reload, `camel.vault.azure.refreshPeriod` is the interval of time between two different checks for update events and `camel.vault.azure.secrets` is a regex representing the secrets we want to track for updates.
+
+where `camel.vault.azure.eventhubConnectionString` is the eventhub connection string to get notification from, `camel.vault.azure.blobAccountName`, `camel.vault.azure.blobContainerName` and `camel.vault.azure.blobAccessKey` are the Azure Storage Blob parameters for the checkpoint store needed by Azure Eventhub.
+
+Note that `camel.vault.azure.secrets` is not mandatory: if not specified the task responsible for checking updates events will take into accounts or the properties with an `azure:` prefix.
+
+The only requirement is adding the camel-azure-key-vault jar to your Camel application.
+
+
