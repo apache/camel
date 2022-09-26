@@ -191,6 +191,19 @@ public interface UnitOfWork {
     Route popRoute();
 
     /**
+     * Gets the {@link Route} level-of-depth that this {@link UnitOfWork} currently is being routed through.
+     * <p/>
+     * Notice that an {@link Exchange} can be routed through multiple routes and thus the level of depth can change over
+     * time.
+     *
+     * If level is 1 then the current route is at the first route (original route). Maybe be <tt>0</tt> if not routed
+     * through a route currently.
+     *
+     * @return the route level-of-depth
+     */
+    int routeStackLevel();
+
+    /**
      * Whether the unit of work should call the before/after process methods or not.
      */
     boolean isBeforeAfterProcess();
