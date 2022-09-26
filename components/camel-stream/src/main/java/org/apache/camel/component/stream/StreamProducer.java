@@ -28,10 +28,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
-import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
@@ -40,7 +41,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Producer that can write to streams
  */
-public class StreamProducer extends DefaultProducer {
+public class StreamProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(StreamProducer.class);
 
@@ -70,17 +71,24 @@ public class StreamProducer extends DefaultProducer {
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
-        delay(endpoint.getDelay());
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        try {
+            delay(endpoint.getDelay());
 
-        synchronized (this) {
-            try {
-                openStream(exchange);
-                writeToStream(outputStream, exchange);
-            } finally {
-                closeStream(exchange, false);
+            synchronized (this) {
+                try {
+                    openStream(exchange);
+                    writeToStream(outputStream, exchange);
+                } finally {
+                    closeStream(exchange, false);
+                }
             }
+        } catch (Exception e) {
+            exchange.setException(e);
         }
+
+        callback.done(true);
+        return true;
     }
 
     private OutputStream resolveStreamFromFile() throws IOException {
