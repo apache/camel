@@ -16,6 +16,10 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.process;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
@@ -26,10 +30,6 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @Command(name = "event", aliases = { "event", "events" },
          description = "Get latest 25 events of Camel integrations")
