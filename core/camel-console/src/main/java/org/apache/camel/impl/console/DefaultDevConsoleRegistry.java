@@ -138,6 +138,8 @@ public class DefaultDevConsoleRegistry extends ServiceSupport implements DevCons
         result = consoles.add(console);
         if (result) {
             CamelContextAware.trySetCamelContext(console, camelContext);
+            // ensure console is started as it may be registered later
+            ServiceHelper.startService(console);
             LOG.debug("DevConsole with id {} successfully registered", console.getId());
         }
         return result;

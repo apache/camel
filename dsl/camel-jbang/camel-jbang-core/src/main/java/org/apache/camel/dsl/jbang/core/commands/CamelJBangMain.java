@@ -48,6 +48,7 @@ import org.apache.camel.dsl.jbang.core.commands.process.CamelStatus;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelTop;
 import org.apache.camel.dsl.jbang.core.commands.process.Hawtio;
 import org.apache.camel.dsl.jbang.core.commands.process.Jolokia;
+import org.apache.camel.dsl.jbang.core.commands.process.ListEvent;
 import org.apache.camel.dsl.jbang.core.commands.process.ListProcess;
 import org.apache.camel.dsl.jbang.core.commands.process.ListService;
 import org.apache.camel.dsl.jbang.core.commands.process.ListVault;
@@ -71,6 +72,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("route", new CommandLine(new CamelRouteStatus(main)))
                         .addSubcommand("processor", new CommandLine(new CamelProcessorStatus(main)))
                         .addSubcommand("endpoint", new CommandLine(new CamelEndpointStatus(main)))
+                        .addSubcommand("event", new CommandLine(new ListEvent(main)))
                         .addSubcommand("service", new CommandLine(new ListService(main)))
                         .addSubcommand("source", new CommandLine(new CamelSourceAction(main)))
                         .addSubcommand("vault", new CommandLine(new ListVault(main))))
