@@ -74,7 +74,7 @@ public class EventConsole extends AbstractDevConsole {
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
-        if (!events.isEmpty()) {
+        if (events != null && !events.isEmpty()) {
             sb.append(String.format("Last %s Camel Events:", events.size()));
             for (CamelEvent event : events) {
                 if (event.getTimestamp() > 0) {
@@ -85,7 +85,7 @@ public class EventConsole extends AbstractDevConsole {
             }
             sb.append("\n");
         }
-        if (!routeEvents.isEmpty()) {
+        if (routeEvents != null && !routeEvents.isEmpty()) {
             sb.append("\n");
             sb.append(String.format("Last %s Route Events:", routeEvents.size()));
             for (CamelEvent.RouteEvent event : routeEvents) {
@@ -97,7 +97,7 @@ public class EventConsole extends AbstractDevConsole {
             }
             sb.append("\n");
         }
-        if (!exchangeEvents.isEmpty()) {
+        if (exchangeEvents != null && !exchangeEvents.isEmpty()) {
             sb.append("\n");
             sb.append(String.format("Last %s Exchange Events:", exchangeEvents.size()));
             for (CamelEvent.ExchangeEvent event : exchangeEvents) {
@@ -116,7 +116,7 @@ public class EventConsole extends AbstractDevConsole {
     protected JsonObject doCallJson(Map<String, Object> options) {
         JsonObject root = new JsonObject();
 
-        if (!events.isEmpty()) {
+        if (events != null && !events.isEmpty()) {
             List<JsonObject> arr = new ArrayList<>();
             for (CamelEvent event : events) {
                 JsonObject jo = new JsonObject();
@@ -129,7 +129,7 @@ public class EventConsole extends AbstractDevConsole {
             }
             root.put("events", arr);
         }
-        if (!routeEvents.isEmpty()) {
+        if (routeEvents != null && !routeEvents.isEmpty()) {
             List<JsonObject> arr = new ArrayList<>();
             for (CamelEvent event : routeEvents) {
                 JsonObject jo = new JsonObject();
@@ -142,7 +142,7 @@ public class EventConsole extends AbstractDevConsole {
             }
             root.put("routeEvents", arr);
         }
-        if (!exchangeEvents.isEmpty()) {
+        if (exchangeEvents != null && !exchangeEvents.isEmpty()) {
             List<JsonObject> arr = new ArrayList<>();
             for (CamelEvent.ExchangeEvent event : exchangeEvents) {
                 JsonObject jo = new JsonObject();

@@ -72,6 +72,8 @@ public class DefaultDevConsoleResolver implements DevConsoleResolver, CamelConte
             if (DevConsole.class.isAssignableFrom(type)) {
                 answer = (DevConsole) camelContext.getInjector().newInstance(type, false);
                 CamelContextAware.trySetCamelContext(answer, camelContext);
+                // ensure console is started
+
             } else {
                 throw new IllegalArgumentException(
                         "Resolving dev-console: " + id + " detected type conflict: Not a DevConsole implementation. Found: "
@@ -92,6 +94,10 @@ public class DefaultDevConsoleResolver implements DevConsoleResolver, CamelConte
     @Override
     public Optional<DevConsole> lookupDevConsole(String id) {
         DevConsoleRegistry dcr = camelContext.getExtension(DevConsoleRegistry.class);
-        return dcr.getConsole(id);
+        if (dcr != null) {
+            return dcr.getConsole(id);
+        } else {
+            return Optional.empty();
+        }
     }
 }
