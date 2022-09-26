@@ -68,8 +68,6 @@ public class ListEvent extends ProcessBaseCommand {
                             row.name = extractName(root, ph);
                         }
                         row.pid = "" + ph.pid();
-                        row.uptime = extractSince(ph);
-                        row.age = TimeUtils.printSince(row.uptime);
 
                         if (filter == null || filter.contains("context")) {
                             fetchEvents(root, row, "events", rows);
@@ -140,7 +138,7 @@ public class ListEvent extends ProcessBaseCommand {
             case "name":
                 return o1.name.compareToIgnoreCase(o2.name) * negate;
             case "age":
-                return Long.compare(o1.uptime, o2.uptime) * negate;
+                return Long.compare(o1.timestamp, o2.timestamp) * negate;
             default:
                 return 0;
         }
@@ -149,8 +147,6 @@ public class ListEvent extends ProcessBaseCommand {
     private static class Row implements Cloneable {
         String pid;
         String name;
-        String age;
-        long uptime;
         String type;
         long timestamp;
         String exchangeId;
