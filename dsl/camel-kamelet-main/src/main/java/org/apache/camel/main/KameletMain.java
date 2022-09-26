@@ -348,6 +348,7 @@ public class KameletMain extends MainCommandLineSupport {
         configure().withInflightRepositoryBrowseEnabled(true);
         configure().withEndpointRuntimeStatisticsEnabled(true);
         configure().withJmxManagementStatisticsLevel(ManagementStatisticsLevel.Extended);
+        configure().withShutdownLogInflightExchangesOnTimeout(false);
         configure().withShutdownTimeout(10);
 
         boolean health = "true".equals(getInitialProperties().get("camel.jbang.health"));
