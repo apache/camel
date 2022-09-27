@@ -298,7 +298,7 @@
         <jcommander-version>1.72</jcommander-version>
         <jcr-version>2.0</jcr-version>
         <jedis-client-version>3.7.1</jedis-client-version>
-        <jetcd-version>0.5.11</jetcd-version>
+        <jetcd-version>0.7.3</jetcd-version>
         <jetty9-version>9.4.48.v20220622</jetty9-version>
         <jetty-version>${jetty9-version}</jetty-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
