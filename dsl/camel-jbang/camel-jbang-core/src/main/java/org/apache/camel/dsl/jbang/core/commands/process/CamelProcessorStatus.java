@@ -126,7 +126,9 @@ public class CamelProcessorStatus extends ProcessBaseCommand {
                             if (add) {
                                 rows.add(row);
                                 List<JsonObject> list = o.getCollection("processors");
-                                addProcessors(row, rows, list);
+                                if (list != null) {
+                                    addProcessors(row, rows, list);
+                                }
                             }
                         }
                     }
@@ -183,14 +185,16 @@ public class CamelProcessorStatus extends ProcessBaseCommand {
             }
             if (source) {
                 List<JsonObject> lines = o.getCollection("code");
-                for (JsonObject line : lines) {
-                    Code code = new Code();
-                    code.line = line.getInteger("line");
-                    code.code = line.getString("code");
-                    if (line.getBooleanOrDefault("match", false)) {
-                        code.match = true;
+                if (lines != null) {
+                    for (JsonObject line : lines) {
+                        Code code = new Code();
+                        code.line = line.getInteger("line");
+                        code.code = line.getString("code");
+                        if (line.getBooleanOrDefault("match", false)) {
+                            code.match = true;
+                        }
+                        row.code.add(code);
                     }
-                    row.code.add(code);
                 }
             }
         }
