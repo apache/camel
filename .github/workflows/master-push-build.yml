@@ -23,6 +23,7 @@ on:
       - camel-3.14.x
 jobs:
   build:
+    if: github.repository == 'apache/camel'
     runs-on: ubuntu-latest
     strategy:
       matrix:

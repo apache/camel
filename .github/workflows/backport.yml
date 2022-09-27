@@ -24,6 +24,7 @@ on:
 
 jobs:
   backport:
+    if: github.repository == 'apache/camel'
     runs-on: ubuntu-18.04
     name: Backport
     steps:
