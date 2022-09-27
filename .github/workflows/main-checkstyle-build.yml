@@ -29,6 +29,7 @@ permissions:
 
 jobs:
   build:
+    if: github.repository == 'apache/camel'
     runs-on: ubuntu-latest
     strategy:
       matrix:
