@@ -60,6 +60,9 @@ public class ListProcess extends ProcessBaseCommand {
                         row.uptime = extractSince(ph);
                         row.ago = TimeUtils.printSince(row.uptime);
                         JsonObject context = (JsonObject) root.get("context");
+                        if (context == null) {
+                            return;
+                        }
                         row.name = context.getString("name");
                         if ("CamelJBang".equals(row.name)) {
                             row.name = extractName(root, ph);

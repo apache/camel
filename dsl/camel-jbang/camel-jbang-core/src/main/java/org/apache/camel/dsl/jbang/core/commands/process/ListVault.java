@@ -56,6 +56,9 @@ public class ListVault extends ProcessBaseCommand {
                         Row row = new Row();
                         row.pid = "" + ph.pid();
                         JsonObject context = (JsonObject) root.get("context");
+                        if (context == null) {
+                            return;
+                        }
                         row.name = context.getString("name");
                         if ("CamelJBang".equals(row.name)) {
                             row.name = extractName(root, ph);

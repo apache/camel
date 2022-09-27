@@ -60,6 +60,9 @@ public class CamelContextTop extends ProcessBaseCommand {
                         Row row = new Row();
                         rows.add(row);
                         JsonObject context = (JsonObject) root.get("context");
+                        if (context == null) {
+                            return;
+                        }
                         row.name = context.getString("name");
                         if ("CamelJBang".equals(row.name)) {
                             row.name = extractName(root, ph);
