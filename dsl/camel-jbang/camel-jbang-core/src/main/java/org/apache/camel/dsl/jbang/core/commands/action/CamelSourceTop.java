@@ -109,14 +109,16 @@ public class CamelSourceTop extends ActionBaseCommand {
                     }
                 }
                 List<JsonObject> lines = o.getCollection("code");
-                for (JsonObject line : lines) {
-                    Code code = new Code();
-                    code.line = line.getInteger("line");
-                    code.code = line.getString("code");
-                    if (line.getBooleanOrDefault("match", false)) {
-                        code.match = true;
+                if (lines != null) {
+                    for (JsonObject line : lines) {
+                        Code code = new Code();
+                        code.line = line.getInteger("line");
+                        code.code = line.getString("code");
+                        if (line.getBooleanOrDefault("match", false)) {
+                            code.match = true;
+                        }
+                        row.code.add(code);
                     }
-                    row.code.add(code);
                 }
 
                 boolean add = true;

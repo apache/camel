@@ -95,11 +95,13 @@ public class CamelSourceAction extends ActionBaseCommand {
                 // if there are 2+ routes in the same source then we would have duplicates
                 if (!rows.contains(row)) {
                     List<JsonObject> lines = o.getCollection("code");
-                    for (JsonObject line : lines) {
-                        Code code = new Code();
-                        code.line = line.getInteger("line");
-                        code.code = line.getString("code");
-                        row.code.add(code);
+                    if (lines != null) {
+                        for (JsonObject line : lines) {
+                            Code code = new Code();
+                            code.line = line.getInteger("line");
+                            code.code = line.getString("code");
+                            row.code.add(code);
+                        }
                     }
                     boolean add = true;
                     if (filter != null) {
