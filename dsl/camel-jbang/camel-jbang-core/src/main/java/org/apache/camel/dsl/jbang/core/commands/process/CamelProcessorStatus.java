@@ -70,6 +70,9 @@ public class CamelProcessorStatus extends ProcessBaseCommand {
                     JsonObject root = loadStatus(ph.pid());
                     if (root != null) {
                         JsonObject context = (JsonObject) root.get("context");
+                        if (context == null) {
+                            return;
+                        }
                         JsonArray array = (JsonArray) root.get("routes");
                         for (int i = 0; i < array.size(); i++) {
                             JsonObject o = (JsonObject) array.get(i);

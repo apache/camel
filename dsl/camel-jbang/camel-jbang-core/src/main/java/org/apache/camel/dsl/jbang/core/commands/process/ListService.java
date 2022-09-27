@@ -59,6 +59,9 @@ public class ListService extends ProcessBaseCommand {
                     if (root != null) {
                         Row row = new Row();
                         JsonObject context = (JsonObject) root.get("context");
+                        if (context == null) {
+                            return;
+                        }
                         row.name = context.getString("name");
                         if ("CamelJBang".equals(row.name)) {
                             row.name = extractName(root, ph);

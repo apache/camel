@@ -83,7 +83,7 @@ public class CamelEndpointStatus extends ProcessBaseCommand {
                     if (root != null) {
                         JsonObject context = (JsonObject) root.get("context");
                         JsonObject jo = (JsonObject) root.get("endpoints");
-                        if (jo != null) {
+                        if (context != null && jo != null) {
                             JsonArray array = (JsonArray) jo.get("endpoints");
                             for (int i = 0; i < array.size(); i++) {
                                 JsonObject o = (JsonObject) array.get(i);
