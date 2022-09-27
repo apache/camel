@@ -30,9 +30,11 @@ import java.security.SecureRandom;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
-import com.azure.storage.blob.models.PageList;
+import com.azure.core.http.rest.PagedIterable;
 import com.azure.storage.blob.models.PageRange;
+import com.azure.storage.blob.models.PageRangeItem;
 import com.azure.storage.blob.specialized.BlobInputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.azure.storage.blob.BlobBlock;
@@ -54,6 +56,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -409,10 +413,17 @@ class BlobOperationsIT extends Base {
 
         assertNotNull(response);
 
-        final PageList pageList = (PageList) response.getBody();
+        final PagedIterable<?> pagedIterable = (PagedIterable<?>) response.getBody();
+        List<?> pageRangeItems = pagedIterable.stream().collect(Collectors.toList());
 
-        assertEquals(pageRange.getStart(), pageList.getPageRange().get(0).getStart());
-        assertEquals(pageRange.getEnd(), pageList.getPageRange().get(0).getEnd());
+        assertEquals(1, pageRangeItems.size());
+        assertInstanceOf(PageRangeItem.class, pageRangeItems.get(0));
+
+        PageRangeItem pageRangeItem = (PageRangeItem) pageRangeItems.get(0);
+
+        assertEquals(pageRange.getStart(), pageRangeItem.getRange().getOffset());
+        assertEquals(pageRange.getEnd(), pageRangeItem.getRange().getLength() - 1);
+        assertFalse(pageRangeItem.isClear());
 
         blobClientWrapper.delete(null, null, null);
     }
