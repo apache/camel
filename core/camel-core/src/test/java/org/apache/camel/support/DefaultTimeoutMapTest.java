@@ -149,7 +149,10 @@ public class DefaultTimeoutMapTest {
         map.put("F", 6, 800);
 
         await().atMost(Duration.ofSeconds(2))
-                .untilAsserted(() -> assertEquals("D", keys.get(0)));
+                .untilAsserted(() -> {
+                    assertFalse(keys.isEmpty());
+                    assertEquals("D", keys.get(0));
+                });
 
         assertEquals(4, values.get(0).intValue());
         assertEquals("B", keys.get(1));
