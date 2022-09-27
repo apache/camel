@@ -82,7 +82,15 @@ public class CamelContextStatus extends ProcessBaseCommand {
                             row.inflight = stats.get("exchangesInflight").toString();
                             row.failed = stats.get("exchangesFailed").toString();
                             row.reloaded = stats.get("reloaded").toString();
-                            Object last = stats.get("sinceLastCreatedExchange");
+                            Object last = stats.get("lastProcessingTime");
+                            if (last != null) {
+                                row.last = last.toString();
+                            }
+                            last = stats.get("deltaProcessingTime");
+                            if (last != null) {
+                                row.delta = last.toString();
+                            }
+                            last = stats.get("sinceLastCreatedExchange");
                             if (last != null) {
                                 row.sinceLastStarted = last.toString();
                             }
@@ -137,6 +145,8 @@ public class CamelContextStatus extends ProcessBaseCommand {
                     new Column().header("TOTAL").with(r -> r.total),
                     new Column().header("FAIL").with(r -> r.failed),
                     new Column().header("INFLIGHT").with(r -> r.inflight),
+                    new Column().header("LAST").with(r -> r.last),
+                    new Column().header("DELTA").with(this::getDelta),
                     new Column().header("SINCE-LAST").with(this::getSinceLast))));
         }
 
@@ -182,6 +192,18 @@ public class CamelContextStatus extends ProcessBaseCommand {
         }
     }
 
+    protected String getDelta(Row r) {
+        if (r.delta != null) {
+            if (r.delta.startsWith("-")) {
+                return r.delta;
+            } else if (!"0".equals(r.delta)) {
+                // use plus sign to denote slower when positive
+                return "+" + r.delta;
+            }
+        }
+        return r.delta;
+    }
+
     protected String getSinceLast(Row r) {
         String s1 = r.sinceLastStarted != null ? r.sinceLastStarted : "-";
         String s2 = r.sinceLastCompleted != null ? r.sinceLastCompleted : "-";
@@ -218,6 +240,8 @@ public class CamelContextStatus extends ProcessBaseCommand {
         String total;
         String failed;
         String inflight;
+        String last;
+        String delta;
         String sinceLastStarted;
         String sinceLastCompleted;
         String sinceLastFailed;

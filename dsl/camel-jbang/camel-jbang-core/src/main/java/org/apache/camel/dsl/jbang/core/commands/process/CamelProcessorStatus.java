@@ -94,7 +94,15 @@ public class CamelProcessorStatus extends ProcessBaseCommand {
                                 }
                                 row.max = stats.get("maxProcessingTime").toString();
                                 row.min = stats.get("minProcessingTime").toString();
-                                Object last = stats.get("sinceLastCreatedExchange");
+                                Object last = stats.get("lastProcessingTime");
+                                if (last != null) {
+                                    row.last = last.toString();
+                                }
+                                last = stats.get("deltaProcessingTime");
+                                if (last != null) {
+                                    row.delta = last.toString();
+                                }
+                                last = stats.get("sinceLastCreatedExchange");
                                 if (last != null) {
                                     row.sinceLastStarted = last.toString();
                                 }
@@ -156,7 +164,15 @@ public class CamelProcessorStatus extends ProcessBaseCommand {
                 }
                 row.max = stats.get("maxProcessingTime").toString();
                 row.min = stats.get("minProcessingTime").toString();
-                Object last = stats.get("sinceLastCompletedExchange");
+                Object last = stats.get("lastProcessingTime");
+                if (last != null) {
+                    row.last = last.toString();
+                }
+                last = stats.get("deltaProcessingTime");
+                if (last != null) {
+                    row.delta = last.toString();
+                }
+                last = stats.get("sinceLastCompletedExchange");
                 if (last != null) {
                     row.sinceLastCompleted = last.toString();
                 }
@@ -196,6 +212,8 @@ public class CamelProcessorStatus extends ProcessBaseCommand {
                 new Column().header("MEAN").with(r -> r.mean),
                 new Column().header("MIN").with(r -> r.min),
                 new Column().header("MAX").with(r -> r.max),
+                new Column().header("LAST").with(r -> r.last),
+                new Column().header("DELTA").with(this::getDelta),
                 new Column().header("SINCE-LAST").with(this::getSinceLast))));
     }
 
@@ -222,6 +240,18 @@ public class CamelProcessorStatus extends ProcessBaseCommand {
         String s1 = r.sinceLastCompleted != null ? r.sinceLastCompleted : "-";
         String s2 = r.sinceLastFailed != null ? r.sinceLastFailed : "-";
         return s1 + "/" + s2;
+    }
+
+    protected String getDelta(Row r) {
+        if (r.delta != null) {
+            if (r.delta.startsWith("-")) {
+                return r.delta;
+            } else if (!"0".equals(r.delta)) {
+                // use plus sign to denote slower when positive
+                return "+" + r.delta;
+            }
+        }
+        return r.delta;
     }
 
     protected String getName(Row r) {
@@ -275,6 +305,8 @@ public class CamelProcessorStatus extends ProcessBaseCommand {
         String mean;
         String max;
         String min;
+        String last;
+        String delta;
         String sinceLastStarted;
         String sinceLastCompleted;
         String sinceLastFailed;
