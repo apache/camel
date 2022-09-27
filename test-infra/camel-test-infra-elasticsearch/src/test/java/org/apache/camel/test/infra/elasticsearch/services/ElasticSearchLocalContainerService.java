@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.elasticsearch.ElasticsearchContainer;
 
 public class ElasticSearchLocalContainerService implements ElasticSearchService, ContainerService<ElasticsearchContainer> {
-    public static final String DEFAULT_ELASTIC_SEARCH_CONTAINER = "docker.elastic.co/elasticsearch/elasticsearch-oss:7.10.2";
+    public static final String DEFAULT_ELASTIC_SEARCH_CONTAINER = "docker.elastic.co/elasticsearch/elasticsearch-oss:7.17.1";
 
     private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchLocalContainerService.class);
     private static final int ELASTIC_SEARCH_PORT = 9200;
