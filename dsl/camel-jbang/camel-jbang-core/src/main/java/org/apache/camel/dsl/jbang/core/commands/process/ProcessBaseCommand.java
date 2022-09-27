@@ -121,6 +121,13 @@ abstract class ProcessBaseCommand extends CamelCommand {
         }
 
         name = extractCamelName(cl, mvn);
+        if (name == null && root != null) {
+            JsonObject jo = (JsonObject) root.get("context");
+            if (jo != null) {
+                name = jo.getString("name");
+            }
+        }
+
         return name == null ? "" : name;
     }
 
@@ -158,7 +165,6 @@ abstract class ProcessBaseCommand extends CamelCommand {
                 if (mvn != null) {
                     return mvn;
                 }
-                return cl.contains("camel-main") ? "camel-main" : "camel-core";
             }
         }
 
