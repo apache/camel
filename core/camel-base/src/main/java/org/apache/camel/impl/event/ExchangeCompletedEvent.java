@@ -38,7 +38,7 @@ public class ExchangeCompletedEvent extends AbstractExchangeEvent implements Cam
     public String toString() {
         if (timeTaken > -1) {
             return getExchange().getExchangeId() + " exchange completed"
-                    + " took: " + TimeUtils.printDuration(timeTaken, true);
+                   + " took: " + TimeUtils.printDuration(timeTaken, true);
         } else {
             return getExchange().getExchangeId() + " exchange completed";
         }
