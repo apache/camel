@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import java.time.Duration;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AggregationStrategy;
@@ -25,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -44,12 +46,13 @@ public class AggregateTimeoutTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template.sendBodyAndHeader("direct:start", "B", "id", 123);
 
-        // wait about 0.2 second so that the timeout kicks in but it was
+        // wait about 0.2 second so that the timeout kicks in, but it was
         // discarded
         mock.assertIsSatisfied(200);
 
         // should invoke the timeout method
-        assertEquals(1, invoked.get());
+        await().atMost(Duration.ofSeconds(2))
+                .untilAsserted(() -> assertEquals(1, invoked.get()));
 
         assertNotNull(receivedExchange);
         assertEquals("AB", receivedExchange.getIn().getBody());
@@ -69,7 +72,8 @@ public class AggregateTimeoutTest extends ContextTestSupport {
         mock.assertIsSatisfied(150);
 
         // should have not invoked the timeout method anymore
-        assertEquals(1, invoked.get());
+        await().atMost(Duration.ofSeconds(2))
+                .untilAsserted(() -> assertEquals(1, invoked.get()));
     }
 
     @Override
