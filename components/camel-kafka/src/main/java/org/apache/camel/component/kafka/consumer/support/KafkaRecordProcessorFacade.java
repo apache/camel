@@ -54,16 +54,17 @@ public class KafkaRecordProcessorFacade {
         return camelKafkaConsumer.isStopping();
     }
 
-    public ProcessingResult processPolledRecords(ConsumerRecords<Object, Object> allRecords) {
+    public ProcessingResult processPolledRecords(
+            ConsumerRecords<Object, Object> allRecords, ProcessingResult resultFromPreviousPoll) {
         logRecords(allRecords);
 
         Set<TopicPartition> partitions = allRecords.partitions();
         Iterator<TopicPartition> partitionIterator = partitions.iterator();
 
-        ProcessingResult lastResult = ProcessingResult.newUnprocessed();
+        ProcessingResult lastResult
+                = resultFromPreviousPoll == null ? ProcessingResult.newUnprocessed() : resultFromPreviousPoll;
 
         while (partitionIterator.hasNext() && !isStopping()) {
-            lastResult = ProcessingResult.newUnprocessed();
             TopicPartition partition = partitionIterator.next();
 
             List<ConsumerRecord<Object, Object>> partitionRecords = allRecords.records(partition);
