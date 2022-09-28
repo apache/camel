@@ -58,48 +58,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.ActivemqComponentBuilderFactory.activemq();
     }
     /**
-     * Async HTTP Client (AHC) (camel-ahc)
-     * Call external HTTP services using Async Http Client.
-     * 
-     * Category: http
-     * Since: 2.8
-     * Maven coordinates: org.apache.camel:camel-ahc
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AhcComponentBuilderFactory.AhcComponentBuilder ahc() {
-        return org.apache.camel.builder.component.dsl.AhcComponentBuilderFactory.ahc();
-    }
-    /**
-     * Async HTTP Client (AHC) Websocket (camel-ahc-ws)
-     * Exchange data with external Websocket servers using Async Http Client.
-     * 
-     * Category: websocket
-     * Since: 2.14
-     * Maven coordinates: org.apache.camel:camel-ahc-ws
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AhcWsComponentBuilderFactory.AhcWsComponentBuilder ahcWs() {
-        return org.apache.camel.builder.component.dsl.AhcWsComponentBuilderFactory.ahcWs();
-    }
-    /**
-     * Async HTTP Client (AHC) Secure Websocket (Secure) (camel-ahc-ws)
-     * Exchange data with external Websocket servers using Async Http Client.
-     * 
-     * Category: websocket
-     * Since: 2.14
-     * Maven coordinates: org.apache.camel:camel-ahc-ws
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.AhcWssComponentBuilderFactory.AhcWssComponentBuilder ahcWss() {
-        return org.apache.camel.builder.component.dsl.AhcWssComponentBuilderFactory.ahcWss();
-    }
-    /**
      * AMQP (camel-amqp)
      * Messaging with AMQP protocol using Apache QPid Client.
      * 
@@ -1296,6 +1254,19 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.EhcacheComponentBuilderFactory.EhcacheComponentBuilder ehcache() {
         return org.apache.camel.builder.component.dsl.EhcacheComponentBuilderFactory.ehcache();
+    }
+    /**
+     * Elasticsearch (camel-elasticsearch)
+     * Send requests to ElasticSearch via Java Client API.
+     * 
+     * Category: search,monitoring
+     * Since: 3.19
+     * Maven coordinates: org.apache.camel:camel-elasticsearch
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.ElasticsearchComponentBuilderFactory.ElasticsearchComponentBuilder elasticsearch() {
+        return org.apache.camel.builder.component.dsl.ElasticsearchComponentBuilderFactory.elasticsearch();
     }
     /**
      * Elasticsearch Rest (camel-elasticsearch-rest)

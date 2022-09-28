@@ -33,9 +33,8 @@
   <description>Camel Dependencies POM</description>
   <properties>
     <abdera-version>1.1.3</abdera-version>
-    <activemq-artemis-version>2.24.0</activemq-artemis-version>
+    <activemq-artemis-version>2.26.0</activemq-artemis-version>
     <activemq-version>5.17.2</activemq-version>
-    <ahc-version>2.12.3</ahc-version>
     <apache-any23-version>2.7</apache-any23-version>
     <apache-drill-version>1.19.0</apache-drill-version>
     <apache-gora-version>0.9</apache-gora-version>
@@ -65,7 +64,7 @@
     <avro-ipc-netty-version>1.11.1</avro-ipc-netty-version>
     <avro-version>1.11.1</avro-version>
     <awaitility-version>4.2.0</awaitility-version>
-    <aws-java-sdk2-version>2.17.276</aws-java-sdk2-version>
+    <aws-java-sdk2-version>2.17.282</aws-java-sdk2-version>
     <aws-xray-version>2.6.1</aws-xray-version>
     <axiom-version>1.2.14</axiom-version>
     <azure-sdk-bom-version>1.2.5</azure-sdk-bom-version>
@@ -178,6 +177,8 @@
     <eddsa-version>0.3.0</eddsa-version>
     <egit-github-core-version>2.1.5</egit-github-core-version>
     <ehcache3-version>3.9.6</ehcache3-version>
+    <elasticsearch-java-client-sniffer-version>8.4.1</elasticsearch-java-client-sniffer-version>
+    <elasticsearch-java-client-version>8.4.1</elasticsearch-java-client-version>
     <elasticsearch-rest-sniffer-version>7.10.2</elasticsearch-rest-sniffer-version>
     <elasticsearch-rest-version>7.10.2</elasticsearch-rest-version>
     <elytron-web>1.10.2.Final</elytron-web>
@@ -247,7 +248,7 @@
     <hawtbuf-version>1.11</hawtbuf-version>
     <hawtdispatch-version>1.22</hawtdispatch-version>
     <hazelcast-version>5.1.3</hazelcast-version>
-    <hbase-version>2.4.12</hbase-version>
+    <hbase-version>2.5.0</hbase-version>
     <hdrhistrogram-version>2.1.11</hdrhistrogram-version>
     <hibernate-validator-version>6.2.4.Final</hibernate-validator-version>
     <hibernate-version>5.6.10.Final</hibernate-version>
@@ -312,13 +313,13 @@
     <jcommander-version>1.72</jcommander-version>
     <jcr-version>2.0</jcr-version>
     <jedis-client-version>3.7.1</jedis-client-version>
-    <jetcd-version>0.5.11</jetcd-version>
+    <jetcd-version>0.7.3</jetcd-version>
     <jettison-version>1.5.0</jettison-version>
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
     <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
     <jetty-version>${jetty9-version}</jetty-version>
     <jetty9-version>9.4.48.v20220622</jetty9-version>
-    <jgit-version>6.1.0.202203080745-r</jgit-version>
+    <jgit-version>6.3.0.202209071007-r</jgit-version>
     <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
     <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
     <jgroups-raft-version>0.5.3.Final</jgroups-raft-version>
@@ -326,7 +327,7 @@
     <jib-version>0.21.0</jib-version>
     <jira-guava-version>30.1.1-jre</jira-guava-version>
     <jira-rest-client-api-version>5.2.4</jira-rest-client-api-version>
-    <jnats-version>2.15.7</jnats-version>
+    <jnats-version>2.16.0</jnats-version>
     <jodatime2-version>2.11.1</jodatime2-version>
     <johnzon-version>1.2.19</johnzon-version>
     <jolokia-version>1.7.1</jolokia-version>
@@ -354,8 +355,8 @@
     <junit-toolbox-version>2.4</junit-toolbox-version>
     <junit-version>4.13.2</junit-version>
     <jxmpp-version>0.6.4</jxmpp-version>
-    <jython-standalone-version>2.7.2</jython-standalone-version>
-    <jython-version>2.7.2</jython-version>
+    <jython-standalone-version>2.7.3</jython-standalone-version>
+    <jython-version>2.7.3</jython-version>
     <jzlib-version>1.1.3</jzlib-version>
     <kafka-version>3.2.1</kafka-version>
     <kafka-vertx-version>2.8.1</kafka-vertx-version>
@@ -407,7 +408,7 @@
     <mina-version>2.1.6</mina-version>
     <minidns-version>0.3.4</minidns-version>
     <minimal-json-version>0.9.5</minimal-json-version>
-    <minio-version>8.4.3</minio-version>
+    <minio-version>8.4.5</minio-version>
     <mock-javamail-version>1.9</mock-javamail-version>
     <mockito-version>3.12.4</mockito-version>
     <mockwebserver-version>0.2.2</mockwebserver-version>
@@ -436,7 +437,7 @@
     <opentelemetry-version>1.17.0</opentelemetry-version>
     <opentracing-tracerresolver-version>0.1.8</opentracing-tracerresolver-version>
     <opentracing-version>0.33.0</opentracing-version>
-    <optaplanner-version>8.27.0.Final</optaplanner-version>
+    <optaplanner-version>8.28.0.Final</optaplanner-version>
     <os-maven-plugin-version>1.7.0</os-maven-plugin-version>
     <paho-version>1.2.5</paho-version>
     <partial-build-plugin-version>2.7</partial-build-plugin-version>
@@ -453,8 +454,8 @@
     <pubnub-version>4.25.0</pubnub-version>
     <pulsar-version>2.10.1</pulsar-version>
     <qpid-broker-version>8.0.6</qpid-broker-version>
-    <qpid-jms-client-version>0.61.0</qpid-jms-client-version>
-    <qpid-proton-j-version>0.33.10</qpid-proton-j-version>
+    <qpid-jms-client-version>1.7.0</qpid-jms-client-version>
+    <qpid-proton-j-version>0.34.0</qpid-proton-j-version>
     <quartz-version>2.3.2</quartz-version>
     <quickfixj-version>2.3.1</quickfixj-version>
     <rabbitmq-amqp-client-version>5.14.0</rabbitmq-amqp-client-version>
@@ -499,9 +500,9 @@
     <spock-version>2.1-groovy-3.0</spock-version>
     <spring-batch-version>4.3.6</spring-batch-version>
     <spring-data-redis-version>2.6.2</spring-data-redis-version>
-    <spring-integration-version>5.5.14</spring-integration-version>
+    <spring-integration-version>5.5.15</spring-integration-version>
     <spring-ldap-version>2.4.1</spring-ldap-version>
-    <spring-rabbitmq-version>2.4.6</spring-rabbitmq-version>
+    <spring-rabbitmq-version>2.4.7</spring-rabbitmq-version>
     <spring-security-version>5.7.3</spring-security-version>
     <spring-vault-core-version>2.3.2</spring-vault-core-version>
     <spring-version>${spring5-version}</spring-version>
@@ -554,7 +555,7 @@
     <xpp3-version>1.1.4c</xpp3-version>
     <xstream-version>1.4.19</xstream-version>
     <yetus-audience-annotations-version>0.13.0</yetus-audience-annotations-version>
-    <zendesk-client-version>0.14.1</zendesk-client-version>
+    <zendesk-client-version>0.18.0</zendesk-client-version>
     <zipkin-reporter-version>2.16.3</zipkin-reporter-version>
     <zipkin-version>2.23.4</zipkin-version>
     <zookeeper-version>3.5.9</zookeeper-version>

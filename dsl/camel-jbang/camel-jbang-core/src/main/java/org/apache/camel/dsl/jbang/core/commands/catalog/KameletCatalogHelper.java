@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.catalog;
 
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -30,6 +31,11 @@ import org.apache.camel.util.StringHelper;
 public final class KameletCatalogHelper {
 
     private KameletCatalogHelper() {
+    }
+
+    public static List<String> findKameletNames(String version) throws Exception {
+        Map<String, Object> kamelets = loadKamelets(version);
+        return new ArrayList<>(kamelets.keySet());
     }
 
     public static KameletModel createModel(Object kamelet, boolean all) throws Exception {
@@ -146,6 +152,16 @@ public final class KameletCatalogHelper {
         Object catalog = clazz.getDeclaredConstructor().newInstance();
         Method m = clazz.getMethod("getKamelets");
         return (Map<String, Object>) ObjectHelper.invokeMethod(m, catalog);
+    }
+
+    public static InputStream loadKameletYamlSchema(String name, String version) throws Exception {
+        ClassLoader cl = createClassLoader();
+        MavenDependencyDownloader downloader = new MavenDependencyDownloader();
+        downloader.setClassLoader(cl);
+        downloader.start();
+        downloader.downloadDependency("org.apache.camel.kamelets", "camel-kamelets-catalog", version);
+        Thread.currentThread().setContextClassLoader(cl);
+        return cl.getResourceAsStream("kamelets/" + name + ".kamelet.yaml");
     }
 
     public static KameletModel loadKameletModel(String name, String version) throws Exception {

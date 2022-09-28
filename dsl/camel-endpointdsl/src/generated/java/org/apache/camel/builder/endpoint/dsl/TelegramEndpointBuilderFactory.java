@@ -901,7 +901,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
-         * Default: 4096
+         * Default: 1048576
          * Group: advanced
          * 
          * @param bufferSize the value to set
@@ -918,7 +918,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
-         * Default: 4096
+         * Default: 1048576
          * Group: advanced
          * 
          * @param bufferSize the value to set
@@ -930,39 +930,34 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * To configure the AsyncHttpClient to use a custom
-         * com.ning.http.client.AsyncHttpClientConfig instance.
+         * To use a custom HttpClient.
          * 
-         * The option is a:
-         * &lt;code&gt;org.asynchttpclient.AsyncHttpClientConfig&lt;/code&gt;
+         * The option is a: &lt;code&gt;java.net.http.HttpClient&lt;/code&gt;
          * type.
          * 
          * Group: advanced
          * 
-         * @param clientConfig the value to set
+         * @param client the value to set
          * @return the dsl builder
          */
-        default AdvancedTelegramEndpointConsumerBuilder clientConfig(
-                org.asynchttpclient.AsyncHttpClientConfig clientConfig) {
-            doSetProperty("clientConfig", clientConfig);
+        default AdvancedTelegramEndpointConsumerBuilder client(
+                java.net.http.HttpClient client) {
+            doSetProperty("client", client);
             return this;
         }
         /**
-         * To configure the AsyncHttpClient to use a custom
-         * com.ning.http.client.AsyncHttpClientConfig instance.
+         * To use a custom HttpClient.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.asynchttpclient.AsyncHttpClientConfig&lt;/code&gt;
-         * type.
+         * &lt;code&gt;java.net.http.HttpClient&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
-         * @param clientConfig the value to set
+         * @param client the value to set
          * @return the dsl builder
          */
-        default AdvancedTelegramEndpointConsumerBuilder clientConfig(
-                String clientConfig) {
-            doSetProperty("clientConfig", clientConfig);
+        default AdvancedTelegramEndpointConsumerBuilder client(String client) {
+            doSetProperty("client", client);
             return this;
         }
     }
@@ -1168,7 +1163,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
-         * Default: 4096
+         * Default: 1048576
          * Group: advanced
          * 
          * @param bufferSize the value to set
@@ -1185,7 +1180,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
-         * Default: 4096
+         * Default: 1048576
          * Group: advanced
          * 
          * @param bufferSize the value to set
@@ -1197,39 +1192,34 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * To configure the AsyncHttpClient to use a custom
-         * com.ning.http.client.AsyncHttpClientConfig instance.
+         * To use a custom HttpClient.
          * 
-         * The option is a:
-         * &lt;code&gt;org.asynchttpclient.AsyncHttpClientConfig&lt;/code&gt;
+         * The option is a: &lt;code&gt;java.net.http.HttpClient&lt;/code&gt;
          * type.
          * 
          * Group: advanced
          * 
-         * @param clientConfig the value to set
+         * @param client the value to set
          * @return the dsl builder
          */
-        default AdvancedTelegramEndpointProducerBuilder clientConfig(
-                org.asynchttpclient.AsyncHttpClientConfig clientConfig) {
-            doSetProperty("clientConfig", clientConfig);
+        default AdvancedTelegramEndpointProducerBuilder client(
+                java.net.http.HttpClient client) {
+            doSetProperty("client", client);
             return this;
         }
         /**
-         * To configure the AsyncHttpClient to use a custom
-         * com.ning.http.client.AsyncHttpClientConfig instance.
+         * To use a custom HttpClient.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.asynchttpclient.AsyncHttpClientConfig&lt;/code&gt;
-         * type.
+         * &lt;code&gt;java.net.http.HttpClient&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
-         * @param clientConfig the value to set
+         * @param client the value to set
          * @return the dsl builder
          */
-        default AdvancedTelegramEndpointProducerBuilder clientConfig(
-                String clientConfig) {
-            doSetProperty("clientConfig", clientConfig);
+        default AdvancedTelegramEndpointProducerBuilder client(String client) {
+            doSetProperty("client", client);
             return this;
         }
     }
@@ -1369,7 +1359,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
-         * Default: 4096
+         * Default: 1048576
          * Group: advanced
          * 
          * @param bufferSize the value to set
@@ -1385,7 +1375,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
-         * Default: 4096
+         * Default: 1048576
          * Group: advanced
          * 
          * @param bufferSize the value to set
@@ -1396,38 +1386,34 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * To configure the AsyncHttpClient to use a custom
-         * com.ning.http.client.AsyncHttpClientConfig instance.
+         * To use a custom HttpClient.
          * 
-         * The option is a:
-         * &lt;code&gt;org.asynchttpclient.AsyncHttpClientConfig&lt;/code&gt;
+         * The option is a: &lt;code&gt;java.net.http.HttpClient&lt;/code&gt;
          * type.
          * 
          * Group: advanced
          * 
-         * @param clientConfig the value to set
+         * @param client the value to set
          * @return the dsl builder
          */
-        default AdvancedTelegramEndpointBuilder clientConfig(
-                org.asynchttpclient.AsyncHttpClientConfig clientConfig) {
-            doSetProperty("clientConfig", clientConfig);
+        default AdvancedTelegramEndpointBuilder client(
+                java.net.http.HttpClient client) {
+            doSetProperty("client", client);
             return this;
         }
         /**
-         * To configure the AsyncHttpClient to use a custom
-         * com.ning.http.client.AsyncHttpClientConfig instance.
+         * To use a custom HttpClient.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.asynchttpclient.AsyncHttpClientConfig&lt;/code&gt;
-         * type.
+         * &lt;code&gt;java.net.http.HttpClient&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
-         * @param clientConfig the value to set
+         * @param client the value to set
          * @return the dsl builder
          */
-        default AdvancedTelegramEndpointBuilder clientConfig(String clientConfig) {
-            doSetProperty("clientConfig", clientConfig);
+        default AdvancedTelegramEndpointBuilder client(String client) {
+            doSetProperty("client", client);
             return this;
         }
     }

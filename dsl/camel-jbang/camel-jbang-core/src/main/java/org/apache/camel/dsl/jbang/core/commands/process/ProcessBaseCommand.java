@@ -108,7 +108,7 @@ abstract class ProcessBaseCommand extends CamelCommand {
 
         // try first camel-jbang
         String name = extractCamelJBangName(cl);
-        if (name != null) {
+        if (name != null && !name.isEmpty()) {
             return name;
         }
 
@@ -121,6 +121,13 @@ abstract class ProcessBaseCommand extends CamelCommand {
         }
 
         name = extractCamelName(cl, mvn);
+        if (name == null && root != null) {
+            JsonObject jo = (JsonObject) root.get("context");
+            if (jo != null) {
+                name = jo.getString("name");
+            }
+        }
+
         return name == null ? "" : name;
     }
 
@@ -158,7 +165,6 @@ abstract class ProcessBaseCommand extends CamelCommand {
                 if (mvn != null) {
                     return mvn;
                 }
-                return cl.contains("camel-main") ? "camel-main" : "camel-core";
             }
         }
 
@@ -214,7 +220,7 @@ abstract class ProcessBaseCommand extends CamelCommand {
     JsonObject loadStatus(long pid) {
         try {
             File f = getStatusFile("" + pid);
-            if (f != null) {
+            if (f != null && f.exists()) {
                 FileInputStream fis = new FileInputStream(f);
                 String text = IOHelper.loadText(fis);
                 IOHelper.close(fis);

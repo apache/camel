@@ -333,10 +333,20 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
+    public RestDefinition routeId(String routeId) {
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+        // add on last verb as that is how the Java DSL works
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        verb.setRouteId(routeId);
+        return this;
+    }
+
     public RestDefinition deprecated() {
         if (!getVerbs().isEmpty()) {
             VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-            verb.deprecated();
+            verb.setDeprecated("true");
         }
 
         return this;
@@ -680,6 +690,10 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         List<RouteDefinition> answer = new ArrayList<>();
 
         RestConfiguration config = camelContext.getRestConfiguration();
+        if (config.isInlineRoutes()) {
+            // sanity check this rest definition do not have duplicates linked routes via direct endpoints
+            validateUniqueDirects();
+        }
 
         addRouteDefinition(camelContext, answer, config.getComponent(), config.getProducerComponent());
 
@@ -695,6 +709,21 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             }
             if (!paths.add(path)) {
                 throw new IllegalArgumentException("Duplicate verb detected in rest-dsl: " + path);
+            }
+        }
+    }
+
+    protected void validateUniqueDirects() {
+        Set<String> directs = new HashSet<>();
+        for (VerbDefinition verb : verbs) {
+            ToDefinition to = verb.getTo();
+            if (to != null) {
+                String uri = to.getUri();
+                if (uri.startsWith("direct:")) {
+                    if (!directs.add(uri)) {
+                        throw new IllegalArgumentException("Duplicate to in rest-dsl: " + uri);
+                    }
+                }
             }
         }
     }
@@ -768,6 +797,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             RouteDefinition route = new RouteDefinition();
             if (verb.getTo() == null) {
                 throw new IllegalArgumentException("Rest service: " + verb + " must have to endpoint configured.");
+            }
+            if (verb.getRouteId() != null) {
+                route.routeId(verb.getRouteId());
             }
             route.getOutputs().add(verb.getTo());
 

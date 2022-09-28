@@ -519,6 +519,16 @@ public enum ZendeskApiMethod implements ApiMethod {
         "deleteTicketField",
         arg("id", long.class)),
 
+    DELETE_TICKET_FORM(
+        void.class,
+        "deleteTicketForm",
+        arg("id", long.class)),
+
+    DELETE_TICKET_FORM_1(
+        void.class,
+        "deleteTicketForm",
+        arg("ticketForm", org.zendesk.client.v2.model.TicketForm.class)),
+
     DELETE_TICKETS(
         void.class,
         "deleteTickets",
@@ -592,6 +602,10 @@ public enum ZendeskApiMethod implements ApiMethod {
         void.class,
         "deleteUserSegment",
         arg("userSegment", org.zendesk.client.v2.model.hc.UserSegment.class)),
+
+    GET_ACTIVE_TRIGGERS(
+        Iterable.class,
+        "getActiveTriggers"),
 
     GET_ARTICLE(
         org.zendesk.client.v2.model.hc.Article.class,
@@ -677,6 +691,11 @@ public enum ZendeskApiMethod implements ApiMethod {
         Iterable.class,
         "getAssignableGroups"),
 
+    GET_ASSIGNED_TICKETS_COUNT_FOR_USER(
+        org.zendesk.client.v2.model.TicketCount.class,
+        "getAssignedTicketsCountForUser",
+        arg("id", long.class)),
+
     GET_ATTACHMENT(
         org.zendesk.client.v2.model.Attachment.class,
         "getAttachment",
@@ -731,6 +750,11 @@ public enum ZendeskApiMethod implements ApiMethod {
         Iterable.class,
         "getCategoryTranslations",
         arg("categoryId", Long.class)),
+
+    GET_CCD_TICKETS_COUNT_FOR_USER(
+        org.zendesk.client.v2.model.TicketCount.class,
+        "getCcdTicketsCountForUser",
+        arg("id", long.class)),
 
     GET_COMPLIANCE_DELETION_STATUSES(
         Iterable.class,
@@ -925,6 +949,11 @@ public enum ZendeskApiMethod implements ApiMethod {
         "getOrganizationMembershipsForUser",
         arg("user_id", long.class)),
 
+    GET_ORGANIZATION_REQUESTS(
+        Iterable.class,
+        "getOrganizationRequests",
+        arg("organizationId", long.class)),
+
     GET_ORGANIZATION_TICKETS(
         Iterable.class,
         "getOrganizationTickets",
@@ -938,6 +967,12 @@ public enum ZendeskApiMethod implements ApiMethod {
     GET_ORGANIZATIONS(
         Iterable.class,
         "getOrganizations"),
+
+    GET_ORGANIZATIONS_1(
+        java.util.List.class,
+        "getOrganizations",
+        arg("id", long.class),
+        arg("ids", long[].class)),
 
     GET_ORGANIZATIONS_INCREMENTALLY(
         Iterable.class,
@@ -1017,36 +1052,11 @@ public enum ZendeskApiMethod implements ApiMethod {
         Iterable.class,
         "getSchedules"),
 
-    GET_SEARCH_RESULTS(
-        Iterable.class,
-        "getSearchResults",
-        arg("query", String.class)),
-
-    GET_SEARCH_RESULTS_1(
-        Iterable.class,
-        "getSearchResults",
-        arg("type", Class.class),
-        arg("query", String.class)),
-
-    GET_SEARCH_RESULTS_2(
-        Iterable.class,
-        "getSearchResults",
-        arg("type", Class.class),
+    GET_SEARCH_TICKET_RESULTS(
+        java.util.Optional.class,
+        "getSearchTicketResults",
         arg("query", String.class),
-        arg("parameters", String.class)),
-
-    GET_SEARCH_RESULTS_3(
-        Iterable.class,
-        "getSearchResults",
-        arg("type", Class.class),
-        arg("query", String.class),
-        arg("params", java.util.Map.class)),
-
-    GET_SEARCH_RESULTS_4(
-        Iterable.class,
-        "getSearchResults",
-        arg("type", Class.class),
-        arg("query", String.class),
+        arg("queryParams", java.util.Map.class),
         arg("sortBy", String.class),
         arg("sortOrder", org.zendesk.client.v2.model.SortOrder.class)),
 
@@ -1209,6 +1219,15 @@ public enum ZendeskApiMethod implements ApiMethod {
         arg("externalId", String.class),
         arg("includeArchived", boolean.class)),
 
+    GET_TICKETS_COUNT(
+        org.zendesk.client.v2.model.TicketCount.class,
+        "getTicketsCount"),
+
+    GET_TICKETS_COUNT_FOR_ORGANIZATION(
+        org.zendesk.client.v2.model.TicketCount.class,
+        "getTicketsCountForOrganization",
+        arg("id", long.class)),
+
     GET_TICKETS_FROM_SEARCH(
         Iterable.class,
         "getTicketsFromSearch",
@@ -1263,6 +1282,14 @@ public enum ZendeskApiMethod implements ApiMethod {
     GET_TRIGGERS(
         Iterable.class,
         "getTriggers"),
+
+    GET_TRIGGERS_1(
+        Iterable.class,
+        "getTriggers",
+        arg("categoryId0", String.class),
+        arg("active", boolean.class),
+        arg("sortBy", String.class),
+        arg("sortOrder", org.zendesk.client.v2.model.SortOrder.class)),
 
     GET_TWITTER_MONITORS(
         Iterable.class,
@@ -1362,6 +1389,18 @@ public enum ZendeskApiMethod implements ApiMethod {
         Iterable.class,
         "getUsers"),
 
+    GET_USERS_1(
+        java.util.List.class,
+        "getUsers",
+        arg("id", long.class),
+        arg("ids", long[].class)),
+
+    GET_USERS_BY_EXTERNAL_IDS(
+        java.util.List.class,
+        "getUsersByExternalIds",
+        arg("externalId0", long.class),
+        arg("externalId0s", long[].class)),
+
     GET_USERS_BY_ROLE(
         Iterable.class,
         "getUsersByRole",
@@ -1372,6 +1411,15 @@ public enum ZendeskApiMethod implements ApiMethod {
         Iterable.class,
         "getUsersIncrementally",
         arg("startTime", java.util.Date.class)),
+
+    GET_VIEW(
+        Iterable.class,
+        "getView",
+        arg("id", long.class)),
+
+    GET_VIEWS(
+        Iterable.class,
+        "getViews"),
 
     IMPORT_TICKET(
         org.zendesk.client.v2.model.Ticket.class,
@@ -1526,6 +1574,19 @@ public enum ZendeskApiMethod implements ApiMethod {
         "resetUserPassword",
         arg("user", org.zendesk.client.v2.model.User.class),
         arg("password", String.class)),
+
+    SEARCH_TRIGGERS(
+        Iterable.class,
+        "searchTriggers",
+        arg("query", String.class)),
+
+    SEARCH_TRIGGERS_1(
+        Iterable.class,
+        "searchTriggers",
+        arg("query", String.class),
+        arg("active", boolean.class),
+        arg("sortBy", String.class),
+        arg("sortOrder", org.zendesk.client.v2.model.SortOrder.class)),
 
     SET_GROUP_MEMBERSHIP_AS_DEFAULT(
         java.util.List.class,
@@ -1717,6 +1778,11 @@ public enum ZendeskApiMethod implements ApiMethod {
         org.zendesk.client.v2.model.Field.class,
         "updateTicketField",
         arg("field", org.zendesk.client.v2.model.Field.class)),
+
+    UPDATE_TICKET_FORM(
+        org.zendesk.client.v2.model.TicketForm.class,
+        "updateTicketForm",
+        arg("ticketForm", org.zendesk.client.v2.model.TicketForm.class)),
 
     UPDATE_TICKETS(
         org.zendesk.client.v2.model.JobStatus.class,

@@ -35,6 +35,7 @@ import org.apache.camel.component.kafka.producer.support.KafkaProducerCallBack;
 import org.apache.camel.component.kafka.producer.support.KafkaProducerMetadataCallBack;
 import org.apache.camel.component.kafka.producer.support.KeyValueHolderIterator;
 import org.apache.camel.component.kafka.producer.support.ProducerUtil;
+import org.apache.camel.component.kafka.producer.support.PropagatedHeadersProvider;
 import org.apache.camel.component.kafka.serde.KafkaHeaderSerializer;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -236,14 +237,14 @@ public class KafkaProducer extends DefaultAsyncProducer {
             Exchange exchange, Message message) {
         String topic = evaluateTopic(message);
 
-        // extracting headers which need to be propagated
-        List<Header> propagatedHeaders = getPropagatedHeaders(exchange, message);
+        PropagatedHeadersProvider propagatedHeadersProvider
+                = new PropagatedHeadersProvider(this, configuration, exchange, message);
 
         Object body = message.getBody();
 
         Iterator<Object> iterator = getObjectIterator(body);
 
-        return new KeyValueHolderIterator(iterator, exchange, configuration, topic, propagatedHeaders);
+        return new KeyValueHolderIterator(iterator, exchange, configuration, topic, propagatedHeadersProvider);
     }
 
     protected ProducerRecord<Object, Object> createRecord(Exchange exchange, Message message) {
@@ -330,7 +331,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
         return iterator;
     }
 
-    private List<Header> getPropagatedHeaders(Exchange exchange, Message message) {
+    public List<Header> getPropagatedHeaders(Exchange exchange, Message message) {
         Map<String, Object> messageHeaders = message.getHeaders();
         List<Header> propagatedHeaders = new ArrayList<>(messageHeaders.size());
 

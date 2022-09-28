@@ -28,6 +28,7 @@ import org.apache.camel.support.component.SendDynamicAwareSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 /**
  * HTTP based {@link org.apache.camel.spi.SendDynamicAware} which allows to optimise HTTP components with the toD
@@ -163,8 +164,9 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
             }
         }
 
-        // favour using java.net.URI for parsing into host, context-path and authority
         try {
+            // favour using java.net.URI for parsing into host, context-path and authority
+            u = UnsafeUriCharactersEncoder.encode(u);
             URI parse = new URI(u);
             String host = parse.getHost();
             String path = parse.getPath();

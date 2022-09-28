@@ -92,7 +92,6 @@ code and source code.
 
 The following provides more details on the included cryptographic
 software:
-  * camel-ahc can be configured to use https
   * camel-crypto can be used for secure communications
   * camel-cxf can be configured for secure communications
   * camel-ftp can be configured for secure communications

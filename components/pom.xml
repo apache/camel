@@ -78,8 +78,6 @@
 
         <!-- regular modules in alphabetic order -->
         <module>camel-activemq</module>
-        <module>camel-ahc-ws</module>
-        <module>camel-ahc</module>
         <module>camel-amqp</module>
         <module>camel-any23</module>
         <module>camel-arangodb</module>
@@ -135,6 +133,7 @@
 	    <module>camel-dropbox</module>
 	    <module>camel-dynamic-router</module>
         <module>camel-ehcache</module>
+        <module>camel-elasticsearch</module>
         <module>camel-elasticsearch-rest</module>
         <module>camel-elytron</module>
         <module>camel-etcd3</module>
@@ -256,6 +255,7 @@
         <module>camel-protobuf</module>
         <module>camel-pubnub</module>
         <module>camel-pulsar</module>
+        <module>camel-python</module>
         <module>camel-quartz</module>
         <module>camel-quickfix</module>
         <module>camel-rabbitmq</module>

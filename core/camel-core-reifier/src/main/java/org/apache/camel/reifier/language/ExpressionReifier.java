@@ -44,6 +44,7 @@ import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.model.language.MvelExpression;
 import org.apache.camel.model.language.OgnlExpression;
+import org.apache.camel.model.language.PythonExpression;
 import org.apache.camel.model.language.RefExpression;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.language.SpELExpression;
@@ -141,6 +142,8 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
         } else if (definition instanceof MvelExpression) {
             return new ExpressionReifier<>(camelContext, definition);
         } else if (definition instanceof OgnlExpression) {
+            return new ExpressionReifier<>(camelContext, definition);
+        } else if (definition instanceof PythonExpression) {
             return new ExpressionReifier<>(camelContext, definition);
         } else if (definition instanceof RefExpression) {
             return new ExpressionReifier<>(camelContext, definition);

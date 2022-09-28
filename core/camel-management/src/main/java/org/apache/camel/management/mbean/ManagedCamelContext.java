@@ -32,6 +32,7 @@ import org.w3c.dom.Document;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Producer;
@@ -52,6 +53,7 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.UnitOfWork;
 
 @ManagedResource(description = "Managed CamelContext")
 public class ManagedCamelContext extends ManagedPerformanceCounter implements TimerListener, ManagedCamelContextMBean {
@@ -72,6 +74,57 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         boolean enabled = context.getManagementStrategy().getManagementAgent() != null
                 && context.getManagementStrategy().getManagementAgent().getStatisticsLevel() != ManagementStatisticsLevel.Off;
         setStatisticsEnabled(enabled);
+    }
+
+    @Override
+    public void completedExchange(Exchange exchange, long time) {
+        // the camel-context mbean is triggered for every route mbean
+        // so we must only trigger on the root level, otherwise the context mbean
+        // total counter will be incorrect. For example if an exchange is routed via 3 routes
+        // we should only count this as 1 instead of 3.
+        UnitOfWork uow = exchange.getUnitOfWork();
+        if (uow != null) {
+            int level = uow.routeStackLevel();
+            if (level <= 1) {
+                super.completedExchange(exchange, time);
+            }
+        } else {
+            super.completedExchange(exchange, time);
+        }
+    }
+
+    @Override
+    public void failedExchange(Exchange exchange) {
+        // the camel-context mbean is triggered for every route mbean
+        // so we must only trigger on the root level, otherwise the context mbean
+        // total counter will be incorrect. For example if an exchange is routed via 3 routes
+        // we should only count this as 1 instead of 3.
+        UnitOfWork uow = exchange.getUnitOfWork();
+        if (uow != null) {
+            int level = uow.routeStackLevel();
+            if (level <= 1) {
+                super.failedExchange(exchange);
+            }
+        } else {
+            super.failedExchange(exchange);
+        }
+    }
+
+    @Override
+    public void processExchange(Exchange exchange, String type) {
+        // the camel-context mbean is triggered for every route mbean
+        // so we must only trigger on the root level, otherwise the context mbean
+        // total counter will be incorrect. For example if an exchange is routed via 3 routes
+        // we should only count this as 1 instead of 3.
+        UnitOfWork uow = exchange.getUnitOfWork();
+        if (uow != null) {
+            int level = uow.routeStackLevel();
+            if (level <= 1) {
+                super.processExchange(exchange, type);
+            }
+        } else {
+            super.processExchange(exchange, type);
+        }
     }
 
     public CamelContext getContext() {

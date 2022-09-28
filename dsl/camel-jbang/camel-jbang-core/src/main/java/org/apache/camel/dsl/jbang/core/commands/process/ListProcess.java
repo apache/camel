@@ -37,6 +37,10 @@ public class ListProcess extends ProcessBaseCommand {
                         description = "Sort by pid, name or age", defaultValue = "pid")
     String sort;
 
+    @CommandLine.Option(names = { "--pid" },
+                        description = "List only pid in the output")
+    boolean pid;
+
     public ListProcess(CamelJBangMain main) {
         super(main);
     }
@@ -56,6 +60,9 @@ public class ListProcess extends ProcessBaseCommand {
                         row.uptime = extractSince(ph);
                         row.ago = TimeUtils.printSince(row.uptime);
                         JsonObject context = (JsonObject) root.get("context");
+                        if (context == null) {
+                            return;
+                        }
                         row.name = context.getString("name");
                         if ("CamelJBang".equals(row.name)) {
                             row.name = extractName(root, ph);
@@ -76,27 +83,38 @@ public class ListProcess extends ProcessBaseCommand {
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.name),
-                    new Column().header("READY").dataAlign(HorizontalAlign.CENTER).with(r -> r.ready),
-                    new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
-                            .with(r -> extractState(r.state)),
-                    new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago))));
+            if (pid) {
+                rows.forEach(r -> System.out.println(r.pid));
+            } else {
+                System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                        new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
+                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(r -> r.name),
+                        new Column().header("READY").dataAlign(HorizontalAlign.CENTER).with(r -> r.ready),
+                        new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
+                                .with(r -> extractState(r.state)),
+                        new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago))));
+            }
         }
 
         return 0;
     }
 
     protected int sortRow(Row o1, Row o2) {
-        switch (sort) {
+        String s = sort;
+        int negate = 1;
+        if (s.startsWith("-")) {
+            s = s.substring(1);
+            negate = -1;
+        }
+        switch (s) {
             case "pid":
-                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid));
+                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid)) * negate;
             case "name":
-                return o1.name.compareToIgnoreCase(o2.name);
+                return o1.name.compareToIgnoreCase(o2.name) * negate;
             case "age":
-                return Long.compare(o1.uptime, o2.uptime);
+                return Long.compare(o1.uptime, o2.uptime) * negate;
             default:
                 return 0;
         }

@@ -184,6 +184,7 @@ import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.model.language.MvelExpression;
 import org.apache.camel.model.language.OgnlExpression;
+import org.apache.camel.model.language.PythonExpression;
 import org.apache.camel.model.language.RefExpression;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.language.SpELExpression;
@@ -4085,6 +4086,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "path", type = "string"),
                     @YamlProperty(name = "produces", type = "string"),
                     @YamlProperty(name = "response-message", type = "array:org.apache.camel.model.rest.ResponseMessageDefinition"),
+                    @YamlProperty(name = "route-id", type = "string"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "boolean"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
@@ -4158,6 +4160,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "response-message": {
                     java.util.List<org.apache.camel.model.rest.ResponseMessageDefinition> val = asFlatList(node, org.apache.camel.model.rest.ResponseMessageDefinition.class);
                     target.setResponseMsgs(val);
+                    break;
+                }
+                case "route-id": {
+                    String val = asText(node);
+                    target.setRouteId(val);
                     break;
                 }
                 case "security": {
@@ -5419,6 +5426,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "path", type = "string"),
                     @YamlProperty(name = "produces", type = "string"),
                     @YamlProperty(name = "response-message", type = "array:org.apache.camel.model.rest.ResponseMessageDefinition"),
+                    @YamlProperty(name = "route-id", type = "string"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "boolean"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
@@ -5492,6 +5500,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "response-message": {
                     java.util.List<org.apache.camel.model.rest.ResponseMessageDefinition> val = asFlatList(node, org.apache.camel.model.rest.ResponseMessageDefinition.class);
                     target.setResponseMsgs(val);
+                    break;
+                }
+                case "route-id": {
+                    String val = asText(node);
+                    target.setRouteId(val);
                     break;
                 }
                 case "security": {
@@ -5828,6 +5841,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "path", type = "string"),
                     @YamlProperty(name = "produces", type = "string"),
                     @YamlProperty(name = "response-message", type = "array:org.apache.camel.model.rest.ResponseMessageDefinition"),
+                    @YamlProperty(name = "route-id", type = "string"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "boolean"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
@@ -5901,6 +5915,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "response-message": {
                     java.util.List<org.apache.camel.model.rest.ResponseMessageDefinition> val = asFlatList(node, org.apache.camel.model.rest.ResponseMessageDefinition.class);
                     target.setResponseMsgs(val);
+                    break;
+                }
+                case "route-id": {
+                    String val = asText(node);
+                    target.setRouteId(val);
                     break;
                 }
                 case "security": {
@@ -9761,6 +9780,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "path", type = "string"),
                     @YamlProperty(name = "produces", type = "string"),
                     @YamlProperty(name = "response-message", type = "array:org.apache.camel.model.rest.ResponseMessageDefinition"),
+                    @YamlProperty(name = "route-id", type = "string"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "boolean"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
@@ -9834,6 +9854,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "response-message": {
                     java.util.List<org.apache.camel.model.rest.ResponseMessageDefinition> val = asFlatList(node, org.apache.camel.model.rest.ResponseMessageDefinition.class);
                     target.setResponseMsgs(val);
+                    break;
+                }
+                case "route-id": {
+                    String val = asText(node);
+                    target.setRouteId(val);
                     break;
                 }
                 case "security": {
@@ -10169,6 +10194,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "path", type = "string"),
                     @YamlProperty(name = "produces", type = "string"),
                     @YamlProperty(name = "response-message", type = "array:org.apache.camel.model.rest.ResponseMessageDefinition"),
+                    @YamlProperty(name = "route-id", type = "string"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "boolean"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
@@ -10242,6 +10268,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "response-message": {
                     java.util.List<org.apache.camel.model.rest.ResponseMessageDefinition> val = asFlatList(node, org.apache.camel.model.rest.ResponseMessageDefinition.class);
                     target.setResponseMsgs(val);
+                    break;
+                }
+                case "route-id": {
+                    String val = asText(node);
+                    target.setRouteId(val);
                     break;
                 }
                 case "security": {
@@ -10644,6 +10675,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "path", type = "string"),
                     @YamlProperty(name = "produces", type = "string"),
                     @YamlProperty(name = "response-message", type = "array:org.apache.camel.model.rest.ResponseMessageDefinition"),
+                    @YamlProperty(name = "route-id", type = "string"),
                     @YamlProperty(name = "security", type = "array:org.apache.camel.model.rest.SecurityDefinition"),
                     @YamlProperty(name = "skip-binding-on-error-code", type = "boolean"),
                     @YamlProperty(name = "to", type = "object:org.apache.camel.model.ToDefinition"),
@@ -10719,6 +10751,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setResponseMsgs(val);
                     break;
                 }
+                case "route-id": {
+                    String val = asText(node);
+                    target.setRouteId(val);
+                    break;
+                }
                 case "security": {
                     java.util.List<org.apache.camel.model.rest.SecurityDefinition> val = asFlatList(node, org.apache.camel.model.rest.SecurityDefinition.class);
                     target.setSecurity(val);
@@ -10751,6 +10788,68 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 default: {
                     return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = "python",
+            inline = true,
+            types = org.apache.camel.model.language.PythonExpression.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            properties = {
+                    @YamlProperty(name = "expression", type = "string", required = true),
+                    @YamlProperty(name = "id", type = "string"),
+                    @YamlProperty(name = "trim", type = "boolean")
+            }
+    )
+    public static class PythonExpressionDeserializer extends YamlDeserializerBase<PythonExpression> {
+        public PythonExpressionDeserializer() {
+            super(PythonExpression.class);
+        }
+
+        @Override
+        protected PythonExpression newInstance() {
+            return new PythonExpression();
+        }
+
+        @Override
+        protected PythonExpression newInstance(String value) {
+            return new PythonExpression(value);
+        }
+
+        @Override
+        protected boolean setProperty(PythonExpression target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "expression": {
+                    String val = asText(node);
+                    target.setExpression(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "trim": {
+                    String val = asText(node);
+                    target.setTrim(val);
+                    break;
+                }
+                default: {
+                    ExpressionDefinition ed = target.getExpressionType();
+                    if (ed != null) {
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
+                    }
+                    ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
+                    if (ed != null) {
+                        target.setExpressionType(ed);
+                    } else {
+                        return false;
+                    }
                 }
             }
             return true;
@@ -11909,6 +12008,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "endpoint-property", type = "array:org.apache.camel.model.rest.RestPropertyDefinition"),
                     @YamlProperty(name = "host", type = "string"),
                     @YamlProperty(name = "host-name-resolver", type = "enum:allLocalIp,localHostName,localIp"),
+                    @YamlProperty(name = "inline-routes", type = "boolean"),
                     @YamlProperty(name = "json-data-format", type = "string"),
                     @YamlProperty(name = "port", type = "string"),
                     @YamlProperty(name = "producer-api-doc", type = "string"),
@@ -12014,6 +12114,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "host-name-resolver": {
                     target.setHostNameResolver(asEnum(node, org.apache.camel.model.rest.RestHostNameResolver.class));
+                    break;
+                }
+                case "inline-routes": {
+                    String val = asText(node);
+                    target.setInlineRoutes(java.lang.Boolean.valueOf(val));
                     break;
                 }
                 case "json-data-format": {

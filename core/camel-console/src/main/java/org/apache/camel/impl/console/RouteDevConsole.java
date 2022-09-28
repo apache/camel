@@ -94,6 +94,10 @@ public class RouteDevConsole extends AbstractDevConsole {
             sb.append(String.format("\n    Mean Time: %s", TimeUtils.printDuration(mrb.getMeanProcessingTime(), true)));
             sb.append(String.format("\n    Max Time: %s", TimeUtils.printDuration(mrb.getMaxProcessingTime(), true)));
             sb.append(String.format("\n    Min Time: %s", TimeUtils.printDuration(mrb.getMinProcessingTime(), true)));
+            if (mrb.getExchangesTotal() > 0) {
+                sb.append(String.format("\n    Last Time: %s", TimeUtils.printDuration(mrb.getLastProcessingTime(), true)));
+                sb.append(String.format("\n    Delta Time: %s", TimeUtils.printDuration(mrb.getDeltaProcessingTime(), true)));
+            }
             Date last = mrb.getLastExchangeCreatedTimestamp();
             if (last != null) {
                 String ago = TimeUtils.printSince(last.getTime());
@@ -158,6 +162,10 @@ public class RouteDevConsole extends AbstractDevConsole {
             sb.append(String.format("\n        Mean Time: %s", TimeUtils.printDuration(mp.getMeanProcessingTime(), true)));
             sb.append(String.format("\n        Max Time: %s", TimeUtils.printDuration(mp.getMaxProcessingTime(), true)));
             sb.append(String.format("\n        Min Time: %s", TimeUtils.printDuration(mp.getMinProcessingTime(), true)));
+            if (mp.getExchangesTotal() > 0) {
+                sb.append(String.format("\n    Last Time: %s", TimeUtils.printDuration(mp.getLastProcessingTime(), true)));
+                sb.append(String.format("\n    Delta Time: %s", TimeUtils.printDuration(mp.getDeltaProcessingTime(), true)));
+            }
             Date last = mp.getLastExchangeCompletedTimestamp();
             if (last != null) {
                 String ago = TimeUtils.printSince(last.getTime());
@@ -209,6 +217,10 @@ public class RouteDevConsole extends AbstractDevConsole {
             stats.put("meanProcessingTime", mrb.getMeanProcessingTime());
             stats.put("maxProcessingTime", mrb.getMaxProcessingTime());
             stats.put("minProcessingTime", mrb.getMinProcessingTime());
+            if (mrb.getExchangesTotal() > 0) {
+                stats.put("lastProcessingTime", mrb.getLastProcessingTime());
+                stats.put("deltaProcessingTime", mrb.getDeltaProcessingTime());
+            }
             Date last = mrb.getLastExchangeCreatedTimestamp();
             if (last != null) {
                 String ago = TimeUtils.printSince(last.getTime());
@@ -291,6 +303,10 @@ public class RouteDevConsole extends AbstractDevConsole {
             stats.put("meanProcessingTime", mp.getMeanProcessingTime());
             stats.put("maxProcessingTime", mp.getMaxProcessingTime());
             stats.put("minProcessingTime", mp.getMinProcessingTime());
+            if (mp.getExchangesTotal() > 0) {
+                stats.put("lastProcessingTime", mp.getLastProcessingTime());
+                stats.put("deltaProcessingTime", mp.getDeltaProcessingTime());
+            }
             Date last = mp.getLastExchangeCompletedTimestamp();
             if (last != null) {
                 String ago = TimeUtils.printSince(last.getTime());

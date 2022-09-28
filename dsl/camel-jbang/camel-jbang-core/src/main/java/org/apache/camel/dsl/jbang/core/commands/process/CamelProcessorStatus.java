@@ -70,6 +70,9 @@ public class CamelProcessorStatus extends ProcessBaseCommand {
                     JsonObject root = loadStatus(ph.pid());
                     if (root != null) {
                         JsonObject context = (JsonObject) root.get("context");
+                        if (context == null) {
+                            return;
+                        }
                         JsonArray array = (JsonArray) root.get("routes");
                         for (int i = 0; i < array.size(); i++) {
                             JsonObject o = (JsonObject) array.get(i);
@@ -94,7 +97,15 @@ public class CamelProcessorStatus extends ProcessBaseCommand {
                                 }
                                 row.max = stats.get("maxProcessingTime").toString();
                                 row.min = stats.get("minProcessingTime").toString();
-                                Object last = stats.get("sinceLastCreatedExchange");
+                                Object last = stats.get("lastProcessingTime");
+                                if (last != null) {
+                                    row.last = last.toString();
+                                }
+                                last = stats.get("deltaProcessingTime");
+                                if (last != null) {
+                                    row.delta = last.toString();
+                                }
+                                last = stats.get("sinceLastCreatedExchange");
                                 if (last != null) {
                                     row.sinceLastStarted = last.toString();
                                 }
@@ -118,7 +129,9 @@ public class CamelProcessorStatus extends ProcessBaseCommand {
                             if (add) {
                                 rows.add(row);
                                 List<JsonObject> list = o.getCollection("processors");
-                                addProcessors(row, rows, list);
+                                if (list != null) {
+                                    addProcessors(row, rows, list);
+                                }
                             }
                         }
                     }
@@ -156,7 +169,15 @@ public class CamelProcessorStatus extends ProcessBaseCommand {
                 }
                 row.max = stats.get("maxProcessingTime").toString();
                 row.min = stats.get("minProcessingTime").toString();
-                Object last = stats.get("sinceLastCompletedExchange");
+                Object last = stats.get("lastProcessingTime");
+                if (last != null) {
+                    row.last = last.toString();
+                }
+                last = stats.get("deltaProcessingTime");
+                if (last != null) {
+                    row.delta = last.toString();
+                }
+                last = stats.get("sinceLastCompletedExchange");
                 if (last != null) {
                     row.sinceLastCompleted = last.toString();
                 }
@@ -167,14 +188,16 @@ public class CamelProcessorStatus extends ProcessBaseCommand {
             }
             if (source) {
                 List<JsonObject> lines = o.getCollection("code");
-                for (JsonObject line : lines) {
-                    Code code = new Code();
-                    code.line = line.getInteger("line");
-                    code.code = line.getString("code");
-                    if (line.getBooleanOrDefault("match", false)) {
-                        code.match = true;
+                if (lines != null) {
+                    for (JsonObject line : lines) {
+                        Code code = new Code();
+                        code.line = line.getInteger("line");
+                        code.code = line.getString("code");
+                        if (line.getBooleanOrDefault("match", false)) {
+                            code.match = true;
+                        }
+                        row.code.add(code);
                     }
-                    row.code.add(code);
                 }
             }
         }
@@ -196,17 +219,25 @@ public class CamelProcessorStatus extends ProcessBaseCommand {
                 new Column().header("MEAN").with(r -> r.mean),
                 new Column().header("MIN").with(r -> r.min),
                 new Column().header("MAX").with(r -> r.max),
+                new Column().header("LAST").with(r -> r.last),
+                new Column().header("DELTA").with(this::getDelta),
                 new Column().header("SINCE-LAST").with(this::getSinceLast))));
     }
 
     protected int sortRow(Row o1, Row o2) {
-        switch (sort) {
+        String s = sort;
+        int negate = 1;
+        if (s.startsWith("-")) {
+            s = s.substring(1);
+            negate = -1;
+        }
+        switch (s) {
             case "pid":
-                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid));
+                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid)) * negate;
             case "name":
-                return o1.name.compareToIgnoreCase(o2.name);
+                return o1.name.compareToIgnoreCase(o2.name) * negate;
             case "age":
-                return Long.compare(o1.uptime, o2.uptime);
+                return Long.compare(o1.uptime, o2.uptime) * negate;
             default:
                 return 0;
         }
@@ -216,6 +247,18 @@ public class CamelProcessorStatus extends ProcessBaseCommand {
         String s1 = r.sinceLastCompleted != null ? r.sinceLastCompleted : "-";
         String s2 = r.sinceLastFailed != null ? r.sinceLastFailed : "-";
         return s1 + "/" + s2;
+    }
+
+    protected String getDelta(Row r) {
+        if (r.delta != null) {
+            if (r.delta.startsWith("-")) {
+                return r.delta;
+            } else if (!"0".equals(r.delta)) {
+                // use plus sign to denote slower when positive
+                return "+" + r.delta;
+            }
+        }
+        return r.delta;
     }
 
     protected String getName(Row r) {
@@ -269,6 +312,8 @@ public class CamelProcessorStatus extends ProcessBaseCommand {
         String mean;
         String max;
         String min;
+        String last;
+        String delta;
         String sinceLastStarted;
         String sinceLastCompleted;
         String sinceLastFailed;

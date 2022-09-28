@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.catalog;
 
+import java.awt.*;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -31,6 +33,7 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.main.download.MavenGav;
+import org.apache.camel.main.util.SuggestSimilarHelper;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
@@ -47,6 +50,16 @@ public class CatalogDoc extends CamelCommand {
                             arity = "1")
     String name;
 
+    @CommandLine.Option(names = { "--url" },
+                        description = "Prints the link to the online documentation on the Camel website",
+                        defaultValue = "false")
+    boolean url;
+
+    @CommandLine.Option(names = { "--open-url" },
+                        description = "Opens the online documentation form the Camel website in the web browser",
+                        defaultValue = "false")
+    boolean openUrl;
+
     @CommandLine.Option(names = { "--filter" },
                         description = "Filter option listed in tables by name, description, or group")
     String filter;
@@ -58,8 +71,6 @@ public class CatalogDoc extends CamelCommand {
     @CommandLine.Option(names = {
             "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "0.9.0")
     String kameletsVersion;
-
-    // TODO: endpoint uri to document the uri only
 
     final CamelCatalog catalog = new DefaultCamelCatalog(true);
 
@@ -111,14 +122,59 @@ public class CatalogDoc extends CamelCommand {
         }
 
         if (prefix == null) {
-            System.out.println("Camel resource: " + name + " not found");
+            // guess if a kamelet
+            List<String> suggestions;
+            boolean kamelet = name.endsWith("-sink") || name.endsWith("-source") || name.endsWith("-action");
+            if (kamelet) {
+                // kamelet names
+                suggestions = SuggestSimilarHelper.didYouMean(KameletCatalogHelper.findKameletNames(kameletsVersion), name);
+            } else {
+                // assume its a component
+                suggestions = SuggestSimilarHelper.didYouMean(catalog.findComponentNames(), name);
+            }
+            if (suggestions != null) {
+                String type = kamelet ? "kamelet" : "component";
+                System.out.printf("Camel %s: %s not found. Did you mean? %s%n", type, name, String.join(", ", suggestions));
+            } else {
+                System.out.println("Camel resource: " + name + " not found");
+            }
         } else {
-            System.out.println("Camel " + prefix + ": " + name + " not found");
+            List<String> suggestions = null;
+            if ("kamelet".equals(prefix)) {
+                suggestions = SuggestSimilarHelper.didYouMean(KameletCatalogHelper.findKameletNames(kameletsVersion), name);
+            } else if ("component".equals(prefix)) {
+                suggestions = SuggestSimilarHelper.didYouMean(catalog.findComponentNames(), name);
+            } else if ("dataformat".equals(prefix)) {
+                suggestions = SuggestSimilarHelper.didYouMean(catalog.findDataFormatNames(), name);
+            } else if ("language".equals(prefix)) {
+                suggestions = SuggestSimilarHelper.didYouMean(catalog.findLanguageNames(), name);
+            } else if ("other".equals(prefix)) {
+                suggestions = SuggestSimilarHelper.didYouMean(catalog.findOtherNames(), name);
+            }
+            if (suggestions != null) {
+                System.out.printf("Camel %s: %s not found. Did you mean? %s%n", prefix, name, String.join(", ", suggestions));
+            } else {
+                System.out.printf("Camel %s: %s not found.%n", prefix, name);
+            }
         }
         return 1;
     }
 
-    private void docKamelet(KameletModel km) {
+    private void docKamelet(KameletModel km) throws Exception {
+        String link = websiteLink("kamelet", name, kameletsVersion);
+        if (openUrl) {
+            if (link != null) {
+                Desktop.getDesktop().browse(new URI(link));
+            }
+            return;
+        }
+        if (url) {
+            if (link != null) {
+                System.out.println(link);
+            }
+            return;
+        }
+
         System.out.printf("Kamelet Name: %s%n", km.name);
         System.out.printf("Kamelet Type: %s%n", km.type);
         System.out.println("Support Level: " + km.supportLevel);
@@ -137,10 +193,12 @@ public class CatalogDoc extends CamelCommand {
                 System.out.println("        <groupId>" + gav.getGroupId() + "</groupId>");
                 System.out.println("        <artifactId>" + gav.getArtifactId() + "</artifactId>");
                 String v = gav.getVersion();
-                if (v == null) {
+                if (v == null && "org.apache.camel".equals(gav.getGroupId())) {
                     v = catalog.getCatalogVersion();
                 }
-                System.out.println("        <version>" + v + "</version>");
+                if (v != null) {
+                    System.out.println("        <version>" + v + "</version>");
+                }
                 System.out.println("    </dependency>");
             }
             System.out.println("");
@@ -157,19 +215,40 @@ public class CatalogDoc extends CamelCommand {
             }
             System.out.println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, filtered, Arrays.asList(
                     new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20)
-                            .maxWidth(30, OverflowBehaviour.NEWLINE)
+                            .maxWidth(35, OverflowBehaviour.NEWLINE)
                             .with(r -> r.name),
-                    new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::getDescription),
-                    new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.NEWLINE)
+                    new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
+                            .with(this::getDescription),
+                    new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
                             .with(r -> r.defaultValue),
-                    new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).with(r -> r.type),
-                    new Column().header("EXAMPLE").dataAlign(HorizontalAlign.LEFT).with(r -> r.example))));
+                    new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
+                            .with(r -> r.type),
+                    new Column().header("EXAMPLE").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.NEWLINE)
+                            .with(r -> r.example))));
             System.out.println("");
         }
 
+        if (link != null) {
+            System.out.println(link);
+            System.out.println("");
+        }
     }
 
-    private void docComponent(ComponentModel cm) {
+    private void docComponent(ComponentModel cm) throws Exception {
+        String link = websiteLink("component", name, catalog.getCatalogVersion());
+        if (openUrl) {
+            if (link != null) {
+                Desktop.getDesktop().browse(new URI(link));
+            }
+            return;
+        }
+        if (url) {
+            if (link != null) {
+                System.out.println(link);
+            }
+            return;
+        }
+
         if (cm.isDeprecated()) {
             System.out.printf("Component Name: %s (deprecated)%n", cm.getName());
         } else {
@@ -202,12 +281,14 @@ public class CatalogDoc extends CamelCommand {
         System.out.println("");
         System.out.printf("Path parameters (%s):%n", cm.getEndpointPathOptions().size());
         System.out.println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, cm.getEndpointPathOptions(), Arrays.asList(
-                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20).maxWidth(30, OverflowBehaviour.NEWLINE)
+                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20).maxWidth(35, OverflowBehaviour.NEWLINE)
                         .with(this::getName),
-                new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::getDescription),
-                new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.NEWLINE)
-                        .with(r -> r.getShortDefaultValue(40)),
-                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).with(BaseOptionModel::getShortJavaType))));
+                new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
+                        .with(this::getDescription),
+                new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
+                        .with(r -> r.getShortDefaultValue(25)),
+                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
+                        .with(BaseOptionModel::getShortJavaType))));
         System.out.println("");
         var filtered = filter(filter, cm.getEndpointParameterOptions());
         var total1 = cm.getEndpointParameterOptions().size();
@@ -218,12 +299,14 @@ public class CatalogDoc extends CamelCommand {
             System.out.printf("Query parameters (total: %s match-filter: %s):%n", total1, total2);
         }
         System.out.println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, filtered, Arrays.asList(
-                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20).maxWidth(30, OverflowBehaviour.NEWLINE)
+                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20).maxWidth(35, OverflowBehaviour.NEWLINE)
                         .with(this::getName),
-                new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::getDescription),
-                new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.NEWLINE)
-                        .with(r -> r.getShortDefaultValue(40)),
-                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).with(BaseOptionModel::getShortJavaType))));
+                new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
+                        .with(this::getDescription),
+                new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
+                        .with(r -> r.getShortDefaultValue(25)),
+                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
+                        .with(BaseOptionModel::getShortJavaType))));
         System.out.println("");
 
         if (headers && !cm.getEndpointHeaders().isEmpty()) {
@@ -231,17 +314,38 @@ public class CatalogDoc extends CamelCommand {
                     cm.getName(), cm.getEndpointHeaders().size());
             System.out.println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, cm.getEndpointHeaders(), Arrays.asList(
                     new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20)
-                            .maxWidth(30, OverflowBehaviour.NEWLINE)
+                            .maxWidth(35, OverflowBehaviour.NEWLINE)
                             .with(this::getName),
-                    new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::getDescription),
-                    new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.NEWLINE)
-                            .with(r -> r.getShortDefaultValue(40)),
-                    new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).with(BaseOptionModel::getShortJavaType))));
+                    new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
+                            .with(this::getDescription),
+                    new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
+                            .with(r -> r.getShortDefaultValue(25)),
+                    new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
+                            .with(BaseOptionModel::getShortJavaType))));
+            System.out.println("");
+        }
+
+        if (link != null) {
+            System.out.println(link);
             System.out.println("");
         }
     }
 
-    private void docDataFormat(DataFormatModel dm) {
+    private void docDataFormat(DataFormatModel dm) throws Exception {
+        String link = websiteLink("dataformat", name, catalog.getCatalogVersion());
+        if (openUrl) {
+            if (link != null) {
+                Desktop.getDesktop().browse(new URI(link));
+            }
+            return;
+        }
+        if (url) {
+            if (link != null) {
+                System.out.println(link);
+            }
+            return;
+        }
+
         if (dm.isDeprecated()) {
             System.out.printf("Dataformat Name: %s (deprecated)%n", dm.getName());
         } else {
@@ -268,16 +372,37 @@ public class CatalogDoc extends CamelCommand {
                     dm.getName(), total1, total2);
         }
         System.out.println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, filtered, Arrays.asList(
-                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20).maxWidth(30, OverflowBehaviour.NEWLINE)
+                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20).maxWidth(35, OverflowBehaviour.NEWLINE)
                         .with(this::getName),
-                new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::getDescription),
-                new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.NEWLINE)
-                        .with(r -> r.getShortDefaultValue(40)),
-                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).with(BaseOptionModel::getShortJavaType))));
+                new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
+                        .with(this::getDescription),
+                new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
+                        .with(r -> r.getShortDefaultValue(25)),
+                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
+                        .with(BaseOptionModel::getShortJavaType))));
         System.out.println("");
+
+        if (link != null) {
+            System.out.println(link);
+            System.out.println("");
+        }
     }
 
-    private void docLanguage(LanguageModel lm) {
+    private void docLanguage(LanguageModel lm) throws Exception {
+        String link = websiteLink("language", name, catalog.getCatalogVersion());
+        if (openUrl) {
+            if (link != null) {
+                Desktop.getDesktop().browse(new URI(link));
+            }
+            return;
+        }
+        if (url) {
+            if (link != null) {
+                System.out.println(link);
+            }
+            return;
+        }
+
         if (lm.isDeprecated()) {
             System.out.printf("Language Name: %s (deprecated)%n", lm.getName());
         } else {
@@ -304,16 +429,37 @@ public class CatalogDoc extends CamelCommand {
                     lm.getName(), total1, total2);
         }
         System.out.println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, filtered, Arrays.asList(
-                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20).maxWidth(30, OverflowBehaviour.NEWLINE)
+                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20).maxWidth(35, OverflowBehaviour.NEWLINE)
                         .with(this::getName),
-                new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::getDescription),
-                new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.NEWLINE)
-                        .with(r -> r.getShortDefaultValue(40)),
-                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).with(BaseOptionModel::getShortJavaType))));
+                new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
+                        .with(this::getDescription),
+                new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
+                        .with(r -> r.getShortDefaultValue(25)),
+                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
+                        .with(BaseOptionModel::getShortJavaType))));
         System.out.println("");
+
+        if (link != null) {
+            System.out.println(link);
+            System.out.println("");
+        }
     }
 
-    private void docOther(OtherModel om) {
+    private void docOther(OtherModel om) throws Exception {
+        String link = websiteLink("other", name, catalog.getCatalogVersion());
+        if (openUrl) {
+            if (link != null) {
+                Desktop.getDesktop().browse(new URI(link));
+            }
+            return;
+        }
+        if (url) {
+            if (link != null) {
+                System.out.println(link);
+            }
+            return;
+        }
+
         if (om.isDeprecated()) {
             System.out.printf("Miscellaneous Name: %s (deprecated)%n", om.getName());
         } else {
@@ -329,6 +475,11 @@ public class CatalogDoc extends CamelCommand {
         System.out.println("        <version>" + om.getVersion() + "</version>");
         System.out.println("    </dependency>");
         System.out.println("");
+
+        if (link != null) {
+            System.out.println(link);
+            System.out.println("");
+        }
     }
 
     String getName(BaseOptionModel o) {
@@ -385,6 +536,28 @@ public class CatalogDoc extends CamelCommand {
         return options.stream().filter(
                 r -> r.name.equalsIgnoreCase(target) || r.description.toLowerCase(Locale.ROOT).contains(target))
                 .collect(Collectors.toList());
+    }
+
+    String websiteLink(String prefix, String name, String version) {
+        String v = "next";
+        if (version != null && !version.endsWith("-SNAPSHOT")) {
+            // 3.18.2 -> 3.18.x
+            int pos = version.lastIndexOf('.');
+            v = version.substring(0, pos) + ".x";
+        }
+        if ("component".equals(prefix)) {
+            return String.format("https://camel.apache.org/components/%s/%s-component.html", v, name);
+        } else if ("dataformat".equals(prefix)) {
+            return String.format("https://camel.apache.org/components/%s/dataformats/%s-dataformat.html", v, name);
+        } else if ("language".equals(prefix)) {
+            return String.format("https://camel.apache.org/components/%s/languages/%s-language.html", v, name);
+        } else if ("other".equals(prefix)) {
+            return String.format("https://camel.apache.org/components/%s/others/%s.html", v, name);
+        } else if ("kamelet".equals(prefix)) {
+            return String.format("https://camel.apache.org/camel-kamelets/%s/%s.html", v, name);
+        }
+
+        return null;
     }
 
 }

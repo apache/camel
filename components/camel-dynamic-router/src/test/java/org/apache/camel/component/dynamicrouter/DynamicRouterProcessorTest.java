@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.dynamicrouter;
 
+import java.util.List;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.dynamicrouter.support.DynamicRouterTestSupport;
@@ -23,7 +25,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.dynamicrouter.DynamicRouterConstants.MODE_FIRST_MATCH;
+import static org.apache.camel.component.dynamicrouter.DynamicRouterConstants.MODE_ALL_MATCH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
@@ -34,7 +36,7 @@ class DynamicRouterProcessorTest extends DynamicRouterTestSupport {
     @BeforeEach
     void localSetup() throws Exception {
         super.setup();
-        processor = new DynamicRouterProcessor(PROCESSOR_ID, context, MODE_FIRST_MATCH, false, () -> filterProcessorFactory);
+        processor = new DynamicRouterProcessor(PROCESSOR_ID, context, MODE_ALL_MATCH, false, () -> filterProcessorFactory);
         processor.doInit();
     }
 
@@ -57,6 +59,16 @@ class DynamicRouterProcessorTest extends DynamicRouterTestSupport {
         processor.addFilter(filterProcessor);
         PrioritizedFilterProcessor result = processor.getFilter(TEST_ID);
         assertEquals(filterProcessor, result);
+    }
+
+    @Test
+    void addMultipleFiltersWithSameId() {
+        processor.addFilter(filterProcessor);
+        processor.addFilter(filterProcessor);
+        processor.addFilter(filterProcessor);
+        processor.addFilter(filterProcessor);
+        List<PrioritizedFilterProcessor> matchingFilters = processor.matchFilters(exchange);
+        assertEquals(1, matchingFilters.size());
     }
 
     @Test

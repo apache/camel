@@ -89,6 +89,9 @@ public class RestConfigurationDefinition {
     @Metadata(label = "consumer,advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private Boolean enableCORS;
     @XmlAttribute
+    @Metadata(label = "consumer", javaType = "java.lang.Boolean", defaultValue = "false")
+    private Boolean inlineRoutes;
+    @XmlAttribute
     @Metadata(label = "advanced")
     private String jsonDataFormat;
     @XmlAttribute
@@ -328,6 +331,23 @@ public class RestConfigurationDefinition {
      */
     public void setEnableCORS(Boolean enableCORS) {
         this.enableCORS = enableCORS;
+    }
+
+    public Boolean getInlineRoutes() {
+        return inlineRoutes;
+    }
+
+    /**
+     * Inline routes in rest-dsl which are linked using direct endpoints.
+     *
+     * By default, each service in Rest DSL is an individual route, meaning that you would have at least two routes per
+     * service (rest-dsl, and the route linked from rest-dsl). Enabling this allows Camel to optimize and inline this as
+     * a single route, however this requires to use direct endpoints, which must be unique per service.
+     *
+     * This option is default <tt>false</tt>.
+     */
+    public void setInlineRoutes(Boolean inlineRoutes) {
+        this.inlineRoutes = inlineRoutes;
     }
 
     public String getJsonDataFormat() {
@@ -612,6 +632,20 @@ public class RestConfigurationDefinition {
     }
 
     /**
+     * Inline routes in rest-dsl which are linked using direct endpoints.
+     *
+     * By default, each service in Rest DSL is an individual route, meaning that you would have at least two routes per
+     * service (rest-dsl, and the route linked from rest-dsl). Enabling this allows Camel to optimize and inline this as
+     * a single route, however this requires to use direct endpoints, which must be unique per service.
+     *
+     * This option is default <tt>false</tt>.
+     */
+    public RestConfigurationDefinition inlineRoutes(boolean inlineRoutes) {
+        setInlineRoutes(inlineRoutes);
+        return this;
+    }
+
+    /**
      * To use a specific json data format
      * <p/>
      * <b>Important:</b> This option is only for setting a custom name of the data format, not to refer to an existing
@@ -790,6 +824,9 @@ public class RestConfigurationDefinition {
         }
         if (enableCORS != null) {
             target.setEnableCORS(enableCORS);
+        }
+        if (inlineRoutes != null) {
+            target.setInlineRoutes(inlineRoutes);
         }
         if (jsonDataFormat != null) {
             target.setJsonDataFormat(jsonDataFormat);

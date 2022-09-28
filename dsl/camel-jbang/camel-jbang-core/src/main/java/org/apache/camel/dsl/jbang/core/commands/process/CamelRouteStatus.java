@@ -46,6 +46,10 @@ public class CamelRouteStatus extends ProcessBaseCommand {
                         description = "Prefer to display source filename/code instead of IDs")
     boolean source;
 
+    @CommandLine.Option(names = { "--short-uri" },
+                        description = "List endpoint URI without query parameters (short)")
+    boolean shortUri;
+
     @CommandLine.Option(names = { "--limit" },
                         description = "Filter routes by limiting to the given number of rows")
     int limit;
@@ -69,6 +73,9 @@ public class CamelRouteStatus extends ProcessBaseCommand {
                     JsonObject root = loadStatus(ph.pid());
                     if (root != null) {
                         JsonObject context = (JsonObject) root.get("context");
+                        if (context == null) {
+                            return;
+                        }
                         JsonArray array = (JsonArray) root.get("routes");
                         for (int i = 0; i < array.size(); i++) {
                             JsonObject o = (JsonObject) array.get(i);
@@ -115,7 +122,15 @@ public class CamelRouteStatus extends ProcessBaseCommand {
                                 }
                                 row.max = stats.get("maxProcessingTime").toString();
                                 row.min = stats.get("minProcessingTime").toString();
-                                Object last = stats.get("sinceLastCreatedExchange");
+                                Object last = stats.get("lastProcessingTime");
+                                if (last != null) {
+                                    row.last = last.toString();
+                                }
+                                last = stats.get("deltaProcessingTime");
+                                if (last != null) {
+                                    row.delta = last.toString();
+                                }
+                                last = stats.get("sinceLastCreatedExchange");
                                 if (last != null) {
                                     row.sinceLastStarted = last.toString();
                                 }
@@ -161,11 +176,11 @@ public class CamelRouteStatus extends ProcessBaseCommand {
                 new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getId),
                 new Column().header("FROM").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
-                        .with(r -> r.from),
+                        .with(this::getFrom),
                 new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
                         .with(r -> r.state),
                 new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
-                new Column().header("COVER").dataAlign(HorizontalAlign.CENTER).with(this::getCoverage),
+                new Column().header("COVER").with(this::getCoverage),
                 new Column().header("MSG/S").with(this::getThroughput),
                 new Column().header("TOTAL").with(r -> r.total),
                 new Column().header("FAIL").with(r -> r.failed),
@@ -173,20 +188,39 @@ public class CamelRouteStatus extends ProcessBaseCommand {
                 new Column().header("MEAN").with(r -> r.mean),
                 new Column().header("MIN").with(r -> r.min),
                 new Column().header("MAX").with(r -> r.max),
+                new Column().header("LAST").with(r -> r.last),
+                new Column().header("DELTA").with(this::getDelta),
                 new Column().header("SINCE-LAST").with(this::getSinceLast))));
     }
 
     protected int sortRow(Row o1, Row o2) {
-        switch (sort) {
+        String s = sort;
+        int negate = 1;
+        if (s.startsWith("-")) {
+            s = s.substring(1);
+            negate = -1;
+        }
+        switch (s) {
             case "pid":
-                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid));
+                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid)) * negate;
             case "name":
-                return o1.name.compareToIgnoreCase(o2.name);
+                return o1.name.compareToIgnoreCase(o2.name) * negate;
             case "age":
-                return Long.compare(o1.uptime, o2.uptime);
+                return Long.compare(o1.uptime, o2.uptime) * negate;
             default:
                 return 0;
         }
+    }
+
+    private String getFrom(Row r) {
+        String u = r.from;
+        if (shortUri) {
+            int pos = u.indexOf('?');
+            if (pos > 0) {
+                u = u.substring(0, pos);
+            }
+        }
+        return u;
     }
 
     protected String getSinceLast(Row r) {
@@ -220,6 +254,18 @@ public class CamelRouteStatus extends ProcessBaseCommand {
         }
     }
 
+    protected String getDelta(Row r) {
+        if (r.delta != null) {
+            if (r.delta.startsWith("-")) {
+                return r.delta;
+            } else if (!"0".equals(r.delta)) {
+                // use plus sign to denote slower when positive
+                return "+" + r.delta;
+            }
+        }
+        return r.delta;
+    }
+
     static class Row {
         String pid;
         String name;
@@ -237,6 +283,8 @@ public class CamelRouteStatus extends ProcessBaseCommand {
         String mean;
         String max;
         String min;
+        String last;
+        String delta;
         String sinceLastStarted;
         String sinceLastCompleted;
         String sinceLastFailed;

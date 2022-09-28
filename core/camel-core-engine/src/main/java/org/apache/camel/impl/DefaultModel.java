@@ -40,6 +40,7 @@ import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.DefaultRouteTemplateContext;
 import org.apache.camel.model.FaultToleranceConfigurationDefinition;
+import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelLifecycleStrategy;
@@ -57,6 +58,7 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.TemplatedRouteBeanDefinition;
 import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.TemplatedRouteParameterDefinition;
+import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
@@ -177,6 +179,47 @@ public class DefaultModel implements Model {
         }
 
         removeRouteDefinitions(list);
+
+        // special if rest-dsl is inlining routes
+        if (camelContext.getRestConfiguration().isInlineRoutes()) {
+            List<RouteDefinition> allRoutes = new ArrayList<>();
+            allRoutes.addAll(list);
+            allRoutes.addAll(this.routeDefinitions);
+
+            List<RouteDefinition> toBeRemoved = new ArrayList<>();
+            Map<String, RouteDefinition> directs = new HashMap<>();
+            for (RouteDefinition r : allRoutes) {
+                // does the route start with direct, which is candidate for rest-dsl
+                FromDefinition from = r.getInput();
+                if (from != null) {
+                    String uri = from.getEndpointUri();
+                    if (uri != null && uri.startsWith("direct:")) {
+                        directs.put(uri, r);
+                    }
+                }
+            }
+            for (RouteDefinition r : allRoutes) {
+                // loop all rest routes
+                FromDefinition from = r.getInput();
+                if (from != null) {
+                    String uri = from.getEndpointUri();
+                    if (uri != null && uri.startsWith("rest:")) {
+                        ToDefinition to = (ToDefinition) r.getOutputs().get(0);
+                        String toUri = to.getEndpointUri();
+                        RouteDefinition toBeInlined = directs.get(toUri);
+                        if (toBeInlined != null) {
+                            toBeRemoved.add(toBeInlined);
+                            // inline by replacing the outputs
+                            r.getOutputs().clear();
+                            r.getOutputs().addAll(toBeInlined.getOutputs());
+                        }
+                    }
+                }
+            }
+            // remove all the routes that was inlined
+            list.removeAll(toBeRemoved);
+            this.routeDefinitions.removeAll(toBeRemoved);
+        }
 
         for (RouteDefinition r : list) {
             for (ModelLifecycleStrategy s : modelLifecycleStrategies) {

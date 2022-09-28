@@ -21,7 +21,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "get",
-                     description = "Get status of Camel integrations (use --help to see sub commands)")
+                     description = "Get status of Camel integrations (use get --help to see sub commands)")
 public class CamelStatus extends CamelCommand {
 
     public CamelStatus(CamelJBangMain main) {

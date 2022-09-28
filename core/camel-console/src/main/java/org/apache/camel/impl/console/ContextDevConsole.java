@@ -77,6 +77,11 @@ public class ContextDevConsole extends AbstractDevConsole {
                 sb.append(String.format("\n    Mean Time: %s", TimeUtils.printDuration(mb.getMeanProcessingTime(), true)));
                 sb.append(String.format("\n    Max Time: %s", TimeUtils.printDuration(mb.getMaxProcessingTime(), true)));
                 sb.append(String.format("\n    Min Time: %s", TimeUtils.printDuration(mb.getMinProcessingTime(), true)));
+                if (mb.getExchangesTotal() > 0) {
+                    sb.append(String.format("\n    Last Time: %s", TimeUtils.printDuration(mb.getLastProcessingTime(), true)));
+                    sb.append(
+                            String.format("\n    Delta Time: %s", TimeUtils.printDuration(mb.getDeltaProcessingTime(), true)));
+                }
                 Date last = mb.getLastExchangeCreatedTimestamp();
                 if (last != null) {
                     String ago = TimeUtils.printSince(last.getTime());
@@ -144,6 +149,10 @@ public class ContextDevConsole extends AbstractDevConsole {
                 stats.put("meanProcessingTime", mb.getMeanProcessingTime());
                 stats.put("maxProcessingTime", mb.getMaxProcessingTime());
                 stats.put("minProcessingTime", mb.getMinProcessingTime());
+                if (mb.getExchangesTotal() > 0) {
+                    stats.put("lastProcessingTime", mb.getLastProcessingTime());
+                    stats.put("deltaProcessingTime", mb.getDeltaProcessingTime());
+                }
                 Date last = mb.getLastExchangeCreatedTimestamp();
                 if (last != null) {
                     String ago = TimeUtils.printSince(last.getTime());

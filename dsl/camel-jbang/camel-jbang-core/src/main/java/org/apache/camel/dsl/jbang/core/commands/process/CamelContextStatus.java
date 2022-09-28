@@ -60,13 +60,16 @@ public class CamelContextStatus extends ProcessBaseCommand {
                     if (root != null) {
                         Row row = new Row();
                         JsonObject context = (JsonObject) root.get("context");
+                        if (context == null) {
+                            return;
+                        }
                         row.name = context.getString("name");
                         if ("CamelJBang".equals(row.name)) {
                             row.name = extractName(root, ph);
                         }
                         row.pid = "" + ph.pid();
                         row.uptime = extractSince(ph);
-                        row.ago = TimeUtils.printSince(row.uptime);
+                        row.age = TimeUtils.printSince(row.uptime);
                         JsonObject runtime = (JsonObject) root.get("runtime");
                         row.platform = extractPlatform(ph, runtime);
                         row.platformVersion = runtime != null ? runtime.getString("platformVersion") : null;
@@ -82,7 +85,15 @@ public class CamelContextStatus extends ProcessBaseCommand {
                             row.inflight = stats.get("exchangesInflight").toString();
                             row.failed = stats.get("exchangesFailed").toString();
                             row.reloaded = stats.get("reloaded").toString();
-                            Object last = stats.get("sinceLastCreatedExchange");
+                            Object last = stats.get("lastProcessingTime");
+                            if (last != null) {
+                                row.last = last.toString();
+                            }
+                            last = stats.get("deltaProcessingTime");
+                            if (last != null) {
+                                row.delta = last.toString();
+                            }
+                            last = stats.get("sinceLastCreatedExchange");
                             if (last != null) {
                                 row.sinceLastStarted = last.toString();
                             }
@@ -131,12 +142,14 @@ public class CamelContextStatus extends ProcessBaseCommand {
                             .with(r -> extractState(r.state)),
                     new Column().header("RELOAD").headerAlign(HorizontalAlign.CENTER)
                             .with(r -> r.reloaded),
-                    new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
+                    new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
                     new Column().header("ROUTE").with(this::getRoutes),
                     new Column().header("MSG/S").with(this::getThroughput),
                     new Column().header("TOTAL").with(r -> r.total),
                     new Column().header("FAIL").with(r -> r.failed),
                     new Column().header("INFLIGHT").with(r -> r.inflight),
+                    new Column().header("LAST").with(r -> r.last),
+                    new Column().header("DELTA").with(this::getDelta),
                     new Column().header("SINCE-LAST").with(this::getSinceLast))));
         }
 
@@ -156,13 +169,19 @@ public class CamelContextStatus extends ProcessBaseCommand {
     }
 
     protected int sortRow(Row o1, Row o2) {
-        switch (sort) {
+        String s = sort;
+        int negate = 1;
+        if (s.startsWith("-")) {
+            s = s.substring(1);
+            negate = -1;
+        }
+        switch (s) {
             case "pid":
-                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid));
+                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid)) * negate;
             case "name":
-                return o1.name.compareToIgnoreCase(o2.name);
+                return o1.name.compareToIgnoreCase(o2.name) * negate;
             case "age":
-                return Long.compare(o1.uptime, o2.uptime);
+                return Long.compare(o1.uptime, o2.uptime) * negate;
             default:
                 return 0;
         }
@@ -174,6 +193,18 @@ public class CamelContextStatus extends ProcessBaseCommand {
         } else {
             return r.platform;
         }
+    }
+
+    protected String getDelta(Row r) {
+        if (r.delta != null) {
+            if (r.delta.startsWith("-")) {
+                return r.delta;
+            } else if (!"0".equals(r.delta)) {
+                // use plus sign to denote slower when positive
+                return "+" + r.delta;
+            }
+        }
+        return r.delta;
     }
 
     protected String getSinceLast(Row r) {
@@ -206,12 +237,14 @@ public class CamelContextStatus extends ProcessBaseCommand {
         int routeTotal;
         int state;
         String reloaded;
-        String ago;
+        String age;
         long uptime;
         String throughput;
         String total;
         String failed;
         String inflight;
+        String last;
+        String delta;
         String sinceLastStarted;
         String sinceLastCompleted;
         String sinceLastFailed;

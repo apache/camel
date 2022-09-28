@@ -60,6 +60,9 @@ public class CamelContextTop extends ProcessBaseCommand {
                         Row row = new Row();
                         rows.add(row);
                         JsonObject context = (JsonObject) root.get("context");
+                        if (context == null) {
+                            return;
+                        }
                         row.name = context.getString("name");
                         if ("CamelJBang".equals(row.name)) {
                             row.name = extractName(root, ph);
@@ -136,10 +139,8 @@ public class CamelContextTop extends ProcessBaseCommand {
                             .with(this::getLoad),
                     new Column().header("HEAP").headerAlign(HorizontalAlign.CENTER).with(this::getHeapMemory),
                     new Column().header("NON-HEAP").headerAlign(HorizontalAlign.CENTER).with(this::getNonHeapMemory),
-                    new Column().header("GC").headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.LEFT)
-                            .with(this::getGC),
-                    new Column().header("THREADS").headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER)
-                            .with(this::getThreads))));
+                    new Column().header("GC").headerAlign(HorizontalAlign.CENTER).with(this::getGC),
+                    new Column().header("THREADS").headerAlign(HorizontalAlign.CENTER).with(this::getThreads))));
         }
 
         return 0;
@@ -158,15 +159,21 @@ public class CamelContextTop extends ProcessBaseCommand {
     }
 
     protected int sortRow(Row o1, Row o2) {
-        switch (sort) {
+        String s = sort;
+        int negate = 1;
+        if (s.startsWith("-")) {
+            s = s.substring(1);
+            negate = -1;
+        }
+        switch (s) {
             case "pid":
-                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid));
+                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid)) * negate;
             case "name":
-                return o1.name.compareToIgnoreCase(o2.name);
+                return o1.name.compareToIgnoreCase(o2.name) * negate;
             case "mem":
-                return Long.compare(o1.heapMemUsed, o2.heapMemUsed) * -1; // we want the biggest first
+                return Long.compare(o1.heapMemUsed, o2.heapMemUsed) * negate * -1; // we want the biggest first
             case "age":
-                return Long.compare(o1.uptime, o2.uptime);
+                return Long.compare(o1.uptime, o2.uptime) * negate;
             default:
                 return 0;
         }

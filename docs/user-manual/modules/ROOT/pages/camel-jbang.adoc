@@ -449,7 +449,7 @@ And you can also try bleeding edge development by using SNAPSHOT such as:
 
 [source,bash]
 ----
-jbang run -Dcamel.jbang.version=3.19.0-SNAPSHOT camel@apache/camel [command]
+jbang run --fresh -Dcamel.jbang.version=3.19.0-SNAPSHOT camel@apache/camel [command]
 ----
 
 
@@ -712,6 +712,49 @@ camel cmd start-route --all
 
 TIP: You can stop one or more route by their ids by separating using
 comma such as: camel cmd start-route --id=route1,hello. Use `camel cmd start-route --help` for more details.
+
+==== Configuring logging levels
+
+You can see the current logging levels of the running Camel integrations by:
+
+[source,bash]
+----
+camel cmd logger
+  PID   NAME   AGE   LOGGER  LEVEL
+ 90857  bar   2m48s  root    INFO
+ 91103  foo     20s  root    INFO
+----
+
+The logging level can be change at runtime, for example to change foo to DEBUG you execute:
+
+[source,bash]
+----
+camel cmd logger --level=DEBUG foo
+----
+
+TIP: You can use `--all` to change logging levels for all running integrations.
+
+==== Listing services
+
+Some Camel integrations may host a service which clients can call, such as REST, or SOAP-WS, or socket-level services using TCP protocols.
+
+You can list the available services as shown in the example below:
+
+[source,bash]
+----
+camel get service
+ PID   NAME       COMPONENT      PROTOCOL  SERVICE
+ 1912  netty      netty          tcp       tcp:localhost:4444
+ 2023  greetings  platform-http  rest      http://0.0.0.0:7777/camel/greetings/{name} (GET)
+ 2023  greetings  platform-http  http      http://0.0.0.0:7777/q/dev
+----
+
+Here you can see 2 Camel integrations. The netty integration hosts a TCP service that is available on port 4444.
+The other Camel integration hosts a REST service that can be called via GET only.
+And finally the integration comes with embedded web console (started with the `--console` option).
+
+NOTE: For a service to be listed then Camel components must be able to advertise the services using xref:camel-console.adoc[].
+
 
 === Using Jolokia and Hawtio
 
@@ -989,7 +1032,7 @@ TIP: Use `camel catalog --help` to see all possible commands.
 === Displaying component documentation
 
 The `doc` goal can show quick documentation for every component, dataformat, kamelets etc.
-For example to see the kafka component you run
+For example to see the kafka component you run:
 
 [source,bash]
 ----
@@ -1014,6 +1057,32 @@ components. In such a situation you can prefix the name with dataformat, i.e:
 ----
 camel doc dataformat:thrift
 ----
+
+You can also see the kamelet documentation such as shown:
+
+[source,bash]
+----
+camel doc aws-kinesis-sink
+----
+
+==== Browsing online documentation from the Camel website
+
+You can use the `doc` command to quickly open the url in the web browser for the online documentation.
+For example to browse the kafka component, you use `--open-url`:
+
+[source,bash]
+----
+camel doc kafka --open-url
+----
+
+This also works for data formats, languages, kamelets etc.
+
+[source,bash]
+----
+camel doc aws-kinesis-sink --open-url
+----
+
+TIP: To just get the link to the online documentation, then use `camel doc kafka --url`.
 
 ==== Filtering options listed in the tables
 

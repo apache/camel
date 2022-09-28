@@ -67,6 +67,8 @@ public class EventhubsReloadTriggerTask extends ServiceSupport implements CamelC
     private String secrets;
     private EventProcessorClient eventProcessorClient;
     private KeyVaultPropertiesFunction propertiesFunction;
+    private volatile Instant lastCheckTime;
+    private volatile Instant lastReloadTime;
     private final Map<String, Instant> updates = new HashMap<>();
 
     public EventhubsReloadTriggerTask() {
@@ -87,7 +89,7 @@ public class EventhubsReloadTriggerTask extends ServiceSupport implements CamelC
     }
 
     /**
-     * Whether Camel should be reloaded on Azure secret updated
+     * Whether Camel should be reloaded on Azure Key Vault secret updated
      */
     public void setReloadEnabled(boolean reloadEnabled) {
         this.reloadEnabled = reloadEnabled;
@@ -98,6 +100,20 @@ public class EventhubsReloadTriggerTask extends ServiceSupport implements CamelC
      */
     public Map<String, Instant> getUpdates() {
         return Collections.unmodifiableMap(updates);
+    }
+
+    /**
+     * Last time this task checked Azure Key Vault for updated secrets.
+     */
+    public Instant getLastCheckTime() {
+        return lastCheckTime;
+    }
+
+    /**
+     * Last time Azure Key Vault secrets update triggered reload.
+     */
+    public Instant getLastReloadTime() {
+        return lastReloadTime;
     }
 
     @Override
@@ -114,7 +130,7 @@ public class EventhubsReloadTriggerTask extends ServiceSupport implements CamelC
         // specific secrets
         secrets = camelContext.getVaultConfiguration().azure().getSecrets();
         if (ObjectHelper.isEmpty(secrets) && propertiesFunction == null) {
-            throw new IllegalArgumentException("Secrets must be configured on Azure vault configuration");
+            throw new IllegalArgumentException("Secrets must be configured on Azure Key vault configuration");
         }
 
         String eventhubConnectionString = null;
@@ -133,22 +149,18 @@ public class EventhubsReloadTriggerTask extends ServiceSupport implements CamelC
             BlobContainerAsyncClient c = new BlobContainerClientBuilder()
                     .endpoint(String.format(Locale.ROOT, "https://%s" + BLOB_SERVICE_URI_SEGMENT, blobAccountName))
                     .containerName(blobContainerName)
-                    .credential(new StorageSharedKeyCredential(blobAccountName, blobAccessKey))
-                    .buildAsyncClient();
+                    .credential(new StorageSharedKeyCredential(blobAccountName, blobAccessKey)).buildAsyncClient();
 
             EventProcessorClientBuilder eventProcessorClientBuilder = new EventProcessorClientBuilder()
-                    .checkpointStore(new BlobCheckpointStore(c))
-                    .consumerGroup("$Default")
-                    .connectionString(eventhubConnectionString)
-                    .processEvent(this::onEventListener)
-                    .processError(this::onErrorListener)
-                    .transportType(AmqpTransportType.AMQP);
+                    .checkpointStore(new BlobCheckpointStore(c)).consumerGroup("$Default")
+                    .connectionString(eventhubConnectionString).processEvent(this::onEventListener)
+                    .processError(this::onErrorListener).transportType(AmqpTransportType.AMQP);
 
             eventProcessorClient = eventProcessorClientBuilder.buildEventProcessorClient();
             eventProcessorClient.start();
         } else {
             throw new RuntimeCamelException(
-                    "Using the Azure Key Vault Secret refresh task requires setting eventhubs connection String, Blob Account Name, Blob Access Key and Blob Container Name  as application properties ");
+                    "Using the Azure Key Vault Secret refresh task requires setting Eventhub connection String, Blob Account Name, Blob Access Key and Blob Container Name  as application properties ");
         }
     }
 
@@ -170,6 +182,7 @@ public class EventhubsReloadTriggerTask extends ServiceSupport implements CamelC
 
     @Override
     public void run() {
+        lastCheckTime = Instant.now();
     }
 
     protected boolean matchSecret(String name) {
@@ -215,6 +228,9 @@ public class EventhubsReloadTriggerTask extends ServiceSupport implements CamelC
             if (ObjectHelper.isNotEmpty(secret) && ObjectHelper.isNotEmpty(eventType)) {
                 if (eventType.equalsIgnoreCase(SECRET_VERSION_ADD)) {
                     if (matchSecret(secret)) {
+                        if (ObjectHelper.isNotEmpty(eventContext.getEventData().getEnqueuedTime())) {
+                            updates.put(secret, eventContext.getEventData().getEnqueuedTime());
+                        }
                         if (isReloadEnabled()) {
                             LOG.info("Update for Azure secret: {} detected, triggering CamelContext reload", secret);
                             triggerReloading = true;
@@ -227,12 +243,13 @@ public class EventhubsReloadTriggerTask extends ServiceSupport implements CamelC
             ContextReloadStrategy reload = camelContext.hasService(ContextReloadStrategy.class);
             if (reload != null) {
                 // trigger reload
+                lastReloadTime = Instant.now();
                 reload.onReload(this);
             }
         }
     }
 
     public void onErrorListener(final ErrorContext errorContext) {
-        //NOOP
+        // NOOP
     }
 }

@@ -26,8 +26,10 @@ import org.apache.camel.dsl.jbang.core.commands.action.CamelReloadAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelResetStatsAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteStartAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteStopAction;
+import org.apache.camel.dsl.jbang.core.commands.action.CamelSourceAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelSourceTop;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelThreadDump;
+import org.apache.camel.dsl.jbang.core.commands.action.LoggerAction;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogCommand;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogComponent;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogDataFormat;
@@ -37,6 +39,7 @@ import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogLanguage;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogOther;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelContextStatus;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelContextTop;
+import org.apache.camel.dsl.jbang.core.commands.process.CamelEndpointStatus;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelProcessorStatus;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelProcessorTop;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelRouteStatus;
@@ -45,7 +48,9 @@ import org.apache.camel.dsl.jbang.core.commands.process.CamelStatus;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelTop;
 import org.apache.camel.dsl.jbang.core.commands.process.Hawtio;
 import org.apache.camel.dsl.jbang.core.commands.process.Jolokia;
+import org.apache.camel.dsl.jbang.core.commands.process.ListEvent;
 import org.apache.camel.dsl.jbang.core.commands.process.ListProcess;
+import org.apache.camel.dsl.jbang.core.commands.process.ListService;
 import org.apache.camel.dsl.jbang.core.commands.process.ListVault;
 import org.apache.camel.dsl.jbang.core.commands.process.StopProcess;
 import picocli.CommandLine;
@@ -66,6 +71,10 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("context", new CommandLine(new CamelContextStatus(main)))
                         .addSubcommand("route", new CommandLine(new CamelRouteStatus(main)))
                         .addSubcommand("processor", new CommandLine(new CamelProcessorStatus(main)))
+                        .addSubcommand("endpoint", new CommandLine(new CamelEndpointStatus(main)))
+                        .addSubcommand("event", new CommandLine(new ListEvent(main)))
+                        .addSubcommand("service", new CommandLine(new ListService(main)))
+                        .addSubcommand("source", new CommandLine(new CamelSourceAction(main)))
                         .addSubcommand("vault", new CommandLine(new ListVault(main))))
                 .addSubcommand("top", new CommandLine(new CamelTop(main))
                         .addSubcommand("context", new CommandLine(new CamelContextTop(main)))
@@ -78,6 +87,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("reset-stats", new CommandLine(new CamelResetStatsAction(main)))
                         .addSubcommand("reload", new CommandLine(new CamelReloadAction(main)))
                         .addSubcommand("thread-dump", new CommandLine(new CamelThreadDump(main)))
+                        .addSubcommand("logger", new CommandLine(new LoggerAction(main)))
                         .addSubcommand("gc", new CommandLine(new CamelGCAction(main))))
                 .addSubcommand("generate", new CommandLine(new CodeGenerator(main))
                         .addSubcommand("rest", new CommandLine(new CodeRestGenerator(main))))

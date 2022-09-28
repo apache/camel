@@ -37,6 +37,7 @@ import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.model.language.MvelExpression;
 import org.apache.camel.model.language.OgnlExpression;
+import org.apache.camel.model.language.PythonExpression;
 import org.apache.camel.model.language.RefExpression;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.language.SpELExpression;
@@ -687,6 +688,16 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      */
     public T ognl(String text) {
         return expression(new OgnlExpression(text));
+    }
+
+    /**
+     * Evaluates a Python expression.
+     *
+     * @param  text the expression to be evaluated
+     * @return      the builder to continue processing the DSL
+     */
+    public T python(String text) {
+        return expression(new PythonExpression(text));
     }
 
     /**

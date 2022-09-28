@@ -178,13 +178,19 @@ public class CamelThreadDump extends ActionBaseCommand {
     }
 
     protected int sortRow(Row o1, Row o2) {
-        switch (sort) {
+        String s = sort;
+        int negate = 1;
+        if (s.startsWith("-")) {
+            s = s.substring(1);
+            negate = -1;
+        }
+        switch (s) {
             case "id":
-                return Long.compare(o1.id, o2.id);
+                return Long.compare(o1.id, o2.id) * negate;
             case "name":
-                return o1.name.compareToIgnoreCase(o2.name);
+                return o1.name.compareToIgnoreCase(o2.name) * negate;
             case "state":
-                return o1.state.compareToIgnoreCase(o2.state);
+                return o1.state.compareToIgnoreCase(o2.state) * negate;
             default:
                 return 0;
         }

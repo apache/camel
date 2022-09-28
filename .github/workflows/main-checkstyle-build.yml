@@ -24,8 +24,12 @@ on:
 # Every 6 hours during weekends ... we don't want to be flooded with emails
     - cron: '30 */6 * * 6,0'
 
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
 jobs:
   build:
+    if: github.repository == 'apache/camel'
     runs-on: ubuntu-latest
     strategy:
       matrix:

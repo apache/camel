@@ -30,7 +30,7 @@ public class TelegramEndpointUriFactory extends org.apache.camel.support.compone
         props.add("bridgeErrorHandler");
         props.add("bufferSize");
         props.add("chatId");
-        props.add("clientConfig");
+        props.add("client");
         props.add("delay");
         props.add("exceptionHandler");
         props.add("exchangePattern");

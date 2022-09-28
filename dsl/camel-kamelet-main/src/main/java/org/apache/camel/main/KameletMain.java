@@ -22,6 +22,7 @@ import java.util.Objects;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -334,15 +335,21 @@ public class KameletMain extends MainCommandLineSupport {
             VertxHttpServer.registerServer(answer, 8080, stub);
         }
         if (console) {
-            // turn on developer console
-            configure().withDevConsoleEnabled(true);
-            // and include timestamps in events so we can see when they happened
-            configure().withCamelEventsTimestampEnabled(true);
             VertxHttpServer.registerConsole(answer);
         }
+        // always enable developer console as it is needed by camel-cli-connector
+        configure().withDevConsoleEnabled(true);
+        // and enable a bunch of other stuff that gives more details for developers
+        configure().withCamelEventsTimestampEnabled(true);
         configure().withLoadHealthChecks(true);
         configure().withModeline(true);
         configure().withLoadStatisticsEnabled(true);
+        configure().withMessageHistory(true);
+        configure().withInflightRepositoryBrowseEnabled(true);
+        configure().withEndpointRuntimeStatisticsEnabled(true);
+        configure().withJmxManagementStatisticsLevel(ManagementStatisticsLevel.Extended);
+        configure().withShutdownLogInflightExchangesOnTimeout(false);
+        configure().withShutdownTimeout(10);
 
         boolean health = "true".equals(getInitialProperties().get("camel.jbang.health"));
         if (health && port == null) {
@@ -446,7 +453,6 @@ public class KameletMain extends MainCommandLineSupport {
         addInitialProperty("camel.component.kamelet.location", location);
         addInitialProperty("camel.component.rest.consumerComponentName", "platform-http");
         addInitialProperty("camel.component.rest.producerComponentName", "vertx-http");
-        addInitialProperty("camel.main.shutdownTimeout", "10");
     }
 
     protected String startupInfo() {

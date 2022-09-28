@@ -12,6 +12,18 @@ Added `addClassLoader` method to `org.apache.camel.spi.ClassResolver`.
 
 The default TLS protocol is changed from `TLSv1.2` to `TLSv1.3` in Camel JSSE support.
 
+=== camel-management
+
+The context MBean (`ManagedCamelContextMBean`) total counter is changed to count only once
+while an _exchange_ is being routed through multiple routes. Previously the counter was
+a total aggregation of all the routes the _exchange_ was processed. For example if an _exchange_
+is routed via A, B and C; then previously the total counter was +3 (+1 for route A, +1 for route B, +1 for route C).
+This is now corrected so the total is +1 on the context MBean.
+
+=== camel-main
+
+The option `camel.main.eager-classloading` has been removed.
+
 === camel-ftp
 
 The default TLS protocol is changed from `TLSv1.2` to `TLSv1.3`.
@@ -81,8 +93,20 @@ The deprecated options were removed and should be replaced by the following opti
 
 Parameters in form of `@name` are extracted from the body or message and their type is preserved and translated into corresponding `com.google.cloud.bigquery.StandardSQLTypeName`. See the https://cloud.google.com/java/docs/reference/google-cloud-bigquery/latest/com.google.cloud.bigquery.QueryParameterValue[documentation] for more information. (Conversion to StandardSQLTypeName.STRING was used for each type before)
 
+
+=== camel-telegram
+
+The component was migrated from the Async HTTP Client to the builtin HTTP client from Java 11 and newer. As such,
+* the parameter `clientConfig`, that received an `AsyncHTTPClientConfiguration` instance was removed
+* the parameter `client`, that received an `AsyncHttpClient` instance, was modified to receive a HTTPClient instance.
+
+
 === xtokenize language
 
 The xtokenize language has moved from `camel-xml-jaxp` to `camel-stax` JAR because
 a stax parser was needed anyway to use the language.
 
+
+=== camel-karaf
+
+Upgraded from Karaf 4.3.x to Karaf 4.4.x, which requires JDK11+.

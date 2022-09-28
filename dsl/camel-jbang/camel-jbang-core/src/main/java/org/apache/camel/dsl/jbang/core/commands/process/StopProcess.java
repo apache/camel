@@ -34,6 +34,10 @@ public class StopProcess extends ProcessBaseCommand {
                         description = "To shutdown all running Camel integrations")
     boolean all;
 
+    @CommandLine.Option(names = { "--kill" },
+                        description = "To force killing the process (SIGKILL)")
+    boolean kill;
+
     public StopProcess(CamelJBangMain main) {
         super(main);
     }
@@ -52,8 +56,16 @@ public class StopProcess extends ProcessBaseCommand {
         for (Long pid : pids) {
             File dir = new File(System.getProperty("user.home"), ".camel");
             File pidFile = new File(dir, "" + pid);
-            System.out.println("Shutting down Camel integration (pid: " + pid + ")");
-            FileUtil.deleteFile(pidFile);
+            if (pidFile.exists()) {
+                System.out.println("Shutting down Camel integration (pid: " + pid + ")");
+                FileUtil.deleteFile(pidFile);
+            }
+            if (kill) {
+                ProcessHandle.of(pid).ifPresent(ph -> {
+                    System.out.println("Killing Camel integration (pid: " + pid + ")");
+                    ph.destroyForcibly();
+                });
+            }
         }
 
         return 0;

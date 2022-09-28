@@ -32,7 +32,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "vault", aliases = { "vault", "vaults" },
-         description = "List secrets from security vaults (AWS) used by running Camel integrations")
+         description = "List secrets from security vaults (AWS, GCP and Azure) used by running Camel integrations")
 public class ListVault extends ProcessBaseCommand {
 
     @CommandLine.Option(names = { "--sort" },
@@ -56,6 +56,9 @@ public class ListVault extends ProcessBaseCommand {
                         Row row = new Row();
                         row.pid = "" + ph.pid();
                         JsonObject context = (JsonObject) root.get("context");
+                        if (context == null) {
+                            return;
+                        }
                         row.name = context.getString("name");
                         if ("CamelJBang".equals(row.name)) {
                             row.name = extractName(root, ph);
@@ -79,6 +82,40 @@ public class ListVault extends ProcessBaseCommand {
                                     row.timestamp = jo.getLongOrDefault("timestamp", 0);
                                     rows.add(row);
                                 }
+                            }
+                            JsonObject gcp = (JsonObject) vaults.get("gcp-secrets");
+                            if (gcp != null) {
+                                row.vault = "GCP";
+                                row.lastCheck = gcp.getLongOrDefault("lastCheckTimestamp", 0);
+                                row.lastReload = gcp.getLongOrDefault("lastReloadTimestamp", 0);
+                                JsonArray arr = (JsonArray) gcp.get("secrets");
+                                for (int i = 0; i < arr.size(); i++) {
+                                    if (i > 0) {
+                                        // create a copy for 2+ secrets
+                                        row = row.copy();
+                                    }
+                                    JsonObject jo = (JsonObject) arr.get(i);
+                                    row.secret = jo.getString("name");
+                                    row.timestamp = jo.getLongOrDefault("timestamp", 0);
+                                    rows.add(row);
+                                }
+                            }
+                        }
+                        JsonObject azure = (JsonObject) vaults.get("azure-secrets");
+                        if (azure != null) {
+                            row.vault = "Azure";
+                            row.lastCheck = azure.getLongOrDefault("lastCheckTimestamp", 0);
+                            row.lastReload = azure.getLongOrDefault("lastReloadTimestamp", 0);
+                            JsonArray arr = (JsonArray) azure.get("secrets");
+                            for (int i = 0; i < arr.size(); i++) {
+                                if (i > 0) {
+                                    // create a copy for 2+ secrets
+                                    row = row.copy();
+                                }
+                                JsonObject jo = (JsonObject) arr.get(i);
+                                row.secret = jo.getString("name");
+                                row.timestamp = jo.getLongOrDefault("timestamp", 0);
+                                rows.add(row);
                             }
                         }
                     }
@@ -105,11 +142,17 @@ public class ListVault extends ProcessBaseCommand {
     }
 
     protected int sortRow(Row o1, Row o2) {
-        switch (sort) {
+        String s = sort;
+        int negate = 1;
+        if (s.startsWith("-")) {
+            s = s.substring(1);
+            negate = -1;
+        }
+        switch (s) {
             case "pid":
-                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid));
+                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid)) * negate;
             case "name":
-                return o1.name.compareToIgnoreCase(o2.name);
+                return o1.name.compareToIgnoreCase(o2.name) * negate;
             default:
                 return 0;
         }
