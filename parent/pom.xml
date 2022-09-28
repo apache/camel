@@ -96,7 +96,7 @@
         <californium-version>2.7.2</californium-version>
         <californium-scandium-version>2.7.3</californium-scandium-version>
         <cassandra-driver-version>4.15.0</cassandra-driver-version>
-        <cassandra-version>4.0.3</cassandra-version>
+        <cassandra-version>4.0.6</cassandra-version>
         <cdi-api-2.0-version>2.0</cdi-api-2.0-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
         <cglib-version>3.2.12</cglib-version>
