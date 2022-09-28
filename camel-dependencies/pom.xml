@@ -110,8 +110,8 @@
     <camel.surefire.parallel.factor>1</camel.surefire.parallel.factor>
     <camel.surefire.parallel.strategy>dynamic</camel.surefire.parallel.strategy>
     <camel.surefire.reuseForks>true</camel.surefire.reuseForks>
-    <cassandra-driver-version>4.14.1</cassandra-driver-version>
-    <cassandra-version>4.0.3</cassandra-version>
+    <cassandra-driver-version>4.15.0</cassandra-driver-version>
+    <cassandra-version>4.0.6</cassandra-version>
     <cdi-api-2.0-version>2.0</cdi-api-2.0-version>
     <cglib-version>3.2.12</cglib-version>
     <checkstyle.failOnViolation>false</checkstyle.failOnViolation>
