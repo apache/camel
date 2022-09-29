@@ -388,7 +388,7 @@
     <maven-javadoc-plugin-version>3.2.0</maven-javadoc-plugin-version>
     <maven-jboss-as-maven-plugin-version>7.9.Final</maven-jboss-as-maven-plugin-version>
     <maven-model-version>3.2.5</maven-model-version>
-    <maven-owasp-plugin-version>7.1.2</maven-owasp-plugin-version>
+    <maven-owasp-plugin-version>7.2.1</maven-owasp-plugin-version>
     <maven-plugin-annotations-version>3.6.4</maven-plugin-annotations-version>
     <maven-plugin-plugin-version>3.6.4</maven-plugin-plugin-version>
     <maven-plugin-testing-harness-version>3.3.0</maven-plugin-testing-harness-version>
