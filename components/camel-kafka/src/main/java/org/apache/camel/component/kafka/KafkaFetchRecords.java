@@ -307,6 +307,7 @@ public class KafkaFetchRecords implements Runnable {
                     kafkaConsumer, threadId, commitManager, consumerListener);
 
             Duration pollDuration = Duration.ofMillis(pollTimeoutMs);
+            ProcessingResult lastResult = null;
             while (isKafkaConsumerRunnableAndNotStopped() && isConnected() && pollExceptionStrategy.canContinue()) {
                 ConsumerRecords<Object, Object> allRecords = consumer.poll(pollDuration);
                 if (consumerListener != null) {
@@ -315,13 +316,15 @@ public class KafkaFetchRecords implements Runnable {
                     }
                 }
 
-                ProcessingResult result = recordProcessorFacade.processPolledRecords(allRecords);
+                ProcessingResult result = recordProcessorFacade.processPolledRecords(allRecords, lastResult);
 
                 if (result.isBreakOnErrorHit()) {
                     LOG.debug("We hit an error ... setting flags to force reconnect");
                     // force re-connect
                     setReconnect(true);
                     setConnected(false);
+                } else {
+                    lastResult = result;
                 }
 
                 updateTaskState();
