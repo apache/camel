@@ -27,7 +27,7 @@
   </parent>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-dependencies</artifactId>
-  <version>3.19.0-SNAPSHOT</version>
+  <version>3.19.0</version>
   <packaging>pom</packaging>
   <name>Camel :: Dependencies</name>
   <description>Camel Dependencies POM</description>
@@ -313,8 +313,8 @@
     <jcommander-version>1.72</jcommander-version>
     <jcr-version>2.0</jcr-version>
     <jedis-client-version>3.7.1</jedis-client-version>
-    <jetcd-version>0.7.3</jetcd-version>
     <jetcd-grpc-version>1.47.0</jetcd-grpc-version>
+    <jetcd-version>0.7.3</jetcd-version>
     <jettison-version>1.5.0</jettison-version>
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
     <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>

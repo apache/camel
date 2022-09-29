@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-olingo2-parent</artifactId>
-        <version>3.19.0-SNAPSHOT</version>
+        <version>3.19.0</version>
     </parent>
 
     <artifactId>camel-olingo2</artifactId>
@@ -148,7 +148,7 @@
                         <configuration>
                             <apis>
                                 <api>
-                                    <apiName/>
+                                    <apiName />
                                     <proxyClass>org.apache.camel.component.olingo2.api.Olingo2App</proxyClass>
                                     <fromJavasource>
                                         <includeMethods>read|uread|delete|create|update|patch|merge|batch</includeMethods>

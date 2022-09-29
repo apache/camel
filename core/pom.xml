@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>3.19.0-SNAPSHOT</version>
+        <version>3.19.0</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
@@ -154,7 +154,7 @@
                         <Import-Package>${camel.osgi.import}</Import-Package>
                         <Export-Package>${camel.osgi.export}</Export-Package>
                         <!-- do not include any resources as not needed-->
-                        <Include-Resource></Include-Resource>
+                        <Include-Resource />
                         <DynamicImport-Package>${camel.osgi.dynamic}</DynamicImport-Package>
                         <Private-Package>${camel.osgi.private.pkg}</Private-Package>
                         <Require-Capability>${camel.osgi.require.capability}</Require-Capability>
