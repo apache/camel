@@ -469,7 +469,7 @@
     <resilience4j-version>1.7.1</resilience4j-version>
     <rest-assured-version>4.5.1</rest-assured-version>
     <resteasy-version>4.5.6.Final</resteasy-version>
-    <roaster-version>2.24.0.Final</roaster-version>
+    <roaster-version>2.26.0.Final</roaster-version>
     <robotframework-version>4.1.2</robotframework-version>
     <rome-version>1.18.0</rome-version>
     <rxjava2-version>2.2.21</rxjava2-version>
