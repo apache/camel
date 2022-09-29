@@ -491,7 +491,7 @@
     <smallrye-health-version>3.3.0</smallrye-health-version>
     <smallrye-metrics-version>3.0.5</smallrye-metrics-version>
     <snakeyaml-engine-version>2.3</snakeyaml-engine-version>
-    <snakeyaml-version>1.32</snakeyaml-version>
+    <snakeyaml-version>1.33</snakeyaml-version>
     <snmp4j-version>2.6.3_1</snmp4j-version>
     <solr-version>8.11.2</solr-version>
     <solr-version-range>[8,9)</solr-version-range>
