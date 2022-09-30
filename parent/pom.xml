@@ -166,7 +166,7 @@
         <debezium-mysql-connector-version>8.0.27</debezium-mysql-connector-version>
         <eddsa-version>0.3.0</eddsa-version>
         <egit-github-core-version>2.1.5</egit-github-core-version>
-        <ehcache3-version>3.9.6</ehcache3-version>
+        <ehcache3-version>3.9.9</ehcache3-version>
         <elasticsearch-rest-sniffer-version>7.10.2</elasticsearch-rest-sniffer-version>
         <elasticsearch-rest-version>7.10.2</elasticsearch-rest-version>
         <elsql-version>1.3</elsql-version>
@@ -237,8 +237,8 @@
         <hazelcast-version>4.2.5</hazelcast-version>
         <hbase-version>2.3.1</hbase-version>
         <hdrhistrogram-version>2.1.11</hdrhistrogram-version>
-        <hibernate-validator-version>6.2.4.Final</hibernate-validator-version>
-        <hibernate-version>5.6.10.Final</hibernate-version>
+        <hibernate-validator-version>6.2.5.Final</hibernate-validator-version>
+        <hibernate-version>5.6.11.Final</hibernate-version>
         <hk2-version>2.6.1</hk2-version>
         <hsqldb-version>2.5.1</hsqldb-version>
         <htrace-version>3.1.0-incubating</htrace-version>
@@ -294,7 +294,7 @@
         <jaxb2-maven-plugin-version>2.5.0</jaxb2-maven-plugin-version>
         <jbpm-version>7.62.0.Final</jbpm-version>
         <jboss-el-api_3.0_spec-version>2.0.0.Final</jboss-el-api_3.0_spec-version>
-        <jboss-logging-version>3.4.0.Final</jboss-logging-version>
+        <jboss-logging-version>3.4.3.Final</jboss-logging-version>
         <jboss-marshalling-version>1.4.10.Final</jboss-marshalling-version>
         <jboss-transaction-spi.version>7.5.1.Final</jboss-transaction-spi.version>
         <jboss-xnio-version>3.3.8.Final</jboss-xnio-version>
@@ -335,7 +335,7 @@
         <jsmpp-version>2.3.11</jsmpp-version>
         <jsch-version>0.2.1</jsch-version>
         <json-api>1.0</json-api>
-        <jsonassert-version>1.5.0</jsonassert-version>
+        <jsonassert-version>1.5.1</jsonassert-version>
         <json-path-version>2.6.0</json-path-version>
         <json-patch-version>1.13</json-patch-version>
         <json-simple-version>1.1.1</json-simple-version>
@@ -389,11 +389,11 @@
         <maven-resources-plugin-version>3.2.0</maven-resources-plugin-version>
         <maven-reporting-api-version>2.2.1</maven-reporting-api-version>
         <maven-reporting-impl-version>2.0.5</maven-reporting-impl-version>
-        <maven-shade-plugin-version>3.2.3</maven-shade-plugin-version>
+        <maven-shade-plugin-version>3.2.4</maven-shade-plugin-version>
         <maven-surefire-report-plugin-version>3.0.0-M4</maven-surefire-report-plugin-version>
         <maven-war-plugin-version>3.3.1</maven-war-plugin-version>
         <metrics-version>4.2.3</metrics-version>
-        <micrometer-version>1.7.11</micrometer-version>
+        <micrometer-version>1.8.10</micrometer-version>
         <microprofile-config-version>2.0</microprofile-config-version>
         <microprofile-metrics-version>3.0</microprofile-metrics-version>
         <microprofile-health-version>3.1</microprofile-health-version>
@@ -418,7 +418,7 @@
         <nessus-weka-version>1.0.1</nessus-weka-version>
         <nsq-client-version>1.0.0.RC4</nsq-client-version>
         <neoscada-version>0.4.0</neoscada-version>
-        <netty-version>4.1.79.Final</netty-version>
+        <netty-version>4.1.82.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.0.64</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>8.9</nimbus-jose-jwt>
@@ -442,7 +442,7 @@
         <paho-version>1.2.5</paho-version>
         <partial-build-plugin-version>2.7</partial-build-plugin-version>
         <pdfbox-version>2.0.24</pdfbox-version>
-        <pgjdbc-driver-version>42.2.23</pgjdbc-driver-version>
+        <pgjdbc-driver-version>42.3.7</pgjdbc-driver-version>
         <pgjdbc-ng-driver-version>0.8.9</pgjdbc-ng-driver-version>
         <picocli-version>4.6.2</picocli-version>
         <powermock-version>2.0.7</powermock-version>
@@ -505,13 +505,13 @@
         <spark-version>3.1.2</spark-version>
         <splunk-version>1.6.5.0_1</splunk-version>
         <spock-version>2.0-M4-groovy-3.0</spock-version>
-        <spring-batch-version>4.3.6</spring-batch-version>
+        <spring-batch-version>4.3.7</spring-batch-version>
         <spring-data-redis-version>2.5.6</spring-data-redis-version>
         <spring-integration-version>5.5.14</spring-integration-version>
         <spring-ldap-version>2.3.8.RELEASE</spring-ldap-version>
         <spring-version-range>[5,6)</spring-version-range>
         <spring-version>${spring5-version}</spring-version>
-        <spring5-version>5.3.22</spring5-version>
+        <spring5-version>5.3.23</spring5-version>
         <spring-rabbitmq-version>2.4.2</spring-rabbitmq-version>
         <spring-security-version>5.6.7</spring-security-version>
         <spring-ws-version>3.1.3</spring-ws-version>
