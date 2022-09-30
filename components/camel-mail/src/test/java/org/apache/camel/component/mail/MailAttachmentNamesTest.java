@@ -71,12 +71,12 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
         return new RoutesBuilder[] { new RouteBuilder() {
             public void configure() {
                 from("pop3://james@localhost?password=foo&initialDelay=100&delay=100&generateMissingAttachmentNames=uuid&handleDuplicateAttachmentNames=uuidPrefix")
-                    .to("mock:result");
+                        .to("mock:result");
             }
         }, new RouteBuilder() {
             public void configure() {
                 from("pop3://suffix@localhost?password=foo&initialDelay=100&delay=100&generateMissingAttachmentNames=uuid&handleDuplicateAttachmentNames=uuidSuffix")
-                    .to("mock:result");
+                        .to("mock:result");
             }
         }, new RouteBuilder() {
             public void configure() {
