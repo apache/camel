@@ -438,7 +438,7 @@
         <protobuf-version>3.19.4</protobuf-version>
         <protobuf-maven-plugin-version>0.6.1</protobuf-maven-plugin-version>
         <protonpack-version>1.8</protonpack-version>
-        <protostream-version>4.4.3.Final</protostream-version>
+        <protostream-version>4.5.0.Final</protostream-version>
         <pubnub-version>4.25.0</pubnub-version>
         <pulsar-version>2.10.1</pulsar-version>
         <qpid-broker-version>8.0.6</qpid-broker-version>
