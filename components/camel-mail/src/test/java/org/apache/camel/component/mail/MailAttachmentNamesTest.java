@@ -44,6 +44,7 @@ import org.jvnet.mock_javamail.Mailbox;
 
 public class MailAttachmentNamesTest extends CamelTestSupport {
 
+    public static final String UUID_EXPRESSION = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
     MockEndpoint resultEndpoint;
     MockEndpoint resultDefaultEndpoint;
     Session session;
@@ -70,7 +71,12 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
         return new RoutesBuilder[] { new RouteBuilder() {
             public void configure() {
                 from("pop3://james@localhost?password=foo&initialDelay=100&delay=100&generateMissingAttachmentNames=uuid&handleDuplicateAttachmentNames=uuidPrefix")
-                        .to("mock:result");
+                    .to("mock:result");
+            }
+        }, new RouteBuilder() {
+            public void configure() {
+                from("pop3://suffix@localhost?password=foo&initialDelay=100&delay=100&generateMissingAttachmentNames=uuid&handleDuplicateAttachmentNames=uuidSuffix")
+                    .to("mock:result");
             }
         }, new RouteBuilder() {
             public void configure() {
@@ -172,6 +178,66 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
         Assert.assertNull(exchange.getIn(AttachmentMessage.class).getAttachmentObjects());
     }
 
+    @Test
+    public void testAttachmentWithDuplicateFilenameSuffix() throws Exception {
+        sendTestMessage("filename_duplicate.txt", "suffix@localhost");
+
+        resultEndpoint.assertIsSatisfied();
+        Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);
+        Assert.assertEquals(2, exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
+
+        Map<String, Attachment> attachments = exchange.getIn(AttachmentMessage.class).getAttachmentObjects();
+        for (Map.Entry<String, Attachment> entry : attachments.entrySet()) {
+            Pattern guidPattern = Pattern.compile("^Capture\\_" + UUID_EXPRESSION + "\\.PNG$");
+            Assert.assertTrue(guidPattern.matcher(entry.getKey()).matches());
+        }
+    }
+
+    @Test
+    public void testAttachmentWithDuplicateFilenameSuffixMultipleDots() throws Exception {
+        sendTestMessage("filename_duplicate_multiple_dots.txt", "suffix@localhost");
+
+        resultEndpoint.assertIsSatisfied();
+        Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);
+        Assert.assertEquals(2, exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
+
+        Map<String, Attachment> attachments = exchange.getIn(AttachmentMessage.class).getAttachmentObjects();
+        for (Map.Entry<String, Attachment> entry : attachments.entrySet()) {
+            Pattern guidPattern = Pattern.compile("^\\.file.name\\_" + UUID_EXPRESSION + "\\.PNG$");
+            Assert.assertTrue(guidPattern.matcher(entry.getKey()).matches());
+        }
+    }
+
+    @Test
+    public void testAttachmentWithDuplicateFilenameSuffixNoExtension() throws Exception {
+        sendTestMessage("filename_duplicate_no_extension.txt", "suffix@localhost");
+
+        resultEndpoint.assertIsSatisfied();
+        Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);
+        Assert.assertEquals(2, exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
+
+        Map<String, Attachment> attachments = exchange.getIn(AttachmentMessage.class).getAttachmentObjects();
+        for (Map.Entry<String, Attachment> entry : attachments.entrySet()) {
+            Pattern guidPattern = Pattern.compile("^Capture\\_" + UUID_EXPRESSION + "$");
+            Assert.assertTrue(guidPattern.matcher(entry.getKey()).matches());
+        }
+    }
+
+    @Test
+    public void testAttachmentWithDuplicateFilenameSuffixStartsWithDot() throws Exception {
+        sendTestMessage("filename_duplicate_single_dot_at_beginning.txt", "suffix@localhost");
+
+        resultEndpoint.assertIsSatisfied();
+        Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);
+        Assert.assertEquals(2, exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
+
+        Map<String, Attachment> attachments = exchange.getIn(AttachmentMessage.class).getAttachmentObjects();
+        for (Map.Entry<String, Attachment> entry : attachments.entrySet()) {
+            Pattern guidPattern = Pattern.compile("^\\.fileName\\_" + UUID_EXPRESSION + "$");
+            Assert.assertTrue(guidPattern.matcher(entry.getKey()).matches());
+        }
+    }
+
     private void sendTestMessage(String filename, String recipient) throws MessagingException, FileNotFoundException {
         MimeMessage message = populateMimeMessage(session, filename);
         message.setRecipients(Message.RecipientType.TO, recipient);
@@ -187,12 +253,12 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
     }
 
     private boolean isUUID(String id) {
-        Pattern guidPattern = Pattern.compile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$");
+        Pattern guidPattern = Pattern.compile("^" + UUID_EXPRESSION + "$");
         return guidPattern.matcher(id).matches();
     }
 
     private boolean startsWithUUID(String id) {
-        Pattern guidPattern = Pattern.compile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\\_.*$");
+        Pattern guidPattern = Pattern.compile("^" + UUID_EXPRESSION + "\\_.*$");
         return guidPattern.matcher(id).matches();
     }
 
