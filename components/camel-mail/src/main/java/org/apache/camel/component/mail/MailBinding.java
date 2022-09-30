@@ -386,12 +386,12 @@ public class MailBinding {
 
                 if (validDisposition(disposition, fileName)) {
                     LOG.debug("Mail contains file attachment: {}", fileName);
-                    if(handleDuplicateAttachmentNames != null){
+                    if (handleDuplicateAttachmentNames != null) {
                         if (handleDuplicateAttachmentNames
-                            .equalsIgnoreCase(MailConstants.MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_UUID_PREFIX)) {
+                                .equalsIgnoreCase(MailConstants.MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_UUID_PREFIX)) {
                             fileName = prefixDuplicateFilenames(map, fileName);
-                        } else if(handleDuplicateAttachmentNames
-                            .equalsIgnoreCase(MailConstants.MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_UUID_SUFFIX)){
+                        } else if (handleDuplicateAttachmentNames
+                                .equalsIgnoreCase(MailConstants.MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_UUID_SUFFIX)) {
                             fileName = suffixDuplicateFilenames(map, fileName);
                         }
                     }
@@ -449,10 +449,9 @@ public class MailBinding {
     }
 
     /**
-     * Updates already existing filenames in the map and suffixes the current filename
-     * Filename will be suffixed, the file extension will remain
-     * If the string starts with a dot and no further dots are contained in the string,
-     * this is considered as a filename without file extension
+     * Updates already existing filenames in the map and suffixes the current filename Filename will be suffixed, the
+     * file extension will remain If the string starts with a dot and no further dots are contained in the string, this
+     * is considered as a filename without file extension
      *
      * @param  map
      * @param  fileName
