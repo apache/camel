@@ -870,9 +870,10 @@ public class MailConfiguration implements Cloneable {
 
     /**
      * Set the strategy to handle duplicate filenames of attachments never: attachments that have a filename which is
-     * already present in the attachments will be ignored unless failOnDuplicateFileAttachment is set to true
-     * uuidPrefix: this will prefix the duplicate attachment filenames each with a uuid and underscore (uuid_)
-     * 
+     * already present in the attachments will be ignored unless failOnDuplicateFileAttachment is set to true.
+     * uuidPrefix: this will prefix the duplicate attachment filenames each with a uuid and underscore (uuid_filename.fileextension).
+     * uuidSuffix: this will suffix the duplicate attachment filenames each with a underscore and uuid (filename_uuid.fileextension).
+     *
      * @param handleDuplicateAttachmentNames
      */
     public void setHandleDuplicateAttachmentNames(String handleDuplicateAttachmentNames) {
