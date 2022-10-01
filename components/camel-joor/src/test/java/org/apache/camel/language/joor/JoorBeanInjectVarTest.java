@@ -18,6 +18,7 @@ package org.apache.camel.language.joor;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -45,7 +46,7 @@ public class JoorBeanInjectVarTest extends CamelTestSupport {
         template.sendBody("direct:start", "Camel");
         template.sendBody("direct:start", "World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

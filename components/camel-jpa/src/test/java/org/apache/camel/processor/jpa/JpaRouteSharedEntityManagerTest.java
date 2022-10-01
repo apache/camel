@@ -68,7 +68,7 @@ public class JpaRouteSharedEntityManagerTest extends AbstractJpaTest {
 
         latch.countDown();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private int getBrokerCount() {
@@ -104,7 +104,7 @@ public class JpaRouteSharedEntityManagerTest extends AbstractJpaTest {
 
         latch.countDown();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -41,7 +41,7 @@ public class PaddyRouteIT extends FtpServerTestSupport {
 
         sendFile(getFtpUrl(), "Hello World", "incoming/hello.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

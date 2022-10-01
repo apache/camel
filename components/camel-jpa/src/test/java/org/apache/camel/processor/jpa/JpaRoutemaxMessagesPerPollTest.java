@@ -33,7 +33,7 @@ public class JpaRoutemaxMessagesPerPollTest extends AbstractJpaTest {
         template.sendBody("direct:start", new SendEmail("two@somewhere.org"));
         template.sendBody("direct:start", new SendEmail("three@somewhere.org"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEntityInDB(3);
     }
 

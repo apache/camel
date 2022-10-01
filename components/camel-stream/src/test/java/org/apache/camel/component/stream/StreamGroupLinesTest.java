@@ -68,7 +68,7 @@ public class StreamGroupLinesTest extends CamelTestSupport {
         mock.message(1).header(StreamConstants.STREAM_INDEX).isEqualTo(1);
         mock.message(1).header(StreamConstants.STREAM_COMPLETE).isEqualTo(true);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<?> list = mock.getExchanges().get(0).getIn().getBody(List.class);
         assertEquals(3, list.size());

@@ -52,7 +52,7 @@ public class IAMDeleteUserIT extends Aws2IAMBase {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         DeleteUserResponse resultGet = (DeleteUserResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);

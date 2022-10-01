@@ -75,7 +75,7 @@ public class SplitterWithXqureyTest extends CamelTestSupport {
         result.reset();
         result.expectedMessageCount(4);
         template.sendBody("direct:endpoint", xmlData);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         int i = 0;
         for (Exchange exchange : result.getExchanges()) {
             Element element = (Element) exchange.getIn().getBody();
@@ -93,7 +93,7 @@ public class SplitterWithXqureyTest extends CamelTestSupport {
         result.reset();
         result.expectedMessageCount(4);
         template.sendBody("direct:toString", xmlData);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         int i = 0;
         for (Exchange exchange : result.getExchanges()) {
             String message = exchange.getIn().getBody(String.class);

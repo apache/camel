@@ -65,7 +65,7 @@ public class CamelSqlEmptyResultTest extends CamelTestSupport {
 
         template.sendBody("seda:in", "");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Object header = out.getReceivedExchanges().get(0).getIn().getHeader("PersonID");
         assertNull(header, "PersonID header should be null");
     }

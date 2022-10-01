@@ -53,7 +53,7 @@ public class NettyHttpProducerBridgeTest extends BaseNettyTest {
                 exchange.getIn().setHeader(Exchange.HTTP_QUERY, "x=%3B");
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -70,7 +70,7 @@ public class NettyHttpProducerBridgeTest extends BaseNettyTest {
                 exchange.getIn().setHeader(Exchange.HTTP_QUERY, "x=;");
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

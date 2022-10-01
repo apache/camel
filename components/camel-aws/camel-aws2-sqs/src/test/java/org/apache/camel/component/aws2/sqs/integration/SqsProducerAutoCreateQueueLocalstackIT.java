@@ -67,7 +67,7 @@ public class SqsProducerAutoCreateQueueLocalstackIT extends Aws2SQSBaseTest {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

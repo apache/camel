@@ -53,7 +53,7 @@ public class SftpChangedReadLockIT extends SftpServerTestSupport {
 
         writeSlowFile();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         String content = context.getTypeConverter().convertTo(String.class, testDirectory.resolve("out/slowfile.dat").toFile());
         String[] lines = content.split(LS);

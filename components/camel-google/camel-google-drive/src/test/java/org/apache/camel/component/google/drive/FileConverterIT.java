@@ -55,7 +55,7 @@ public class FileConverterIT extends AbstractGoogleDriveTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         File file = mock.getReceivedExchanges().get(0).getIn().getBody(com.google.api.services.drive.model.File.class);
 

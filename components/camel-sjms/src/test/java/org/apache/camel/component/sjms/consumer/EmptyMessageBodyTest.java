@@ -17,6 +17,7 @@
 package org.apache.camel.component.sjms.consumer;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +29,7 @@ public class EmptyMessageBodyTest extends JmsTestSupport {
 
         template.sendBody("sjms:start", "");
         template.sendBody("sjms:start", null);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

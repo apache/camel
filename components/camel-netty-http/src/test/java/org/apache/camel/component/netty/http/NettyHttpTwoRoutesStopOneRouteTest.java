@@ -18,6 +18,7 @@ package org.apache.camel.component.netty.http;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
@@ -37,7 +38,7 @@ public class NettyHttpTwoRoutesStopOneRouteTest extends BaseNettyTest {
         out = template.requestBody("netty-http:http://localhost:{{port}}/bar", "Hello Camel", String.class);
         assertEquals("Bye Camel", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // stop foo route
         context.getRouteController().stopRoute("foo");
@@ -56,7 +57,7 @@ public class NettyHttpTwoRoutesStopOneRouteTest extends BaseNettyTest {
         out = template.requestBody("netty-http:http://localhost:{{port}}/bar", "Hello Camel", String.class);
         assertEquals("Bye Camel", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -46,7 +46,7 @@ public class SpringJsonPathCustomReadMapperBeanTest extends CamelSpringTestSuppo
         assertTrue(resultFromMock instanceof String);
         assertTrue(resultFromMock.toString().contains("121002700.0"));
         assertTrue(resultFromMock.toString().contains("-91000000.0"));
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
     }
 

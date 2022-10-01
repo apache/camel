@@ -49,7 +49,7 @@ public class KmsCreateKeyIT extends Aws2KmsBase {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEquals(1, result.getExchanges().size());
         assertNotNull(result.getExchanges().get(0).getIn().getBody(CreateKeyResponse.class).keyMetadata().keyId());
     }

@@ -59,7 +59,7 @@ public class SqsProducerBatchTest extends CamelTestSupport {
                 exchange.getIn().setBody(c);
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         SendMessageBatchResponse res = result.getExchanges().get(0).getIn().getBody(SendMessageBatchResponse.class);
         assertEquals(2, res.failed().size());
         assertEquals(2, res.successful().size());

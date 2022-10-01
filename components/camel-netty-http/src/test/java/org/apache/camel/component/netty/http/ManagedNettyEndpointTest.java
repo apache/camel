@@ -24,6 +24,7 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -57,7 +58,7 @@ public class ManagedNettyEndpointTest extends BaseNettyTest {
                     "Hello World", String.class);
             assertEquals("param" + i + "=value" + i, out);
         }
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         MBeanServer mbeanServer = getMBeanServer();
 

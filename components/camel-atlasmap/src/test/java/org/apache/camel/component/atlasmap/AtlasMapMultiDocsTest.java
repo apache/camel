@@ -84,7 +84,7 @@ public class AtlasMapMultiDocsTest extends CamelSpringTestSupport {
         ProducerTemplate producerTemplate = context.createProducerTemplate();
         producerTemplate.sendBodyAndProperty("direct:start", null, "CAPTURED_OUT_MESSAGES_MAP", sourceMap);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Exchange exchange = result.getExchanges().get(0);
         Map<?, ?> targetMap = exchange.getProperty("TARGET_MESSAGES_MAP", Map.class);
 
@@ -113,7 +113,7 @@ public class AtlasMapMultiDocsTest extends CamelSpringTestSupport {
         ProducerTemplate producerTemplate = context.createProducerTemplate();
         producerTemplate.sendBody("direct:start-body", sourceMap);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Exchange exchange = resultBody.getExchanges().get(0);
         Map<?, ?> targetMap = exchange.getIn().getBody(Map.class);
 
@@ -138,7 +138,7 @@ public class AtlasMapMultiDocsTest extends CamelSpringTestSupport {
         ProducerTemplate producerTemplate = context.createProducerTemplate();
         producerTemplate.sendBodyAndHeaders("direct:start-header", null, sourceMap);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Exchange exchange = resultBody.getExchanges().get(0);
         verifyTargetDocs(exchange.getIn().getHeaders());
     }
@@ -164,7 +164,7 @@ public class AtlasMapMultiDocsTest extends CamelSpringTestSupport {
         ProducerTemplate producerTemplate = context.createProducerTemplate();
         producerTemplate.send(ep, ex);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Exchange exchange = resultBody.getExchanges().get(0);
         verifyTargetDocs(exchange.getProperties());
     }

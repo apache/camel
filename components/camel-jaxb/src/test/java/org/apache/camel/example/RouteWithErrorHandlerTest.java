@@ -37,7 +37,7 @@ public class RouteWithErrorHandlerTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "<purchaseOrder name='Wine' amount='123.45' price='2.22'/>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -50,7 +50,7 @@ public class RouteWithErrorHandlerTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "<foo/>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -67,7 +67,7 @@ public class RouteWithErrorHandlerTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "<purchaseOrder name='Beer' amount='2.0' price='1.99'/>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

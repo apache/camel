@@ -42,7 +42,7 @@ public class MailIdempotentRepositoryDuplicateNotRemoveTest extends MailIdempote
 
         context.getRouteController().startRoute("foo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // windows need a little slack
         Awaitility.await().atMost(500, TimeUnit.MILLISECONDS)

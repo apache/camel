@@ -27,6 +27,7 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.activemq.services.ActiveMQService;
 import org.apache.camel.test.infra.activemq.services.ActiveMQServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -65,7 +66,7 @@ public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
         getMockEndpoint("mock:result.threadPool").expectedMessageCount(1000);
         doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.threadPool", DefaultTaskExecutorType.ThreadPool);
         doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.threadPool", DefaultTaskExecutorType.ThreadPool);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         long numberThreadsCreated = currentThreadCount() - beforeThreadCount;
         LOG.info("Number of threads created, testThreadPoolTaskExecutor: {}", numberThreadsCreated);
         assertTrue(numberThreadsCreated <= 100, "Number of threads created should be equal or lower than "
@@ -93,7 +94,7 @@ public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
         getMockEndpoint("mock:result.default").expectedMessageCount(1000);
         doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.default", null);
         doSendMessages("foo.JmsDefaultTaskExecutorTypeTest.default", null);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         long numberThreadsCreated = currentThreadCount() - beforeThreadCount;
         LOG.info("Number of threads created, testDefaultTaskExecutor: {}", numberThreadsCreated);
         assertTrue(numberThreadsCreated >= 800, "Number of threads created should be equal or higher than "

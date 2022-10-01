@@ -85,7 +85,7 @@ public class EventbridgeDeleteRuleIT extends Aws2EventbridgeBase {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertNotNull(ex.getIn().getBody(DeleteRuleResponse.class));
 
     }

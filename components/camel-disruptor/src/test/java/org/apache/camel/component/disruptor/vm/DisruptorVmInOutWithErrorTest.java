@@ -18,6 +18,7 @@ package org.apache.camel.component.disruptor.vm;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
@@ -38,7 +39,7 @@ public class DisruptorVmInOutWithErrorTest extends AbstractVmTestSupport {
             assertEquals("Damn I cannot do this", e.getCause().getMessage());
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

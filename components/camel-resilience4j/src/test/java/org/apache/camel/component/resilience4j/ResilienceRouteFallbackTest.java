@@ -19,6 +19,7 @@ package org.apache.camel.component.resilience4j;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.CircuitBreakerConstants;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -42,7 +43,7 @@ public class ResilienceRouteFallbackTest extends CamelTestSupport {
 
         template.sendBody(endPointUri, "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

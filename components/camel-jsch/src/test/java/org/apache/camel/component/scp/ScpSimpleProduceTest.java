@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -50,7 +51,7 @@ public class ScpSimpleProduceTest extends ScpServerTestSupport {
         String uri = getScpUri() + "?username=admin&password=admin&knownHostsFile=" + getKnownHostsFile();
         template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -63,7 +64,7 @@ public class ScpSimpleProduceTest extends ScpServerTestSupport {
         template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader(uri, "Bye World", Exchange.FILE_NAME, "bye.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -75,7 +76,7 @@ public class ScpSimpleProduceTest extends ScpServerTestSupport {
         String uri = getScpUri() + "?username=admin&password=admin&knownHostsFile=" + getKnownHostsFile();
         template.sendBodyAndHeader(uri, "Bye World", Exchange.FILE_NAME, "mysub/bye.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -87,7 +88,7 @@ public class ScpSimpleProduceTest extends ScpServerTestSupport {
         String uri = getScpUri() + "?username=admin&password=admin&knownHostsFile=" + getKnownHostsFile();
         template.sendBodyAndHeader(uri, "Farewell World", Exchange.FILE_NAME, "mysub/mysubsub/farewell.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -99,7 +100,7 @@ public class ScpSimpleProduceTest extends ScpServerTestSupport {
         String uri = getScpUri() + "?username=admin&password=admin&chmod=640&knownHostsFile=" + getKnownHostsFile();
         template.sendBodyAndHeader(uri, "Bonjour Monde", Exchange.FILE_NAME, "monde.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -115,7 +116,7 @@ public class ScpSimpleProduceTest extends ScpServerTestSupport {
                   + getKnownHostsFile();
         template.sendBodyAndHeader(uri, "Hallo Welt", Exchange.FILE_NAME, "welt.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -131,7 +132,7 @@ public class ScpSimpleProduceTest extends ScpServerTestSupport {
                   + getKnownHostsFile();
         template.sendBodyAndHeader(uri, "Hallo Welt", Exchange.FILE_NAME, "welt.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -145,7 +146,7 @@ public class ScpSimpleProduceTest extends ScpServerTestSupport {
                      + getKnownHostsFile();
         template.sendBodyAndHeader(uri, "Hallo Welt", Exchange.FILE_NAME, "welt.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @BindToRegistry("privKey")

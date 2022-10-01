@@ -71,7 +71,7 @@ public class MinaDataFormatTest extends CamelTestSupport {
             socket.close();
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

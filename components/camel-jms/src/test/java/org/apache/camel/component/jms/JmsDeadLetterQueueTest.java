@@ -39,7 +39,7 @@ public class JmsDeadLetterQueueTest extends AbstractJMSTest {
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -49,7 +49,7 @@ public class JmsDeadLetterQueueTest extends AbstractJMSTest {
 
         template.sendBody("direct:start", "Kabom");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // the cause exception is gone in the transformation below
         assertNull(mock.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT));

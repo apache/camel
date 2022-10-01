@@ -34,7 +34,7 @@ public class CamelFastHeadersMapTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // should have detected custom and use that
         HeadersMapFactory factory = context.adapt(ExtendedCamelContext.class).getHeadersMapFactory();

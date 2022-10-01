@@ -17,6 +17,7 @@
 package org.apache.camel.builder.endpoint;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.direct;
@@ -31,7 +32,7 @@ public class LanguageEndpointStaticTest extends BaseEndpointDslTest {
 
         template.sendBody("direct:start", "World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -43,7 +44,7 @@ public class LanguageEndpointStaticTest extends BaseEndpointDslTest {
                 .withBody("World")
                 .send();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

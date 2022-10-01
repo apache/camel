@@ -986,13 +986,6 @@ public abstract class CamelTestSupport
     /**
      * Asserts that all the expectations of the Mock endpoints are valid
      */
-    protected void assertMockEndpointsSatisfied() throws InterruptedException {
-        MockEndpoint.assertIsSatisfied(context);
-    }
-
-    /**
-     * Asserts that all the expectations of the Mock endpoints are valid
-     */
     protected void assertMockEndpointsSatisfied(long timeout, TimeUnit unit) throws InterruptedException {
         MockEndpoint.assertIsSatisfied(context, timeout, unit);
     }

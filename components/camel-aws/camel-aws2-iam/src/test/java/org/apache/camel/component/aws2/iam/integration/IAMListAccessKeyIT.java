@@ -57,7 +57,7 @@ public class IAMListAccessKeyIT extends Aws2IAMBase {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

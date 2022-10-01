@@ -18,6 +18,7 @@ package org.apache.camel.component.netty.http;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -77,7 +78,7 @@ public class NettyHttpSimpleBasicAuthTest extends BaseNettyTest {
                 auth, String.class);
         assertEquals("Bye World", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Order(3)

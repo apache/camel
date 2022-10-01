@@ -37,7 +37,7 @@ public class XsltAggregationStrategyTest extends CamelTestSupport {
 
         context.getRouteController().startRoute("route1");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -48,7 +48,7 @@ public class XsltAggregationStrategyTest extends CamelTestSupport {
 
         context.getRouteController().startRoute("route2");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

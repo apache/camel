@@ -87,7 +87,7 @@ public class TarAggregationStrategyEmptyFirstFileTest extends CamelTestSupport {
 
         template.sendBody("direct:start", input.toString());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         File[] files = new File("target/out").listFiles();
         if (files != null) {

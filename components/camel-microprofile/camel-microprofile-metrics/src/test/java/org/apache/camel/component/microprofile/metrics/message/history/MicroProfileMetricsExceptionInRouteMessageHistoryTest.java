@@ -22,6 +22,7 @@ import io.smallrye.metrics.exporters.JsonExporter;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.eclipse.microprofile.metrics.MetricID;
 import org.eclipse.microprofile.metrics.MetricRegistry.Type;
 import org.eclipse.microprofile.metrics.Timer;
@@ -48,7 +49,7 @@ public class MicroProfileMetricsExceptionInRouteMessageHistoryTest extends Micro
             }
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         SortedMap<MetricID, Timer> timers = metricRegistry.getTimers();
         assertEquals(3, timers.size());

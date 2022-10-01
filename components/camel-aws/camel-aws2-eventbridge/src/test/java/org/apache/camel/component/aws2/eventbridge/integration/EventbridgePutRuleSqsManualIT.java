@@ -110,7 +110,7 @@ public class EventbridgePutRuleSqsManualIT extends CamelTestSupport {
         clientS3.deleteBucket(DeleteBucketRequest.builder().bucket("test-2567810").build());
 
         Thread.sleep(60000);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
     }
 

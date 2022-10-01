@@ -65,7 +65,7 @@ public class SqlProducerToDTest extends CamelTestSupport {
 
         template.requestBodyAndHeader("direct:query", "Hi there!", "foo", "AMQ");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals(1, list.size());

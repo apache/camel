@@ -50,7 +50,7 @@ public class SqsProducerPurgeTest extends CamelTestSupport {
             public void process(Exchange exchange) {
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         PurgeQueueResponse res = result.getExchanges().get(0).getIn().getBody(PurgeQueueResponse.class);
         assertNotNull(res);
     }

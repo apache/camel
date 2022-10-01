@@ -64,7 +64,7 @@ public class MicroProfileMetricsRoutePolicyTest extends MicroProfileMetricsTestS
             }
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Timer fooTimer = getTimer(DEFAULT_CAMEL_ROUTE_POLICY_PROCESSING_METRIC_NAME);
         assertEquals(count / 2, fooTimer.getCount());

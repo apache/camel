@@ -47,7 +47,7 @@ public class JmsSelectorOptionTest extends JmsTestSupport {
         template.sendBodyAndHeader("sjms:queue:hello", "Message1", "SIZE_NUMBER", 1505);
         template.sendBodyAndHeader("sjms:queue:hello", "Message3", "SIZE_NUMBER", 1300);
         template.sendBodyAndHeader("sjms:queue:hello", "Message2", "SIZE_NUMBER", 1600);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test

@@ -46,7 +46,7 @@ public class FtpChangedZeroLengthReadLockIT extends FtpServerTestSupport {
 
         writeZeroFile();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private void writeZeroFile() throws Exception {

@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractPersistentJMSTest;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.junit.jupiter.api.Test;
@@ -43,7 +44,7 @@ public class JmsDirectStartupOrderIssueTest extends AbstractPersistentJMSTest {
 
         getMockEndpoint("mock:result").expectedMessageCount(4);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         DefaultCamelContext dcc = (DefaultCamelContext) context;
         List<RouteStartupOrder> order = dcc.getRouteStartupOrder();

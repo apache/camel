@@ -33,7 +33,7 @@ public class CaffeineSendDynamicAwareOffTest extends CaffeineCacheTestSupport {
         template.sendBodyAndHeaders("direct:start", "Hello World",
                 Map.of("action1", "PUT", "action2", "GET", "myKey", "foobar"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // there are 2 caffeine endpoints
         int count = (int) context.getEndpoints().stream()

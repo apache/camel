@@ -18,6 +18,7 @@ package org.apache.camel.component.jms.issues;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,7 +34,7 @@ public class JmsInOutExclusiveTopicRecipientListTest extends AbstractJMSTest {
                 String.class);
         assertEquals("Bye Camel", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

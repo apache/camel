@@ -118,7 +118,7 @@ public class PulsarConsumerPatternInIT extends PulsarITSupport {
                 = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_TWO_URI).create();
         producer2.send("Hello Two");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         resetMocks();
 

@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.dataformat.bindy.fixed.BindyFixedLengthDataFormat;
@@ -58,7 +59,7 @@ public class BindySimpleFixedLengthMarshallWithClipAndTrimTest extends CamelTest
 
         template.sendBody("direct:start", generateModel());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     public List<Map<String, Object>> generateModel() {

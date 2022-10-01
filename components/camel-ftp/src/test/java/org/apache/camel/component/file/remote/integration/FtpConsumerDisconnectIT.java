@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.remote.FtpEndpoint;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.commons.net.ftp.FTPClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -60,7 +61,7 @@ public class FtpConsumerDisconnectIT extends FtpServerTestSupport {
     @Test
     public void testDisconnectOnDone() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // give time for ftp consumer to disconnect, delay is 5000 ms which is
         // long

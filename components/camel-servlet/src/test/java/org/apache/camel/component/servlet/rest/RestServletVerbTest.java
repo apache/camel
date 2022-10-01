@@ -61,7 +61,7 @@ public class RestServletVerbTest extends ServletCamelRouterTestSupport {
 
         assertEquals(200, response.getResponseCode());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -80,7 +80,7 @@ public class RestServletVerbTest extends ServletCamelRouterTestSupport {
 
         assertEquals(200, response.getResponseCode());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -99,7 +99,7 @@ public class RestServletVerbTest extends ServletCamelRouterTestSupport {
 
         assertEquals(204, response.getResponseCode());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

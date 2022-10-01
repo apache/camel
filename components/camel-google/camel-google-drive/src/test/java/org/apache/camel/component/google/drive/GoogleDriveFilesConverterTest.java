@@ -40,7 +40,7 @@ public class GoogleDriveFilesConverterTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("file://target/file-test/", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Message result = mock.getExchanges().get(0).getIn();
         assertTrue(result.getBody() instanceof com.google.api.services.drive.model.File,

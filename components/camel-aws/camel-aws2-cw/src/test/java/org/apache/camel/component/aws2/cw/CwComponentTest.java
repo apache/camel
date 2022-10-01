@@ -55,7 +55,7 @@ public class CwComponentTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

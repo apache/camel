@@ -32,7 +32,7 @@ public class JmsSimpleHeaderTest extends AbstractJMSTest {
 
         template.sendBodyAndHeader("activemq:queue:JmsSimpleHeaderTest", "Hello World", "data", (byte) 40);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -43,7 +43,7 @@ public class JmsSimpleHeaderTest extends AbstractJMSTest {
 
         template.sendBodyAndHeader("activemq:queue:JmsSimpleHeaderTest", "Hello World", "data", 'A');
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -56,7 +56,7 @@ public class JmsSimpleHeaderTest extends AbstractJMSTest {
 
         template.sendBodyAndHeader("activemq:queue:JmsSimpleHeaderTest", "Hello World", "data", cs);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

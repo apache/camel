@@ -42,7 +42,7 @@ public class BindyMarshalUnmarshalWithDefaultValueTest extends CamelTestSupport 
 
         template.sendBody("direct:marshal", model);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test

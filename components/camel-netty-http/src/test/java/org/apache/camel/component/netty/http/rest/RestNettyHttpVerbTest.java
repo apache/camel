@@ -49,7 +49,7 @@ public class RestNettyHttpVerbTest extends BaseNettyTest {
         template.requestBodyAndHeader("http://localhost:" + getPort() + "/users", "{ \"id\":\"1\", \"name\":\"Scott\" }",
                 Exchange.HTTP_METHOD, "POST", String.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -62,7 +62,7 @@ public class RestNettyHttpVerbTest extends BaseNettyTest {
         template.requestBodyAndHeader("http://localhost:" + getPort() + "/users/1", "{ \"id\":\"1\", \"name\":\"Scott\" }",
                 Exchange.HTTP_METHOD, "PUT", String.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -74,7 +74,7 @@ public class RestNettyHttpVerbTest extends BaseNettyTest {
         template.requestBodyAndHeader("http://localhost:" + getPort() + "/users/1", null, Exchange.HTTP_METHOD, "DELETE",
                 String.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

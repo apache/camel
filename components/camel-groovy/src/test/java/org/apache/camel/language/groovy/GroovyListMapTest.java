@@ -43,7 +43,7 @@ public class GroovyListMapTest extends CamelTestSupport {
 
         sendBody("direct:start", grid);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

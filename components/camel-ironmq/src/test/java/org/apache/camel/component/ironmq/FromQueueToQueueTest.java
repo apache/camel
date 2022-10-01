@@ -57,7 +57,7 @@ public class FromQueueToQueueTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         try {
             queue1.getClient().queue("testqueue").reserve();

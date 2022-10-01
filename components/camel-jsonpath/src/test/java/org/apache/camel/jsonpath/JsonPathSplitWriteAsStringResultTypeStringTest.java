@@ -46,7 +46,7 @@ public class JsonPathSplitWriteAsStringResultTypeStringTest extends CamelTestSup
 
         template.sendBody("direct:start", new File("src/test/resources/content.json"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

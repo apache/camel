@@ -60,7 +60,7 @@ public class MQProducerTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         ListBrokersResponse resultGet = (ListBrokersResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.brokerSummaries().size());
@@ -80,7 +80,7 @@ public class MQProducerTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         ListBrokersResponse resultGet = (ListBrokersResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.brokerSummaries().size());
@@ -111,7 +111,7 @@ public class MQProducerTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         CreateBrokerResponse resultGet = (CreateBrokerResponse) exchange.getIn().getBody();
         assertEquals("1", resultGet.brokerId());
@@ -130,7 +130,7 @@ public class MQProducerTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         DeleteBrokerResponse resultGet = (DeleteBrokerResponse) exchange.getIn().getBody();
         assertEquals("1", resultGet.brokerId());
@@ -148,7 +148,7 @@ public class MQProducerTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -167,7 +167,7 @@ public class MQProducerTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         UpdateBrokerResponse resultGet = (UpdateBrokerResponse) exchange.getIn().getBody();
         assertEquals("1", resultGet.brokerId());
     }
@@ -188,7 +188,7 @@ public class MQProducerTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         DescribeBrokerResponse resultGet = (DescribeBrokerResponse) exchange.getIn().getBody();
         assertEquals("1", resultGet.brokerId());
     }

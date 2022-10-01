@@ -39,6 +39,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.AfterEach;
@@ -355,7 +356,7 @@ public class PrinterPrintTest extends CamelTestSupport {
         context.start();
         template.sendBodyAndHeader("direct:start", "Hello Printer", PrinterEndpoint.JOB_NAME, "Test-Job-Name");
         context.stop();
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test

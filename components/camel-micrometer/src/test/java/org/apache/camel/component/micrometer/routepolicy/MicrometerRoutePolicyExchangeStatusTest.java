@@ -43,7 +43,7 @@ public class MicrometerRoutePolicyExchangeStatusTest extends AbstractMicrometerR
             }
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Counter exchangesSucceededCounter = meterRegistry.find(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME)
                 .tag(ROUTE_ID_TAG, "completing").counter();
         Counter exchangesFailedCounter = meterRegistry.find(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILED_METER_NAME)

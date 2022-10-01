@@ -128,7 +128,7 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
             createFile(testPath(), i + "");
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

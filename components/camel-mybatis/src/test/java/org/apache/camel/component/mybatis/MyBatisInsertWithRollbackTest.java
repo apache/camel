@@ -18,6 +18,7 @@ package org.apache.camel.component.mybatis;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +35,7 @@ public class MyBatisInsertWithRollbackTest extends MyBatisTestSupport {
 
         template.sendBody("direct:start", null);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // there should be still 2 rows
         Integer rows = template.requestBody("mybatis:count?statementType=SelectOne", null, Integer.class);

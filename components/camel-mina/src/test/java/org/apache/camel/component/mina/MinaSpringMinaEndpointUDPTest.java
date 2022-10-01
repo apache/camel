@@ -35,7 +35,7 @@ public class MinaSpringMinaEndpointUDPTest extends CamelSpringTestSupport {
 
         template.sendBody("myMinaEndpoint", "Hello World" + LS);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

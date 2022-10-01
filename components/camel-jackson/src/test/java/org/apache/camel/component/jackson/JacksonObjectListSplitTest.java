@@ -17,6 +17,7 @@
 package org.apache.camel.component.jackson;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +31,7 @@ public class JacksonObjectListSplitTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "[{\"dummy\": \"value1\"}, {\"dummy\": \"value2\"}]");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

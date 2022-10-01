@@ -41,7 +41,7 @@ public class VelocitySomeValuesNotInExchangeTest extends CamelTestSupport {
         headers.put("id", 123);
         template.sendBodyAndHeaders("direct:a", "", headers);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -55,7 +55,7 @@ public class VelocitySomeValuesNotInExchangeTest extends CamelTestSupport {
         headers.put("name", "Claus");
         template.sendBodyAndHeaders("direct:a", "", headers);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

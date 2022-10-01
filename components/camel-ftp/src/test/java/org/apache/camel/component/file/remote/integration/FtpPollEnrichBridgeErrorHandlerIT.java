@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.remote.BaseServerTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.ftp.services.FtpServiceFactory;
 import org.apache.camel.test.infra.ftp.services.embedded.FtpEmbeddedService;
 import org.junit.jupiter.api.Test;
@@ -50,7 +51,7 @@ public class FtpPollEnrichBridgeErrorHandlerIT extends BaseServerTestSupport {
 
         template.sendBody("seda:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange out = getMockEndpoint("mock:dead").getExchanges().get(0);
         assertNotNull(out);

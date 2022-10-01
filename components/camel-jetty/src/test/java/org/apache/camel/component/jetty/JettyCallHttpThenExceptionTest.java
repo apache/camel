@@ -19,6 +19,7 @@ package org.apache.camel.component.jetty;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,7 +39,7 @@ public class JettyCallHttpThenExceptionTest extends BaseJettyTest {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertNotNull(reply);
         assertTrue(reply.getMessage().getBody(String.class).startsWith("java.lang.IllegalArgumentException: I cannot do this"));

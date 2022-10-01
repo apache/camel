@@ -33,7 +33,7 @@ public class JdbcAnotherRouteTest extends AbstractJdbcTestSupport {
     public void testTimerInvoked() throws Exception {
         mock.expectedMinimumMessageCount(1);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

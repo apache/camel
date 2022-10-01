@@ -18,6 +18,7 @@ package org.apache.camel.component.undertow;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +35,7 @@ public class UndertowProducerContentTypeTest extends BaseUndertowTest {
                 "application/json", String.class);
         assertEquals("{ status: \"ok\" }", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

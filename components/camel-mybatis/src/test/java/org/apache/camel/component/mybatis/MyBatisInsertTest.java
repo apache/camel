@@ -40,7 +40,7 @@ public class MyBatisInsertTest extends MyBatisTestSupport {
 
         template.sendBody("direct:start", account);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // there should be 3 rows now
         Integer rows = template.requestBody("mybatis:count?statementType=SelectOne", null, Integer.class);
@@ -60,7 +60,7 @@ public class MyBatisInsertTest extends MyBatisTestSupport {
 
         template.sendBody("direct:start", map);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // there should be 3 rows now
         Integer rows = template.requestBody("mybatis:count?statementType=SelectOne", null, Integer.class);

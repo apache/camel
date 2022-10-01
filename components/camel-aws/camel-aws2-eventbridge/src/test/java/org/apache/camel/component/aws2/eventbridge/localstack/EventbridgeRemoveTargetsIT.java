@@ -74,7 +74,7 @@ public class EventbridgeRemoveTargetsIT extends Aws2EventbridgeBase {
                 exchange.getIn().setHeader(EventbridgeConstants.TARGETS_IDS, targets);
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEquals(1, result.getExchanges().size());
     }
 

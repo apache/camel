@@ -72,7 +72,7 @@ public class NettyRfc5425LongMessageTest extends CamelTestSupport {
 
         template.sendBody("direct:start", MESSAGE.getBytes("UTF8"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

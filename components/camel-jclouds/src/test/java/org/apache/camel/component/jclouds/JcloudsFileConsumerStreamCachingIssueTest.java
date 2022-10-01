@@ -19,6 +19,7 @@ package org.apache.camel.component.jclouds;
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,7 +44,7 @@ public class JcloudsFileConsumerStreamCachingIssueTest extends CamelTestSupport 
 
         template.sendBodyAndHeader("file:target/foo", "Hello World", Exchange.FILE_NAME, "foo.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -66,7 +66,7 @@ public class MinaProducerShutdownMockTest extends BaseMinaTest {
 
         verify(mockConnector).dispose(true);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

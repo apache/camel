@@ -46,7 +46,7 @@ public class FtpReconnectAttemptServerStoppedIT extends FtpServerTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         mock.reset();
         mock.expectedMessageCount(1);
@@ -54,7 +54,7 @@ public class FtpReconnectAttemptServerStoppedIT extends FtpServerTestSupport {
         // resume the server so we can connect
         service.resume();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Awaitility.await().untilAsserted(() -> Assertions.assertEquals(1, service.countConnections()));
     }
 

@@ -22,6 +22,7 @@ import java.io.InputStream;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
 
+import org.apache.camel.component.mock.MockEndpoint;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
@@ -40,7 +41,7 @@ public class SAXSourceLogBodyTest extends CamelTestSupport {
 
         template.sendBody("direct:start", new File("src/test/resources/xslt/staff/staff.xml"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

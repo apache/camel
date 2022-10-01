@@ -49,7 +49,7 @@ public class SqsProducerDeleteQueueTest extends CamelTestSupport {
             public void process(Exchange exchange) {
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         DeleteQueueResponse res = result.getExchanges().get(0).getIn().getBody(DeleteQueueResponse.class);
         assertNotNull(res);
     }

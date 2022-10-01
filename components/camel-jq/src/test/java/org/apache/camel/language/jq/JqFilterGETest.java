@@ -19,6 +19,7 @@ package org.apache.camel.language.jq;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class JqFilterGETest extends JqTestSupport {
@@ -49,7 +50,7 @@ public class JqFilterGETest extends JqTestSupport {
         template.sendBody("direct:start", b1);
         template.sendBody("direct:start", b2);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -77,6 +78,6 @@ public class JqFilterGETest extends JqTestSupport {
         template.sendBody("direct:start", b1);
         template.sendBody("direct:start", b2);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 }

@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.frontend.ServerFactoryBean;
@@ -65,7 +66,7 @@ public class CxfProducerSynchronousFalseTest extends CamelTestSupport {
         assertTrue(response.indexOf("echo " + TEST_MESSAGE) > 0, "It should has the echo message");
         assertTrue(response.indexOf("echoResponse") > 0, "It should has the echoResponse tag");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

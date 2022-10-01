@@ -31,7 +31,7 @@ public class MyBatisSelectListWithSplitTest extends MyBatisTestSupport {
 
         template.sendBody("direct:start", null);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Account james = mock.getReceivedExchanges().get(0).getIn().getBody(Account.class);
         Account claus = mock.getReceivedExchanges().get(1).getIn().getBody(Account.class);

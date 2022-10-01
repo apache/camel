@@ -34,7 +34,7 @@ public class CustomSedaTest extends BaseEndpointDslTest {
         template.sendBody("seda2:foo", "World");
         template.sendBody("direct:foo", "Camel");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertNotNull(context.hasComponent("seda"));
         assertNotNull(context.hasComponent("seda2"));

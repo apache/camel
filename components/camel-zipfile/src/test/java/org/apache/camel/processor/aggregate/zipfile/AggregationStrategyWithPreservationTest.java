@@ -52,7 +52,7 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
     public void testSplitter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:aggregateToZipEntry");
         mock.expectedMessageCount(1);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         File[] files = new File(TEST_DIR).listFiles();
         assertNotNull(files);

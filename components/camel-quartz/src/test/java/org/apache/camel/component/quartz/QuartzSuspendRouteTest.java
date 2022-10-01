@@ -29,7 +29,7 @@ public class QuartzSuspendRouteTest extends BaseQuartzTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         context.getRouteController().suspendRoute("foo");
 
@@ -47,7 +47,7 @@ public class QuartzSuspendRouteTest extends BaseQuartzTest {
 
         context.getRouteController().resumeRoute("foo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

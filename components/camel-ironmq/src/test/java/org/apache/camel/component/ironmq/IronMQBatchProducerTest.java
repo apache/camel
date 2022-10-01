@@ -44,7 +44,7 @@ public class IronMQBatchProducerTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         template.sendBody("direct:start", messages);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertThat(mock.getReceivedExchanges().size(), equalTo(1));
         Object header = mock.getReceivedExchanges().get(0).getIn().getHeader(IronMQConstants.MESSAGE_ID);
         assertIsInstanceOf(Ids.class, header);

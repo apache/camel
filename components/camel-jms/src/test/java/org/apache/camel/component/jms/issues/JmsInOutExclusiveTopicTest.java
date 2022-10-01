@@ -18,6 +18,7 @@ package org.apache.camel.component.jms.issues;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,7 +40,7 @@ public class JmsInOutExclusiveTopicTest extends AbstractJMSTest {
         String out = template.requestBody("direct:start", "Camel", String.class);
         assertEquals("Bye Camel", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

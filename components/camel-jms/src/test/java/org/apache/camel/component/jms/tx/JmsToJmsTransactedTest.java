@@ -73,7 +73,7 @@ public class JmsToJmsTransactedTest extends CamelSpringTestSupport {
 
         template.sendBody("activemq:queue:JmsToJmsTransactedTest", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -100,7 +100,7 @@ public class JmsToJmsTransactedTest extends CamelSpringTestSupport {
 
         template.sendBody("activemq:queue:JmsToJmsTransactedTest", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // it should be moved to DLQ in JMS broker
         Object body = consumer.receiveBody("activemq:queue:ActiveMQ.DLQ", 2000);
@@ -131,7 +131,7 @@ public class JmsToJmsTransactedTest extends CamelSpringTestSupport {
 
         template.sendBody("activemq:queue:JmsToJmsTransactedTest", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

@@ -41,7 +41,7 @@ public class CaffeineLoadCacheProducerMultiOperationSameCacheTest extends Caffei
         mock1.expectedHeaderReceived(CaffeineConstants.ACTION_SUCCEEDED, true);
         assertEquals("1", mock1.getExchanges().get(0).getIn().getBody());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     // ****************************

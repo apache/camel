@@ -57,7 +57,7 @@ public class KmsListKeysIT extends Aws2KmsBase {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEquals(1, result.getExchanges().size());
         assertTrue(result.getExchanges().get(0).getIn().getBody(ListKeysResponse.class).hasKeys());
     }

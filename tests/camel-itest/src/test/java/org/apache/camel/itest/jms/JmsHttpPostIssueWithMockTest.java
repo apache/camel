@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.AvailablePortFinder;
@@ -48,7 +49,7 @@ public class JmsHttpPostIssueWithMockTest extends CamelTestSupport {
 
         template.sendBody("jms:queue:in", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -58,7 +59,7 @@ public class JmsHttpPostIssueWithMockTest extends CamelTestSupport {
         String out = template.requestBody("jms:queue:in", "Hello World", String.class);
         assertEquals("OK", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

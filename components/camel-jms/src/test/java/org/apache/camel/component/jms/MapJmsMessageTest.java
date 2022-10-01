@@ -38,7 +38,7 @@ public class MapJmsMessageTest extends AbstractJMSTest {
 
         template.sendBody("activemq:queue:MapJmsMessageTest", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -49,7 +49,7 @@ public class MapJmsMessageTest extends AbstractJMSTest {
 
         template.sendBody("activemq:queue:MapJmsMessageTest", "Hello World".getBytes());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

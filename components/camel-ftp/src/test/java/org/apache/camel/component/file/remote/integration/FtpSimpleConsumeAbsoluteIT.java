@@ -39,7 +39,7 @@ public class FtpSimpleConsumeAbsoluteIT extends FtpServerTestSupport {
 
         context.getRouteController().startRoute("foo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

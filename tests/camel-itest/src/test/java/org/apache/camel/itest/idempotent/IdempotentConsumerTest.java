@@ -16,6 +16,7 @@
  */
 package org.apache.camel.itest.idempotent;
 
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -38,7 +39,7 @@ public class IdempotentConsumerTest extends CamelSpringTestSupport {
         template.sendBodyAndHeader("direct:start", "two", "messageId", 2);
         template.sendBodyAndHeader("direct:start", "three", "messageId", 3);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

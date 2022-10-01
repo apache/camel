@@ -33,7 +33,7 @@ public class RssToHttpIssueTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:end");
         mock.expectedMinimumMessageCount(1);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

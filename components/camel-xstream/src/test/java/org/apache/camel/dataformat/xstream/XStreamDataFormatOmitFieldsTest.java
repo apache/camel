@@ -41,7 +41,7 @@ public class XStreamDataFormatOmitFieldsTest extends CamelTestSupport {
 
         template.sendBody("direct:start", purchaseOrder);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         String body = mock.getReceivedExchanges().get(0).getIn().getBody(String.class);
         assertTrue(body.contains("<name>"), "Should contain name field");

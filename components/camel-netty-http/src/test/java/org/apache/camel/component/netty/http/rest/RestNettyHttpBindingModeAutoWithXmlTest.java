@@ -36,7 +36,7 @@ public class RestNettyHttpBindingModeAutoWithXmlTest extends BaseNettyTest {
         String body = "<user name=\"Donald Duck\" id=\"123\"></user>";
         template.sendBody("netty-http:http://localhost:" + getPort() + "/users/new", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         UserJaxbPojo user = mock.getReceivedExchanges().get(0).getIn().getBody(UserJaxbPojo.class);
         assertNotNull(user);

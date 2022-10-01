@@ -32,7 +32,7 @@ public class J2XOutputBytesTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "{\"hello\": \"world!\"}");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

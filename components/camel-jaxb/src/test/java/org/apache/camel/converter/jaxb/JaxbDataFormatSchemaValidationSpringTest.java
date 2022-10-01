@@ -79,7 +79,7 @@ public class JaxbDataFormatSchemaValidationSpringTest extends CamelSpringTestSup
 
         template.sendBody("direct:marshall", person);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         String payload = mockMarshall.getExchanges().get(0).getIn().getBody(String.class);
         LOG.info(payload);
@@ -124,7 +124,7 @@ public class JaxbDataFormatSchemaValidationSpringTest extends CamelSpringTestSup
                 .toString();
         template.sendBody("direct:unmarshall", xml);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Person person = mockUnmarshall.getExchanges().get(0).getIn().getBody(Person.class);
 

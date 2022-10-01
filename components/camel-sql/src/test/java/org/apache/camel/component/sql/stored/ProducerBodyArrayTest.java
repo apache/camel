@@ -63,7 +63,7 @@ public class ProducerBodyArrayTest extends CamelTestSupport {
         Integer[] numbers = new Integer[] { 1, 2 };
         template.requestBody("direct:query", numbers);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getExchanges().get(0);
 

@@ -44,7 +44,7 @@ public class FtpStreamingMoveIT extends FtpServerTestSupport {
 
         context.getRouteController().startRoute("foo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         InputStream is = mock.getExchanges().get(0).getIn().getBody(InputStream.class);
         assertNotNull(is);

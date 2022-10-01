@@ -30,7 +30,7 @@ public class NettyHttpProducerSendEmptyHeaderTest extends BaseNettyTest {
 
         template.sendBodyAndHeader("netty-http:http://localhost:{{port}}/myapp/mytest", "Hello World", "foo", "");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

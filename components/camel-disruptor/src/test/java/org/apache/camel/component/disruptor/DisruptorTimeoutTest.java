@@ -42,7 +42,7 @@ public class DisruptorTimeoutTest extends CamelTestSupport {
         final Future<String> out = template.asyncRequestBody("disruptor:foo", "World", String.class);
         assertEquals("Bye World", out.get());
         result.await(1, TimeUnit.SECONDS);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -64,7 +64,7 @@ public class DisruptorTimeoutTest extends CamelTestSupport {
             //we can't remove the exchange from a Disruptor once it is published, but it should never reach the
             //mock:result endpoint because it should be filtered out by the DisruptorConsumer
             result.await(1, TimeUnit.SECONDS);
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
         }
     }
 

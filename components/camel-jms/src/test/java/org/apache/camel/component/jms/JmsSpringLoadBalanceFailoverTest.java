@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jms;
 
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -42,7 +43,7 @@ public class JmsSpringLoadBalanceFailoverTest extends CamelSpringTestSupport {
         String out = template.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

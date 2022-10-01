@@ -37,7 +37,7 @@ public class FtpProducerReplyStringIT extends FtpServerTestSupport {
 
         template.requestBodyAndHeader("direct:start", "Bye World", Exchange.FILE_NAME, "hello.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

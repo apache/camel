@@ -18,6 +18,7 @@ package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.async.MyAsyncComponent;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -42,7 +43,7 @@ public class AsyncEndpointJmsTXWireTapTest extends CamelSpringTestSupport {
 
         template.sendBody("activemq:queue:inbox", "Hello Camel");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // the tapped exchange is not transacted
         assertFalse(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should use different threads");

@@ -17,6 +17,7 @@
 package org.apache.camel.jaxb;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.FallbackTypeConverter;
 import org.apache.camel.converter.jaxb.message.Message;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -31,7 +32,7 @@ public class FallbackTypeConverterObjectFactoryEnabledTest extends CamelTestSupp
 
         template.sendBody("direct:a", in);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

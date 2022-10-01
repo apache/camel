@@ -18,6 +18,7 @@ package org.apache.camel.component.hashicorp.vault.integration;
 
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
@@ -56,7 +57,7 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -78,7 +79,7 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -101,7 +102,7 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
 
         template.sendBody("direct:username", "Hello World");
         template.sendBody("direct:password", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -124,7 +125,7 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
 
             template.sendBody("direct:start", "Hello World");
 
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
         });
     }
 
@@ -147,7 +148,7 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
             getMockEndpoint("mock:bar").expectedBodiesReceived("admin");
 
             template.sendBody("direct:username", "Hello World");
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
         });
     }
 
@@ -171,7 +172,7 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
 
         template.sendBody("direct:username", "Hello World");
         template.sendBody("direct:password", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -194,7 +195,7 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
 
         template.sendBody("direct:username", "Hello World");
         template.sendBody("direct:password", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -218,7 +219,7 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
 
             template.sendBody("direct:username", "Hello World");
             template.sendBody("direct:password", "Hello World");
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
         });
     }
 
@@ -242,7 +243,7 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
 
         template.sendBody("direct:username", "Hello World");
         template.sendBody("direct:password", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -264,7 +265,7 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
             getMockEndpoint("mock:bar").expectedBodiesReceived("admin");
 
             template.sendBody("direct:username", "Hello World");
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
         });
     }
 
@@ -289,7 +290,7 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
 
             template.sendBody("direct:username", "Hello World");
             template.sendBody("direct:password", "Hello World");
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
         });
     }
 
@@ -311,7 +312,7 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
         getMockEndpoint("mock:bar").expectedBodiesReceived("admin");
 
         template.sendBody("direct:username", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -332,7 +333,7 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
         getMockEndpoint("mock:bar").expectedBodiesReceived("admin");
 
         template.sendBody("direct:username", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -355,7 +356,7 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
 
         template.sendBody("direct:username", "Hello World");
         template.sendBody("direct:password", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -378,7 +379,7 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
 
         template.sendBody("direct:username", "Hello World");
         template.sendBody("direct:password", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -399,7 +400,7 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
         getMockEndpoint("mock:bar").expectedBodiesReceived("21");
 
         template.sendBody("direct:version", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -420,7 +421,7 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
         getMockEndpoint("mock:bar").expectedBodiesReceived("{id=21}");
 
         template.sendBody("direct:version", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -442,7 +443,7 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
         getMockEndpoint("mock:bar").expectedBodiesReceived("{id=21}");
 
         template.sendBody("direct:version", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -464,7 +465,7 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
         getMockEndpoint("mock:bar").expectedBodiesReceived("pippo");
 
         template.sendBody("direct:version", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -486,7 +487,7 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
         getMockEndpoint("mock:bar").expectedBodiesReceived("pippo");
 
         template.sendBody("direct:version", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -508,6 +509,6 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
         getMockEndpoint("mock:bar").expectedBodiesReceived("21");
 
         template.sendBody("direct:version", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 }

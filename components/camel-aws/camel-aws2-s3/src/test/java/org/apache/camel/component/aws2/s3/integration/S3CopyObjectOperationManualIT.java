@@ -80,7 +80,7 @@ public class S3CopyObjectOperationManualIT extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

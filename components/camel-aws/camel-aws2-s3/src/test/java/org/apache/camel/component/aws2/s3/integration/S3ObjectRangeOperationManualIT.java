@@ -81,7 +81,7 @@ public class S3ObjectRangeOperationManualIT extends CamelTestSupport {
                 exchange.getIn().setHeader(AWS2S3Constants.RANGE_END, 9);
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
     }
 

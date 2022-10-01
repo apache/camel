@@ -37,7 +37,7 @@ public class MinaUdpUsingTemplateTest extends BaseMinaTest {
 
         sendUdpMessages();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     protected void sendUdpMessages() {
@@ -54,7 +54,7 @@ public class MinaUdpUsingTemplateTest extends BaseMinaTest {
         byte[] in = "Hello from bytes".getBytes();
         template.sendBody(String.format("mina:udp://127.0.0.1:%1$s?sync=false", getPort()), in);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         List<Exchange> list = endpoint.getReceivedExchanges();
         byte[] out = list.get(0).getIn().getBody(byte[].class);
 
@@ -73,7 +73,7 @@ public class MinaUdpUsingTemplateTest extends BaseMinaTest {
         byte[] in = fromHexString(toSend);
         template.sendBody(String.format("mina:udp://127.0.0.1:%1$s?sync=false", getPort()), in);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         List<Exchange> list = endpoint.getReceivedExchanges();
         byte[] out = list.get(0).getIn().getBody(byte[].class);
 

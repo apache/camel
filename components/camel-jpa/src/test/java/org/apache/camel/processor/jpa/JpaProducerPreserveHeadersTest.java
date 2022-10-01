@@ -40,7 +40,7 @@ public class JpaProducerPreserveHeadersTest extends AbstractJpaTest {
         // query the record as InOut
         template.requestBodyAndHeader("direct:start", null, "foo", 123);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         SendEmail se = (SendEmail) mock.getReceivedExchanges().get(0).getMessage().getBody(List.class).get(0);
         assertEquals("foo@beer.org", se.getAddress());

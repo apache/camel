@@ -41,7 +41,7 @@ public class XMLTokenSplitTest extends CamelTestSupport {
         String body = createBody();
         template.sendBodyAndHeader(fileUri(testDirectory, "xtokenizer"), body, Exchange.FILE_NAME, "orders.xml");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -55,7 +55,7 @@ public class XMLTokenSplitTest extends CamelTestSupport {
         String body = createBody();
         template.sendBodyAndHeader(fileUri(testDirectory, "xtokenizer2"), body, Exchange.FILE_NAME, "orders.xml");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     protected String createBody() {

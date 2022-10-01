@@ -40,7 +40,7 @@ public class FileRouteToJmsTest extends AbstractJMSTest {
         deleteDirectory("target/routefromfile");
         template.sendBodyAndHeader("file://target/routefromfile", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

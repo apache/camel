@@ -34,7 +34,7 @@ public class JmsDestinationResolverTest extends AbstractJMSTest {
 
         template.sendBodyAndHeader("direct:start", "Hello World", "cheese", 123);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

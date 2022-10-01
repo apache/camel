@@ -70,7 +70,7 @@ public class LambdaPublishVersionIT extends Aws2LambdaBase {
                 exchange.getIn().setHeader(Lambda2Constants.VERSION_DESCRIPTION, "This is my description");
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         PublishVersionResponse resp = result.getExchanges().get(0).getMessage().getBody(PublishVersionResponse.class);
         assertNotNull(resp);

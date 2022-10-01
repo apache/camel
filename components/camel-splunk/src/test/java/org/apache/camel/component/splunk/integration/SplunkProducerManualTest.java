@@ -37,7 +37,7 @@ public class SplunkProducerManualTest extends SplunkTest {
         splunkEvent.addPair("key22", "value2");
         splunkEvent.addPair("key33", "value3");
         template.sendBody("direct:stream", splunkEvent);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -49,7 +49,7 @@ public class SplunkProducerManualTest extends SplunkTest {
         splunkEvent.addPair("key2", "value2");
         splunkEvent.addPair("key3", "value1");
         template.sendBody("direct:submit", splunkEvent);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -61,7 +61,7 @@ public class SplunkProducerManualTest extends SplunkTest {
         splunkEvent.addPair("key2", "value2");
         splunkEvent.addPair("key3", "value3");
         template.sendBody("direct:tcp", splunkEvent);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

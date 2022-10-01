@@ -32,7 +32,7 @@ public class JdbcRouteSplitTest extends AbstractJdbcTestSupport {
 
         template.sendBody("direct:hello", "select * from customer order by ID");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

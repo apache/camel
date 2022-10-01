@@ -22,6 +22,7 @@ import org.apache.camel.Body;
 import org.apache.camel.Handler;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +38,7 @@ public class JaxbErrorLogTest extends CamelTestSupport {
             sendBody("seda:test", new CannotMarshal(i));
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

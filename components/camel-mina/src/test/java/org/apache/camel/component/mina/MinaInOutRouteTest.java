@@ -38,7 +38,7 @@ public class MinaInOutRouteTest extends BaseMinaTest {
 
         Object out = template.requestBodyAndHeader("direct:in", "Chad", "city", "Woodbine");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEquals("Bye Chad", out);
     }
 

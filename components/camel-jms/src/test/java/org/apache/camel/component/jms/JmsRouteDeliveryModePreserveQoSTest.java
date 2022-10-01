@@ -39,7 +39,7 @@ public class JmsRouteDeliveryModePreserveQoSTest extends AbstractPersistentJMSTe
 
         template.sendBody("activemq:queue:JmsRouteDeliveryModePreserveQoSTest.foo?preserveMessageQos=true", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // should be persistent by default
         Map<String, Object> map = mock.getReceivedExchanges().get(0).getIn().getHeaders();
@@ -56,7 +56,7 @@ public class JmsRouteDeliveryModePreserveQoSTest extends AbstractPersistentJMSTe
                 "Hello World", "JMSDeliveryMode",
                 DeliveryMode.NON_PERSISTENT);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // should preserve non persistent
         Map<String, Object> map = mock.getReceivedExchanges().get(0).getIn().getHeaders();
@@ -73,7 +73,7 @@ public class JmsRouteDeliveryModePreserveQoSTest extends AbstractPersistentJMSTe
                 "Hello World", "JMSDeliveryMode",
                 "NON_PERSISTENT");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // should preserve non persistent
         Map<String, Object> map = mock.getReceivedExchanges().get(0).getIn().getHeaders();
@@ -90,7 +90,7 @@ public class JmsRouteDeliveryModePreserveQoSTest extends AbstractPersistentJMSTe
                 "Hello World", "JMSDeliveryMode",
                 DeliveryMode.PERSISTENT);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // should preserve persistent
         Map<String, Object> map = mock.getReceivedExchanges().get(0).getIn().getHeaders();
@@ -107,7 +107,7 @@ public class JmsRouteDeliveryModePreserveQoSTest extends AbstractPersistentJMSTe
                 "Hello World", "JMSDeliveryMode",
                 "PERSISTENT");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // should preserve persistent
         Map<String, Object> map = mock.getReceivedExchanges().get(0).getIn().getHeaders();
@@ -131,7 +131,7 @@ public class JmsRouteDeliveryModePreserveQoSTest extends AbstractPersistentJMSTe
 
         template.sendBody("direct:nonJmsDeliveryMode", "Beer is good...");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -146,7 +146,7 @@ public class JmsRouteDeliveryModePreserveQoSTest extends AbstractPersistentJMSTe
 
         template.sendBody("direct:noExplicitNonJmsDeliveryMode", "Beer is good...");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -164,7 +164,7 @@ public class JmsRouteDeliveryModePreserveQoSTest extends AbstractPersistentJMSTe
         template.sendBodyAndHeader("direct:preserveQosNonJmsDeliveryMode", "Beer is good...", JmsConstants.JMS_DELIVERY_MODE,
                 3);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

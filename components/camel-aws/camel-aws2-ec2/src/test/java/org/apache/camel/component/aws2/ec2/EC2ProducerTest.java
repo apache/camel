@@ -196,7 +196,7 @@ public class EC2ProducerTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         DescribeInstanceStatusResponse resultGet = (DescribeInstanceStatusResponse) exchange.getMessage().getBody();
         assertEquals(1, resultGet.instanceStatuses().size());

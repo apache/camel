@@ -29,7 +29,7 @@ public class ProduceMessagesSimpleIT extends CouchbaseIntegrationTestBase {
         mock.expectedMessageCount(1);
 
         template.sendBody("direct:start", "couchbase persist");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         mock.message(0).body().equals("couchbase persist");
 
     }

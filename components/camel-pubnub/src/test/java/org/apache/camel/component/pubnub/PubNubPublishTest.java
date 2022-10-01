@@ -43,7 +43,7 @@ public class PubNubPublishTest extends PubNubTestBase {
         mockResult.expectedMessageCount(1);
         mockResult.expectedHeaderReceived(TIMETOKEN, "14598111595318003");
         template.sendBody("direct:publish", new Hello("Hi"));
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -60,7 +60,7 @@ public class PubNubPublishTest extends PubNubTestBase {
         mockResult.expectedHeaderReceived(TIMETOKEN, "14598111595318003");
 
         template.sendBodyAndHeader("direct:publish", "Hi", PubNubConstants.OPERATION, "FIRE");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

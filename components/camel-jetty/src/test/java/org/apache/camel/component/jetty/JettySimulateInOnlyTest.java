@@ -68,7 +68,7 @@ public class JettySimulateInOnlyTest extends BaseJettyTest {
         route += "A";
         assertEquals("OK", reply);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals("AB", route);
     }
@@ -107,7 +107,7 @@ public class JettySimulateInOnlyTest extends BaseJettyTest {
         route += "A";
         assertEquals("OK", reply);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals("AB", route);
     }

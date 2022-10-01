@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsHelper;
 import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.eclipse.microprofile.metrics.MetricID;
 import org.eclipse.microprofile.metrics.MetricRegistry.Type;
 import org.eclipse.microprofile.metrics.Tag;
@@ -56,7 +57,7 @@ public class MicroProfileMetricsMessageHistoryTest extends MicroProfileMetricsTe
             }
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         SortedMap<MetricID, Timer> timers = metricRegistry.getTimers();
         assertEquals(3, timers.size());

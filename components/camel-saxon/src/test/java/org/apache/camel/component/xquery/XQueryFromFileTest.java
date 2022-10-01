@@ -44,7 +44,7 @@ public class XQueryFromFileTest extends CamelTestSupport {
         template.sendBodyAndHeader(fileUri(testDirectory), "<mail><subject>Hey</subject><body>Hello world!</body></mail>",
                 Exchange.FILE_NAME, "body.xml");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<Exchange> list = mock.getReceivedExchanges();
         Exchange exchange = list.get(0);

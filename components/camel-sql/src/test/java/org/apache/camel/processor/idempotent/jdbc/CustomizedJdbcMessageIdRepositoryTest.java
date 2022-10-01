@@ -69,7 +69,7 @@ public class CustomizedJdbcMessageIdRepositoryTest extends CamelSpringTestSuppor
         template.sendBodyAndHeader("direct:start", "one", "messageId", "1");
         template.sendBodyAndHeader("direct:start", "three", "messageId", "3");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // all 3 messages should be in jdbc repo
         List<String> receivedMessageIds = jdbcTemplate.queryForList(SELECT_ALL_STRING, String.class, PROCESSOR_NAME);

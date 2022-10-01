@@ -46,7 +46,7 @@ public class ChunkComponentNestedTest extends CamelTestSupport {
         // Act
         startSimpleProducerTemplate.sendBodyAndHeader("The Body", "name", "Andrew");
         // Verify
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

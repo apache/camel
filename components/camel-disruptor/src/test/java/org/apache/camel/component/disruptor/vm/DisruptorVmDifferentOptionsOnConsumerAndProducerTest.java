@@ -31,7 +31,7 @@ public class DisruptorVmDifferentOptionsOnConsumerAndProducerTest extends Abstra
 
         template2.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // check the camel context of the exchange
         assertEquals(context, result.getExchanges().get(0).getContext(), "Got a wrong context.");

@@ -22,6 +22,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class FtpConsumerIdempotentKeyChangedIssueIT extends FtpServerTestSupport {
@@ -40,7 +41,7 @@ public class FtpConsumerIdempotentKeyChangedIssueIT extends FtpServerTestSupport
         getMockEndpoint("mock:file").expectedBodiesReceived("Hello World");
 
         template.sendBodyAndHeader(endpoint, "Hello World", Exchange.FILE_NAME, "hello.txt");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         oneExchangeDone.matches(5, TimeUnit.SECONDS);
 
@@ -49,7 +50,7 @@ public class FtpConsumerIdempotentKeyChangedIssueIT extends FtpServerTestSupport
 
         template.sendBodyAndHeader(endpoint, "Hello World Again", Exchange.FILE_NAME, "hello.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

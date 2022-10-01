@@ -19,6 +19,7 @@ package org.apache.camel.component.jms.issues;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
@@ -36,7 +37,7 @@ public class JmsInOutPersistentReplyQueueTest extends AbstractJMSTest {
         template.sendBody("seda:start", "C");
         template.sendBody("seda:start", "D");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -45,7 +45,7 @@ public class JdbcAggregateSerializedHeadersTest extends AbstractJdbcAggregationT
 
         LOG.info("Sending all " + SIZE + " message done. Now waiting for aggregation to complete.");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

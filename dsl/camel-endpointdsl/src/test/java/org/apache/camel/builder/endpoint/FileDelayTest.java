@@ -44,7 +44,7 @@ public class FileDelayTest extends BaseEndpointDslTest {
         mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
         mock.message(1).arrives().between(1500, 3000).millis().afterPrevious();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

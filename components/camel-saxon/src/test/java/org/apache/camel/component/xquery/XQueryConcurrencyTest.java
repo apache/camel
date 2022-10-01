@@ -64,7 +64,7 @@ public class XQueryConcurrencyTest extends CamelTestSupport {
 
         mock.assertNoDuplicates(body());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         executor.shutdown();
     }
 

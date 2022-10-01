@@ -35,7 +35,7 @@ public class JacksonMarshalUnmarshalTypeHeaderTest extends CamelTestSupport {
         String json = "<pojo name=\"Camel\"/>";
         template.sendBodyAndHeader("direct:backPojo", json, JacksonXMLConstants.UNMARSHAL_TYPE, TestPojo.class.getName());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         TestPojo pojo = mock.getReceivedExchanges().get(0).getIn().getBody(TestPojo.class);
         assertNotNull(pojo);

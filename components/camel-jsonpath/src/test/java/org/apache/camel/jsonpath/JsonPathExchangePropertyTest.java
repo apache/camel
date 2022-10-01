@@ -19,6 +19,7 @@ package org.apache.camel.jsonpath;
 import java.io.File;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -44,7 +45,7 @@ public class JsonPathExchangePropertyTest extends CamelTestSupport {
 
         template.sendBody("direct:start", new File("src/test/resources/books.json"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Object foo = getMockEndpoint("mock:color").getReceivedExchanges().get(0).getProperty("foo");
         Assertions.assertTrue(foo instanceof String);

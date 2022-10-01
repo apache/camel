@@ -53,7 +53,7 @@ public class ExplicitEncodingAndXMLCharFilteringTest extends CamelTestSupport {
         result.expectedFileExists(testDirectory.resolve("output.xml"));
 
         template.sendBody("direct:start", order);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         JAXBContext jaxbContext = JAXBContext.newInstance("org.apache.camel.example");
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();

@@ -39,7 +39,7 @@ public class Jms2TopicDurableTest extends BaseJms2TestSupport {
 
         template.sendBody("jms:topic:foo", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

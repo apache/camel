@@ -41,7 +41,7 @@ public class IntercepFromAndStrategyTest extends CamelTestSupport {
         resultEndpoint.expectedBodiesReceived("Bla Bla Bla");
         interceptedEndpoint.expectedBodiesReceived("Bla Bla Bla");
         template.sendBody("direct:start", "Bla Bla Bla");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

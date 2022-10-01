@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -46,7 +47,7 @@ public class TransactionErrorHandlerRedeliveryDelayTest extends CamelSpringTestS
 
         template.sendBody("activemq:queue:TransactionErrorHandlerRedeliveryDelayTest.in", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     public static class MyFailureProcessor implements Processor {

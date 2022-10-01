@@ -46,7 +46,7 @@ public class SimpleMockTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -57,7 +57,7 @@ public class SimpleMockTest extends CamelTestSupport {
         template.sendBody("direct:start", "Hello World");
         template.sendBody("direct:start", "Bye World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -45,7 +45,7 @@ public class SlackProducerTest extends CamelTestSupport {
 
         template.sendBody(test, "Hello from Camel!");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -63,7 +63,7 @@ public class SlackProducerTest extends CamelTestSupport {
 
         template.sendBody(test, message);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

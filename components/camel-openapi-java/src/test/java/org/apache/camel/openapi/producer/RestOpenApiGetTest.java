@@ -19,6 +19,7 @@ package org.apache.camel.openapi.producer;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +34,7 @@ public class RestOpenApiGetTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("direct:start", null, "name", "Donald Duck");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

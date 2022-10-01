@@ -97,7 +97,7 @@ public class ZooKeeperProducerIT extends ZooKeeperITSupport {
         e.setPattern(ExchangePattern.InOut);
         template.send("direct:roundtrip", e);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -108,7 +108,7 @@ public class ZooKeeperProducerIT extends ZooKeeperITSupport {
         Exchange e = createExchangeWithBody(testPayload);
         template.send("direct:roundtrip", e);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -135,7 +135,7 @@ public class ZooKeeperProducerIT extends ZooKeeperITSupport {
 
         template.send("direct:create-mode", e);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Stat s = mock.getReceivedExchanges().get(0).getIn().getHeader(ZooKeeperMessage.ZOOKEEPER_STATISTICS, Stat.class);
         assertEquals(0, s.getEphemeralOwner());
@@ -152,7 +152,7 @@ public class ZooKeeperProducerIT extends ZooKeeperITSupport {
         e.getIn().setHeader(ZOOKEEPER_OPERATION, "DELETE");
         template.send("direct:delete", e);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertNull(client.getConnection().exists("/to-be-deleted", false));
     }
@@ -180,7 +180,7 @@ public class ZooKeeperProducerIT extends ZooKeeperITSupport {
         Exchange exchange = createExchangeWithBody(testPayload);
         template.send("direct:roundtrip", exchange);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Message received = mock.getReceivedExchanges().get(0).getIn();
         assertEquals("/node", ZooKeeperMessage.getPath(received));

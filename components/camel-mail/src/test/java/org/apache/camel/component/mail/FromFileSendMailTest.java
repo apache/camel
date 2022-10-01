@@ -38,7 +38,7 @@ public class FromFileSendMailTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("file://target/mailtext", "Hi how are you", Exchange.FILE_NAME, "mail.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Mailbox mailbox = Mailbox.get("james@localhost");
         assertEquals(1, mailbox.size());

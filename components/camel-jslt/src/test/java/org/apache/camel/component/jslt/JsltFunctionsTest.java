@@ -23,6 +23,7 @@ import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.FunctionUtils;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -54,7 +55,7 @@ public class JsltFunctionsTest extends CamelTestSupport {
 
         sendBody("direct://start", "{}", Collections.singletonMap(JsltConstants.HEADER_JSLT_STRING, "power(2, 10)"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -82,7 +82,7 @@ public class JGroupsConsumerTest extends CamelTestSupport {
         channel.send(msg);
 
         // Then
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -97,7 +97,7 @@ public class JGroupsConsumerTest extends CamelTestSupport {
         channel.send(msg);
 
         // Then
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

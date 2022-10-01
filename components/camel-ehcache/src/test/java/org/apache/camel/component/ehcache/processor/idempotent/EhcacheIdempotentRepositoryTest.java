@@ -122,7 +122,7 @@ public class EhcacheIdempotentRepositoryTest extends EhcacheTestSupport {
         template.sendBodyAndHeader("direct://in", "b", "messageId", key02);
         template.sendBodyAndHeader("direct://in", "c", "messageId", key01);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

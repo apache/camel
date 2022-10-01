@@ -23,6 +23,7 @@ import io.smallrye.config.SmallRyeConfigBuilder;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.spi.Registry;
@@ -107,7 +108,7 @@ public class CamelMicroProfilePropertiesSourceTest extends CamelTestSupport {
 
         template.sendBody("direct:start", context.resolvePropertyPlaceholders("Hello {{hi}} from {{who}}"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

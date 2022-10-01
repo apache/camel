@@ -38,7 +38,7 @@ public class SqsConsumerIdleMessageTest extends CamelTestSupport {
         Thread.sleep(110);
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertNull(mock.getExchanges().get(0).getIn().getBody());
         assertNull(mock.getExchanges().get(1).getIn().getBody());
     }

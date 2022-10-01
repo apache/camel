@@ -47,7 +47,7 @@ public class ECS2ProducerSpringTest extends CamelSpringTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         ListClustersResponse resultGet = (ListClustersResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.clusterArns().size());
@@ -66,7 +66,7 @@ public class ECS2ProducerSpringTest extends CamelSpringTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         ListClustersResponse resultGet = (ListClustersResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.clusterArns().size());
@@ -85,7 +85,7 @@ public class ECS2ProducerSpringTest extends CamelSpringTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         CreateClusterResponse resultGet = (CreateClusterResponse) exchange.getIn().getBody();
         assertEquals("Test", resultGet.cluster().clusterName());
@@ -103,7 +103,7 @@ public class ECS2ProducerSpringTest extends CamelSpringTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         DescribeClustersResponse resultGet = exchange.getIn().getBody(DescribeClustersResponse.class);
         assertEquals("Test", resultGet.clusters().get(0).clusterName());
@@ -121,7 +121,7 @@ public class ECS2ProducerSpringTest extends CamelSpringTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         DeleteClusterResponse resultGet = exchange.getIn().getBody(DeleteClusterResponse.class);
         assertEquals("Test", resultGet.cluster().clusterName());

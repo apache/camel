@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
@@ -45,7 +46,7 @@ public class FtpProducerToDMoveExistingIT extends FtpServerTestSupport {
         template.sendBodyAndHeaders("direct:start", "Hello World", headers);
         template.sendBodyAndHeaders("direct:start", "Bye World", headers);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertFileExists(service.ftpFile("out/old-hello.txt"));
         assertFileExists(service.ftpFile("out/hello.txt"));

@@ -38,7 +38,7 @@ public class MinaConsumerTest extends BaseMinaTest {
 
         template.sendBody("mina:tcp://localhost:" + port1 + "?textline=true&sync=false", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         // END SNIPPET: e2
     }
 

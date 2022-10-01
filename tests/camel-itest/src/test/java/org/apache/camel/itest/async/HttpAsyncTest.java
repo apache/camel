@@ -54,7 +54,7 @@ public class HttpAsyncTest extends HttpAsyncTestSupport {
         String response = template.extractFutureBody(future, String.class);
         assertEquals("Bye World", response);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         // END SNIPPET: e2
     }
 

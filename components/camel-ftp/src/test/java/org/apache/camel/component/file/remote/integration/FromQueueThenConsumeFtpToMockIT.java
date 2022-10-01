@@ -58,7 +58,7 @@ public class FromQueueThenConsumeFtpToMockIT extends FtpServerTestSupport {
 
         template.sendBodyAndHeader("seda:start", "Hello World", "myfile", "hello.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private void prepareFtpServer() throws Exception {

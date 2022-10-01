@@ -56,7 +56,7 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:aggregateToTarEntry");
         mock.expectedMessageCount(1);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Thread.sleep(500);
 

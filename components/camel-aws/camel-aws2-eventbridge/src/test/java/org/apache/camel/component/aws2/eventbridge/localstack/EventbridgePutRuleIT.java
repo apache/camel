@@ -65,7 +65,7 @@ public class EventbridgePutRuleIT extends Aws2EventbridgeBase {
                 exchange.getIn().setHeader(EventbridgeConstants.TARGETS, targets);
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
     }
 

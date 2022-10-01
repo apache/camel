@@ -28,7 +28,7 @@ public class NettyFileTcpTest extends BaseNettyTest {
         endpoint.expectedMessageCount(1);
         endpoint.message(0).body().startsWith("Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

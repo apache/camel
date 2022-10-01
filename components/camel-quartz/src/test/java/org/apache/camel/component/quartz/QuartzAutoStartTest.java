@@ -36,9 +36,9 @@ public class QuartzAutoStartTest extends BaseQuartzTest {
         assertFalse(quartz.getScheduler().isStarted(), "Should not have started scheduler");
 
         Awaitility.await().atMost(2, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertMockEndpointsSatisfied());
+                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         mock.reset();
         mock.expectedMinimumMessageCount(1);
@@ -47,7 +47,7 @@ public class QuartzAutoStartTest extends BaseQuartzTest {
 
         quartz.getScheduler().start();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

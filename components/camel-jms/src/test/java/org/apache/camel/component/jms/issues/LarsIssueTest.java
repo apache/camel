@@ -41,7 +41,7 @@ public class LarsIssueTest extends AbstractJMSTest {
         template.sendBody("activemq:queue:LarsIssueTest.bar", body1);
         template.sendBody("activemq:queue:LarsIssueTest.bar", body2);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

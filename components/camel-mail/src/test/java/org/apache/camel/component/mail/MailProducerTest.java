@@ -24,6 +24,7 @@ import javax.mail.internet.MimeMessage;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
@@ -39,7 +40,7 @@ public class MailProducerTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.sendBodyAndHeader("direct:start", "Message ", "To", "someone@localhost");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         // need to check the message header
         Exchange exchange = getMockEndpoint("mock:result").getExchanges().get(0);
         assertNotNull(exchange.getIn().getHeader(MailConstants.MAIL_MESSAGE_ID), "The message id should not be null");
@@ -63,7 +64,7 @@ public class MailProducerTest extends CamelTestSupport {
         mimeMessage.setText("This is the message");
 
         template.sendBodyAndHeader("direct:start", mimeMessage, "To", "someone@localhost");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         // need to check the message header
         Exchange exchange = getMockEndpoint("mock:result").getExchanges().get(0);
         assertNotNull(exchange.getIn().getHeader(MailConstants.MAIL_MESSAGE_ID), "The message id should not be null");

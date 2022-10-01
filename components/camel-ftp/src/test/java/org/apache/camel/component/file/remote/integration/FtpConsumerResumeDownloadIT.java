@@ -65,7 +65,7 @@ public class FtpConsumerResumeDownloadIT extends FtpServerTestSupport {
         // start route
         context.getRouteController().startRoute("myRoute");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertTrue(notify.matchesWaitTime());
 
         // and the out file should exists

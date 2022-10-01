@@ -58,7 +58,7 @@ class MinioConsumerIT extends MinioIntegrationTestSupport {
             exchange.getIn().setBody("Test3");
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -45,7 +45,7 @@ public class NormalizedUriTest extends BaseEndpointDslTest {
 
         template.sendBody("direct:test", null);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertSame(result, resultEndpoint);
     }
 }

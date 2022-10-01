@@ -18,6 +18,7 @@ package org.apache.camel.component.kamelet;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +30,7 @@ public class KameletLocalBeanTest extends CamelTestSupport {
 
         template.sendBody("direct:moe", "John");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -40,7 +41,7 @@ public class KameletLocalBeanTest extends CamelTestSupport {
         template.sendBody("direct:shamrock", "Jack");
         template.sendBody("direct:moe", "Mary");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     // **********************************************

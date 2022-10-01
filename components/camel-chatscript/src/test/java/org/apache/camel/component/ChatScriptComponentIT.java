@@ -43,7 +43,7 @@ public class ChatScriptComponentIT extends CamelTestSupport {
     public void testChatScript() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
-        Awaitility.await().atMost(Duration.ofSeconds(2)).untilAsserted(() -> assertMockEndpointsSatisfied());
+        Awaitility.await().atMost(Duration.ofSeconds(2)).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
     }
 
     @Override

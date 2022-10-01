@@ -17,6 +17,7 @@
 package org.apache.camel.component.zookeeper.cloud.integration;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.zookeeper.cloud.ZooKeeperServiceDiscovery;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.test.AvailablePortFinderPropertiesFunction;
@@ -127,7 +128,7 @@ public class SpringZooKeeperServiceCallRouteIT extends CamelSpringTestSupport {
         template.sendBody("direct:start", "ping");
         template.sendBody("direct:start", "ping");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     // ***********************

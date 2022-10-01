@@ -114,7 +114,7 @@ public class FacebookComponentProducerIT extends CamelFacebookTestSupport {
             }
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test

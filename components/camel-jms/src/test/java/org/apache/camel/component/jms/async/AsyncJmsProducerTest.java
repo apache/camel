@@ -18,6 +18,7 @@ package org.apache.camel.component.jms.async;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,7 +38,7 @@ public class AsyncJmsProducerTest extends AbstractJMSTest {
         String reply = template.requestBody("direct:start", "Hello Camel", String.class);
         assertEquals("Bye Camel", reply);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertFalse(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should use different threads");
     }

@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.asn1.model.testsmscbercdr.SmsCdr;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
@@ -51,7 +52,7 @@ public class ASN1DataFormatWithStreamIteratorClassTest extends CamelTestSupport 
             assertTrue(exchange.getIn().getBody() instanceof SmsCdr);
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -87,7 +88,7 @@ public class ASN1DataFormatWithStreamIteratorClassTest extends CamelTestSupport 
             // fos.close();
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -117,7 +118,7 @@ public class ASN1DataFormatWithStreamIteratorClassTest extends CamelTestSupport 
             assertTrue(exchange.getIn().getBody() instanceof SmsCdr);
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private void baseDoubleUnmarshalTest(String firstMockEnpointName, String secondMockEnpointName, String directEndpointName)
@@ -152,7 +153,7 @@ public class ASN1DataFormatWithStreamIteratorClassTest extends CamelTestSupport 
 
         assertEquals(secondUnmarshalledCdr.toString(), firstUnmarshalledCdr.toString());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test

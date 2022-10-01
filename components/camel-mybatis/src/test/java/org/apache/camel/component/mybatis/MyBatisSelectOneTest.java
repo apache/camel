@@ -32,7 +32,7 @@ public class MyBatisSelectOneTest extends MyBatisTestSupport {
 
         template.sendBody("direct:start", 456);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Account account = mock.getReceivedExchanges().get(0).getIn().getBody(Account.class);
         assertEquals("Claus", account.getFirstName());
@@ -46,7 +46,7 @@ public class MyBatisSelectOneTest extends MyBatisTestSupport {
 
         template.sendBody("direct:start", 999);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

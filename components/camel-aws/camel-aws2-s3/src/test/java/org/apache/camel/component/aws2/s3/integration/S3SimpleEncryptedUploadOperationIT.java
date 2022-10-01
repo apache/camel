@@ -80,7 +80,7 @@ public class S3SimpleEncryptedUploadOperationIT extends Aws2S3Base {
 
         assertEquals("Camel rocks!", c.getIn().getBody(String.class));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

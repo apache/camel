@@ -35,7 +35,7 @@ public class SpringSqlMultilineTest extends CamelSpringTestSupport {
 
         template.sendBody("direct:start", "");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

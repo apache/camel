@@ -76,7 +76,7 @@ public class EventbridgeListRulesIT extends Aws2EventbridgeBase {
         assertEquals(true, resp.hasRules());
         assertEquals(1, resp.rules().size());
         assertEquals("firstrule", resp.rules().get(0).name());
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
     }
 

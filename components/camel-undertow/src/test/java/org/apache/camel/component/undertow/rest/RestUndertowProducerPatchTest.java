@@ -34,7 +34,7 @@ public class RestUndertowProducerPatchTest extends BaseUndertowTest {
 
         fluentTemplate.withBody(body).withHeader("id", id).to("direct:start").send();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

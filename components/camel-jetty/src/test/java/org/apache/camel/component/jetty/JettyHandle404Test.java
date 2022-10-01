@@ -48,7 +48,7 @@ public class JettyHandle404Test extends BaseJettyTest {
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test

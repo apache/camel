@@ -46,7 +46,7 @@ public class SplitGroupWrappedMultiXmlTokenTest extends CamelTestSupport {
         String body = createBody();
         template.sendBodyAndHeader(fileUri(testDirectory), body, Exchange.FILE_NAME, "orders.xml");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     protected String createBody() {

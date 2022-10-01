@@ -26,6 +26,7 @@ import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.netty.NettyConverter;
 import org.junit.jupiter.api.Test;
 
@@ -45,7 +46,7 @@ public class NettyHttpAccessHttpRequestAndResponseBeanTest extends BaseNettyTest
         String out2 = template.requestBody("netty-http:http://localhost:{{port}}/foo", "Camel", String.class);
         await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> assertEquals("Bye Camel", out2));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

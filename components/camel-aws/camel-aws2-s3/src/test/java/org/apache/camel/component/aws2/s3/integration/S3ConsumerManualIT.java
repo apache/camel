@@ -102,7 +102,7 @@ public class S3ConsumerManualIT extends CamelTestSupport {
         });
 
         Thread.sleep(10000);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
