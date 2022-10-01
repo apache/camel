@@ -104,7 +104,7 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
         // reset
         getMBeanServer().invoke(on, "reset", null, null);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         getMockEndpoint("mock:foo").expectedMessageCount(1);
 
         template.sendBody("seda:foo", "Hello Again");

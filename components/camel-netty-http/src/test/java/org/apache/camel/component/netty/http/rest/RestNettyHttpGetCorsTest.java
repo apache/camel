@@ -45,7 +45,7 @@ public class RestNettyHttpGetCorsTest extends BaseNettyTest {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         getMockEndpoint("mock:input").expectedMessageCount(1);
 
         // send GET request which should be routed

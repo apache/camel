@@ -43,7 +43,7 @@ public class FtpConsumerDoneFileNameFixedIT extends FtpServerTestSupport {
         // done file
         await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 

@@ -84,7 +84,7 @@ public class ManagedJmsSelectorTest extends CamelTestSupport {
 
         // change the selector at runtime
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         mbeanServer.setAttribute(on, new Attribute("MessageSelector", "brand='softdrink'"));
 

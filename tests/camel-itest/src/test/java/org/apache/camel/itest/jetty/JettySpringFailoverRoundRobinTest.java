@@ -60,7 +60,7 @@ public class JettySpringFailoverRoundRobinTest extends CamelSpringTestSupport {
 
         // reset mocks and send a message again to see that round robin
         // continue where it should
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         getMockEndpoint("mock:JettySpringFailoverRoundRobinTestBad").expectedMessageCount(0);
         getMockEndpoint("mock:JettySpringFailoverRoundRobinTestBad2").expectedMessageCount(0);

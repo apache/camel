@@ -37,7 +37,7 @@ public class FileConsumerQuartzSchedulerRestartTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
 
         context.getRouteController().stopRoute("foo");
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
         template.sendBodyAndHeader(fileUri(testDirectory), "Bye World", Exchange.FILE_NAME, "bye.txt");

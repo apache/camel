@@ -22,7 +22,6 @@ import java.io.InputStream;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
 
-import org.apache.camel.component.mock.MockEndpoint;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
@@ -30,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 

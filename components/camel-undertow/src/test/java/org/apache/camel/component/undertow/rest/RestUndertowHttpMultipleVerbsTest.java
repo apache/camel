@@ -31,7 +31,7 @@ public class RestUndertowHttpMultipleVerbsTest extends BaseUndertowTest {
         template.requestBodyAndHeader("undertow:http://localhost:{{port}}/example/123", null, Exchange.HTTP_METHOD, "GET");
         MockEndpoint.assertIsSatisfied(context);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         getMockEndpoint("mock:get").expectedMessageCount(0);
         getMockEndpoint("mock:put").expectedMessageCount(1);

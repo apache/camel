@@ -71,7 +71,7 @@ public class DynamicRoutersWithJMSMessageLostHeadersIssueTest extends AbstractJM
         template.sendBody("direct:foo", "A");
 
         MockEndpoint.assertIsSatisfied(context);
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         // actvivemq
         getMockEndpoint("mock:checkHeader").expectedMessageCount(1);
