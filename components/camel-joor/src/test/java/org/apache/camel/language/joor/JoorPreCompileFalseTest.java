@@ -50,7 +50,7 @@ public class JoorPreCompileFalseTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
 
         // update file
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         template.sendBodyAndHeader("file:target?fileExist=Override", "'Bye ' + body", Exchange.FILE_NAME, "update.joor");
 

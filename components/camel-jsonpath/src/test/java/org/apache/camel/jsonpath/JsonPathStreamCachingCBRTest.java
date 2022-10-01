@@ -76,7 +76,7 @@ public class JsonPathStreamCachingCBRTest extends CamelTestSupport {
     @Test
     public void testCheapBicycle() throws Exception {
         sendMessageToBicycleRoute("direct:bicycle");
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         sendMessageToBicycleRoute("direct:bicycle2");
     }
 

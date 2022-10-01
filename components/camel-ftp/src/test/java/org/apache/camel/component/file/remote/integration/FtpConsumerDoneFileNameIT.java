@@ -44,7 +44,7 @@ public class FtpConsumerDoneFileNameIT extends FtpServerTestSupport {
 
         MockEndpoint.assertIsSatisfied(context, 1, TimeUnit.SECONDS);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 

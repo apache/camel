@@ -45,7 +45,7 @@ public class FtpConsumerIdempotentKeyChangedIssueIT extends FtpServerTestSupport
 
         oneExchangeDone.matches(5, TimeUnit.SECONDS);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         getMockEndpoint("mock:file").expectedBodiesReceived("Hello World Again");
 
         template.sendBodyAndHeader(endpoint, "Hello World Again", Exchange.FILE_NAME, "hello.txt");

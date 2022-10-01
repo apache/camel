@@ -34,7 +34,7 @@ public class JettyLongestContextPathMatchTest extends BaseJettyTest {
         template.sendBody("http://localhost:{{port}}/myapp/aaa", null);
         MockEndpoint.assertIsSatisfied(context);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         getMockEndpoint("mock:aaa").expectedMessageCount(1);
         getMockEndpoint("mock:bbb").expectedMessageCount(0);
@@ -43,7 +43,7 @@ public class JettyLongestContextPathMatchTest extends BaseJettyTest {
         template.sendBody("http://localhost:{{port}}/myapp/aaa/ccc", null);
         MockEndpoint.assertIsSatisfied(context);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         getMockEndpoint("mock:aaa").expectedMessageCount(0);
         getMockEndpoint("mock:bbb").expectedMessageCount(1);
@@ -52,7 +52,7 @@ public class JettyLongestContextPathMatchTest extends BaseJettyTest {
         template.sendBody("http://localhost:{{port}}/myapp/aaa/bbb", null);
         MockEndpoint.assertIsSatisfied(context);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         getMockEndpoint("mock:aaa").expectedMessageCount(0);
         getMockEndpoint("mock:bbb").expectedMessageCount(1);
@@ -61,7 +61,7 @@ public class JettyLongestContextPathMatchTest extends BaseJettyTest {
         template.sendBody("http://localhost:{{port}}/myapp/aaa/bbb/foo", null);
         MockEndpoint.assertIsSatisfied(context);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         getMockEndpoint("mock:aaa").expectedMessageCount(0);
         getMockEndpoint("mock:bbb").expectedMessageCount(0);
@@ -70,7 +70,7 @@ public class JettyLongestContextPathMatchTest extends BaseJettyTest {
         template.sendBody("http://localhost:{{port}}/myapp/aaa/bbb/ccc/", null);
         MockEndpoint.assertIsSatisfied(context);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         getMockEndpoint("mock:aaa").expectedMessageCount(0);
         getMockEndpoint("mock:bbb").expectedMessageCount(0);
@@ -79,7 +79,7 @@ public class JettyLongestContextPathMatchTest extends BaseJettyTest {
         template.sendBody("http://localhost:{{port}}/myapp/aaa/bbb/ccc/foo", null);
         MockEndpoint.assertIsSatisfied(context);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         getMockEndpoint("mock:aaa").expectedMessageCount(0);
         getMockEndpoint("mock:bbb").expectedMessageCount(0);

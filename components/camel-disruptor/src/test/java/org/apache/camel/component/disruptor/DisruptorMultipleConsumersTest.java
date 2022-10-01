@@ -52,7 +52,7 @@ public class DisruptorMultipleConsumersTest extends CamelTestSupport {
             }
 
         });
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         getMockEndpoint("mock:a").expectedMessageCount(20);
         getMockEndpoint("mock:b").expectedMessageCount(20);
@@ -63,7 +63,7 @@ public class DisruptorMultipleConsumersTest extends CamelTestSupport {
             template.sendBody("disruptor:bar", "Bye World");
         }
         MockEndpoint.assertIsSatisfied(context);
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         context.getRouteController().suspendRoute("testRoute");
         getMockEndpoint("mock:a").expectedMessageCount(20);

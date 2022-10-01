@@ -120,7 +120,7 @@ public class PulsarConsumerPatternInIT extends PulsarITSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         // now switch to patterns
         context.getRouteController().stopRoute("one");

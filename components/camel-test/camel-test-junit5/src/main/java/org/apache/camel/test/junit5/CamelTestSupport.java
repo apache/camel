@@ -367,7 +367,7 @@ public abstract class CamelTestSupport
                 LOG.debug("Reset between test methods");
                 // and in between tests we must do IoC and reset mocks
                 postProcessTest();
-                resetMocks();
+                MockEndpoint.resetMocks(context);
             }
         } else {
             // test is per test so always setup
@@ -980,13 +980,6 @@ public abstract class CamelTestSupport
         Language language = context.resolveLanguage(languageName);
         assertNotNull(language, "Nog language found for name: " + languageName);
         return language;
-    }
-
-    /**
-     * Reset all Mock endpoints.
-     */
-    protected void resetMocks() {
-        MockEndpoint.resetMocks(context);
     }
 
     protected void assertValidContext(CamelContext context) {

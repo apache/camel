@@ -36,7 +36,7 @@ public class JmsSuspendResumeTest extends AbstractPersistentJMSTest {
 
         context.getRouteController().suspendRoute("JmsSuspendResumeTest");
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         mock.expectedMessageCount(0);
 
         // sleep a bit to ensure its properly suspended
@@ -47,7 +47,7 @@ public class JmsSuspendResumeTest extends AbstractPersistentJMSTest {
 
         MockEndpoint.assertIsSatisfied(context, 1, TimeUnit.SECONDS);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         mock.expectedBodiesReceived("Bye World");
 
         context.getRouteController().resumeRoute("JmsSuspendResumeTest");

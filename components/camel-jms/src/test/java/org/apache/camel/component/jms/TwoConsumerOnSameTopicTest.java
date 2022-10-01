@@ -69,7 +69,7 @@ public class TwoConsumerOnSameTopicTest extends AbstractPersistentJMSTest {
             context.getRouteController().stopRoute("a");
 
             // send new message should go to B only
-            resetMocks();
+            MockEndpoint.resetMocks(context);
 
             getMockEndpoint("mock:a").expectedMessageCount(0);
             getMockEndpoint("mock:b").expectedBodiesReceived("Bye World");
@@ -79,7 +79,7 @@ public class TwoConsumerOnSameTopicTest extends AbstractPersistentJMSTest {
             MockEndpoint.assertIsSatisfied(context);
 
             // send new message should go to both A and B
-            resetMocks();
+            MockEndpoint.resetMocks(context);
 
             // now start route A
             context.getRouteController().startRoute("a");
@@ -99,7 +99,7 @@ public class TwoConsumerOnSameTopicTest extends AbstractPersistentJMSTest {
             assertTrue(context.removeRoute("a"));
 
             // send new message should go to B only
-            resetMocks();
+            MockEndpoint.resetMocks(context);
 
             getMockEndpoint("mock:a").expectedMessageCount(0);
             getMockEndpoint("mock:b").expectedBodiesReceived("Bye World");

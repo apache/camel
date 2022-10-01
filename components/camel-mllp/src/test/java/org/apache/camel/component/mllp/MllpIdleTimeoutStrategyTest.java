@@ -141,7 +141,7 @@ public class MllpIdleTimeoutStrategyTest extends CamelTestSupport {
 
     @BeforeEach
     public void setupMock() {
-        resetMocks();
+        MockEndpoint.resetMocks(context);
     }
 
     private void sendHl7Message(ProducerTemplate template) throws Exception {

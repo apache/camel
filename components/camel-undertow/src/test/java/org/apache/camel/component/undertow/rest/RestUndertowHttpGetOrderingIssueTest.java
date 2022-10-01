@@ -32,14 +32,14 @@ public class RestUndertowHttpGetOrderingIssueTest extends BaseUndertowTest {
         assertEquals("Route without name", out);
         MockEndpoint.assertIsSatisfied(context);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         getMockEndpoint("mock:pippo").expectedMessageCount(1);
         out = template.requestBody("undertow:http://localhost:{{port}}/Donald", null, String.class);
         assertEquals("Route with name: Donald", out);
         MockEndpoint.assertIsSatisfied(context);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         out = template.requestBody("undertow:http://localhost:{{port}}/bar", null, String.class);

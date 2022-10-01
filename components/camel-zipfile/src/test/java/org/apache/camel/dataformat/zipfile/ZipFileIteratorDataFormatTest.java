@@ -37,7 +37,7 @@ public class ZipFileIteratorDataFormatTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         // unzip the file
         getMockEndpoint("mock:unzip").expectedBodiesReceived("ABCDEF1234567890");

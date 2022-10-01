@@ -86,7 +86,7 @@ public class DisruptorBufferingTest extends CamelTestSupport {
         mockEndpoint.expectedMessageCount(3);
         mockEndpoint.assertIsSatisfied();
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         template.sendBody("disruptor:foo", "D");
         template.sendBody("disruptor:foo", "E");
         template.sendBody("disruptor:foo", "F");

@@ -43,7 +43,7 @@ public class NettyHttpTwoRoutesStopOneRouteTest extends BaseNettyTest {
         // stop foo route
         context.getRouteController().stopRoute("foo");
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         getMockEndpoint("mock:foo").expectedMessageCount(0);
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello Camel");

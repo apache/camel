@@ -123,7 +123,7 @@ public class RouteWatcherReloadStrategyTest extends CamelTestSupport {
         template.sendBody("direct:bar", "Hello World");
         MockEndpoint.assertIsSatisfied(context);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         LOG.info("Copying file to target/dummy");
 
@@ -183,7 +183,7 @@ public class RouteWatcherReloadStrategyTest extends CamelTestSupport {
         template.sendBody("direct:bar", "Hello World");
         MockEndpoint.assertIsSatisfied(context);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         // now update the file
         LOG.info("Updating file in target/dummy");

@@ -45,7 +45,7 @@ public class JmsInOnlyDisableTimeToLiveTest extends AbstractJMSTest {
         // wait after the msg has expired
         Thread.sleep(2500);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         getMockEndpoint("mock:end").expectedMessageCount(0);
 
         cool.someBusinessLogic();
@@ -72,7 +72,7 @@ public class JmsInOnlyDisableTimeToLiveTest extends AbstractJMSTest {
         // wait after the msg has expired
         Thread.sleep(2500);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         getMockEndpoint("mock:end").expectedBodiesReceived("Hello World 2");
 
         cool.someBusinessLogic();

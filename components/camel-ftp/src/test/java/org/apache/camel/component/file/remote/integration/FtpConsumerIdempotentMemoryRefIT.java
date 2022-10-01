@@ -66,7 +66,7 @@ public class FtpConsumerIdempotentMemoryRefIT extends FtpServerTestSupport {
         assertTrue(repo.contains("d.txt"));
         assertTrue(repo.contains("e.txt"));
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         notify = new NotifyBuilder(context).whenDone(2).create();
 
         getMockEndpoint("mock:result").expectedMessageCount(2);
