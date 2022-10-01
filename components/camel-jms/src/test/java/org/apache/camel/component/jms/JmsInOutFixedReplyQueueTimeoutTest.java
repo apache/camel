@@ -23,6 +23,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,7 +49,7 @@ public class JmsInOutFixedReplyQueueTimeoutTest extends AbstractJMSTest {
         String out = template.requestBody("direct:JmsInOutFixedReplyQueueTimeoutTest", "Camel", String.class);
         assertEquals("Bye Camel", out);
 
-        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Test
@@ -60,7 +61,7 @@ public class JmsInOutFixedReplyQueueTimeoutTest extends AbstractJMSTest {
                 "Should have thrown exception");
 
         assertIsInstanceOf(ExchangeTimedOutException.class, ex.getCause());
-        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Override

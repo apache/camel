@@ -22,6 +22,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
@@ -55,7 +56,7 @@ public class ManualFromQueueManualTest extends CamelTestSupport {
     public void testConsume() throws Exception {
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(3);
 
-        assertMockEndpointsSatisfied(1, TimeUnit.MINUTES);
+        MockEndpoint.assertIsSatisfied(context, 1, TimeUnit.MINUTES);
     }
 
     @Override

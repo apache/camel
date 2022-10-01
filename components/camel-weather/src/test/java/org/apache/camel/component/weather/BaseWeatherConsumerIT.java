@@ -51,7 +51,7 @@ public abstract class BaseWeatherConsumerIT extends CamelTestSupport {
         mock.expectedMessageCount(1);
 
         // give the route a bit time to start and fetch the weather info
-        assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
 
         Exchange exchange = mock.getExchanges().get(0);
         assertNotNull(exchange);

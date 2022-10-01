@@ -149,7 +149,7 @@ public class MllpIdleTimeoutStrategyTest extends CamelTestSupport {
         // Need to send one message to get the connection established
         template.sendBody(Hl7TestMessageGenerator.generateMessage());
         Thread.sleep(IDLE_TIMEOUT * 3);
-        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
     }
 
     @Test

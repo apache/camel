@@ -45,7 +45,7 @@ public class JmsSuspendResumeTest extends AbstractPersistentJMSTest {
 
         template.sendBody("activemq:queue:JmsSuspendResumeTest", "Bye World");
 
-        assertMockEndpointsSatisfied(1, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 1, TimeUnit.SECONDS);
 
         resetMocks();
         mock.expectedBodiesReceived("Bye World");

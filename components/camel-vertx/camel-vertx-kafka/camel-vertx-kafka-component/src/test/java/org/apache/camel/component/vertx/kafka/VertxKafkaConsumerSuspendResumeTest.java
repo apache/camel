@@ -95,7 +95,7 @@ public class VertxKafkaConsumerSuspendResumeTest extends BaseEmbeddedKafkaTest {
         }
 
         getMockEndpoint("mock:result").setResultMinimumWaitTime(1000);
-        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
 
         resetMocks();
         getMockEndpoint("mock:result").expectedMessageCount(7);

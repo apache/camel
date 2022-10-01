@@ -56,7 +56,7 @@ public class JmsBatchResequencerJMSPriorityTest extends AbstractJMSTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("G", "A", "B", "E", "H", "C", "D", "F");
 
-        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
     }
 
     @Override

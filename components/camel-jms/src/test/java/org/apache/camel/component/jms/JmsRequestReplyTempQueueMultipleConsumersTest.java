@@ -82,7 +82,7 @@ public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupp
             });
         }
 
-        assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
     }
 
     @Override
