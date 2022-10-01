@@ -79,7 +79,7 @@ public class ProducerBatchTest extends CamelTestSupport {
 
         template.requestBody("direct:query", batchParams);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getExchanges().get(0);
 

@@ -23,6 +23,7 @@ import com.pubnub.api.models.consumer.presence.PNGetStateResult;
 import com.pubnub.api.models.consumer.presence.PNSetStateResult;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.pubnub.PubNubConstants;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
@@ -54,7 +55,7 @@ public class PubNubStateExample extends CamelTestSupport {
         headers.put(PubNubConstants.OPERATION, "GETSTATE");
         PNGetStateResult getStateResult = template.requestBodyAndHeader("direct:publish", null, PubNubConstants.OPERATION,
                 "GETSTATE", PNGetStateResult.class);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEquals("preben", getStateResult.getStateByUUID().get("iot").getAsJsonObject().get("name").getAsString());
     }
 

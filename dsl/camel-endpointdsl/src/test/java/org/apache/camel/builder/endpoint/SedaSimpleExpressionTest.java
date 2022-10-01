@@ -47,7 +47,7 @@ public class SedaSimpleExpressionTest extends BaseEndpointDslTest {
 
         template.sendBodyAndHeader("direct:start", "Hello World", "mySize", 5);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertSame(result, resultEndpoint);
     }
 }

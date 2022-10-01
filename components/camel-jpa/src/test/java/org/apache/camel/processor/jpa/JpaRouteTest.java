@@ -44,7 +44,7 @@ public class JpaRouteTest extends AbstractJpaTest {
 
         template.sendBody("direct:start", new SendEmail("someone@somewhere.org"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEntityInDB(1);
     }
 

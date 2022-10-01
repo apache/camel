@@ -19,6 +19,7 @@ package org.apache.camel.component.jetty.async;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -45,7 +46,7 @@ public class JettyAsyncThrottleTest extends BaseJettyTest {
         template.asyncRequestBody("http://localhost:{{port}}/myservice", null);
         template.asyncRequestBody("http://localhost:{{port}}/myservice", null);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         int size = getMockEndpoint("mock:result").getReceivedExchanges().size();
 
         for (int i = 0; i < size; i++) {

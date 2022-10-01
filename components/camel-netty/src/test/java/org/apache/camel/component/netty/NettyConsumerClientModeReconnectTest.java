@@ -70,7 +70,7 @@ public class NettyConsumerClientModeReconnectTest extends BaseNettyTest {
             LOG.info(">>> starting Netty server");
             startNettyServer();
 
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
             LOG.info(">>> routing done");
 
             Thread.sleep(500);

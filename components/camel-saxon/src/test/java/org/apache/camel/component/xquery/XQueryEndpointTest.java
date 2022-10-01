@@ -37,7 +37,7 @@ public class XQueryEndpointTest extends CamelSpringTestSupport {
         template.sendBody("direct:start",
                 "<mail><subject>Hey</subject><body>Hello world!</body></mail>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<Exchange> list = endpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);

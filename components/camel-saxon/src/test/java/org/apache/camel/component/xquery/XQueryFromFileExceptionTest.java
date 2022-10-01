@@ -20,6 +20,7 @@ import java.nio.file.Path;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -43,7 +44,7 @@ public class XQueryFromFileExceptionTest extends CamelTestSupport {
                       + "<lastName>Strachan</lastName><city>London</city></person>";
         template.sendBodyAndHeader(fileUri(testDirectory), body, Exchange.FILE_NAME, "hello.xml");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Thread.sleep(500);
 
@@ -61,7 +62,7 @@ public class XQueryFromFileExceptionTest extends CamelTestSupport {
                       + "<lastName>Strachan</lastName><city>London</city></person";
         template.sendBodyAndHeader(fileUri(testDirectory), body, Exchange.FILE_NAME, "hello2.xml");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Thread.sleep(500);
 

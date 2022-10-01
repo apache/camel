@@ -24,6 +24,7 @@ import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.apache.camel.component.undertow.UndertowHttpsSpringTest;
 import org.apache.camel.support.jsse.KeyManagersParameters;
@@ -94,7 +95,7 @@ public class UndertowWssRouteTest extends BaseUndertowTest {
         testClient.sendTextMessage("Hello from WS client");
         assertTrue(testClient.await(10));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals(10, testClient.getReceived().size());
         for (int i = 0; i < 10; i++) {

@@ -49,7 +49,7 @@ public class FtpPollEnrichConsumeWithDisconnectAndDeleteIT extends FtpServerTest
         ProducerTemplate triggerTemplate = context.createProducerTemplate();
         triggerTemplate.sendBody("vm:trigger", "");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         File file = service.ftpFile("poll/hello.txt").toFile();
         await().atMost(3, TimeUnit.SECONDS)

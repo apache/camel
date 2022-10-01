@@ -40,7 +40,7 @@ public class HttpProducerSOTimeoutTest extends BaseJettyTest {
         String out = template.requestBody("http://localhost:{{port}}/myservice?socketTimeout=5000", null, String.class);
         assertEquals("Bye World", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -56,7 +56,7 @@ public class HttpProducerSOTimeoutTest extends BaseJettyTest {
             assertIsInstanceOf(SocketTimeoutException.class, e.getCause());
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

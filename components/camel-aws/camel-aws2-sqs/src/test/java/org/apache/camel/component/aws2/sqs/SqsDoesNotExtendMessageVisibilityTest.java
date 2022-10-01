@@ -57,7 +57,8 @@ public class SqsDoesNotExtendMessageVisibilityTest extends CamelTestSupport {
         message.receiptHandle(RECEIPT_HANDLE);
         this.client.messages.add(message.build());
 
-        assertMockEndpointsSatisfied(); // Wait for message to arrive.
+        // Wait for message to arrive.
+        MockEndpoint.assertIsSatisfied(context);
         assertEquals(0, this.client.changeMessageVisibilityRequests.size());
     }
 

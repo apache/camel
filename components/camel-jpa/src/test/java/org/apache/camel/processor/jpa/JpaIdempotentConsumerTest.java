@@ -101,7 +101,7 @@ public class JpaIdempotentConsumerTest extends AbstractJpaTest {
         sendMessage("1", "one");
         sendMessage("3", "three");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // all 3 messages should be in jpa repo
         Set<String> ids = new HashSet<>();
@@ -151,7 +151,7 @@ public class JpaIdempotentConsumerTest extends AbstractJpaTest {
         sendMessage("1", "one");
         sendMessage("3", "three");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // only message 1 and 3 should be in jpa repo
         Set<String> ids = new HashSet<>();

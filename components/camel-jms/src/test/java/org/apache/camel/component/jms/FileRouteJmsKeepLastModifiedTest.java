@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,7 +49,7 @@ public class FileRouteJmsKeepLastModifiedTest extends AbstractJMSTest {
 
     @Test
     public void testKeepLastModified() throws Exception {
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Awaitility.await().atMost(5, TimeUnit.SECONDS).until(inbox::exists);
 
         File outbox = new File("target/FileRouteJmsKeepLastModifiedTest/outbox/hello.txt");

@@ -44,7 +44,7 @@ public class MailDisconnectTest extends CamelTestSupport {
         Thread.sleep(500);
         template.sendBodyAndHeader("smtp://jones@localhost", "E Bla bla", "Subject", "Hello E");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -17,6 +17,7 @@
 package org.apache.camel.component.activemq;
 
 import org.apache.camel.component.activemq.support.ActiveMQSpringTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,6 +39,6 @@ public class ActiveMQComponentUserNamePasswordTest extends ActiveMQSpringTestSup
 
         template.sendBody("activemq:queue:foo", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 }

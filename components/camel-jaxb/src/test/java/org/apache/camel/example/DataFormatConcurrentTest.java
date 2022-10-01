@@ -155,7 +155,7 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
             });
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     public void unmarshal(final CountDownLatch latch) throws Exception {

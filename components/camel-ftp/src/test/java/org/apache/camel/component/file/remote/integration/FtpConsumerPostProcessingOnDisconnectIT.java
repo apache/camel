@@ -51,7 +51,7 @@ public class FtpConsumerPostProcessingOnDisconnectIT extends FtpServerTestSuppor
         context.getRouteController().startRoute("foo");
 
         // Check that expectations are satisfied
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // File is deleted
         await().atMost(250, TimeUnit.MILLISECONDS)
@@ -76,7 +76,7 @@ public class FtpConsumerPostProcessingOnDisconnectIT extends FtpServerTestSuppor
         context.getRouteController().startRoute("bar");
 
         // Check that expectations are satisfied
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

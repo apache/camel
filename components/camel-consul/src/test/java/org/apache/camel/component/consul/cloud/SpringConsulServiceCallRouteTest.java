@@ -27,6 +27,7 @@ import com.orbitz.consul.model.agent.Registration;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.cloud.DefaultServiceCallProcessor;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.FilterProcessor;
@@ -96,7 +97,7 @@ public abstract class SpringConsulServiceCallRouteTest extends CamelSpringTestSu
         template.sendBody("direct:start", "service-2");
         template.sendBody("direct:start", "service-2");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     // ************************************

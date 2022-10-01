@@ -51,7 +51,7 @@ public class EhcacheConsumerTest extends EhcacheTestSupport {
         cache.put(key, values[0]);
         cache.put(key, values[1]);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

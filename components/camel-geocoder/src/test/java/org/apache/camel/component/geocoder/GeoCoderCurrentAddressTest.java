@@ -33,7 +33,7 @@ public class GeoCoderCurrentAddressTest extends GeoCoderApiKeyTestBase {
 
         template.sendBody("direct:start", "Hello");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

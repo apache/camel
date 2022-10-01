@@ -87,7 +87,7 @@ public class EventbridgePutRuleManualIT extends CamelTestSupport {
                 exchange.getIn().setHeader(EventbridgeConstants.TARGETS, targets);
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
     }
 

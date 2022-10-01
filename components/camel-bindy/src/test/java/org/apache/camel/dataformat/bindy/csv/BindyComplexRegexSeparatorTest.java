@@ -43,7 +43,7 @@ public class BindyComplexRegexSeparatorTest extends CamelTestSupport {
 
         template.sendBody("direct:unmarshal", "header1,header2\n\"value1\",\"value,2\"");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Example body = mock.getReceivedExchanges().get(0).getIn().getBody(Example.class);
         assertEquals("value,2", body.field2);
     }

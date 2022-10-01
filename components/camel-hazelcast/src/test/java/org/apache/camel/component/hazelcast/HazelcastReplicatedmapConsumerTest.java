@@ -81,7 +81,7 @@ public class HazelcastReplicatedmapConsumerTest extends CamelTestSupport {
         out.expectedMessageCount(1);
         map.put("4711", "my-foo", 100, TimeUnit.MILLISECONDS);
         Awaitility.await().atMost(30000, TimeUnit.MILLISECONDS).untilAsserted(
-                () -> assertMockEndpointsSatisfied());
+                () -> MockEndpoint.assertIsSatisfied(context));
     }
 
     @Test

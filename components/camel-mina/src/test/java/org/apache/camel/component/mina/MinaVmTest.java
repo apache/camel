@@ -31,7 +31,7 @@ public class MinaVmTest extends BaseMinaTest {
         template.sendBodyAndHeader(String.format("mina:vm://localhost:%1$s?sync=false&minaLogger=true", getPort()), body,
                 "cheese", 123);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

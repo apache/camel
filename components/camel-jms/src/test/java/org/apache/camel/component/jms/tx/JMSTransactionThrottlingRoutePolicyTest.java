@@ -49,7 +49,7 @@ public class JMSTransactionThrottlingRoutePolicyTest extends CamelSpringTestSupp
             template.sendBody("activemq-sender:queue:JMSTransactionThrottlingRoutePolicyTest", "Message " + i);
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

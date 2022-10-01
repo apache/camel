@@ -57,7 +57,7 @@ public class ZipAggregationStrategyEmptyFileTest extends CamelTestSupport {
         template.sendBody("file:target/foo", "Bye");
         template.sendBody("file:target/foo", "Howdy");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         File[] files = new File(TEST_DIR).listFiles();
         assertNotNull(files);

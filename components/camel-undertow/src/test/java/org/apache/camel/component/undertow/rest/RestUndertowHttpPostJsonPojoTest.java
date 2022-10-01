@@ -36,7 +36,7 @@ public class RestUndertowHttpPostJsonPojoTest extends BaseUndertowTest {
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
         template.sendBody("undertow:http://localhost:{{port}}/users/new", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         UserPojo user = mock.getReceivedExchanges().get(0).getIn().getBody(UserPojo.class);
         assertNotNull(user);

@@ -64,7 +64,7 @@ public class JaxbMarshalNamespacePrefixMapperTest extends CamelTestSupport {
 
         template.sendBody("direct:start", order);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         String xml = mock.getExchanges().get(0).getIn().getBody(String.class);
         LOG.info(xml);

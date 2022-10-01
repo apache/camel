@@ -19,6 +19,7 @@ package org.apache.camel.component.netty;
 import io.netty.channel.ChannelHandler;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
 
@@ -45,7 +46,7 @@ public class NettyCustomCodecTest extends BaseNettyTest {
 
         template.sendBody(uri, data);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         byte[] mockData = getMockEndpoint("mock:input").getReceivedExchanges().get(0).getIn().getBody(byte[].class);
         ObjectHelper.equalByteArray(data, mockData);

@@ -41,7 +41,7 @@ public class AtlasMapJsonToJavaTest extends CamelSpringTestSupport {
         final ProducerTemplate producerTemplate = context.createProducerTemplate();
         producerTemplate.sendBody("direct:start", new ByteArrayInputStream("{\"field1\":\"value1\"}".getBytes()));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         final Object body = result.getExchanges().get(0).getIn().getBody();
         assertEquals(Pojo.class, body.getClass());
         assertEquals("value1", ((Pojo) body).getField1());

@@ -18,6 +18,7 @@ package org.apache.camel.component.jms.tuning;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -55,7 +56,7 @@ public class PerformanceRouteTest extends AbstractJMSTest {
             template.sendBodyAndHeader("activemq:queue:inbox", "Message " + i, "type", type);
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         long delta = System.currentTimeMillis() - start;
         LOG.info("RoutePerformanceTest: Sent: {} Took: {} ms", size, delta);

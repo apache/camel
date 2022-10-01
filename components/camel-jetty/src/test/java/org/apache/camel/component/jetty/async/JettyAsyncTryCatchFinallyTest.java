@@ -18,6 +18,7 @@ package org.apache.camel.component.jetty.async;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,7 +35,7 @@ public class JettyAsyncTryCatchFinallyTest extends BaseJettyTest {
         String reply = template.requestBody("http://localhost:{{port}}/myservice", "Hello Camel", String.class);
         assertEquals("Bye World", reply);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

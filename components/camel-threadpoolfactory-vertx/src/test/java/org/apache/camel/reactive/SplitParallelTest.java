@@ -19,6 +19,7 @@ package org.apache.camel.reactive;
 import io.vertx.core.Vertx;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.reactive.vertx.VertXThreadPoolFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -46,7 +47,7 @@ public class SplitParallelTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "A,B,C,D,E,F,G,H,I,J");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         vertx.close();
     }

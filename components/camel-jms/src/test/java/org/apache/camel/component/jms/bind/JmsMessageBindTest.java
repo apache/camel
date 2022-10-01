@@ -44,7 +44,7 @@ public class JmsMessageBindTest extends CamelSpringTestSupport {
         template.sendBodyAndHeaders("activemq:Test.BindingQueue", "SomeBody", headers);
 
         // lets wait for the method to be invoked
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // now lets test that the bean is correct
         MyBean bean = getMandatoryBean(MyBean.class, "myBean");

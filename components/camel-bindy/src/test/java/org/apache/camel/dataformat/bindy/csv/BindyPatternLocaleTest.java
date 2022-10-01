@@ -51,7 +51,7 @@ public class BindyPatternLocaleTest extends CamelTestSupport {
         unity.setReceiver(10f);
         template.sendBody("direct:marshal", unity);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -65,7 +65,7 @@ public class BindyPatternLocaleTest extends CamelTestSupport {
         unity.setReceiver(1f);
         template.sendBody("direct:marshal", unity);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -79,7 +79,7 @@ public class BindyPatternLocaleTest extends CamelTestSupport {
         unity.setReceiver(0f);
         template.sendBody("direct:marshal", unity);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

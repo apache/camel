@@ -62,7 +62,7 @@ public class FromFtpKeepLastModifiedIT extends FtpServerTestSupport {
         mock.expectedFileExists(testDirectory.resolve("hello.txt"));
         mock.message(0).header(Exchange.FILE_LAST_MODIFIED).isNotNull();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         long t1 = mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_LAST_MODIFIED, long.class);
         long t2 = testDirectory.resolve("hello.txt").toFile().lastModified();
@@ -85,7 +85,7 @@ public class FromFtpKeepLastModifiedIT extends FtpServerTestSupport {
         mock.expectedFileExists(testDirectory.resolve("hello.txt"));
         mock.message(0).header(Exchange.FILE_LAST_MODIFIED).isNotNull();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         long t1 = mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_LAST_MODIFIED, long.class);
         long t2 = testDirectory.resolve("hello.txt").toFile().lastModified();
@@ -108,7 +108,7 @@ public class FromFtpKeepLastModifiedIT extends FtpServerTestSupport {
         mock.expectedFileExists(testDirectory.resolve("hello.txt"));
         mock.message(0).header(Exchange.FILE_LAST_MODIFIED).isNotNull();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         long t1 = mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_LAST_MODIFIED, long.class);
         long t2 = testDirectory.resolve("hello.txt").toFile().lastModified();

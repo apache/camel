@@ -68,7 +68,7 @@ public class RawMailMessageTest extends CamelTestSupport {
 
         getMockEndpoint("mock:mail").expectedMessageCount(1);
         template.sendBodyAndHeaders("smtp://davsclaus@apache.org", body, map);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = getMockEndpoint("mock:mail").getReceivedExchanges().get(0);
 
@@ -99,7 +99,7 @@ public class RawMailMessageTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).body().isNotNull();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Message mailMessage = mock.getExchanges().get(0).getIn().getBody(Message.class);
         assertNotNull("mail subject should not be null", mailMessage.getSubject());
@@ -128,7 +128,7 @@ public class RawMailMessageTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).body().isNotNull();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         String body = mock.getExchanges().get(0).getIn().getBody(String.class);
         MimeMessage mm = new MimeMessage(null, new ByteArrayInputStream(body.getBytes()));

@@ -51,7 +51,7 @@ public class QuartzManuallyTriggerJobTest extends BaseQuartzTest {
 
         // trigger job manually
         scheduler.triggerJob(jobKeys.get(0), jobDataMap);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

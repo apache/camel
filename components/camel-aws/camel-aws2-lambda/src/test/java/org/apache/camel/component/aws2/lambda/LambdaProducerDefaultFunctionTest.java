@@ -45,7 +45,7 @@ public class LambdaProducerDefaultFunctionTest extends CamelTestSupport {
                 exchange.getIn().setBody("{\"name\":\"Camel\"}");
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertNotNull(exchange.getMessage().getBody(String.class));
         assertEquals("{\"Hello\":\"Camel\"}", exchange.getMessage().getBody(String.class));

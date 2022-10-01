@@ -35,7 +35,7 @@ public class JettySteveIssueTest extends BaseJettyTest {
 
         template.requestBody(serverUri + "?x=foo", null, Object.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

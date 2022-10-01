@@ -63,7 +63,7 @@ public class MultipleJpaRouteEndpointTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "start");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         verify(em1).merge(value1);
         verify(em2).merge(value2);
     }

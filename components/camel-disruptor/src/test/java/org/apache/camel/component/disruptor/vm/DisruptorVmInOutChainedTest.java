@@ -34,7 +34,7 @@ public class DisruptorVmInOutChainedTest extends AbstractVmTestSupport {
         String reply = template2.requestBody("disruptor-vm:a", "start", String.class);
         assertEquals("start-a-b-c", reply);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

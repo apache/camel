@@ -39,7 +39,7 @@ public class JdbcProducerOutputTypeSelectListTest extends AbstractJdbcTestSuppor
 
         template.sendBody("direct:start", "select * from customer");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<?> received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
         assertEquals(3, received.size());

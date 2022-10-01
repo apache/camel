@@ -72,7 +72,7 @@ public class LevelDBAggregateLoadAndRecoverTest extends LevelDBTestSupport {
 
         LOG.info("Sending all " + SIZE + " message done. Now waiting for aggregation to complete.");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         int recovered = 0;
         for (Exchange exchange : mock.getReceivedExchanges()) {

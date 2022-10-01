@@ -115,7 +115,7 @@ public class SpringXmlSignatureTest extends XmlSignatureTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         sendBody("direct:xades", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Message message = getMessage(mock);
         byte[] body = message.getBody(byte[].class);

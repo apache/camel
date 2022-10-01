@@ -17,6 +17,7 @@
 package org.apache.camel.builder.endpoint;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class EndpointRoutesConfigurationTest extends BaseEndpointDslTest {
@@ -28,7 +29,7 @@ public class EndpointRoutesConfigurationTest extends BaseEndpointDslTest {
         template.sendBody("direct:start", "Hello World");
         template.sendBody("direct:start2", "Bye World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

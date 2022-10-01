@@ -29,7 +29,7 @@ public class DisruptorConcurrentConsumersTest extends CamelTestSupport {
 
         template.sendBody("disruptor:foo?concurrentConsumers=5", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

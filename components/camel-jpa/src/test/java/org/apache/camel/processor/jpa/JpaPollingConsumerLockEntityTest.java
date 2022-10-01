@@ -62,7 +62,7 @@ public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
         template.asyncRequestBodyAndHeaders("direct:locked", "message", headers);
         template.asyncRequestBodyAndHeaders("direct:locked", "message", headers);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -81,7 +81,7 @@ public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
         template.asyncRequestBodyAndHeaders("direct:not-locked", "message", headers);
         template.asyncRequestBodyAndHeaders("direct:not-locked", "message", headers);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

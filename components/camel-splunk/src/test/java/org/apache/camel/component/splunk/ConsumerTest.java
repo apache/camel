@@ -57,7 +57,7 @@ public class ConsumerTest extends SplunkMockTestSupport {
         InputStream stream = ConsumerTest.class.getResourceAsStream("/resultsreader_test_data.json");
         when(jobMock.getResults(any())).thenReturn(stream);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         SplunkEvent received = searchMock.getReceivedExchanges().get(0).getIn().getBody(SplunkEvent.class);
         assertNotNull(received);
         Map<String, String> data = received.getEventData();

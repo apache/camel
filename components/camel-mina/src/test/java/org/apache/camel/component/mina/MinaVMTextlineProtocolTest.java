@@ -31,7 +31,7 @@ public class MinaVMTextlineProtocolTest extends BaseMinaTest {
         template.sendBodyAndHeader(String.format("mina:vm://localhost:%1$s?textline=true&sync=false", getPort()), body,
                 "cheese", 123);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

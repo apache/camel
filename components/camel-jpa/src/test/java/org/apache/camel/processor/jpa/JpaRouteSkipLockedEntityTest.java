@@ -54,7 +54,7 @@ public class JpaRouteSkipLockedEntityTest extends AbstractJpaTest {
         this.context.getRouteController().startRoute("second");
         this.context.getRouteController().startRoute("first");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         //force test to wait till finished
         this.context.getRouteController().stopRoute("first");

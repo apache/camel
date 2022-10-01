@@ -49,7 +49,7 @@ public class HazelcastSedaFIFOTest extends CamelTestSupport {
             template.sendBody("hazelcast-seda:foo", "test" + i);
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         mock.reset();
     }
 

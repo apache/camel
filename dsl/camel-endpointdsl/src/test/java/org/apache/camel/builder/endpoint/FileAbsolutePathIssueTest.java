@@ -39,7 +39,7 @@ public class FileAbsolutePathIssueTest extends BaseEndpointDslTest {
 
         template.sendBodyAndHeader("file:" + start, "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

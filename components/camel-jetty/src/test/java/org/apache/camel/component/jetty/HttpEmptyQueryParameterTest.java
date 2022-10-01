@@ -17,6 +17,7 @@
 package org.apache.camel.component.jetty;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,14 +29,14 @@ public class HttpEmptyQueryParameterTest extends BaseJettyTest {
         getMockEndpoint("mock:input").expectedHeaderReceived("id", 123);
         String out = fluentTemplate.to("http://localhost:{{port}}/foo?id=123").request(String.class);
         assertEquals("Header: 123", out);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         resetMocks();
 
         getMockEndpoint("mock:input").expectedHeaderReceived("id", "");
         out = fluentTemplate.to("http://localhost:{{port}}/foo?id=").request(String.class);
         assertEquals("Header: ", out);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -53,7 +53,7 @@ class MinioComponentIT extends MinioIntegrationTestSupport {
             exchange.getIn().setBody("This is my bucket content.");
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertResultExchange(result.getExchanges().get(0));
         assertResultExchange(result.getExchanges().get(1));
@@ -71,7 +71,7 @@ class MinioComponentIT extends MinioIntegrationTestSupport {
             exchange1.getIn().setBody("This is my bucket content.");
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertResultExchange(result.getExchanges().get(0));
 

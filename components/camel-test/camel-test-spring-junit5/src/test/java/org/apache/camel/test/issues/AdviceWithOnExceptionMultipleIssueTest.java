@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -50,7 +51,7 @@ public class AdviceWithOnExceptionMultipleIssueTest extends CamelSpringTestSuppo
 
         getMockEndpoint("mock:resultA").expectedMessageCount(1);
         template.sendBody("direct:startA", "a trigger");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -65,7 +66,7 @@ public class AdviceWithOnExceptionMultipleIssueTest extends CamelSpringTestSuppo
 
         getMockEndpoint("mock:resultA").expectedMessageCount(0);
         template.sendBody("direct:startA", "a trigger");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -92,7 +93,7 @@ public class AdviceWithOnExceptionMultipleIssueTest extends CamelSpringTestSuppo
 
         getMockEndpoint("mock:resultA").expectedMessageCount(0);
         template.sendBody("direct:startA", "a trigger");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

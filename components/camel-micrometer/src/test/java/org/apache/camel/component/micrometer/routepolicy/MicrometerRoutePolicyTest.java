@@ -47,7 +47,7 @@ public class MicrometerRoutePolicyTest extends AbstractMicrometerRoutePolicyTest
             }
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Timer fooTimer = meterRegistry.find(DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME).tag(ROUTE_ID_TAG, "foo").timer();
         assertEquals(count / 2, fooTimer.count());

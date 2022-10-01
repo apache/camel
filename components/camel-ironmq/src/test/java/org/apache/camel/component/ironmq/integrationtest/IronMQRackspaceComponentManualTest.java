@@ -43,7 +43,7 @@ public class IronMQRackspaceComponentManualTest extends CamelTestSupport {
         result.expectedBodiesReceived("some payload");
         template.sendBody("some payload");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         String id = result.getExchanges().get(0).getIn().getHeader("MESSAGE_ID", String.class);
         assertNotNull(id);
     }

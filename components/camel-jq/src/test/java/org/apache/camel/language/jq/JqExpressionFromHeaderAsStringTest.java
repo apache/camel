@@ -18,6 +18,7 @@ package org.apache.camel.language.jq;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class JqExpressionFromHeaderAsStringTest extends JqTestSupport {
@@ -42,6 +43,6 @@ public class JqExpressionFromHeaderAsStringTest extends JqTestSupport {
 
         template.sendBodyAndHeader("direct:start", null, "Content", node);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 }

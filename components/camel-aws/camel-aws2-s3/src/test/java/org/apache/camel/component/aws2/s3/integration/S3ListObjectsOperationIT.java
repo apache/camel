@@ -91,7 +91,7 @@ public class S3ListObjectsOperationIT extends Aws2S3Base {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

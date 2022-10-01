@@ -36,7 +36,7 @@ public class JacksonEmptyElementsAsNullTest extends CamelTestSupport {
         template.sendBody("direct:start", "<pojo><name/></pojo>");
         template.sendBody("direct:start", "<pojo></pojo>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Assertions.assertEquals("Jack", mock.getReceivedExchanges().get(0).getMessage().getBody(TestPojo.class).getName());
         // <name></name> and <name/> are NOT the same as empty string vs null
@@ -55,7 +55,7 @@ public class JacksonEmptyElementsAsNullTest extends CamelTestSupport {
         template.sendBody("direct:start2", "<pojo><name/></pojo>");
         template.sendBody("direct:start2", "<pojo></pojo>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Assertions.assertEquals("Jack", mock.getReceivedExchanges().get(0).getMessage().getBody(TestPojo.class).getName());
         // <name></name> and <name/> are both the same as an empty string

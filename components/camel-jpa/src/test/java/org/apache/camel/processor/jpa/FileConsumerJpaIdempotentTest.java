@@ -86,7 +86,7 @@ public class FileConsumerJpaIdempotentTest extends AbstractJpaTest {
 
         context.getRouteController().startRoute("foo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Thread.sleep(1000);
 
@@ -101,7 +101,7 @@ public class FileConsumerJpaIdempotentTest extends AbstractJpaTest {
 
         // should NOT consume the file again, let 2 secs pass to let the consumer try to consume it but it should not
         Thread.sleep(2000);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

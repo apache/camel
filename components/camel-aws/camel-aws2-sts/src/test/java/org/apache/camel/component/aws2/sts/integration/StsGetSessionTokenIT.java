@@ -49,7 +49,7 @@ public class StsGetSessionTokenIT extends Aws2StsBase {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEquals(1, result.getExchanges().size());
         assertNotNull(result.getExchanges().get(0).getIn().getBody(GetSessionTokenResponse.class).credentials().accessKeyId());
     }

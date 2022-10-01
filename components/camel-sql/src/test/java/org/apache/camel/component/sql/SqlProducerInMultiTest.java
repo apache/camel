@@ -68,7 +68,7 @@ public class SqlProducerInMultiTest extends CamelTestSupport {
         headers.put("licenses", new String[] { "ASF", "XXX", "YYY" });
         template.requestBodyAndHeaders("direct:query", "Hi there!", headers);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals(6, list.size());
@@ -103,7 +103,7 @@ public class SqlProducerInMultiTest extends CamelTestSupport {
 
         template.requestBodyAndHeaders("direct:query", "Hi there!", headers);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals(6, list.size());
@@ -137,7 +137,7 @@ public class SqlProducerInMultiTest extends CamelTestSupport {
         headers.put("licenses", "ASF,XXX,YYY");
         template.requestBodyAndHeaders("direct:query", "Hi there!", headers);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals(6, list.size());

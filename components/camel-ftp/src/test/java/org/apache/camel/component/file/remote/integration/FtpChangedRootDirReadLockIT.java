@@ -53,7 +53,7 @@ public class FtpChangedRootDirReadLockIT extends FtpServerTestSupport {
 
         writeSlowFile();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<String> lines = Files.readAllLines(testDirectory.resolve("slowfile.dat"));
         assertEquals(20, lines.size(), "There should be 20 lines in the file");

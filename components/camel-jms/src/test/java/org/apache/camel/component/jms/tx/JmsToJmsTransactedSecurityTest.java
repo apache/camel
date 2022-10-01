@@ -79,7 +79,7 @@ public class JmsToJmsTransactedSecurityTest extends CamelSpringTestSupport {
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
     }
 

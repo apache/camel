@@ -27,6 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.activemq.services.ActiveMQService;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -60,7 +61,7 @@ public class JmsSimpleRequestLateReplyTest extends AbstractJMSTest {
 
         Object body = template.requestBody(getQueueEndpointName(), "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals(expectedBody, body);
     }

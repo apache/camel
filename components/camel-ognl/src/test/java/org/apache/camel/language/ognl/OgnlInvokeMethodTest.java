@@ -36,7 +36,7 @@ public class OgnlInvokeMethodTest extends CamelTestSupport {
         Animal animal = new Animal("Tony the Tiger", 12);
         template.sendBody("direct:start", animal);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

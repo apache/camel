@@ -80,7 +80,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
 
         template.sendBody("direct:zipStreamCache", TEXT);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
         assertEquals(exchange.getIn().getMessageId() + ".zip", exchange.getIn().getHeader(FILE_NAME));
@@ -95,7 +95,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
 
         template.sendBody("direct:zip", TEXT);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
         assertEquals(exchange.getIn().getMessageId() + ".zip", exchange.getIn().getHeader(FILE_NAME));
@@ -109,7 +109,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("direct:zip", TEXT, FILE_NAME, "poem.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -119,7 +119,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("direct:zip", TEXT, FILE_NAME, "poems/poem.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -131,7 +131,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("direct:zip", TEXT, FILE_NAME, "poems/poem.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -141,7 +141,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
 
         template.sendBody("direct:unzip", getZippedText("file"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -179,7 +179,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
 
         template.sendBody("direct:zipAndUnzip", TEXT);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
         assertEquals(exchange.getIn().getMessageId(), exchange.getIn().getHeader(FILE_NAME));
@@ -198,7 +198,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
 
         template.sendBody("direct:zipToFile", TEXT);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // use builder to ensure the exchange is fully done before we check for file exists
         assertTrue(notify.matches(5, TimeUnit.SECONDS), "The exchange is not done in time.");
@@ -238,7 +238,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("direct:dslZip", TEXT, FILE_NAME, "poem.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -248,7 +248,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
 
         template.sendBody("direct:dslUnzip", getZippedText("test.txt"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test

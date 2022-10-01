@@ -62,7 +62,7 @@ public class JMXTXUseOriginalBodyTest extends CamelSpringTestSupport {
 
         start.sendBody("foo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -74,7 +74,7 @@ public class JMXTXUseOriginalBodyTest extends CamelSpringTestSupport {
 
         broken.sendBody("foo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     public static class FooBean {

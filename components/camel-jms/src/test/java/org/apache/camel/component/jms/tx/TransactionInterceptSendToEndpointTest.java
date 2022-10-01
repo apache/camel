@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jms.tx;
 
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -39,7 +40,7 @@ public class TransactionInterceptSendToEndpointTest extends CamelSpringTestSuppo
 
         template.sendBody("activemq:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

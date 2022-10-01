@@ -33,7 +33,7 @@ public class CoAPPingTest extends CoAPTestSupport {
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived(true);
         sender.sendBodyAndHeader("Hello", CoAPConstants.COAP_METHOD, CoAPConstants.METHOD_PING);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

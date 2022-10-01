@@ -54,7 +54,7 @@ public class SqsDeadletterWithClientRegistryLocalstackIT extends Aws2SQSBaseTest
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

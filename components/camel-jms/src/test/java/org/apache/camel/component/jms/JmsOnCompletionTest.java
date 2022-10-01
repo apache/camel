@@ -37,7 +37,7 @@ public class JmsOnCompletionTest extends AbstractJMSTest {
 
         template.sendBody("activemq:queue:JmsOnCompletionTest.start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -50,7 +50,7 @@ public class JmsOnCompletionTest extends AbstractJMSTest {
 
         template.sendBody("activemq:queue:JmsOnCompletionTest.start", "Kabom");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

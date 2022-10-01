@@ -34,7 +34,7 @@ public class SshComponentKnownHostEdDSATest extends SshComponentTestSupport {
 
         template.sendBody("direct:ssh", msg);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

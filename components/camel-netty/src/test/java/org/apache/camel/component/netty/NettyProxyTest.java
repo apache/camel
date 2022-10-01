@@ -17,6 +17,7 @@
 package org.apache.camel.component.netty;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -40,7 +41,7 @@ public class NettyProxyTest extends BaseNettyTest {
         Object body = template.requestBody("netty:tcp://localhost:" + port.getPort() + "?sync=true&textline=true", "Camel\n");
         assertEquals("Bye Camel", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

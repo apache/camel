@@ -43,7 +43,7 @@ public class FtpProducerAllowNullBodyFileAlreadyExistIT extends FtpServerTestSup
 
         template.sendBody("direct:appendTypeAppend", null);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -54,7 +54,7 @@ public class FtpProducerAllowNullBodyFileAlreadyExistIT extends FtpServerTestSup
 
         template.sendBody("direct:appendTypeOverride", null);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

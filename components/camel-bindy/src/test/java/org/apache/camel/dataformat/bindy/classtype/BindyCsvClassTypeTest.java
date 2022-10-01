@@ -22,6 +22,7 @@ import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.model.simple.oneclass.Order;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
@@ -43,7 +44,7 @@ public class BindyCsvClassTypeTest extends CamelTestSupport {
 
         template.sendBody("direct:in", generateOrder());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -54,7 +55,7 @@ public class BindyCsvClassTypeTest extends CamelTestSupport {
         String data = "1,B2,Keira,Knightley,ISIN,XX23456789,BUY,Share,400.25,EUR,14-01-2009,16-02-2010 23:21:59\r\n";
         template.sendBody("direct:out", data);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Order order = getMockEndpoint("mock:out").getReceivedExchanges().get(0).getIn().getBody(Order.class);
         assertEquals(1, order.getOrderNr());

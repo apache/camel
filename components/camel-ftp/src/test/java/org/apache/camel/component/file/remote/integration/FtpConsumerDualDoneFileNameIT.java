@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class FtpConsumerDualDoneFileNameIT extends FtpServerTestSupport {
@@ -37,7 +38,7 @@ public class FtpConsumerDualDoneFileNameIT extends FtpServerTestSupport {
         template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=${file:name}.ready", "Bye World", Exchange.FILE_NAME,
                 "bye.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test

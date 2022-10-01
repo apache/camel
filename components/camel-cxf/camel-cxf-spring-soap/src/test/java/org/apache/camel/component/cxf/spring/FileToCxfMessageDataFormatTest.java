@@ -81,7 +81,7 @@ public class FileToCxfMessageDataFormatTest extends CamelSpringTestSupport {
 
         template.sendBodyAndHeader("file:target/filetocxf", createBody(), Exchange.FILE_NAME, "payload.xml");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         String out = mock.getReceivedExchanges().get(0).getIn().getBody(String.class);
         assertNotNull(out);

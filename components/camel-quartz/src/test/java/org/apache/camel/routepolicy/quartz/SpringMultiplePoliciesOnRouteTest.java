@@ -16,6 +16,7 @@
  */
 package org.apache.camel.routepolicy.quartz;
 
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -36,7 +37,7 @@ public class SpringMultiplePoliciesOnRouteTest extends CamelSpringTestSupport {
             Thread.sleep(3);
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

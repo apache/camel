@@ -55,7 +55,7 @@ public class AdditionalMailPropertiesTest extends CamelTestSupport {
         mock.expectedBodiesReceived("Hello james how are you?");
         mock.expectedHeaderReceived("subject", "Hello");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

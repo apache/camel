@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,7 +35,7 @@ public class DisruptorVmWaitForTaskNewerTest extends AbstractVmTestSupport {
         // we do not wait for the response so we just get our own input back
         assertEquals("Hello World", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -53,7 +54,7 @@ public class DisruptorVmWaitForTaskNewerTest extends AbstractVmTestSupport {
         // Should return the in message as no reply is expected
         assertEquals("Hello World", out.getMessage().getBody());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

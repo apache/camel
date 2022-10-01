@@ -48,7 +48,7 @@ public class JpaTXRollbackTest extends AbstractJpaTest {
         // start route
         context.getRouteController().startRoute("foo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertTrue(foo.intValue() >= 2, "Should be >= 2, was: " + foo.intValue());
         assertTrue(bar.intValue() >= 2, "Should be >= 2, was: " + bar.intValue());

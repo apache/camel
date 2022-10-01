@@ -46,7 +46,7 @@ public class InOnlyTopicDurableConsumerTest extends Jms2TestSupport {
 
         template.sendBody("sjms2:topic:foo", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

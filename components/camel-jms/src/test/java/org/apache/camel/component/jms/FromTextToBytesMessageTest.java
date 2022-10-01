@@ -35,7 +35,7 @@ public class FromTextToBytesMessageTest extends AbstractJMSTest {
 
         template.sendBody("activemq:queue:text2bytes", "3");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         javax.jms.Message msg = mock.getReceivedExchanges().get(0).getIn(JmsMessage.class).getJmsMessage();
         assertNotNull(msg);
@@ -49,7 +49,7 @@ public class FromTextToBytesMessageTest extends AbstractJMSTest {
 
         template.sendBody("activemq:queue:text2bytesHeader", "3");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         javax.jms.Message msg = mock.getReceivedExchanges().get(0).getIn(JmsMessage.class).getJmsMessage();
         assertNotNull(msg);
@@ -63,7 +63,7 @@ public class FromTextToBytesMessageTest extends AbstractJMSTest {
 
         template.sendBody("activemq:queue:text2text", "Hello");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         javax.jms.Message msg = mock.getReceivedExchanges().get(0).getIn(JmsMessage.class).getJmsMessage();
         assertNotNull(msg);

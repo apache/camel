@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +35,7 @@ public class ZipFileIteratorDataFormatTest extends CamelTestSupport {
         Stream body = Stream.of("ABC", "DEF", "1234567890");
         template.sendBody("direct:zip", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         resetMocks();
 
@@ -44,7 +45,7 @@ public class ZipFileIteratorDataFormatTest extends CamelTestSupport {
         File file = new File("target/output/report.txt.zip");
         template.sendBody("direct:unzip", file);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

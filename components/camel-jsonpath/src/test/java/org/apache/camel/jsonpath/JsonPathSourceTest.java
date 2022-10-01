@@ -22,6 +22,7 @@ import java.nio.charset.Charset;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.FileConsumer;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
@@ -64,7 +65,7 @@ public class JsonPathSourceTest extends CamelTestSupport {
                 .asGenericFile("src/test/resources/germanbooks-utf8.json",
                         new File("src/test/resources/germanbooks-utf8.json"), "UTF-8", false));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -81,7 +82,7 @@ public class JsonPathSourceTest extends CamelTestSupport {
                 .asGenericFile("src/test/resources/germanbooks-utf8.json",
                         new File("src/test/resources/germanbooks-utf8.json"), "UTF-8", false));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -98,7 +99,7 @@ public class JsonPathSourceTest extends CamelTestSupport {
                 .asGenericFile("src/test/resources/germanbooks-iso-8859-1.json",
                         new File("src/test/resources/germanbooks-iso-8859-1.json"), "ISO-8859-1", false));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private static void switchToDefaultCharset(String charset) {

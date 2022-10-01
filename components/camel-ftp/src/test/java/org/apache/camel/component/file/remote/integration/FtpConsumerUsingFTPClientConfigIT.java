@@ -52,7 +52,7 @@ public class FtpConsumerUsingFTPClientConfigIT extends FtpServerTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private void prepareFtpServer() {

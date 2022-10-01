@@ -22,6 +22,7 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.http.base.cookie.ExchangeCookieHandler;
 import org.apache.camel.http.base.cookie.InstanceCookieHandler;
 import org.apache.camel.http.common.HttpMessage;
@@ -40,7 +41,7 @@ public class NettyHttpProducerSessionTest extends BaseNettyTest {
         getMockEndpoint("mock:result").expectedBodiesReceived("New New World", "New New World");
         template.sendBody("direct:start", "World");
         template.sendBody("direct:start", "World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -48,7 +49,7 @@ public class NettyHttpProducerSessionTest extends BaseNettyTest {
         getMockEndpoint("mock:result").expectedBodiesReceived("Old New World", "Old Old World");
         template.sendBody("direct:instance", "World");
         template.sendBody("direct:instance", "World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -56,7 +57,7 @@ public class NettyHttpProducerSessionTest extends BaseNettyTest {
         getMockEndpoint("mock:result").expectedBodiesReceived("Old New World", "Old New World");
         template.sendBody("direct:exchange", "World");
         template.sendBody("direct:exchange", "World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

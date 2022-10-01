@@ -48,7 +48,7 @@ public class FtpXQueryTest extends CamelTestSupport {
                 "<mail from=\"janstey@apache.org\"><subject>Hey</subject><body>Bye World!</body></mail>",
                 Exchange.FILE_NAME, "janstey.xml");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

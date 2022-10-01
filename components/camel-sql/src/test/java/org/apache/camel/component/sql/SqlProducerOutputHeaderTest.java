@@ -61,7 +61,7 @@ public class SqlProducerOutputHeaderTest extends CamelTestSupport {
 
         template.requestBody("direct:query", "Hi there!");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

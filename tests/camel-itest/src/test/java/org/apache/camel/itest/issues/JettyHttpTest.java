@@ -37,7 +37,7 @@ public class JettyHttpTest extends CamelTestSupport {
 
         template.sendBody("direct:root", "");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -46,7 +46,7 @@ public class JettyHttpTest extends CamelTestSupport {
         mock.expectedBodiesReceived("Hi! /someservice/relative");
 
         template.sendBody("direct:relative", "");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

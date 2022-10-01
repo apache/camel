@@ -39,7 +39,7 @@ public class JmsMessageCreatedStrategyComponentTest extends AbstractJMSTest {
 
         template.sendBody("activemq:queue:JmsMessageCreatedStrategyComponentTest", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -51,7 +51,7 @@ public class S3ConsumerIgnoreBodyIT extends Aws2S3Base {
         });
 
         Awaitility.await().atMost(10, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertMockEndpointsSatisfied());
+                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
         Assert.assertNull(result.getExchanges().get(0).getMessage().getBody());
     }
 

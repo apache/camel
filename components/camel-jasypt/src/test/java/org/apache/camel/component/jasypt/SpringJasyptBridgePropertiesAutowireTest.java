@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jasypt;
 
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -29,7 +30,7 @@ public class SpringJasyptBridgePropertiesAutowireTest extends CamelSpringTestSup
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

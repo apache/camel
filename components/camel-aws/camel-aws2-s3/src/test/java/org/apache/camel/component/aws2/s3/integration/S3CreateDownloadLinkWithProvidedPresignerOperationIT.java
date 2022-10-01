@@ -78,7 +78,7 @@ public class S3CreateDownloadLinkWithProvidedPresignerOperationIT extends Aws2S3
         });
 
         assertNotNull(ex1.getMessage().getBody());
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -200,7 +200,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         String payload = "Hi Alice, Be careful Eve is listening, signed Bob";
         Map<String, Object> headers = getHeaders();
         template.sendBodyAndHeaders("direct:verify_exception_sig_userids", payload, headers);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         checkThrownException(exception, IllegalArgumentException.class, null, "No public key found for the key ID(s)");
 
@@ -217,7 +217,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         // the following entry is necessary for the dynamic test
         headers.put(PGPKeyAccessDataFormat.KEY_USERID, "second");
         template.sendBodyAndHeaders("direct:several-signer-keys", payload, headers);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         checkThrownException(exception, IllegalArgumentException.class, null,
                 "No passphrase specified for signature key user ID");
@@ -235,7 +235,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         MockEndpoint mockKeyFlag = getMockEndpoint("mock:encrypted_keyflag");
         mockKeyFlag.setExpectedMessageCount(1);
         template.sendBody("direct:keyflag", "Test Message");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<Exchange> exchanges = mockKeyFlag.getExchanges();
         assertEquals(1, exchanges.size());
@@ -263,7 +263,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         MockEndpoint mockSubkey = getMockEndpoint("mock:unencrypted");
         mockSubkey.expectedBodiesReceived(payload);
         template.sendBody("direct:subkey", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -272,7 +272,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         MockEndpoint mockSubkey = getMockEndpoint("mock:unencrypted");
         mockSubkey.expectedBodiesReceived(payload);
         template.sendBody("direct:subkey", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -281,7 +281,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         MockEndpoint mock = getMockEndpoint("mock:exception");
         mock.expectedMessageCount(1);
         template.sendBody("direct:subkeyUnmarshal", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         checkThrownException(mock, IllegalArgumentException.class, null, "The input message body has an invalid format.");
     }
@@ -294,7 +294,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         MockEndpoint mock = getMockEndpoint("mock:exception");
         mock.expectedMessageCount(1);
         template.sendBody("direct:subkeyUnmarshal", bos.toByteArray());
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         checkThrownException(mock, IllegalArgumentException.class, null, "The input message body has an invalid format.");
     }
@@ -323,7 +323,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         MockEndpoint mock = getMockEndpoint("mock:exception");
         mock.expectedMessageCount(1);
         template.sendBody("direct:subkeyUnmarshal", bos.toByteArray());
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         checkThrownException(mock, PGPException.class, null,
                 "PGP message is encrypted with a key which could not be found in the Secret Keyring");
@@ -451,7 +451,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         MockEndpoint mock = getMockEndpoint("mock:exception");
         mock.expectedMessageCount(1);
         template.sendBody("direct:subkeyUnmarshal", bos.toByteArray());
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         checkThrownException(mock, IllegalArgumentException.class, null, "The input message body has an invalid format.");
     }
@@ -464,7 +464,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         MockEndpoint mock = getMockEndpoint("mock:exception");
         mock.expectedMessageCount(1);
         template.sendBody("direct:subkey", "Test Message");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         checkThrownException(mock, PGPException.class, null,
                 "PGP message contains a signature although a signature is not expected");
@@ -479,7 +479,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         MockEndpoint mock = getMockEndpoint("mock:exception");
         mock.expectedMessageCount(1);
         template.sendBody("direct:subkey", "Test Message");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         checkThrownException(mock, PGPException.class, null,
                 "PGP message does not contain any signatures although a signature is expected");
@@ -497,7 +497,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         MockEndpoint mock = getMockEndpoint("mock:unencrypted");
         mock.expectedBodiesReceived(payload);
         template.sendBody("direct:subkey", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
     }
 

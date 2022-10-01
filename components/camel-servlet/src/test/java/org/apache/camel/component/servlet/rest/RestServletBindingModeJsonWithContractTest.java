@@ -47,7 +47,7 @@ public class RestServletBindingModeJsonWithContractTest extends ServletCamelRout
         String answer = response.getText();
         assertTrue(answer.contains("\"active\":true"), "Unexpected response: " + answer);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Object obj = mock.getReceivedExchanges().get(0).getIn().getBody();
         assertEquals(UserPojoEx.class, obj.getClass());

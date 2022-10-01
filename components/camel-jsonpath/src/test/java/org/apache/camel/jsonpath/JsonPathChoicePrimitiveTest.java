@@ -17,6 +17,7 @@
 package org.apache.camel.jsonpath;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -47,7 +48,7 @@ public class JsonPathChoicePrimitiveTest extends CamelTestSupport {
         template.sendBody("direct:start", "{\"counter\": 0}");
         template.sendBody("direct:start", "{\"counter\": 2}");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

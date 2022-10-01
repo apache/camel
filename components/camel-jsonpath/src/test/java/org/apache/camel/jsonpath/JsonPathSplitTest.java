@@ -62,7 +62,7 @@ public class JsonPathSplitTest extends CamelTestSupport {
         String out = template.requestBody("direct:start", new File("src/test/resources/books.json"), String.class);
         assertNotNull(out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Map row = getMockEndpoint("mock:authors").getReceivedExchanges().get(0).getIn().getBody(Map.class);
         assertEquals("Nigel Rees", row.get("author"));

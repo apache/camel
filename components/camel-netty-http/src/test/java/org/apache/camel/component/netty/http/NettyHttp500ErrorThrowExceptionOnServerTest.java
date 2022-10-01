@@ -18,6 +18,7 @@ package org.apache.camel.component.netty.http;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
@@ -44,7 +45,7 @@ public class NettyHttp500ErrorThrowExceptionOnServerTest extends BaseNettyTest {
             assertEquals("http://localhost:" + getPort() + "/foo", cause.getUri());
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -55,7 +56,7 @@ public class NettyHttp500ErrorThrowExceptionOnServerTest extends BaseNettyTest {
                 "Hello World", String.class);
         assertTrue(body.startsWith("java.lang.IllegalArgumentException: Camel cannot do this"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

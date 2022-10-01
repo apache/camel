@@ -48,7 +48,7 @@ public class JmsXMLRouteTest extends AbstractJMSTest {
 
         template.sendBody("direct:object", source);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -62,7 +62,7 @@ public class JmsXMLRouteTest extends AbstractJMSTest {
 
         template.sendBody("direct:bytes", source);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -76,7 +76,7 @@ public class JmsXMLRouteTest extends AbstractJMSTest {
 
         template.sendBody("direct:default", source);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -90,7 +90,7 @@ public class JmsXMLRouteTest extends AbstractJMSTest {
 
         template.sendBody("direct:object", source);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -104,7 +104,7 @@ public class JmsXMLRouteTest extends AbstractJMSTest {
 
         template.sendBody("direct:bytes", source);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -118,7 +118,7 @@ public class JmsXMLRouteTest extends AbstractJMSTest {
 
         template.sendBody("direct:default", source);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -138,7 +138,7 @@ public class JmsXMLRouteTest extends AbstractJMSTest {
 
         template.sendBody("direct:object", source);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -158,7 +158,7 @@ public class JmsXMLRouteTest extends AbstractJMSTest {
 
         template.sendBody("direct:bytes", source);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -178,7 +178,7 @@ public class JmsXMLRouteTest extends AbstractJMSTest {
 
         template.sendBody("direct:default", source);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

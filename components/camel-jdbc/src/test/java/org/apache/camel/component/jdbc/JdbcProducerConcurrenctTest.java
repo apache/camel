@@ -66,7 +66,7 @@ public class JdbcProducerConcurrenctTest extends AbstractJdbcTestSupport {
             responses.put(index, out);
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEquals(files, responses.size());
 
         for (int i = 0; i < files; i++) {

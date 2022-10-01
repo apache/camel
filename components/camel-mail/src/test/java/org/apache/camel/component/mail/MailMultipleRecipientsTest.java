@@ -48,7 +48,7 @@ public class MailMultipleRecipientsTest extends CamelTestSupport {
         template.sendBodyAndHeaders("smtp://localhost", "Hello World", headers);
         // END SNIPPET: e1
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -64,7 +64,7 @@ public class MailMultipleRecipientsTest extends CamelTestSupport {
         template.sendBody("smtp://localhost?to=claus@localhost,willem@localhost&cc=james@localhost", "Hello World");
         // END SNIPPET: e2
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private void assertMailbox(String name) {

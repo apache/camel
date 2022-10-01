@@ -42,7 +42,7 @@ public class RestUndertowHttpBindingModeJsonWithContractTest extends BaseUnderto
         String answerString = new String((byte[]) answer);
         assertTrue(answerString.contains("\"active\":true"), "Unexpected response: " + answerString);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Object obj = mock.getReceivedExchanges().get(0).getIn().getBody();
         assertEquals(UserPojoEx.class, obj.getClass());

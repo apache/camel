@@ -36,7 +36,7 @@ public class BindyPipeDelimiterTest extends CamelTestSupport {
 
         template.sendBody("direct:unmarshal", "COL1|COL2|COL3\nHAPPY | NEW | YEAR");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         MyData rec1 = (MyData) mock.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
         MyData rec2 = (MyData) mock.getReceivedExchanges().get(0).getIn().getBody(List.class).get(1);
@@ -65,7 +65,7 @@ public class BindyPipeDelimiterTest extends CamelTestSupport {
         data.setCol3("YEAR");
         template.sendBody("direct:marshal", data);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -80,7 +80,7 @@ public class BindyPipeDelimiterTest extends CamelTestSupport {
         data.setCol3("YEAR");
         template.sendBody("direct:marshal", data);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

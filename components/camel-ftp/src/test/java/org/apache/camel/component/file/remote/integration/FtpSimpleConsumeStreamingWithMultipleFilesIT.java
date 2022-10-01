@@ -45,7 +45,7 @@ public class FtpSimpleConsumeStreamingWithMultipleFilesIT extends FtpServerTestS
 
         context.getRouteController().startRoute("foo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         InputStream remoteFile1 = mock.getExchanges().get(0).getIn().getBody(InputStream.class);
         assertNotNull(remoteFile1);

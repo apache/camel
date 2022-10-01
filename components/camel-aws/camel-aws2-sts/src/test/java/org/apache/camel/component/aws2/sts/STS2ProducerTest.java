@@ -51,7 +51,7 @@ public class STS2ProducerTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         AssumeRoleResponse resultGet = (AssumeRoleResponse) exchange.getIn().getBody();
         assertEquals("arn", resultGet.assumedRoleUser().arn());
@@ -68,7 +68,7 @@ public class STS2ProducerTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         GetSessionTokenResponse resultGet = (GetSessionTokenResponse) exchange.getIn().getBody();
         assertEquals("xxx", resultGet.credentials().accessKeyId());
@@ -86,7 +86,7 @@ public class STS2ProducerTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         GetFederationTokenResponse resultGet = (GetFederationTokenResponse) exchange.getIn().getBody();
         assertEquals("xxx", resultGet.credentials().accessKeyId());

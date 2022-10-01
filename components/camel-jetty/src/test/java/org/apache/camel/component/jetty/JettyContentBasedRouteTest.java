@@ -35,7 +35,7 @@ public class JettyContentBasedRouteTest extends BaseJettyTest {
 
         template.requestBody(serverUri + "?one=true", null, Object.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -46,7 +46,7 @@ public class JettyContentBasedRouteTest extends BaseJettyTest {
 
         template.requestBody(serverUri + "?two=true", null, Object.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -18,6 +18,7 @@ package org.apache.camel.component.kamelet;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.MulticastDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
@@ -65,7 +66,7 @@ public class KameletEipMulticastTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "ABC");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         RouteDefinition rd = context.getRouteDefinition("start");
         MulticastDefinition md = ProcessorDefinitionHelper.findFirstTypeInOutputs(rd.getOutputs(), MulticastDefinition.class);
@@ -106,7 +107,7 @@ public class KameletEipMulticastTest extends CamelTestSupport {
         template.sendBody("direct:start", "ABC");
         template.sendBody("direct:start", "DEF");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         RouteDefinition rd = context.getRouteDefinition("start");
         MulticastDefinition md = ProcessorDefinitionHelper.findFirstTypeInOutputs(rd.getOutputs(), MulticastDefinition.class);

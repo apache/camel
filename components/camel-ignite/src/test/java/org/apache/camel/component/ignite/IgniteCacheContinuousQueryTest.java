@@ -33,6 +33,7 @@ import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ignite.cache.IgniteCacheComponent;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.cache.CacheEntryEventSerializableFilter;
@@ -90,7 +91,7 @@ public class IgniteCacheContinuousQueryTest extends AbstractIgniteTest implement
         IgniteCache<Integer, Person> cache = ignite().getOrCreateCache("testcontinuous1");
         cache.putAll(persons);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         for (Exchange exchange : getMockEndpoint("mock:test1").getExchanges()) {
             Assertions.assertThat(exchange.getIn().getHeader(IgniteConstants.IGNITE_CACHE_NAME)).isEqualTo("testcontinuous1");
@@ -111,7 +112,7 @@ public class IgniteCacheContinuousQueryTest extends AbstractIgniteTest implement
 
         context.getRouteController().startRoute("continuousQuery.fireExistingEntries");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         resetMocks();
 
@@ -120,7 +121,7 @@ public class IgniteCacheContinuousQueryTest extends AbstractIgniteTest implement
         persons = createPersons(101, 100);
         cache.putAll(persons);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -133,7 +134,7 @@ public class IgniteCacheContinuousQueryTest extends AbstractIgniteTest implement
 
         context.getRouteController().startRoute("remoteFilter");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         resetMocks();
 
@@ -142,7 +143,7 @@ public class IgniteCacheContinuousQueryTest extends AbstractIgniteTest implement
         persons = createPersons(101, 100);
         cache.putAll(persons);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -156,7 +157,7 @@ public class IgniteCacheContinuousQueryTest extends AbstractIgniteTest implement
         IgniteCache<Integer, Person> cache = ignite().getOrCreateCache("testcontinuous1");
         cache.putAll(persons);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         for (Exchange exchange : getMockEndpoint("mock:test4").getExchanges()) {
             Assertions.assertThat(exchange.getIn().getHeader(IgniteConstants.IGNITE_CACHE_NAME)).isEqualTo("testcontinuous1");

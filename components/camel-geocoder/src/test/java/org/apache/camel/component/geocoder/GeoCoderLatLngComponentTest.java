@@ -34,7 +34,7 @@ public class GeoCoderLatLngComponentTest extends GeoCoderApiKeyTestBase {
         // the address header overrides the endpoint configuration
         template.sendBody("direct:start", "Hello");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

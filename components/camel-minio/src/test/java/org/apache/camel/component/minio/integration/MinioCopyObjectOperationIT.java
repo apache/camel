@@ -59,7 +59,7 @@ class MinioCopyObjectOperationIT extends MinioIntegrationTestSupport {
             exchange.getIn().setHeader(MinioConstants.MINIO_OPERATION, MinioOperations.copyObject);
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

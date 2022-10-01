@@ -25,6 +25,7 @@ import java.util.concurrent.Executors;
 import javax.crypto.KeyGenerator;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -61,7 +62,7 @@ public class XMLSecurityConcurrencyTest extends CamelTestSupport {
             });
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         String secure = getMockEndpoint("mock:secure").getReceivedExchanges().get(0).getIn().getBody(String.class);
         assertNotNull(secure);

@@ -39,7 +39,7 @@ public class JettyHttpGetWithParamAsExchangeHeaderTest extends BaseJettyTest {
 
         template.requestBody(serverUri + "?one=einz&two=twei", null, Object.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -51,7 +51,7 @@ public class JettyHttpGetWithParamAsExchangeHeaderTest extends BaseJettyTest {
 
         template.requestBody(serverUri + "?message=Keine%20g%C3%BCltige%20GPS-Daten!", null, Object.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -64,7 +64,7 @@ public class JettyHttpGetWithParamAsExchangeHeaderTest extends BaseJettyTest {
 
         template.requestBody(serverUri + "?message=Keine+g%C6ltige+GPS-Daten%21", null, Object.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -77,7 +77,7 @@ public class JettyHttpGetWithParamAsExchangeHeaderTest extends BaseJettyTest {
         // parameter starts with a space using %20 as decimal encoded
         template.requestBody(serverUri + "?message=%20World", null, Object.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -90,7 +90,7 @@ public class JettyHttpGetWithParamAsExchangeHeaderTest extends BaseJettyTest {
         // parameter starts with a space using + decoded
         template.requestBody(serverUri + "?message= World", null, Object.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -103,7 +103,7 @@ public class JettyHttpGetWithParamAsExchangeHeaderTest extends BaseJettyTest {
         // parameter starts with a space using + decoded
         template.requestBody(serverUri + "?message=+World", null, Object.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -116,7 +116,7 @@ public class JettyHttpGetWithParamAsExchangeHeaderTest extends BaseJettyTest {
 
         template.requestBodyAndHeader(serverUri, null, Exchange.HTTP_QUERY, "one=uno&two=dos");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -128,7 +128,7 @@ public class JettyHttpGetWithParamAsExchangeHeaderTest extends BaseJettyTest {
 
         template.requestBody(serverUri, "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

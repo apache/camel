@@ -67,7 +67,7 @@ public class ProducerUseMessageBodyForTemplateTest extends CamelTestSupport {
         template.requestBodyAndHeader("direct:query", "SUBNUMBERS(INTEGER :#num1,INTEGER :#num2,OUT INTEGER resultofsum)",
                 SqlStoredConstants.SQL_STORED_PARAMETERS, batch1);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getExchanges().get(0);
 

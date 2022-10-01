@@ -35,7 +35,7 @@ public class J2XInputStreamTest extends CamelTestSupport {
 
         template.sendBody("direct:start", new ByteArrayInputStream("{\"hello\": \"world!\"}".getBytes(StandardCharsets.UTF_8)));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

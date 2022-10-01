@@ -49,7 +49,7 @@ public class JmsGetHeaderKeyFormatIssueWithContentTypeHeaderTest extends Abstrac
 
         template.sendBodyAndHeader(uri, "Hello World", "Content-Type", "text/plain");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

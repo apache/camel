@@ -48,7 +48,7 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
                 .to("direct://start")
                 .send();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     // ****************************
@@ -74,7 +74,7 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
                 .to("direct://start")
                 .send();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertTrue(cache.containsKey(key));
         assertEquals(val, cache.get(key));
@@ -96,7 +96,7 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
                 .to("direct://start")
                 .send();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         map.forEach((k, v) -> {
             assertTrue(cache.containsKey(k));
@@ -131,7 +131,7 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
                 .to("direct://start")
                 .send();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertTrue(cache.containsKey(key));
         assertEquals(val1, cache.get(key));
@@ -162,7 +162,7 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
                 .to("direct://start")
                 .send();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -184,7 +184,7 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
                 .to("direct://start")
                 .send();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         final Map<String, String> elements = mock.getExchanges().get(0).getIn().getBody(Map.class);
         keys.forEach(k -> {
@@ -216,7 +216,7 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
                 .to("direct://start")
                 .send();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertFalse(cache.containsKey(key));
     }
@@ -251,7 +251,7 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
                 .to("direct://start")
                 .send();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertFalse(cache.containsKey(key));
     }
@@ -275,7 +275,7 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
                 .to("direct://start")
                 .send();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         cache.forEach(e -> assertFalse(keys.contains(e.getKey())));
     }
@@ -330,7 +330,7 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
 
         assertEquals(val3, cache.get(key));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     // ****************************

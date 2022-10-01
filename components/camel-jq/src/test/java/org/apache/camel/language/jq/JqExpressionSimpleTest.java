@@ -18,6 +18,7 @@ package org.apache.camel.language.jq;
 
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class JqExpressionSimpleTest extends JqTestSupport {
@@ -39,6 +40,6 @@ public class JqExpressionSimpleTest extends JqTestSupport {
 
         template.sendBody("direct:start", node("foo", "bar", "baz", "bak"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 }

@@ -83,7 +83,7 @@ public class ConsumerDownloadLocalTest extends GoogleCloudStorageBaseTest {
             });
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         context.stop();
 

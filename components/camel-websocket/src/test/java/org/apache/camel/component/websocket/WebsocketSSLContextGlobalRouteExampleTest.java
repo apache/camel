@@ -25,6 +25,7 @@ import javax.net.ssl.SSLContext;
 import org.apache.camel.CamelContext;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -111,7 +112,7 @@ public class WebsocketSSLContextGlobalRouteExampleTest extends CamelTestSupport 
         testClient.sendTextMessage("Hello from WS client");
         assertTrue(testClient.await(10, TimeUnit.SECONDS));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals(10, testClient.getReceived().size());
         for (int i = 0; i < 10; i++) {

@@ -512,7 +512,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
     public void enveloped() throws Exception {
         setupMock();
         sendBody("direct:enveloped", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -521,7 +521,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
                                  "<ns:root xmlns:ns=\"http://test\"><a ID=\"myID\"><b>bValue</b></a></ns:root>";
         setupMock();
         sendBody("direct:detached", detachedPayload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -541,7 +541,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         XAdESSignatureProperties props = (XAdESSignatureProperties) endpoint.getConfiguration().getProperties();
         props.setSigPolicyId(value);
         sendBody("direct:enveloping", payload, Collections.emptyMap());
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         checkThrownException(mock, XmlSignatureException.class,
                 "The XAdES-EPES configuration is invalid. The signature policy identifier is missing.", null);
     }
@@ -563,7 +563,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         XAdESSignatureProperties props = (XAdESSignatureProperties) endpoint.getConfiguration().getProperties();
         props.setSignaturePolicyDigestValue(value);
         sendBody("direct:enveloping", payload, Collections.emptyMap());
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         checkThrownException(mock, XmlSignatureException.class,
                 "The XAdES-EPES configuration is invalid. The digest value for the signature policy is missing.", null);
     }
@@ -585,7 +585,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         XAdESSignatureProperties props = (XAdESSignatureProperties) endpoint.getConfiguration().getProperties();
         props.setSignaturePolicyDigestAlgorithm(value);
         sendBody("direct:enveloping", payload, Collections.emptyMap());
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         checkThrownException(mock, XmlSignatureException.class,
                 "The XAdES-EPES configuration is invalid. The digest algorithm for the signature policy is missing.", null);
     }
@@ -598,7 +598,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         XAdESSignatureProperties props = (XAdESSignatureProperties) endpoint.getConfiguration().getProperties();
         props.setSignerClaimedRoles(Collections.singletonList("<ClaimedRole>wrong XML fragment<ClaimedRole>")); // Element 'ClaimedRole' is not closed correctly
         sendBody("direct:enveloping", payload, Collections.emptyMap());
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         checkThrownException(
                 mock,
                 XmlSignatureException.class,
@@ -616,7 +616,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         props.setCommitmentTypeQualifiers(
                 Collections.singletonList("<CommitmentTypeQualifier>wrong XML fragment<CommitmentTypeQualifier>")); // end tag is not correct
         sendBody("direct:enveloping", payload, Collections.emptyMap());
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         checkThrownException(
                 mock,
                 XmlSignatureException.class,
@@ -633,7 +633,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         XAdESSignatureProperties props = (XAdESSignatureProperties) endpoint.getConfiguration().getProperties();
         props.setSigPolicyQualifiers(Collections.singletonList("<SigPolicyQualifier>wrong XML fragment<SigPolicyQualifier>")); // end tag is not correct
         sendBody("direct:enveloping", payload, Collections.emptyMap());
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         checkThrownException(
                 mock,
                 XmlSignatureException.class,
@@ -652,7 +652,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
                 .singletonList(
                         "<SigPolicyQualifier xmlns=\"http://invalid.com\">XML fragment with wrong namespace for root element</SigPolicyQualifier>"));
         sendBody("direct:enveloping", payload, Collections.emptyMap());
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         checkThrownException(
                 mock,
                 XmlSignatureException.class,
@@ -861,7 +861,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
             throws Exception {
         MockEndpoint mock = setupMock();
         sendBody(fromUri, payload, headers);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Message message = getMessage(mock);
         byte[] body = message.getBody(byte[].class);
         Document doc = XmlSignatureHelper.newDocumentBuilder(true).parse(new ByteArrayInputStream(body));

@@ -41,7 +41,7 @@ public class BindyMarshalUnmarshalssueTest extends CamelTestSupport {
         body.setDate("Wednesday November 9 2011");
         template.sendBody("direct:start", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         WeatherModel model = mock.getReceivedExchanges().get(0).getIn().getBody(WeatherModel.class);
 

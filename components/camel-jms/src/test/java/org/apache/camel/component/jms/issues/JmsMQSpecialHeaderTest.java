@@ -34,7 +34,7 @@ public class JmsMQSpecialHeaderTest extends AbstractJMSTest {
 
         template.sendBodyAndHeader("activemq:queue:ibm", "Hello IBM", "JMS_IBM_Character_Set", "ISO8859_1");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -49,7 +49,7 @@ public class JmsMQSpecialHeaderTest extends AbstractJMSTest {
 
         template.sendBodyAndHeaders("activemq:queue:ibm", "Hello IBM", headers);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

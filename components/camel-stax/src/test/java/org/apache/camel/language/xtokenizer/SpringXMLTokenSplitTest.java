@@ -40,7 +40,7 @@ public class SpringXMLTokenSplitTest extends CamelSpringTestSupport {
         String body = createBody();
         template.sendBodyAndHeader(fileUri(testDirectory, "xtokenizer"), body, Exchange.FILE_NAME, "orders.xml");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

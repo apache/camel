@@ -48,7 +48,7 @@ public class CaffeineCacheRemovalListenerProducerTest extends CaffeineCacheTestS
 
         fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_CLEANUP).to("direct://start").send();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     // ****************************
@@ -92,7 +92,7 @@ public class CaffeineCacheRemovalListenerProducerTest extends CaffeineCacheTestS
             assertEquals(map.get(k), elements.get(k));
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     // ****************************
@@ -116,7 +116,7 @@ public class CaffeineCacheRemovalListenerProducerTest extends CaffeineCacheTestS
         fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_GET)
                 .withHeader(CaffeineConstants.KEY, key).withBody(val).to("direct://start").send();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -135,7 +135,7 @@ public class CaffeineCacheRemovalListenerProducerTest extends CaffeineCacheTestS
         fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_GET_ALL)
                 .withHeader(CaffeineConstants.KEYS, keys).to("direct://start").send();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         final Map<String, String> elements = mock.getExchanges().get(0).getIn().getBody(Map.class);
         keys.forEach(k -> {
@@ -164,7 +164,7 @@ public class CaffeineCacheRemovalListenerProducerTest extends CaffeineCacheTestS
         fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_INVALIDATE)
                 .withHeader(CaffeineConstants.KEY, key).to("direct://start").send();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertNull(cache.getIfPresent(key));
     }
@@ -185,7 +185,7 @@ public class CaffeineCacheRemovalListenerProducerTest extends CaffeineCacheTestS
         fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_INVALIDATE_ALL)
                 .withHeader(CaffeineConstants.KEYS, keys).to("direct://start").send();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         final Map<String, String> elements = getTestRemovalListenerCache().getAllPresent(keys);
         keys.forEach(k -> {

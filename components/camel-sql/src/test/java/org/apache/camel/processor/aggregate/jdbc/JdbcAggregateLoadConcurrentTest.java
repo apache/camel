@@ -59,7 +59,7 @@ public class JdbcAggregateLoadConcurrentTest extends AbstractJdbcAggregationTest
 
         LOG.info("Sending all " + SIZE + " message done. Now waiting for aggregation to complete.");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         executor.shutdownNow();
     }
 

@@ -35,7 +35,7 @@ public class ReplyToDestinationSelectorNameTest extends AbstractJMSTest {
         Object body1 = template.requestBody("direct:start", "World");
         Object body2 = template.requestBody("direct:start", "Camel");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals("Bye World", body1);
         assertEquals("Bye Camel", body2);

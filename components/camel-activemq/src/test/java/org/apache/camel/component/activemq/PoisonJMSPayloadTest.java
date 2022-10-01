@@ -24,6 +24,7 @@ import javax.jms.Session;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.component.activemq.support.ActiveMQSpringTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -62,7 +63,7 @@ public class PoisonJMSPayloadTest extends ActiveMQSpringTestSupport {
         boolean invoked = context.getRegistry().lookupByNameAndType("myBean", MyBean.class).isInvoked();
         assertFalse(invoked, "Bean should not be invoked");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

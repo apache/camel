@@ -17,6 +17,7 @@
 package org.apache.camel.component.netty;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class NettyTextlineInOnlyTest extends BaseNettyTest {
@@ -27,7 +28,7 @@ public class NettyTextlineInOnlyTest extends BaseNettyTest {
 
         template.sendBody("netty:tcp://localhost:{{port}}?textline=true&sync=false", "Hello World\nhow are you?\n");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -36,7 +37,7 @@ public class NettyTextlineInOnlyTest extends BaseNettyTest {
 
         template.sendBody("netty:tcp://localhost:{{port}}?textline=true&sync=false", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -45,7 +46,7 @@ public class NettyTextlineInOnlyTest extends BaseNettyTest {
 
         template.sendBody("netty:tcp://localhost:{{port}}?textline=true&sync=false", "Hello World\n");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -43,7 +44,7 @@ public class JmsMessageBodySetNullTest extends AbstractJMSTest {
 
         template.sendBody("jms:queue:JmsMessageBodySetNullTest", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -67,7 +68,7 @@ public class JmsMessageBodySetNullTest extends AbstractJMSTest {
 
         template.sendBodyAndHeader("jms:queue:JmsMessageBodySetNullTest", "Hello World", "code", 123);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -89,7 +90,7 @@ public class JmsMessageBodySetNullTest extends AbstractJMSTest {
 
         template.sendBody("jms:queue:JmsMessageBodySetNullTest", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -113,7 +114,7 @@ public class JmsMessageBodySetNullTest extends AbstractJMSTest {
 
         template.sendBodyAndHeader("jms:queue:JmsMessageBodySetNullTest", "Hello World", "code", 123);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

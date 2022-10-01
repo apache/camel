@@ -71,7 +71,7 @@ public class HazelcastSedaTransferExchangeTest extends CamelTestSupport {
 
         template.send("direct:foobar", exchange);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -85,7 +85,7 @@ public class HazelcastSedaTransferExchangeTest extends CamelTestSupport {
 
         template.send("direct:foo", exchange);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

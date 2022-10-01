@@ -43,7 +43,7 @@ public class LambdaEndpointRouteBuilderTest extends BaseEndpointDslTest {
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -61,7 +61,7 @@ public class LambdaEndpointRouteBuilderTest extends BaseEndpointDslTest {
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -80,7 +80,7 @@ public class LambdaEndpointRouteBuilderTest extends BaseEndpointDslTest {
 
         template.sendBody("direct:start", "World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

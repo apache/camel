@@ -49,7 +49,7 @@ public class JmsRouteWithDefaultKeyFormatStrategyTest extends AbstractJMSTest {
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -60,7 +60,7 @@ public class JmsRouteWithDefaultKeyFormatStrategyTest extends AbstractJMSTest {
 
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", "cheese");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -78,7 +78,7 @@ public class JmsRouteWithDefaultKeyFormatStrategyTest extends AbstractJMSTest {
 
         template.sendBodyAndHeaders("direct:start", "Hello World", headers);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

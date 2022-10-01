@@ -56,7 +56,7 @@ public class AdviceWithTransactionIssueTest extends CamelSpringTestSupport {
 
         template.sendBody("activemq:queue:start", "bar");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -75,7 +75,7 @@ public class AdviceWithTransactionIssueTest extends CamelSpringTestSupport {
 
         template.sendBody("activemq:queue:start", "bar");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

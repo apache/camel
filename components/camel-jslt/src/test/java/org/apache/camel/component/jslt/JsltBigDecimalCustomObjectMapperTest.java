@@ -25,6 +25,7 @@ import com.schibsted.spt.data.jslt.filters.JsonFilter;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
@@ -60,7 +61,7 @@ public class JsltBigDecimalCustomObjectMapperTest extends CamelTestSupport {
                 ResourceHelper.resolveMandatoryResourceAsInputStream(
                         context, "org/apache/camel/component/jslt/useBigDecimal/input.json"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private JsonFilter createObjectFilter() {

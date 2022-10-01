@@ -59,7 +59,7 @@ public class RabbitMQSupendResumeIT extends AbstractRabbitMQIT {
 
         template.sendBody("hello");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         context.getRouteController().resumeRoute("consumer");
 
@@ -79,7 +79,7 @@ public class RabbitMQSupendResumeIT extends AbstractRabbitMQIT {
 
         context.getRouteController().resumeRoute("consumer");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

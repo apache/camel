@@ -40,7 +40,7 @@ public class RemoveMessagesIT extends CouchbaseIntegrationTestBase {
         template.sendBodyAndHeader("direct:start", "delete the document ", HEADER_ID, "DocumentID_1");
         template.sendBodyAndHeader("direct:start", "delete the document", HEADER_ID, "DocumentID_2");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
     }
 

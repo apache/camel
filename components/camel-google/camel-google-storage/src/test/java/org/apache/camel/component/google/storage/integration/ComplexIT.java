@@ -144,7 +144,7 @@ public class ComplexIT extends CamelTestSupport {
         mockProcessed.expectedMessageCount(3);
 
         Thread.sleep(10000);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

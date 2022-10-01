@@ -45,7 +45,7 @@ public class FtpRecursiveDepth2IT extends FtpServerTestSupport {
         template.sendBodyAndHeader("ftp://admin@localhost:{{ftp.server.port}}/depth2/bar/foo?password=admin", "b3",
                 Exchange.FILE_NAME, "b3.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

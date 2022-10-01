@@ -39,7 +39,7 @@ public class JmsThrottlingInflightRoutePolicyTest extends AbstractPersistentJMST
             template.sendBody("activemq-sender:queue:JmsThrottlingInflightRoutePolicyTest", "Message " + i);
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

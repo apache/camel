@@ -17,6 +17,7 @@
 package org.apache.camel.spring.issues;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.TransactedPolicy;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
@@ -53,7 +54,7 @@ public class Camel14624Test extends CamelTestSupport {
 
         template.sendBody("direct:test", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

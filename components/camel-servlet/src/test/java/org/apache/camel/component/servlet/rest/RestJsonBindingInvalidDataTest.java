@@ -22,6 +22,7 @@ import java.io.InputStream;
 import com.google.gson.JsonSyntaxException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.servlet.ServletCamelRouterTestSupport;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
@@ -44,7 +45,7 @@ public class RestJsonBindingInvalidDataTest extends ServletCamelRouterTestSuppor
         String data = context.getTypeConverter().convertTo(String.class, is);
         assertEquals("Invalid json data says Camel", data);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

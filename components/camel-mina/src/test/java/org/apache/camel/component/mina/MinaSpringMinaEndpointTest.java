@@ -35,7 +35,7 @@ public class MinaSpringMinaEndpointTest extends CamelSpringTestSupport {
 
         template.sendBody("myMinaEndpoint", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         // checking the endpoint uri
         MinaEndpoint endpoint = applicationContext.getBean("myMinaEndpoint", MinaEndpoint.class);
         Integer port = applicationContext.getBean("port", Integer.class);

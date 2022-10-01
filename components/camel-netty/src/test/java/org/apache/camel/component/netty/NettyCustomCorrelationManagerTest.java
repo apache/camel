@@ -46,7 +46,7 @@ public class NettyCustomCorrelationManagerTest extends BaseNettyTest {
         template.sendBodyAndHeader("seda:start", "B", "request", "B");
         template.sendBodyAndHeader("seda:start", "C", "request", "C");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

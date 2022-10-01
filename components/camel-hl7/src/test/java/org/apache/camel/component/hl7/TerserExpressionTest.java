@@ -38,7 +38,7 @@ public class TerserExpressionTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived(PATIENT_ID);
         template.sendBody("direct:test1", createADT01Message());
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -46,7 +46,7 @@ public class TerserExpressionTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:test2");
         mock.expectedMessageCount(1);
         template.sendBody("direct:test2", createADT01Message());
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -54,7 +54,7 @@ public class TerserExpressionTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:test3");
         mock.expectedMessageCount(1);
         template.sendBody("direct:test3", createADT01Message());
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -79,7 +79,7 @@ public class TerserExpressionTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived(PATIENT_ID);
         template.sendBody("direct:test5", createADT01Message());
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

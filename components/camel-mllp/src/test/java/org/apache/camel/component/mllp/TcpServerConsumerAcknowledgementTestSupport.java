@@ -137,7 +137,7 @@ public abstract class TcpServerConsumerAcknowledgementTestSupport extends CamelT
 
         assertTrue(done.matches(10, TimeUnit.SECONDS), "Exchange should have completed");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     public void acknowledgementDeliveryFailure() throws Exception {
@@ -157,6 +157,6 @@ public abstract class TcpServerConsumerAcknowledgementTestSupport extends CamelT
         mllpClient.sendFramedData(testMessage);
 
         assertTrue(done.matches(5, TimeUnit.SECONDS), "One exchange should have complete");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 }

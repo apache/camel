@@ -32,7 +32,7 @@ public class JmsConsumerRestartPickupConfigurationChangesTest extends AbstractJM
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Hello World");
         template.sendBody("activemq:queue:JmsConsumerRestartPickupConfigurationChangesTest.Request", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         consumer.stop();
 
@@ -46,7 +46,7 @@ public class JmsConsumerRestartPickupConfigurationChangesTest extends AbstractJM
         result.reset();
         result.expectedBodiesReceived("Bye World");
         template.sendBody("activemq:queue:JmsConsumerRestartPickupConfigurationChangesTest.Destination", "Bye World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         consumer.stop();
     }

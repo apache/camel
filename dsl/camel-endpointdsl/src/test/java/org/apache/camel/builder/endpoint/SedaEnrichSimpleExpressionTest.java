@@ -42,6 +42,6 @@ public class SedaEnrichSimpleExpressionTest extends BaseEndpointDslTest {
 
         template.sendBodyAndProperty("direct:start", "Empty", "whereTo", "cheese");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 }

@@ -42,7 +42,7 @@ public class JdbcOptionsTest extends AbstractJdbcTestSupport {
 
         template.sendBody("direct:start", "select * from customer");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List list = mock.getExchanges().get(0).getIn().getBody(ArrayList.class);
         assertEquals(1, list.size());

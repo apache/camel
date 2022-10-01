@@ -122,7 +122,7 @@ public class RobotFrameworkCamelUtilsTest extends CamelTestSupport {
             }
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getExchanges().get(0);
         assertEquals(0, (int) ObjectHelper.cast(Integer.class,

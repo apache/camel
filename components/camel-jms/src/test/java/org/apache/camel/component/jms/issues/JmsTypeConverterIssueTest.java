@@ -63,7 +63,7 @@ public class JmsTypeConverterIssueTest extends AbstractJMSTest {
 
         template.sendBody("activemq:queue:inbox", "<?xml version=\"1.0\"?><agent id=\"123\"></agent>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

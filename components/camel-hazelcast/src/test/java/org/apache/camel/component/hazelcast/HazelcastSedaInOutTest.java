@@ -61,7 +61,7 @@ public class HazelcastSedaInOutTest extends CamelTestSupport {
                 exchange.getIn().setBody("test");
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         mock.reset();
     }
 

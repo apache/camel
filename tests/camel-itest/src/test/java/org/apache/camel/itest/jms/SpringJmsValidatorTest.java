@@ -16,6 +16,7 @@
  */
 package org.apache.camel.itest.jms;
 
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
@@ -41,7 +42,7 @@ public class SpringJmsValidatorTest extends CamelSpringTestSupport {
         String body = "<?xml version=\"1.0\"?>\n<p>Hello world!</p>";
         template.sendBody("jms:queue:inbox", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -53,7 +54,7 @@ public class SpringJmsValidatorTest extends CamelSpringTestSupport {
         String body = "<?xml version=\"1.0\"?>\n<foo>Kaboom</foo>";
         template.sendBody("jms:queue:inbox", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

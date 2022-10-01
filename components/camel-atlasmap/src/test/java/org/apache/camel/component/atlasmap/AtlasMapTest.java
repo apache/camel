@@ -45,7 +45,7 @@ public class AtlasMapTest extends CamelSpringTestSupport {
         ProducerTemplate producerTemplate = context.createProducerTemplate();
         producerTemplate.sendBody("direct:start", Util.generateMockTwitterStatus());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Object body = result.getExchanges().get(0).getIn().getBody();
         assertEquals(String.class, body.getClass());
         ObjectMapper mapper = new ObjectMapper();

@@ -108,7 +108,7 @@ public abstract class Base64DataFormatTestBase extends CamelTestSupport {
 
         template.sendBody("direct:startEncode", raw);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         byte[] encoded = result.getReceivedExchanges().get(0).getIn().getBody(byte[].class);
         assertArrayEquals(expected, encoded);
@@ -119,7 +119,7 @@ public abstract class Base64DataFormatTestBase extends CamelTestSupport {
 
         template.sendBody("direct:startDecode", encoded);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         byte[] decoded = result.getReceivedExchanges().get(0).getIn().getBody(byte[].class);
         assertArrayEquals(expected, decoded);

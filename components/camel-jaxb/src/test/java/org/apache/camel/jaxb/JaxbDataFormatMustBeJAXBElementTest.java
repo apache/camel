@@ -43,7 +43,7 @@ public class JaxbDataFormatMustBeJAXBElementTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "<foo><bar>Hello Bar</bar></foo>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -59,7 +59,7 @@ public class JaxbDataFormatMustBeJAXBElementTest extends CamelTestSupport {
             assertEquals(JAXBElement.class, ipe.getType());
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

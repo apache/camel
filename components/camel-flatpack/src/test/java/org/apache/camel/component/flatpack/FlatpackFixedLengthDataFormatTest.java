@@ -47,7 +47,7 @@ public class FlatpackFixedLengthDataFormatTest extends CamelTestSupport {
         String data = IOConverter.toString(new File("src/test/data/fixed/PEOPLE-FixedLength.txt"), null);
 
         template.sendBody("direct:unmarshal", data);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         DataSetList list = mock.getExchanges().get(0).getIn().getBody(DataSetList.class);
         assertEquals(4, list.size());
@@ -72,7 +72,7 @@ public class FlatpackFixedLengthDataFormatTest extends CamelTestSupport {
         data.add(row);
 
         template.sendBody("direct:marshal", data);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         String s = mock.getExchanges().get(0).getIn().getBody(String.class);
         assertTrue(s.startsWith("JOHN                               DOE"));

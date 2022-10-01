@@ -50,7 +50,7 @@ public class FtpConsumerAsyncStressIT extends FtpServerTestSupport {
         mock.setResultWaitTime(30000);
         mock.expectedMinimumMessageCount(50);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

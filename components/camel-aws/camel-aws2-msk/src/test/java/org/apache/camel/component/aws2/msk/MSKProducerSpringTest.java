@@ -48,7 +48,7 @@ public class MSKProducerSpringTest extends CamelSpringTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         ListClustersResponse resultGet = (ListClustersResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.clusterInfoList().size());
@@ -66,7 +66,7 @@ public class MSKProducerSpringTest extends CamelSpringTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         ListClustersResponse resultGet = (ListClustersResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.clusterInfoList().size());
@@ -88,7 +88,7 @@ public class MSKProducerSpringTest extends CamelSpringTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         CreateClusterResponse resultGet = (CreateClusterResponse) exchange.getIn().getBody();
         assertEquals("test-kafka", resultGet.clusterName());
@@ -106,7 +106,7 @@ public class MSKProducerSpringTest extends CamelSpringTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         DeleteClusterResponse resultGet = (DeleteClusterResponse) exchange.getIn().getBody();
         assertEquals("test-kafka", resultGet.clusterArn());
@@ -124,7 +124,7 @@ public class MSKProducerSpringTest extends CamelSpringTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         DescribeClusterResponse resultGet = (DescribeClusterResponse) exchange.getIn().getBody();
         assertEquals("test-kafka", resultGet.clusterInfo().clusterArn());
