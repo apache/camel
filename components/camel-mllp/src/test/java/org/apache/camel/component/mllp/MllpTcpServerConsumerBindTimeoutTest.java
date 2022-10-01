@@ -109,7 +109,7 @@ public class MllpTcpServerConsumerBindTimeoutTest extends CamelTestSupport {
 
         mllpClient.sendMessageAndWaitForAcknowledgement(Hl7TestMessageGenerator.generateMessage(), 10000);
 
-        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
     }
 
 }

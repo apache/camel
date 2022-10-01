@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class RabbitMQInOutIT extends RabbitMQITSupport {
@@ -32,7 +33,7 @@ public class RabbitMQInOutIT extends RabbitMQITSupport {
 
         template.requestBody("direct:start", "World");
 
-        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Override

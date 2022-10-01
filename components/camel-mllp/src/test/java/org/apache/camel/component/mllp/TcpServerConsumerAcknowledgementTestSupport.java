@@ -147,7 +147,7 @@ public abstract class TcpServerConsumerAcknowledgementTestSupport extends CamelT
 
         mllpClient.sendFramedData(TEST_MESSAGE, disconnectAfterSend);
 
-        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
     }
 
     public void unparsableMessage(String testMessage) throws Exception {

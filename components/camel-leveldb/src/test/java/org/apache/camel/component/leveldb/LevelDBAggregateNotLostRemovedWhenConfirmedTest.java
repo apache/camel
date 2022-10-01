@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.params.Test;
 import org.awaitility.Awaitility;
 import org.hamcrest.Matchers;
@@ -56,7 +57,7 @@ public class LevelDBAggregateNotLostRemovedWhenConfirmedTest extends LevelDBTest
         template.sendBodyAndHeader("direct:start", "D", "id", 123);
         template.sendBodyAndHeader("direct:start", "E", "id", 123);
 
-        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         final List<Exchange> receivedExchanges = Awaitility.await().atMost(1, TimeUnit.SECONDS)
                 .until(() -> getMockEndpoint("mock:result").getReceivedExchanges(), Matchers.notNullValue());

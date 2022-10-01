@@ -92,7 +92,7 @@ public class MllpTcpServerConsumerMulitpleTcpPacketTest extends CamelTestSupport
         mllpClient.sendFramedDataInMultiplePackets(message, (byte) '\r');
         String acknowledgement = mllpClient.receiveFramedData();
 
-        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
 
         assertThat("Should be acknowledgment for message 1", acknowledgement,
                 CoreMatchers.containsString(String.format("MSA|AA|00001")));
@@ -115,7 +115,7 @@ public class MllpTcpServerConsumerMulitpleTcpPacketTest extends CamelTestSupport
                     CoreMatchers.containsString(String.format("MSA|AA|%05d", i)));
         }
 
-        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
     }
 
 }

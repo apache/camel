@@ -62,7 +62,7 @@ public class HazelcastQueueConsumerPollTest extends HazelcastCamelTestSupport {
         MockEndpoint out = getMockEndpoint("mock:result");
         out.expectedMessageCount(1);
 
-        assertMockEndpointsSatisfied(2000, TimeUnit.MILLISECONDS);
+        MockEndpoint.assertIsSatisfied(context, 2000, TimeUnit.MILLISECONDS);
 
         this.checkHeadersAbsence(out.getExchanges().get(0).getIn().getHeaders(), HazelcastConstants.ADDED);
     }

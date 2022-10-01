@@ -89,6 +89,6 @@ public class RabbitMQReConnectionIT extends AbstractRabbitMQIT {
         }
         producingMockEndpoint.expectedMessageCount(nbMessages - failedMessages);
         consumingMockEndpoint.expectedMessageCount(nbMessages - failedMessages);
-        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
     }
 }

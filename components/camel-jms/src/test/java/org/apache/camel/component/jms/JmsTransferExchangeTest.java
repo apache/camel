@@ -65,7 +65,7 @@ public class JmsTransferExchangeTest extends AbstractJMSTest {
             exchange.setProperty("bar", 123);
         });
 
-        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
     }
 
     @Override

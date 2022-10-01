@@ -70,7 +70,7 @@ public class TransactedAsyncExceptionTest extends CamelTestSupport {
         if (!mockEndpoint.await(getShutdownTimeout(), TimeUnit.SECONDS)) {
             dumpThreads();
         }
-        assertMockEndpointsSatisfied(getShutdownTimeout(), TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, getShutdownTimeout(), TimeUnit.SECONDS);
     }
 
     private void dumpThreads() {

@@ -86,6 +86,6 @@ public class MllpProducerConsumerLoopbackInOnlyTest extends CamelTestSupport {
         String acknowledgement = source.requestBody((Object) testMessage, String.class);
         assertThat("Should receive no acknowledgment for message 1", acknowledgement, CoreMatchers.nullValue());
 
-        assertMockEndpointsSatisfied(60, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 60, TimeUnit.SECONDS);
     }
 }

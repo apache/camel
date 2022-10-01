@@ -68,7 +68,7 @@ public class ConsumeResumeStrategyIT extends CouchbaseIntegrationTestBase {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(10);
 
-        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         TestCouchbaseResumeAdapter adapter = resumeStrategy.getAdapter(TestCouchbaseResumeAdapter.class);
         await().atMost(30, TimeUnit.SECONDS).until(() -> adapter != null);

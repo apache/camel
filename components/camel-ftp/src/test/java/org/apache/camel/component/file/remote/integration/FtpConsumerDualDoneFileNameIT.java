@@ -50,7 +50,7 @@ public class FtpConsumerDualDoneFileNameIT extends FtpServerTestSupport {
         template.sendBodyAndHeader(getFtpUrl(), "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         // give chance to poll 2nd file but it lacks the done file
-        assertMockEndpointsSatisfied(1, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 1, TimeUnit.SECONDS);
     }
 
     @Override

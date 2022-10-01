@@ -23,6 +23,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
@@ -40,7 +41,7 @@ public class JmsInOutIndividualRequestTimeoutTest extends AbstractJMSTest {
         String out = template.requestBody("direct:JmsInOutIndividualRequestTimeoutTest", "Camel", String.class);
         assertEquals("Bye Camel", out);
 
-        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Test
@@ -56,7 +57,7 @@ public class JmsInOutIndividualRequestTimeoutTest extends AbstractJMSTest {
         ExchangeTimedOutException timeout = assertIsInstanceOf(ExchangeTimedOutException.class, ex.getCause());
         assertEquals(1500, timeout.getTimeout());
 
-        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Test
@@ -68,7 +69,7 @@ public class JmsInOutIndividualRequestTimeoutTest extends AbstractJMSTest {
                         JmsConstants.JMS_REQUEST_TIMEOUT, 8000L, String.class);
         assertEquals("Bye World", out);
 
-        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Override

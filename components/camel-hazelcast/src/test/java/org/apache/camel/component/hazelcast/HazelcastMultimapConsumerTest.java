@@ -69,7 +69,7 @@ public class HazelcastMultimapConsumerTest extends HazelcastCamelTestSupport {
         EntryEvent<Object, Object> event = new EntryEvent<>("foo", null, EntryEventType.ADDED.getType(), "4711", "my-foo");
         argument.getValue().entryAdded(event);
 
-        assertMockEndpointsSatisfied(5000, TimeUnit.MILLISECONDS);
+        MockEndpoint.assertIsSatisfied(context, 5000, TimeUnit.MILLISECONDS);
 
         this.checkHeaders(out.getExchanges().get(0).getIn().getHeaders(), HazelcastConstants.ADDED);
     }
@@ -86,7 +86,7 @@ public class HazelcastMultimapConsumerTest extends HazelcastCamelTestSupport {
         EntryEvent<Object, Object> event = new EntryEvent<>("foo", null, EntryEventType.EVICTED.getType(), "4711", "my-foo");
         argument.getValue().entryEvicted(event);
 
-        assertMockEndpointsSatisfied(30000, TimeUnit.MILLISECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30000, TimeUnit.MILLISECONDS);
     }
 
     @Test
@@ -98,7 +98,7 @@ public class HazelcastMultimapConsumerTest extends HazelcastCamelTestSupport {
         EntryEvent<Object, Object> event = new EntryEvent<>("foo", null, EntryEventType.REMOVED.getType(), "4711", "my-foo");
         argument.getValue().entryRemoved(event);
 
-        assertMockEndpointsSatisfied(5000, TimeUnit.MILLISECONDS);
+        MockEndpoint.assertIsSatisfied(context, 5000, TimeUnit.MILLISECONDS);
         this.checkHeaders(out.getExchanges().get(0).getIn().getHeaders(), HazelcastConstants.REMOVED);
     }
 

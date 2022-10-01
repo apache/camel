@@ -68,7 +68,7 @@ public class LevelDBCustomSerializationTest extends CamelTestSupport {
         template.sendBodyAndHeader("direct:start", objectB, "id", 123);
         template.sendBodyAndHeader("direct:start", objectC, "id", 123);
 
-        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         // from endpoint should be preserved
         assertEquals("direct://start", mock.getReceivedExchanges().get(0).getFromEndpoint().getEndpointUri());
