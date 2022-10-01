@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,7 +53,7 @@ public class TransactedAsyncUsingThreadsTest extends CamelSpringTestSupport {
 
         template.sendBody("activemq:queue:TransactedAsyncUsingThreadsTest", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // transacted causes Camel to force sync routing
         assertEquals(thread1, thread2, "Should use a same thread when doing transacted async routing");
@@ -74,7 +75,7 @@ public class TransactedAsyncUsingThreadsTest extends CamelSpringTestSupport {
 
         template.sendBody("activemq:queue:TransactedAsyncUsingThreadsTest", "Bye World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // transacted causes Camel to force sync routing
         assertEquals(thread1, thread2, "Should use a same thread when doing transacted async routing");

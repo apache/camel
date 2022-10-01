@@ -49,7 +49,7 @@ class Etcd3RoutePolicyIT extends Etcd3TestSupport {
         MockEndpoint mock = getMockEndpoint("mock:leader");
         mock.expectedBodiesReceived("ABC");
         template.sendBody("direct:leader", "ABC");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         getClient().getLeaseClient().revoke(policyAsLeader.getLeaseId());
         getClient().getKVClient().put(
                 ByteSequence.from(policyAsLeader.getServicePath().getBytes()),
@@ -67,7 +67,7 @@ class Etcd3RoutePolicyIT extends Etcd3TestSupport {
         MockEndpoint mock = getMockEndpoint("mock:not-leader");
         mock.expectedBodiesReceived("DEF");
         template.sendBody("direct:not-leader", "DEF");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

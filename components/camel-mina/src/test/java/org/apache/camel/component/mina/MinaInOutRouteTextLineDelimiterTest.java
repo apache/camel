@@ -38,7 +38,7 @@ public class MinaInOutRouteTextLineDelimiterTest extends BaseMinaTest {
         Object out = template.requestBody(
                 String.format("mina:tcp://localhost:%1$s?sync=true&textline=true&textlineDelimiter=MAC", getPort()), "Chad");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEquals("Bye Chad", out);
     }
 

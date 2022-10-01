@@ -50,7 +50,7 @@ public class FromFtpRemoteFileSortByExpressionIT extends FtpServerTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello Paris", "Hello London", "Hello Copenhagen");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -66,7 +66,7 @@ public class FromFtpRemoteFileSortByExpressionIT extends FtpServerTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:reverse");
         mock.expectedBodiesReceived("Hello Copenhagen", "Hello London", "Hello Paris");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private void prepareFtpServer() {

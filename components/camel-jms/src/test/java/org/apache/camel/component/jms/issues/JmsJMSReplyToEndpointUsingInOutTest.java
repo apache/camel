@@ -80,7 +80,7 @@ public class JmsJMSReplyToEndpointUsingInOutTest extends AbstractJMSTest {
             return msg;
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         executor.shutdownNow();
     }
 

@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -45,7 +46,7 @@ public class DisruptorWaitForTaskCompleteOnCompletionTest extends CamelTestSuppo
             assertEquals("Forced", e.getCause().getMessage());
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // 3 + 1 C and A should be last
         assertEquals("CCCCA", done);

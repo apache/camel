@@ -47,7 +47,7 @@ public class AggregateRedisIT extends CamelTestSupport {
         template.sendBodyAndHeader("direct:start", "F", "myId", 2);
         template.sendBodyAndHeader("direct:start", "C", "myId", 1);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

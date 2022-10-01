@@ -47,7 +47,7 @@ public class RestHttpsClientAuthRouteTest extends CamelTestSupport {
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived("Hello some-id");
         sender.sendBody(null);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     protected String getClientURI() {

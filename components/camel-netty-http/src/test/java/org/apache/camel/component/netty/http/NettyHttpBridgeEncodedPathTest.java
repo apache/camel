@@ -64,7 +64,7 @@ public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
 
             try (CloseableHttpResponse response = client.execute(httpGet)) {
                 assertEquals(200, response.getStatusLine().getStatusCode(), "Get a wrong response status");
-                assertMockEndpointsSatisfied();
+                MockEndpoint.assertIsSatisfied(context);
             }
         }
     }

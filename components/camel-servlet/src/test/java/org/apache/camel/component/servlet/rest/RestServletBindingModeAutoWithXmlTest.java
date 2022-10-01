@@ -44,7 +44,7 @@ public class RestServletBindingModeAutoWithXmlTest extends ServletCamelRouterTes
 
         assertEquals(200, response.getResponseCode());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         UserJaxbPojo user = mock.getReceivedExchanges().get(0).getIn().getBody(UserJaxbPojo.class);
         assertNotNull(user);

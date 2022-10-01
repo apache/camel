@@ -19,6 +19,7 @@ package org.apache.camel.component.jms;
 import java.util.Map;
 
 import org.apache.camel.Headers;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -40,7 +41,7 @@ public class SpringJmsRoutingSlipInOutTest extends CamelSpringTestSupport {
 
         template.sendBody("activemq:queue:SpringJmsRoutingSlipInOutTest.start", "Hello");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     public static final class MyBean {

@@ -81,7 +81,7 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
 
         template.sendBody("direct:testSaxonWithFlag", "<a>Hello|there|Camel</a>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Exchange received = mockEndpoint.getExchanges().get(0);
         Object body = received.getIn().getBody();
         assertEquals("Hello", body);
@@ -96,7 +96,7 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
 
         template.sendBody("direct:testSaxonWithFactory", "<a>Hello|there|Camel</a>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Exchange received = mockEndpoint.getExchanges().get(0);
         Object body = received.getIn().getBody();
         assertEquals("Hello", body);
@@ -112,7 +112,7 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
 
         template.sendBody("direct:testSaxonWithObjectModel", "<a>Hello|there|Camel</a>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Exchange received = mockEndpoint.getExchanges().get(0);
         Object body = received.getIn().getBody();
         assertEquals("Hello", body);
@@ -127,7 +127,7 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
 
         template.sendBody("direct:testSaxonWithFlagPredicate", "<a>Hello|there|Camel</a>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -139,7 +139,7 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
 
         template.sendBody("direct:testSaxonWithFactoryPredicate", "<a>Hello|there|Camel</a>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Disabled("See http://www.saxonica.com/documentation/index.html#!xpath-api/jaxp-xpath/factory")
@@ -152,7 +152,7 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
 
         template.sendBody("direct:testSaxonWithObjectModelPredicate", "<a>Hello|there|Camel</a>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

@@ -79,7 +79,7 @@ public class ConsumerLocalTest extends GoogleCloudStorageBaseTest {
             });
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
     }
 

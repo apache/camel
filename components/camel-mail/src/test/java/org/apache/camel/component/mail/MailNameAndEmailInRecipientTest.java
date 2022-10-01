@@ -42,7 +42,7 @@ public class MailNameAndEmailInRecipientTest extends CamelTestSupport {
         template.sendBodyAndHeaders("smtp://localhost", "Hello World", headers);
         // END SNIPPET: e1
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private void assertMailbox(String name) {

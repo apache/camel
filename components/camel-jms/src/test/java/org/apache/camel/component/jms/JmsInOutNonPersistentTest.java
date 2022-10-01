@@ -19,6 +19,7 @@ package org.apache.camel.component.jms;
 import javax.jms.DeliveryMode;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,7 +37,7 @@ public class JmsInOutNonPersistentTest extends AbstractJMSTest {
         String reply = template.requestBody("direct:start", "World", String.class);
         assertEquals("Bye World", reply);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -47,7 +47,7 @@ public class S3StreamUploadOperationIT extends Aws2S3Base {
             template.sendBody("direct:stream1", "Andrea\n");
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange ex = template.request("direct:listObjects", new Processor() {
 

@@ -37,7 +37,7 @@ public class MyBatisSelectOneWithOutputHeaderTest extends MyBatisTestSupport {
 
         template.sendBody("direct:start", TEST_ACCOUNT_ID);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Account account = mock.getReceivedExchanges().get(0).getIn().getHeader(TEST_CASE_HEADER_NAME, Account.class);
         assertEquals("Claus", account.getFirstName());

@@ -56,7 +56,7 @@ public class FtpProducerFileExistFailIT extends FtpServerTestSupport {
                 = assertIsInstanceOf(GenericFileOperationFailedException.class, ex.getCause());
         assertEquals("File already exist: exist/hello.txt. Cannot write new file.", cause.getMessage());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

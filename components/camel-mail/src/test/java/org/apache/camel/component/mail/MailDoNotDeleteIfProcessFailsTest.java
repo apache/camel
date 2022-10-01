@@ -25,6 +25,7 @@ import javax.mail.internet.MimeMessage;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,7 +53,7 @@ public class MailDoNotDeleteIfProcessFailsTest extends CamelTestSupport {
         // the first 2 attempt should fail
         getMockEndpoint("mock:error").expectedMessageCount(2);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals(3, counter);
     }

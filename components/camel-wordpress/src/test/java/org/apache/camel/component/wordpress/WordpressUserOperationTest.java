@@ -32,7 +32,7 @@ public class WordpressUserOperationTest extends WordpressComponentTestSupport {
         mock.expectedMinimumMessageCount(1);
         mock.allMessages().body().isInstanceOf(User.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -41,7 +41,7 @@ public class WordpressUserOperationTest extends WordpressComponentTestSupport {
         mock.expectedMinimumMessageCount(1);
         mock.allMessages().body().isInstanceOf(User.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -61,7 +61,7 @@ public class WordpressUserOperationTest extends WordpressComponentTestSupport {
         assertThat(response.getId(), is(3));
         assertThat(response.getSlug(), is("bdenbrough"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -77,7 +77,7 @@ public class WordpressUserOperationTest extends WordpressComponentTestSupport {
         assertThat(response.getId(), is(1));
         assertThat(response.getEmail(), is("admin@email.com"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -90,7 +90,7 @@ public class WordpressUserOperationTest extends WordpressComponentTestSupport {
         assertThat(response.getId(), is(4));
         assertThat(response.getUsername(), is("bmarsh"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

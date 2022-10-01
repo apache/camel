@@ -60,7 +60,7 @@ public class FtpShutdownCompleteAllTasksIT extends FtpServerTestSupport {
         MockEndpoint bar = getMockEndpoint("mock:bar");
         bar.expectedMinimumMessageCount(1);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // shutdown during processing
         context.stop();

@@ -72,7 +72,7 @@ public class SheetsStreamConsumerIntegrationTest extends AbstractGoogleSheetsStr
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
         assertTrue(exchange.getIn().getHeaders().containsKey(SPREADSHEET_ID));
@@ -122,7 +122,7 @@ public class SheetsStreamConsumerIntegrationTest extends AbstractGoogleSheetsStr
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
         assertTrue(exchange.getIn().getHeaders().containsKey(SPREADSHEET_ID));

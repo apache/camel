@@ -36,7 +36,7 @@ public class JmsTransferExchangeTest extends AbstractJMSTest {
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -48,7 +48,7 @@ public class JmsTransferExchangeTest extends AbstractJMSTest {
 
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", "cheese");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test

@@ -49,7 +49,7 @@ public class JsonPathSplitWriteAsStringMapTest extends CamelTestSupport {
 
         template.sendBody("direct:start", new File("src/test/resources/content-map.json"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Map.Entry<?, ?> row = mock.getReceivedExchanges().get(0).getIn().getBody(Map.Entry.class);
         assertEquals("foo", row.getKey());

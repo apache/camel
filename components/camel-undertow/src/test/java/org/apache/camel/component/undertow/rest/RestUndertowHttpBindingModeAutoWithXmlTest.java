@@ -36,7 +36,7 @@ public class RestUndertowHttpBindingModeAutoWithXmlTest extends BaseUndertowTest
         String body = "<user name=\"Donald Duck\" id=\"123\"></user>";
         template.sendBody("undertow:http://localhost:{{port}}/users/new", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         UserJaxbPojo user = mock.getReceivedExchanges().get(0).getIn().getBody(UserJaxbPojo.class);
         assertNotNull(user);

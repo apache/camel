@@ -70,7 +70,7 @@ public class S3SimpleUploadOperationIT extends Aws2S3Base {
         assertEquals(1, resp.size());
         assertEquals("camel.txt", resp.get(0).key());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test

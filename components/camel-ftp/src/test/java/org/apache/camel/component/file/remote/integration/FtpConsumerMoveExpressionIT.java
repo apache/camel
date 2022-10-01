@@ -47,7 +47,7 @@ public class FtpConsumerMoveExpressionIT extends FtpServerTestSupport {
 
         sendFile(getFtpUrl(), "Reports", "report2.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // give time for consumer to rename file
         String now = new SimpleDateFormat("yyyyMMdd").format(new Date());

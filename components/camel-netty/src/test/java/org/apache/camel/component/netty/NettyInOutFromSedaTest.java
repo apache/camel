@@ -31,7 +31,7 @@ public class NettyInOutFromSedaTest extends BaseNettyTest {
         template.sendBody("seda:start", "B");
         template.sendBody("seda:start", "C");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

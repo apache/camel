@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jms.tuning;
 
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.jupiter.api.Disabled;
@@ -57,7 +58,7 @@ public class PerformanceRoutePojoTest extends CamelSpringTestSupport {
             template.sendBodyAndHeader("activemq:queue:inbox", "Message " + i, "type", type);
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         long delta = System.currentTimeMillis() - start;
         LOG.info("RoutePerformancePojoTest: Sent: {} Took: {} ms", size, delta);

@@ -51,7 +51,7 @@ public class CsvUnmarshalTwoCsvDataFormatConcurrentTest extends CamelTestSupport
         template.sendBody("direct:start", "123" + delimiter + "Camel in Action" + delimiter + "1\n124" + delimiter
                                           + "ActiveMQ in Action" + delimiter + "2");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         @SuppressWarnings("unchecked")
         List<List<String>> body = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);

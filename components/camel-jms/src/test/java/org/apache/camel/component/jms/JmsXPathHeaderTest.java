@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -31,7 +32,7 @@ public class JmsXPathHeaderTest extends AbstractJMSTest {
 
         template.sendBodyAndHeader("activemq:queue:in", "<hello>World</hello>", "foo", "true");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -41,7 +42,7 @@ public class JmsXPathHeaderTest extends AbstractJMSTest {
 
         template.sendBodyAndHeader("activemq:queue:in", "<hello>World</hello>", "foo", "false");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -51,7 +52,7 @@ public class JmsXPathHeaderTest extends AbstractJMSTest {
 
         template.sendBody("activemq:queue:in", "<hello>World</hello>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

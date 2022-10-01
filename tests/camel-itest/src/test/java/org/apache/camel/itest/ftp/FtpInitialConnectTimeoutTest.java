@@ -26,6 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.net.SocketFactory;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -149,7 +150,7 @@ public class FtpInitialConnectTimeoutTest extends CamelTestSupport {
 
         sendBody("direct:start", "test");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

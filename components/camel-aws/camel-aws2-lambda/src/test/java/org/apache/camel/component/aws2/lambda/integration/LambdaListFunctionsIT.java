@@ -71,7 +71,7 @@ public class LambdaListFunctionsIT extends Aws2LambdaBase {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         ListFunctionsResponse resp = result.getExchanges().get(0).getIn().getBody(ListFunctionsResponse.class);
         assertEquals(1, resp.functions().size());
         assertEquals("GetHelloWithName", resp.functions().get(0).functionName());

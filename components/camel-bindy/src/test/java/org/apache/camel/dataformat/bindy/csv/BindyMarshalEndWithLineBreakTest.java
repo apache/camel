@@ -46,7 +46,7 @@ public class BindyMarshalEndWithLineBreakTest extends CamelTestSupport {
 
         template.sendBody("direct:withlb", csvRecord);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -64,7 +64,7 @@ public class BindyMarshalEndWithLineBreakTest extends CamelTestSupport {
 
         template.sendBody("direct:withoutlb", csvRecord2);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

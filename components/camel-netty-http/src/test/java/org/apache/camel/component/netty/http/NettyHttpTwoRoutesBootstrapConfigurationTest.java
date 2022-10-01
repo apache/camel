@@ -18,6 +18,7 @@ package org.apache.camel.component.netty.http;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.netty.NettyServerBootstrapConfiguration;
 import org.junit.jupiter.api.Test;
 
@@ -53,7 +54,7 @@ public class NettyHttpTwoRoutesBootstrapConfigurationTest extends BaseNettyTest 
         out = template.requestBody("netty-http:http://localhost:{{port}}/bar", "Hello Camel", String.class);
         assertEquals("Bye Camel", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // validate the options
         NettyHttpConsumer consumer = (NettyHttpConsumer) context.getRoute("foo").getConsumer();

@@ -24,6 +24,7 @@ import java.time.Duration;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -75,7 +76,7 @@ public class JettyFileConsumerTest extends BaseJettyTest {
         File jpg = new File("src/test/resources/java.jpg");
         template.sendBodyAndHeader(fileUri(testDirectory, "binary"), jpg, Exchange.FILE_NAME, "java.jpg");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         File des = testDirectory.resolve("test/java.jpg").toFile();
         Awaitility.await().atMost(Duration.ofSeconds(2))

@@ -17,6 +17,7 @@
 package org.apache.camel.component.netty;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,7 +40,7 @@ public class NettyUDPLargeMessageInOnlyTest extends BaseNettyTest {
 
         getMockEndpoint("mock:result").expectedBodiesReceived(message);
         template.sendBody("netty:udp://localhost:{{port}}?sync=false", message);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test

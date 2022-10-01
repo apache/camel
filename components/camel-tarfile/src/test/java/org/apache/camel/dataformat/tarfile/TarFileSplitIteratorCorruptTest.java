@@ -21,6 +21,7 @@ import java.util.Iterator;
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +34,7 @@ public class TarFileSplitIteratorCorruptTest extends CamelTestSupport {
                 .isInstanceOf(IllegalStateException.class);
         getMockEndpoint("mock:end").expectedMessageCount(0);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

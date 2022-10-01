@@ -44,7 +44,7 @@ public class FileRouteToJmsToFileTest extends AbstractJMSTest {
 
         template.sendBodyAndHeader("file://target/file2file/in", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         notify.matchesWaitTime();
 

@@ -32,7 +32,7 @@ public class MinaTcpTextlineDelimiterTest extends BaseMinaTest {
                 String.format("mina:tcp://localhost:%1$s?sync=false&textline=true&textlineDelimiter=UNIX", getPort()), body,
                 "cheese", 123);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -38,7 +38,7 @@ public class SqlEndpointLikeTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

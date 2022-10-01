@@ -38,7 +38,7 @@ public class MinaUdpConcurrentTest extends BaseMinaTest {
 
         sendUdpMessages();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     protected void sendUdpMessages() throws Exception {

@@ -72,7 +72,7 @@ public class LevelDBAggregateConcurrentSameGroupTest extends LevelDBTestSupport 
             });
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         executor.shutdownNow();
     }
 

@@ -20,6 +20,7 @@ import java.nio.file.Path;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.builder.Namespaces;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -45,7 +46,7 @@ public class XMLTokenizeLanguageStreamingFileTest extends CamelTestSupport {
 
         template.sendBodyAndHeader(fileUri(testDirectory), body, Exchange.FILE_NAME, "myxml.xml");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -42,7 +42,7 @@ public class ActiveMQOriginalDestinationTest extends ActiveMQTestSupport {
 
         template.sendBody("activemq:queue:foo", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // consume from bar
         Exchange out = consumer.receive("activemq:queue:bar", 5000);

@@ -54,7 +54,7 @@ public class TimerAdvancedTest extends BaseEndpointDslTest {
 
         context.getRouteController().startAllRoutes();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertTrue(handled.get());
     }

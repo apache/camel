@@ -63,7 +63,7 @@ public class SqlProducerWhereIssueTest extends CamelTestSupport {
 
         template.requestBodyAndHeader("direct:query", "Hi there!", "lowId", "1");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
         Map row = (Map) list.get(0);

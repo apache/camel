@@ -45,7 +45,7 @@ public class IAMCreateUserIT extends Aws2IAMBase {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         CreateUserResponse resultGet = (CreateUserResponse) exchange.getIn().getBody();
         assertEquals("test", resultGet.user().userName());

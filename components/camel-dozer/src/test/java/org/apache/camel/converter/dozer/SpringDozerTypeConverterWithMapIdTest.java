@@ -38,6 +38,6 @@ public class SpringDozerTypeConverterWithMapIdTest extends CamelSpringTestSuppor
 
         template.sendBody("direct:service-in", createServiceCustomer());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 }

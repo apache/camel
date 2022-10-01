@@ -55,7 +55,7 @@ public class IsMockEndpointsFileTest extends CamelTestSupport {
         template.sendBodyAndHeader("file:target/input", "Hello Camel", Exchange.FILE_NAME, "camel.txt");
         template.sendBodyAndHeader("file:target/input", "Hello World", Exchange.FILE_NAME, "world.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

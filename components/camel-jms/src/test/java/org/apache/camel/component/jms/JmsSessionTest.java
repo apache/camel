@@ -35,7 +35,7 @@ public class JmsSessionTest extends AbstractJMSTest {
 
         template.sendBody("activemq:queue:fooJmsSessionTest", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

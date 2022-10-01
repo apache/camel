@@ -33,7 +33,7 @@ public class GeoCoderEmptyAddressTest extends GeoCoderApiKeyTestBase {
         // the address header overrides the endpoint configuration
         template.sendBodyAndHeader("direct:start", "Hello", GeoCoderConstants.ADDRESS, " ");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

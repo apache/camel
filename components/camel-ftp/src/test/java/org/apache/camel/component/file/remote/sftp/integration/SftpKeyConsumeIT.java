@@ -44,7 +44,7 @@ public class SftpKeyConsumeIT extends SftpServerTestSupport {
 
         context.getRouteController().startRoute("foo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private byte[] getBytesFromFile(String filename) throws IOException {

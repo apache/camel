@@ -84,7 +84,7 @@ public class SplunkHECITManualTest extends CamelTestSupport {
         mock.expectedMinimumMessageCount(1);
 
         template.sendBodyAndHeader("direct:hec", "My splunk data", "header", "headerValue");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

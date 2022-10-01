@@ -41,7 +41,7 @@ public class CsvUnmarshalCommentMarkerSpringTest extends CamelSpringTestSupport 
 
         template.sendBody("direct:start", "# Cool books list (comment)\n123|Camel in Action|1\n124|ActiveMQ in Action|2");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<List<String>> body = result.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals(2, body.size());

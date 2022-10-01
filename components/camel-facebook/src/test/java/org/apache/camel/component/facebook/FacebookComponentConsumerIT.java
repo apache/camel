@@ -73,7 +73,7 @@ public class FacebookComponentConsumerIT extends CamelFacebookTestSupport {
             mock.expectedMinimumMessageCount(1);
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test

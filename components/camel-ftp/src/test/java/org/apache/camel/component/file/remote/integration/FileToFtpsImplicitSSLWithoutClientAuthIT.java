@@ -41,7 +41,7 @@ public class FileToFtpsImplicitSSLWithoutClientAuthIT extends FtpsServerImplicit
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

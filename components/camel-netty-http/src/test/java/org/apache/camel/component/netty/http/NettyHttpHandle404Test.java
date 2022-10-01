@@ -37,7 +37,7 @@ public class NettyHttpHandle404Test extends BaseNettyTest {
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

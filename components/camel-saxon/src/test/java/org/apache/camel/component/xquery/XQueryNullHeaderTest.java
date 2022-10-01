@@ -33,7 +33,7 @@ public class XQueryNullHeaderTest extends CamelSpringTestSupport {
                                                    + "<lastName>Strachan</lastName><city>London</city></person>",
                 "foo", "123");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -46,7 +46,7 @@ public class XQueryNullHeaderTest extends CamelSpringTestSupport {
                                                    + "<lastName>Strachan</lastName><city>London</city></person>",
                 "foo", null);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

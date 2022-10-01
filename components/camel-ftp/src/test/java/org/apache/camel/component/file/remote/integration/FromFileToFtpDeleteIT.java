@@ -46,7 +46,7 @@ public class FromFileToFtpDeleteIT extends FtpServerTestSupport {
 
         template.sendBodyAndHeader(fileUri(testDirectory, "delete"), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertTrue(notify.matchesWaitTime());
 
         // file should be deleted

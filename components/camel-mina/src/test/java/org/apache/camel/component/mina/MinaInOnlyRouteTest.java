@@ -32,7 +32,7 @@ public class MinaInOnlyRouteTest extends BaseMinaTest {
         mock.expectedBodiesReceived("Bye Chad");
         mock.setResultWaitTime(5000);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

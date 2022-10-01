@@ -52,7 +52,7 @@ public class CxfRawMessageRouterTest extends CxfSimpleRouterTest {
         result.expectedMessageCount(1);
         HelloService client = getCXFClient();
         client.echo("hello world");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Map<?, ?> context
                 = CastUtils.cast((Map<?, ?>) result.assertExchangeReceived(0).getIn().getHeaders().get("ResponseContext"));
         Map<?, ?> protocalHeaders = CastUtils.cast((Map<?, ?>) context.get("org.apache.cxf.message.Message.PROTOCOL_HEADERS"));

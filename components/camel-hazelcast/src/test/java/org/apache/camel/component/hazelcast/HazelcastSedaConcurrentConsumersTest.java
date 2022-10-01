@@ -40,7 +40,7 @@ public class HazelcastSedaConcurrentConsumersTest extends CamelTestSupport {
             template.sendBody("hazelcast-seda:foo?concurrentConsumers=4", "test");
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         mock.reset();
     }
 

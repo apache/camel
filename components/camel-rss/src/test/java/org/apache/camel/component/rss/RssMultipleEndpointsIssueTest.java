@@ -33,7 +33,7 @@ public class RssMultipleEndpointsIssueTest extends CamelTestSupport {
         MockEndpoint b = getMockEndpoint("mock:b");
         b.expectedMinimumMessageCount(1);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

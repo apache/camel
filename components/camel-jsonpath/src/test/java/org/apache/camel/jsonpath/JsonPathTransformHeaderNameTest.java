@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -46,7 +47,7 @@ public class JsonPathTransformHeaderNameTest extends CamelTestSupport {
         Object file = new File("src/test/resources/books.json");
         template.sendBodyAndHeader("direct:start", "Hello World", "myHeader", file);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<?> authors = getMockEndpoint("mock:authors").getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals("Nigel Rees", authors.get(0));

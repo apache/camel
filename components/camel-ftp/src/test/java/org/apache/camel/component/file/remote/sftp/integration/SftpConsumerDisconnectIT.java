@@ -53,7 +53,7 @@ public class SftpConsumerDisconnectIT extends SftpServerTestSupport {
         context.getRouteController().startRoute("foo");
 
         // Check that expectations are satisfied
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // File is deleted
         File deletedFile = new File(service.getFtpRootDir() + "/" + SAMPLE_FILE_NAME_1);
@@ -79,7 +79,7 @@ public class SftpConsumerDisconnectIT extends SftpServerTestSupport {
         context.getRouteController().startRoute("bar");
 
         // Check that expectations are satisfied
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

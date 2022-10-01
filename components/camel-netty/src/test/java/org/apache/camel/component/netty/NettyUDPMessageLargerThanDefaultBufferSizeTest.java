@@ -20,6 +20,7 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.FixedRecvByteBufAllocator;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,7 +43,7 @@ public class NettyUDPMessageLargerThanDefaultBufferSizeTest extends BaseNettyTes
 
         getMockEndpoint("mock:result").expectedBodiesReceived(message);
         template.sendBody("netty:udp://localhost:{{port}}?sync=false", message);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test

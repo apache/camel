@@ -18,6 +18,7 @@ package org.apache.camel.dataformat.base64;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +30,7 @@ public class Base64PropertiesFunctionTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "Hello");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

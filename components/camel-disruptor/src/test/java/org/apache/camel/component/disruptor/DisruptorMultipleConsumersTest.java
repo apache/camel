@@ -17,6 +17,7 @@
 package org.apache.camel.component.disruptor;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +30,7 @@ public class DisruptorMultipleConsumersTest extends CamelTestSupport {
         template.sendBody("disruptor:foo", "Hello World");
         template.sendBody("disruptor:bar", "Bye World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -41,7 +42,7 @@ public class DisruptorMultipleConsumersTest extends CamelTestSupport {
         template.sendBody("disruptor:foo", "Hello World");
         template.sendBody("disruptor:bar", "Bye World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -61,7 +62,7 @@ public class DisruptorMultipleConsumersTest extends CamelTestSupport {
             template.sendBody("disruptor:foo", "Hello World");
             template.sendBody("disruptor:bar", "Bye World");
         }
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         resetMocks();
 
         context.getRouteController().suspendRoute("testRoute");
@@ -73,7 +74,7 @@ public class DisruptorMultipleConsumersTest extends CamelTestSupport {
             template.sendBody("disruptor:foo", "Hello World");
             template.sendBody("disruptor:bar", "Bye World");
         }
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

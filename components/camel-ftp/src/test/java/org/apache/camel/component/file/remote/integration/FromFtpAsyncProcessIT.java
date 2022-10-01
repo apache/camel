@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.junit.jupiter.api.Test;
 
@@ -55,7 +56,7 @@ public class FromFtpAsyncProcessIT extends FtpServerTestSupport {
 
         context.getRouteController().startRoute("foo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // give time for files to be deleted on ftp server
 

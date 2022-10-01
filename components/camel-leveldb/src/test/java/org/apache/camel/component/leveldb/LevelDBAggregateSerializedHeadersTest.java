@@ -65,7 +65,7 @@ public class LevelDBAggregateSerializedHeadersTest extends LevelDBTestSupport {
 
         LOG.info("Sending all " + SIZE + " message done. Now waiting for aggregation to complete.");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

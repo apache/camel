@@ -19,6 +19,7 @@ package org.apache.camel.component.netty;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.PooledExchangeFactory;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +38,7 @@ public class NettyTextlineInOnlyPooledExchangeTest extends BaseNettyTest {
 
         template.sendBody("netty:tcp://localhost:{{port}}?textline=true&sync=false", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -47,7 +48,7 @@ public class NettyTextlineInOnlyPooledExchangeTest extends BaseNettyTest {
         template.sendBody("netty:tcp://localhost:{{port}}?textline=true&sync=false", "Hello World");
         template.sendBody("netty:tcp://localhost:{{port}}?textline=true&sync=false", "Bye World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

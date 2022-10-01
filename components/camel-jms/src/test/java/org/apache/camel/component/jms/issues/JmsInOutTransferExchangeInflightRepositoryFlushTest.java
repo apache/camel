@@ -42,7 +42,7 @@ public class JmsInOutTransferExchangeInflightRepositoryFlushTest extends Abstrac
 
         template.send("direct:start", exchange -> exchange.getIn().setBody(new SerializableRequestDto("Restless Camel")));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals(0, context().getInflightRepository().size());
     }

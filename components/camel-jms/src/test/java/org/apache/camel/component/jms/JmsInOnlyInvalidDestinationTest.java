@@ -22,6 +22,7 @@ import javax.jms.Session;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.springframework.jms.support.destination.DestinationResolutionException;
 import org.springframework.jms.support.destination.DestinationResolver;
@@ -41,7 +42,7 @@ public class JmsInOnlyInvalidDestinationTest extends AbstractJMSTest {
         template.sendBodyAndHeader("direct:foo", "Hello World", "foo",
                 "activemq:queue:JmsInOnlyInvalidDestinationTest?destinationResolver=#myResolver");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

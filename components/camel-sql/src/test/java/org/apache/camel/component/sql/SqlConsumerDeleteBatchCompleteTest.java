@@ -65,7 +65,7 @@ public class SqlConsumerDeleteBatchCompleteTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(3);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // some servers may be a bit slow for this
         for (int i = 0; i < 5; i++) {

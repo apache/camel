@@ -26,7 +26,7 @@ public class GoogleMailStreamConsumerIntegrationTest extends AbstractGoogleMailS
     public void testConsumePrefixedMessages() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

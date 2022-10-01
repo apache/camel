@@ -48,7 +48,7 @@ public class JmsAutoStartupTest extends AbstractPersistentJMSTest {
         template.sendBody("activemq:queue:JmsAutoStartupTest", "Hello World");
 
         Awaitility.await().atMost(2, TimeUnit.SECONDS)
-                .untilAsserted(this::assertMockEndpointsSatisfied);
+                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
 
         mock.reset();
         mock.expectedBodiesReceived("Hello World");
@@ -56,7 +56,7 @@ public class JmsAutoStartupTest extends AbstractPersistentJMSTest {
         // then start the listener so we can consume the persistent message
         consumer.startListenerContainer();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

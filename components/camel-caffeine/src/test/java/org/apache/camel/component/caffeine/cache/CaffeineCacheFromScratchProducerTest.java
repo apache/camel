@@ -53,7 +53,7 @@ public class CaffeineCacheFromScratchProducerTest extends CamelTestSupport {
         fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_GET)
                 .withHeader(CaffeineConstants.KEY, key).withBody(val).to("direct://get-1").send();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     // ****************************

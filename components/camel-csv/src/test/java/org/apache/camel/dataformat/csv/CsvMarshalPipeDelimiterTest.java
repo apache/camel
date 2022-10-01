@@ -41,7 +41,7 @@ public class CsvMarshalPipeDelimiterTest extends CamelTestSupport {
 
         template.sendBody("direct:start", createBody());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         String body = result.getReceivedExchanges().get(0).getIn().getBody(String.class);
         String[] lines = body.split(LS);

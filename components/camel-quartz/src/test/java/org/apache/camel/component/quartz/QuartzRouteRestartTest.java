@@ -30,7 +30,7 @@ public class QuartzRouteRestartTest extends BaseQuartzTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // restart route
         context().getRouteController().stopRoute("trigger");
@@ -39,7 +39,7 @@ public class QuartzRouteRestartTest extends BaseQuartzTest {
 
         // wait a bit
         Awaitility.await().atMost(2, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertMockEndpointsSatisfied());
+                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
 
         // start route, and we got messages again
         mock.reset();
@@ -47,7 +47,7 @@ public class QuartzRouteRestartTest extends BaseQuartzTest {
 
         context().getRouteController().startRoute("trigger");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -46,7 +46,7 @@ public class IronMQComponentTest extends CamelTestSupport {
         mock.expectedMinimumMessageCount(1);
         template.sendBody("direct:start", "some payload");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Message in = mock.getExchanges().get(0).getIn();
         assertNotNull(in.getHeader(IronMQConstants.MESSAGE_ID));
         assertNotNull(in.getHeader(IronMQConstants.MESSAGE_RESERVATION_ID));
@@ -63,7 +63,7 @@ public class IronMQComponentTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange resultExchange = result.getExchanges().get(0);
         assertEquals("This is my message text.", resultExchange.getIn().getBody());
@@ -83,7 +83,7 @@ public class IronMQComponentTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange resultExchange = result.getExchanges().get(0);
         assertEquals("This is my message text.", resultExchange.getIn().getBody());

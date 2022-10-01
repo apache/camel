@@ -41,7 +41,7 @@ public class PubNubFireTest extends PubNubTestBase {
         mockResult.expectedHeaderReceived(TIMETOKEN, "14598111595318003");
 
         template.sendBody("direct:publish", "Hi");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

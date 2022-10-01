@@ -49,7 +49,7 @@ public class MustacheComponentTest extends CamelTestSupport {
         // Act
         startSimpleProducerTemplate.sendBodyAndHeader("The Body", "someHeader", "Some Header");
         // Verify
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     /**
@@ -66,7 +66,7 @@ public class MustacheComponentTest extends CamelTestSupport {
         // Act
         startSimpleProducerTemplate.send(exchange);
         // Verify
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     /**
@@ -84,7 +84,7 @@ public class MustacheComponentTest extends CamelTestSupport {
         // Act
         startSimpleProducerTemplate.send(exchange);
         // Verify
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -99,7 +99,7 @@ public class MustacheComponentTest extends CamelTestSupport {
         // Act
         startSimpleProducerTemplate.send(exchange);
         // Verify
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -114,7 +114,7 @@ public class MustacheComponentTest extends CamelTestSupport {
         // Act
         startSimpleProducerTemplate.send(exchange);
         // Verify
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     /**
@@ -128,7 +128,7 @@ public class MustacheComponentTest extends CamelTestSupport {
         for (int i = 0; i < messageCount; i++) {
             startSimpleProducerTemplate.sendBodyAndHeader("The Body", "someHeader", "Some Header");
         }
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         LoggerFactory.getLogger(getClass())
                 .info("Mustache performance: " + stopwatch.taken() + "ms for " + messageCount + " messages");
     }

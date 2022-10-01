@@ -82,7 +82,7 @@ public class XPathLanguageDefaultSettingsTest extends CamelSpringTestSupport {
 
         template.sendBody("seda:testDefaultXPathSettings", "<a>Hello|there|Camel</a>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

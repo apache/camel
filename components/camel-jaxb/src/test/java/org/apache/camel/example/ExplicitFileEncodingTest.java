@@ -47,7 +47,7 @@ public class ExplicitFileEncodingTest extends CamelTestSupport {
         result.expectedFileExists(testDirectory.resolve("output.txt"));
 
         template.sendBody("direct:start", order);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         JAXBContext jaxbContext = JAXBContext.newInstance("org.apache.camel.example");
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();

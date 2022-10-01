@@ -44,7 +44,7 @@ public class GroovySetHeaderTest extends CamelTestSupport {
 
         template.sendBodyAndHeaders("direct:start", "Hello World", headers);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

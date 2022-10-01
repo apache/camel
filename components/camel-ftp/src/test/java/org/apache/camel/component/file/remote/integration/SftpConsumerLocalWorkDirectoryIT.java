@@ -78,9 +78,9 @@ public class SftpConsumerLocalWorkDirectoryIT extends SftpServerTestSupport {
 
         context.getRouteController().startRoute("myRoute");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertTrue(notify.matchesWaitTime());
 
         // and the out file should exists

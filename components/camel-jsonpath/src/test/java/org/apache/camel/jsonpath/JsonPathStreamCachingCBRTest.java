@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -86,7 +87,7 @@ public class JsonPathStreamCachingCBRTest extends CamelTestSupport {
 
         template.sendBody(startPoint, new FileInputStream(new File("src/test/resources/cheap.json")));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -97,7 +98,7 @@ public class JsonPathStreamCachingCBRTest extends CamelTestSupport {
 
         template.sendBody("direct:start", new FileInputStream(new File("src/test/resources/cheap.json")));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -108,7 +109,7 @@ public class JsonPathStreamCachingCBRTest extends CamelTestSupport {
 
         template.sendBody("direct:start", new FileInputStream(new File("src/test/resources/average.json")));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -119,7 +120,7 @@ public class JsonPathStreamCachingCBRTest extends CamelTestSupport {
 
         template.sendBody("direct:start", new FileInputStream(new File("src/test/resources/expensive.json")));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

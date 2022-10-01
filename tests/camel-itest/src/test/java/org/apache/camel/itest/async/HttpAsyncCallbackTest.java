@@ -49,7 +49,7 @@ public class HttpAsyncCallbackTest extends HttpAsyncTestSupport {
         template.asyncCallbackRequestBody(url, "Willem", callback);
 
         // END SNIPPET: e3
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertTrue(LATCH.await(10, TimeUnit.SECONDS), "Should get 3 callbacks");
 

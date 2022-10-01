@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.groovy;
 
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -35,7 +36,7 @@ public class InlinedGroovyScriptTest extends CamelSpringTestSupport {
         template.sendBodyAndHeader("direct:start", "Hello", "foo", 123);
         template.sendBodyAndHeader("direct:start", "3", "foo", 123);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

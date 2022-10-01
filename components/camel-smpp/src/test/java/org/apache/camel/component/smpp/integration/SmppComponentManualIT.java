@@ -55,7 +55,7 @@ public class SmppComponentManualIT extends CamelTestSupport {
 
         template.send(start, exchange);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Exchange resultExchange = result.getExchanges().get(0);
         assertEquals(SmppMessageType.DeliveryReceipt.toString(), resultExchange.getIn().getHeader(SmppConstants.MESSAGE_TYPE));
         assertEquals("Hello SMPP World!", resultExchange.getIn().getBody());
@@ -79,7 +79,7 @@ public class SmppComponentManualIT extends CamelTestSupport {
 
         template.send(start, exchange);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Exchange resultExchange = result.getExchanges().get(0);
         assertEquals(SmppMessageType.DeliveryReceipt.toString(), resultExchange.getIn().getHeader(SmppConstants.MESSAGE_TYPE));
         assertEquals("Hello SMPP World!", resultExchange.getIn().getBody());
@@ -105,7 +105,7 @@ public class SmppComponentManualIT extends CamelTestSupport {
 
         template.send(start, exchange);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEquals(SmppMessageType.DeliveryReceipt.toString(),
                 result.getExchanges().get(0).getIn().getHeader(SmppConstants.MESSAGE_TYPE));
         assertEquals(SmppMessageType.DeliveryReceipt.toString(),

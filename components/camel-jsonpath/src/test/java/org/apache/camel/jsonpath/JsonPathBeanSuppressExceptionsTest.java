@@ -17,6 +17,7 @@
 package org.apache.camel.jsonpath;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +28,7 @@ public class JsonPathBeanSuppressExceptionsTest extends CamelTestSupport {
         String json = "{\"person\" : {\"firstname\" : \"foo\", \"middlename\" : \"foo2\", \"lastname\" : \"bar\"}}";
         getMockEndpoint("mock:result").expectedBodiesReceived("foo foo2 bar");
         template.sendBody("direct:start", json);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -35,7 +36,7 @@ public class JsonPathBeanSuppressExceptionsTest extends CamelTestSupport {
         String json = "{\"person\" : {\"firstname\" : \"foo\", \"lastname\" : \"bar\"}}";
         getMockEndpoint("mock:result").expectedBodiesReceived("foo bar");
         template.sendBody("direct:start", json);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

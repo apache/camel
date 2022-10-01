@@ -67,7 +67,7 @@ public class DozerTypeConverterDTOTest extends CamelTestSupport {
 
         template.sendBody("direct:service-in", createDtoCustomer());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

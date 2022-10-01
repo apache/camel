@@ -40,7 +40,7 @@ public class JdbcFix18157Test extends AbstractJdbcTestSupport {
 
         template.sendBody("direct:useHeadersAsParameters", "select * from customer");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEquals(1, mock.getReceivedExchanges().get(0).getIn().getBody(List.class).size());
 
     }

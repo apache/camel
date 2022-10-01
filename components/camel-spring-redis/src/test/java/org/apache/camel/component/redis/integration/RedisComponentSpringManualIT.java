@@ -65,7 +65,7 @@ public class RedisComponentSpringManualIT extends CamelSpringTestSupport {
                 exchange.getIn().setHeader(RedisConstants.MESSAGE, "Message two");
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange resultExchangeOne = result.getExchanges().get(0);
         Exchange resultExchangeTwo = result.getExchanges().get(1);

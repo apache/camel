@@ -44,7 +44,7 @@ public class FtpProducerFileExistIgnoreIT extends FtpServerTestSupport {
 
         template.sendBodyAndHeader(getFtpUrl(), "Bye World", Exchange.FILE_NAME, "hello.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

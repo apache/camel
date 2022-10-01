@@ -38,7 +38,7 @@ public class TarFileMultipleFilesSplitterTest extends TarSplitterRouteTest {
         splitResult.expectedBodiesReceivedInAnyOrder("chiau.txt", "hi.txt", "hola.txt", "another/hello.txt",
                 "other/greetings.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

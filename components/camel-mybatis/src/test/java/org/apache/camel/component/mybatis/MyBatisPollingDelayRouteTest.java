@@ -30,7 +30,7 @@ public class MyBatisPollingDelayRouteTest extends MyBatisTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         long delta = System.currentTimeMillis() - start;
 
         assertTrue(delta < 7000, "Should not take that long: " + delta);

@@ -23,6 +23,7 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.http.base.cookie.ExchangeCookieHandler;
 import org.apache.camel.http.base.cookie.InstanceCookieHandler;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -90,7 +91,7 @@ public class CxfProducerSessionTest extends CamelTestSupport {
         assertEquals("New New World", response);
         response = template.requestBody("direct:start", "World", String.class);
         assertEquals("New New World", response);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -100,7 +101,7 @@ public class CxfProducerSessionTest extends CamelTestSupport {
         assertEquals("Old New World", response);
         response = template.requestBody("direct:exchange", "World", String.class);
         assertEquals("Old New World", response);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -110,7 +111,7 @@ public class CxfProducerSessionTest extends CamelTestSupport {
         assertEquals("Old New World", response);
         response = template.requestBody("direct:instance", "World", String.class);
         assertEquals("Old Old World", response);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test

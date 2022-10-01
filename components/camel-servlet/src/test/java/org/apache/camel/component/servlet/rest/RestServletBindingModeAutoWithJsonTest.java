@@ -44,7 +44,7 @@ public class RestServletBindingModeAutoWithJsonTest extends ServletCamelRouterTe
 
         assertEquals(200, response.getResponseCode());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         UserPojo user = mock.getReceivedExchanges().get(0).getIn().getBody(UserPojo.class);
         assertNotNull(user);

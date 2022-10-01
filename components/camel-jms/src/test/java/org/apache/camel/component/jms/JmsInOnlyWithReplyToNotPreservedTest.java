@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -30,7 +31,7 @@ public class JmsInOnlyWithReplyToNotPreservedTest extends AbstractJMSTest {
 
         template.sendBody("direct:JmsInOnlyWithReplyToNotPreservedTest", "World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // there should be no messages on the JmsInOnlyWithReplyToNotPreservedTest.Reply queue
         Object msg = consumer.receiveBody("activemq:queue:JmsInOnlyWithReplyToNotPreservedTest.Reply", 1000);

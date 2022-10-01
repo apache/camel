@@ -39,7 +39,7 @@ public class HttpSyncTest extends HttpAsyncTestSupport {
         String name = template.requestBody("direct:name", "Give me a name", String.class);
         assertEquals("Claus", name);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         // END SNIPPET: e2
     }
 

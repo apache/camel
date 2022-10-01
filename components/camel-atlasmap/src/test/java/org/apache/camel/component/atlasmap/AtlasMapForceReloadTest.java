@@ -56,7 +56,7 @@ public class AtlasMapForceReloadTest extends CamelSpringTestSupport {
         ProducerTemplate producerTemplate = context.createProducerTemplate();
         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         producerTemplate.sendBody("direct:start", tccl.getResourceAsStream(INPUT_FILE));
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         final Object body = result.getExchanges().get(0).getIn().getBody();
         assertEquals(EXPECTED_BODY, body);
 
@@ -65,7 +65,7 @@ public class AtlasMapForceReloadTest extends CamelSpringTestSupport {
                 Paths.get("target/test-classes/atlasmap-mapping-force-reload.adm"),
                 StandardCopyOption.REPLACE_EXISTING);
         producerTemplate.sendBody("direct:start", tccl.getResourceAsStream(INPUT_FILE));
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         final Object body2 = result.getExchanges().get(0).getIn().getBody();
         assertEquals(EXPECTED_BODY, body2);
     }
@@ -81,7 +81,7 @@ public class AtlasMapForceReloadTest extends CamelSpringTestSupport {
         ProducerTemplate producerTemplate = context.createProducerTemplate();
         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         producerTemplate.sendBody("direct:start-force-reload", tccl.getResourceAsStream(INPUT_FILE));
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         final Object body = result.getExchanges().get(0).getIn().getBody();
         assertEquals(EXPECTED_BODY, body);
 
@@ -90,7 +90,7 @@ public class AtlasMapForceReloadTest extends CamelSpringTestSupport {
                 Paths.get("target/test-classes/atlasmap-mapping-force-reload.adm"),
                 StandardCopyOption.REPLACE_EXISTING);
         producerTemplate.sendBody("direct:start", tccl.getResourceAsStream(INPUT_FILE));
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         final Object body2 = result.getExchanges().get(0).getIn().getBody();
         InputStream schemaIs = tccl.getResourceAsStream("xml-target-schemaset.xml");
         AtlasXmlSchemaSetParser schemaParser = new AtlasXmlSchemaSetParser(tccl);

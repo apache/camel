@@ -44,7 +44,7 @@ public class FtpProducerJailStartingDirectoryIT extends FtpServerTestSupport {
             assertTrue(iae.getMessage().contains("as the filename is jailed to the starting directory"));
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -54,7 +54,7 @@ public class FtpProducerJailStartingDirectoryIT extends FtpServerTestSupport {
 
         template.sendBodyAndHeader("direct:start", "Bye World", Exchange.FILE_NAME, "jail/bye.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

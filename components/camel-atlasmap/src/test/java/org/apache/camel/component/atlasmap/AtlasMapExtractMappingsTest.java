@@ -46,7 +46,7 @@ public class AtlasMapExtractMappingsTest extends CamelSpringTestSupport {
         producerTemplate.sendBody("direct:start",
                 new ByteArrayInputStream("{ \"order\": { \"orderId\": \"A123\" }}".getBytes()));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         final Object body = result.getExchanges().get(0).getIn().getBody();
         assertEquals(EXPECTED_BODY, body);
@@ -62,7 +62,7 @@ public class AtlasMapExtractMappingsTest extends CamelSpringTestSupport {
         producerTemplate.sendBody("direct:start-n",
                 new ByteArrayInputStream("{ \"order\": { \"orderId\": \"A123\" }}".getBytes()));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         final Object body = resultN.getExchanges().get(0).getIn().getBody();
         assertEquals(EXPECTED_BODY, body);

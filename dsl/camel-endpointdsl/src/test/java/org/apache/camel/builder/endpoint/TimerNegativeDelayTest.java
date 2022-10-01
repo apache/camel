@@ -29,7 +29,7 @@ public class TimerNegativeDelayTest extends BaseEndpointDslTest {
 
         context.getRouteController().startAllRoutes();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

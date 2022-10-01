@@ -39,7 +39,7 @@ public class SpringQuartzPersistentStoreRestartRouteTest extends CamelSpringTest
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // restart route
         context().getRouteController().stopRoute("myRoute");
@@ -48,7 +48,7 @@ public class SpringQuartzPersistentStoreRestartRouteTest extends CamelSpringTest
 
         // wait a bit
         Awaitility.await().atMost(2, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertMockEndpointsSatisfied());
+                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
 
         // start route, and we got messages again
         mock.reset();
@@ -56,7 +56,7 @@ public class SpringQuartzPersistentStoreRestartRouteTest extends CamelSpringTest
 
         context().getRouteController().startRoute("myRoute");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

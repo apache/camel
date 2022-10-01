@@ -80,7 +80,7 @@ public class VertxKafkaConsumerSuspendResumeTest extends BaseEmbeddedKafkaTest {
             producer.send(data);
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // suspend
         context.getRouteController().suspendRoute("foo");
@@ -103,7 +103,7 @@ public class VertxKafkaConsumerSuspendResumeTest extends BaseEmbeddedKafkaTest {
         // resume
         context.getRouteController().resumeRoute("foo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

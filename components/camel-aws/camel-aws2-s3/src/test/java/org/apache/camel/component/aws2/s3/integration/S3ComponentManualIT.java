@@ -66,7 +66,7 @@ public class S3ComponentManualIT extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertResultExchange(result.getExchanges().get(0));
         assertResultExchange(result.getExchanges().get(1));
@@ -86,7 +86,7 @@ public class S3ComponentManualIT extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertResultExchange(result.getExchanges().get(0));
 

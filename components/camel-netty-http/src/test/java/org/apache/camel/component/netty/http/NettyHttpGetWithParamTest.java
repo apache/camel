@@ -39,7 +39,7 @@ public class NettyHttpGetWithParamTest extends BaseNettyTest {
 
         template.requestBody(serverUri + "?one=uno&two=dos", (Object) null);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -51,7 +51,7 @@ public class NettyHttpGetWithParamTest extends BaseNettyTest {
 
         template.requestBodyAndHeader(serverUri, null, Exchange.HTTP_QUERY, "one=uno&two=dos");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -56,7 +56,7 @@ public class DropboxProducerMoveIT extends DropboxTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.expectedHeaderReceived(DropboxResultHeader.MOVED_PATH.name(), workdir + "/" + FILE);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

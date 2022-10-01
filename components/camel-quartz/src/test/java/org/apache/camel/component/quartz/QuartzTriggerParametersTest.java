@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class QuartzTriggerParametersTest extends BaseQuartzTest {
@@ -28,7 +29,7 @@ public class QuartzTriggerParametersTest extends BaseQuartzTest {
     public void testTriggerParameters() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Europe/Berlin");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

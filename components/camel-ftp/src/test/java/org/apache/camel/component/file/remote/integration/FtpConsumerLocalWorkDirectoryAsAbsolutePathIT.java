@@ -60,7 +60,7 @@ public class FtpConsumerLocalWorkDirectoryAsAbsolutePathIT extends FtpServerTest
         mock.expectedBodiesReceived("Hello World");
         mock.expectedMessageCount(1);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // give test some time to close file resources
         // now the lwd file should be deleted

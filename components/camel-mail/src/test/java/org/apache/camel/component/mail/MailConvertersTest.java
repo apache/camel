@@ -50,7 +50,7 @@ public class MailConvertersTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("direct:a", "Hello World", "Subject", "Camel rocks");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Message mailMessage = mock.getReceivedExchanges().get(0).getIn().getBody(MailMessage.class).getMessage();
         assertNotNull(mailMessage);
@@ -66,7 +66,7 @@ public class MailConvertersTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("direct:a", "Hello World", "Subject", "Camel rocks");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Message mailMessage = mock.getReceivedExchanges().get(0).getIn().getBody(MailMessage.class).getMessage();
         assertNotNull(mailMessage);
@@ -88,7 +88,7 @@ public class MailConvertersTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Message mailMessage = mock.getReceivedExchanges().get(0).getIn().getBody(MailMessage.class).getMessage();
         assertNotNull(mailMessage);
@@ -113,7 +113,7 @@ public class MailConvertersTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Message mailMessage = mock.getReceivedExchanges().get(0).getIn().getBody(MailMessage.class).getMessage();
         assertNotNull(mailMessage);
@@ -138,7 +138,7 @@ public class MailConvertersTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Message mailMessage = mock.getReceivedExchanges().get(0).getIn().getBody(MailMessage.class).getMessage();
         assertNotNull(mailMessage);

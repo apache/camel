@@ -46,7 +46,7 @@ public class HttpToFileTest extends BaseJettyTest {
         String response = context.getTypeConverter().convertTo(String.class, out);
         assertEquals("We got the file", response, "Response from Jetty");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // give file some time to save
         Awaitility.await()

@@ -70,7 +70,7 @@ public class JMXTXUseOriginalBodyWithDLCErrorHandlerTest extends JMXTXUseOrigina
 
         start.sendBody("foo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class JMXTXUseOriginalBodyWithDLCErrorHandlerTest extends JMXTXUseOrigina
 
         broken.sendBody("foo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -97,7 +97,7 @@ public class JMXTXUseOriginalBodyWithDLCErrorHandlerTest extends JMXTXUseOrigina
 
         ok.sendBody("foo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     public static class FooBean {

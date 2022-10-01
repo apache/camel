@@ -39,7 +39,7 @@ public class JpaWireTapTest extends AbstractJpaTest {
 
         template.sendBody("direct:start", new SendEmail("someone@somewhere.org"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEntityInDB(2);
     }
 

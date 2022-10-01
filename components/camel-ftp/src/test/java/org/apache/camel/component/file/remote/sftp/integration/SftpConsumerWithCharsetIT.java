@@ -58,7 +58,7 @@ public class SftpConsumerWithCharsetIT extends SftpServerTestSupport {
         context.getRouteController().startRoute("foo");
 
         // Check that expectations are satisfied
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // Check that the proper charset was set in the internal object
         Exchange exchange = mock.getExchanges().get(0);

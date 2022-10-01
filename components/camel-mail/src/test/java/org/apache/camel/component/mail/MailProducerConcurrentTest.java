@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
@@ -73,7 +74,7 @@ public class MailProducerConcurrentTest extends CamelTestSupport {
         // wait first for all the exchanges above to be thoroughly sent asynchronously
         assertTrue(latch.await(5, TimeUnit.SECONDS));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertTrue(builder.matchesWaitTime());
 
         Mailbox box = Mailbox.get("someone@localhost");

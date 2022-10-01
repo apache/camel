@@ -44,7 +44,7 @@ public class PubNubSubscriberTest extends PubNubTestBase {
         context.getRouteController().startRoute("subroute");
         mockResult.expectedMessageCount(1);
         mockResult.expectedHeaderReceived(PubNubConstants.CHANNEL, "mychannel");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

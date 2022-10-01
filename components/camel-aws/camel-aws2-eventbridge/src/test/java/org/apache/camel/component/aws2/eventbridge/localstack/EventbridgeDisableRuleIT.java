@@ -86,7 +86,7 @@ public class EventbridgeDisableRuleIT extends Aws2EventbridgeBase {
         assertEquals(1, resp.rules().size());
         assertEquals("firstrule", resp.rules().get(0).name());
         assertEquals(RuleState.DISABLED, resp.rules().get(0).state());
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
     }
 

@@ -35,7 +35,7 @@ public class MyBatisBeanSelectListTest extends MyBatisTestSupport {
 
         template.sendBody("direct:start", null);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<?> list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
         Account james = (Account) list.get(0);

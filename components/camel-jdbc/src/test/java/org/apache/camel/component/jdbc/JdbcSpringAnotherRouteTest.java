@@ -32,7 +32,7 @@ public class JdbcSpringAnotherRouteTest extends CamelSpringTestSupport {
     public void testTimerInvoked() throws Exception {
         mock.expectedMinimumMessageCount(1);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

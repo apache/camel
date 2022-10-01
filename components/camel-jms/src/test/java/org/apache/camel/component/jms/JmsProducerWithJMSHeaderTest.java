@@ -50,7 +50,7 @@ public class JmsProducerWithJMSHeaderTest extends AbstractJMSTest {
         template.sendBodyAndHeader("activemq:queue:fooJmsProducerWithJMSHeaderTest?preserveMessageQos=true", "Hello World",
                 "JMSPriority", "2");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -62,7 +62,7 @@ public class JmsProducerWithJMSHeaderTest extends AbstractJMSTest {
         template.sendBodyAndHeader("activemq:queue:fooJmsProducerWithJMSHeaderTest?preserveMessageQos=true", "Hello World",
                 "JMSPriority", "0");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -74,7 +74,7 @@ public class JmsProducerWithJMSHeaderTest extends AbstractJMSTest {
         template.sendBodyAndHeader("activemq:queue:fooJmsProducerWithJMSHeaderTest?preserveMessageQos=true", "Hello World",
                 "JMSPriority", "9");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -88,7 +88,7 @@ public class JmsProducerWithJMSHeaderTest extends AbstractJMSTest {
         template.sendBodyAndHeader("activemq:queue:fooJmsProducerWithJMSHeaderTest?preserveMessageQos=true", "Hello World",
                 "JMSPriority", "2");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -100,7 +100,7 @@ public class JmsProducerWithJMSHeaderTest extends AbstractJMSTest {
         template.sendBodyAndHeader("activemq:queue:fooJmsProducerWithJMSHeaderTest?preserveMessageQos=true", "Hello World",
                 "JMSDeliveryMode", "1");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -113,7 +113,7 @@ public class JmsProducerWithJMSHeaderTest extends AbstractJMSTest {
                 "JMSDeliveryMode",
                 "NON_PERSISTENT");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -134,7 +134,7 @@ public class JmsProducerWithJMSHeaderTest extends AbstractJMSTest {
 
         template.send("activemq:queue:fooJmsProducerWithJMSHeaderTest", bar);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -152,7 +152,7 @@ public class JmsProducerWithJMSHeaderTest extends AbstractJMSTest {
                         () -> assertThat(consumer.receiveNoWait("activemq:queue:barJmsProducerWithJMSHeaderTest")).isNull());
         template.sendBody("activemq:queue:fooJmsProducerWithJMSHeaderTest", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -168,7 +168,7 @@ public class JmsProducerWithJMSHeaderTest extends AbstractJMSTest {
         template.sendBodyAndHeaders("activemq:queue:fooJmsProducerWithJMSHeaderTest?preserveMessageQos=true", "Hello World",
                 headers);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -195,7 +195,7 @@ public class JmsProducerWithJMSHeaderTest extends AbstractJMSTest {
 
         Thread.sleep(1000);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -219,7 +219,7 @@ public class JmsProducerWithJMSHeaderTest extends AbstractJMSTest {
 
         template.sendBody("activemq:queue:fooJmsProducerWithJMSHeaderTest", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -230,7 +230,7 @@ public class JmsProducerWithJMSHeaderTest extends AbstractJMSTest {
 
         template.sendBodyAndHeader("activemq:queue:fooJmsProducerWithJMSHeaderTest", "Hello World", JMS_X_GROUP_ID, "atom");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -244,7 +244,7 @@ public class JmsProducerWithJMSHeaderTest extends AbstractJMSTest {
         template.sendBodyAndHeader("activemq:queue:barJmsProducerWithJMSHeaderTest", "Hello World",
                 JmsConstants.JMS_DESTINATION, queue);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals("queue://fooJmsProducerWithJMSHeaderTest",
                 mock.getReceivedExchanges().get(0).getIn().getHeader("JMSDestination", Destination.class).toString());
@@ -259,7 +259,7 @@ public class JmsProducerWithJMSHeaderTest extends AbstractJMSTest {
         template.sendBodyAndHeader("activemq:queue:barJmsProducerWithJMSHeaderTest", "Hello World",
                 JmsConstants.JMS_DESTINATION_NAME, "fooJmsProducerWithJMSHeaderTest");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals("queue://fooJmsProducerWithJMSHeaderTest",
                 mock.getReceivedExchanges().get(0).getIn().getHeader("JMSDestination", Destination.class).toString());
@@ -299,7 +299,7 @@ public class JmsProducerWithJMSHeaderTest extends AbstractJMSTest {
         template.sendBodyAndHeader("activemq:queue:barJmsProducerWithJMSHeaderTest", "Hello World",
                 JmsConstants.JMS_DESTINATION_NAME, "aJmsProducerWithJMSHeaderTest");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals("queue://bJmsProducerWithJMSHeaderTest",
                 mock.getReceivedExchanges().get(0).getIn().getHeader("JMSDestination", Destination.class).toString());

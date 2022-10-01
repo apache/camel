@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.stax.model.Product;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -57,7 +58,7 @@ public class IssueWithWrongEncodingTest extends CamelTestSupport {
         template.sendBodyAndHeader("file:" + testDirectory.toString(), file, Exchange.FILE_NAME,
                 "products_with_valid_utf8.xml");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -77,7 +78,7 @@ public class IssueWithWrongEncodingTest extends CamelTestSupport {
         fos.write(XML_2.getBytes(StandardCharsets.UTF_8));
         fos.close();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

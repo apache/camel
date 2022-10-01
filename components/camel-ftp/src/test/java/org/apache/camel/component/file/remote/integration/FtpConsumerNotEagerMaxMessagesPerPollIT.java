@@ -46,13 +46,13 @@ public class FtpConsumerNotEagerMaxMessagesPerPollIT extends FtpServerTestSuppor
         mock.setResultWaitTime(4000);
         mock.expectedPropertyReceived(Exchange.BATCH_SIZE, 2);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         mock.reset();
         mock.expectedBodiesReceived("CCC");
         mock.expectedPropertyReceived(Exchange.BATCH_SIZE, 1);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private void prepareFtpServer() {

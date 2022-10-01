@@ -29,6 +29,7 @@ import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ignite.events.IgniteEventsComponent;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.events.Event;
@@ -77,7 +78,7 @@ public class IgniteEventsTest extends AbstractIgniteTest {
         await().atMost(150, TimeUnit.MILLISECONDS)
                 .until(() -> cache.get(resourceUid), Matchers.nullValue());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<Integer> eventTypes = receivedEventTypes("mock:test1");
 
@@ -107,7 +108,7 @@ public class IgniteEventsTest extends AbstractIgniteTest {
         cache.get(resourceUid);
         cache.put(resourceUid, "123");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<Integer> eventTypes = receivedEventTypes("mock:test3");
 

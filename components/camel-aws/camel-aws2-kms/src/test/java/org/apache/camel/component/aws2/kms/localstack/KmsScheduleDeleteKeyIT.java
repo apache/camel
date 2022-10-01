@@ -70,7 +70,7 @@ public class KmsScheduleDeleteKeyIT extends Aws2KmsBase {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEquals(1, result.getExchanges().size());
         assertEquals(KeyState.PENDING_DELETION,
                 result.getExchanges().get(0).getIn().getBody(DescribeKeyResponse.class).keyMetadata().keyState());

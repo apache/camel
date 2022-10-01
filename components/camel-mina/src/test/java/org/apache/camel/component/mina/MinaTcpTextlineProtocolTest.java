@@ -31,7 +31,7 @@ public class MinaTcpTextlineProtocolTest extends BaseMinaTest {
         template.sendBodyAndHeader(String.format("mina:tcp://localhost:%1$s?textline=true&sync=false", getPort()), body,
                 "cheese", 123);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

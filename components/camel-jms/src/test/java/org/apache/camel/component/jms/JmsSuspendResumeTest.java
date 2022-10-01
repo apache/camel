@@ -32,7 +32,7 @@ public class JmsSuspendResumeTest extends AbstractPersistentJMSTest {
 
         template.sendBody("activemq:queue:JmsSuspendResumeTest", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         context.getRouteController().suspendRoute("JmsSuspendResumeTest");
 
@@ -52,7 +52,7 @@ public class JmsSuspendResumeTest extends AbstractPersistentJMSTest {
 
         context.getRouteController().resumeRoute("JmsSuspendResumeTest");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

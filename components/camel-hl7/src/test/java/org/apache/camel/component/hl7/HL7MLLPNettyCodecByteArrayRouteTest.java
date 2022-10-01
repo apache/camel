@@ -75,7 +75,7 @@ public class HL7MLLPNettyCodecByteArrayRouteTest extends HL7TestSupport {
         assertEquals("MSH|^~\\&|MYSENDER||||200701011539||ADR^A19||||123|||||UNICODE UTF-8", lines[0]);
         assertEquals("MSA|AA|123", lines[1]);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -99,7 +99,7 @@ public class HL7MLLPNettyCodecByteArrayRouteTest extends HL7TestSupport {
         assertEquals("MSH|^~\\&|MYSENDER||||200701011539||ADT^A01||||123|||||UNICODE UTF-8", lines[0]);
         assertEquals("PID|||123||Döe^John", lines[1]);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -119,7 +119,7 @@ public class HL7MLLPNettyCodecByteArrayRouteTest extends HL7TestSupport {
         template.requestBody("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&encoders=#hl7encoder&decoders=#hl7decoder",
                 in.toString());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

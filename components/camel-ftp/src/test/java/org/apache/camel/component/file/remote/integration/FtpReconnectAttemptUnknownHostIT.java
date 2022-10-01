@@ -34,7 +34,7 @@ public class FtpReconnectAttemptUnknownHostIT extends FtpServerTestSupport {
         // let it run a little
         Thread.sleep(3000);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

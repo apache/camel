@@ -54,7 +54,7 @@ public class FromFtpSetNamesWithMultiDirectoriesIT extends FtpServerTestSupport 
 
         context.getRouteController().startRoute("foo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertTrue(notify.matchesWaitTime());
 
         Exchange ex = resultEndpoint.getExchanges().get(0);

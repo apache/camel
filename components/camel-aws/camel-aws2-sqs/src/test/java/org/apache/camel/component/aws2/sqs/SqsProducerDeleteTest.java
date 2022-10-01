@@ -51,7 +51,7 @@ public class SqsProducerDeleteTest extends CamelTestSupport {
                 exchange.getIn().setHeader(Sqs2Constants.RECEIPT_HANDLE, "123456");
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         DeleteMessageResponse res = result.getExchanges().get(0).getIn().getBody(DeleteMessageResponse.class);
         assertNotNull(res);
     }

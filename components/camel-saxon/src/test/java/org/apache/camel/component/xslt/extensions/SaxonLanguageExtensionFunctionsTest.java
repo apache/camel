@@ -33,7 +33,7 @@ public class SaxonLanguageExtensionFunctionsTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "<body>test</body>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

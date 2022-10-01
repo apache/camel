@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.shiro.security.ShiroSecurityConstants;
 import org.apache.camel.component.shiro.security.ShiroSecurityPolicy;
 import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
@@ -50,7 +51,7 @@ public class ShiroOverJmsTest extends CamelTestSupport {
         headers.put(ShiroSecurityConstants.SHIRO_SECURITY_PASSWORD, "starr");
         template.requestBodyAndHeaders("direct:ShiroOverJmsTestStart", "Hello World", headers);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

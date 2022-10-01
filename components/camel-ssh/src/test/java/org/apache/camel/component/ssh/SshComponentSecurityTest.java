@@ -36,7 +36,7 @@ public class SshComponentSecurityTest extends SshComponentTestSupport {
 
         template.sendBody("direct:ssh-rsa", msg);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -49,7 +49,7 @@ public class SshComponentSecurityTest extends SshComponentTestSupport {
 
         template.sendBody("direct:ssh-rsaFile", msg);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -62,7 +62,7 @@ public class SshComponentSecurityTest extends SshComponentTestSupport {
 
         template.sendBody("direct:ssh-rsapkcs8", msg);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -75,7 +75,7 @@ public class SshComponentSecurityTest extends SshComponentTestSupport {
 
         template.sendBody("direct:ssh-encrsaFile", msg);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -88,7 +88,7 @@ public class SshComponentSecurityTest extends SshComponentTestSupport {
 
         template.sendBody("direct:ssh-eddsaFile", msg);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -101,7 +101,7 @@ public class SshComponentSecurityTest extends SshComponentTestSupport {
 
         template.sendBody("direct:ssh-enceddsaFile", msg);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -114,7 +114,7 @@ public class SshComponentSecurityTest extends SshComponentTestSupport {
 
         template.sendBody("direct:ssh-ecFile", msg);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -127,7 +127,7 @@ public class SshComponentSecurityTest extends SshComponentTestSupport {
 
         template.sendBody("direct:ssh-ecFilepkcs8", msg);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

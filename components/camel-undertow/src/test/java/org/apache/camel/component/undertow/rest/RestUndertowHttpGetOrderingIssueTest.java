@@ -17,6 +17,7 @@
 package org.apache.camel.component.undertow.rest;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.junit.jupiter.api.Test;
 
@@ -29,21 +30,21 @@ public class RestUndertowHttpGetOrderingIssueTest extends BaseUndertowTest {
         getMockEndpoint("mock:root").expectedMessageCount(1);
         String out = template.requestBody("undertow:http://localhost:{{port}}", null, String.class);
         assertEquals("Route without name", out);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         resetMocks();
 
         getMockEndpoint("mock:pippo").expectedMessageCount(1);
         out = template.requestBody("undertow:http://localhost:{{port}}/Donald", null, String.class);
         assertEquals("Route with name: Donald", out);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         resetMocks();
 
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         out = template.requestBody("undertow:http://localhost:{{port}}/bar", null, String.class);
         assertEquals("Going to the bar", out);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

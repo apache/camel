@@ -40,7 +40,7 @@ public class JmsRemoveHeaderTest extends AbstractJMSTest {
 
         template.sendBodyAndHeaders("activemq:queue:fooJmsRemoveHeaderTest", "Hello World", headers);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

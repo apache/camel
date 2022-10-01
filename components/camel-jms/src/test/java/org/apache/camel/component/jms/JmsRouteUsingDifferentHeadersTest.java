@@ -50,7 +50,7 @@ public class JmsRouteUsingDifferentHeadersTest extends AbstractJMSTest {
 
         template.sendBodyAndHeaders("activemq:queue:JmsRouteUsingDifferentHeadersTest", "Hello World", headers);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

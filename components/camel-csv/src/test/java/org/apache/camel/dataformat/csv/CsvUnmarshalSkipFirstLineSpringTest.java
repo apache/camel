@@ -42,7 +42,7 @@ public class CsvUnmarshalSkipFirstLineSpringTest extends CamelSpringTestSupport 
         // the first line contains the column names which we intend to skip
         template.sendBody("direct:start", "OrderId|Item|Amount\n123|Camel in Action|1\n124|ActiveMQ in Action|2");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<List<String>> body = result.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals(2, body.size());
@@ -63,7 +63,7 @@ public class CsvUnmarshalSkipFirstLineSpringTest extends CamelSpringTestSupport 
         // to true the first line gets simply skipped and not unmarshalled
         template.sendBody("direct:start", "124|ActiveMQ in Action|2\n123|Camel in Action|1");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<List<String>> body = result.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals(1, body.size());
@@ -79,7 +79,7 @@ public class CsvUnmarshalSkipFirstLineSpringTest extends CamelSpringTestSupport 
         // the first and last line we intend to skip
         template.sendBody("direct:start", "123|Camel in Action|1\n");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<?> body = result.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals(0, body.size());

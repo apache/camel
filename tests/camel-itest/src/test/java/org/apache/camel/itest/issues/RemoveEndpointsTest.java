@@ -42,7 +42,7 @@ public class RemoveEndpointsTest extends CamelTestSupport {
         assertEquals(7, context.getEndpoints().size());
 
         template.sendBody("direct:foo", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Collection<Endpoint> list = context.removeEndpoints("*");
         assertEquals(7, list.size()); // all have been removed

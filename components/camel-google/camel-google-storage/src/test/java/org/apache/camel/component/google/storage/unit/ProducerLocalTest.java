@@ -141,7 +141,7 @@ public class ProducerLocalTest extends GoogleCloudStorageBaseTest {
         LOG.info("deleteBucket {}", deleteBucket);
         assertTrue(deleteBucket);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

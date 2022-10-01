@@ -54,7 +54,7 @@ public class JmsCustomJMSReplyToIssueTest extends AbstractJMSTest {
         // send reply
         template.sendBody("activemq:" + replyTo, "Bye World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

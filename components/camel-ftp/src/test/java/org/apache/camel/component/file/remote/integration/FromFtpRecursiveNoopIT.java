@@ -46,7 +46,7 @@ public class FromFtpRecursiveNoopIT extends FtpServerTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("a", "b", "a2", "c", "b2");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // reset mock and send in a new file to be picked up only
         mock.reset();
@@ -54,7 +54,7 @@ public class FromFtpRecursiveNoopIT extends FtpServerTestSupport {
 
         template.sendBodyAndHeader(getFtpUrl(), "c2", Exchange.FILE_NAME, "c.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

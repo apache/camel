@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -38,7 +39,7 @@ public class JdbcAggregateForceCompletionHeaderTest extends AbstractJdbcAggregat
         template.sendBodyAndHeader("direct:start", "test3", "id", "1");
         template.sendBodyAndHeader("direct:start", "test4", "id", "2");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         getMockEndpoint("mock:aggregated").expectedMessageCount(2);
         getMockEndpoint("mock:aggregated").expectedBodiesReceivedInAnyOrder("test1test3", "test2test4");
@@ -47,7 +48,7 @@ public class JdbcAggregateForceCompletionHeaderTest extends AbstractJdbcAggregat
         //now send the signal message to trigger completion of all groups, message should NOT be aggregated
         template.sendBodyAndProperty("direct:start", "test5", Exchange.AGGREGATION_COMPLETE_ALL_GROUPS, true);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -60,7 +61,7 @@ public class JdbcAggregateForceCompletionHeaderTest extends AbstractJdbcAggregat
         template.sendBodyAndHeader("direct:start", "test3", "id", "1");
         template.sendBodyAndHeader("direct:start", "test4", "id", "2");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         getMockEndpoint("mock:aggregated").expectedMessageCount(3);
         getMockEndpoint("mock:aggregated").expectedBodiesReceivedInAnyOrder("test1test3", "test2test4", "test5");
@@ -72,7 +73,7 @@ public class JdbcAggregateForceCompletionHeaderTest extends AbstractJdbcAggregat
         headers.put(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE, true);
         template.sendBodyAndHeaders("direct:start", "test5", headers);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

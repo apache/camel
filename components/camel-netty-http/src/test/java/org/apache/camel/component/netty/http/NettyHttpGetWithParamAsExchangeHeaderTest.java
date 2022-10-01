@@ -36,7 +36,7 @@ public class NettyHttpGetWithParamAsExchangeHeaderTest extends BaseNettyTest {
 
         template.requestBody(serverUri + "&one=einz&two=twei", null, Object.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -48,7 +48,7 @@ public class NettyHttpGetWithParamAsExchangeHeaderTest extends BaseNettyTest {
 
         template.requestBody(serverUri + "&message=Keine%20g%C3%BCltige%20GPS-Daten!", null, Object.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -61,7 +61,7 @@ public class NettyHttpGetWithParamAsExchangeHeaderTest extends BaseNettyTest {
 
         template.requestBody(serverUri + "&message=Keine+g%C6ltige+GPS-Daten%21", null, Object.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -74,7 +74,7 @@ public class NettyHttpGetWithParamAsExchangeHeaderTest extends BaseNettyTest {
         // parameter starts with a space using %20 as decimal encoded
         template.requestBody(serverUri + "&message=%20World", null, Object.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -87,7 +87,7 @@ public class NettyHttpGetWithParamAsExchangeHeaderTest extends BaseNettyTest {
         // parameter starts with a space
         template.requestBody(serverUri + "&message= World", null, Object.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -100,7 +100,7 @@ public class NettyHttpGetWithParamAsExchangeHeaderTest extends BaseNettyTest {
         // parameter starts with a space
         template.requestBody(serverUri + "&message=+World", null, Object.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -114,7 +114,7 @@ public class NettyHttpGetWithParamAsExchangeHeaderTest extends BaseNettyTest {
 
         template.requestBodyAndHeader(serverUri, null, Exchange.HTTP_QUERY, "one=uno&two=dos");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -126,7 +126,7 @@ public class NettyHttpGetWithParamAsExchangeHeaderTest extends BaseNettyTest {
 
         template.requestBody(serverUri, "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

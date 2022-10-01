@@ -36,7 +36,7 @@ public class JmsUseOriginalBodyTest extends AbstractJMSTest {
 
         template.sendBody("activemq:queue:a", "Hello");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -46,7 +46,7 @@ public class JmsUseOriginalBodyTest extends AbstractJMSTest {
 
         template.sendBody("activemq:queue:b", "Hello");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -44,7 +44,7 @@ public class SpringMDCTransactedTest extends CamelTestSupport {
 
         template.sendBody("direct:a", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

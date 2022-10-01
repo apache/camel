@@ -56,7 +56,7 @@ public class JmsResequencerTest extends CamelSpringTestSupport {
             template.sendBodyAndHeader(endpoint, text, "num", (long) i);
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

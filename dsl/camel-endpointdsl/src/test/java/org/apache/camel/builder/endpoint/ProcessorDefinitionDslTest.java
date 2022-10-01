@@ -35,7 +35,7 @@ public class ProcessorDefinitionDslTest extends BaseEndpointDslTest {
 
         template.requestBody("direct:a", "Hello World", String.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

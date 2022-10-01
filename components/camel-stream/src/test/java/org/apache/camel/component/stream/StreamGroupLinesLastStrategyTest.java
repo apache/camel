@@ -35,7 +35,7 @@ public class StreamGroupLinesLastStrategyTest extends StreamGroupLinesStrategyTe
         mock.message(1).header(StreamConstants.STREAM_INDEX).isEqualTo(1);
         mock.message(1).header(StreamConstants.STREAM_COMPLETE).isEqualTo(true);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Object result = mock.getExchanges().get(0).getIn().getBody();
         assertEquals("A" + LS + "B" + LS + "C" + LS + "D" + LS, result, "Get a wrong result.");

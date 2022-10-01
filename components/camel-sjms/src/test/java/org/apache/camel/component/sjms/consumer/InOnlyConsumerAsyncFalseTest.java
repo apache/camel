@@ -19,6 +19,7 @@ package org.apache.camel.component.sjms.consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -47,7 +48,7 @@ public class InOnlyConsumerAsyncFalseTest extends JmsTestSupport {
         // process the 2nd message on the queue
         Thread.sleep(3000);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEquals(beforeThreadName, afterThreadName);
     }
 

@@ -19,6 +19,7 @@ package org.apache.camel.parser.java;
 import java.io.File;
 import java.util.List;
 
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.parser.RouteBuilderParser;
 import org.apache.camel.parser.model.CamelNodeDetails;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -78,7 +79,7 @@ public class RoasterJavaDslTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

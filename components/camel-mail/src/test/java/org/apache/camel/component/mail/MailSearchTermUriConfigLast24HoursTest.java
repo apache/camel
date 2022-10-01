@@ -52,7 +52,7 @@ public class MailSearchTermUriConfigLast24HoursTest extends CamelTestSupport {
         mock.expectedBodiesReceivedInAnyOrder("Ordering ActiveMQ in Action", "This is spam",
                 "We meet at 7pm the usual place", "I am attaching you");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private void prepareMailbox() throws Exception {
