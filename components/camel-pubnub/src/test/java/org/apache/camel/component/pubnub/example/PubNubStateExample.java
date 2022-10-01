@@ -49,7 +49,7 @@ public class PubNubStateExample extends CamelTestSupport {
         assertNotNull(response.getState());
         assertEquals("preben", response.getState().getAsJsonObject().get("name").getAsString());
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         getMockEndpoint("mock:result").expectedMessageCount(1);
         headers.clear();
         headers.put(PubNubConstants.OPERATION, "GETSTATE");

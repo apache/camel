@@ -53,7 +53,7 @@ public class Sjms2ComponentRestartTest extends CamelTestSupport {
         // restart
         context.stop();
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         // rebind as the registry is cleared on stop
         context.getRegistry().bind("activemqCF", connectionFactory);
@@ -88,7 +88,7 @@ public class Sjms2ComponentRestartTest extends CamelTestSupport {
 
         // restart
         context.suspend();
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         context.resume();
 
         getMockEndpoint("mock:test").expectedMessageCount(1);

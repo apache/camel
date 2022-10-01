@@ -31,7 +31,7 @@ public class HttpEmptyQueryParameterTest extends BaseJettyTest {
         assertEquals("Header: 123", out);
         MockEndpoint.assertIsSatisfied(context);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         getMockEndpoint("mock:input").expectedHeaderReceived("id", "");
         out = fluentTemplate.to("http://localhost:{{port}}/foo?id=").request(String.class);

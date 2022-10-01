@@ -45,7 +45,7 @@ public class RestUndertowHttpGetCorsTest extends BaseUndertowTest {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         getMockEndpoint("mock:inputGet").expectedMessageCount(1);
 
         // send GET request which should be routed
@@ -76,7 +76,7 @@ public class RestUndertowHttpGetCorsTest extends BaseUndertowTest {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         getMockEndpoint("mock:inputPut").expectedMessageCount(1);
 
         // send PUT request which should be routed

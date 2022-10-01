@@ -114,7 +114,7 @@ public class IgniteCacheContinuousQueryTest extends AbstractIgniteTest implement
 
         MockEndpoint.assertIsSatisfied(context);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         getMockEndpoint("mock:test2").expectedMessageCount(100);
 
@@ -136,7 +136,7 @@ public class IgniteCacheContinuousQueryTest extends AbstractIgniteTest implement
 
         MockEndpoint.assertIsSatisfied(context);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         getMockEndpoint("mock:test3").expectedMessageCount(50);
 
@@ -219,7 +219,7 @@ public class IgniteCacheContinuousQueryTest extends AbstractIgniteTest implement
             context.getRouteController().stopRoute(route.getId());
         }
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
     }
 
     public static class Person implements Serializable {

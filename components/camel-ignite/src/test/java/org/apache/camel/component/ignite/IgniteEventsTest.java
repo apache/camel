@@ -135,7 +135,7 @@ public class IgniteEventsTest extends AbstractIgniteTest {
             }
             context.getRouteController().stopRoute(route.getId());
         }
-        resetMocks();
+        MockEndpoint.resetMocks(context);
     }
 
     @Override

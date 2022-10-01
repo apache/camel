@@ -32,7 +32,7 @@ public class UndertowHttpEmptyQueryParameterTest extends BaseUndertowTest {
         assertEquals("Header: 123", out);
         MockEndpoint.assertIsSatisfied(context);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         getMockEndpoint("mock:input").expectedHeaderReceived("id", "");
         out = fluentTemplate.to("undertow:http://localhost:{{port}}/foo?id=").request(String.class);

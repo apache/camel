@@ -40,7 +40,7 @@ public class CsvUnmarshalTwoCsvDataFormatConcurrentTest extends CamelTestSupport
         result2.expectedMessageCount(1);
         sendAndVerify("|", result);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         result.expectedMessageCount(1);
         result2.expectedMessageCount(1);
