@@ -74,7 +74,7 @@ public class HazelcastQueueConsumerTest extends HazelcastCamelTestSupport {
         MockEndpoint out = getMockEndpoint("mock:added");
         out.expectedMessageCount(1);
 
-        assertMockEndpointsSatisfied(2, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 2, TimeUnit.SECONDS);
         this.checkHeaders(out.getExchanges().get(0).getIn().getHeaders(), HazelcastConstants.ADDED);
     }
 
@@ -85,7 +85,7 @@ public class HazelcastQueueConsumerTest extends HazelcastCamelTestSupport {
         MockEndpoint out = getMockEndpoint("mock:removed");
         out.expectedMessageCount(1);
 
-        assertMockEndpointsSatisfied(2, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 2, TimeUnit.SECONDS);
         this.checkHeaders(out.getExchanges().get(0).getIn().getHeaders(), HazelcastConstants.REMOVED);
     }
 

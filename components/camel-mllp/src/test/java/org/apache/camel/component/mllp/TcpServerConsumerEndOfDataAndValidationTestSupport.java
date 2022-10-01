@@ -118,7 +118,7 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
 
     @Override
     public void tearDown() throws Exception {
-        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
 
         super.tearDown();
     }
@@ -203,7 +203,7 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
 
         assertTrue(notify2.matches(RECEIVE_TIMEOUT, TimeUnit.MILLISECONDS), "Remaining exchanges did not complete");
 
-        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
 
         assertTrue(acknowledgement1.contains("MSA|AA|00001"), "Should be acknowledgment for message 1");
         assertTrue(acknowledgement2.contains("MSA|AA|00002"), "Should be acknowledgment for message 2");

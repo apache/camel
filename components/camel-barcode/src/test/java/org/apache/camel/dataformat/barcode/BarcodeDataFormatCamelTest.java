@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.zxing.BarcodeFormat;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.DataFormat;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -46,7 +47,7 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
 
         template.sendBody("direct:code1", MSG);
 
-        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
         this.checkImage(image, 100, 100, BarcodeImageType.PNG.toString(), BarcodeFormat.QR_CODE);
     }
 
@@ -63,7 +64,7 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
 
         template.sendBody("direct:code2", MSG);
 
-        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
         this.checkImage(image, 200, 200, BarcodeImageType.PNG.toString(), BarcodeFormat.QR_CODE);
     }
 
@@ -80,7 +81,7 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
 
         template.sendBody("direct:code3", MSG);
 
-        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
         this.checkImage(image, 100, 100, "JPEG", BarcodeFormat.QR_CODE);
     }
 
@@ -97,7 +98,7 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
 
         template.sendBody("direct:code4", MSG);
 
-        assertMockEndpointsSatisfied(60, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 60, TimeUnit.SECONDS);
         this.checkImage(image, "JPEG", BarcodeFormat.PDF_417);
     }
 
@@ -115,7 +116,7 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
 
         template.sendBody("direct:code5", MSG);
 
-        assertMockEndpointsSatisfied(60, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 60, TimeUnit.SECONDS);
         this.checkImage(image, 200, 200, "PNG", BarcodeFormat.AZTEC);
     }
 

@@ -94,6 +94,6 @@ public class RabbitMQLoadIT extends AbstractRabbitMQIT {
         // Check message count
         producingMockEndpoint.expectedMessageCount(PRODUCER_COUNT * MESSAGE_COUNT);
         consumingMockEndpoint.expectedMessageCount(PRODUCER_COUNT * MESSAGE_COUNT);
-        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
     }
 }

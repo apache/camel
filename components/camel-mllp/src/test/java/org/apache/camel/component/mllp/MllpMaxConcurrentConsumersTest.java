@@ -84,7 +84,7 @@ public class MllpMaxConcurrentConsumersTest extends CamelTestSupport {
         String testMessage = "MSH|^~\\&|ADT|EPIC|JCAPS|CC|20160902123950|RISTECH|ADT^A08|00001|D|2.3|||||||" + '\r' + '\n';
         mllpClient.sendMessageAndWaitForAcknowledgement(testMessage, 10000);
 
-        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
     }
 
     @Test
@@ -97,7 +97,7 @@ public class MllpMaxConcurrentConsumersTest extends CamelTestSupport {
         String testMessage = "MSH|^~\\&|ADT|EPIC|JCAPS|CC|20160902123950|RISTECH|ADT^A08|00001|D|2.3|||||||" + '\r' + '\n';
         mllpClient.sendMessageAndWaitForAcknowledgement(testMessage, 10000);
 
-        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
 
         // second connection should fail
         assertThrows(MllpJUnitResourceException.class,

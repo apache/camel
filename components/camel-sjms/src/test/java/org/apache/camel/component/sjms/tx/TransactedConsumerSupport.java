@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.slf4j.Logger;
@@ -67,7 +68,7 @@ public abstract class TransactedConsumerSupport extends CamelTestSupport {
 
         // Await on our countdown for 30 seconds at most then move on
         latch.await(30, TimeUnit.SECONDS);
-        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Override

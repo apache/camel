@@ -55,7 +55,7 @@ public class FromFileToFtpSplitParallelIT extends FtpServerTestSupport {
 
         context.getRouteController().startAllRoutes();
 
-        assertMockEndpointsSatisfied(1, TimeUnit.MINUTES);
+        MockEndpoint.assertIsSatisfied(context, 1, TimeUnit.MINUTES);
 
         // use memory profiler
         // Thread.sleep(99999999);

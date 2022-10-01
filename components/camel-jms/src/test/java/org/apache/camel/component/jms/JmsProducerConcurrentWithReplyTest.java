@@ -24,6 +24,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
@@ -63,7 +64,7 @@ public class JmsProducerConcurrentWithReplyTest extends AbstractJMSTest {
             futures.add(out);
         }
 
-        assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
 
         for (int i = 0; i < futures.size(); i++) {
             Object out = futures.get(i).get(5, TimeUnit.SECONDS);

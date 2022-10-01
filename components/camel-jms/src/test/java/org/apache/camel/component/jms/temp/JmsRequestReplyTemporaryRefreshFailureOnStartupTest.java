@@ -98,7 +98,7 @@ public class JmsRequestReplyTemporaryRefreshFailureOnStartupTest extends CamelTe
 
         template.asyncRequestBody("direct:start", "ping");
 
-        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
         service.shutdown();
     }
 

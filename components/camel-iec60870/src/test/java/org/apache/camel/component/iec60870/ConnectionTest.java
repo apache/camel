@@ -97,7 +97,7 @@ public class ConnectionTest extends CamelTestSupport {
 
         // assert
 
-        assertMockEndpointsSatisfied(1_000, TimeUnit.MILLISECONDS);
+        MockEndpoint.assertIsSatisfied(context, 1_000, TimeUnit.MILLISECONDS);
     }
 
     @Test
@@ -115,7 +115,7 @@ public class ConnectionTest extends CamelTestSupport {
 
         // assert
 
-        assertMockEndpointsSatisfied(1_000, TimeUnit.MILLISECONDS);
+        MockEndpoint.assertIsSatisfied(context, 1_000, TimeUnit.MILLISECONDS);
     }
 
     @Test
@@ -135,7 +135,7 @@ public class ConnectionTest extends CamelTestSupport {
 
         // assert
 
-        assertMockEndpointsSatisfied(2_000, TimeUnit.MILLISECONDS);
+        MockEndpoint.assertIsSatisfied(context, 2_000, TimeUnit.MILLISECONDS);
         System.out.println(testServer1Endpoint.getExchanges().get(0).getIn().getBody());
 
     }

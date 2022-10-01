@@ -69,7 +69,7 @@ public class HazelcastSetConsumerTest extends HazelcastCamelTestSupport {
         final ItemEvent<String> event = new ItemEvent<>("mm", ItemEventType.ADDED, "foo", null);
         argument.getValue().itemAdded(event);
 
-        assertMockEndpointsSatisfied(2000, TimeUnit.MILLISECONDS);
+        MockEndpoint.assertIsSatisfied(context, 2000, TimeUnit.MILLISECONDS);
 
         this.checkHeaders(out.getExchanges().get(0).getIn().getHeaders(), HazelcastConstants.ADDED);
     }
@@ -83,7 +83,7 @@ public class HazelcastSetConsumerTest extends HazelcastCamelTestSupport {
         final ItemEvent<String> event = new ItemEvent<>("mm", ItemEventType.REMOVED, "foo", null);
         argument.getValue().itemRemoved(event);
 
-        assertMockEndpointsSatisfied(2000, TimeUnit.MILLISECONDS);
+        MockEndpoint.assertIsSatisfied(context, 2000, TimeUnit.MILLISECONDS);
         this.checkHeaders(out.getExchanges().get(0).getIn().getHeaders(), HazelcastConstants.REMOVED);
     }
 

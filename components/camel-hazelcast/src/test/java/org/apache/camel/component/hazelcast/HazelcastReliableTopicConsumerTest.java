@@ -67,7 +67,7 @@ public class HazelcastReliableTopicConsumerTest extends HazelcastCamelTestSuppor
         final Message<String> msg = new Message<>("foo", "foo", new java.util.Date().getTime(), null);
         argument.getValue().onMessage(msg);
 
-        assertMockEndpointsSatisfied(2000, TimeUnit.MILLISECONDS);
+        MockEndpoint.assertIsSatisfied(context, 2000, TimeUnit.MILLISECONDS);
 
         this.checkHeaders(out.getExchanges().get(0).getIn().getHeaders(), HazelcastConstants.RECEIVED);
     }

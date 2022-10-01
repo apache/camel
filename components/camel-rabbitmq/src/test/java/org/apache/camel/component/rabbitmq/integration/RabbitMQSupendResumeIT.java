@@ -71,7 +71,7 @@ public class RabbitMQSupendResumeIT extends AbstractRabbitMQIT {
 
         template.sendBody("Hello2");
 
-        assertMockEndpointsSatisfied(1, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 1, TimeUnit.SECONDS);
 
         resetMocks();
         resultEndpoint.expectedBodiesReceived("Hello2");

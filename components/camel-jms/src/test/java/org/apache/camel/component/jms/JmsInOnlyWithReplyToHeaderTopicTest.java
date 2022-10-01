@@ -45,7 +45,7 @@ public class JmsInOnlyWithReplyToHeaderTopicTest extends AbstractJMSTest {
             exchange.getIn().setHeader("JMSReplyTo", "topic:JmsInOnlyWithReplyToHeaderTopicTest.bar");
         });
 
-        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Override

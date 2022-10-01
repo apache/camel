@@ -132,7 +132,7 @@ public class PulsarConsumerDeadLetterPolicyIT extends PulsarITSupport {
         });
         producer.send("Hello World!");
 
-        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Test
@@ -158,7 +158,7 @@ public class PulsarConsumerDeadLetterPolicyIT extends PulsarITSupport {
         });
 
         producer.send("Hello World!");
-        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Test
@@ -191,7 +191,7 @@ public class PulsarConsumerDeadLetterPolicyIT extends PulsarITSupport {
         });
 
         producer.send("Hello World!");
-        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {

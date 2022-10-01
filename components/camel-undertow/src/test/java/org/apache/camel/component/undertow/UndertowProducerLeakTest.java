@@ -19,6 +19,7 @@ package org.apache.camel.component.undertow;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class UndertowProducerLeakTest extends BaseUndertowTest {
@@ -27,7 +28,7 @@ public class UndertowProducerLeakTest extends BaseUndertowTest {
     public void testLeak() throws Exception {
         getMockEndpoint("mock:result").expectedMinimumMessageCount(50);
 
-        assertMockEndpointsSatisfied(2, TimeUnit.MINUTES);
+        MockEndpoint.assertIsSatisfied(context, 2, TimeUnit.MINUTES);
     }
 
     @Override
