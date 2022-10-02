@@ -3,7 +3,7 @@
 :shortname: python
 :artifactid: camel-python
 :description: Evaluates a Python expression.
-:since: 3.9
+:since: 3.19
 :supportlevel: Experimental
 //Manually maintained attributes
 :camel-spring-boot-name: python
