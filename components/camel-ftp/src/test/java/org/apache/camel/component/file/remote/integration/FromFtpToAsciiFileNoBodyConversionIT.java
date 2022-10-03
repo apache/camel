@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file.remote.integration;
 
+import java.nio.file.Path;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
@@ -23,11 +25,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /**
  * Unit testing a FTP ASCII transfer that Camel provides the needed conversion to String from the input stream.
  */
 public class FromFtpToAsciiFileNoBodyConversionIT extends FtpServerTestSupport {
+    @TempDir
+    Path testDirectory;
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/tmp5/camel?password=admin&binary=false";
@@ -65,7 +70,7 @@ public class FromFtpToAsciiFileNoBodyConversionIT extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(getFtpUrl()).to(fileUri("?fileExist=Override&noop=true"), "mock:result");
+                from(getFtpUrl()).to(fileUri(testDirectory, "?fileExist=Override&noop=true"), "mock:result");
             }
         };
     }

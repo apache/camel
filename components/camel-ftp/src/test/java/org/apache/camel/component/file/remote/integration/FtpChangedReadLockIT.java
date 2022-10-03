@@ -17,10 +17,12 @@
 package org.apache.camel.component.file.remote.integration;
 
 import java.io.FileOutputStream;
+import java.nio.file.Path;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,8 +33,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  *
  */
 public class FtpChangedReadLockIT extends FtpServerTestSupport {
-
     private static final Logger LOG = LoggerFactory.getLogger(FtpChangedReadLockIT.class);
+
+    @TempDir
+    Path testDirectory;
 
     protected String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}"
@@ -43,13 +47,13 @@ public class FtpChangedReadLockIT extends FtpServerTestSupport {
     public void testChangedReadLock() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists(testFile("out/slowfile.dat"));
+        mock.expectedFileExists(testDirectory.resolve("out/slowfile.dat"));
 
         writeSlowFile();
 
         assertMockEndpointsSatisfied();
 
-        String content = context.getTypeConverter().convertTo(String.class, testFile("out/slowfile.dat").toFile());
+        String content = context.getTypeConverter().convertTo(String.class, testDirectory.resolve("out/slowfile.dat").toFile());
         String[] lines = content.split(LS);
         assertEquals(20, lines.length, "There should be 20 lines in the file");
         for (int i = 0; i < 20; i++) {
@@ -78,7 +82,7 @@ public class FtpChangedReadLockIT extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(getFtpUrl()).to(fileUri("out"), "mock:result");
+                from(getFtpUrl()).to(fileUri(testDirectory, "out"), "mock:result");
             }
         };
     }

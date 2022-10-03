@@ -16,17 +16,22 @@
  */
 package org.apache.camel.pollconsumer.quartz;
 
+import java.nio.file.Path;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 public class FileConsumerQuartzSchedulerRestartTest extends CamelTestSupport {
+    @TempDir
+    Path testDirectory;
 
     @Test
     public void testQuartzSchedulerRestart() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
-        template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri(testDirectory), "Hello World", Exchange.FILE_NAME, "hello.txt");
         context.getRouteController().startRoute("foo");
         assertMockEndpointsSatisfied();
 
@@ -34,7 +39,7 @@ public class FileConsumerQuartzSchedulerRestartTest extends CamelTestSupport {
         resetMocks();
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
-        template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUri(testDirectory), "Bye World", Exchange.FILE_NAME, "bye.txt");
         context.getRouteController().startRoute("foo");
         assertMockEndpointsSatisfied();
     }
