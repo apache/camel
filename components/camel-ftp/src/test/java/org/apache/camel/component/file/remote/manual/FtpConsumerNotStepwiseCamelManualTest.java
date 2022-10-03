@@ -16,13 +16,18 @@
  */
 package org.apache.camel.component.file.remote.manual;
 
+import java.nio.file.Path;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 @Disabled("Run this test manually")
 public class FtpConsumerNotStepwiseCamelManualTest extends CamelTestSupport {
+    @TempDir
+    Path testDirectory;
 
     @Test
     public void testFtpConsumerManual() throws Exception {
@@ -35,7 +40,7 @@ public class FtpConsumerNotStepwiseCamelManualTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("ftp:localhost/one/two?username=camel&password=camel&noop=true&stepwise=false").to(fileUri())
+                from("ftp:localhost/one/two?username=camel&password=camel&noop=true&stepwise=false").to(fileUri(testDirectory))
                         .to("mock:result");
             }
         };

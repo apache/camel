@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.remote.integration;
 
 import java.io.File;
+import java.nio.file.Path;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,6 +26,7 @@ import org.apache.camel.converter.IOConverter;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -38,6 +40,9 @@ public class FromFtpDirectoryToBinaryFilesIT extends FtpServerTestSupport {
     private static long logoFileSize;
     private static File logo1File;
     private static long logo1FileSize;
+
+    @TempDir
+    Path testDirectory;
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/incoming/?password=admin"
@@ -73,12 +78,12 @@ public class FromFtpDirectoryToBinaryFilesIT extends FtpServerTestSupport {
                                          + " but should have been bigger than 10000");
 
         // assert the file
-        File logo1DestFile = testFile("logo1.jpeg").toFile();
+        File logo1DestFile = testDirectory.resolve("logo1.jpeg").toFile();
         assertTrue(logo1DestFile.exists(), "The binary file should exists");
         assertEquals(logo1FileSize, logo1DestFile.length(), "File size for logo1.jpg does not match");
 
         // assert the file
-        File logoDestFile = testFile("logo.jpeg").toFile();
+        File logoDestFile = testDirectory.resolve("logo.jpeg").toFile();
         assertTrue(logoDestFile.exists(), " The binary file should exists");
         assertEquals(logoFileSize, logoDestFile.length(), "File size for logo1.jpg does not match");
     }
@@ -87,7 +92,7 @@ public class FromFtpDirectoryToBinaryFilesIT extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(getFtpUrl()).to(fileUri("?noop=true"), "mock:result");
+                from(getFtpUrl()).to(fileUri(testDirectory, "?noop=true"), "mock:result");
             }
         };
     }
