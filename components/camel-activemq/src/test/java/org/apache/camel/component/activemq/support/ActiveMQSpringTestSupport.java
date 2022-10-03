@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.activemq.support;
 
-import java.nio.file.Path;
-
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
@@ -27,10 +24,6 @@ public abstract class ActiveMQSpringTestSupport extends CamelSpringTestSupport i
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return newAppContext(getClass().getSimpleName() + "-context.xml");
-    }
-
-    public Path testDirectory() {
-        return CamelTestSupport.testDirectory(getClass(), false);
     }
 
     protected int getShutdownTimeout() {
