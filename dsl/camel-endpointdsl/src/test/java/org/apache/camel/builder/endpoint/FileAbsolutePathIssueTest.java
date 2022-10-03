@@ -16,15 +16,20 @@
  */
 package org.apache.camel.builder.endpoint;
 
+import java.nio.file.Path;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 public class FileAbsolutePathIssueTest extends BaseEndpointDslTest {
+    @TempDir
+    static Path testDirectory;
 
-    private String start = testDirectory("issue").toAbsolutePath().toString();
-    private String done = testDirectory("done").toAbsolutePath().toString();
+    private String start = testDirectory.resolve("issue").toAbsolutePath().toString();
+    private String done = testDirectory.resolve("done").toAbsolutePath().toString();
 
     @Test
     public void testMoveAbsolute() throws Exception {
