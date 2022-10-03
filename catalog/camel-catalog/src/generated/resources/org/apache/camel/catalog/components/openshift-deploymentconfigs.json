@@ -8,7 +8,7 @@
     "firstVersion": "3.18.0",
     "label": "container,cloud,paas",
     "javaType": "org.apache.camel.component.openshift.deploymentconfigs.OpenshiftDeploymentConfigsComponent",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
     "version": "3.20.0-SNAPSHOT",

@@ -4,7 +4,7 @@
 :artifactid: camel-kubernetes
 :description: Perform operations on Openshift Deployment Configs and get notified on Deployment Config changes.
 :since: 3.18
-:supportlevel: Preview
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Kubernetes
