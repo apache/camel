@@ -22,6 +22,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -256,7 +258,9 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
         Map<String, String> props = new HashMap<>();
         props.put(TEST_CLASS_NAME_PROPERTY, testClass.getName());
         props.put(TEST_CLASS_SIMPLE_NAME_PROPERTY, testClass.getSimpleName());
-        props.put(TEST_DIRECTORY_PROPERTY, testDirectory(testClass, false).toString());
+
+        Path testDir = Paths.get("target", "data", testClass.getSimpleName());
+        props.put(TEST_DIRECTORY_PROPERTY, testDir.toString());
         return props;
     }
 
