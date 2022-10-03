@@ -4,7 +4,7 @@
 :artifactid: camel-hashicorp-vault
 :description: Manage secrets in Hashicorp Vault Service
 :since: 3.18
-:supportlevel: Preview
+:supportlevel: Stable
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: hashicorp-vault
