@@ -20,6 +20,7 @@ package org.apache.camel.test.infra.activemq.services;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.LongAdder;
@@ -95,6 +96,10 @@ public final class ActiveMQEmbeddedServiceBuilder {
         brokerService.setBrokerName(brokerName + (name != null ? "-" + name : ""));
 
         return this;
+    }
+
+    public ActiveMQEmbeddedServiceBuilder withDataDirectory(Path dataDirectory) {
+        return withDataDirectory(dataDirectory.toAbsolutePath().toString());
     }
 
     public ActiveMQEmbeddedServiceBuilder withDataDirectory(String dataDirectory) {
