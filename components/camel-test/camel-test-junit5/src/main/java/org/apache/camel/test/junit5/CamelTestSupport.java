@@ -16,11 +16,8 @@
  */
 package org.apache.camel.test.junit5;
 
-import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -83,7 +80,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.apache.camel.test.junit5.TestSupport.isCamelDebugPresent;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -126,7 +122,6 @@ public abstract class CamelTestSupport
     private boolean isCreateCamelContextPerClass = false;
     private CamelRouteCoverageDumper routeCoverageDumper = new CamelRouteCoverageDumper();
     private ExtensionContext.Store globalStore;
-    private boolean testDirectoryCleaned;
     // CHECKSTYLE:ON
 
     @Override
@@ -600,7 +595,6 @@ public abstract class CamelTestSupport
             doPostTearDown();
             cleanupResources();
         }
-        testDirectoryCleaned = false;
     }
 
     void tearDownCreateCamelContextPerClass() throws Exception {
@@ -623,7 +617,6 @@ public abstract class CamelTestSupport
      * Strategy to perform resources setup, before {@link CamelContext} is created
      */
     protected void setupResources() throws Exception {
-        deleteTestDirectory();
     }
 
     /**
@@ -1074,60 +1067,13 @@ public abstract class CamelTestSupport
         }
     }
 
-    protected Path testDirectory() {
-        return testDirectory(false);
+    @Deprecated
+    protected static String fileUri(Path testDirectory) {
+        return "file:" + testDirectory;
     }
 
-    protected Path testDirectory(boolean create) {
-        Class<?> testClass = getClass();
-        return testDirectory(testClass, create);
+    @Deprecated
+    protected static String fileUri(Path testDirectory, String query) {
+        return "file:" + testDirectory + (query.startsWith("?") ? "" : "/") + query;
     }
-
-    public static Path testDirectory(Class<?> testClass, boolean create) {
-        Path dir = Paths.get("target", "data", testClass.getSimpleName());
-        if (create) {
-            try {
-                Files.createDirectories(dir);
-            } catch (IOException e) {
-                throw new IllegalStateException("Unable to create test directory: " + dir, e);
-            }
-        }
-        return dir;
-    }
-
-    protected Path testFile(String dir) {
-        return testDirectory().resolve(dir);
-    }
-
-    protected Path testDirectory(String dir) {
-        return testDirectory(dir, false);
-    }
-
-    protected Path testDirectory(String dir, boolean create) {
-        Path f = testDirectory().resolve(dir);
-        if (create) {
-            try {
-                Files.createDirectories(f);
-            } catch (IOException e) {
-                throw new IllegalStateException("Unable to create test directory: " + dir, e);
-            }
-        }
-        return f;
-    }
-
-    protected String fileUri() {
-        return "file:" + testDirectory();
-    }
-
-    protected String fileUri(String query) {
-        return "file:" + testDirectory() + (query.startsWith("?") ? "" : "/") + query;
-    }
-
-    public void deleteTestDirectory() {
-        if (!testDirectoryCleaned) {
-            deleteDirectory(testDirectory());
-            testDirectoryCleaned = true;
-        }
-    }
-
 }
