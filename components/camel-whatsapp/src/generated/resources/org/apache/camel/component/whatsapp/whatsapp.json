@@ -11,7 +11,7 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-whatsapp",
-    "version": "3.19.0-SNAPSHOT",
+    "version": "3.20.0-SNAPSHOT",
     "scheme": "whatsapp",
     "extendsScheme": "",
     "syntax": "whatsapp:phoneNumberId",
