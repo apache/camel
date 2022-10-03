@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.nio.file.Path;
 import java.time.Duration;
 
 import org.apache.camel.Exchange;
@@ -23,6 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,6 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Unit testing demonstrating how to store incoming requests as files and serving a response back.
  */
 public class HttpToFileTest extends BaseJettyTest {
+    @TempDir
+    Path testDirectory;
 
     @Test
     public void testToJettyAndSaveToFile() throws Exception {
@@ -47,7 +51,7 @@ public class HttpToFileTest extends BaseJettyTest {
         // give file some time to save
         Awaitility.await()
                 .atMost(Duration.ofSeconds(1))
-                .untilAsserted(() -> assertFileExists(testFile("hello.txt"), "Hello World"));
+                .untilAsserted(() -> assertFileExists(testDirectory.resolve("hello.txt"), "Hello World"));
     }
 
     @Override
@@ -61,7 +65,7 @@ public class HttpToFileTest extends BaseJettyTest {
 
                 // store the content from the queue as a file
                 from("seda:in").setHeader(Exchange.FILE_NAME, constant("hello.txt")).convertBodyTo(String.class)
-                        .to(fileUri()).to("mock:result");
+                        .to(fileUri(testDirectory)).to("mock:result");
             }
         };
     }
