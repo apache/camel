@@ -24,9 +24,12 @@ mkdir ${DOWNLOAD} 2>/dev/null
 RUNDIR=$(cd ${0%/*} && echo $PWD)
 COMPLIST=( "camel-spring-xml:spring-xml"
   "camel-cxf:cxf"
+  "camel-cxf-spring-rest:cxf/jaxrs"
+  "camel-cxf-spring-soap:cxf/jaxws"
   "camel-spring-integration:spring/integration"
   "camel-spring-security:spring-security"
-  "karaf/camel-blueprint:blueprint" )
+  "karaf/camel-blueprint:blueprint"
+  "karaf/camel-cxf-blueprint:cxf" )
 SITE_DIR="${DOWNLOAD}/websites/production/camel"
 WEBSITE_URL="https://svn.apache.org/repos/infra/websites/production/camel/content"
 GIT_WEBSITE_URL="https://gitbox.apache.org/repos/asf/camel-website.git"
