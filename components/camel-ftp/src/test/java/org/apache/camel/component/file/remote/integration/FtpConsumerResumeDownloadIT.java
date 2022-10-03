@@ -24,6 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
 import static org.apache.camel.test.junit5.TestSupport.assertFileNotExists;
@@ -32,8 +33,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FtpConsumerResumeDownloadIT extends FtpServerTestSupport {
 
+    @TempDir
+    Path lwd;
+
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:{{ftp.server.port}}/myserver/?password=admin&localWorkDirectory=" + testDirectory("lwd")
+        return "ftp://admin@localhost:{{ftp.server.port}}/myserver/?password=admin&localWorkDirectory=" + lwd.resolve("lwd")
                + "&resumeDownload=true&binary=true";
     }
 
@@ -48,7 +52,6 @@ public class FtpConsumerResumeDownloadIT extends FtpServerTestSupport {
         Files.write(myserver.resolve("hello.txt"), "Hello\nWorld\nI was here".getBytes());
 
         // create in-progress file with partial download
-        Path lwd = testDirectory("lwd", true);
         Files.write(lwd.resolve("hello.txt.inprogress"), "Hello\n".getBytes());
     }
 
@@ -66,20 +69,20 @@ public class FtpConsumerResumeDownloadIT extends FtpServerTestSupport {
         assertTrue(notify.matchesWaitTime());
 
         // and the out file should exists
-        assertFileExists(testFile("out/hello.txt"), "Hello\nWorld\nI was here");
+        assertFileExists(lwd.resolve("out/hello.txt"), "Hello\nWorld\nI was here");
 
         // now the lwd file should be deleted
-        assertFileNotExists(testFile("lwd/hello.txt"));
+        assertFileNotExists(lwd.resolve("lwd/hello.txt"));
 
         // and so the in progress
-        assertFileNotExists(testFile("lwd/hello.txt.inprogress"));
+        assertFileNotExists(lwd.resolve("lwd/hello.txt.inprogress"));
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(getFtpUrl()).routeId("myRoute").noAutoStartup().to("mock:result", fileUri("out"));
+                from(getFtpUrl()).routeId("myRoute").noAutoStartup().to("mock:result", fileUri(lwd, "out"));
             }
         };
     }

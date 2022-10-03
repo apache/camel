@@ -18,6 +18,7 @@ package org.apache.camel.component.file.remote.integration;
 
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -26,10 +27,14 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 public class FromFileToFtpSplitParallelIT extends FtpServerTestSupport {
 
     private static final int SIZE = 5000;
+
+    @TempDir
+    Path testDirectory;
 
     protected String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/tmp2/big?password=admin";
@@ -38,7 +43,7 @@ public class FromFileToFtpSplitParallelIT extends FtpServerTestSupport {
     @Test
     public void testSplit() throws Exception {
         // create big file
-        FileOutputStream fos = new FileOutputStream(testDirectory() + "/bigdata.txt");
+        FileOutputStream fos = new FileOutputStream(testDirectory.toString() + "/bigdata.txt");
         for (int i = 0; i < SIZE; i++) {
             String line = "ABCDEFGHIJKLMNOPQRSTUVWXYZ-" + i + "\n";
             fos.write(line.getBytes(StandardCharsets.UTF_8));
@@ -66,7 +71,7 @@ public class FromFileToFtpSplitParallelIT extends FtpServerTestSupport {
 
                 onException().maximumRedeliveries(5).redeliveryDelay(1000);
 
-                from(fileUri()).noAutoStartup().routeId("foo")
+                from(fileUri(testDirectory)).noAutoStartup().routeId("foo")
                     .split(body().tokenize("\n")).executorService("ftp-pool")
                         .to(getFtpUrl())
                         .to("log:line?groupSize=100")

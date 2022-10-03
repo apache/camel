@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.remote.integration;
 
 import java.io.File;
+import java.nio.file.Path;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -28,6 +29,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
 import static org.apache.camel.test.junit5.TestSupport.assertFileNotExists;
@@ -36,10 +38,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FtpConsumerLocalWorkDirectoryIT extends FtpServerTestSupport {
+    @TempDir
+    Path testDirectory;
 
     protected String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/lwd/?password=admin"
-               + "&localWorkDirectory=" + testDirectory("lwd")
+               + "&localWorkDirectory=" + testDirectory.resolve("lwd")
                + "&noop=true";
     }
 
@@ -79,10 +83,10 @@ public class FtpConsumerLocalWorkDirectoryIT extends FtpServerTestSupport {
         assertTrue(notify.matchesWaitTime());
 
         // and the out file should exists
-        assertFileExists(testFile("out/hello.txt"), "Hello World");
+        assertFileExists(testDirectory.resolve("out/hello.txt"), "Hello World");
 
         // now the lwd file should be deleted
-        assertFileNotExists(testFile("lwd/hello.txt"));
+        assertFileNotExists(testDirectory.resolve("lwd/hello.txt"));
     }
 
     @Override
@@ -94,9 +98,9 @@ public class FtpConsumerLocalWorkDirectoryIT extends FtpServerTestSupport {
                         File body = exchange.getIn().getBody(File.class);
                         assertNotNull(body);
                         assertTrue(body.exists(), "Local work file should exists");
-                        assertEquals(FileUtil.normalizePath(testFile("lwd/hello.txt").toString()), body.getPath());
+                        assertEquals(FileUtil.normalizePath(testDirectory.resolve("lwd/hello.txt").toString()), body.getPath());
                     }
-                }).to("mock:result", fileUri("out"));
+                }).to("mock:result", fileUri(testDirectory, "out"));
             }
         };
     }

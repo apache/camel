@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.remote.integration;
 
 import java.io.InputStream;
+import java.nio.file.Path;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -26,6 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -36,6 +38,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 // On plain local vsftpd the download failed for every > 1mb file, here I had to make it bigger to trigger the error.
 
 public class FtpSimpleConsumeStreamingStepwiseIT extends FtpServerTestSupport {
+    @TempDir
+    Path testDirectory;
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/tmp4/camel?password=admin&binary=true&delay=5000" +
@@ -76,7 +80,7 @@ public class FtpSimpleConsumeStreamingStepwiseIT extends FtpServerTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from(getFtpUrl()).setHeader(Exchange.FILE_NAME, constant("deleteme.jpg"))
-                        .to(fileUri(), "mock:result");
+                        .to(fileUri(testDirectory), "mock:result");
             }
         };
     }
