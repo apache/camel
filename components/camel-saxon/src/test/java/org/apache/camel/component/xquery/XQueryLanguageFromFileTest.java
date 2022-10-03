@@ -16,16 +16,21 @@
  */
 package org.apache.camel.component.xquery;
 
+import java.nio.file.Path;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /**
  *
  */
 public class XQueryLanguageFromFileTest extends CamelTestSupport {
+    @TempDir
+    Path testDirectory;
 
     @Test
     public void testXQueryFromFile() throws Exception {
@@ -37,11 +42,11 @@ public class XQueryLanguageFromFileTest extends CamelTestSupport {
         other.expectedMessageCount(1);
         other.message(0).body(String.class).contains("Bye World");
 
-        template.sendBodyAndHeader(fileUri(),
+        template.sendBodyAndHeader(fileUri(testDirectory),
                 "<mail from=\"davsclaus@apache.org\"><subject>Hey</subject><body>Hello World!</body></mail>",
                 Exchange.FILE_NAME, "claus.xml");
 
-        template.sendBodyAndHeader(fileUri(),
+        template.sendBodyAndHeader(fileUri(testDirectory),
                 "<mail from=\"janstey@apache.org\"><subject>Hey</subject><body>Bye World!</body></mail>",
                 Exchange.FILE_NAME, "janstey.xml");
 
@@ -53,7 +58,7 @@ public class XQueryLanguageFromFileTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri())
+                from(fileUri(testDirectory))
                         .choice()
                         .when().xquery("/mail/@from = 'davsclaus@apache.org'")
                         .convertBodyTo(String.class)
