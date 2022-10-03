@@ -16,6 +16,9 @@
  */
 package org.apache.camel.language.xtokenizer;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
@@ -24,6 +27,7 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringXMLTokenSplitTest extends CamelSpringTestSupport {
+    Path testDirectory = Paths.get("target", "data", SpringXMLTokenSplitTest.class.getSimpleName());
 
     @Test
     public void testXMLToken() throws Exception {
@@ -34,7 +38,7 @@ public class SpringXMLTokenSplitTest extends CamelSpringTestSupport {
         mock.message(2).body().isEqualTo("<order id=\"3\" xmlns=\"http:acme.com\">DSL in Action</order>");
 
         String body = createBody();
-        template.sendBodyAndHeader(fileUri("xtokenizer"), body, Exchange.FILE_NAME, "orders.xml");
+        template.sendBodyAndHeader(fileUri(testDirectory, "xtokenizer"), body, Exchange.FILE_NAME, "orders.xml");
 
         assertMockEndpointsSatisfied();
     }

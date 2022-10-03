@@ -16,14 +16,19 @@
  */
 package org.apache.camel.language.xtokenizer;
 
+import java.nio.file.Path;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.builder.Namespaces;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 public class XMLTokenSplitTest extends CamelTestSupport {
+    @TempDir
+    Path testDirectory;
 
     @Test
     public void testXMLToken() throws Exception {
@@ -34,7 +39,7 @@ public class XMLTokenSplitTest extends CamelTestSupport {
         mock.message(2).body().isEqualTo("<order id=\"3\" xmlns=\"http:acme.com\">DSL in Action</order>");
 
         String body = createBody();
-        template.sendBodyAndHeader(fileUri("xtokenizer"), body, Exchange.FILE_NAME, "orders.xml");
+        template.sendBodyAndHeader(fileUri(testDirectory, "xtokenizer"), body, Exchange.FILE_NAME, "orders.xml");
 
         assertMockEndpointsSatisfied();
     }
@@ -48,7 +53,7 @@ public class XMLTokenSplitTest extends CamelTestSupport {
         mock.message(2).body().isEqualTo("<order id=\"3\" xmlns=\"http:acme.com\">DSL in Action</order>");
 
         String body = createBody();
-        template.sendBodyAndHeader(fileUri("xtokenizer2"), body, Exchange.FILE_NAME, "orders.xml");
+        template.sendBodyAndHeader(fileUri(testDirectory, "xtokenizer2"), body, Exchange.FILE_NAME, "orders.xml");
 
         assertMockEndpointsSatisfied();
     }
@@ -72,13 +77,13 @@ public class XMLTokenSplitTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from(fileUri("xtokenizer?initialDelay=0&delay=10"))
+                from(fileUri(testDirectory, "xtokenizer?initialDelay=0&delay=10"))
                         // split the order child tags, and inherit namespaces from
                         // the orders root tag
                         .split().xtokenize("//orders/order", ns).to("mock:split");
                 // END SNIPPET: e1
 
-                from(fileUri("xtokenizer2?initialDelay=0&delay=10"))
+                from(fileUri(testDirectory, "xtokenizer2?initialDelay=0&delay=10"))
                         // split the order child tags, and inherit namespaces from
                         // the orders root tag
                         .split(body().xtokenize("//orders/order", ns)).to("mock:split");
