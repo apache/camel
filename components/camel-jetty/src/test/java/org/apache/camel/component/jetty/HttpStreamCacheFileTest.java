@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.io.File;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -23,12 +25,16 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class HttpStreamCacheFileTest extends BaseJettyTest {
+
+    @TempDir
+    File testDirectory;
 
     private final String responseBody = "12345678901234567890123456789012345678901234567890";
 
@@ -38,7 +44,7 @@ public class HttpStreamCacheFileTest extends BaseJettyTest {
         assertEquals("Bye World", out);
 
         // the temporary files should have been deleted
-        String[] files = testDirectory().toFile().list();
+        String[] files = testDirectory.list();
         assertEquals(0, files.length, "There should be no files");
     }
 
@@ -54,7 +60,7 @@ public class HttpStreamCacheFileTest extends BaseJettyTest {
         }
 
         // the temporary files should have been deleted
-        String[] files = testDirectory().toFile().list();
+        String[] files = testDirectory.list();
         assertEquals(0, files.length, "There should be no files");
     }
 
@@ -67,7 +73,7 @@ public class HttpStreamCacheFileTest extends BaseJettyTest {
                 // to write to file
                 context.getStreamCachingStrategy().setSpoolEnabled(true);
                 context.getStreamCachingStrategy().setSpoolThreshold(16);
-                context.getStreamCachingStrategy().setSpoolDirectory(testDirectory().toFile());
+                context.getStreamCachingStrategy().setSpoolDirectory(testDirectory);
                 context.setStreamCaching(true);
 
                 // use a route so we got an unit of work
