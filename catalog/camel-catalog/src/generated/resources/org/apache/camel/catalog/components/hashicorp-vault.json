@@ -8,7 +8,7 @@
     "firstVersion": "3.18.0",
     "label": "cloud,cloud",
     "javaType": "org.apache.camel.component.hashicorp.vault.HashicorpVaultComponent",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hashicorp-vault",
     "version": "3.20.0-SNAPSHOT",
