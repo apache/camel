@@ -16,13 +16,18 @@
  */
 package org.apache.camel.language.xtokenizer;
 
+import java.nio.file.Path;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.builder.Namespaces;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 public class XMLTokenizeLanguageStreamingFileTest extends CamelTestSupport {
+    @TempDir
+    Path testDirectory;
 
     @Test
     public void testFromFile() throws Exception {
@@ -38,7 +43,7 @@ public class XMLTokenizeLanguageStreamingFileTest extends CamelTestSupport {
                   + "<c:child some_attr='b' anotherAttr='b'></c:child>" + "<c:child some_attr='c' anotherAttr='c'></c:child>"
                   + "<c:child some_attr='d' anotherAttr='d'></c:child>" + "</c:parent>";
 
-        template.sendBodyAndHeader(fileUri(), body, Exchange.FILE_NAME, "myxml.xml");
+        template.sendBodyAndHeader(fileUri(testDirectory), body, Exchange.FILE_NAME, "myxml.xml");
 
         assertMockEndpointsSatisfied();
     }
@@ -49,7 +54,7 @@ public class XMLTokenizeLanguageStreamingFileTest extends CamelTestSupport {
             Namespaces ns = new Namespaces("C", "urn:c");
 
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10")).split().xtokenize("//C:child", ns).streaming()
+                from(fileUri(testDirectory, "?initialDelay=0&delay=10")).split().xtokenize("//C:child", ns).streaming()
                         .to("mock:result").end();
             }
         };

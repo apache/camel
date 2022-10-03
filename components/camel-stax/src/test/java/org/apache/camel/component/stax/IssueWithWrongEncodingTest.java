@@ -19,17 +19,17 @@ package org.apache.camel.component.stax;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.stax.model.Product;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.apache.camel.component.stax.StAXBuilder.stax;
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 public class IssueWithWrongEncodingTest extends CamelTestSupport {
 
@@ -44,19 +44,18 @@ public class IssueWithWrongEncodingTest extends CamelTestSupport {
                                         + "    </product>\n"
                                         + "</products>";
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("target/encoding");
-        super.setUp();
-    }
+    @TempDir
+    Path testDirectory;
 
     @Test
     public void testOkEncoding() throws Exception {
+        resetMocks();
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         File file = new File("src/test/resources/products_with_valid_utf8.xml");
-        template.sendBodyAndHeader("file:target/encoding", file, Exchange.FILE_NAME, "products_with_valid_utf8.xml");
+
+        template.sendBodyAndHeader("file:" + testDirectory.toString(), file, Exchange.FILE_NAME,
+                "products_with_valid_utf8.xml");
 
         assertMockEndpointsSatisfied();
     }
@@ -64,9 +63,9 @@ public class IssueWithWrongEncodingTest extends CamelTestSupport {
     @Test
     public void testInvalidEncoding() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
-        getMockEndpoint("mock:result").expectedFileExists("target/encoding/error/invalid.xml");
+        getMockEndpoint("mock:result").expectedFileExists(testDirectory.resolve("error/invalid.xml"));
 
-        File file = new File("target/encoding/invalid.xml");
+        File file = testDirectory.resolve("invalid.xml").toFile();
         FileOutputStream fos = new FileOutputStream(file, false);
         fos.write(XML_1.getBytes(StandardCharsets.UTF_8));
         // thai elephant is 4 bytes
@@ -86,7 +85,7 @@ public class IssueWithWrongEncodingTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("file:target/encoding?moveFailed=error")
+                fromF("file:%s?moveFailed=error", testDirectory.toString())
                         .split(stax(Product.class))
                         .to("mock:result");
             }
