@@ -259,7 +259,7 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     }
 
     public SagaDefinition timeout(Duration duration) {
-        return timeout(TimeUtils.printDuration(duration));
+        return timeout(TimeUtils.printDuration(duration, true));
     }
 
     public SagaDefinition timeout(long timeout, TimeUnit unit) {
