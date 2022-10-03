@@ -89,7 +89,7 @@ public class LRAOptionsIT extends AbstractLRATestSupport {
 
                 from("direct:wrong-expression")
                         .saga()
-                        .option("id", simple("${10 / 0}"))
+                        .option("id", simple("${body.pippo.pluto}"))
                         .to("log:info");
 
             }
