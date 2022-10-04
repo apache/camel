@@ -2060,6 +2060,28 @@
     "producerOnly": true,
     "lenientProperties": false
   },
+  "Etcd3ComponentBuilderFactory": {
+    "kind": "component",
+    "name": "etcd3",
+    "title": "Etcd v3",
+    "description": "Get, set, delete or watch keys in etcd key-value store.",
+    "deprecated": false,
+    "firstVersion": "3.19.0",
+    "label": "clustering,database",
+    "javaType": "org.apache.camel.component.etcd3.Etcd3Component",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-etcd3",
+    "version": "3.20.0-SNAPSHOT",
+    "scheme": "etcd3",
+    "extendsScheme": "",
+    "syntax": "etcd3:path",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false
+  },
   "ExecComponentBuilderFactory": {
     "kind": "component",
     "name": "exec",
