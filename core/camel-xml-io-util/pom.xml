@@ -35,14 +35,4 @@
         <firstVersion>3.10.0</firstVersion>
         <label>core,xml</label>
     </properties>
-
-    <dependencies>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-
-    </dependencies>
-
 </project>
