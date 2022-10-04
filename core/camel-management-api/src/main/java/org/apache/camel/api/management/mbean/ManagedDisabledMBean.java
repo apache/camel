@@ -14,23 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.reifier;
+package org.apache.camel.api.management.mbean;
 
-import org.apache.camel.Processor;
-import org.apache.camel.Route;
-import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.processor.DisabledProcessor;
+import org.apache.camel.api.management.ManagedAttribute;
 
-public class DisabledReifier extends ProcessorReifier {
+public interface ManagedDisabledMBean extends ManagedProcessorMBean {
 
-    public DisabledReifier(Route route, ProcessorDefinition<?> definition) {
-        super(route, definition);
-    }
+    @ManagedAttribute(description = "The node type that was disabled")
+    String getNodeType();
 
-    @Override
-    public Processor createProcessor() {
-        DisabledProcessor answer = new DisabledProcessor();
-        answer.setNodeType(definition.getShortName());
-        return answer;
-    }
 }

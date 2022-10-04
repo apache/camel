@@ -29,6 +29,7 @@ public class DisabledProcessor extends AsyncProcessorSupport implements IdAware,
 
     private String id;
     private String routeId;
+    private String nodeType;
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
@@ -60,6 +61,17 @@ public class DisabledProcessor extends AsyncProcessorSupport implements IdAware,
     @Override
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    /**
+     * Node type that was disabled
+     */
+    public String getNodeType() {
+        return nodeType;
+    }
+
+    public void setNodeType(String nodeType) {
+        this.nodeType = nodeType;
     }
 
     @Override

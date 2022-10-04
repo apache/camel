@@ -47,6 +47,7 @@ import org.apache.camel.management.mbean.ManagedConvertBody;
 import org.apache.camel.management.mbean.ManagedCustomLoadBalancer;
 import org.apache.camel.management.mbean.ManagedDataFormat;
 import org.apache.camel.management.mbean.ManagedDelayer;
+import org.apache.camel.management.mbean.ManagedDisabled;
 import org.apache.camel.management.mbean.ManagedDynamicRouter;
 import org.apache.camel.management.mbean.ManagedEndpoint;
 import org.apache.camel.management.mbean.ManagedEnricher;
@@ -126,6 +127,7 @@ import org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.ClaimCheckProcessor;
 import org.apache.camel.processor.Delayer;
+import org.apache.camel.processor.DisabledProcessor;
 import org.apache.camel.processor.DynamicRouter;
 import org.apache.camel.processor.Enricher;
 import org.apache.camel.processor.ExchangePatternProcessor;
@@ -344,6 +346,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedClaimCheck(context, (ClaimCheckProcessor) target, definition);
             } else if (target instanceof Delayer) {
                 answer = new ManagedDelayer(context, (Delayer) target, definition);
+            } else if (target instanceof DisabledProcessor) {
+                answer = new ManagedDisabled(context, (DisabledProcessor) target, definition);
             } else if (target instanceof Throttler) {
                 answer = new ManagedThrottler(context, (Throttler) target, definition);
             } else if (target instanceof DynamicRouter) {
