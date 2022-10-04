@@ -44,10 +44,10 @@ public class DisabledProcessorTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("mock:foo").disabled()
-                    .to("mock:bar").disabled(false)
-                    .to("mock:baz").disabled(true)
-                    .to("mock:result");
+                        .to("mock:foo").disabled()
+                        .to("mock:bar").disabled(false)
+                        .to("mock:baz").disabled(true)
+                        .to("mock:result");
             }
         };
     }
