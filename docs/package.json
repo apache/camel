@@ -4,6 +4,7 @@
     "lint": "eslint gulpfile.js",
     "lint-fix": "eslint gulpfile.js --fix"
   },
+  "type": "module",
   "license": "Apache-2.0",
   "devDependencies": {
     "del": "^7.0.0",
