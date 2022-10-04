@@ -423,7 +423,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
             boolean autoAck = exchange.getProperty(MllpConstants.MLLP_AUTO_ACKNOWLEDGE, true, boolean.class);
             if (!autoAck) {
                 if (getConfiguration().getExchangePattern() == ExchangePattern.InOut) {
-                    Object acknowledgementBytesProperty = exchange.getProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT);
+                    final Object acknowledgementBytesProperty = exchange.getProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT);
                     Object acknowledgementStringProperty = exchange.getProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING);
                     final String exceptionMessage
                             = (acknowledgementBytesProperty == null && acknowledgementStringProperty == null)
@@ -432,9 +432,9 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                                       + " exchange properties are null"
                                     : "Automatic Acknowledgement is disabled and neither the "
                                       + MllpConstants.MLLP_ACKNOWLEDGEMENT + "(type = "
-                                      + acknowledgementBytesProperty.getClass().getSimpleName() + ") nor the"
+                                      + getTypeOrNullString(acknowledgementBytesProperty) + ") nor the"
                                       + MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING + "(type = "
-                                      + acknowledgementBytesProperty.getClass().getSimpleName()
+                                      + getTypeOrNullString(acknowledgementBytesProperty)
                                       + ") exchange properties can be converted to byte[]";
                     MllpInvalidAcknowledgementException invalidAckEx = new MllpInvalidAcknowledgementException(
                             exceptionMessage, originalHl7MessageBytes, acknowledgementMessageBytes, logPhi);
@@ -605,6 +605,14 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         }
 
         getEndpoint().checkAfterSendProperties(exchange, consumerRunnable.getSocket(), log);
+    }
+
+    private static String getTypeOrNullString(Object acknowledgementBytesProperty) {
+        if (acknowledgementBytesProperty != null) {
+            return acknowledgementBytesProperty.getClass().getSimpleName();
+        }
+
+        return "null";
     }
 
 }
