@@ -23,5 +23,9 @@
     "prettier-eslint-cli": "^7.1.0",
     "through2": "^4.0.2",
     "vinyl": "^3.0.0"
+  },
+  "resolutions": {
+    "set-value": "^4.1.0",
+    "glob-parent": "^6.0.2"
   }
 }
