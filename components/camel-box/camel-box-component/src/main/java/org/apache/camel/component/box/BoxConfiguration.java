@@ -467,6 +467,10 @@ public class BoxConfiguration {
             return true;
         }
 
+        if (o == null) {
+            return false;
+        }
+
         BoxConfiguration that = (BoxConfiguration) o;
 
         return maxCacheEntries == that.maxCacheEntries
