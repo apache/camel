@@ -852,18 +852,48 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Disables this EIP from the route.
+     */
+    public Type disabled() {
+        return disabled("true");
+    }
+
+    /**
      * Whether to disable this EIP from the route.
      */
     public Type disabled(boolean disabled) {
-        setDisabled(disabled ? "true" : "false");
-        return asType();
+        return disabled(disabled ? "true" : "false");
     }
 
     /**
      * Whether to disable this EIP from the route.
      */
     public Type disabled(String disabled) {
-        setDisabled(disabled);
+        if (this instanceof OutputNode && getOutputs().isEmpty()) {
+            // set id on this
+            setDisabled(disabled);
+        } else {
+
+            // set it on last output as this is what the user means to do
+            // for Block(s) with non empty getOutputs() the id probably refers
+            // to the last definition in the current Block
+            List<ProcessorDefinition<?>> outputs = getOutputs();
+            if (!blocks.isEmpty()) {
+                if (blocks.getLast() instanceof ProcessorDefinition) {
+                    ProcessorDefinition<?> block = (ProcessorDefinition<?>) blocks.getLast();
+                    if (!block.getOutputs().isEmpty()) {
+                        outputs = block.getOutputs();
+                    }
+                }
+            }
+            if (!getOutputs().isEmpty()) {
+                outputs.get(outputs.size() - 1).setDisabled(disabled);
+            } else {
+                // the output could be empty
+                setDisabled(disabled);
+            }
+        }
+
         return asType();
     }
 

@@ -18,18 +18,17 @@ package org.apache.camel.reifier;
 
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.model.ProcessDefinition;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.processor.DisabledProcessor;
 
-public class DisabledReifier extends ProcessorReifier<ProcessDefinition> {
+public class DisabledReifier extends ProcessorReifier {
 
     public DisabledReifier(Route route, ProcessorDefinition<?> definition) {
-        super(route, (ProcessDefinition) definition);
+        super(route, definition);
     }
 
     @Override
     public Processor createProcessor() {
-        // disabled so return null
-        return null;
+        return new DisabledProcessor();
     }
 }
