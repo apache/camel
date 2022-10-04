@@ -162,6 +162,7 @@
         </dependency>
 
         <!-- testing -->
+        <!-- woodstox is needed by the StaxConverter test-->
         <dependency>
             <groupId>org.codehaus.woodstox</groupId>
             <artifactId>woodstox-core-asl</artifactId>
