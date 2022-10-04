@@ -110,7 +110,7 @@ const sources = {
         '../core/camel-main/src/main/docs/*.adoc',
         '../components/{*,*/*}/src/main/docs/*.adoc',
       ],
-      destination: 'components/modules/ROOT/examples/',
+      destination: 'components/modules/ROOT/examples',
     },
     json: {
       source: [
