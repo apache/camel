@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jms.activemq;
 
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.jupiter.api.Test;
@@ -34,7 +35,7 @@ public class TwoEmbeddedActiveMQBrokersTest extends CamelSpringTestSupport {
         template.sendBody("activemq1:queue:JmsTransferExchangeFromSplitterTest1", "foo");
         template.sendBody("activemq2:queue:JmsTransferExchangeFromSplitterTest2", "bar");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

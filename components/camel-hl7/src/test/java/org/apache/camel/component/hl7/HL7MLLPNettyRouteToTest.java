@@ -25,6 +25,7 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -99,7 +100,7 @@ public class HL7MLLPNettyRouteToTest extends HL7TestSupport {
         assertEquals("MSH|^~\\&|MYSENDER||||200701011539||ADR^A19^ADR_A19|456|P|2.4", lines[0]);
         assertEquals("MSA|AA|123", lines[1]);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     // START SNIPPET: e3

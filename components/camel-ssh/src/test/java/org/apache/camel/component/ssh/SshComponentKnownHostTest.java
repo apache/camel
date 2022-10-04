@@ -34,7 +34,7 @@ public class SshComponentKnownHostTest extends SshComponentTestSupport {
 
         template.sendBody("direct:ssh", msg);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -46,7 +46,7 @@ public class SshComponentKnownHostTest extends SshComponentTestSupport {
 
         template.sendBody("direct:sshInvalid", msg);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -61,7 +61,7 @@ public class SshComponentKnownHostTest extends SshComponentTestSupport {
 
         template.sendBody("direct:sshInvalidWarnOnly", msg);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -71,14 +71,14 @@ public class SshComponentKnownHostTest extends SshComponentTestSupport {
         mock.expectedBodiesReceived("test");
         mock.expectedHeaderReceived(SshConstants.EXIT_VALUE, 0);
         mock.expectedHeaderReceived(SshConstants.STDERR, "Error:test");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testPollingConsumerWithInvalidKnownHostFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:resultInvalid");
         mock.expectedMessageCount(0);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -88,7 +88,7 @@ public class SshComponentKnownHostTest extends SshComponentTestSupport {
         mock.expectedBodiesReceived("test");
         mock.expectedHeaderReceived(SshConstants.EXIT_VALUE, 0);
         mock.expectedHeaderReceived(SshConstants.STDERR, "Error:test");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

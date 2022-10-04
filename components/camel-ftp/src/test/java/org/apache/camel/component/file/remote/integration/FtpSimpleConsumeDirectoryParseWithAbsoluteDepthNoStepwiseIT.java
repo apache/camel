@@ -39,7 +39,7 @@ public class FtpSimpleConsumeDirectoryParseWithAbsoluteDepthNoStepwiseIT extends
 
         context.getRouteController().startRoute("foo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

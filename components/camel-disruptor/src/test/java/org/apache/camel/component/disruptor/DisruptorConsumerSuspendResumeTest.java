@@ -48,7 +48,7 @@ public class DisruptorConsumerSuspendResumeTest extends CamelTestSupport {
 
         // send a message to the route but the consumer is suspended
         // so it should not route it
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         mock.expectedMessageCount(0);
 
         // wait a bit to ensure consumer is suspended, as it could be in a poll mode where
@@ -60,7 +60,7 @@ public class DisruptorConsumerSuspendResumeTest extends CamelTestSupport {
         mock.assertIsSatisfied(2000);
 
         // resume consumer
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         mock.expectedMessageCount(1);
 
         // resume bar consumer (not the route)

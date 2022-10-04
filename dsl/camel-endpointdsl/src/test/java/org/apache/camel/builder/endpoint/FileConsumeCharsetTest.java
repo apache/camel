@@ -47,7 +47,7 @@ public class FileConsumeCharsetTest extends BaseEndpointDslTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World \u4f60\u597d");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         oneExchangeDone.matchesWaitTime();
 

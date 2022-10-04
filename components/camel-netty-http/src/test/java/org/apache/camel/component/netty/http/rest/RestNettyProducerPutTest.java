@@ -17,6 +17,7 @@
 package org.apache.camel.component.netty.http.rest;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.netty.http.BaseNettyTest;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +29,7 @@ public class RestNettyProducerPutTest extends BaseNettyTest {
 
         fluentTemplate.withBody("Donald Duck").withHeader("id", "123").to("direct:start").send();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -32,7 +32,7 @@ public class AtomPollingUnthrottledTest extends CamelTestSupport {
         mock.expectedMessageCount(7);
         mock.setResultWaitTime(3000L);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.aws.xray.TestDataBuilder.TestTrace;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
@@ -60,9 +61,8 @@ public class CamelAwsXRayTestSupport extends CamelTestSupport {
         socketListener.getReceivedData().clear();
     }
 
-    @Override
     protected void resetMocks() {
-        super.resetMocks();
+        MockEndpoint.resetMocks(context);
     }
 
     @Override

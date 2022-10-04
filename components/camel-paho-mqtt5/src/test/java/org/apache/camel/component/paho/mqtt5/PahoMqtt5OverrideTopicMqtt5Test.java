@@ -17,6 +17,7 @@
 package org.apache.camel.component.paho.mqtt5;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class PahoMqtt5OverrideTopicMqtt5Test extends PahoMqtt5TestSupport {
@@ -47,7 +48,7 @@ public class PahoMqtt5OverrideTopicMqtt5Test extends PahoMqtt5TestSupport {
         template.sendBodyAndHeader("direct:test", "Hello World", PahoMqtt5Constants.CAMEL_PAHO_OVERRIDE_TOPIC, "myoverride");
 
         // Then
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

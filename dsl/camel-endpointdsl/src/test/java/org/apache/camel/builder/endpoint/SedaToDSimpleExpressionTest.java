@@ -45,6 +45,6 @@ public class SedaToDSimpleExpressionTest extends BaseEndpointDslTest {
 
         template.sendBodyAndProperty("direct:start", "Hello World", "whereTo", "cheese");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 }

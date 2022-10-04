@@ -68,7 +68,7 @@ public class TarFileDataFormatTest extends CamelTestSupport {
 
         template.sendBody("direct:tar", TEXT);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
         assertEquals(exchange.getIn().getMessageId() + ".tar", exchange.getIn().getHeader(FILE_NAME));
@@ -84,7 +84,7 @@ public class TarFileDataFormatTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("direct:tar", TEXT, FILE_NAME, "poem.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
         assertTrue(ObjectHelper.equalByteArray(getTaredText("poem.txt"), exchange.getIn().getBody(byte[].class)));
@@ -98,7 +98,7 @@ public class TarFileDataFormatTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("direct:tar", TEXT, FILE_NAME, "poems/poem.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
         assertTrue(ObjectHelper.equalByteArray(getTaredText("poem.txt"), exchange.getIn().getBody(byte[].class)));
@@ -114,7 +114,7 @@ public class TarFileDataFormatTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("direct:tar", TEXT, FILE_NAME, "poems/poem.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
         assertTrue(ObjectHelper.equalByteArray(getTaredTextInFolder("poems/", "poems/poem.txt"),
@@ -128,7 +128,7 @@ public class TarFileDataFormatTest extends CamelTestSupport {
 
         template.sendBody("direct:untar", getTaredText("file"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -146,7 +146,7 @@ public class TarFileDataFormatTest extends CamelTestSupport {
 
         template.sendBody("direct:tarAndUntar", TEXT);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
         assertEquals(exchange.getIn().getMessageId(), exchange.getIn().getHeader(FILE_NAME));
@@ -165,7 +165,7 @@ public class TarFileDataFormatTest extends CamelTestSupport {
 
         template.sendBody("direct:tarToFile", TEXT);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // use builder to ensure the exchange is fully done before we check for file exists
         assertTrue(notify.matches(5, TimeUnit.SECONDS));
@@ -205,7 +205,7 @@ public class TarFileDataFormatTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("direct:dslTar", TEXT, FILE_NAME, "poem.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -215,7 +215,7 @@ public class TarFileDataFormatTest extends CamelTestSupport {
 
         template.sendBody("direct:dslUntar", getTaredText("test.txt"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test

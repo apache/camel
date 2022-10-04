@@ -25,6 +25,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.SendEmail;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -69,7 +70,7 @@ public class JpaProducerConcurrentTest extends AbstractJpaTest {
             responses.put(index, out);
         }
 
-        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         assertEquals(files, responses.size());
 

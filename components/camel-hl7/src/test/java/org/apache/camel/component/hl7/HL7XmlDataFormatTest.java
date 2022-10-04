@@ -43,7 +43,7 @@ public class HL7XmlDataFormatTest extends CamelTestSupport {
         String body = createHL7AsString();
         template.sendBody("direct:unmarshalOk", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -57,7 +57,7 @@ public class HL7XmlDataFormatTest extends CamelTestSupport {
         assertTrue(xml.contains("<ORM_O01"));
         template.sendBody("direct:unmarshalOkXml", xml);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Message received = mock.getReceivedExchanges().get(0).getIn().getMandatoryBody(Message.class);
         assertEquals("O01", new Terser(received).get("MSH-9-2"));
     }

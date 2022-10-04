@@ -19,6 +19,7 @@ package org.apache.camel.processor.groovy;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -43,7 +44,7 @@ public class GroovySumFilterTest extends CamelSpringTestSupport {
 
         template.sendBody("direct:start", orders);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -57,7 +58,7 @@ public class GroovySumFilterTest extends CamelSpringTestSupport {
 
         template.sendBody("direct:start", orders);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

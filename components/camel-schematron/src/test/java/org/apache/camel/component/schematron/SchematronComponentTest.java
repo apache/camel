@@ -44,7 +44,7 @@ public class SchematronComponentTest extends CamelTestSupport {
         String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-1.xml"),
                 Charset.defaultCharset());
         template.sendBody("direct:start", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         String result = mock.getExchanges().get(0).getIn().getHeader(Constants.VALIDATION_REPORT, String.class);
         assertEquals(0, Integer.valueOf(Utils.evaluate("count(//svrl:failed-assert)", result)).intValue());
         assertEquals(0, Integer.valueOf(Utils.evaluate("count(//svrl:successful-report)", result)).intValue());
@@ -61,7 +61,7 @@ public class SchematronComponentTest extends CamelTestSupport {
         String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-2.xml"),
                 Charset.defaultCharset());
         template.sendBody("direct:start", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         String result = mock.getExchanges().get(0).getIn().getHeader(Constants.VALIDATION_REPORT, String.class);
 
         // should throw two assertions because of the missing chapters in the XML.

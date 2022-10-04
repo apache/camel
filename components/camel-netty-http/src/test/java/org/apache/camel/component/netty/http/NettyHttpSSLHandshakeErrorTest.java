@@ -18,6 +18,7 @@ package org.apache.camel.component.netty.http;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
@@ -63,7 +64,7 @@ public class NettyHttpSSLHandshakeErrorTest extends BaseNettyTest {
         assertNotNull(ex);
         assertEquals(javax.net.ssl.SSLHandshakeException.class, ex.getClass(), "SSLHandshakeException expected");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

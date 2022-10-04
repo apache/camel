@@ -49,7 +49,7 @@ public class JmsSelectorOptionTest extends AbstractJMSTest {
         template.sendBodyAndHeader("activemq:queue:JmsSelectorOptionTest.hello", "Message1", "SIZE_NUMBER", 1505);
         template.sendBodyAndHeader("activemq:queue:JmsSelectorOptionTest.hello", "Message3", "SIZE_NUMBER", 1300);
         template.sendBodyAndHeader("activemq:queue:JmsSelectorOptionTest.hello", "Message2", "SIZE_NUMBER", 1600);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test

@@ -68,7 +68,7 @@ public class MinaManyUDPMessagesTest extends CamelTestSupport {
             socket.close();
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

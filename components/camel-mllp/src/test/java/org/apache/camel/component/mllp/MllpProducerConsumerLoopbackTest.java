@@ -105,7 +105,7 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
         assertThat("Should be acknowledgment for message 1", acknowledgement,
                 CoreMatchers.containsString(String.format("MSA|AA|00001")));
 
-        assertMockEndpointsSatisfied(60, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 60, TimeUnit.SECONDS);
     }
 
     @Test
@@ -122,6 +122,6 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
                     CoreMatchers.containsString(String.format("MSA|AA|%05d", i)));
         }
 
-        assertMockEndpointsSatisfied(60, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 60, TimeUnit.SECONDS);
     }
 }

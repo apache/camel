@@ -50,7 +50,7 @@ public class AtlasMapXmlToXmlDefaultNsTest extends CamelSpringTestSupport {
         producerTemplate.sendBody("direct:start", new ByteArrayInputStream(
                 "<Patient xmlns=\"http://hl7.org/fhir\"><id value=\"101138\"></id></Patient>".getBytes()));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         final String body = result.getExchanges().get(0).getIn().getBody(String.class);
 
         assertNotNull(body);

@@ -19,6 +19,7 @@ package org.apache.camel.itest.issues;
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -63,7 +64,7 @@ public class IsUseAdviceWithJUnit5Test extends CamelTestSupport {
 
         template.sendBody(directEndPointURI, "a trigger");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertNotNull(context.hasEndpoint(directEndPointURI));
 

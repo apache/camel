@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.RouteWatcherReloadStrategy;
@@ -83,7 +84,7 @@ public class RouteWatcherReloadStrategyTest extends CamelTestSupport {
         // and the route should work
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         template.sendBody("direct:bar", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -120,9 +121,9 @@ public class RouteWatcherReloadStrategyTest extends CamelTestSupport {
         getMockEndpoint("mock:bar").expectedMessageCount(0);
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         template.sendBody("direct:bar", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         LOG.info("Copying file to target/dummy");
 
@@ -140,7 +141,7 @@ public class RouteWatcherReloadStrategyTest extends CamelTestSupport {
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         getMockEndpoint("mock:foo").expectedMessageCount(0);
         template.sendBody("direct:bar", "Bye World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -180,9 +181,9 @@ public class RouteWatcherReloadStrategyTest extends CamelTestSupport {
         // and the route should work
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         template.sendBody("direct:bar", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         // now update the file
         LOG.info("Updating file in target/dummy");
@@ -200,6 +201,6 @@ public class RouteWatcherReloadStrategyTest extends CamelTestSupport {
         Thread.sleep(500);
         getMockEndpoint("mock:bar").expectedBodiesReceived("Bye Camel");
         template.sendBody("direct:bar", "Camel");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 }

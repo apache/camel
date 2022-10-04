@@ -53,7 +53,7 @@ public class JmsRouteWithCustomListenerContainerTest extends AbstractJMSTest {
         Object out = template.requestBody("activemq:queue:JmsRouteWithCustomListenerContainerTest", "Camel in Action");
         assertEquals("OK: Camel in Action", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // assert MEP
         assertEquals(ExchangePattern.InOut, inbox.getReceivedExchanges().get(0).getPattern());

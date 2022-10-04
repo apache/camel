@@ -48,7 +48,7 @@ public class MinaEncodingTest extends BaseMinaTest {
         endpoint.expectedBodiesReceived(body);
 
         template.sendBody(uri, body);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -65,7 +65,7 @@ public class MinaEncodingTest extends BaseMinaTest {
         endpoint.expectedBodiesReceived(body);
 
         template.sendBody(uri, body);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -82,7 +82,7 @@ public class MinaEncodingTest extends BaseMinaTest {
         endpoint.expectedBodiesReceived(body);
 
         template.sendBody(uri, body);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     // Note: MINA does not support sending bytes with the textline codec
@@ -101,7 +101,7 @@ public class MinaEncodingTest extends BaseMinaTest {
         endpoint.expectedBodiesReceived(body);
 
         template.sendBody(uri, body);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -120,7 +120,7 @@ public class MinaEncodingTest extends BaseMinaTest {
 
         template.sendBody(uri, body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test

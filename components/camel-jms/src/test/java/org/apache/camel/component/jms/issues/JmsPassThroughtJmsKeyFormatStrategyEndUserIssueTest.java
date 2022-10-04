@@ -39,7 +39,7 @@ public class JmsPassThroughtJmsKeyFormatStrategyEndUserIssueTest extends Abstrac
 
         template.sendBodyAndHeader(uri, "Hello World", "HEADER_1", "VALUE_1");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -40,7 +40,7 @@ public class CamelTestSupportTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test

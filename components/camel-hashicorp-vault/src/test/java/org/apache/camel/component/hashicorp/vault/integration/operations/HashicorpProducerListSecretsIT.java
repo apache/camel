@@ -66,7 +66,7 @@ public class HashicorpProducerListSecretsIT extends HashicorpVaultBase {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Exchange ret = mockRead.getExchanges().get(0);
         assertNotNull(ret);
         assertTrue(ret.getMessage().getBody(List.class).contains("test"));

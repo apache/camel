@@ -88,8 +88,7 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
 
     static {
         boolean includeNewLine = true;
-        if (TestSupport.getJavaMajorVersion() >= 9
-                || TestSupport.isJava18_261_later() && !TestSupport.isJavaVendor("Azul")) {
+        if (!TestSupport.isJavaVendor("Azul")) {
             includeNewLine = false;
         }
         payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -245,77 +244,77 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
     public void testSHA1() throws Exception {
         setupMock();
         sendBody("direct:sha1", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testSHA224() throws Exception {
         setupMock();
         sendBody("direct:sha224", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testSHA256() throws Exception {
         setupMock();
         sendBody("direct:sha256", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testSHA384() throws Exception {
         setupMock();
         sendBody("direct:sha384", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testSHA512() throws Exception {
         setupMock();
         sendBody("direct:sha512", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testRIPEMD160() throws Exception {
         setupMock();
         sendBody("direct:ripemd160", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testWHIRLPOOL() throws Exception {
         setupMock();
         sendBody("direct:whirlpool", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testSHA3224() throws Exception {
         setupMock();
         sendBody("direct:sha3_224", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testSHA3256() throws Exception {
         setupMock();
         sendBody("direct:sha3_256", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testSHA3384() throws Exception {
         setupMock();
         sendBody("direct:sha3_384", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testSHA3512() throws Exception {
         setupMock();
         sendBody("direct:sha3_512", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private MockEndpoint setupMock() {
@@ -355,7 +354,7 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
             } else {
                 template.sendBodyAndHeaders("direct:in", payload, headers);
             }
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(SignatureDigestMethodTest.this.context);
             return mock.getReceivedExchanges().get(0);
         } finally {
             context.stop();

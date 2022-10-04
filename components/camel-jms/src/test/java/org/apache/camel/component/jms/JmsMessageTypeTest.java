@@ -59,7 +59,7 @@ public class JmsMessageTypeTest extends AbstractJMSTest {
         // we send an object and force it to use Text type
         template.sendBodyAndHeader("direct:foo", new MyFooBean("World"), JMS_MESSAGE_TYPE, "Text");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -72,7 +72,7 @@ public class JmsMessageTypeTest extends AbstractJMSTest {
         // we send an object and force it to use Text type
         template.sendBody("direct:text", new MyFooBean("World"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -85,7 +85,7 @@ public class JmsMessageTypeTest extends AbstractJMSTest {
         // we send a string and force it to use Text type
         template.sendBody("direct:text", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -97,7 +97,7 @@ public class JmsMessageTypeTest extends AbstractJMSTest {
         // we send an object and force it to use Bytes type
         template.sendBodyAndHeader("direct:foo", new MyFooBean("World"), JMS_MESSAGE_TYPE, "Bytes");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -109,7 +109,7 @@ public class JmsMessageTypeTest extends AbstractJMSTest {
         // we send an object and force it to use Bytes type
         template.sendBody("direct:bytes", new MyFooBean("World"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -121,7 +121,7 @@ public class JmsMessageTypeTest extends AbstractJMSTest {
         // we send a string and force it to use Bytes type
         template.sendBody("direct:bytes", "Bye World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -133,7 +133,7 @@ public class JmsMessageTypeTest extends AbstractJMSTest {
         // we send an object and force it to use Map type
         template.sendBodyAndHeader("direct:foo", new MyFooBean("Claus"), JMS_MESSAGE_TYPE, "Map");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals("Claus", mock.getExchanges().get(0).getIn().getBody(Map.class).get("name"));
     }
@@ -147,7 +147,7 @@ public class JmsMessageTypeTest extends AbstractJMSTest {
         // we send an object and force it to use Map type
         template.sendBody("direct:map", new MyFooBean("Claus"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals("Claus", mock.getExchanges().get(0).getIn().getBody(Map.class).get("name"));
     }
@@ -164,7 +164,7 @@ public class JmsMessageTypeTest extends AbstractJMSTest {
         // we send a Map object and force it to use Map type
         template.sendBody("direct:map", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals("Claus", mock.getExchanges().get(0).getIn().getBody(Map.class).get("name"));
     }
@@ -179,7 +179,7 @@ public class JmsMessageTypeTest extends AbstractJMSTest {
         // we send an object and force it to use Object type
         template.sendBodyAndHeader("direct:foo", new MyFooBean("James"), JMS_MESSAGE_TYPE, "Object");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals("James", mock.getExchanges().get(0).getIn().getBody(MyFooBean.class).getName());
     }
@@ -194,7 +194,7 @@ public class JmsMessageTypeTest extends AbstractJMSTest {
         // we send an object and force it to use Object type
         template.sendBody("direct:object", new MyFooBean("James"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals("James", mock.getExchanges().get(0).getIn().getBody(MyFooBean.class).getName());
     }

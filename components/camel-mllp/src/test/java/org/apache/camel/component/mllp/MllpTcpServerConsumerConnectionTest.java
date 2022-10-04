@@ -92,7 +92,7 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
         Thread.sleep(1000);
         mllpClient.close();
 
-        assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 15, TimeUnit.SECONDS);
     }
 
     @Test
@@ -116,7 +116,7 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
         Thread.sleep(1000);
         mllpClient.reset();
 
-        assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 15, TimeUnit.SECONDS);
     }
 
     /**
@@ -146,7 +146,7 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
             assertNull(expectedEx.getCause());
         }
 
-        assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 15, TimeUnit.SECONDS);
     }
 
     void addTestRouteWithIdleTimeout(final int idleTimeout) throws Exception {

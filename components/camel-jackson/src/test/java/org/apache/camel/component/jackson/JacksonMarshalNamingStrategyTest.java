@@ -16,41 +16,52 @@
  */
 package org.apache.camel.component.jackson;
 
-import org.apache.camel.builder.RouteBuilder;
+import java.util.stream.Stream;
+
+import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JacksonMarshalNamingStrategyTest extends CamelTestSupport {
 
-    @Test
-    public void testMarshalAndUnmarshalMap() throws Exception {
+    @ParameterizedTest
+    @MethodSource("namingStrategies")
+    public void testNamingStrategy(String namingStrategy, String expectedJson) throws Exception {
         PojoNamingStrategy pojoNamingStrategy = new PojoNamingStrategy();
         pojoNamingStrategy.setFieldOne("test");
         pojoNamingStrategy.setFieldTwo("supertest");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
+
+        context.addRoutes(new RouteConfigurationBuilder() {
+            @Override
+            public void configuration() throws Exception {
+                JacksonDataFormat format = new JacksonDataFormat();
+                format.setNamingStrategy(namingStrategy);
+                from("direct:in").marshal(format).to("mock:result");
+            }
+        });
+
         Object marshalled = template.requestBody("direct:in", pojoNamingStrategy);
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
-        assertEquals("{\"field.one\":\"test\",\"field.two\":\"supertest\"}", marshalledAsString);
+        assertEquals(expectedJson, marshalledAsString);
 
         mock.assertIsSatisfied();
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-
-            @Override
-            public void configure() {
-                JacksonDataFormat format = new JacksonDataFormat();
-                format.setNamingStrategy("LOWER_DOT_CASE");
-                from("direct:in").marshal(format).to("mock:result");
-            }
-        };
+    private static Stream<Arguments> namingStrategies() {
+        return Stream.of(
+                Arguments.of("LOWER_DOT_CASE", "{\"field.one\":\"test\",\"field.two\":\"supertest\"}"),
+                Arguments.of("SNAKE_CASE", "{\"field_one\":\"test\",\"field_two\":\"supertest\"}"),
+                Arguments.of("LOWER_CAMEL_CASE", "{\"fieldOne\":\"test\",\"fieldTwo\":\"supertest\"}"),
+                Arguments.of("LOWER_CASE", "{\"fieldone\":\"test\",\"fieldtwo\":\"supertest\"}"),
+                Arguments.of("KEBAB_CASE", "{\"field-one\":\"test\",\"field-two\":\"supertest\"}"),
+                Arguments.of("UPPER_CAMEL_CASE", "{\"FieldOne\":\"test\",\"FieldTwo\":\"supertest\"}"));
     }
-
 }

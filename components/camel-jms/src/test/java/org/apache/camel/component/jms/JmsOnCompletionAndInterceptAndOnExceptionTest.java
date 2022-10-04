@@ -36,7 +36,7 @@ public class JmsOnCompletionAndInterceptAndOnExceptionTest extends AbstractJMSTe
 
         template.sendBody("activemq:queue:JmsOnCompletionAndInterceptAndOnExceptionTest.start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -51,7 +51,7 @@ public class JmsOnCompletionAndInterceptAndOnExceptionTest extends AbstractJMSTe
 
         template.sendBody("activemq:queue:JmsOnCompletionAndInterceptAndOnExceptionTest.start", "Kabom");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

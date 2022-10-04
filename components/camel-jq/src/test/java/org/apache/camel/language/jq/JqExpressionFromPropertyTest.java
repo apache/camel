@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.apache.camel.NoSuchHeaderOrPropertyException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class JqExpressionFromPropertyTest extends JqTestSupport {
@@ -53,7 +54,7 @@ public class JqExpressionFromPropertyTest extends JqTestSupport {
                 .withProcessor(e -> e.setProperty("Content", node))
                 .send();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -70,6 +71,6 @@ public class JqExpressionFromPropertyTest extends JqTestSupport {
                 .withProcessor(e -> e.getMessage().setBody(node))
                 .send();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 }

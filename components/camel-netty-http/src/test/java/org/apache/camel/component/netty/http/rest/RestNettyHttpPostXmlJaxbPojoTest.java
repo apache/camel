@@ -38,7 +38,7 @@ public class RestNettyHttpPostXmlJaxbPojoTest extends BaseNettyTest {
         template.sendBodyAndHeader("netty-http:http://localhost:" + getPort() + "/users/new", body, Exchange.CONTENT_TYPE,
                 "text/xml");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         UserJaxbPojo user = mock.getReceivedExchanges().get(0).getIn().getBody(UserJaxbPojo.class);
         assertNotNull(user);
@@ -55,7 +55,7 @@ public class RestNettyHttpPostXmlJaxbPojoTest extends BaseNettyTest {
         String body = "<user name=\"Donald Duck\" id=\"456\"></user>";
         template.sendBody("netty-http:http://localhost:" + getPort() + "/users/new", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         UserJaxbPojo user = mock.getReceivedExchanges().get(0).getIn().getBody(UserJaxbPojo.class);
         assertNotNull(user);

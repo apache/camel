@@ -19,6 +19,7 @@ package org.apache.camel.language.groovy;
 import java.net.URLEncoder;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +31,7 @@ public class LanguageGroovyRouteTest extends CamelTestSupport {
 
         template.sendBody("direct:start", 3);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

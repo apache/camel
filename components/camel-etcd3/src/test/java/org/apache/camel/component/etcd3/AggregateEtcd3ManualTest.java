@@ -18,9 +18,8 @@ package org.apache.camel.component.etcd3;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.etcd3.processor.aggregate.Etcd3AggregationRepository;
+import org.apache.camel.component.etcd3.support.Etcd3TestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -30,22 +29,17 @@ import org.junit.jupiter.api.Test;
  * of message 1,2 and 4 as they use the same correlation key.
  * <p/>
  */
-@Disabled("Requires manually testing")
-public class AggregateEtcd3ManualTest extends CamelTestSupport {
-
-    // TODO: use docker test-containers for testing
-
-    private String endpoint = System.getProperty("endpoint"); //http://ip:port
+class AggregateEtcd3ManualTest extends Etcd3TestSupport {
 
     @Test
-    public void testABC() throws Exception {
+    void testABC() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("ABC");
         template.sendBodyAndHeader("direct:start", "A", "myId", 1);
         template.sendBodyAndHeader("direct:start", "B", "myId", 1);
         template.sendBodyAndHeader("direct:start", "F", "myId", 2);
         template.sendBodyAndHeader("direct:start", "C", "myId", 1);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
@@ -56,7 +50,7 @@ public class AggregateEtcd3ManualTest extends CamelTestSupport {
                 from("direct:start")
                         .log("Sending ${body} with correlation key ${header.myId}")
                         .aggregate(header("myId"), new MyAggregationStrategy())
-                        .aggregationRepository(new Etcd3AggregationRepository("aggregation", endpoint))
+                        .aggregationRepository(new Etcd3AggregationRepository("aggregation", service.getServiceAddress()))
                         .completionSize(3)
                         .log("Sending out ${body}")
                         .to("mock:result");

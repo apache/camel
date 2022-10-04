@@ -31,7 +31,7 @@ public class Jms2DeliveryDelayTest extends BaseJms2TestSupport {
 
         long start = System.currentTimeMillis();
         template.sendBody("jms:topic:foo?deliveryDelay=1000", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertTrue(System.currentTimeMillis() - start >= 1000, "Should take at least 1000 millis");
     }
 
@@ -42,7 +42,7 @@ public class Jms2DeliveryDelayTest extends BaseJms2TestSupport {
 
         long start = System.currentTimeMillis();
         template.sendBody("jms:topic:foo", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertTrue(System.currentTimeMillis() - start < 1000, "Should take less than 1000 millis");
     }
 

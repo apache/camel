@@ -21,6 +21,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.body;
@@ -50,7 +51,7 @@ public class JmsProducerConcurrentTest extends AbstractJMSTest {
                     return null;
                 });
             }
-            assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
+            MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
         } finally {
             executor.shutdownNow();
         }

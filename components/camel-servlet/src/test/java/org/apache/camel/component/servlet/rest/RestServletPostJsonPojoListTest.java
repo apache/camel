@@ -44,7 +44,7 @@ public class RestServletPostJsonPojoListTest extends ServletCamelRouterTestSuppo
         assertEquals(200, response.getResponseCode());
         assertEquals("application/json", response.getContentType());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertNotNull(list);

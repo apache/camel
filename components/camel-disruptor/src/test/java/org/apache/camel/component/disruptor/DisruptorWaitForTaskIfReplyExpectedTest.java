@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +33,7 @@ public class DisruptorWaitForTaskIfReplyExpectedTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
         final String out = template.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", out);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
     }
 
@@ -53,7 +54,7 @@ public class DisruptorWaitForTaskIfReplyExpectedTest extends CamelTestSupport {
 
         // Should return the in message as no reply is expected
         assertEquals("Hello World", out.getMessage().getBody());
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
     }
 

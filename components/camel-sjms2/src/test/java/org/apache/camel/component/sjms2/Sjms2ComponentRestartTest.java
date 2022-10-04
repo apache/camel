@@ -19,6 +19,7 @@ package org.apache.camel.component.sjms2;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -47,12 +48,12 @@ public class Sjms2ComponentRestartTest extends CamelTestSupport {
 
         getMockEndpoint("mock:test").expectedMessageCount(1);
         template.sendBody("sjms2:queue:test", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // restart
         context.stop();
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         // rebind as the registry is cleared on stop
         context.getRegistry().bind("activemqCF", connectionFactory);
@@ -64,7 +65,7 @@ public class Sjms2ComponentRestartTest extends CamelTestSupport {
         // and re-create template
         template = context.createProducerTemplate();
         template.sendBody("sjms2:queue:test", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         context.stop();
     }
@@ -83,17 +84,17 @@ public class Sjms2ComponentRestartTest extends CamelTestSupport {
 
         getMockEndpoint("mock:test").expectedMessageCount(1);
         template.sendBody("sjms2:queue:test", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // restart
         context.suspend();
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         context.resume();
 
         getMockEndpoint("mock:test").expectedMessageCount(1);
 
         template.sendBody("sjms2:queue:test", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         context.stop();
     }

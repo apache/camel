@@ -49,7 +49,7 @@ public class SqsProducerSendByteArrayLocalstackIT extends Aws2SQSBaseTest {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Assert.assertEquals(3, result.getExchanges().get(0).getMessage().getHeaders().size());
         Assert.assertEquals("HeaderTest",
                 Strings.fromByteArray((byte[]) result.getExchanges().get(0).getMessage().getHeaders().get("value1")));

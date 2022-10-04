@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>3.19.0-SNAPSHOT</version>
+        <version>3.20.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -78,8 +78,8 @@
                             <goal>install-node-and-yarn</goal>
                         </goals>
                         <configuration>
-                            <nodeVersion>v16.13.2</nodeVersion>
-                            <yarnVersion>v1.22.17</yarnVersion>
+                            <nodeVersion>v18.10.0</nodeVersion>
+                            <yarnVersion>v3.2.3</yarnVersion>
                         </configuration>
                     </execution>
                     <execution>

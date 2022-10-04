@@ -94,7 +94,7 @@ public class FtpConsumerWithCharsetIT extends FtpServerTestSupport {
     public void testConsumerWithCharset() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived(payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getExchanges().get(0);
         RemoteFile<?> file = (RemoteFile<?>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);

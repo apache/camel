@@ -51,7 +51,7 @@ public class JmsRouteWithInOnlyTest extends AbstractJMSTest {
         Object out = template.requestBody("activemq:queue:JmsRouteWithInOnlyTest", "Camel in Action");
         assertEquals("OK: Camel in Action", out);
 
-        assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
 
         // assert MEP
         assertEquals(ExchangePattern.InOut, inbox.getReceivedExchanges().get(0).getPattern());

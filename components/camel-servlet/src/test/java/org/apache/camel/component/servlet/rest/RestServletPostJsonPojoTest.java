@@ -43,7 +43,7 @@ public class RestServletPostJsonPojoTest extends ServletCamelRouterTestSupport {
 
         assertEquals(200, response.getResponseCode());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         UserPojo user = mock.getReceivedExchanges().get(0).getIn().getBody(UserPojo.class);
         assertNotNull(user);

@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.RestConfiguration;
 import org.junit.jupiter.api.Test;
 
@@ -47,9 +48,9 @@ public class RestJettyGetCorsTest extends BaseJettyTest {
                 out.getMessage().getHeader("Access-Control-Allow-Headers"));
         assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_MAX_AGE, out.getMessage().getHeader("Access-Control-Max-Age"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         getMockEndpoint("mock:input").expectedMessageCount(1);
 
         // send GET request which should be routed
@@ -57,7 +58,7 @@ public class RestJettyGetCorsTest extends BaseJettyTest {
         String out2 = template.requestBody("http://localhost:" + getPort() + "/users/123/basic", null, String.class);
         assertEquals("123;Donald Duck", out2);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

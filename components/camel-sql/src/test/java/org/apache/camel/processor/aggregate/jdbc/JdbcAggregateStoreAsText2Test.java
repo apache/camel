@@ -93,7 +93,7 @@ public class JdbcAggregateStoreAsText2Test extends CamelSpringTestSupport {
 
         template.sendBodyAndHeaders("direct:start", "E", headers);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     public String getAggregationRepositoryBody(int id) {

@@ -54,7 +54,7 @@ public class AdviceWithIssueTest extends CamelTestSupport {
 
         template.sendBody("direct:start", Collections.singletonMap("foo", "bar"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

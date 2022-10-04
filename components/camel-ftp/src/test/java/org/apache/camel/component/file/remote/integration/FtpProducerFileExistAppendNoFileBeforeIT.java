@@ -35,7 +35,7 @@ public class FtpProducerFileExistAppendNoFileBeforeIT extends FtpServerTestSuppo
 
         template.sendBodyAndHeader(getFtpUrl(), "Bye World", Exchange.FILE_NAME, "hello.txt");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

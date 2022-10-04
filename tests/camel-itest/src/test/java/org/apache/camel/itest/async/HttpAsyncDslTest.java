@@ -18,6 +18,7 @@ package org.apache.camel.itest.async;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
@@ -44,7 +45,7 @@ public class HttpAsyncDslTest extends CamelTestSupport {
         template.sendBody("jms:queue:order", "Order: Camel in Action");
         order += "C";
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // B should be last (either ABC or BAC depending on threading)
         assertEquals(3, order.length());
@@ -60,7 +61,7 @@ public class HttpAsyncDslTest extends CamelTestSupport {
         String response = template.requestBody("jms:queue:order", "Order: Camel in Action", String.class);
         order += "C";
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // should be in strict ABC order as we do request/reply
         assertEquals("ABC", order);

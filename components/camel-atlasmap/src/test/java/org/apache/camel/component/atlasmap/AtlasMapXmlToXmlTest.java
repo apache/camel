@@ -52,7 +52,7 @@ public class AtlasMapXmlToXmlTest extends CamelSpringTestSupport {
         producerTemplate.sendBody("direct:start", new ByteArrayInputStream(
                 "<tns:Patient xmlns:tns=\"http://hl7.org/fhir\"><tns:id value=\"101138\"></tns:id></tns:Patient>".getBytes()));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         final String body = result.getExchanges().get(0).getIn().getBody(String.class);
 
         assertNotNull(body);

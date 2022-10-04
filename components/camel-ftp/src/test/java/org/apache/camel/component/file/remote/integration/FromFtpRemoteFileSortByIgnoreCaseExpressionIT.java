@@ -52,7 +52,7 @@ public class FromFtpRemoteFileSortByIgnoreCaseExpressionIT extends FtpServerTest
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello London", "Hello Copenhagen", "Hello Paris");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -68,7 +68,7 @@ public class FromFtpRemoteFileSortByIgnoreCaseExpressionIT extends FtpServerTest
         MockEndpoint nocase = getMockEndpoint("mock:nocase");
         nocase.expectedBodiesReceived("Hello Copenhagen", "Hello London", "Hello Paris");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -84,7 +84,7 @@ public class FromFtpRemoteFileSortByIgnoreCaseExpressionIT extends FtpServerTest
         MockEndpoint nocasereverse = getMockEndpoint("mock:nocasereverse");
         nocasereverse.expectedBodiesReceived("Hello Paris", "Hello London", "Hello Copenhagen");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private void prepareFtpServer() {

@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.SendEmail;
 import org.junit.jupiter.api.Test;
 
@@ -49,7 +50,7 @@ public class JpaNonTXRollbackTest extends AbstractJpaTest {
         // start route
         context.getRouteController().startRoute("foo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals(1, foo.intValue());
         assertEquals(1, bar.intValue());

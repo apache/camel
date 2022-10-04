@@ -58,7 +58,7 @@ public class ConsumeChildrenIT extends ZooKeeperITSupport {
         client.delete("/grimm/hansel");
         client.delete("/grimm/gretel");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         validateExchangesContainListings(mock, createChildListing(), createChildListing("hansel"),
                 createChildListing("hansel", "gretel"), createChildListing("gretel"),

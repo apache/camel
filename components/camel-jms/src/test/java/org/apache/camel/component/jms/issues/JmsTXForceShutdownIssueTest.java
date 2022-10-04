@@ -52,7 +52,7 @@ public class JmsTXForceShutdownIssueTest extends CamelSpringTestSupport {
 
         template.sendBody("activemq:queue:inbox", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // will complete the test and force a shutdown ...
     }

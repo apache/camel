@@ -20,6 +20,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -39,7 +40,7 @@ public class CamelJmxConsumerTest extends CamelTestSupport {
         ManagedRouteMBean mr = context.getExtension(ManagedCamelContext.class).getManagedRoute("foo");
         mr.setTracing(true);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

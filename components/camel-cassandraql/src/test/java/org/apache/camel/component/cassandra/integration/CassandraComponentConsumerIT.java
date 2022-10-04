@@ -44,7 +44,7 @@ public class CassandraComponentConsumerIT extends BaseCassandra {
             }
         });
         mock.await(1, TimeUnit.SECONDS);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -59,7 +59,7 @@ public class CassandraComponentConsumerIT extends BaseCassandra {
             }
         });
         mock.await(1, TimeUnit.SECONDS);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -75,7 +75,7 @@ public class CassandraComponentConsumerIT extends BaseCassandra {
         });
         mock.await(1, TimeUnit.SECONDS);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -68,7 +68,7 @@ public class S3ConsumerIT extends Aws2S3Base {
         });
 
         Awaitility.await().atMost(10, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertMockEndpointsSatisfied());
+                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
     }
 
     @Override

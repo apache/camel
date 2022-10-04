@@ -55,7 +55,7 @@ public class SqsProducerSendLocalstackMaxAttributesIT extends Aws2SQSBaseTest {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Assert.assertEquals(13, result.getExchanges().get(0).getMessage().getHeaders().size());
     }
 

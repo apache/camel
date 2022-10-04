@@ -57,7 +57,7 @@ public class LevelDBSpringAggregateTest extends CamelSpringTestSupport {
         template.sendBodyAndHeader("direct:start", "D", "id", 123);
         template.sendBodyAndHeader("direct:start", "E", "id", 123);
 
-        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     public static class MyAggregationStrategy implements AggregationStrategy {

@@ -37,7 +37,7 @@ public class NettyHttpProducerHttpPathTest extends BaseNettyTest {
             in.setHeader(Exchange.HTTP_PATH, "");
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -53,7 +53,7 @@ public class NettyHttpProducerHttpPathTest extends BaseNettyTest {
             in.setHeader(Exchange.HTTP_PATH, "/bar");
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -69,7 +69,7 @@ public class NettyHttpProducerHttpPathTest extends BaseNettyTest {
             in.setHeader(Exchange.HTTP_PATH, null);
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -85,7 +85,7 @@ public class NettyHttpProducerHttpPathTest extends BaseNettyTest {
             in.setHeader(Exchange.HTTP_PATH, "/bar/");
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

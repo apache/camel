@@ -46,7 +46,7 @@ public class GmailUsersMessagesConsumerIT extends AbstractGoogleMailTestSupport 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertTrue(mock.getExchanges().get(0).getIn().getBody() instanceof ListMessagesResponse);
     }

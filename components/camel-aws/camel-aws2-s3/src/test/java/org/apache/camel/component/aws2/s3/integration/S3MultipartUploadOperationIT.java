@@ -55,7 +55,7 @@ public class S3MultipartUploadOperationIT extends Aws2S3Base {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test

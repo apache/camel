@@ -29,24 +29,24 @@ public class QuartzStopRouteTest extends BaseQuartzTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         context.getRouteController().stopRoute("foo");
 
         int size = mock.getReceivedCounter();
         assertEquals(1, size, "Should not schedule when stopped");
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         mock.expectedMessageCount(0);
         mock.assertIsSatisfied(3000);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         mock.expectedMinimumMessageCount(1);
 
         context.getRouteController().startRoute("foo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -41,7 +41,7 @@ public class NettyHttpHeaderFilterStrategyRemovalTest extends BaseNettyTest {
 
         template.sendBody("netty-http:http://localhost:" + getPort() + "/?" + options, "message");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -55,7 +55,7 @@ public class NettyHttpHeaderFilterStrategyRemovalTest extends BaseNettyTest {
         template.sendBodyAndHeader("netty-http:http://localhost:" + getPort() + "/?" + options, "message", headerToFilter,
                 "headerValue");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -18,6 +18,7 @@ package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -57,7 +58,7 @@ public class JMSTXInOutPersistentQueueTest extends CamelSpringTestSupport {
         // now we succeed
         template.sendBody("direct:start", "World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

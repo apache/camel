@@ -212,7 +212,7 @@ public class CamelRouteStatus extends ProcessBaseCommand {
         }
     }
 
-    private String getFrom(Row r) {
+    protected String getFrom(Row r) {
         String u = r.from;
         if (shortUri) {
             int pos = u.indexOf('?');

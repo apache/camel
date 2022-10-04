@@ -1,0 +1,62 @@
+From: "Lastname, Firstname" <first.last@company.com>
+To: "receiver@company.com" <receiver@company.com>
+Subject: Duplicate attachment names
+Date: Tue, 6 Sep 2022 18:19:49 +0000
+Accept-Language: en-DE, de-DE, en-US
+Content-Language: en-US
+Content-Type: multipart/mixed;
+	boundary="_005_AM9PR02MB741019D4290F345E6F3C4370E87E9AM9PR02MB7410eurp_"
+MIME-Version: 1.0
+
+--_005_AM9PR02MB741019D4290F345E6F3C4370E87E9AM9PR02MB7410eurp_
+Content-Type: multipart/alternative;
+	boundary="_000_AM9PR02MB741019D4290F345E6F3C4370E87E9AM9PR02MB7410eurp_"
+
+--_000_AM9PR02MB741019D4290F345E6F3C4370E87E9AM9PR02MB7410eurp_
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+
+
+--_000_AM9PR02MB741019D4290F345E6F3C4370E87E9AM9PR02MB7410eurp_
+Content-Type: text/html; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<body>
+</body>
+</html>
+
+--_000_AM9PR02MB741019D4290F345E6F3C4370E87E9AM9PR02MB7410eurp_--
+
+--_005_AM9PR02MB741019D4290F345E6F3C4370E87E9AM9PR02MB7410eurp_
+Content-Type: image/png; name=".fileName"
+Content-Description: .fileName
+Content-Disposition: attachment; filename=".fileName"; size=300;
+	creation-date="Tue, 06 Sep 2022 18:19:00 GMT";
+	modification-date="Tue, 06 Sep 2022 18:19:48 GMT"
+Content-Transfer-Encoding: base64
+
+iVBORw0KGgoAAAANSUhEUgAAACoAAAAfCAYAAACRdF9FAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAADBSURBVFhH7dRLEoIwEIRhb8IjgNdA8f5XgvQi
+1ixanEwCStUsvg2E9L/i1g6P9ZMmzPQ5dOPzVB5a226oxD4+k4fW5qG1eWht1wkNA38BTQyU2vgs
+B7sTsLm3m/TT8qYOZSHfsDvBFMoOJCWRwO7MoQ5l49DFD4G9k+RQqezQFPm3oTJQiw1aqUJZhAYb
+tDo0NNxfRdShbDyHHCrlocAGrTwU2KCVhwIbtLpuKDt0FPaTl+RZD9VgcZI8+9NQvWXdAIrhycI/
+5FwqAAAAAElFTkSuQmCC
+
+--_005_AM9PR02MB741019D4290F345E6F3C4370E87E9AM9PR02MB7410eurp_
+Content-Type: image/png; name=".fileName"
+Content-Description: .fileName
+Content-Disposition: attachment; filename=".fileName"; size=300;
+	creation-date="Tue, 06 Sep 2022 18:19:00 GMT";
+	modification-date="Tue, 06 Sep 2022 18:19:48 GMT"
+Content-Transfer-Encoding: base64
+
+iVBORw0KGgoAAAANSUhEUgAAACoAAAAfCAYAAACRdF9FAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAADBSURBVFhH7dRLEoIwEIRhb8IjgNdA8f5XgvQi
+1ixanEwCStUsvg2E9L/i1g6P9ZMmzPQ5dOPzVB5a226oxD4+k4fW5qG1eWht1wkNA38BTQyU2vgs
+B7sTsLm3m/TT8qYOZSHfsDvBFMoOJCWRwO7MoQ5l49DFD4G9k+RQqezQFPm3oTJQiw1aqUJZhAYb
+tDo0NNxfRdShbDyHHCrlocAGrTwU2KCVhwIbtLpuKDt0FPaTl+RZD9VgcZI8+9NQvWXdAIrhycI/
+5FwqAAAAAElFTkSuQmCC
+
+--_005_AM9PR02MB741019D4290F345E6F3C4370E87E9AM9PR02MB7410eurp_--

@@ -176,7 +176,7 @@ public class Etcd3AggregationRepository extends ServiceSupport
                     .If(new Cmp(
                             ByteSequence.from(String.format("%s/%s", prefixName, key).getBytes()),
                             Cmp.Op.EQUAL,
-                            CmpTarget.ModRevisionCmpTarget.modRevision(modRevision)))
+                            CmpTarget.modRevision(modRevision)))
                     .Then(Op.put(ByteSequence
                             .from(String.format("%s/%s", prefixName, key).getBytes()), convertToEtcd3Format(newHolder),
                             PutOption.DEFAULT))

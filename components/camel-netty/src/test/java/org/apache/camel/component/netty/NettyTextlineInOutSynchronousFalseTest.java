@@ -19,6 +19,7 @@ package org.apache.camel.component.netty;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,7 +37,7 @@ public class NettyTextlineInOutSynchronousFalseTest extends BaseNettyTest {
         String reply = template.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", reply);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertFalse(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should not same threads");
     }

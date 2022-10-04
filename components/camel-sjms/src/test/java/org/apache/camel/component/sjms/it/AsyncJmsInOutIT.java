@@ -45,7 +45,7 @@ public class AsyncJmsInOutIT extends JmsTestSupport {
         }
 
         // just in case we run on slow boxes
-        assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
 
         log.info("Took " + watch.taken() + " ms. to process 100 messages request/reply over JMS");
     }

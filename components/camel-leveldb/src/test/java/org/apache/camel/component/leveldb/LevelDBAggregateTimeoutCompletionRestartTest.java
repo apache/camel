@@ -55,7 +55,7 @@ public class LevelDBAggregateTimeoutCompletionRestartTest extends LevelDBTestSup
         mock = getMockEndpoint("mock:aggregated");
         mock.expectedBodiesReceived("ABC");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEquals(1, mock.getReceivedCounter());
     }
 

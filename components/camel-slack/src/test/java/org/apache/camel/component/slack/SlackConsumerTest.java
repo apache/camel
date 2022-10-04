@@ -58,7 +58,7 @@ public class SlackConsumerTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).simple("${body.getText()}").isEqualTo(message);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private void assumeCredentials() {

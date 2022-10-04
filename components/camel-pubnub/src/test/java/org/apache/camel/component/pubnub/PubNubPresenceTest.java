@@ -49,7 +49,7 @@ public class PubNubPresenceTest extends PubNubTestBase {
         context.getRouteController().startRoute("presence-route");
         mockResult.expectedMinimumMessageCount(1);
         mockResult.expectedHeaderReceived(PubNubConstants.CHANNEL, "mychannel");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         PNPresenceEventResult presence = mockResult.getReceivedExchanges().get(0).getIn().getBody(PNPresenceEventResult.class);
         assertThat(presence.getEvent(), equalTo("join"));
         assertThat(presence.getOccupancy(), equalTo(3));
@@ -68,7 +68,7 @@ public class PubNubPresenceTest extends PubNubTestBase {
                                   + "\"join\": [\"2220E216-5A30-49AD-A89C-1E0B5AE26AD7\", \"4262AE3F-3202-4487-BEE0-1A0D91307DEB\"]},\"b\":\"mychannel-pnpres\"}]}")));
         context.getRouteController().startRoute("presence-route");
         mockResult.expectedMinimumMessageCount(1);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         PNPresenceEventResult presence = mockResult.getReceivedExchanges().get(0).getIn().getBody(PNPresenceEventResult.class);
         assertThat(presence.getHereNowRefresh(), equalTo(true));
     }

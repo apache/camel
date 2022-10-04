@@ -58,7 +58,7 @@ public class BindySimpleCsvFunctionWithClassMethodTest extends CamelTestSupport 
         body.setNumber(new BigDecimal(10));
         template.sendBody("direct:startMarshal1", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         BindyCsvRowFormat7621 model
                 = mockEndPointUnMarshal1.getReceivedExchanges().get(0).getIn().getBody(BindyCsvRowFormat7621.class);

@@ -39,7 +39,7 @@ public class SftpEDDSAKeyFileConsumeIT extends SftpServerTestSupport {
 
         context.getRouteController().startRoute("foo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

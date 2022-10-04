@@ -40,7 +40,7 @@ public class JmsPollEnrichTest extends CamelTestSupport {
 
         template.sendBody("direct:JmsPollEnrichTestStart", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

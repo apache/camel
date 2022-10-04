@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.issues;
 
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -39,7 +40,7 @@ public class MockEndpointsAndSkipTest extends CamelSpringTestSupport {
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

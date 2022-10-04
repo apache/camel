@@ -51,7 +51,7 @@ public class AsyncJmsInOutTest extends AbstractJMSTest {
         }
 
         // just in case we run on slow boxes
-        assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
 
         LOG.info("Took {} ms. to process 100 messages request/reply over JMS", watch.taken());
     }

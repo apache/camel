@@ -68,7 +68,7 @@ public class MailSortTermThreeTest extends CamelTestSupport {
 
         context.getRouteController().startAllRoutes();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private void prepareMailbox() throws Exception {

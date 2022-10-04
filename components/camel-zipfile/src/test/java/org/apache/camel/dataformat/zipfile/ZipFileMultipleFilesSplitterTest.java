@@ -35,7 +35,7 @@ public class ZipFileMultipleFilesSplitterTest extends ZipSplitterRouteTest {
         processZipEntry.expectedBodiesReceivedInAnyOrder("chau", "hi", "hola", "another_chiau", "another_hi");
         splitResult.expectedBodiesReceivedInAnyOrder("chiau.txt", "hi.txt", "hola.txt", "directoryOne/another_chiau.txt",
                 "directoryOne/another_hi.txt");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

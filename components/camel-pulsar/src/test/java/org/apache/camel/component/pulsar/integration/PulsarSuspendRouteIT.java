@@ -121,7 +121,7 @@ public class PulsarSuspendRouteIT extends PulsarITSupport {
 
         producer.send("a message");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         context.getRouteController().suspendRoute(ROUTE_ID);
 
@@ -164,7 +164,7 @@ public class PulsarSuspendRouteIT extends PulsarITSupport {
         context.getRouteController().suspendRoute(ROUTE_ID);
         waitForRouteSuspension.countDown();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // Confirm that acknowledging the exchange did not raise an exception
         Exception e = to.getReceivedExchanges().get(0).getException();
@@ -188,7 +188,7 @@ public class PulsarSuspendRouteIT extends PulsarITSupport {
 
         to.setExpectedMessageCount(1);
         sentMessageIds.add(producer.send("message 1"));
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // After suspension, the consumer will process exactly 1 more message (configured by `consumerQueueSize`)
         context.getRouteController().suspendRoute(ROUTE_ID);
@@ -199,7 +199,7 @@ public class PulsarSuspendRouteIT extends PulsarITSupport {
         sentMessageIds.add(producer.send("message 3"));
         sentMessageIds.add(producer.send("message 4"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // Once route is resumed, previously sent messages will also be consumed
         to.setExpectedMessageCount(5);
@@ -208,7 +208,7 @@ public class PulsarSuspendRouteIT extends PulsarITSupport {
         context.getRouteController().resumeRoute(ROUTE_ID);
         sentMessageIds.add(producer.send("message 5"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<MessageId> receivedMessageIds = to.getReceivedExchanges().stream()
                 .map(e -> e.getIn().getHeader(PulsarMessageHeaders.MESSAGE_ID, MessageId.class))
@@ -238,7 +238,7 @@ public class PulsarSuspendRouteIT extends PulsarITSupport {
         producer.send("a message");
         producer.send("another message");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     // to prevent leaking test state

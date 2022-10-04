@@ -176,7 +176,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
             if (this.scheduledExecutor != null && visibilityTimeout != null && (visibilityTimeout.intValue() / 2) > 0) {
                 int delay = visibilityTimeout.intValue() / 2;
                 int period = visibilityTimeout.intValue();
-                int repeatSeconds = Double.valueOf(visibilityTimeout.doubleValue() * 1.5).intValue();
+                int repeatSeconds = (int) (visibilityTimeout.doubleValue() * 1.5);
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(
                             "Scheduled TimeoutExtender task to start after {} delay, and run with {}/{} period/repeat (seconds), to extend exchangeId: {}",

@@ -18,6 +18,7 @@ package org.apache.camel.builder.saxon;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -31,6 +32,7 @@ import org.apache.camel.util.TimeUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,8 +43,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  */
 public class XPathSplitChoicePerformanceTest extends CamelTestSupport {
-
     private static final Logger LOG = LoggerFactory.getLogger(XPathSplitChoicePerformanceTest.class);
+
+    @TempDir
+    Path testDirectory;
 
     private int size = 20 * 1000;
     private final AtomicInteger tiny = new AtomicInteger();
@@ -84,7 +88,7 @@ public class XPathSplitChoicePerformanceTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?noop=true"))
+                from(fileUri(testDirectory, "?noop=true"))
                         .process(new Processor() {
                             public void process(Exchange exchange) {
                                 log.info("Starting to process file");
@@ -152,11 +156,9 @@ public class XPathSplitChoicePerformanceTest extends CamelTestSupport {
     }
 
     public void createDataFile(Logger log, int size) throws Exception {
-        deleteTestDirectory();
-
         log.info("Creating data file ...");
 
-        File file = testDirectory(true).resolve("data.xml").toFile();
+        File file = testDirectory.resolve("data.xml").toFile();
         FileOutputStream fos = new FileOutputStream(file, true);
         fos.write("<orders>\n".getBytes());
 

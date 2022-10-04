@@ -18,6 +18,7 @@ package org.apache.camel.component.google.secret.manager.integration;
 
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
@@ -50,7 +51,7 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -70,7 +71,7 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
 
         template.sendBody("direct:username", "Hello World");
         template.sendBody("direct:password", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -90,7 +91,7 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
 
         template.sendBody("direct:username", "Hello World");
         template.sendBody("direct:password", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -110,7 +111,7 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
 
             template.sendBody("direct:start", "Hello World");
 
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
         });
     }
 
@@ -131,7 +132,7 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
 
         template.sendBody("direct:username", "Hello World");
         template.sendBody("direct:password", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -151,7 +152,7 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
 
         template.sendBody("direct:username", "Hello World");
         template.sendBody("direct:password", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -172,7 +173,7 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
 
             template.sendBody("direct:username", "Hello World");
             template.sendBody("direct:password", "Hello World");
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
         });
     }
 
@@ -193,7 +194,7 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
 
         template.sendBody("direct:username", "Hello World");
         template.sendBody("direct:password", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -211,7 +212,7 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
         getMockEndpoint("mock:bar").expectedBodiesReceived("\"id\":\"23\"");
 
         template.sendBody("direct:version", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -229,7 +230,7 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
         getMockEndpoint("mock:bar").expectedBodiesReceived("{\"id\":\"23\"}");
 
         template.sendBody("direct:version", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -248,7 +249,7 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
         getMockEndpoint("mock:bar").expectedBodiesReceived("hello");
 
         template.sendBody("direct:version", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -267,7 +268,7 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
         getMockEndpoint("mock:bar").expectedBodiesReceived("pippo");
 
         template.sendBody("direct:version", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -286,7 +287,7 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
         getMockEndpoint("mock:bar").expectedBodiesReceived("pippo");
 
         template.sendBody("direct:version", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -305,6 +306,6 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
         getMockEndpoint("mock:bar").expectedBodiesReceived("23");
 
         template.sendBody("direct:version", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 }

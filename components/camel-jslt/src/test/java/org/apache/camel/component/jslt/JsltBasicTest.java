@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
@@ -44,7 +45,7 @@ public class JsltBasicTest extends CamelTestSupport {
                 ResourceHelper.resolveMandatoryResourceAsInputStream(
                         context, "org/apache/camel/component/jslt/demoPlayground/input.json"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -54,7 +55,7 @@ public class JsltBasicTest extends CamelTestSupport {
         //type integer is not allowed
         sendBody("direct://start", 4);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -71,7 +72,7 @@ public class JsltBasicTest extends CamelTestSupport {
                 IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(
                         context, "org/apache/camel/component/jslt/demoPlayground/input.json")));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -89,7 +90,7 @@ public class JsltBasicTest extends CamelTestSupport {
 
         sendBody("direct://start", text.getBytes(StandardCharsets.UTF_8));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -108,7 +109,7 @@ public class JsltBasicTest extends CamelTestSupport {
                 Collections.singletonMap(JsltConstants.HEADER_JSLT_RESOURCE_URI,
                         "org/apache/camel/component/jslt/demoPlayground/transformation.json"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

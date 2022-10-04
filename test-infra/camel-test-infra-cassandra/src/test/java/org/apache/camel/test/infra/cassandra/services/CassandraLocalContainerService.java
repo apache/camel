@@ -27,7 +27,7 @@ import org.testcontainers.containers.CassandraContainer;
  */
 public class CassandraLocalContainerService implements CassandraService, ContainerService<CassandraContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(CassandraLocalContainerService.class);
-    private static final String IMAGE_NAME = "cassandra:4.0.3";
+    private static final String IMAGE_NAME = "cassandra:4.0.6";
 
     private final CassandraContainer container;
 

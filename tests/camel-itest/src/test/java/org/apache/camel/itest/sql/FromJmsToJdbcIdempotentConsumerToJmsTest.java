@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.ITestSupport;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
@@ -85,7 +86,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         template.sendBodyAndHeader("activemq2:queue:inbox", "A", "uid", 123);
 
         // assert mock and wait for the message to be done
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertTrue(notify.matchesWaitTime(), "Should complete 1 message");
 
         // check that there is a message in the database and JMS queue
@@ -117,7 +118,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         template.sendBodyAndHeader("activemq2:queue:inbox", "A", "uid", 123);
 
         // assert mock and wait for the message to be done
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertTrue(notify.matchesWaitTime(), "Should complete 7 message");
 
         // check that there is a message in the database and JMS queue
@@ -151,7 +152,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         template.sendBodyAndHeader("activemq2:queue:inbox", "B", "uid", 456);
 
         // assert mock and wait for the message to be done
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertTrue(notify.matchesWaitTime(), "Should complete 7 messages");
 
         // check that there is a message in the database and JMS queue
@@ -180,7 +181,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         template.sendBodyAndHeader("activemq2:queue:inbox", "D", "uid", 111);
 
         // assert mock and wait for the message to be done
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertTrue(notify.matchesWaitTime(), "Should complete 3 messages");
 
         // check that there is two messages in the database and JMS queue
@@ -217,7 +218,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         template.sendBodyAndHeader("activemq2:queue:inbox", "F", "uid", 333);
 
         // assert mock and wait for the message to be done
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertTrue(notify.matchesWaitTime(), "Should complete 4 messages");
 
         // check that there is two messages in the database and JMS queue

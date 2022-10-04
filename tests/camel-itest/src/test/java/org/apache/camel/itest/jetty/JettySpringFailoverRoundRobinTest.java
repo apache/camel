@@ -16,6 +16,7 @@
  */
 package org.apache.camel.itest.jetty;
 
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
@@ -55,11 +56,11 @@ public class JettySpringFailoverRoundRobinTest extends CamelSpringTestSupport {
         String reply = template.requestBody("direct:JettySpringFailoverRoundRobinTestStart", null, String.class);
         assertEquals("Good", reply);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // reset mocks and send a message again to see that round robin
         // continue where it should
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         getMockEndpoint("mock:JettySpringFailoverRoundRobinTestBad").expectedMessageCount(0);
         getMockEndpoint("mock:JettySpringFailoverRoundRobinTestBad2").expectedMessageCount(0);

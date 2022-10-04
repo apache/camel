@@ -37,7 +37,7 @@ public class SshComponentProducerTest extends SshComponentTestSupport {
 
         template.sendBody("direct:ssh", msg);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -55,7 +55,7 @@ public class SshComponentProducerTest extends SshComponentTestSupport {
 
         template.sendBody("direct:ssh", msg);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -74,7 +74,7 @@ public class SshComponentProducerTest extends SshComponentTestSupport {
 
         template.sendBodyAndHeaders("direct:sshCredentialsWithHeaders", msg, headers);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

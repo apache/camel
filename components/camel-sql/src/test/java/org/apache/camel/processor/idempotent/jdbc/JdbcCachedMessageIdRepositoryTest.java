@@ -72,7 +72,7 @@ public class JdbcCachedMessageIdRepositoryTest extends CamelSpringTestSupport {
         template.sendBodyAndHeader("direct:start", "two", "messageId", "2");
         template.sendBodyAndHeader("direct:start", "three", "messageId", "3");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals(5, repository.getHitCount());
         assertEquals(1, repository.getMissCount());

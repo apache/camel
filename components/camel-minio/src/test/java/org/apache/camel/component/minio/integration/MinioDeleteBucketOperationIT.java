@@ -52,7 +52,7 @@ class MinioDeleteBucketOperationIT extends MinioIntegrationTestSupport {
             exchange.getIn().setHeader(MinioConstants.MINIO_OPERATION, MinioOperations.deleteBucket);
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

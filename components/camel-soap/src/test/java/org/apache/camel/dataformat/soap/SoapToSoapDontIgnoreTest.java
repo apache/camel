@@ -75,7 +75,7 @@ public class SoapToSoapDontIgnoreTest extends CamelTestSupport {
 
         template.sendBody("direct:start", createRequest());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Exchange result = endpoint.assertExchangeReceived(0);
 
         byte[] body = result.getIn().getBody(byte[].class);

@@ -36,7 +36,7 @@ public class HazelcastSedaSpringSupportTest extends CamelSpringTestSupport {
 
         template.sendBody("hazelcast-seda:foo", "test");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

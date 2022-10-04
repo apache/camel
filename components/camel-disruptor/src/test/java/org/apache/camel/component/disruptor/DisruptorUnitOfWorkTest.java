@@ -46,7 +46,7 @@ public class DisruptorUnitOfWorkTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         notify.matchesWaitTime();
 
         assertEquals("onCompleteA", sync);

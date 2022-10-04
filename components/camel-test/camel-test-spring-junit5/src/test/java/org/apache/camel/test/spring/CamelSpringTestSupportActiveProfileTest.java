@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.spring;
 
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -46,7 +47,7 @@ public class CamelSpringTestSupportActiveProfileTest extends CamelSpringTestSupp
     public void testLoadActiveProfile() throws InterruptedException {
         getMockEndpoint("mock:test").expectedBodiesReceived("Hello World");
         template.sendBody("direct:start", "World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

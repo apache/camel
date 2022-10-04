@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class JmsToDTest extends AbstractJMSTest {
@@ -29,7 +30,7 @@ public class JmsToDTest extends AbstractJMSTest {
         template.sendBodyAndHeader("direct:start", "Hello bar", "where", "JmsToDTest.bar");
         template.sendBodyAndHeader("direct:start", "Hello beer", "where", "JmsToDTest.beer");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

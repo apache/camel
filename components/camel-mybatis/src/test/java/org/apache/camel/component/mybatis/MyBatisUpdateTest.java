@@ -37,7 +37,7 @@ public class MyBatisUpdateTest extends MyBatisTestSupport {
 
         template.sendBody("direct:start", account);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // there should be 2 rows now
         Integer rows = template.requestBody("mybatis:count?statementType=SelectOne", null, Integer.class);

@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -43,7 +44,7 @@ public class DisruptorWaitForTaskNeverOnCompletionTest extends CamelTestSupport 
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertTrue(latch.await(5, TimeUnit.SECONDS));
         // B should be first because we do not wait

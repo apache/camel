@@ -52,7 +52,7 @@ public class AtlasMapJsonToXmlSchemaTest extends CamelSpringTestSupport {
         InputStream payloadIs = tccl.getResourceAsStream("json-source.json");
         producerTemplate.sendBody("direct:start", payloadIs);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         final String body = result.getExchanges().get(0).getIn().getBody(String.class);
         assertNotNull(body);
         LOG.debug(">>>>> {}", body);

@@ -122,7 +122,7 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
         assertNotNull(outExchange);
         assertEquals(400, outExchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -153,7 +153,7 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
         assertNotNull(outExchange);
         assertEquals(200, outExchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.assertExchangeReceived(0);
         UserPojo[] receivedUsers = exchange.getIn().getBody(UserPojo[].class);
@@ -183,7 +183,7 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
         assertNotNull(outExchange);
         assertEquals(400, outExchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -214,7 +214,7 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
         assertNotNull(outExchange);
         assertEquals(200, outExchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.assertExchangeReceived(0);
         UserPojo[] receivedUsers = exchange.getIn().getBody(UserPojo[].class);
@@ -244,7 +244,7 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
         assertNotNull(outExchange);
         assertEquals(400, outExchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

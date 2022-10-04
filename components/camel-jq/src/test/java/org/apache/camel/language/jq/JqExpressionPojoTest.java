@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jackson.JacksonConstants;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class JqExpressionPojoTest extends JqTestSupport {
@@ -56,7 +57,7 @@ public class JqExpressionPojoTest extends JqTestSupport {
 
         template.sendBody("direct:start", node);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     public static class Book {

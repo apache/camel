@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.activemq;
 
+import java.nio.file.Path;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
@@ -40,6 +41,7 @@ import org.apache.camel.component.activemq.support.ActiveMQSpringTestSupport;
 import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
 import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -55,6 +57,9 @@ public class JmsJdbcXATest extends ActiveMQSpringTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(JmsJdbcXATest.class);
     BrokerService broker;
     int messageCount;
+
+    @TempDir
+    Path dataDirectory;
 
     public java.sql.Connection initDb() throws Exception {
         String createStatement = "CREATE TABLE SCP_INPUT_MESSAGES (" + "id int NOT NULL GENERATED ALWAYS AS IDENTITY, "
@@ -110,7 +115,7 @@ public class JmsJdbcXATest extends ActiveMQSpringTestSupport {
                 .defaultBroker()
                 .withDeleteAllMessagesOnStartup(false)
                 .withBrokerName(JmsJdbcXATest.class)
-                .withDataDirectory(testDirectory().toString())
+                .withDataDirectory(dataDirectory)
                 .build()
                 .getBrokerService();
 
@@ -181,7 +186,7 @@ public class JmsJdbcXATest extends ActiveMQSpringTestSupport {
                     .defaultBroker()
                     .withBrokerName(JmsJdbcXATest.class)
                     .withTcpTransport()
-                    .withDataDirectory(testDirectory().toString())
+                    .withDataDirectory(dataDirectory)
                     .build()
                     .getBrokerService();
 

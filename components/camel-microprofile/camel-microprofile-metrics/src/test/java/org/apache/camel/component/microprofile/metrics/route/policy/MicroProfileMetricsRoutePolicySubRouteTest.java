@@ -21,6 +21,7 @@ import java.util.SortedMap;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.eclipse.microprofile.metrics.MetricID;
 import org.eclipse.microprofile.metrics.Timer;
 import org.junit.jupiter.api.Test;
@@ -39,7 +40,7 @@ public class MicroProfileMetricsRoutePolicySubRouteTest extends MicroProfileMetr
             template.sendBody("direct:foo", null);
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         SortedMap<MetricID, Timer> timers = metricRegistry.getTimers();
         assertEquals(2, timers.size());

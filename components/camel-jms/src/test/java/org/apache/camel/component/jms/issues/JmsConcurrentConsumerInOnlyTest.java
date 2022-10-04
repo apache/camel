@@ -21,6 +21,7 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.activemq.services.ActiveMQService;
 import org.apache.camel.test.infra.activemq.services.ActiveMQServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -49,7 +50,7 @@ public class JmsConcurrentConsumerInOnlyTest extends CamelTestSupport {
 
         context.getRouteController().startAllRoutes();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

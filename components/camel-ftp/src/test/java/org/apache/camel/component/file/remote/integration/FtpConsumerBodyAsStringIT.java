@@ -47,7 +47,7 @@ public class FtpConsumerBodyAsStringIT extends FtpServerTestSupport {
         mock.expectedBodiesReceived("Hello World");
         mock.expectedMessageCount(1);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private void prepareFtpServer() throws Exception {

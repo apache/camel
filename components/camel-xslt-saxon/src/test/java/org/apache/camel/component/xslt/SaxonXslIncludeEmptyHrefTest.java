@@ -32,7 +32,7 @@ public class SaxonXslIncludeEmptyHrefTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "<root>1</root>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

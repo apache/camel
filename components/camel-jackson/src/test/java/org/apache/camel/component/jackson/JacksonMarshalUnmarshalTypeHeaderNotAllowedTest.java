@@ -34,7 +34,7 @@ public class JacksonMarshalUnmarshalTypeHeaderNotAllowedTest extends CamelTestSu
         String json = "{\"name\":\"Camel\"}";
         template.sendBodyAndHeader("direct:backPojo", json, JacksonConstants.UNMARSHAL_TYPE, TestPojo.class.getName());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

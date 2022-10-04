@@ -47,7 +47,7 @@ public class AtlasMapSingleDocTest extends CamelSpringTestSupport {
         ProducerTemplate producerTemplate = context.createProducerTemplate();
         producerTemplate.sendBody("direct:start", javaSource);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         MockEndpoint result = getMockEndpoint("mock:result");
         Exchange exchange = result.getExchanges().get(0);
         Map<?, ?> targetMap = exchange.getIn().getBody(Map.class);

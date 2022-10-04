@@ -35,7 +35,7 @@ public class JacksonMarshalUnmarshalPojoArrayTest extends CamelTestSupport {
         String json = "[{\"text\":\"Camel\"}, {\"text\":\"World\"}]";
         template.sendBody("direct:beginArray", json);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Pojo[] array = mock.getReceivedExchanges().get(0).getIn().getBody(Pojo[].class);
         assertNotNull(array);

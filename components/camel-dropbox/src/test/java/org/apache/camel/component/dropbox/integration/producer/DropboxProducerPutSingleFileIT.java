@@ -93,7 +93,7 @@ public class DropboxProducerPutSingleFileIT extends DropboxTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.expectedHeaderReceived(DropboxResultHeader.UPLOADED_FILE.name(), workdir + "/" + FILENAME);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

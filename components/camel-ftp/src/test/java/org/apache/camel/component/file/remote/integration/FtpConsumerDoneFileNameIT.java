@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
@@ -41,16 +42,16 @@ public class FtpConsumerDoneFileNameIT extends FtpServerTestSupport {
         // wait a bit and it should not pickup the written file as there are no
         // done file
 
-        assertMockEndpointsSatisfied(1, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 1, TimeUnit.SECONDS);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
         // write the done file
         template.sendBodyAndHeader(getFtpUrl(), "", Exchange.FILE_NAME, "hello.dat");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // give time for done file to be deleted
         // done file should be deleted now

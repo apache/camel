@@ -36,7 +36,7 @@ public class JmsInOnlyIncludeSentJMSMessageIDTest extends AbstractJMSTest {
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange done = mock.getReceivedExchanges().get(0);
         assertNotNull(done);

@@ -17,6 +17,7 @@
 package org.apache.camel.itest.ftp;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.utils.extensions.FtpServiceExtension;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -46,7 +47,7 @@ public class FtpAndHttpRecipientListInterceptSendToEndpointIssueTest extends Cam
 
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", "seda:foo," + ftp + "," + http);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

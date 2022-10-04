@@ -40,7 +40,7 @@ public class JaxbDataFormatIssueTest extends CamelTestSupport {
         foo.setBar("Hello Bar");
         template.sendBody("direct:start", foo);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

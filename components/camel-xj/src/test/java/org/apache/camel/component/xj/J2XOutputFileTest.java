@@ -36,7 +36,7 @@ public class J2XOutputFileTest extends CamelTestSupport {
         template.sendBodyAndHeader("direct:start", "{\"hello\": \"world!\"}", Exchange.XSLT_FILE_NAME,
                 "target/J2XOutputFileTest.xml");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

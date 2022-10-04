@@ -69,7 +69,7 @@ public class SqlConsumerDynamicParameterTest extends CamelTestSupport {
 
         context.getRouteController().startRoute("foo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<Exchange> exchanges = mock.getReceivedExchanges();
 

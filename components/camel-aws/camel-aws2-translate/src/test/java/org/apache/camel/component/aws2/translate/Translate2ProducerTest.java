@@ -49,7 +49,7 @@ public class Translate2ProducerTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         String resultGet = exchange.getIn().getBody(String.class);
         assertEquals("Hello", resultGet);
@@ -69,7 +69,7 @@ public class Translate2ProducerTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         String resultGet = exchange.getIn().getBody(String.class);
         assertEquals("Hello", resultGet);
@@ -87,7 +87,7 @@ public class Translate2ProducerTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         String resultGet = exchange.getIn().getBody(String.class);
         assertEquals("Hello", resultGet);

@@ -27,7 +27,7 @@ public class SpringZipSplitterRouteTest extends CamelSpringTestSupport {
     public void testSplitter() throws InterruptedException {
         MockEndpoint processZipEntry = getMockEndpoint("mock:processZipEntry");
         processZipEntry.expectedBodiesReceivedInAnyOrder("chau", "hi", "hola", "another_chiau", "another_hi");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -18,6 +18,7 @@ package org.apache.camel.language.joor;
 
 import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -44,7 +45,7 @@ public class JoorBeanTest extends CamelTestSupport {
         template.sendBodyAndHeader("direct:start", 18, "user", "mickey");
         template.sendBodyAndHeader("direct:start", 44, "user", "scott");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     public static String priority(@Joor("((int) body) / 2 > 10") boolean high, @Header("user") String user) {

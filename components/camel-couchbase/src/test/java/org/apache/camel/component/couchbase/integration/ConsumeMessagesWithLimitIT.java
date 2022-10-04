@@ -40,7 +40,7 @@ public class ConsumeMessagesWithLimitIT extends CouchbaseIntegrationTestBase {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(10);
 
-        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
     }
 

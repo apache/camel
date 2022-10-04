@@ -62,7 +62,7 @@ public class MapBodyManualIT extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

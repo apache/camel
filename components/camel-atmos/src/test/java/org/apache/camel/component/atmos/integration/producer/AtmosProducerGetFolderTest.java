@@ -48,7 +48,7 @@ public class AtmosProducerGetFolderTest extends AtmosTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
-        assertMockEndpointsSatisfied(100L, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 100L, TimeUnit.SECONDS);
 
         List<Exchange> exchanges = mock.getReceivedExchanges();
         Exchange exchange = exchanges.get(0);

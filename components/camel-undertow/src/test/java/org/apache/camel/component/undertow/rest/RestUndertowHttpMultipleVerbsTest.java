@@ -18,6 +18,7 @@ package org.apache.camel.component.undertow.rest;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.junit.jupiter.api.Test;
 
@@ -28,15 +29,15 @@ public class RestUndertowHttpMultipleVerbsTest extends BaseUndertowTest {
         getMockEndpoint("mock:get").expectedMessageCount(1);
         getMockEndpoint("mock:put").expectedMessageCount(0);
         template.requestBodyAndHeader("undertow:http://localhost:{{port}}/example/123", null, Exchange.HTTP_METHOD, "GET");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         getMockEndpoint("mock:get").expectedMessageCount(0);
         getMockEndpoint("mock:put").expectedMessageCount(1);
         template.requestBodyAndHeader("undertow:http://localhost:{{port}}/example/456", "Hello World", Exchange.HTTP_METHOD,
                 "PUT");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

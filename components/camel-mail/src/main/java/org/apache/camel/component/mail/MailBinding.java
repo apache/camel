@@ -386,9 +386,14 @@ public class MailBinding {
 
                 if (validDisposition(disposition, fileName)) {
                     LOG.debug("Mail contains file attachment: {}", fileName);
-                    if (handleDuplicateAttachmentNames != null && handleDuplicateAttachmentNames
-                            .equalsIgnoreCase(MailConstants.MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_UUID_PREFIX)) {
-                        fileName = handleDuplicateFilenames(map, fileName);
+                    if (handleDuplicateAttachmentNames != null) {
+                        if (handleDuplicateAttachmentNames
+                                .equalsIgnoreCase(MailConstants.MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_UUID_PREFIX)) {
+                            fileName = prefixDuplicateFilenames(map, fileName);
+                        } else if (handleDuplicateAttachmentNames
+                                .equalsIgnoreCase(MailConstants.MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_UUID_SUFFIX)) {
+                            fileName = suffixDuplicateFilenames(map, fileName);
+                        }
                     }
                     if (!map.containsKey(fileName)) {
                         // Parts marked with a disposition of Part.ATTACHMENT are clearly attachments
@@ -434,7 +439,7 @@ public class MailBinding {
      * @param  fileName
      * @return
      */
-    private String handleDuplicateFilenames(Map<String, Attachment> map, String fileName) {
+    private String prefixDuplicateFilenames(Map<String, Attachment> map, String fileName) {
         if (map.containsKey(fileName)) {
             Attachment obj = map.remove(fileName);
             map.put(prefixWithUUID(fileName), obj);
@@ -443,8 +448,35 @@ public class MailBinding {
         return fileName;
     }
 
+    /**
+     * Updates already existing filenames in the map and suffixes the current filename Filename will be suffixed, the
+     * file extension will remain If the string starts with a dot and no further dots are contained in the string, this
+     * is considered as a filename without file extension
+     *
+     * @param  map
+     * @param  fileName
+     * @return
+     */
+    private String suffixDuplicateFilenames(Map<String, Attachment> map, String fileName) {
+        if (map.containsKey(fileName)) {
+            Attachment obj = map.remove(fileName);
+            map.put(suffixWithUUID(fileName), obj);
+            return suffixWithUUID(fileName);
+        }
+        return fileName;
+    }
+
     private String prefixWithUUID(String string) {
         return UUID.randomUUID() + "_" + string;
+    }
+
+    private String suffixWithUUID(String string) {
+        if (string.lastIndexOf(".") > 0) {
+            string = new StringBuilder(string).insert(string.lastIndexOf("."), "_" + UUID.randomUUID()).toString();
+        } else {
+            string = string + "_" + UUID.randomUUID();
+        }
+        return string;
     }
 
     private boolean validDisposition(String disposition, String fileName) {

@@ -47,7 +47,7 @@ public class CamelTargetAdapterTest extends CamelSpringTestSupport {
         MessageChannel outputChannel = getMandatoryBean(MessageChannel.class, "channelA");
         outputChannel.send(new GenericMessage<Object>(MESSAGE_BODY));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test

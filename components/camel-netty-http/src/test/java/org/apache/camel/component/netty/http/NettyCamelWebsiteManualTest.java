@@ -18,6 +18,7 @@ package org.apache.camel.component.netty.http;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -31,7 +32,7 @@ public class NettyCamelWebsiteManualTest extends CamelTestSupport {
 
         template.sendBody("direct:in", null);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

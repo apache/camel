@@ -46,7 +46,7 @@ public class DisruptorConcurrentTest extends CamelTestSupport {
             template.sendBody("disruptor:foo", "Message " + i);
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -61,7 +61,7 @@ public class DisruptorConcurrentTest extends CamelTestSupport {
             template.asyncSendBody("disruptor:foo", "Message " + i);
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -86,7 +86,7 @@ public class DisruptorConcurrentTest extends CamelTestSupport {
             replies.add(out);
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals(20, replies.size());
         executors.shutdownNow();
@@ -113,7 +113,7 @@ public class DisruptorConcurrentTest extends CamelTestSupport {
                 replies.add(out);
             }
 
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
 
             assertEquals(20, replies.size());
             for (int i = 0; i < 20; i++) {

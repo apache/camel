@@ -20,6 +20,7 @@ import com.google.common.eventbus.EventBus;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -59,7 +60,7 @@ public class GuavaEventBusComponentTest extends CamelTestSupport {
 
         // Then
         getMockEndpoint("mock:test").setExpectedMessageCount(1);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEquals(message, getMockEndpoint("mock:test").getExchanges().get(0).getIn().getBody());
     }
 

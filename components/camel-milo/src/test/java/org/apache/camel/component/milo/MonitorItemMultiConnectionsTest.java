@@ -114,6 +114,6 @@ public class MonitorItemMultiConnectionsTest extends AbstractMiloServerTest {
         this.producer1.sendBody("Foo");
 
         // assert
-        this.assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 }

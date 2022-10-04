@@ -99,7 +99,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
 
         setupMock();
         sendBody("direct:ecdsa-sha1", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private MockEndpoint setupMock() {
@@ -126,7 +126,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
             } else {
                 template.sendBodyAndHeaders("direct:in", payload, headers);
             }
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(ECDSASignatureTest.this.context);
             return mock.getReceivedExchanges().get(0);
         } finally {
             context.stop();

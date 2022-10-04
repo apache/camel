@@ -32,7 +32,7 @@ public class MinaSslContextParametersVmTest extends BaseMinaTest {
                 "mina:vm://localhost:" + getPort() + "?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters",
                 body, "cheese", 123);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

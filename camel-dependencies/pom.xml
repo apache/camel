@@ -27,7 +27,7 @@
   </parent>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-dependencies</artifactId>
-  <version>3.19.0-SNAPSHOT</version>
+  <version>3.20.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Camel :: Dependencies</name>
   <description>Camel Dependencies POM</description>
@@ -50,7 +50,7 @@
     <arquillian-jetty-embedded-9-version>1.0.0.CR3</arquillian-jetty-embedded-9-version>
     <arquillian-version>1.6.0.Final</arquillian-version>
     <arquillian-weld-embedded-version>2.0.0.Final</arquillian-weld-embedded-version>
-    <ascii-table-version>1.7.0</ascii-table-version>
+    <ascii-table-version>1.8.0</ascii-table-version>
     <asm-version>8.0.1</asm-version>
     <asn1bean-version>1.13.0</asn1bean-version>
     <assertj-version>3.23.1</assertj-version>
@@ -64,10 +64,10 @@
     <avro-ipc-netty-version>1.11.1</avro-ipc-netty-version>
     <avro-version>1.11.1</avro-version>
     <awaitility-version>4.2.0</awaitility-version>
-    <aws-java-sdk2-version>2.17.282</aws-java-sdk2-version>
+    <aws-java-sdk2-version>2.17.286</aws-java-sdk2-version>
     <aws-xray-version>2.6.1</aws-xray-version>
     <axiom-version>1.2.14</axiom-version>
-    <azure-sdk-bom-version>1.2.5</azure-sdk-bom-version>
+    <azure-sdk-bom-version>1.2.6</azure-sdk-bom-version>
     <azure-storage-blob-changefeed-version>12.0.0-beta.18</azure-storage-blob-changefeed-version>
     <bouncycastle-version>1.71</bouncycastle-version>
     <box-java-sdk-version>2.58.0</box-java-sdk-version>
@@ -110,8 +110,8 @@
     <camel.surefire.parallel.factor>1</camel.surefire.parallel.factor>
     <camel.surefire.parallel.strategy>dynamic</camel.surefire.parallel.strategy>
     <camel.surefire.reuseForks>true</camel.surefire.reuseForks>
-    <cassandra-driver-version>4.14.1</cassandra-driver-version>
-    <cassandra-version>4.0.3</cassandra-version>
+    <cassandra-driver-version>4.15.0</cassandra-driver-version>
+    <cassandra-version>4.0.6</cassandra-version>
     <cdi-api-2.0-version>2.0</cdi-api-2.0-version>
     <cglib-version>3.2.12</cglib-version>
     <checkstyle.failOnViolation>false</checkstyle.failOnViolation>
@@ -141,7 +141,7 @@
     <commons-math3-version>3.6.1</commons-math3-version>
     <commons-net-version>3.8.0</commons-net-version>
     <commons-pool2-version>2.11.1</commons-pool2-version>
-    <commons-text-version>1.9</commons-text-version>
+    <commons-text-version>1.10.0</commons-text-version>
     <commons-validator-version>1.7</commons-validator-version>
     <compiler.fork>true</compiler.fork>
     <compress-lzf-version>1.1</compress-lzf-version>
@@ -159,7 +159,7 @@
     <cxf.xjc.jvmArgs></cxf.xjc.jvmArgs>
     <datasonnet-mapper-version>2.1.4</datasonnet-mapper-version>
     <debezium-mysql-connector-version>8.0.28</debezium-mysql-connector-version>
-    <debezium-version>1.9.5.Final</debezium-version>
+    <debezium-version>1.9.6.Final</debezium-version>
     <deltaspike-version>1.9.5</deltaspike-version>
     <depends-maven-plugin-version>1.4.0</depends-maven-plugin-version>
     <derby-version>10.14.2.0</derby-version>
@@ -264,7 +264,7 @@
     <icu4j-version>70.1</icu4j-version>
     <ignite-version>2.12.0</ignite-version>
     <impsort-maven-plugin-version>1.6.0</impsort-maven-plugin-version>
-    <infinispan-version>13.0.11.Final</infinispan-version>
+    <infinispan-version>14.0.0.Final</infinispan-version>
     <influx-guava-version>20.0</influx-guava-version>
     <influx-java-driver-version>2.22</influx-java-driver-version>
     <irclib-version>1.10</irclib-version>
@@ -313,8 +313,10 @@
     <jcommander-version>1.72</jcommander-version>
     <jcr-version>2.0</jcr-version>
     <jedis-client-version>3.7.1</jedis-client-version>
+    <jetcd-grpc-version>1.47.0</jetcd-grpc-version>
+    <jetcd-guava-version>31.1-jre</jetcd-guava-version>
     <jetcd-version>0.7.3</jetcd-version>
-    <jettison-version>1.5.0</jettison-version>
+    <jettison-version>1.5.1</jettison-version>
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
     <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
     <jetty-version>${jetty9-version}</jetty-version>
@@ -333,7 +335,7 @@
     <jolokia-version>1.7.1</jolokia-version>
     <jolt-version>0.1.7</jolt-version>
     <jool-version>0.9.14</jool-version>
-    <jooq-version>3.16.8</jooq-version>
+    <jooq-version>3.16.10</jooq-version>
     <joor-version>0.9.14</joor-version>
     <jose4j-version>0.6.4</jose4j-version>
     <jota-version>1.0.0-beta9</jota-version>
@@ -387,7 +389,7 @@
     <maven-javadoc-plugin-version>3.2.0</maven-javadoc-plugin-version>
     <maven-jboss-as-maven-plugin-version>7.9.Final</maven-jboss-as-maven-plugin-version>
     <maven-model-version>3.2.5</maven-model-version>
-    <maven-owasp-plugin-version>7.1.2</maven-owasp-plugin-version>
+    <maven-owasp-plugin-version>7.2.1</maven-owasp-plugin-version>
     <maven-plugin-annotations-version>3.6.4</maven-plugin-annotations-version>
     <maven-plugin-plugin-version>3.6.4</maven-plugin-plugin-version>
     <maven-plugin-testing-harness-version>3.3.0</maven-plugin-testing-harness-version>
@@ -450,7 +452,7 @@
     <protobuf-maven-plugin-version>0.6.1</protobuf-maven-plugin-version>
     <protobuf-version>3.19.4</protobuf-version>
     <protonpack-version>1.8</protonpack-version>
-    <protostream-version>4.4.3.Final</protostream-version>
+    <protostream-version>4.5.0.Final</protostream-version>
     <pubnub-version>4.25.0</pubnub-version>
     <pulsar-version>2.10.1</pulsar-version>
     <qpid-broker-version>8.0.6</qpid-broker-version>
@@ -468,7 +470,7 @@
     <resilience4j-version>1.7.1</resilience4j-version>
     <rest-assured-version>4.5.1</rest-assured-version>
     <resteasy-version>4.5.6.Final</resteasy-version>
-    <roaster-version>2.24.0.Final</roaster-version>
+    <roaster-version>2.26.0.Final</roaster-version>
     <robotframework-version>4.1.2</robotframework-version>
     <rome-version>1.18.0</rome-version>
     <rxjava2-version>2.2.21</rxjava2-version>
@@ -490,7 +492,7 @@
     <smallrye-health-version>3.3.0</smallrye-health-version>
     <smallrye-metrics-version>3.0.5</smallrye-metrics-version>
     <snakeyaml-engine-version>2.3</snakeyaml-engine-version>
-    <snakeyaml-version>1.32</snakeyaml-version>
+    <snakeyaml-version>1.33</snakeyaml-version>
     <snmp4j-version>2.6.3_1</snmp4j-version>
     <solr-version>8.11.2</solr-version>
     <solr-version-range>[8,9)</solr-version-range>
@@ -521,7 +523,7 @@
     <swagger-java-version>1.6.4</swagger-java-version>
     <swagger-openapi3-version>2.1.13</swagger-openapi3-version>
     <templating-maven-plugin-version>1.0.0</templating-maven-plugin-version>
-    <testcontainers-version>1.17.3</testcontainers-version>
+    <testcontainers-version>1.17.4</testcontainers-version>
     <tika-version>2.4.1</tika-version>
     <trimStackTrace>false</trimStackTrace>
     <twilio-version>7.55.3</twilio-version>

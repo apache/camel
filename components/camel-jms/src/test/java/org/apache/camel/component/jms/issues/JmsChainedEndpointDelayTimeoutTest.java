@@ -20,6 +20,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -33,7 +34,7 @@ public class JmsChainedEndpointDelayTimeoutTest extends AbstractJMSTest {
         getMockEndpoint("mock:exception").expectedMessageCount(0);
         getMockEndpoint("mock:ping").expectedMessageCount(1);
         template.requestBody("activemq:JmsChainedEndpointDelayTimeoutTest.test", "<hello />");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -41,7 +42,7 @@ public class JmsChainedEndpointDelayTimeoutTest extends AbstractJMSTest {
         getMockEndpoint("mock:exception").expectedMessageCount(0);
         getMockEndpoint("mock:ping").expectedMessageCount(1);
         template.requestBody("activemq:JmsChainedEndpointDelayTimeoutTest.fixed", "<hello />");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

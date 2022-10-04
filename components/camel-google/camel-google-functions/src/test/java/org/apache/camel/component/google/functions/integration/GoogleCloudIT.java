@@ -118,7 +118,7 @@ public class GoogleCloudIT extends CamelTestSupport {
         int functionListCounter = mockFunctionList1.getReceivedCounter();
         mockGetFunction.expectedMessageCount(functionListCounter);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private String createRandomFunctionName() {

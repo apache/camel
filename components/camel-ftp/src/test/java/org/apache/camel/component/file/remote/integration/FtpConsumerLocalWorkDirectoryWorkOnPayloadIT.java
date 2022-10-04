@@ -32,7 +32,7 @@ public class FtpConsumerLocalWorkDirectoryWorkOnPayloadIT extends FtpConsumerLoc
                         exchange.getIn().setBody("Hello World");
 
                     }
-                }).to("mock:result", fileUri("out"));
+                }).to("mock:result", fileUri(testDirectory, "out"));
             }
         };
     }

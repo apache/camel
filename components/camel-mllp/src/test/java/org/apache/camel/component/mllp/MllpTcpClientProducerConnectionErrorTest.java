@@ -132,7 +132,7 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
 
         assertTrue(twoDone.matches(5, TimeUnit.SECONDS), "Should have completed two exchanges");
 
-        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
     }
 
     /**
@@ -160,7 +160,7 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
         source.sendBody(Hl7TestMessageGenerator.generateMessage());
         assertTrue(twoDone.matches(5, TimeUnit.SECONDS), "Should have completed two exchanges");
 
-        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
     }
 
     @Test()
@@ -179,7 +179,7 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
 
         assertTrue(done.matches(5, TimeUnit.SECONDS), "Should have completed an exchange");
 
-        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
     }
 
     @Test()
@@ -198,7 +198,7 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
 
         assertTrue(done.matches(5, TimeUnit.SECONDS), "Should have completed an exchange");
 
-        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
     }
 
     @Test()
@@ -218,7 +218,7 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
 
         assertTrue(done.matches(5, TimeUnit.SECONDS), "Should have completed an exchange");
 
-        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
 
         // Depending on the timing, either a write or a receive exception will be thrown
         assertEquals(1, writeEx.getExchanges().size() + acknowledgementEx.getExchanges().size(),
@@ -243,7 +243,7 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
 
         assertTrue(done.matches(5, TimeUnit.SECONDS), "Should have completed an exchange");
 
-        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
 
         // Depending on the timing, either a write or a receive exception will be thrown
         assertEquals(1, writeEx.getExchanges().size() + acknowledgementEx.getExchanges().size(),
@@ -270,7 +270,7 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
 
         assertTrue(done.matches(5, TimeUnit.SECONDS), "Should have completed an exchange");
 
-        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
     }
 
 }

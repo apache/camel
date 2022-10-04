@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file.remote.integration;
 
+import java.nio.file.Path;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
@@ -23,12 +25,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /**
  * Unit test for consuming files from a FTP Server to files where we want to use the filename from the FTPServer instead
  * of explicit setting a filename using the file headername option.
  */
 public class FromFtpToFileNoFileNameHeaderIT extends FtpServerTestSupport {
+    @TempDir
+    Path testDirectory;
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/tmp3/camel?password=admin&binary=false";
@@ -46,7 +51,7 @@ public class FromFtpToFileNoFileNameHeaderIT extends FtpServerTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived("Hello World from FTPServer");
-        mock.expectedFileExists(testFile("hello.txt"), "Hello World from FTPServer");
+        mock.expectedFileExists(testDirectory.resolve("hello.txt"), "Hello World from FTPServer");
 
         mock.assertIsSatisfied();
     }
@@ -69,7 +74,7 @@ public class FromFtpToFileNoFileNameHeaderIT extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                String fileUrl = fileUri("?fileExist=Override&noop=true");
+                String fileUrl = fileUri(testDirectory, "?fileExist=Override&noop=true");
                 // we do not set any filename in the header property so the
                 // filename should be the one
                 // from the FTP server we downloaded

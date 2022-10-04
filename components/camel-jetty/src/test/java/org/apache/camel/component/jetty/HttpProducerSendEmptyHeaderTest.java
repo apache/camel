@@ -38,7 +38,7 @@ public class HttpProducerSendEmptyHeaderTest extends BaseJettyTest {
 
         template.sendBodyAndHeader("http://localhost:{{port}}/myapp/mytest", "Hello World", "foo", "");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

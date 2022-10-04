@@ -35,7 +35,7 @@ public class JacksonMarshalAllowJMSTypeTest extends CamelTestSupport {
         String json = "<pojo name=\"Camel\"/>";
         template.sendBodyAndHeader("direct:backPojo", json, "JMSType", TestPojo.class.getName());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         TestPojo pojo = mock.getReceivedExchanges().get(0).getIn().getBody(TestPojo.class);
         assertNotNull(pojo);

@@ -45,7 +45,7 @@ public class FtpSimpleConsumeStreamingStepwiseFalseIT extends FtpServerTestSuppo
 
         context.getRouteController().startRoute("foo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertMore(mock);
     }
 

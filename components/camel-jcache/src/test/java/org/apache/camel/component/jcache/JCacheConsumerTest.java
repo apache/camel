@@ -101,7 +101,7 @@ public class JCacheConsumerTest extends JCacheComponentTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

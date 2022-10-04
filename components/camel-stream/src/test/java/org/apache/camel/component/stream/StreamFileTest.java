@@ -77,7 +77,7 @@ public class StreamFileTest extends CamelTestSupport {
             });
             consumer.start();
 
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
 
             consumer.stop();
         } finally {
@@ -106,7 +106,7 @@ public class StreamFileTest extends CamelTestSupport {
         template.sendBody("direct:start", "Camel");
 
         context.getRouteController().startRoute("consume");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         context.stop();
     }
 }

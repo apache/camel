@@ -16,15 +16,22 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.io.File;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpStreamCacheFileIssueTest extends BaseJettyTest {
+
+    @TempDir
+    File testDirectory;
 
     private String body = "12345678901234567890123456789012345678901234567890";
 
@@ -36,10 +43,10 @@ public class HttpStreamCacheFileIssueTest extends BaseJettyTest {
         assertEquals(body, out);
 
         // the temporary files should have been deleted
-        String[] files = testDirectory().toFile().list();
+        String[] files = testDirectory.list();
         assertEquals(0, files.length, "There should be no files");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
@@ -51,14 +58,14 @@ public class HttpStreamCacheFileIssueTest extends BaseJettyTest {
                 // to write to file
                 context.getStreamCachingStrategy().setSpoolEnabled(true);
                 context.getStreamCachingStrategy().setSpoolThreshold(16);
-                context.getStreamCachingStrategy().setSpoolDirectory(testDirectory().toFile());
+                context.getStreamCachingStrategy().setSpoolDirectory(testDirectory);
                 context.setStreamCaching(true);
 
                 // use a route so we got an unit of work
                 from("direct:start").to("http://localhost:{{port}}/myserver").process(new Processor() {
                     public void process(Exchange exchange) {
                         // there should be a temp cache file
-                        String[] files = testDirectory().toFile().list();
+                        String[] files = testDirectory.list();
                         assertTrue(files.length > 0, "There should be a temp cache file");
                     }
                 })

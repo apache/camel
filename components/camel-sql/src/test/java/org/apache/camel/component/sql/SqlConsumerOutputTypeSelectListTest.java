@@ -67,7 +67,7 @@ public class SqlConsumerOutputTypeSelectListTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(3);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<Exchange> exchanges = mock.getReceivedExchanges();
         assertTrue(exchanges.size() >= 3);

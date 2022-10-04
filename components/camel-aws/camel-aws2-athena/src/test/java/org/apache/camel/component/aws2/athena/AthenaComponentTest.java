@@ -77,7 +77,7 @@ public class AthenaComponentTest extends CamelTestSupport {
         GetQueryExecutionResponse result = message.getBody(GetQueryExecutionResponse.class);
         assertEquals("11111111-1111-1111-1111-111111111111", result.queryExecution().queryExecutionId());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -100,7 +100,7 @@ public class AthenaComponentTest extends CamelTestSupport {
         result.forEach(responses::add);
         assertEquals(1, responses.size());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -121,7 +121,7 @@ public class AthenaComponentTest extends CamelTestSupport {
         GetQueryResultsResponse result = message.getBody(GetQueryResultsResponse.class);
         assertEquals(1, result.resultSet().rows().size());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -145,7 +145,7 @@ public class AthenaComponentTest extends CamelTestSupport {
         String result = message.getBody(String.class);
         assertEquals("s3://bucket/file.csv", result);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -169,7 +169,7 @@ public class AthenaComponentTest extends CamelTestSupport {
                 result.queryExecutionIds());
         assertEquals("next-token", result.nextToken());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -191,7 +191,7 @@ public class AthenaComponentTest extends CamelTestSupport {
 
         assertNull(message.getBody());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test

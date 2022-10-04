@@ -19,6 +19,7 @@ package org.apache.camel.component.jms.async;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -37,7 +38,7 @@ public class AsyncConsumerTest extends AbstractJMSTest {
         template.sendBody("activemq:queue:AsyncConsumerTest.start", "Hello Camel");
         template.sendBody("activemq:queue:AsyncConsumerTest.start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

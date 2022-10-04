@@ -59,8 +59,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
 
     static {
         boolean includeNewLine = true;
-        if (TestSupport.getJavaMajorVersion() >= 9
-                || TestSupport.isJava18_261_later() && !TestSupport.isJavaVendor("Azul")) {
+        if (!TestSupport.isJavaVendor("Azul")) {
             includeNewLine = false;
         }
         payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -182,7 +181,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
         assumeTrue(canTest, "Test preconditions failed: canTest=" + canTest);
         setupMock();
         sendBody("direct:ecdsa_sha1", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -190,7 +189,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
         assumeTrue(canTest, "Test preconditions failed: canTest=" + canTest);
         setupMock();
         sendBody("direct:ecdsa_sha224", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -198,7 +197,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
         assumeTrue(canTest, "Test preconditions failed: canTest=" + canTest);
         setupMock();
         sendBody("direct:ecdsa_sha256", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -206,7 +205,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
         assumeTrue(canTest, "Test preconditions failed: canTest=" + canTest);
         setupMock();
         sendBody("direct:ecdsa_sha384", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -214,7 +213,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
         assumeTrue(canTest, "Test preconditions failed: canTest=" + canTest);
         setupMock();
         sendBody("direct:ecdsa_sha512", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -222,7 +221,7 @@ public class ECDSASignatureTest extends CamelTestSupport {
         assumeTrue(canTest, "Test preconditions failed: canTest=" + canTest);
         setupMock();
         sendBody("direct:ecdsa_ripemd160", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private MockEndpoint setupMock() {

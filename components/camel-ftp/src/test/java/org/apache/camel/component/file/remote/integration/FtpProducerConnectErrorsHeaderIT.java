@@ -33,7 +33,7 @@ public class FtpProducerConnectErrorsHeaderIT extends FtpServerTestSupport {
         mock.expectedHeaderReceived("CamelFtpReplyCode", "530");
 
         template.sendBody("direct:start", "hi");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

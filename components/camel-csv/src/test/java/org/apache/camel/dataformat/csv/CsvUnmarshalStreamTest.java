@@ -54,7 +54,7 @@ public class CsvUnmarshalStreamTest extends CamelTestSupport {
 
         template.sendBody("direct:start", message);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         for (int i = 0; i < EXPECTED_COUNT; ++i) {
             List<String> body = result.getReceivedExchanges().get(i)
@@ -73,7 +73,7 @@ public class CsvUnmarshalStreamTest extends CamelTestSupport {
 
         template.sendBody("direct:start", new MyFileInputStream(new File("src/test/resources/data.csv")));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         for (int i = 0; i < EXPECTED_COUNT; ++i) {
             List<String> body = result.getReceivedExchanges().get(i)

@@ -36,7 +36,7 @@ public class X2JOutputFileTest extends CamelTestSupport {
         template.sendBodyAndHeader("direct:start", "<hello>world!</hello>", Exchange.XSLT_FILE_NAME,
                 "target/X2JOutputFileTest.json");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,7 +48,7 @@ public class AsyncConsumerInOutTest extends AbstractJMSTest {
         template.sendBody("activemq:queue:AsyncConsumerInOutTest.start", "Hello Camel");
         template.sendBody("activemq:queue:AsyncConsumerInOutTest.start", "Hello World");
 
-        assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
     }
 
     @Override

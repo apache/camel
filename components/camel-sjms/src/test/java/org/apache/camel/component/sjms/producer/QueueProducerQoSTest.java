@@ -104,7 +104,7 @@ public class QueueProducerQoSTest extends CamelTestSupport {
             // we're just interested in the message becoming expired
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         DestinationViewMBean queue = service.getQueueMBean(TEST_INOUT_DESTINATION_NAME);
         assertEquals(0, queue.getQueueSize(),
@@ -118,7 +118,7 @@ public class QueueProducerQoSTest extends CamelTestSupport {
         String endpoint = String.format("sjms:queue:%s?timeToLive=1000", TEST_INONLY_DESTINATION_NAME);
         template.sendBody(endpoint, "test message");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         DestinationViewMBean queue = service.getQueueMBean(TEST_INONLY_DESTINATION_NAME);
         assertEquals(0, queue.getQueueSize(),

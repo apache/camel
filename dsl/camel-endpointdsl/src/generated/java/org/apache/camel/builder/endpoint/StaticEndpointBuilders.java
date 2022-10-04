@@ -4279,6 +4279,49 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.ElasticsearchEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Etcd v3 (camel-etcd3)
+     * Get, set, delete or watch keys in etcd key-value store.
+     * 
+     * Category: clustering,database
+     * Since: 3.19
+     * Maven coordinates: org.apache.camel:camel-etcd3
+     * 
+     * Syntax: <code>etcd3:path</code>
+     * 
+     * Path parameter: path
+     * The path the endpoint refers to
+     * 
+     * @param path path
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.Etcd3EndpointBuilderFactory.Etcd3EndpointBuilder etcd3(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.Etcd3EndpointBuilderFactory.endpointBuilder("etcd3", path);
+    }
+    /**
+     * Etcd v3 (camel-etcd3)
+     * Get, set, delete or watch keys in etcd key-value store.
+     * 
+     * Category: clustering,database
+     * Since: 3.19
+     * Maven coordinates: org.apache.camel:camel-etcd3
+     * 
+     * Syntax: <code>etcd3:path</code>
+     * 
+     * Path parameter: path
+     * The path the endpoint refers to
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path path
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.Etcd3EndpointBuilderFactory.Etcd3EndpointBuilder etcd3(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.Etcd3EndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Exec (camel-exec)
      * Execute commands on the underlying operating system.
      * 

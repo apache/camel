@@ -18,6 +18,7 @@ package org.apache.camel.component.servlet;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,7 +37,7 @@ public class ServletChoiceBeanTest extends ServletCamelRouterTestSupport {
         assertEquals(200, response.getResponseCode());
         assertEquals("Client is Donald Duck", response.getText(), "The response message is wrong");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -51,7 +52,7 @@ public class ServletChoiceBeanTest extends ServletCamelRouterTestSupport {
             assertEquals(404, e.getResponseCode());
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

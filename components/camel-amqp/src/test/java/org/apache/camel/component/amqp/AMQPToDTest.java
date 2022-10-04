@@ -18,6 +18,7 @@ package org.apache.camel.component.amqp;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
 import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
@@ -52,7 +53,7 @@ public class AMQPToDTest extends CamelTestSupport {
         template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar");
         template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

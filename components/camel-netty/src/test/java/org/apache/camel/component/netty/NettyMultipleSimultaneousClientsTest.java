@@ -25,6 +25,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -82,7 +83,7 @@ public class NettyMultipleSimultaneousClientsTest extends BaseNettyTest {
         for (int i = 0; i < clientCount; i++) {
             assertEquals("Bye World", replies[i].get());
         }
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

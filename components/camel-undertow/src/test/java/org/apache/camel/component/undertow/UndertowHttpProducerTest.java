@@ -18,6 +18,7 @@ package org.apache.camel.component.undertow;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,7 +32,7 @@ public class UndertowHttpProducerTest extends BaseUndertowTest {
         String out = template.requestBody("http://localhost:{{port}}/foo", null, String.class);
         assertEquals("Bye World", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -42,7 +43,7 @@ public class UndertowHttpProducerTest extends BaseUndertowTest {
                 String.class);
         assertEquals("Bye World", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -55,7 +56,7 @@ public class UndertowHttpProducerTest extends BaseUndertowTest {
                 String.class);
         assertEquals("Bye World", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

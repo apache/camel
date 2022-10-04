@@ -18,6 +18,7 @@ package org.apache.camel.builder.saxon;
 
 import java.io.FileInputStream;
 
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,7 @@ public class SpringXQueryTransformIssueTest extends CamelSpringTestSupport {
 
         template.sendBody("direct:start", data);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

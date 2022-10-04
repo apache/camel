@@ -36,7 +36,7 @@ public class JettyHttpMapHttpMessageHeadersTest extends BaseJettyTest {
 
         template.requestBody(serverUriFiltered + "?one=einz&two=twei", null, Object.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -49,7 +49,7 @@ public class JettyHttpMapHttpMessageHeadersTest extends BaseJettyTest {
 
         template.requestBody(serverUriNotFiltered + "?one=einz&two=twei", null, Object.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -62,7 +62,7 @@ public class JettyHttpMapHttpMessageHeadersTest extends BaseJettyTest {
 
         template.requestBodyAndHeader(serverUriFiltered, null, Exchange.HTTP_QUERY, "one=uno&two=dos");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -75,7 +75,7 @@ public class JettyHttpMapHttpMessageHeadersTest extends BaseJettyTest {
 
         template.requestBodyAndHeader(serverUriNotFiltered, null, Exchange.HTTP_QUERY, "one=uno&two=dos");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -88,7 +88,7 @@ public class JettyHttpMapHttpMessageHeadersTest extends BaseJettyTest {
 
         template.requestBodyAndHeader(serverUriNotFiltered, "Hello World", "header1", "pippo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -101,7 +101,7 @@ public class JettyHttpMapHttpMessageHeadersTest extends BaseJettyTest {
 
         template.requestBodyAndHeader(serverUriFiltered, "Hello World", "header1", "pippo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

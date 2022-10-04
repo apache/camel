@@ -44,7 +44,7 @@ public class MetricsComponentRouteTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         template1.sendBody(new Object());
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -62,7 +62,7 @@ public class MetricsComponentRouteTest extends CamelTestSupport {
         headers.put(header1, value1);
         headers.put(header2, value2);
         template1.sendBodyAndHeaders(body, headers);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -83,7 +83,7 @@ public class MetricsComponentRouteTest extends CamelTestSupport {
         headers.put("date", now);
 
         template2.sendBodyAndHeaders(body, headers);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

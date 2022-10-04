@@ -37,7 +37,7 @@ public class NormalSearchManualTest extends SplunkTest {
         searchMock.expectedMessageCount(1);
         getMockEndpoint("mock:submit-result").expectedMessageCount(1);
 
-        assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
         SplunkEvent received = searchMock.getReceivedExchanges().get(0).getIn().getBody(SplunkEvent.class);
         assertNotNull(received);
         Map<String, String> data = received.getEventData();

@@ -63,7 +63,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
                 MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
         mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
         sendBodyAndHeader("direct:start", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -71,7 +71,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
         sendBodyAndHeader("direct:notruststore", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -79,7 +79,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
         sendBodyAndHeader("direct:failedtrust", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -91,7 +91,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
                 MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
         mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
         sendBodyAndHeader("direct:selfsigned", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -103,7 +103,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
                 MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
         mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
         sendBodyAndHeader("direct:clientauth", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -111,7 +111,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
         sendBodyAndHeader("direct:failedclientauth", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -123,7 +123,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
                 MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
         mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
         sendBodyAndHeader("direct:ciphersuites", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -136,7 +136,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
                     MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
             mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
             sendBodyAndHeader("direct:rpk", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
         }
     }
 
@@ -146,7 +146,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
             MockEndpoint mock = getMockEndpoint("mock:result");
             mock.expectedMessageCount(0);
             sendBodyAndHeader("direct:rpknotruststore", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
         }
     }
 
@@ -156,7 +156,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
             MockEndpoint mock = getMockEndpoint("mock:result");
             mock.expectedMessageCount(0);
             sendBodyAndHeader("direct:rpkfailedtrust", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
         }
     }
 
@@ -170,7 +170,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
                     MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
             mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
             sendBodyAndHeader("direct:rpkclientauth", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
         }
     }
 
@@ -184,7 +184,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
                     MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
             mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
             sendBodyAndHeader("direct:psk", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
         }
     }
 
@@ -198,7 +198,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
                     MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
             mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
             sendBodyAndHeader("direct:pskciphersuite", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
         }
     }
 
@@ -212,7 +212,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
                     MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
             mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
             sendBodyAndHeader("direct:pskx509", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
         }
     }
 

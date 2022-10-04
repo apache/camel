@@ -17,6 +17,7 @@
 package org.apache.camel.builder.endpoint;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class LanguageHeaderRouteTest extends BaseEndpointDslTest {
@@ -27,7 +28,7 @@ public class LanguageHeaderRouteTest extends BaseEndpointDslTest {
 
         template.sendBodyAndHeader("direct:start", "Hi", "foo", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

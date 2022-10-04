@@ -33,7 +33,7 @@ public class XQueryWithExplicitTypeTest extends CamelSpringTestSupport {
 
         template.sendBody("direct:start", "<person name='Hadrian' city='Raleigh'/>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

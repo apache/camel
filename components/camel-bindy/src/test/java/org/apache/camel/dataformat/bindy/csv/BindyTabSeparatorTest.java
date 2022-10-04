@@ -37,7 +37,7 @@ public class BindyTabSeparatorTest extends CamelTestSupport {
 
         template.sendBody("direct:unmarshal", "123\tCamel in Action\t2\tPlease hurry\tJane Doe\tJohn Doe\n");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         PurchaseOrder order = mock.getReceivedExchanges().get(0).getIn().getBody(PurchaseOrder.class);
 
@@ -64,7 +64,7 @@ public class BindyTabSeparatorTest extends CamelTestSupport {
 
         template.sendBody("direct:marshal", order);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @SuppressWarnings("unchecked")
@@ -80,7 +80,7 @@ public class BindyTabSeparatorTest extends CamelTestSupport {
                                                        + "456\tCamel in Action\t1\t\t\t\n",
                 Exchange.CONTENT_ENCODING, "iso8859-1");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<PurchaseOrder> orders = (List<PurchaseOrder>) mock.getReceivedExchanges().get(0).getIn().getBody();
         PurchaseOrder order = orders.get(0);
@@ -108,7 +108,7 @@ public class BindyTabSeparatorTest extends CamelTestSupport {
 
         template.sendBody("direct:marshal", order);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

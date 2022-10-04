@@ -27,6 +27,7 @@ import java.util.Iterator;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,7 +52,7 @@ public class TarFileSplitAndDeleteTest extends CamelTestSupport {
         getMockEndpoint("mock:end").expectedMessageCount(3);
         String tarFile = createTarFile("testDeleteTarFileWhenUnmarshalWithDataFormat");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         notify.matchesWaitTime();
 
@@ -66,7 +67,7 @@ public class TarFileSplitAndDeleteTest extends CamelTestSupport {
         getMockEndpoint("mock:end").expectedMessageCount(3);
         String tarFile = createTarFile("testDeleteTarFileWhenUnmarshalWithSplitter");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         notify.matchesWaitTime();
 

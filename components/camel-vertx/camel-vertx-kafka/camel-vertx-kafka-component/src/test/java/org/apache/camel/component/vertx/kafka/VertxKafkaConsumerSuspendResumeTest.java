@@ -80,12 +80,12 @@ public class VertxKafkaConsumerSuspendResumeTest extends BaseEmbeddedKafkaTest {
             producer.send(data);
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // suspend
         context.getRouteController().suspendRoute("foo");
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
         for (int k = 3; k < 10; k++) {
@@ -95,15 +95,15 @@ public class VertxKafkaConsumerSuspendResumeTest extends BaseEmbeddedKafkaTest {
         }
 
         getMockEndpoint("mock:result").setResultMinimumWaitTime(1000);
-        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         getMockEndpoint("mock:result").expectedMessageCount(7);
 
         // resume
         context.getRouteController().resumeRoute("foo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

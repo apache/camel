@@ -16,13 +16,8 @@
  */
 package org.apache.camel.component.activemq.support;
 
-import java.nio.file.Path;
-
 import org.apache.camel.test.junit5.CamelTestSupport;
 
 public class ActiveMQTestSupport extends CamelTestSupport implements ActiveMQSupport {
 
-    public Path testDirectory() {
-        return CamelTestSupport.testDirectory(getClass(), false);
-    }
 }

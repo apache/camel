@@ -33,7 +33,7 @@ public class DockerCustomCmdExecFactoryTestIT extends DockerITTestSupport {
 
         template.sendBody("direct:in", "");
 
-        assertMockEndpointsSatisfied(60, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 60, TimeUnit.SECONDS);
         mock.getExchanges();
     }
 

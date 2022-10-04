@@ -50,6 +50,6 @@ public class MinaSpringMultipleUDPTest extends CamelSpringTestSupport {
 
         // Sleep for awhile to let the messages go through.
         await().atMost(3, TimeUnit.SECONDS)
-                .untilAsserted(this::assertMockEndpointsSatisfied);
+                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
     }
 }

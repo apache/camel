@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jms;
 
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -33,7 +34,7 @@ public class SpringJmsXPathHeaderTest extends CamelSpringTestSupport {
 
         template.sendBodyAndHeader("activemq:queue:SpringJmsXPathHeaderTest.in", "<hello>World</hello>", "foo", "true");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -43,7 +44,7 @@ public class SpringJmsXPathHeaderTest extends CamelSpringTestSupport {
 
         template.sendBodyAndHeader("activemq:queue:SpringJmsXPathHeaderTest.in", "<hello>World</hello>", "foo", "false");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -53,7 +54,7 @@ public class SpringJmsXPathHeaderTest extends CamelSpringTestSupport {
 
         template.sendBody("activemq:queue:SpringJmsXPathHeaderTest.in", "<hello>World</hello>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

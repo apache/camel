@@ -62,7 +62,7 @@ public class MailSearchTermTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("I like riding the Camel", "Ordering Camel in Action");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private void prepareMailbox() throws Exception {

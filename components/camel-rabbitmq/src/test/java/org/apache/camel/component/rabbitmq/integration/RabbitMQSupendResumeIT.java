@@ -59,27 +59,27 @@ public class RabbitMQSupendResumeIT extends AbstractRabbitMQIT {
 
         template.sendBody("hello");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         context.getRouteController().resumeRoute("consumer");
 
         // sleep a bit to ensure its properly suspended
         Thread.sleep(2000);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         resultEndpoint.expectedMessageCount(0);
 
         template.sendBody("Hello2");
 
-        assertMockEndpointsSatisfied(1, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 1, TimeUnit.SECONDS);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         resultEndpoint.expectedBodiesReceived("Hello2");
         resultEndpoint.expectedMessageCount(1);
 
         context.getRouteController().resumeRoute("consumer");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

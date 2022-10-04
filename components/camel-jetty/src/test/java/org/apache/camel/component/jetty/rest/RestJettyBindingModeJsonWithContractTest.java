@@ -51,7 +51,7 @@ public class RestJettyBindingModeJsonWithContractTest extends BaseJettyTest {
         }
         assertTrue(answerString.contains("\"active\":true"), "Unexpected response: " + answerString);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Object obj = mock.getReceivedExchanges().get(0).getIn().getBody();
         assertEquals(UserPojoEx.class, obj.getClass());

@@ -5,7 +5,7 @@
     "title": "Python",
     "description": "Evaluates a Python expression.",
     "deprecated": false,
-    "firstVersion": "3.9.0",
+    "firstVersion": "3.19.0",
     "label": "language,python",
     "javaType": "org.apache.camel.model.language.PythonExpression",
     "abstract": false,

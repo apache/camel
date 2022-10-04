@@ -39,7 +39,7 @@ public class RobotFrameworkComponentTest extends CamelTestSupport {
         template.sendBody("direct:setVariableCamelBody", "Hello Robot");
         template.sendBody("direct:assertRobotCamelInputAsString", "Hello Robot");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getExchanges().get(0);
         assertEquals(0, (int) ObjectHelper.cast(Integer.class,
@@ -59,7 +59,7 @@ public class RobotFrameworkComponentTest extends CamelTestSupport {
         template.sendBody("direct:setVariableCamelBody", 1);
         template.sendBody("direct:assertRobotCamelInputAsNumeric", 1);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getExchanges().get(0);
         assertEquals(0, (int) ObjectHelper.cast(Integer.class,
@@ -76,7 +76,7 @@ public class RobotFrameworkComponentTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("direct:setVariableCamelBodyAndHeader", "Hello Robot", "stringKey", "headerValue");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getExchanges().get(0);
         assertEquals(0, (int) ObjectHelper.cast(Integer.class,
@@ -90,7 +90,7 @@ public class RobotFrameworkComponentTest extends CamelTestSupport {
 
         template.sendBodyAndProperty("direct:setVariableCamelBodyAndProperty", "Hello Robot", "stringKey", "propertyValue");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getExchanges().get(0);
         assertEquals(0, (int) ObjectHelper.cast(Integer.class,
@@ -104,7 +104,7 @@ public class RobotFrameworkComponentTest extends CamelTestSupport {
 
         template.sendBody("direct:setVariableCamelBodyResourceUri", "Hello Robot");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getExchanges().get(0);
         assertEquals(0, (int) ObjectHelper.cast(Integer.class,

@@ -52,7 +52,7 @@ public class EKS2ProducerTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         ListClustersResponse resultGet = (ListClustersResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.clusters().size());
@@ -71,7 +71,7 @@ public class EKS2ProducerTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         ListClustersResponse resultGet = (ListClustersResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.clusters().size());
@@ -93,7 +93,7 @@ public class EKS2ProducerTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         CreateClusterResponse resultGet = (CreateClusterResponse) exchange.getIn().getBody();
         assertEquals("Test", resultGet.cluster().name());
@@ -111,7 +111,7 @@ public class EKS2ProducerTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         DescribeClusterResponse resultGet = exchange.getIn().getBody(DescribeClusterResponse.class);
         assertEquals("Test", resultGet.cluster().name());
@@ -129,7 +129,7 @@ public class EKS2ProducerTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         DeleteClusterResponse resultGet = exchange.getIn().getBody(DeleteClusterResponse.class);
         assertEquals("Test", resultGet.cluster().name());

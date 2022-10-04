@@ -40,7 +40,7 @@ public class MinaSslGlobalContextParametersTcpTest extends BaseMinaTest {
 
         template.sendBodyAndHeader("mina:tcp://localhost:" + getPort() + "?sync=false&minaLogger=true", body, "cheese", 123);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>core</artifactId>
-        <version>3.19.0-SNAPSHOT</version>
+        <version>3.20.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-core</artifactId>
@@ -162,6 +162,7 @@
         </dependency>
 
         <!-- testing -->
+        <!-- woodstox is needed by the StaxConverter test-->
         <dependency>
             <groupId>org.codehaus.woodstox</groupId>
             <artifactId>woodstox-core-asl</artifactId>

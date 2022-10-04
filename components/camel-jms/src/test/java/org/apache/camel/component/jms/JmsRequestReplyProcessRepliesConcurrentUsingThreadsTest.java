@@ -50,7 +50,7 @@ public class JmsRequestReplyProcessRepliesConcurrentUsingThreadsTest extends Abs
         template.sendBody("seda:start", "E");
         LOG.info("... done sending messages");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

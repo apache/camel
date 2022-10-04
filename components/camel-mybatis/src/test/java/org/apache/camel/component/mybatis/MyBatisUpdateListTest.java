@@ -50,7 +50,7 @@ public class MyBatisUpdateListTest extends MyBatisTestSupport {
         params.put("emailAddress", "Other@gmail.com");
         template.sendBody("direct:start", params);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // there should be 2 rows now
         Integer rows = template.requestBody("mybatis:count?statementType=SelectOne", null, Integer.class);

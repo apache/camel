@@ -20,6 +20,7 @@ import javax.jms.JMSException;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
@@ -40,7 +41,7 @@ public class JmsAllowNullBodyTest extends AbstractJMSTest {
         // allow null body is default enabled
         template.sendBodyAndHeader("activemq:queue:JmsAllowNullBodyTest", null, "bar", 123);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -51,7 +52,7 @@ public class JmsAllowNullBodyTest extends AbstractJMSTest {
 
         template.sendBodyAndHeader("activemq:queue:JmsAllowNullBodyTest?allowNullBody=true", null, "bar", 123);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -63,7 +64,7 @@ public class JmsAllowNullBodyTest extends AbstractJMSTest {
         template.sendBodyAndHeader("activemq:queue:JmsAllowNullBodyTest?allowNullBody=true&jmsMessageType=Text", null, "bar",
                 123);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test

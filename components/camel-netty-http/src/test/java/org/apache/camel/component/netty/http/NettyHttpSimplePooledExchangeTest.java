@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.PooledExchangeFactory;
 import org.apache.camel.impl.engine.PooledProcessorExchangeFactory;
 import org.apache.camel.spi.PooledObjectFactory;
@@ -58,7 +59,7 @@ public class NettyHttpSimplePooledExchangeTest extends BaseNettyTest {
         String out = template.requestBody("netty-http:http://localhost:{{port}}/pooled", "World", String.class);
         assertEquals("Bye World", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Awaitility.waitAtMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
             PooledObjectFactory.Statistics stat
@@ -87,7 +88,7 @@ public class NettyHttpSimplePooledExchangeTest extends BaseNettyTest {
                     assertEquals("Bye Earth", reqOut);
                 });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Awaitility.waitAtMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
             PooledObjectFactory.Statistics stat

@@ -53,7 +53,7 @@ public class HashicorpProducerDeleteSecretIT extends HashicorpVaultBase {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

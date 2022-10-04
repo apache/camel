@@ -33,7 +33,7 @@ public class BindySimpleCsvAutospanLineTest extends CamelTestSupport {
 
         template.sendBody("direct:unmarshal", "1,hei,kommentar");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         //final List<Map<?, SpanLastRecord>> rows = CastUtils.cast(mock.getReceivedExchanges().get(0).getIn().getBody(List.class));
         //final SpanLastRecord order = rows.get(0).get(SpanLastRecord.class.getName());
@@ -52,7 +52,7 @@ public class BindySimpleCsvAutospanLineTest extends CamelTestSupport {
 
         template.sendBody("direct:unmarshal", "1,hei,kommentar,test,noe,hei");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         final SpanLastRecord order = mock.getReceivedExchanges().get(0).getIn().getBody(SpanLastRecord.class);
 

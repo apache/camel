@@ -18,6 +18,7 @@ package org.apache.camel.component.netty.http;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class NettyRecipientListHttpBaseTest extends BaseNettyTest {
@@ -33,7 +34,7 @@ public class NettyRecipientListHttpBaseTest extends BaseNettyTest {
         template.sendBodyAndHeader("direct:start", "C", Exchange.HTTP_PATH, "/foo/bar/baz?num=3");
         template.sendBodyAndHeader("direct:start", "D", Exchange.HTTP_PATH, "/foo/baz/bar?num=4");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

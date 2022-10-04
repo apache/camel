@@ -39,7 +39,7 @@ public class JmsDiscoveryTest extends AbstractJMSTest {
         // force shutdown after 5 seconds as otherwise the bean will keep generating a new input
         context.getShutdownStrategy().setTimeout(5);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // sleep a little
         Awaitility.await().atMost(1, TimeUnit.SECONDS)

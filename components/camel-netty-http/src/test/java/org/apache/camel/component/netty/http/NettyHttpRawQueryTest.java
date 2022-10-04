@@ -40,7 +40,7 @@ public class NettyHttpRawQueryTest extends BaseNettyTest {
 
         new URL("http://localhost:" + getPort() + "/?" + query).openConnection().getInputStream().close();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

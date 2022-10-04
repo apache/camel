@@ -77,7 +77,7 @@ public class JmsInOutTransferExchangeTest extends AbstractJMSTest {
         LOG.debug("Asserting result");
         result.assertIsSatisfied();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange transferExchange = transfer.getExchanges().get(0);
         Exchange exchange = createExchangeWithBody(null);

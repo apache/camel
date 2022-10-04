@@ -21,6 +21,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.support.MyAsyncComponent;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -46,7 +47,7 @@ public class AsyncTopicProducerTest extends CamelTestSupport {
         // we should run before the async processor that sets B
         route += "A";
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertFalse(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should use different threads");
         assertFalse(beforeThreadName.equalsIgnoreCase(sedaThreadName), "Should use different threads");

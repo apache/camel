@@ -58,7 +58,7 @@ public class InOutConcurrentConsumerTest extends JmsTestSupport {
             futures.add(out);
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         for (int i = 0; i < futures.size(); i++) {
             Object out = futures.get(i).get();

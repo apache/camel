@@ -66,7 +66,7 @@ public class ProducerInOutTest extends CamelTestSupport {
         headers.put("in2", 0);
         template.requestBodyAndHeaders("direct:query", null, headers);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getExchanges().get(0);
 

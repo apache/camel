@@ -17,6 +17,7 @@
 package org.apache.camel.language.jq;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class JqExpressionHeaderFnTest extends JqTestSupport {
@@ -39,6 +40,6 @@ public class JqExpressionHeaderFnTest extends JqTestSupport {
 
         template.sendBodyAndHeader("direct:start", node("foo", "bar"), "MyHeader", "MyValue");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 }

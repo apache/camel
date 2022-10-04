@@ -19,6 +19,7 @@ package org.apache.camel.dataformat.zipfile;
 import java.io.File;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,7 +41,7 @@ public class ZipSplitterRouteIssueTest extends CamelTestSupport {
 
         template.sendBody("direct:decompressFiles", new File("src/test/resources/data.zip"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -51,7 +52,7 @@ public class ZipSplitterRouteIssueTest extends CamelTestSupport {
         //Send a file which is not exit
         template.sendBody("direct:decompressFiles", new File("src/test/resources/data"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

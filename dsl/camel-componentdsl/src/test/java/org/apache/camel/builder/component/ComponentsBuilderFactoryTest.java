@@ -43,7 +43,7 @@ public class ComponentsBuilderFactoryTest extends CamelTestSupport {
 
         context.getRouteController().startAllRoutes();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test

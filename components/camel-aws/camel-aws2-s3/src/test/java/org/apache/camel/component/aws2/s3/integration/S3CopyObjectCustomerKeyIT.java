@@ -110,7 +110,7 @@ public class S3CopyObjectCustomerKeyIT extends Aws2S3Base {
 
         assertEquals(1, response.size());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

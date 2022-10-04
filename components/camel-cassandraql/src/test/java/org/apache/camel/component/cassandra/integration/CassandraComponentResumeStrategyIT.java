@@ -64,7 +64,7 @@ public class CassandraComponentResumeStrategyIT extends BaseCassandra {
             }
         });
         mock.await(1, TimeUnit.SECONDS);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertTrue(resumeStrategy.resumeActionNotNull);
         assertTrue(resumeStrategy.resumeCalled);

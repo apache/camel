@@ -44,7 +44,7 @@ public class JmsCustomHeaderFilterStrategyTest extends AbstractJMSTest {
 
         template.sendBodyAndHeaders("activemq:queue:JmsCustomHeaderFilterStrategyTest", "Hello World", headers);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

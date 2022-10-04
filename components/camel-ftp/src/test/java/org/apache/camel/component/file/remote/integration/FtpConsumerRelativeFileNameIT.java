@@ -59,7 +59,7 @@ public class FtpConsumerRelativeFileNameIT extends FtpServerTestSupport {
         // should have file name header set
         mock.allMessages().header(Exchange.FILE_NAME).isNotNull();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // give time for ftp consumer to disconnect
         // and expect name to contain target/filename-consumer-XXX.txt

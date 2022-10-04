@@ -35,7 +35,7 @@ public class JettyWithXPathChoiceTest extends BaseJettyTest {
 
         sendBody(body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         x.reset();
         y.reset();
@@ -46,7 +46,7 @@ public class JettyWithXPathChoiceTest extends BaseJettyTest {
 
         sendBody(body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private void sendBody(String body) {

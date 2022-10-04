@@ -34,7 +34,7 @@ public class SimpleMockTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         ReactiveExecutor re = context.adapt(ExtendedCamelContext.class).getReactiveExecutor();
         Assertions.assertInstanceOf(TomcatReactiveExecutor.class, re);
@@ -48,7 +48,7 @@ public class SimpleMockTest extends CamelTestSupport {
         template.sendBody("direct:start", "Hello World");
         template.sendBody("direct:start", "Bye World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         ReactiveExecutor re = context.adapt(ExtendedCamelContext.class).getReactiveExecutor();
         Assertions.assertInstanceOf(TomcatReactiveExecutor.class, re);

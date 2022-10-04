@@ -32,7 +32,7 @@ public class X2JOutputIdentityTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "<hello>world!</hello>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -78,7 +78,7 @@ public class ConsumerWithFilterOptionTest extends GoogleCloudStorageBaseTest {
         result.expectedMessageCount(totalNumberOfFiles);
         consumedObjects.expectedMessageCount(numberOfFilteredFiles);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         context.stop();
 
@@ -98,7 +98,7 @@ public class ConsumerWithFilterOptionTest extends GoogleCloudStorageBaseTest {
         result.expectedMessageCount(totalNumberOfFiles);
         consumedObjects.expectedMessageCount(numberOfFilteredFiles);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         context.stop();
 

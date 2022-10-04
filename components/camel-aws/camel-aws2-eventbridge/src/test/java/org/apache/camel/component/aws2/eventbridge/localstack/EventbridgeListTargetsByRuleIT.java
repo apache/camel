@@ -72,7 +72,7 @@ public class EventbridgeListTargetsByRuleIT extends Aws2EventbridgeBase {
                 exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEquals(1, result.getExchanges().size());
         assertEquals(1, result.getExchanges().get(0).getIn().getBody(ListTargetsByRuleResponse.class).targets().size());
         assertEquals("sqs-queue",

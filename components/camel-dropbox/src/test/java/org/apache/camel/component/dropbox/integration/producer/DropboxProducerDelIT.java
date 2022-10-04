@@ -52,7 +52,7 @@ public class DropboxProducerDelIT extends DropboxTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.expectedHeaderReceived(DropboxResultHeader.DELETED_PATH.name(), workdir + "/" + FILE_NAME);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

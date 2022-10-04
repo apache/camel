@@ -31,7 +31,7 @@ public class JpaRouteConsumeLockEntityTest extends AbstractJpaTest {
 
         template.sendBody("direct:start", new SendEmail("one@somewhere.org"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

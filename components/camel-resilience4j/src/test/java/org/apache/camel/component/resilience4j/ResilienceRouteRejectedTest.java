@@ -22,6 +22,7 @@ import javax.management.ObjectName;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -84,7 +85,7 @@ public class ResilienceRouteRejectedTest extends CamelTestSupport {
 
         template.sendBody(endPointUri, "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

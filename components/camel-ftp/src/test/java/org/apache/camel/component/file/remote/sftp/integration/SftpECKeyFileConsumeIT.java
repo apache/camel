@@ -39,7 +39,7 @@ public class SftpECKeyFileConsumeIT extends SftpServerTestSupport {
 
         context.getRouteController().startRoute("foo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

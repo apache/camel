@@ -79,7 +79,7 @@ public class JettyEnableJmxTest extends BaseJettyTest {
         template.requestBody(serverUri2 + "&x=foo", null, Object.class);
         template.requestBody(serverUri3 + "&x=foo", null, Object.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Set<ObjectName> s = mbsc.queryNames(new ObjectName("org.eclipse.jetty.server:type=server,*"), null);
         assertEquals(2, s.size(), "Could not find 2 Jetty Server: " + s);

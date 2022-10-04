@@ -16,18 +16,24 @@
  */
 package org.apache.camel.component.file.remote.manual;
 
+import java.nio.file.Path;
+
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 @Disabled("Run this test manually")
 public class FtpConsumerScottRecursiveManualTest extends CamelTestSupport {
+    @TempDir
+    Path testDirectory;
 
     @Test
     public void testFtpConsumerManual() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(2);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
@@ -35,7 +41,7 @@ public class FtpConsumerScottRecursiveManualTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("ftp:localhost?username=scott&password=tiger&noop=true&recursive=true").to(fileUri())
+                from("ftp:localhost?username=scott&password=tiger&noop=true&recursive=true").to(fileUri(testDirectory))
                         .to("mock:result");
             }
         };

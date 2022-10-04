@@ -22,6 +22,7 @@ import java.util.Properties;
 import javax.net.ssl.SSLSession;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
@@ -103,7 +104,7 @@ public class NettyHttpSSLTest extends BaseNettyTest {
         String out = template.requestBody("https://localhost:{{port}}", "Hello World", String.class);
         assertEquals("Bye World", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

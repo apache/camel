@@ -19,6 +19,7 @@ package org.apache.camel.component.websocket;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.infra.common.http.WebsocketTestClient;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -49,7 +50,7 @@ public class WebsocketClientCamelRouteTest extends CamelTestSupport {
         testClient.sendTextMessage("Hello from WS client");
         assertTrue(testClient.await(10, TimeUnit.SECONDS));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals(10, testClient.getReceived().size());
         for (int i = 0; i < 10; i++) {

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>core</artifactId>
-        <version>3.19.0-SNAPSHOT</version>
+        <version>3.20.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-core-engine</artifactId>
@@ -59,13 +59,6 @@
             <artifactId>jakarta.xml.bind-api</artifactId>
             <version>${jakarta-jaxb-version}</version>
             <optional>true</optional>
-        </dependency>
-
-        <!-- xmltokenizer using woodstox -->
-        <dependency>
-            <groupId>org.codehaus.woodstox</groupId>
-            <artifactId>woodstox-core-asl</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <!-- required dependencies by camel-core -->

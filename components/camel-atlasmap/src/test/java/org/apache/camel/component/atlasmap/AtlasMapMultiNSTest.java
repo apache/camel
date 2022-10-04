@@ -57,7 +57,7 @@ public class AtlasMapMultiNSTest extends CamelSpringTestSupport {
         c.setFirstName("Jackson");
         producerTemplate.sendBody("direct:start", c);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Message message = result.getExchanges().get(0).getIn();
         Assertions.assertEquals("application/xml", message.getHeader(Exchange.CONTENT_TYPE));
         String out = message.getBody(String.class);

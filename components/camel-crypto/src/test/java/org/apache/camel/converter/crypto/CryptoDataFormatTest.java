@@ -92,7 +92,7 @@ public class CryptoDataFormatTest extends CamelTestSupport {
         encrypted.getIn().setHeader(CryptoDataFormat.KEY, key);
         template.send("direct:key-in-header-decrypt", encrypted);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange received = mock.getReceivedExchanges().get(0);
         validateHeaderIsCleared(received);

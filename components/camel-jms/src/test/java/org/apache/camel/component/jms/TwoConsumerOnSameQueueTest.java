@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
@@ -38,7 +39,7 @@ public class TwoConsumerOnSameQueueTest extends AbstractPersistentJMSTest {
         context.getRouteController().stopRoute("a");
 
         // send new message should go to B only
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         getMockEndpoint("mock:a").expectedMessageCount(0);
         getMockEndpoint("mock:b").expectedBodiesReceived("Bye World", "Bye World");
@@ -46,13 +47,13 @@ public class TwoConsumerOnSameQueueTest extends AbstractPersistentJMSTest {
         template.sendBody("activemq:queue:TwoConsumerOnSameQueueTest", "Bye World");
         template.sendBody("activemq:queue:TwoConsumerOnSameQueueTest", "Bye World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // now start route A
         context.getRouteController().startRoute("a");
 
         // send new message should go to both A and B
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         sendTwoMessagesWhichShouldReceivedOnBothEndpointsAndAssert();
     }
@@ -66,7 +67,7 @@ public class TwoConsumerOnSameQueueTest extends AbstractPersistentJMSTest {
         assertTrue(context.removeRoute("a"));
 
         // send new message should go to B only
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         getMockEndpoint("mock:a").expectedMessageCount(0);
         getMockEndpoint("mock:b").expectedBodiesReceived("Bye World", "Bye World");
@@ -74,7 +75,7 @@ public class TwoConsumerOnSameQueueTest extends AbstractPersistentJMSTest {
         template.sendBody("activemq:queue:TwoConsumerOnSameQueueTest", "Bye World");
         template.sendBody("activemq:queue:TwoConsumerOnSameQueueTest", "Bye World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private void sendTwoMessagesWhichShouldReceivedOnBothEndpointsAndAssert() throws InterruptedException {
@@ -84,7 +85,7 @@ public class TwoConsumerOnSameQueueTest extends AbstractPersistentJMSTest {
         template.sendBody("activemq:queue:TwoConsumerOnSameQueueTest", "Hello World");
         template.sendBody("activemq:queue:TwoConsumerOnSameQueueTest", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

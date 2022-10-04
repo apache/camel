@@ -42,7 +42,7 @@ public class CwComponentIT extends Aws2CwBase {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
