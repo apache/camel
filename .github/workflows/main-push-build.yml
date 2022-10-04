@@ -54,7 +54,7 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: 'maven'
       - name: mvn formatter and build
-        run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -Pformat,fastinstall -DskipTests verify
+        run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -e -Pformat,fastinstall -DskipTests verify
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
         with:
