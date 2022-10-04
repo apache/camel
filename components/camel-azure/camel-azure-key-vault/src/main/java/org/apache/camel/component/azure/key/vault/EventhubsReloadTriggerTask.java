@@ -34,7 +34,6 @@ import com.azure.storage.blob.BlobContainerAsyncClient;
 import com.azure.storage.blob.BlobContainerClientBuilder;
 import com.azure.storage.common.StorageSharedKeyCredential;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
@@ -214,14 +213,8 @@ public class EventhubsReloadTriggerTask extends ServiceSupport implements CamelC
         boolean triggerReloading = false;
 
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode actualObj = null;
-        try {
-            actualObj = mapper.readTree(eventContext.getEventData().getBodyAsString());
-        } catch (JsonMappingException e) {
-            e.printStackTrace();
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+        final JsonNode actualObj = retrieveEventData(eventContext, mapper);
+
         for (int i = 0; i < actualObj.size(); i++) {
             String secret = actualObj.get(i).get("subject").textValue();
             String eventType = actualObj.get(i).get("eventType").textValue();
@@ -246,6 +239,15 @@ public class EventhubsReloadTriggerTask extends ServiceSupport implements CamelC
                 lastReloadTime = Instant.now();
                 reload.onReload(this);
             }
+        }
+    }
+
+    private static JsonNode retrieveEventData(EventContext eventContext, ObjectMapper mapper) {
+        try {
+            return mapper.readTree(eventContext.getEventData().getBodyAsString());
+        } catch (JsonProcessingException e) {
+            LOG.warn("Unable to process event data body: {}", e.getMessage(), e);
+            throw new RuntimeCamelException(e);
         }
     }
 
