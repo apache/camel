@@ -137,6 +137,9 @@ public final class CassandraUtils {
             select = from.all();
         }
         if (isWhereClause(whereColumns, whereColumnsMaxIndex)) {
+            // this should never happen: isWhereClause already checks for the nullity of the whereColumns
+            assert whereColumns != null;
+
             for (int i = 0; i < whereColumns.length && i < whereColumnsMaxIndex; i++) {
                 select = select.whereColumn(whereColumns[i]).isEqualTo(bindMarker());
             }
