@@ -92,13 +92,6 @@
             <artifactId>log4j-slf4j-impl</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <!-- xmltokenizer using woodstox -->
-        <dependency>
-            <groupId>org.codehaus.woodstox</groupId>
-            <artifactId>woodstox-core-asl</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
