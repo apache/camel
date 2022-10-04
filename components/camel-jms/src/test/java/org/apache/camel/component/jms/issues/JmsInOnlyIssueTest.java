@@ -64,7 +64,7 @@ public class JmsInOnlyIssueTest extends AbstractJMSTest {
                 exchange -> exchange.getIn().setBody("Hello World"));
 
         MockEndpoint.assertIsSatisfied(context);
-    /*
+        /*
           The getMessage returns the In message if the Out one is not present. Therefore, we check if
           the body of the returned message equals to the In one and infer that the out one was null.
          */
