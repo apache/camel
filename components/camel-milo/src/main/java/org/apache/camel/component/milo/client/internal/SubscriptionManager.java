@@ -678,10 +678,13 @@ public class SubscriptionManager {
 
         if (user != null && !user.isEmpty()) {
             final String[] creds = user.split(":", 2);
-            if (creds != null && creds.length == 2) {
-                LOG.debug("Enable username/password provider: {}", creds[0]);
+            if (creds != null) {
+                if (creds.length == 2) {
+                    LOG.debug("Enable username/password provider: {}", creds[0]);
+                }
+
+                providers.add(new UsernameProvider(creds[0], creds[1]));
             }
-            providers.add(new UsernameProvider(creds[0], creds[1]));
         }
 
         providers.add(AnonymousProvider.INSTANCE);
