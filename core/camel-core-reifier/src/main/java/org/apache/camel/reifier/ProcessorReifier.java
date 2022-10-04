@@ -119,6 +119,7 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.ReifierStrategy;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -158,6 +159,13 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
 
     public static ProcessorReifier<? extends ProcessorDefinition<?>> reifier(Route route, ProcessorDefinition<?> definition) {
         ProcessorReifier<? extends ProcessorDefinition<?>> answer = null;
+
+        // special if the EIP is disabled
+        Boolean disabled = CamelContextHelper.parseBoolean(route.getCamelContext(), definition.getDisabled());
+        if (disabled != null && disabled) {
+            return new DisabledReifier(route, definition);
+        }
+
         if (!PROCESSORS.isEmpty()) {
             // custom take precedence
             BiFunction<Route, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>> reifier
