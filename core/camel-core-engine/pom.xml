@@ -61,13 +61,6 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- xmltokenizer using woodstox -->
-        <dependency>
-            <groupId>org.codehaus.woodstox</groupId>
-            <artifactId>woodstox-core-asl</artifactId>
-            <scope>test</scope>
-        </dependency>
-
         <!-- required dependencies by camel-core -->
         <dependency>
             <groupId>org.apache.camel</groupId>
