@@ -591,7 +591,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             expects(new AssertionTask() {
                 @Override
                 public void assertOnIndex(int i) {
-                    Exchange exchange = getReceivedExchange(i);
+                    final Exchange exchange = getReceivedExchange(i);
+
                     for (Map.Entry<String, Object> entry : expectedHeaderValues.entrySet()) {
                         String key = entry.getKey();
                         Object expectedValue = entry.getValue();
@@ -632,6 +633,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             @Override
             public void assertOnIndex(int i) {
                 Exchange exchange = getReceivedExchange(i);
+
                 assertFalse("Exchange " + i + " has headers", exchange.getIn().hasHeaders());
             }
 
@@ -801,7 +803,6 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             @Override
             public void assertOnIndex(int i) {
                 Exchange exchange = getReceivedExchange(i);
-                assertTrue("No exchange received for counter: " + i, exchange != null);
 
                 Object expectedBody = expectedBodyValues.get(i);
                 Object actualBody = null;
@@ -885,7 +886,6 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             public void assertOnIndex(int index) {
                 if (index == 0) {
                     Exchange exchange = getReceivedExchange(index);
-                    assertTrue("No exchange received for counter: " + index, exchange != null);
 
                     Object actualBody = exchange.getIn().getBody();
                     Expression exp = createExpression(getCamelContext());
@@ -920,8 +920,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             public void run() {
                 List<Object> actualBodyValuesSet = new ArrayList<>(actualBodyValues);
                 for (int i = 0; i < expectedBodyValues.size(); i++) {
-                    Exchange exchange = getReceivedExchange(i);
-                    assertTrue("No exchange received for counter: " + i, exchange != null);
+                    getReceivedExchange(i);
 
                     Object expectedBody = expectedBodyValues.get(i);
                     assertTrue("Message with body " + expectedBody + " was expected but not found in " + actualBodyValuesSet,
@@ -1888,6 +1887,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         if (index <= receivedExchanges.size() - 1) {
             return receivedExchanges.get(index);
         } else {
+            fail("There is no exchange at index " + index);
+
             return null;
         }
     }
