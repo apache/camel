@@ -457,7 +457,7 @@ public class ValidateMojo extends AbstractExecMojo {
         int sedaDirectErrors = 0;
         String sedaDirectSummary = "";
         if (directOrSedaPairCheck) {
-            long sedaDirectEndpoints = countEndpointPairs(endpoints, "direct") + countEndpointPairs(endpoints, "seda");
+            long sedaDirectEndpoints = (long) countEndpointPairs(endpoints, "direct") + (long) countEndpointPairs(endpoints, "seda");
             sedaDirectErrors += validateEndpointPairs(endpoints, "direct") + validateEndpointPairs(endpoints, "seda");
             if (sedaDirectErrors == 0) {
                 sedaDirectSummary = String.format("Endpoint pair (seda/direct) validation success: (%s = pairs)", sedaDirectEndpoints);
