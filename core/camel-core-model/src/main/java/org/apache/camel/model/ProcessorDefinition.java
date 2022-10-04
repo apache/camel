@@ -65,6 +65,7 @@ import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceAware;
@@ -80,6 +81,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         implements Block {
     @XmlTransient
     private static final AtomicInteger COUNTER = new AtomicInteger();
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    protected String disabled;
     @XmlAttribute
     protected Boolean inheritErrorHandler;
     @XmlTransient
@@ -844,6 +848,22 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             route.setDescription(desc);
         }
 
+        return asType();
+    }
+
+    /**
+     * Whether to disable this EIP from the route.
+     */
+    public Type disabled(boolean disabled) {
+        setDisabled(disabled ? "true" : "false");
+        return asType();
+    }
+
+    /**
+     * Whether to disable this EIP from the route.
+     */
+    public Type disabled(String disabled) {
+        setDisabled(disabled);
         return asType();
     }
 
@@ -3939,6 +3959,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     public void setInheritErrorHandler(Boolean inheritErrorHandler) {
         this.inheritErrorHandler = inheritErrorHandler;
+    }
+
+    public String getDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(String disabled) {
+        this.disabled = disabled;
     }
 
     /**
