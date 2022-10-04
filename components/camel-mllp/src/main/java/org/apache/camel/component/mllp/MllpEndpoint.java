@@ -407,7 +407,7 @@ public class MllpEndpoint extends DefaultEndpoint {
                     try {
                         socket.setSoLinger(on, linger);
                     } catch (IOException ioEx) {
-                        if (log.isDebugEnabled()) {
+                        if (log != null && log.isDebugEnabled()) {
                             String methodString = String.format("setSoLinger(%b, %d)", on, linger);
                             String logMessage = String.format(ignoringExceptionStringFormat, ioEx.getClass().getSimpleName(),
                                     methodString, localSocketAddress, remoteSocketAddress);
@@ -423,7 +423,7 @@ public class MllpEndpoint extends DefaultEndpoint {
                     }
                     socket.close();
                 } catch (IOException ioEx) {
-                    if (log.isDebugEnabled()) {
+                    if (log != null && log.isDebugEnabled()) {
                         String warningMessage = String.format(ignoringExceptionStringFormat, ioEx.getClass().getSimpleName(),
                                 "close()", localSocketAddress, remoteSocketAddress);
                         log.debug(warningMessage, ioEx);
