@@ -47,11 +47,11 @@ public class MicrometerRouteEventNotifier extends AbstractMicrometerEventNotifie
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        Gauge.builder(namingStrategy.getRouteAddedName(), routesAdded, value -> Long.valueOf(value.get()).doubleValue())
+        Gauge.builder(namingStrategy.getRouteAddedName(), routesAdded, value -> (double) value.get())
                 .baseUnit("routes")
                 .tags(namingStrategy.getTags(getCamelContext()))
                 .register(getMeterRegistry());
-        Gauge.builder(namingStrategy.getRouteRunningName(), routesRunning, value -> Long.valueOf(value.get()).doubleValue())
+        Gauge.builder(namingStrategy.getRouteRunningName(), routesRunning, value -> (double) value.get())
                 .baseUnit("routes")
                 .tags(namingStrategy.getTags(getCamelContext()))
                 .register(getMeterRegistry());
