@@ -120,8 +120,7 @@ public class XmlSignatureTest extends CamelTestSupport {
     private KeyPair keyPair;
 
     static {
-        if (TestSupport.getJavaMajorVersion() >= 9
-                || TestSupport.isJava18_261_later() && !TestSupport.isJavaVendor("Azul")) {
+        if (!TestSupport.isJavaVendor("Azul")) {
             includeNewLine = false;
         }
         payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -925,7 +924,7 @@ public class XmlSignatureTest extends CamelTestSupport {
     /**
      * Checks that the processor sorts the xpath expressions in such a way that elements with deeper hierarchy level are
      * signed first.
-     * 
+     *
      */
     @Test
     public void testDetachedSignatureWrongXPathOrder() throws Exception {
