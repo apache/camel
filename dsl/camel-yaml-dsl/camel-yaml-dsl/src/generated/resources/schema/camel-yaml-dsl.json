@@ -447,6 +447,9 @@
           "description" : {
             "type" : "string"
           },
+          "disabled" : {
+            "type" : "boolean"
+          },
           "discard-on-aggregation-failure" : {
             "type" : "boolean"
           },
@@ -504,6 +507,9 @@
             "description" : {
               "type" : "string"
             },
+            "disabled" : {
+              "type" : "boolean"
+            },
             "id" : {
               "type" : "string"
             },
@@ -528,6 +534,9 @@
         "properties" : {
           "description" : {
             "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
           },
           "exception" : {
             "type" : "array",
@@ -557,6 +566,9 @@
         "properties" : {
           "description" : {
             "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
           },
           "id" : {
             "type" : "string"
@@ -593,6 +605,9 @@
           "description" : {
             "type" : "string"
           },
+          "disabled" : {
+            "type" : "boolean"
+          },
           "fault-tolerance-configuration" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.FaultToleranceConfigurationDefinition"
           },
@@ -627,6 +642,9 @@
           },
           "description" : {
             "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
           },
           "filter" : {
             "type" : "string"
@@ -679,6 +697,9 @@
             "description" : {
               "type" : "string"
             },
+            "disabled" : {
+              "type" : "boolean"
+            },
             "id" : {
               "type" : "string"
             },
@@ -717,6 +738,9 @@
           },
           "description" : {
             "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
           },
           "executor-service" : {
             "type" : "string"
@@ -758,6 +782,9 @@
           },
           "description" : {
             "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
           },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
@@ -802,6 +829,9 @@
           },
           "description" : {
             "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
           },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
@@ -973,6 +1003,9 @@
           "description" : {
             "type" : "string"
           },
+          "disabled" : {
+            "type" : "boolean"
+          },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
@@ -998,6 +1031,9 @@
         "properties" : {
           "description" : {
             "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
           },
           "id" : {
             "type" : "string"
@@ -1072,6 +1108,9 @@
           "description" : {
             "type" : "string"
           },
+          "disabled" : {
+            "type" : "boolean"
+          },
           "eager" : {
             "type" : "boolean"
           },
@@ -1111,6 +1150,9 @@
             "description" : {
               "type" : "string"
             },
+            "disabled" : {
+              "type" : "boolean"
+            },
             "id" : {
               "type" : "string"
             },
@@ -1135,6 +1177,9 @@
           "properties" : {
             "description" : {
               "type" : "string"
+            },
+            "disabled" : {
+              "type" : "boolean"
             },
             "id" : {
               "type" : "string"
@@ -1176,6 +1221,9 @@
           "description" : {
             "type" : "string"
           },
+          "disabled" : {
+            "type" : "boolean"
+          },
           "id" : {
             "type" : "string"
           },
@@ -1198,6 +1246,9 @@
           "properties" : {
             "description" : {
               "type" : "string"
+            },
+            "disabled" : {
+              "type" : "boolean"
             },
             "id" : {
               "type" : "string"
@@ -1228,6 +1279,9 @@
             },
             "description" : {
               "type" : "string"
+            },
+            "disabled" : {
+              "type" : "boolean"
             },
             "id" : {
               "type" : "string"
@@ -1285,6 +1339,9 @@
           "description" : {
             "type" : "string"
           },
+          "disabled" : {
+            "type" : "boolean"
+          },
           "failover" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition"
           },
@@ -1326,6 +1383,9 @@
             "description" : {
               "type" : "string"
             },
+            "disabled" : {
+              "type" : "boolean"
+            },
             "id" : {
               "type" : "string"
             },
@@ -1366,6 +1426,9 @@
           },
           "description" : {
             "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
           },
           "do-while" : {
             "type" : "boolean"
@@ -1422,6 +1485,9 @@
           },
           "description" : {
             "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
           },
           "fhir-json" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.FhirJsonDataFormat"
@@ -1533,6 +1599,9 @@
           "description" : {
             "type" : "string"
           },
+          "disabled" : {
+            "type" : "boolean"
+          },
           "executor-service" : {
             "type" : "string"
           },
@@ -1576,6 +1645,9 @@
         "properties" : {
           "description" : {
             "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
           },
           "executor-service" : {
             "type" : "string"
@@ -1621,6 +1693,9 @@
           },
           "description" : {
             "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
           },
           "exception" : {
             "type" : "array",
@@ -1675,6 +1750,9 @@
           "description" : {
             "type" : "string"
           },
+          "disabled" : {
+            "type" : "boolean"
+          },
           "fallback-via-network" : {
             "type" : "boolean"
           },
@@ -1718,6 +1796,9 @@
           "description" : {
             "type" : "string"
           },
+          "disabled" : {
+            "type" : "boolean"
+          },
           "id" : {
             "type" : "string"
           },
@@ -1737,6 +1818,9 @@
         "properties" : {
           "description" : {
             "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
           },
           "id" : {
             "type" : "string"
@@ -1802,6 +1886,9 @@
           "description" : {
             "type" : "string"
           },
+          "disabled" : {
+            "type" : "boolean"
+          },
           "id" : {
             "type" : "string"
           },
@@ -1819,6 +1906,9 @@
         "properties" : {
           "description" : {
             "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
           },
           "id" : {
             "type" : "string"
@@ -1839,6 +1929,9 @@
         "properties" : {
           "description" : {
             "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
           },
           "id" : {
             "type" : "string"
@@ -1882,6 +1975,9 @@
           "description" : {
             "type" : "string"
           },
+          "disabled" : {
+            "type" : "boolean"
+          },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
@@ -1904,6 +2000,9 @@
         "properties" : {
           "description" : {
             "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
           },
           "id" : {
             "type" : "string"
@@ -1964,6 +2063,9 @@
           },
           "description" : {
             "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
           },
           "executor-service" : {
             "type" : "string"
@@ -2092,6 +2194,9 @@
             "description" : {
               "type" : "string"
             },
+            "disabled" : {
+              "type" : "boolean"
+            },
             "id" : {
               "type" : "string"
             },
@@ -2113,6 +2218,9 @@
           "properties" : {
             "description" : {
               "type" : "string"
+            },
+            "disabled" : {
+              "type" : "boolean"
             },
             "exclude-pattern" : {
               "type" : "string"
@@ -2139,6 +2247,9 @@
             "description" : {
               "type" : "string"
             },
+            "disabled" : {
+              "type" : "boolean"
+            },
             "exclude-pattern" : {
               "type" : "string"
             },
@@ -2164,6 +2275,9 @@
             "description" : {
               "type" : "string"
             },
+            "disabled" : {
+              "type" : "boolean"
+            },
             "id" : {
               "type" : "string"
             },
@@ -2188,6 +2302,9 @@
           },
           "description" : {
             "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
           },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
@@ -2277,6 +2394,9 @@
           "description" : {
             "type" : "string"
           },
+          "disabled" : {
+            "type" : "boolean"
+          },
           "id" : {
             "type" : "string"
           },
@@ -2300,6 +2420,9 @@
           "properties" : {
             "description" : {
               "type" : "string"
+            },
+            "disabled" : {
+              "type" : "boolean"
             },
             "id" : {
               "type" : "string"
@@ -2538,6 +2661,9 @@
             "description" : {
               "type" : "string"
             },
+            "disabled" : {
+              "type" : "boolean"
+            },
             "expression" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
             },
@@ -2567,6 +2693,9 @@
           "properties" : {
             "description" : {
               "type" : "string"
+            },
+            "disabled" : {
+              "type" : "boolean"
             },
             "id" : {
               "type" : "string"
@@ -2599,6 +2728,9 @@
           },
           "description" : {
             "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
           },
           "id" : {
             "type" : "string"
@@ -2639,6 +2771,9 @@
             "description" : {
               "type" : "string"
             },
+            "disabled" : {
+              "type" : "boolean"
+            },
             "id" : {
               "type" : "string"
             },
@@ -2663,6 +2798,9 @@
           "description" : {
             "type" : "string"
           },
+          "disabled" : {
+            "type" : "boolean"
+          },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
@@ -2683,6 +2821,9 @@
           "description" : {
             "type" : "string"
           },
+          "disabled" : {
+            "type" : "boolean"
+          },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
@@ -2702,6 +2843,9 @@
           "properties" : {
             "description" : {
               "type" : "string"
+            },
+            "disabled" : {
+              "type" : "boolean"
             },
             "id" : {
               "type" : "string"
@@ -2726,6 +2870,9 @@
           "description" : {
             "type" : "string"
           },
+          "disabled" : {
+            "type" : "boolean"
+          },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
@@ -2749,6 +2896,9 @@
         "properties" : {
           "description" : {
             "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
           },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
@@ -2776,6 +2926,9 @@
           },
           "description" : {
             "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
           },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
@@ -2808,6 +2961,9 @@
           },
           "description" : {
             "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
           },
           "executor-service" : {
             "type" : "string"
@@ -2856,6 +3012,9 @@
           "description" : {
             "type" : "string"
           },
+          "disabled" : {
+            "type" : "boolean"
+          },
           "id" : {
             "type" : "string"
           },
@@ -2875,6 +3034,9 @@
         "properties" : {
           "description" : {
             "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
           },
           "id" : {
             "type" : "string"
@@ -2996,6 +3158,9 @@
           "description" : {
             "type" : "string"
           },
+          "disabled" : {
+            "type" : "boolean"
+          },
           "executor-service" : {
             "type" : "string"
           },
@@ -3048,6 +3213,9 @@
           "description" : {
             "type" : "string"
           },
+          "disabled" : {
+            "type" : "boolean"
+          },
           "executor-service" : {
             "type" : "string"
           },
@@ -3074,6 +3242,9 @@
           "description" : {
             "type" : "string"
           },
+          "disabled" : {
+            "type" : "boolean"
+          },
           "exception-type" : {
             "type" : "string"
           },
@@ -3099,6 +3270,9 @@
           "properties" : {
             "description" : {
               "type" : "string"
+            },
+            "disabled" : {
+              "type" : "boolean"
             },
             "id" : {
               "type" : "string"
@@ -3138,6 +3312,9 @@
             "description" : {
               "type" : "string"
             },
+            "disabled" : {
+              "type" : "boolean"
+            },
             "id" : {
               "type" : "string"
             },
@@ -3167,6 +3344,9 @@
           "description" : {
             "type" : "string"
           },
+          "disabled" : {
+            "type" : "boolean"
+          },
           "id" : {
             "type" : "string"
           },
@@ -3193,6 +3373,9 @@
           "description" : {
             "type" : "string"
           },
+          "disabled" : {
+            "type" : "boolean"
+          },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
@@ -3209,6 +3392,9 @@
         "properties" : {
           "description" : {
             "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
           },
           "do-catch" : {
             "type" : "array",
@@ -3271,6 +3457,9 @@
           },
           "description" : {
             "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
           },
           "fhir-json" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.FhirJsonDataFormat"
@@ -3376,6 +3565,9 @@
           "description" : {
             "type" : "string"
           },
+          "disabled" : {
+            "type" : "boolean"
+          },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
@@ -3398,6 +3590,9 @@
         "properties" : {
           "description" : {
             "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
           },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
@@ -3424,6 +3619,9 @@
         "properties" : {
           "description" : {
             "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
           },
           "expression" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
@@ -3459,6 +3657,9 @@
           },
           "description" : {
             "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
           },
           "dynamic-uri" : {
             "type" : "boolean"
@@ -3904,6 +4105,9 @@
             },
             "description" : {
               "type" : "string"
+            },
+            "disabled" : {
+              "type" : "boolean"
             },
             "dns-service-discovery" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.cloud.DnsServiceCallServiceDiscoveryConfiguration"
