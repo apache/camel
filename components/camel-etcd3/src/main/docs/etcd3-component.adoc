@@ -1,10 +1,11 @@
-= Etcd3 Component
-:doctitle: Etcd3
+= Etcd v3 Component
+:doctitle: Etcd v3
 :shortname: etcd3
 :artifactid: camel-etcd3
-:description: Aggregation repository using EtcD as datastore
-:since: 3.5
+:description: Get, set, delete or watch keys in etcd key-value store.
+:since: 3.19
 :supportlevel: Preview
+:component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: etcd3
 
