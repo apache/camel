@@ -25,7 +25,6 @@
 *** xref:java-xml-io-dsl.adoc[XML Io Dsl]
 *** xref:yaml-dsl.adoc[YAML DSL]
 ** xref:elytron.adoc[Elytron]
-** xref:etcd3.adoc[Etcd3]
 ** xref:headersmap.adoc[Headersmap]
 ** xref:jasypt.adoc[Jasypt]
 ** xref:jfr.adoc[JFR]

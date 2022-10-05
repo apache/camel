@@ -94,6 +94,7 @@
 ** xref:ehcache-component.adoc[Ehcache]
 ** xref:elasticsearch-component.adoc[Elasticsearch]
 ** xref:elasticsearch-rest-component.adoc[Elasticsearch Rest]
+** xref:etcd3-component.adoc[Etcd v3]
 ** xref:exec-component.adoc[Exec]
 ** xref:facebook-component.adoc[Facebook]
 ** xref:fhir-component.adoc[FHIR]
