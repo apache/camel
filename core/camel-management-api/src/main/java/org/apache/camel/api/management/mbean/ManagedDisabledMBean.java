@@ -14,31 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi;
+package org.apache.camel.api.management.mbean;
 
-import org.apache.camel.AsyncProcessor;
-import org.apache.camel.Exchange;
-import org.apache.camel.NamedNode;
-import org.apache.camel.Ordered;
-import org.apache.camel.Processor;
+import org.apache.camel.api.management.ManagedAttribute;
 
-/**
- * A specialized {@link InterceptStrategy} which is used for JMX management for EIPs.
- */
-public interface ManagementInterceptStrategy {
+public interface ManagedDisabledMBean extends ManagedProcessorMBean {
 
-    InstrumentationProcessor<?> createProcessor(NamedNode definition, Processor target);
+    @ManagedAttribute(description = "The node type that was disabled")
+    String getNodeType();
 
-    InstrumentationProcessor<?> createProcessor(String type);
-
-    interface InstrumentationProcessor<T> extends AsyncProcessor, Ordered {
-
-        T before(Exchange exchange);
-
-        void after(Exchange exchange, T data);
-
-        void setProcessor(Processor processor);
-
-        void setCounter(Object object);
-    }
 }
