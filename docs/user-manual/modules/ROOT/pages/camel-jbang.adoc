@@ -225,6 +225,8 @@ Camel will download these JARs in the following order:
 1. from local disk in `~/.m2/repository`
 2. from internet in Maven Central
 3. from internet in custom 3rd-party Maven repositories
+4. from all the repositories found in active profiles of `~/.m2/settings.xml` or a settings file specified using
+`--settings` option.
 
 If you do not want Camel JBang to download over the internet, you can turn this off with `--download`, as shown below:
 
@@ -305,6 +307,69 @@ camel run foo.java --profile=application
 ----
 
 Where the profile id is the name of the properties file.
+
+
+=== Configuration of Maven usage
+
+By default, existing `~/.m2/settings.xml` file is loaded, so it is possible to alter the behaviour of Maven resolution
+process. Maven settings file can provide information about Maven mirrors, credential configuration (potentially
+encrypted) or active profiles and additional repositories.
+
+Maven repositories can use authentication and the Maven-way to configure credentials is through `<server>` elements,
+like this:
+[source,xml]
+----
+<server>
+    <id>external-repository</id>
+    <username>camel</username>
+    <password>{SSVqy/PexxQHvubrWhdguYuG7HnTvHlaNr6g3dJn7nk=}</password>
+</server>
+----
+
+While the password may be specified using plain text, it's better to configure maven master password first and then
+use it to configure repository password:
+
+[source,bash]
+----
+$ mvn -emp
+[INFO] BuildTimeEventSpy is registered.
+Master password: camel
+{hqXUuec2RowH8dA8vdqkF6jn4NU9ybOsDjuTmWvYj4U=}
+----
+
+The above password should be added to `~/.m2/settings-security.xml` file like this:
+[source,xml]
+----
+<settingsSecurity>
+  <master>{hqXUuec2RowH8dA8vdqkF6jn4NU9ybOsDjuTmWvYj4U=}</master>
+</settingsSecurity>
+----
+
+Then a normal password can be configured like this:
+[source,bash]
+----
+$ mvn -ep
+[INFO] BuildTimeEventSpy is registered.
+Password: camel
+{SSVqy/PexxQHvubrWhdguYuG7HnTvHlaNr6g3dJn7nk=}
+----
+
+Finally such password can be used in `<server>/<password>` configuration.
+
+By default, Maven reads the master password from `~/.m2/settings-security.xml` file, but we can override it.
+Location of the settings.xml file itself can be specified as well:
+
+[source,bash]
+----
+camel run foo.java --settings=/path/to/settings.xml --settings-security=/path/to/settings-security.xml
+----
+
+If you want to run Camel application without assuming any location (even `~/.m2/settings.xml`), use this option:
+
+[source,bash]
+----
+camel run foo.java --settings=false
+----
 
 
 === Running routes hosted on GitHub
