@@ -104,6 +104,13 @@ class Run extends CamelCommand {
     @Option(names = {"--repos"}, description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories).")
     String repos;
 
+    @Option(names = {"--settings"}, description = "Optional location of maven setting.xml file to configure servers, repositories, mirrors and proxies." +
+            " If set to \"false\", not even the default ~/.m2/settings.xml will be used.")
+    String mavenSettings;
+
+    @Option(names = {"--settings-security"}, description = "Optional location of maven settings-security.xml file to decrypt settings.xml.")
+    String mavenSettingsSecurity;
+
     @Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
     boolean fresh;
 
@@ -311,6 +318,8 @@ class Run extends CamelCommand {
         main.setRepos(repos);
         main.setDownload(download);
         main.setFresh(fresh);
+        main.setMavenSettings(mavenSettings);
+        main.setMavenSettingsSecurity(mavenSettingsSecurity);
         main.setDownloadListener(new DownloadListener() {
             @Override
             public void onDownloadDependency(String groupId, String artifactId, String version) {

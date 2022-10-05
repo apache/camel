@@ -35,19 +35,23 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Supplier;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.support.SupplierRegistry;
 import org.apache.camel.util.function.Suppliers;
 
 /**
- * <p>{@link SimpleRegistry} extension that allows registration of bean <em>recipes</em> based on javax.inject
- * annotations.</p>
+ * <p>
+ * {@link SupplierRegistry} extension that allows registration of bean <em>recipes</em> based on javax.inject
+ * annotations.
+ * </p>
  *
- * <p>Such requirement was found when trying to configure maven-resolver without using the deprecated
- * service locator helpers (see <a href="https://issues.apache.org/jira/browse/MRESOLVER-157">MRESOLVER-157</a>).</p>
+ * <p>
+ * Such requirement was found when trying to configure maven-resolver without using the deprecated service locator
+ * helpers (see <a href="https://issues.apache.org/jira/browse/MRESOLVER-157">MRESOLVER-157</a>).
+ * </p>
  */
 public class DIRegistry extends SupplierRegistry {
 
@@ -64,11 +68,11 @@ public class DIRegistry extends SupplierRegistry {
     }
 
     /**
-     * Main "registration" method, where {@code beanClass} is expected to be JSR-330 annotated class with non-default
-     * constructor annotated with {@link Inject}. The class may be annotated with
-     * {@link Named} and/or {@link javax.inject.Singleton}.
+     * Main "registration" method, where {@code beanClass} is expected to be a pojo class with non-default constructor
+     * annotated with {@link Inject}. The class may be annotated with {@link Named}. (Maybe supporting
+     * {@link javax.inject.Singleton} soon).
      *
-     * @param key the lookup type
+     * @param key  the lookup type
      * @param type the actual type (to use when instantiating a bean)
      */
     public void bind(Class<?> key, Class<?> type) {
@@ -83,8 +87,9 @@ public class DIRegistry extends SupplierRegistry {
         }
 
         Constructor<?> defaultConstructor = null;
-        Set<Constructor<?>> constructors = new TreeSet<>(Comparator.<Constructor<?>>comparingInt(Constructor::getParameterCount)
-                .reversed());
+        Comparator<Constructor<?>> byParamCount = Comparator.<Constructor<?>> comparingInt(Constructor::getParameterCount)
+                .reversed();
+        Set<Constructor<?>> constructors = new TreeSet<>(byParamCount);
         for (Constructor<?> ctr : type.getDeclaredConstructors()) {
             if (ctr.getParameterCount() == 0) {
                 defaultConstructor = ctr;
@@ -115,8 +120,9 @@ public class DIRegistry extends SupplierRegistry {
                 @Override
                 public Object get() {
                     if (underConstruction.contains(this)) {
-                        throw new IllegalStateException("Cyclic dependency found when creating bean of "
-                                + type.getName() + " type");
+                        throw new IllegalStateException(
+                                "Cyclic dependency found when creating bean of "
+                                                        + type.getName() + " type");
                     }
                     underConstruction.add(this);
                     try {
@@ -166,21 +172,26 @@ public class DIRegistry extends SupplierRegistry {
                                 }
                             }
                             if (t == null) {
-                                throw new IllegalArgumentException("Can't handle argument of " + pt
-                                        + " type when creating bean of " + type.getName() + " type");
+                                throw new IllegalArgumentException(
+                                        "Can't handle argument of " + pt
+                                                                   + " type when creating bean of " + type.getName() + " type");
                             }
                             if (param == null) {
                                 List<Object> instances = byClass.get(t);
                                 if (instances == null) {
-                                    throw new IllegalArgumentException("Missing " + t.getName() + " instance when creating bean of "
-                                            + type + " type");
+                                    throw new IllegalArgumentException(
+                                            "Missing " + t.getName()
+                                                                       + " instance when creating bean of " + type.getName()
+                                                                       + " type");
                                 }
                                 if (instances.size() > 1) {
-                                    throw new IllegalArgumentException("Ambiguous parameter of " + t.getName() + " when creating bean of "
-                                            + type + " type");
+                                    throw new IllegalArgumentException(
+                                            "Ambiguous parameter of " + t.getName()
+                                                                       + " when creating bean of " + type.getName() + " type");
                                 }
                                 param = instances.get(0);
                             }
+                            // this is where recursion may happen.
                             parameters[pc++] = param instanceof Supplier ? ((Supplier<?>) param).get() : param;
                         }
                         try {
@@ -188,7 +199,10 @@ public class DIRegistry extends SupplierRegistry {
                             return ctr.newInstance(parameters);
                         } catch (InstantiationException | IllegalAccessException
                                  | InvocationTargetException | IllegalArgumentException e) {
-                            throw new IllegalArgumentException("Problem instantiating bean of " + type.getName() + " type", e);
+                            throw new IllegalArgumentException(
+                                    "Problem instantiating bean of "
+                                                               + type.getName() + " type",
+                                    e);
                         }
                     } finally {
                         underConstruction.remove(this);
@@ -201,6 +215,7 @@ public class DIRegistry extends SupplierRegistry {
 
     /**
      * Make an {@code alias} point to the same target bean as existing {@code key}.
+     * 
      * @param alias
      * @param key
      */

@@ -63,6 +63,8 @@ public class KameletMain extends MainCommandLineSupport {
     private boolean download = true;
     private String repos;
     private boolean fresh;
+    private String mavenSettings;
+    private String mavenSettingsSecurity;
     private boolean stub;
     private DownloadListener downloadListener;
     private DependencyDownloaderClassLoader classLoader;
@@ -165,6 +167,34 @@ public class KameletMain extends MainCommandLineSupport {
 
     public boolean isStub() {
         return stub;
+    }
+
+    /**
+     * Optionally set the location of Maven settings.xml if it's different than {@code ~/.m2/settings.xml}. If set to
+     * {@code false}, no default settings file will be used at all.
+     * 
+     * @param mavenSettings
+     */
+    public void setMavenSettings(String mavenSettings) {
+        this.mavenSettings = mavenSettings;
+    }
+
+    public String getMavenSettings() {
+        return mavenSettings;
+    }
+
+    /**
+     * Optionally set the location of Maven settings-security.xml if it's different than
+     * {@code ~/.m2/settings-security.xml}.
+     * 
+     * @param mavenSettingsSecurity
+     */
+    public void setMavenSettingsSecurity(String mavenSettingsSecurity) {
+        this.mavenSettingsSecurity = mavenSettingsSecurity;
+    }
+
+    public String getMavenSettingsSecurity() {
+        return mavenSettingsSecurity;
     }
 
     /**
@@ -275,6 +305,8 @@ public class KameletMain extends MainCommandLineSupport {
             downloader.setCamelContext(answer);
             downloader.setRepos(repos);
             downloader.setFresh(fresh);
+            downloader.setMavenSettings(mavenSettings);
+            downloader.setMavenSettingsSecurity(mavenSettingsSecurity);
             if (downloadListener != null) {
                 downloader.addDownloadListener(downloadListener);
             }
