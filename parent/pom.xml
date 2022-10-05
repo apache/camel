@@ -365,6 +365,7 @@
         <lightcouch-version>0.2.0</lightcouch-version>
         <mapstruct-version>1.5.2.Final</mapstruct-version>
         <!-- needed from tooling/archetypes -->
+        <maven-version>3.8.6</maven-version>
         <!-- use antrun 1.6 as 1.7 fails with finding tools.jar on java on some platforms -->
         <maven-antrun-plugin-version>1.6</maven-antrun-plugin-version>
         <maven-archetype-plugin-version>3.2.0</maven-archetype-plugin-version>
@@ -376,7 +377,6 @@
         <maven-jar-plugin-version>3.2.2</maven-jar-plugin-version>
         <maven-javadoc-plugin-version>3.2.0</maven-javadoc-plugin-version>
         <maven-jboss-as-maven-plugin-version>7.9.Final</maven-jboss-as-maven-plugin-version>
-        <maven-model-version>3.2.5</maven-model-version>
         <maven-plugin-plugin-version>3.6.4</maven-plugin-plugin-version>
         <maven-plugin-annotations-version>3.6.4</maven-plugin-annotations-version>
         <maven-plugin-testing-harness-version>3.3.0</maven-plugin-testing-harness-version>
@@ -385,6 +385,7 @@
         <maven-resources-plugin-version>3.2.0</maven-resources-plugin-version>
         <maven-reporting-api-version>2.2.1</maven-reporting-api-version>
         <maven-reporting-impl-version>2.0.5</maven-reporting-impl-version>
+        <maven-resolver-version>1.8.2</maven-resolver-version>
         <maven-shade-plugin-version>3.2.3</maven-shade-plugin-version>
         <maven-surefire-report-plugin-version>3.0.0-M4</maven-surefire-report-plugin-version>
         <maven-war-plugin-version>3.3.1</maven-war-plugin-version>
