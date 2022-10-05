@@ -48,6 +48,10 @@ jobs:
         cache: 'maven'
     - name: mvn checkstyle
       run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -l checkstyle.log -Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress  -Dcheckstyle.failOnViolation=true -e checkstyle:checkstyle
+    - name: Generate a thread dump in case of a lock issue
+      if: failure()
+      run: cat checkstyle.log | grep "Could not acquire write lock for '.*.resolverlock'" > /dev/null && jstack $(jcmd | grep MavenDaemon | awk '{print $1;}') >> checkstyle.log
+      shell: bash
     - name: archive logs
       uses: actions/upload-artifact@v3
       if: always()
@@ -77,6 +81,10 @@ jobs:
           cache: 'maven'
       - name: maven build
         run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -l build.log -Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -e -Pfastinstall -DskipTests install
+      - name: Generate a thread dump in case of a lock issue
+        if: failure()
+        run: cat build.log | grep "Could not acquire write lock for '.*.resolverlock'" > /dev/null && jstack $(jcmd | grep MavenDaemon | awk '{print $1;}') >> build.log
+        shell: bash
       - name: archive logs
         uses: actions/upload-artifact@v3
         if: always()
