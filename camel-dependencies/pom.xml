@@ -388,7 +388,6 @@
     <maven-jar-plugin-version>3.2.2</maven-jar-plugin-version>
     <maven-javadoc-plugin-version>3.2.0</maven-javadoc-plugin-version>
     <maven-jboss-as-maven-plugin-version>7.9.Final</maven-jboss-as-maven-plugin-version>
-    <maven-model-version>3.2.5</maven-model-version>
     <maven-owasp-plugin-version>7.2.1</maven-owasp-plugin-version>
     <maven-plugin-annotations-version>3.6.4</maven-plugin-annotations-version>
     <maven-plugin-plugin-version>3.6.4</maven-plugin-plugin-version>
@@ -396,9 +395,11 @@
     <maven-remote-resources-plugin-version>1.7.0</maven-remote-resources-plugin-version>
     <maven-reporting-api-version>2.2.1</maven-reporting-api-version>
     <maven-reporting-impl-version>2.0.5</maven-reporting-impl-version>
+    <maven-resolver-version>1.8.2</maven-resolver-version>
     <maven-resources-plugin-version>3.2.0</maven-resources-plugin-version>
     <maven-shade-plugin-version>3.2.3</maven-shade-plugin-version>
     <maven-surefire-report-plugin-version>3.0.0-M4</maven-surefire-report-plugin-version>
+    <maven-version>3.8.6</maven-version>
     <maven-war-plugin-version>3.3.1</maven-war-plugin-version>
     <metrics-version>4.2.9</metrics-version>
     <micrometer-version>1.9.3</micrometer-version>

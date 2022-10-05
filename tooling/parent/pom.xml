@@ -41,7 +41,6 @@
         <maven-plugin-annotations-version>3.6.4</maven-plugin-annotations-version>
         <maven-reporting-api-version>3.0</maven-reporting-api-version>
         <maven-reporting-impl-version>2.4</maven-reporting-impl-version>
-        <maven-resolver-version>1.0.3</maven-resolver-version>
         <plexus-build-api-version>0.0.7</plexus-build-api-version>
         <plexus-container-default-version>1.6</plexus-container-default-version>
         <plexus-utils-version>3.3.0</plexus-utils-version>
