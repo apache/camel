@@ -65,6 +65,7 @@ import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceAware;
@@ -80,6 +81,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         implements Block {
     @XmlTransient
     private static final AtomicInteger COUNTER = new AtomicInteger();
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    protected String disabled;
     @XmlAttribute
     protected Boolean inheritErrorHandler;
     @XmlTransient
@@ -842,6 +846,55 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             DescriptionDefinition desc = new DescriptionDefinition();
             desc.setText(description);
             route.setDescription(desc);
+        }
+
+        return asType();
+    }
+
+    /**
+     * Disables this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later
+     * at runtime.
+     */
+    public Type disabled() {
+        return disabled("true");
+    }
+
+    /**
+     * Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be
+     * enabled later at runtime.
+     */
+    public Type disabled(boolean disabled) {
+        return disabled(disabled ? "true" : "false");
+    }
+
+    /**
+     * Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be
+     * enabled later at runtime.
+     */
+    public Type disabled(String disabled) {
+        if (this instanceof OutputNode && getOutputs().isEmpty()) {
+            // set id on this
+            setDisabled(disabled);
+        } else {
+
+            // set it on last output as this is what the user means to do
+            // for Block(s) with non empty getOutputs() the id probably refers
+            // to the last definition in the current Block
+            List<ProcessorDefinition<?>> outputs = getOutputs();
+            if (!blocks.isEmpty()) {
+                if (blocks.getLast() instanceof ProcessorDefinition) {
+                    ProcessorDefinition<?> block = (ProcessorDefinition<?>) blocks.getLast();
+                    if (!block.getOutputs().isEmpty()) {
+                        outputs = block.getOutputs();
+                    }
+                }
+            }
+            if (!getOutputs().isEmpty()) {
+                outputs.get(outputs.size() - 1).setDisabled(disabled);
+            } else {
+                // the output could be empty
+                setDisabled(disabled);
+            }
         }
 
         return asType();
@@ -3939,6 +3992,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     public void setInheritErrorHandler(Boolean inheritErrorHandler) {
         this.inheritErrorHandler = inheritErrorHandler;
+    }
+
+    public String getDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(String disabled) {
+        this.disabled = disabled;
     }
 
     /**
