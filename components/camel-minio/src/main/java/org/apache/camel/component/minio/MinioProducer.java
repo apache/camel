@@ -285,7 +285,7 @@ public class MinioProducer extends DefaultProducer {
         if (getConfiguration().isPojoRequest()) {
             RemoveObjectsArgs.Builder payload = exchange.getIn().getMandatoryBody(RemoveObjectsArgs.Builder.class);
             if (isNotEmpty(payload)) {
-                minioClient.removeObjects(payload.build());
+                minioClient.removeObjects(payload.build()).iterator().hasNext();
                 Message message = getMessageForResponse(exchange);
                 message.setBody(true);
             }
