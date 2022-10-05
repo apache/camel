@@ -322,17 +322,6 @@
         </profile>
 
         <profile>
-            <id>xalan</id>
-            <dependencies>
-                <!-- enable the Xalan processor -->
-                <dependency>
-                    <groupId>xalan</groupId>
-                    <artifactId>xalan</artifactId>
-                    <version>${xalan-version}</version>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
             <id>xerces</id>
             <dependencies>
                 <!-- enable the xerces processor -->

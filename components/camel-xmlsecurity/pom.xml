@@ -57,10 +57,6 @@
             <artifactId>xmlsec</artifactId>
             <version>${xmlsec-version}</version>
         </dependency>
-        <dependency>
-            <groupId>xalan</groupId>
-            <artifactId>xalan</artifactId>
-        </dependency>
 
         <!-- test dependencies -->
         <dependency>

@@ -306,33 +306,6 @@ public class XPathTest extends ContextTestSupport {
         assertTrue(result.toString().contains("James"));
     }
 
-    @Test
-    public void testUsingJavaExtensions() throws Exception {
-        Object instance = null;
-
-        // we may not have Xalan on the classpath
-        try {
-            instance = Class.forName("org.apache.xalan.extensions.XPathFunctionResolverImpl").getDeclaredConstructor()
-                    .newInstance();
-        } catch (Throwable e) {
-
-            log.debug("Could not find Xalan on the classpath so ignoring this test case: " + e);
-        }
-        if (instance instanceof XPathFunctionResolver) {
-            XPathFunctionResolver functionResolver = (XPathFunctionResolver) instance;
-
-            XPathBuilder builder = xpath("java:" + getClass().getName() + ".func(string(/header/value))")
-                    .namespace("java", "http://xml.apache.org/xalan/java")
-                    .functionResolver(functionResolver).stringResult();
-
-            String xml = "<header><value>12</value></header>";
-            // it can throw the exception if we put the xalan into the test
-            // class path
-            assertExpression(builder, xml, "modified12");
-        }
-
-    }
-
     public static String func(String message) {
         return "modified" + message;
     }
