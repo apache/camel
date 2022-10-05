@@ -79,7 +79,7 @@
                         </goals>
                         <configuration>
                             <nodeVersion>v18.10.0</nodeVersion>
-                            <yarnVersion>v3.2.3</yarnVersion>
+                            <yarnVersion>v1.22.19</yarnVersion>
                         </configuration>
                     </execution>
                     <execution>
