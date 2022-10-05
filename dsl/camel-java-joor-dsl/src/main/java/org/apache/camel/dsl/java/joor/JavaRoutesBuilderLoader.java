@@ -212,10 +212,10 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
             // create work-dir if needed
             new File(outputDirectory).mkdirs();
             try {
-                FileOutputStream fos = new FileOutputStream(target);
-                LOG.debug("Writing compiled class: {} as bytecode to file: {}", name, target);
-                fos.write(byteCode);
-                IOHelper.close(fos);
+                try (FileOutputStream fos = new FileOutputStream(target)) {
+                    LOG.debug("Writing compiled class: {} as bytecode to file: {}", name, target);
+                    fos.write(byteCode);
+                }
             } catch (Exception e) {
                 LOG.warn("Error saving compiled class: {} as bytecode to file: {} due to {}", name, target, e.getMessage());
             }
