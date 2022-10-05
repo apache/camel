@@ -96,6 +96,12 @@ public class MailBinding {
 
     public MailBinding(HeaderFilterStrategy headerFilterStrategy, ContentTypeResolver contentTypeResolver,
                        boolean decodeFilename, boolean mapMailMessage,
+                       boolean failOnDuplicateAttachment) {
+        this(headerFilterStrategy, contentTypeResolver, decodeFilename, mapMailMessage, failOnDuplicateAttachment, "never", "never");
+    }
+
+    public MailBinding(HeaderFilterStrategy headerFilterStrategy, ContentTypeResolver contentTypeResolver,
+                       boolean decodeFilename, boolean mapMailMessage,
                        boolean failOnDuplicateAttachment, String generateMissingAttachmentNames,
                        String handleDuplicateAttachmentNames) {
         this.headerFilterStrategy = headerFilterStrategy;
