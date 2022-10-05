@@ -88,21 +88,16 @@ public class AS2ServerConnection {
             LOG.info("Listening on port {}", this.serversocket.getLocalPort());
             while (!Thread.interrupted()) {
                 try {
-                    final int bufsize = 8 * 1024;
+
                     // Set up incoming HTTP connection
-                    final Socket insocket = this.serversocket.accept();
-                    final AS2BHttpServerConnection inconn = new AS2BHttpServerConnection(bufsize);
-                    LOG.info("Incoming connection from {}", insocket.getInetAddress());
-                    inconn.bind(insocket);
+                    final Socket inSocket = this.serversocket.accept();
 
                     // Start worker thread
-                    final Thread t = new RequestHandlerThread(this.httpService, inconn);
+                    final Thread t = new RequestHandlerThread(this.httpService, inSocket);
                     t.setDaemon(true);
                     t.start();
-                } catch (final InterruptedIOException ex) {
-                    break;
-                } catch (final SocketException e) {
-                    // Server socket closed
+                } catch (final InterruptedIOException | SocketException ex) {
+                    // If interrupted or server socket closed
                     break;
                 } catch (final IOException e) {
                     LOG.error("I/O error initialising connection thread: {}", e.getMessage());
@@ -125,15 +120,25 @@ public class AS2ServerConnection {
         private HttpService httpService;
         private HttpServerConnection serverConnection;
 
-        public RequestHandlerThread(HttpService httpService, HttpServerConnection serverConnection) {
+        public RequestHandlerThread(HttpService httpService, Socket inSocket) throws IOException {
+            final int bufSize = 8 * 1024;
+            final AS2BHttpServerConnection inConn = new AS2BHttpServerConnection(bufSize);
+            LOG.info("Incoming connection from {}", inSocket.getInetAddress());
+            inConn.bind(inSocket);
+
+            setThreadName(inConn);
+
+            this.httpService = httpService;
+            this.serverConnection = inConn;
+        }
+
+        private void setThreadName(HttpServerConnection serverConnection) {
             if (serverConnection instanceof HttpInetConnection) {
                 HttpInetConnection inetConnection = (HttpInetConnection) serverConnection;
                 setName(REQUEST_HANDLER_THREAD_NAME_PREFIX + inetConnection.getLocalPort());
             } else {
                 setName(REQUEST_HANDLER_THREAD_NAME_PREFIX + getId());
             }
-            this.httpService = httpService;
-            this.serverConnection = serverConnection;
         }
 
         @Override
@@ -169,6 +174,7 @@ public class AS2ServerConnection {
                 LOG.error("Unrecoverable HTTP protocol violation: {}", ex.getMessage(), ex);
             } finally {
                 try {
+                    this.serverConnection.close();
                     this.serverConnection.shutdown();
                 } catch (final IOException ignore) {
                 }
