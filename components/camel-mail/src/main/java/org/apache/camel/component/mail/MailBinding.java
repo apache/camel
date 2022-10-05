@@ -62,7 +62,9 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.mail.MailConstants.MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER;
 import static org.apache.camel.component.mail.MailConstants.MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_UUID;
+import static org.apache.camel.component.mail.MailConstants.MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER;
 
 /**
  * A Strategy used to convert between a Camel {@link Exchange} and {@link Message} to and from a Mail
@@ -86,12 +88,21 @@ public class MailBinding {
     @Deprecated
     public MailBinding(HeaderFilterStrategy headerFilterStrategy, ContentTypeResolver contentTypeResolver,
                        boolean decodeFilename) {
-        this(headerFilterStrategy, contentTypeResolver, decodeFilename, true, false, "never", "never");
+        this(headerFilterStrategy, contentTypeResolver, decodeFilename, true, false,
+             MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER, MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER);
     }
 
     public MailBinding(HeaderFilterStrategy headerFilterStrategy, ContentTypeResolver contentTypeResolver,
                        boolean decodeFilename, boolean mapMailMessage) {
-        this(headerFilterStrategy, contentTypeResolver, decodeFilename, mapMailMessage, false, "never", "never");
+        this(headerFilterStrategy, contentTypeResolver, decodeFilename, mapMailMessage, false,
+             MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER, MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER);
+    }
+
+    public MailBinding(HeaderFilterStrategy headerFilterStrategy, ContentTypeResolver contentTypeResolver,
+                       boolean decodeFilename, boolean mapMailMessage,
+                       boolean failOnDuplicateAttachment) {
+        this(headerFilterStrategy, contentTypeResolver, decodeFilename, mapMailMessage, failOnDuplicateAttachment,
+             MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER, MAIL_HANDLE_DUPLICATE_ATTACHMENT_NAMES_NEVER);
     }
 
     public MailBinding(HeaderFilterStrategy headerFilterStrategy, ContentTypeResolver contentTypeResolver,
