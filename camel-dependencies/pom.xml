@@ -155,7 +155,7 @@
     <compress-lzf-version>1.1</compress-lzf-version>
     <consul-client-version>1.5.3</consul-client-version>
     <corda-version>4.8</corda-version>
-    <couchbase-client-version>3.3.3</couchbase-client-version>
+    <couchbase-client-version>3.3.4</couchbase-client-version>
     <curator-version>4.3.0</curator-version>
     <cxf-codegen-plugin-version>3.5.3</cxf-codegen-plugin-version>
     <cxf-version>3.5.3</cxf-version>
@@ -256,8 +256,8 @@
     <hazelcast-version>5.1.2</hazelcast-version>
     <hbase-version>2.5.0</hbase-version>
     <hdrhistrogram-version>2.1.11</hdrhistrogram-version>
-    <hibernate-validator-version>6.2.4.Final</hibernate-validator-version>
-    <hibernate-version>5.6.10.Final</hibernate-version>
+    <hibernate-validator-version>6.2.5.Final</hibernate-validator-version>
+    <hibernate-version>5.6.11.Final</hibernate-version>
     <hk2-version>2.6.1</hk2-version>
     <hsqldb-version>2.6.1</hsqldb-version>
     <httpasyncclient-version>4.1.5</httpasyncclient-version>
@@ -308,7 +308,7 @@
     <jaxb2-maven-plugin-version>2.5.0</jaxb2-maven-plugin-version>
     <jaxws-api-version>2.3.0</jaxws-api-version>
     <jboss-el-api_3.0_spec-version>2.0.0.Final</jboss-el-api_3.0_spec-version>
-    <jboss-logging-version>3.4.0.Final</jboss-logging-version>
+    <jboss-logging-version>3.4.3.Final</jboss-logging-version>
     <jboss-marshalling-version>1.4.10.Final</jboss-marshalling-version>
     <jboss-transaction-spi.version>7.5.1.Final</jboss-transaction-spi.version>
     <jboss-xnio-version>3.3.8.Final</jboss-xnio-version>
@@ -388,7 +388,7 @@
     <maven-assembly-plugin-version>3.3.0</maven-assembly-plugin-version>
     <maven-checkstyle-plugin-version>3.1.2</maven-checkstyle-plugin-version>
     <maven-checkstyle-version>8.45.1</maven-checkstyle-version>
-    <maven-jar-plugin-version>3.2.0</maven-jar-plugin-version>
+    <maven-jar-plugin-version>3.2.2</maven-jar-plugin-version>
     <maven-javadoc-plugin-version>3.2.0</maven-javadoc-plugin-version>
     <maven-jboss-as-maven-plugin-version>7.9.Final</maven-jboss-as-maven-plugin-version>
     <maven-model-version>3.2.5</maven-model-version>
@@ -503,7 +503,7 @@
     <spark-version>3.2.2</spark-version>
     <splunk-version>1.6.5.0_1</splunk-version>
     <spock-version>2.1-groovy-3.0</spock-version>
-    <spring-batch-version>4.3.6</spring-batch-version>
+    <spring-batch-version>4.3.7</spring-batch-version>
     <spring-data-redis-version>2.6.2</spring-data-redis-version>
     <spring-integration-version>5.5.15</spring-integration-version>
     <spring-ldap-version>2.4.1</spring-ldap-version>
