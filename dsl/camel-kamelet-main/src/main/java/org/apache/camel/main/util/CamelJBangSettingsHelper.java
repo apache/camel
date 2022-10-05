@@ -40,16 +40,17 @@ public final class CamelJBangSettingsHelper {
             try {
                 String line = key + "=" + value;
 
-                FileInputStream fis = new FileInputStream(FILE);
-                String context = IOHelper.loadText(new FileInputStream(FILE));
-                IOHelper.close(fis);
+                String context;
+                try (FileInputStream fis = new FileInputStream(FILE)) {
+                    context = IOHelper.loadText(fis);
+                }
 
                 if (!context.contains(line)) {
                     // append line as it was not already present
-                    FileOutputStream fos = new FileOutputStream(FILE, true);
-                    fos.write(line.getBytes(StandardCharsets.UTF_8));
-                    fos.write(System.lineSeparator().getBytes(StandardCharsets.UTF_8));
-                    IOHelper.close(fos);
+                    try (FileOutputStream fos = new FileOutputStream(FILE, true)) {
+                        fos.write(line.getBytes(StandardCharsets.UTF_8));
+                        fos.write(System.lineSeparator().getBytes(StandardCharsets.UTF_8));
+                    }
                 }
             } catch (Exception e) {
                 // ignore
