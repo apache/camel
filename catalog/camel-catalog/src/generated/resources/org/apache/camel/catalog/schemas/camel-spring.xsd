@@ -3901,6 +3901,17 @@ create the SecureRandom represented by this object's configuration.
                 
         <xs:sequence/>
                 
+        <xs:attribute name="disabled" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+              <![CDATA[
+Whether to disable this EIP from the route during build time. Once an EIP has
+been disabled then it cannot be enabled later at runtime. Default value: false
+            ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
         <xs:attribute name="inheritErrorHandler" type="xs:boolean"/>
               
       </xs:extension>
