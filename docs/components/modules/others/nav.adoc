@@ -63,4 +63,5 @@
 ** xref:threadpoolfactory-vertx.adoc[ThreadPoolFactory Vert.x]
 ** xref:tracing.adoc[Tracing]
 ** xref:undertow-spring-security.adoc[Undertow Spring Security]
+** xref:wal-docs.adoc[Write Ahead Log Strategy]
 ** xref:zipkin.adoc[Zipkin]

@@ -346,7 +346,8 @@
         <module>camel-rest-swagger</module>
         <!-- build jooq last as it cause component builds to be slower afterwards -->
         <module>camel-jooq</module>
-  </modules>
+        <module>camel-wal</module>
+    </modules>
 
     <properties>
         <camel.osgi.manifest>${project.build.outputDirectory}/META-INF/MANIFEST.MF</camel.osgi.manifest>

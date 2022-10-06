@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "wal",
+    "title": "Camel WAL component for the Resume API",
+    "description": "Camel WAL component for the Resume API",
+    "deprecated": false,
+    "firstVersion": "3.20.0",
+    "label": "java",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-wal",
+    "version": "3.20.0-SNAPSHOT"
+  }
+}
