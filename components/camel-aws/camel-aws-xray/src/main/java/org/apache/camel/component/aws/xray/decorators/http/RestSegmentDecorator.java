@@ -71,7 +71,7 @@ public class RestSegmentDecorator extends AbstractHttpSegmentDecorator {
                 try {
                     path = URLDecoder.decode(path, "UTF-8");
                 } catch (UnsupportedEncodingException e) {
-                    LOG.debug("Failed to decode URL path '" + path + "', ignoring exception", e);
+                    LOG.warn("Failed to decode URL path '{}', ignoring exception", path, e);
                 }
             }
         }
@@ -79,6 +79,11 @@ public class RestSegmentDecorator extends AbstractHttpSegmentDecorator {
     }
 
     protected static List<String> getParameters(String path) {
+        if (path == null) {
+            LOG.warn("The provided path is null and has no parameters to be evaluated");
+            return Collections.emptyList();
+        }
+
         List<String> parameters = null;
 
         int startIndex = path.indexOf('{');

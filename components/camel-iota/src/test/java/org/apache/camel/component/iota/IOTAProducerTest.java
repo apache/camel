@@ -62,7 +62,7 @@ public class IOTAProducerTest extends CamelTestSupport {
             }
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -84,7 +84,7 @@ public class IOTAProducerTest extends CamelTestSupport {
             }
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -106,7 +106,7 @@ public class IOTAProducerTest extends CamelTestSupport {
             }
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

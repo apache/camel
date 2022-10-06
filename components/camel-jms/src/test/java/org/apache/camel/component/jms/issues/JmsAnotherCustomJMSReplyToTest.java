@@ -55,7 +55,7 @@ public class JmsAnotherCustomJMSReplyToTest extends AbstractJMSTest {
         // send reply
         template.sendBody("activemq:" + replyTo, "My name is Arnio");
 
-        Awaitility.await().atMost(2, TimeUnit.SECONDS).untilAsserted(this::assertMockEndpointsSatisfied);
+        Awaitility.await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
     }
 
     @Override

@@ -69,7 +69,7 @@ public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupp
     }
 
     private void doSendMessages(int files) throws Exception {
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedMessageCount(files);
         mockEndpoint.expectsNoDuplicates(body());
@@ -82,7 +82,7 @@ public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupp
             });
         }
 
-        assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
     }
 
     @Override

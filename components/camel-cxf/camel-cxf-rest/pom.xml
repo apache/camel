@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-cxf-parent</artifactId>
-        <version>3.19.0-SNAPSHOT</version>
+        <version>3.20.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-cxf-rest</artifactId>
@@ -44,7 +44,6 @@
             !org.apache.camel.component.cxf.interceptors,
             !org.apache.camel.component.cxf.jaxrs,
             !org.apache.camel.component.cxf.spring,
-            !org.apache.camel.component.cxf.util,
             !org.apache.camel.blueprint,
             javax.activation.*;version="${javax-activation-version-range}",
             javax.jws*;version="[0.0,3)";resolution:=optional,
@@ -67,6 +66,7 @@
             org.apache.camel.blueprint;resolution:=optional,
             *
         </camel.osgi.import>
+        <camel.osgi.private.pkg />
         <camel.osgi.failok>true</camel.osgi.failok>
 
     </properties>
@@ -218,7 +218,7 @@
 
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
+            <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
@@ -51,7 +52,7 @@ public class JsltVariablesTest extends CamelTestSupport {
                         context, "org/apache/camel/component/jslt/withVariables/input.json"),
                 headers);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -76,7 +77,7 @@ public class JsltVariablesTest extends CamelTestSupport {
             exchange.setProperty("instance", "559e934f-b32b-47ab-8327-bd50e2bdc029");
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

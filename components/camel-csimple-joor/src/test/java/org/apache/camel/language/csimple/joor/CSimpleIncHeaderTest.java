@@ -32,7 +32,7 @@ public class CSimpleIncHeaderTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("direct:start", "Hello World", "myCounter", 123);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

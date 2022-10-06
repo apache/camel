@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.io.FileUtils;
 import org.bouncycastle.asn1.ASN1Primitive;
@@ -55,7 +56,7 @@ public class ASN1DataFormatWithStreamIteratorByteArrayTest extends CamelTestSupp
             assertTrue(ASN1Primitive.fromByteArray(arr) instanceof ASN1Primitive);
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test

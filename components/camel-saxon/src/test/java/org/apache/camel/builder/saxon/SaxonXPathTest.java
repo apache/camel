@@ -17,6 +17,7 @@
 package org.apache.camel.builder.saxon;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +36,7 @@ public class SaxonXPathTest extends CamelTestSupport {
         template.sendBody("direct:start", "<person><city>Berlin</city></person>");
         template.sendBody("direct:start", "<person><city>Paris</city></person>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

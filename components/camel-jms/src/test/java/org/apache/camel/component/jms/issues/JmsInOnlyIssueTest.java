@@ -38,7 +38,7 @@ public class JmsInOnlyIssueTest extends AbstractJMSTest {
 
         template.sendBody("activemq:queue:JmsInOnlyIssueTest.in", "Hello World");
 
-        assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
     }
 
     @Test
@@ -52,7 +52,7 @@ public class JmsInOnlyIssueTest extends AbstractJMSTest {
 
         assertDoesNotThrow(() -> future.get(5, TimeUnit.SECONDS));
 
-        assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
     }
 
     @Test
@@ -63,7 +63,7 @@ public class JmsInOnlyIssueTest extends AbstractJMSTest {
         Exchange out = template.send("activemq:queue:JmsInOnlyIssueTest.in", ExchangePattern.InOnly,
                 exchange -> exchange.getIn().setBody("Hello World"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         /*
           The getMessage returns the In message if the Out one is not present. Therefore, we check if
           the body of the returned message equals to the In one and infer that the out one was null.
@@ -85,7 +85,7 @@ public class JmsInOnlyIssueTest extends AbstractJMSTest {
 
         assertDoesNotThrow(() -> future.get(5, TimeUnit.SECONDS));
 
-        assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
     }
 
     @Override

@@ -20,6 +20,7 @@ import java.io.File;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.activemq.services.ActiveMQService;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -75,7 +76,7 @@ public class JmsStreamMessageTypeNoStreamCachingTest extends AbstractJMSTest {
 
         FileUtil.copyFile(baseFile, sourceFile);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Object body = getMockEndpoint("mock:resultJmsStreamMessageTypeNoStreamCachingTest").getReceivedExchanges().get(0)
                 .getIn().getBody();

@@ -41,7 +41,7 @@ public class CsvUnmarshalStreamSpringTest extends CamelSpringTestSupport {
 
         template.sendBody("direct:start", CSV_SAMPLE);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List body1 = line.getExchanges().get(0).getIn().getBody(List.class);
         List body2 = line.getExchanges().get(1).getIn().getBody(List.class);

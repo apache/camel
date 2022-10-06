@@ -51,7 +51,7 @@ public class ZipAggregationStrategyTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived("foo", "bar");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         File[] files = new File(TEST_DIR).listFiles();
         assertNotNull(files);

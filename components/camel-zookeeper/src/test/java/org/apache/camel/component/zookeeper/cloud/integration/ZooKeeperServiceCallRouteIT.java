@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.zookeeper.cloud.ZooKeeperServiceDiscovery;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.infra.zookeeper.services.ZooKeeperService;
@@ -117,7 +118,7 @@ public class ZooKeeperServiceCallRouteIT extends CamelTestSupport {
 
         instances.forEach(r -> template.sendBody("direct:start", "ping"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     // *************************************************************************

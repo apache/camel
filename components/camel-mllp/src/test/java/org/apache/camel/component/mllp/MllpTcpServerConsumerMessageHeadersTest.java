@@ -92,7 +92,7 @@ public class MllpTcpServerConsumerMessageHeadersTest extends CamelTestSupport {
 
         mllpClient.sendMessageAndWaitForAcknowledgement(testMessage, 10000);
 
-        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
 
         Message message = result.getExchanges().get(0).getIn();
 
@@ -114,7 +114,7 @@ public class MllpTcpServerConsumerMessageHeadersTest extends CamelTestSupport {
 
         mllpClient.sendMessageAndWaitForAcknowledgement(testMessage, 10000);
 
-        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
 
         Message message = result.getExchanges().get(0).getIn();
 

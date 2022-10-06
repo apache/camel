@@ -52,7 +52,7 @@ public class MailShutdownCompleteCurrentTaskOnlyTest extends CamelTestSupport {
         bar.expectedMinimumMessageCount(1);
         bar.setResultWaitTime(3000);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // shutdown during processing
         context.stop();

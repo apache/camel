@@ -73,7 +73,7 @@ public class EventbridgeDescribeRuleIT extends Aws2EventbridgeBase {
                 exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertNotNull(result.getExchanges().get(0).getMessage().getBody(DescribeRuleResponse.class).eventPattern());
         assertEquals("firstrule", result.getExchanges().get(0).getMessage().getBody(DescribeRuleResponse.class).name());
     }

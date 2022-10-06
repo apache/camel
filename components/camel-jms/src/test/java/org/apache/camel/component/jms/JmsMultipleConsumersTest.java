@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
@@ -43,7 +44,7 @@ public class JmsMultipleConsumersTest extends AbstractJMSTest {
 
         template.sendBody("jms:topic:JmsMultipleConsumersTest", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -66,7 +67,7 @@ public class JmsMultipleConsumersTest extends AbstractJMSTest {
         template.sendBody("jms:queue:JmsMultipleConsumersTest", "Hello World");
         template.sendBody("jms:queue:JmsMultipleConsumersTest", "Bye World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

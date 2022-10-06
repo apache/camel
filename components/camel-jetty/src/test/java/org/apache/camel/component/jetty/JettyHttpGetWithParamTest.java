@@ -43,7 +43,7 @@ public class JettyHttpGetWithParamTest extends BaseJettyTest {
 
         template.requestBody(serverUri + "?one=uno&two=dos", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -55,7 +55,7 @@ public class JettyHttpGetWithParamTest extends BaseJettyTest {
 
         template.requestBodyAndHeader(serverUri, "Hello World", Exchange.HTTP_QUERY, "one=uno&two=dos");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -67,7 +67,7 @@ public class JettyHttpGetWithParamTest extends BaseJettyTest {
 
         template.requestBodyAndHeader("direct:start", "Hello World", "parameters", "one=uno&two=dos");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

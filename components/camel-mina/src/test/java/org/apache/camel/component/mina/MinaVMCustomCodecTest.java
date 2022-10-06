@@ -74,7 +74,7 @@ public class MinaVMCustomCodecTest extends BaseMinaTest {
         endpoint.expectedBodiesReceived(body);
 
         template.sendBody(myUri, body);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test

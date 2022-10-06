@@ -55,7 +55,7 @@ public class JaxbDataFormatMultipleNamespacesTest extends CamelTestSupport {
         order.setAddress(address);
         template.sendBody("direct:marshall", order);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         String payload = mockMarshall.getExchanges().get(0).getIn().getBody(String.class);
         LOG.info(payload);
@@ -86,7 +86,7 @@ public class JaxbDataFormatMultipleNamespacesTest extends CamelTestSupport {
                   + "<ns2:streetNumber>3a</ns2:streetNumber><ns2:zip>65843</ns2:zip><ns2:city>Sulzbach</ns2:city></ns2:address></ns1:order>";
         template.sendBody("direct:unmarshall", payload);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Order order = (Order) mockUnmarshall.getExchanges().get(0).getIn().getBody();
         Address address = order.getAddress();

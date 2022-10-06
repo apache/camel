@@ -54,14 +54,14 @@ public class BigDecimalFormatFactory extends AbstractFormatFactory {
         public String format(BigDecimal object) throws Exception {
             return !super.hasImpliedDecimalPosition()
                     ? super.getFormat().format(object)
-                    : super.getFormat().format(object.multiply(new BigDecimal(super.getMultiplier())));
+                    : super.getFormat().format(object.multiply(BigDecimal.valueOf(super.getMultiplier())));
         }
 
         @Override
         public BigDecimal parse(String string) throws Exception {
             BigDecimal result = new BigDecimal(string.trim());
             if (super.hasImpliedDecimalPosition()) {
-                result = result.divide(new BigDecimal(super.getMultiplier()), super.getPrecision(), RoundingMode.HALF_EVEN);
+                result = result.divide(BigDecimal.valueOf(super.getMultiplier()), super.getPrecision(), RoundingMode.HALF_EVEN);
             } else {
                 if (super.getPrecision() != -1) {
                     result = result.setScale(super.getPrecision());

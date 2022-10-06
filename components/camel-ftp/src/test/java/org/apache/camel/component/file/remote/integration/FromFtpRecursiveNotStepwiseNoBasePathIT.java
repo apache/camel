@@ -39,7 +39,7 @@ public class FromFtpRecursiveNotStepwiseNoBasePathIT extends FtpServerTestSuppor
         // CAMEL-13400
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Bye World", "Hello World", "Goodday World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -17,6 +17,7 @@
 package org.apache.camel.component.netty;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class NettyTextlineInOnlyNullDelimiterTest extends BaseNettyTest {
@@ -27,7 +28,7 @@ public class NettyTextlineInOnlyNullDelimiterTest extends BaseNettyTest {
 
         template.sendBody("netty:tcp://localhost:{{port}}?textline=true&delimiter=NULL&sync=false", "Hello World\u0000");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -40,7 +41,7 @@ public class TwoConsumerOnSameTopicTest extends AbstractPersistentJMSTest {
             template.sendBody("activemq:topic:TwoConsumerOnSameTopicTest", "Hello Camel 3");
             template.sendBody("activemq:topic:TwoConsumerOnSameTopicTest", "Hello Camel 4");
 
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
         }
     }
 
@@ -57,28 +58,28 @@ public class TwoConsumerOnSameTopicTest extends AbstractPersistentJMSTest {
 
         @Test
         void testTwoConsumerOnSameTopic() throws Exception {
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
         }
 
         @Test
         void testStopAndStartOneRoute() throws Exception {
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
 
             // now stop route A
             context.getRouteController().stopRoute("a");
 
             // send new message should go to B only
-            resetMocks();
+            MockEndpoint.resetMocks(context);
 
             getMockEndpoint("mock:a").expectedMessageCount(0);
             getMockEndpoint("mock:b").expectedBodiesReceived("Bye World");
 
             template.sendBody("activemq:topic:TwoConsumerOnSameTopicTest", "Bye World");
 
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
 
             // send new message should go to both A and B
-            resetMocks();
+            MockEndpoint.resetMocks(context);
 
             // now start route A
             context.getRouteController().startRoute("a");
@@ -91,21 +92,21 @@ public class TwoConsumerOnSameTopicTest extends AbstractPersistentJMSTest {
 
         @Test
         void testRemoveOneRoute() throws Exception {
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
 
             // now stop and remove route A
             context.getRouteController().stopRoute("a");
             assertTrue(context.removeRoute("a"));
 
             // send new message should go to B only
-            resetMocks();
+            MockEndpoint.resetMocks(context);
 
             getMockEndpoint("mock:a").expectedMessageCount(0);
             getMockEndpoint("mock:b").expectedBodiesReceived("Bye World");
 
             template.sendBody("activemq:topic:TwoConsumerOnSameTopicTest", "Bye World");
 
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
         }
     }
 

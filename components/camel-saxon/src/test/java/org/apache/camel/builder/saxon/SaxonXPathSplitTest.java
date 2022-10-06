@@ -17,6 +17,7 @@
 package org.apache.camel.builder.saxon;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -40,7 +41,7 @@ public class SaxonXPathSplitTest extends CamelTestSupport {
 
         template.sendBody("direct:start", sb.toString());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

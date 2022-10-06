@@ -17,6 +17,7 @@
 package org.apache.camel.component.rabbitmq.integration;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.rabbitmq.RabbitMQComponent;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +31,7 @@ public class RabbitMQToDIT extends AbstractRabbitMQIT {
         template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar");
         template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

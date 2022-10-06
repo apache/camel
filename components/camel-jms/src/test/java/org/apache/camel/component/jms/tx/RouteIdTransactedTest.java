@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -38,7 +39,7 @@ public class RouteIdTransactedTest extends CamelSpringTestSupport {
 
         template.sendBody("activemq:queue:RouteIdTransactedTest", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         String id = context.getRouteDefinitions().get(0).getId();
         assertEquals("myCoolRoute", id);
@@ -51,7 +52,7 @@ public class RouteIdTransactedTest extends CamelSpringTestSupport {
 
         template.sendBody("activemq:queue:RouteIdTransactedTest", "Kabom");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         String id = context.getRouteDefinitions().get(0).getId();
         assertEquals("myCoolRoute", id);

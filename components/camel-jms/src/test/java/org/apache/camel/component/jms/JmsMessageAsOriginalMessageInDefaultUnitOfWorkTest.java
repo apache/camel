@@ -47,7 +47,7 @@ public class JmsMessageAsOriginalMessageInDefaultUnitOfWorkTest extends Abstract
         template.sendBodyAndHeader("jms:queue:JmsMessageAsOriginalMessageInDefaultUnitOfWorkTest", "Hello World", "header-key",
                 "header-value");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

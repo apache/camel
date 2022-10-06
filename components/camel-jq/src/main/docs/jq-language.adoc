@@ -4,7 +4,7 @@
 :artifactid: camel-jq
 :description: Evaluates a JQ expression against a JSON message body.
 :since: 3.18
-:supportlevel: Preview
+:supportlevel: Stable
 //Manually maintained attributes
 :camel-spring-boot-name: jq
 

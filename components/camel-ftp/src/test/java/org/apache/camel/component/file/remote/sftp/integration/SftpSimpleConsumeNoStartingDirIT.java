@@ -41,7 +41,7 @@ public class SftpSimpleConsumeNoStartingDirIT extends SftpServerTestSupport {
 
         context.getRouteController().startRoute("foo");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         FileUtil.deleteFile(file);
     }

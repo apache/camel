@@ -61,7 +61,7 @@ public class HL7ValidateTest extends CamelTestSupport {
                     "Should be a validation error message");
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -72,7 +72,7 @@ public class HL7ValidateTest extends CamelTestSupport {
         String body = createHL7AsString();
         template.sendBody("direct:unmarshalOk", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -83,7 +83,7 @@ public class HL7ValidateTest extends CamelTestSupport {
         String body = createHL7AsString();
         template.sendBody("direct:unmarshalOkCustom", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -103,7 +103,7 @@ public class HL7ValidateTest extends CamelTestSupport {
                     "Should be a validation error message");
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -114,7 +114,7 @@ public class HL7ValidateTest extends CamelTestSupport {
         Message message = createADT01Message();
         template.sendBody("direct:start2", message);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

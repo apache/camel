@@ -19,6 +19,7 @@ package org.apache.camel.language.joor;
 import java.util.stream.Stream;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -50,7 +51,7 @@ public class JoorStreamPredicateTest extends CamelTestSupport {
         template.sendBody("direct:start", Stream.of(7, 2, 122, 444));
         template.sendBody("direct:start", Stream.of(1, 2, 3, 99, 4));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

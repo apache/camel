@@ -21,6 +21,7 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.spi.CircuitBreakerConstants;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -62,7 +63,7 @@ public class FaultToleranceRefConfigurationTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // look inside jmx
         // get the stats for the route

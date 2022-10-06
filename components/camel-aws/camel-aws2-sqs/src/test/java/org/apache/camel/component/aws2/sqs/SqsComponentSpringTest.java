@@ -52,7 +52,7 @@ public class SqsComponentSpringTest extends CamelSpringTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange resultExchange = result.getExchanges().get(0);
         assertEquals("This is my message text.", resultExchange.getIn().getBody());
@@ -76,7 +76,7 @@ public class SqsComponentSpringTest extends CamelSpringTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange resultExchange = result.getExchanges().get(0);
         assertEquals("This is my message text.", resultExchange.getIn().getBody());
@@ -106,7 +106,7 @@ public class SqsComponentSpringTest extends CamelSpringTestSupport {
                 exchange.getIn().setBody(c);
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         SendMessageBatchResponse res = result.getExchanges().get(0).getIn().getBody(SendMessageBatchResponse.class);
         assertEquals(2, res.failed().size());
         assertEquals(2, res.successful().size());
@@ -123,7 +123,7 @@ public class SqsComponentSpringTest extends CamelSpringTestSupport {
                 exchange.getIn().setHeader(Sqs2Constants.RECEIPT_HANDLE, "123456");
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         DeleteMessageResponse res = result.getExchanges().get(0).getIn().getBody(DeleteMessageResponse.class);
         assertNotNull(res);
     }

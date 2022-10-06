@@ -60,7 +60,7 @@ public class JmsRouteWithInOnlyAndMultipleAcksTest extends AbstractJMSTest {
                 "JMSCorrelationID", orderId);
         assertEquals("OK: Camel in Action", out);
 
-        assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
     }
 
     @Override

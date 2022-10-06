@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.microprofile.faulttolerance;
 
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.CircuitBreakerConstants;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
@@ -40,7 +41,7 @@ public class SpringFaultToleranceRouteFallbackTest extends CamelSpringTestSuppor
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

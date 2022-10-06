@@ -46,7 +46,7 @@ public class MailSearchTermNotSpamTest extends MailSearchTermTest {
         mock.expectedBodiesReceivedInAnyOrder("I like riding the Camel", "Ordering Camel in Action",
                 "Ordering ActiveMQ in Action", "We meet at 7pm the usual place");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

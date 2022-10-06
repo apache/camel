@@ -22,6 +22,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -69,7 +70,7 @@ public class ManagedJmsEndpointTest extends AbstractPersistentJMSTest {
         template.sendBody("activemq:queue:ManagedJmsEndpointTest", "Hello World");
         template.sendBody("activemq:queue:ManagedJmsEndpointTest", "Bye World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // stop route
         context.getRouteController().stopRoute("foo");

@@ -41,7 +41,7 @@ public class QuartzAddRoutesAfterCamelContextStartedTest extends BaseQuartzTest 
         });
 
         // it should also work
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

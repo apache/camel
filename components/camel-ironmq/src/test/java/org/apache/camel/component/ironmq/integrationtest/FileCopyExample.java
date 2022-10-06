@@ -18,6 +18,7 @@ package org.apache.camel.component.ironmq.integrationtest;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ironmq.IronMQConstants;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -45,7 +46,7 @@ public class FileCopyExample extends CamelTestSupport {
     @Test
     public void testCopyFileOverIronMQ() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertFileExists("target/out/test.txt");
     }
 

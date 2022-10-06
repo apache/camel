@@ -19,6 +19,7 @@ package org.apache.camel.component.netty;
 import io.netty.channel.EventLoopGroup;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -67,7 +68,7 @@ public class NettyUseSharedWorkerThreadPoolTest extends BaseNettyTest {
             assertEquals("Hej Claus", reply);
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         sharedWorkerServerGroup.shutdownGracefully().sync().await();
         sharedWorkerClientGroup.shutdownGracefully().sync().await();

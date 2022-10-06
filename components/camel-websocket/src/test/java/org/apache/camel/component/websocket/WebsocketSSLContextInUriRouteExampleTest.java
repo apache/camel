@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLContext;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.support.jsse.KeyManagersParameters;
@@ -109,7 +110,7 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
         testClient.sendTextMessage("Hello from WS client");
         assertTrue(testClient.await(10, TimeUnit.SECONDS));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals(10, testClient.getReceived().size());
         for (int i = 0; i < 10; i++) {

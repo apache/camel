@@ -53,7 +53,7 @@ public class MailMoveToTest extends CamelTestSupport {
     public void testMoveToWithMarkAsSeen() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(5);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Awaitility.await().atMost(500, TimeUnit.MILLISECONDS)
                 .untilAsserted(() -> assertEquals(0, Mailbox.get("jones@localhost").size()));
@@ -71,7 +71,7 @@ public class MailMoveToTest extends CamelTestSupport {
     public void testMoveToWithDelete() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result2");
         mock.expectedMessageCount(5);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Awaitility.await().atMost(500, TimeUnit.MILLISECONDS)
                 .untilAsserted(() -> assertEquals(0, Mailbox.get("jones2@localhost").size()));

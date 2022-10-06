@@ -17,11 +17,10 @@
 package org.apache.camel.service.lra;
 
 import java.io.IOException;
-import java.io.InputStream;
-
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.core.Response;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -47,12 +46,12 @@ public abstract class AbstractLRATestSupport extends CamelTestSupport {
     private int activeLRAs;
 
     @BeforeEach
-    public void getActiveLRAs() throws IOException {
+    public void getActiveLRAs() throws IOException, InterruptedException {
         this.activeLRAs = getNumberOfActiveLRAs();
     }
 
     @AfterEach
-    public void checkActiveLRAs() throws IOException {
+    public void checkActiveLRAs() throws IOException, InterruptedException {
         await().atMost(2, SECONDS).until(() -> getNumberOfActiveLRAs(), equalTo(activeLRAs));
         assertEquals(activeLRAs, getNumberOfActiveLRAs(), "Some LRA have been left pending");
     }
@@ -81,16 +80,17 @@ public abstract class AbstractLRATestSupport extends CamelTestSupport {
         return sagaService;
     }
 
-    protected int getNumberOfActiveLRAs() throws IOException {
-        Client client = ClientBuilder.newClient();
+    protected int getNumberOfActiveLRAs() throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
 
-        Response response = client.target(getCoordinatorURL() + "/lra-coordinator")
-                .request()
-                .accept("application/json")
-                .get();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(getCoordinatorURL() + "/lra-coordinator"))
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode lras = mapper.readTree(InputStream.class.cast(response.getEntity()));
+        JsonNode lras = mapper.readTree(response.body());
         return lras.size();
     }
 

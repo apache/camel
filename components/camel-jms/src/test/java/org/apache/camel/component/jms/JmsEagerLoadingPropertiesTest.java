@@ -32,7 +32,7 @@ public class JmsEagerLoadingPropertiesTest extends AbstractJMSTest {
 
         template.sendBodyAndHeader("activemq:queue:JmsEagerLoadingPropertiesTest", "Hello World", "name", "Claus");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

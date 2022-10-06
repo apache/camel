@@ -21,6 +21,7 @@ import java.io.InputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,7 +35,7 @@ public class UndertowProducerTest extends BaseUndertowTest {
         String out = template.requestBody("undertow:http://localhost:{{port}}/foo", null, String.class);
         assertEquals("Bye World", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -45,7 +46,7 @@ public class UndertowProducerTest extends BaseUndertowTest {
         String out = template.requestBody("undertow:http://localhost:{{port}}/foo?name=me", null, String.class);
         assertEquals("Bye World", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -57,7 +58,7 @@ public class UndertowProducerTest extends BaseUndertowTest {
                 "name=me", String.class);
         assertEquals("Bye World", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -68,7 +69,7 @@ public class UndertowProducerTest extends BaseUndertowTest {
                 String.class);
         assertEquals("Bye World", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -80,7 +81,7 @@ public class UndertowProducerTest extends BaseUndertowTest {
                 Exchange.HTTP_METHOD, "POST", String.class);
         assertEquals("Bye World", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -92,7 +93,7 @@ public class UndertowProducerTest extends BaseUndertowTest {
                 Exchange.HTTP_METHOD, "POST", String.class);
         assertEquals("This is the InputStream", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

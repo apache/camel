@@ -33,7 +33,7 @@ public class GeoCoderNominatimTest extends CamelTestSupport {
         // the address header overrides the endpoint configuration
         template.sendBody("direct:start", "Test");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

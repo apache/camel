@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -34,7 +35,7 @@ public class JmsMessageHeaderContentBasedRouterTest extends AbstractJMSTest {
 
         template.sendBody("activemq:queue:JmsInOutRoutingSlipTest.start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

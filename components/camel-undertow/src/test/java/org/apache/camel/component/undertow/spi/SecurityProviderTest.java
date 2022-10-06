@@ -19,6 +19,7 @@ package org.apache.camel.component.undertow.spi;
 import io.undertow.util.StatusCodes;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.junit.jupiter.api.Test;
 
@@ -41,7 +42,7 @@ public class SecurityProviderTest extends AbstractSecurityProviderTest {
 
         assertEquals("user", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test

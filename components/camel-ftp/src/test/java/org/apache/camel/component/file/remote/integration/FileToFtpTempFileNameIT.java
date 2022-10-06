@@ -17,11 +17,13 @@
 package org.apache.camel.component.file.remote.integration;
 
 import java.io.File;
+import java.nio.file.Path;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -29,12 +31,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  */
 public class FileToFtpTempFileNameIT extends FtpServerTestSupport {
+    @TempDir
+    Path testDirectory;
 
     @Test
     public void testFileToFtp() {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
 
-        template.sendBodyAndHeader(fileUri("in"), "Hello World", Exchange.FILE_NAME, "sub/hello.txt");
+        template.sendBodyAndHeader(fileUri(testDirectory, "in"), "Hello World", Exchange.FILE_NAME, "sub/hello.txt");
 
         assertTrue(notify.matchesWaitTime());
 
@@ -47,7 +51,7 @@ public class FileToFtpTempFileNameIT extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("in?recursive=true"))
+                from(fileUri(testDirectory, "in?recursive=true"))
                         .to("ftp://admin:admin@localhost:{{ftp.server.port}}"
                             + "/out/?fileName=${file:name}&tempFileName=${file:onlyname}.part&stepwise=false");
             }

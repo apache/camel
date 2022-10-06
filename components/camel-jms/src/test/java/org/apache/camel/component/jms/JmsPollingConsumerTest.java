@@ -65,7 +65,7 @@ public class JmsPollingConsumerTest extends AbstractJMSTest {
 
             template.sendBody("direct:start.wait", "Hello");
 
-            assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+            MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
         }
     }
 
@@ -98,7 +98,7 @@ public class JmsPollingConsumerTest extends AbstractJMSTest {
 
             template.sendBody("direct:start", "Hello");
 
-            assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+            MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
         }
     }
 
@@ -128,7 +128,7 @@ public class JmsPollingConsumerTest extends AbstractJMSTest {
 
             template.sendBody("direct:start", "Hello");
 
-            assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+            MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
         }
     }
 
@@ -154,7 +154,7 @@ public class JmsPollingConsumerTest extends AbstractJMSTest {
             Awaitility.await().atMost(5, TimeUnit.SECONDS)
                     .until(() -> body != null);
 
-            assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+            MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
         }
     }
 

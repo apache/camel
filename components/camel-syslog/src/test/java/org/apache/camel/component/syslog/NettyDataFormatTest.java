@@ -71,7 +71,7 @@ public class NettyDataFormatTest extends CamelTestSupport {
             socket.close();
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -86,7 +86,7 @@ public class NettyDataFormatTest extends CamelTestSupport {
         template.sendBody("netty:udp://127.0.0.1:" + serverPort + "?sync=false&allowDefaultCodec=false&useByteBuf=true",
                 message);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

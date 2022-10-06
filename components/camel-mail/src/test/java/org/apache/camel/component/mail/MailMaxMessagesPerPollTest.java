@@ -51,7 +51,7 @@ public class MailMaxMessagesPerPollTest extends CamelTestSupport {
         mock.message(2).body().isEqualTo("Message 2");
         mock.expectedPropertyReceived(Exchange.BATCH_SIZE, 3);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         mock.reset();
         mock.expectedMessageCount(2);
@@ -59,7 +59,7 @@ public class MailMaxMessagesPerPollTest extends CamelTestSupport {
         mock.message(0).body().isEqualTo("Message 3");
         mock.message(1).body().isEqualTo("Message 4");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private void prepareMailbox() throws Exception {

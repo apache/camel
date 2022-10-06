@@ -16,14 +16,19 @@
  */
 package org.apache.camel.language.xtokenizer;
 
+import java.nio.file.Path;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.builder.Namespaces;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 public class SplitGroupMultiXmlTokenTest extends CamelTestSupport {
+    @TempDir
+    Path testDirectory;
 
     @Test
     public void testTokenXMLPairGroup() throws Exception {
@@ -38,9 +43,9 @@ public class SplitGroupMultiXmlTokenTest extends CamelTestSupport {
         mock.message(2).body().isEqualTo("<group><order id=\"5\" xmlns=\"http:acme.com\">Groovy in Action</order></group>");
 
         String body = createBody();
-        template.sendBodyAndHeader(fileUri(), body, Exchange.FILE_NAME, "orders.xml");
+        template.sendBodyAndHeader(fileUri(testDirectory), body, Exchange.FILE_NAME, "orders.xml");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     protected String createBody() {
@@ -63,7 +68,7 @@ public class SplitGroupMultiXmlTokenTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from(fileUri("?initialDelay=0&delay=10"))
+                from(fileUri(testDirectory, "?initialDelay=0&delay=10"))
                         // split the order child tags, and inherit namespaces from
                         // the orders root tag
                         .split().xtokenize("//order", 'i', ns, 2).to("log:split").to("mock:split");

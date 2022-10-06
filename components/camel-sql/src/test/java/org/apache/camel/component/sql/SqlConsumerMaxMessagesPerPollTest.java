@@ -62,7 +62,7 @@ public class SqlConsumerMaxMessagesPerPollTest extends CamelTestSupport {
     public void maxMessagesPerPoll() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(3);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<Exchange> exchanges = mock.getReceivedExchanges();
         assertBodyMapValue(1, "ID", exchanges.get(0));

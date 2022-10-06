@@ -22,6 +22,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
@@ -67,7 +68,7 @@ public class JmsAddAndRemoveRouteManagementTest extends AbstractJMSTest {
 
         template.sendBody("activemq:queue:JmsAddAndRemoveRouteManagementTest.in", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // now stop and remove that route
         context.getRouteController().stopRoute("myNewRoute");

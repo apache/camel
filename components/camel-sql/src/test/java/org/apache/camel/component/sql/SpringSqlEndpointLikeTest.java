@@ -35,7 +35,7 @@ public class SpringSqlEndpointLikeTest extends CamelSpringTestSupport {
 
         template.sendBody("direct:start", "");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

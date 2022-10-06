@@ -35,7 +35,7 @@ public class WordpressPostOperationTest extends WordpressComponentTestSupport {
         mock.expectedMinimumMessageCount(1);
         mock.allMessages().body().isInstanceOf(Post.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -44,7 +44,7 @@ public class WordpressPostOperationTest extends WordpressComponentTestSupport {
         mock.expectedMinimumMessageCount(1);
         mock.allMessages().body().isInstanceOf(Post.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -61,7 +61,7 @@ public class WordpressPostOperationTest extends WordpressComponentTestSupport {
         assertThat(response.getId(), is(9));
         assertThat(response.getStatus(), is(PublishableStatus.draft));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -80,7 +80,7 @@ public class WordpressPostOperationTest extends WordpressComponentTestSupport {
         assertThat(response.getTitle().getRaw(), is("hello from postman 2 - update"));
         assertThat(response.getTitle().getRendered(), is("hello from postman 2 &#8211; update"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -93,7 +93,7 @@ public class WordpressPostOperationTest extends WordpressComponentTestSupport {
         assertThat(response.getId(), is(9));
         assertThat(response.getStatus(), is(PublishableStatus.trash));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -36,7 +36,7 @@ public class MessageIOSessionTest extends BaseMinaTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         template.sendBody(String.format("mina:tcp://localhost:%1$s?textline=true", getPort()), "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange exchange = mock.getExchanges().get(0);
         Message message = exchange.getIn();
@@ -49,7 +49,7 @@ public class MessageIOSessionTest extends BaseMinaTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         template.sendBody(String.format("mina:tcp://localhost:%1$s?textline=true", getPort()), "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Message message = mock.getExchanges().get(0).getIn();
         // Not making assumptions on what these headers contain, because it might differ

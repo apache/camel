@@ -40,7 +40,7 @@ public class FileToFtpsWithDefaultSettingsIT extends FtpsServerExplicitTLSWithou
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

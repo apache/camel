@@ -44,7 +44,7 @@ public class PayloadByteArrayJmsTest extends AbstractJMSTest {
 
         template.sendBody("activemq:queue:PayloadByteArrayJmsTest", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -58,7 +58,7 @@ public class PayloadByteArrayJmsTest extends AbstractJMSTest {
 
         template.sendBody("activemq:queue:PayloadByteArrayJmsTest", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -72,7 +72,7 @@ public class PayloadByteArrayJmsTest extends AbstractJMSTest {
 
         template.sendBody("activemq:queue:PayloadByteArrayJmsTest", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

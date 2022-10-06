@@ -50,7 +50,7 @@ public class EventbridgePutEventsIT extends Aws2EventbridgeBase {
                 exchange.getIn().setBody("Test Event");
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Assert.assertTrue(result.getExchanges().get(0).getMessage().getBody(PutEventsResponse.class).hasEntries());
         Assert.assertEquals(1, result.getExchanges().get(0).getMessage().getBody(PutEventsResponse.class).entries().size());
         Assert.assertNotNull(

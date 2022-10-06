@@ -164,7 +164,7 @@ public class LambdaProducerTest extends CamelTestSupport {
                 exchange.getIn().setHeader(Lambda2Constants.EVENT_SOURCE_BATCH_SIZE, 100);
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         CreateEventSourceMappingResponse result = exchange.getMessage().getBody(CreateEventSourceMappingResponse.class);
         assertEquals("arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName", result.functionArn());
@@ -178,7 +178,7 @@ public class LambdaProducerTest extends CamelTestSupport {
                 exchange.getIn().setHeader(Lambda2Constants.EVENT_SOURCE_UUID, "a1239494949382882383");
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         DeleteEventSourceMappingResponse result = exchange.getMessage().getBody(DeleteEventSourceMappingResponse.class);
         assertTrue(result.state().equalsIgnoreCase("Deleting"));
@@ -191,7 +191,7 @@ public class LambdaProducerTest extends CamelTestSupport {
             public void process(Exchange exchange) {
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         ListEventSourceMappingsResponse result = exchange.getMessage().getBody(ListEventSourceMappingsResponse.class);
         assertEquals("arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName",
@@ -208,7 +208,7 @@ public class LambdaProducerTest extends CamelTestSupport {
                         "arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName");
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         ListTagsResponse result = (ListTagsResponse) exchange.getMessage().getBody();
         assertEquals("lambda-tag", result.tags().get("test"));
@@ -227,7 +227,7 @@ public class LambdaProducerTest extends CamelTestSupport {
                 exchange.getIn().setHeader(Lambda2Constants.RESOURCE_TAGS, tags);
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         TagResourceResponse result = (TagResourceResponse) exchange.getMessage().getBody();
         assertNotNull(result);
@@ -246,7 +246,7 @@ public class LambdaProducerTest extends CamelTestSupport {
                 exchange.getIn().setHeader(Lambda2Constants.RESOURCE_TAG_KEYS, tagKeys);
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         UntagResourceResponse result = (UntagResourceResponse) exchange.getMessage().getBody();
         assertNotNull(result);
@@ -261,7 +261,7 @@ public class LambdaProducerTest extends CamelTestSupport {
                 exchange.getIn().setHeader(Lambda2Constants.VERSION_DESCRIPTION, "This is my description");
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         PublishVersionResponse result = (PublishVersionResponse) exchange.getMessage().getBody();
         assertNotNull(result);
@@ -278,7 +278,7 @@ public class LambdaProducerTest extends CamelTestSupport {
                 exchange.getIn().setHeader(Lambda2Constants.VERSION_DESCRIPTION, "This is my description");
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         ListVersionsByFunctionResponse result = (ListVersionsByFunctionResponse) exchange.getMessage().getBody();
         assertNotNull(result);
@@ -297,7 +297,7 @@ public class LambdaProducerTest extends CamelTestSupport {
                 exchange.getIn().setHeader(Lambda2Constants.FUNCTION_VERSION, "1");
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         CreateAliasResponse result = (CreateAliasResponse) exchange.getMessage().getBody();
         assertNotNull(result);
@@ -315,7 +315,7 @@ public class LambdaProducerTest extends CamelTestSupport {
                 exchange.getIn().setHeader(Lambda2Constants.FUNCTION_ALIAS_NAME, "alias");
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         DeleteAliasResponse result = (DeleteAliasResponse) exchange.getMessage().getBody();
         assertNotNull(result);
@@ -330,7 +330,7 @@ public class LambdaProducerTest extends CamelTestSupport {
                 exchange.getIn().setHeader(Lambda2Constants.FUNCTION_ALIAS_NAME, "alias");
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         GetAliasResponse result = (GetAliasResponse) exchange.getMessage().getBody();
         assertNotNull(result);
@@ -348,7 +348,7 @@ public class LambdaProducerTest extends CamelTestSupport {
                 exchange.getIn().setHeader(Lambda2Constants.FUNCTION_VERSION, "1");
             }
         });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         ListAliasesResponse result = (ListAliasesResponse) exchange.getMessage().getBody();
         assertNotNull(result);

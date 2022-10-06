@@ -19,6 +19,7 @@ package org.apache.camel.component.jms.issues;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class JmsInOutRoutingSlipTest extends AbstractJMSTest {
@@ -32,7 +33,7 @@ public class JmsInOutRoutingSlipTest extends AbstractJMSTest {
         template.sendBodyAndHeader("activemq:queue:JmsInOutRoutingSlipTest.start", "World", "slip",
                 "activemq:queue:JmsInOutRoutingSlipTest.foo,activemq:queue:JmsInOutRoutingSlipTest.result");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

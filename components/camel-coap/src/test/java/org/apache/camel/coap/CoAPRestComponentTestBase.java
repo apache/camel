@@ -96,7 +96,7 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
         mock.expectedBodiesReceived("Hello some-id: xyz");
         mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
         sender.sendBodyAndHeader("xyz", CoAPConstants.COAP_METHOD, "POST");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -106,7 +106,7 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
         mock.expectedBodiesReceived("Hello some-id");
         mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
         sender.sendBody(null);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     protected abstract String getProtocol();

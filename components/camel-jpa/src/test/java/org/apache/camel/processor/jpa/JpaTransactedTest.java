@@ -22,6 +22,7 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jpa.JpaHelper;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.SendEmail;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +34,7 @@ public class JpaTransactedTest extends AbstractJpaTest {
         getMockEndpoint("mock:result").expectedMessageCount(2);
         template.sendBody("direct:split", Arrays.asList(
                 new SendEmail("test1@example.org"), new SendEmail("test2@example.org")));
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test

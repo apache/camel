@@ -18,6 +18,7 @@ package org.apache.camel.component.azure.key.vault.integration.operations;
 
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
@@ -44,7 +45,7 @@ public class KeyVaultPropertiesSourceTestIT extends CamelTestSupport {
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AZURE_VAULT_NAME", matches = ".*")
@@ -65,7 +66,7 @@ public class KeyVaultPropertiesSourceTestIT extends CamelTestSupport {
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AZURE_VAULT_NAME", matches = ".*")
@@ -86,7 +87,7 @@ public class KeyVaultPropertiesSourceTestIT extends CamelTestSupport {
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AZURE_VAULT_NAME", matches = ".*")
@@ -108,7 +109,7 @@ public class KeyVaultPropertiesSourceTestIT extends CamelTestSupport {
 
         template.sendBody("direct:username", "Hello World");
         template.sendBody("direct:password", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AZURE_VAULT_NAME", matches = ".*")
@@ -131,7 +132,7 @@ public class KeyVaultPropertiesSourceTestIT extends CamelTestSupport {
 
             template.sendBody("direct:username", "Hello World");
             template.sendBody("direct:password", "Hello World");
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
         });
     }
 
@@ -153,7 +154,7 @@ public class KeyVaultPropertiesSourceTestIT extends CamelTestSupport {
         getMockEndpoint("mock:bar").expectedBodiesReceived("password123");
 
         template.sendBody("direct:version", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AZURE_VAULT_NAME", matches = ".*")
@@ -174,7 +175,7 @@ public class KeyVaultPropertiesSourceTestIT extends CamelTestSupport {
                 "{\"username\":\"admin\",\"password\":\"password123\",\"engine\":\"postgres\",\"host\":\"127.0.0.1\",\"port\":\"3128\",\"dbname\":\"db\"}");
 
         template.sendBody("direct:version", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AZURE_VAULT_NAME", matches = ".*")
@@ -196,7 +197,7 @@ public class KeyVaultPropertiesSourceTestIT extends CamelTestSupport {
                 "{\"username\":\"admin\",\"password\":\"password123\",\"engine\":\"postgres\",\"host\":\"127.0.0.1\",\"port\":\"3128\",\"dbname\":\"db\"}");
 
         template.sendBody("direct:version", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AZURE_VAULT_NAME", matches = ".*")
@@ -217,7 +218,7 @@ public class KeyVaultPropertiesSourceTestIT extends CamelTestSupport {
         getMockEndpoint("mock:bar").expectedBodiesReceived("pippo");
 
         template.sendBody("direct:version", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AZURE_VAULT_NAME", matches = ".*")
@@ -238,7 +239,7 @@ public class KeyVaultPropertiesSourceTestIT extends CamelTestSupport {
         getMockEndpoint("mock:bar").expectedBodiesReceived("pippo");
 
         template.sendBody("direct:version", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_AZURE_VAULT_NAME", matches = ".*")
@@ -259,6 +260,6 @@ public class KeyVaultPropertiesSourceTestIT extends CamelTestSupport {
         getMockEndpoint("mock:bar").expectedBodiesReceived("password123");
 
         template.sendBody("direct:version", "Hello World");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 }

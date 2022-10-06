@@ -120,7 +120,7 @@ public class JsonApiDataFormatTest extends CamelTestSupport {
         assertNotNull(outBody);
         assertEquals(this.generateAuthorString(), outBody);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
     }
 
@@ -132,7 +132,7 @@ public class JsonApiDataFormatTest extends CamelTestSupport {
         Exchange exchange = this.createExchangeWithBody(this.generateAuthorString());
         Exchange outExchange = template.send("direct:startUnmarshal", exchange);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         MyAuthor author = outExchange.getIn().getBody(MyAuthor.class);
         assertNotNull(author);

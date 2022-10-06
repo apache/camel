@@ -25,6 +25,7 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
 import org.apache.camel.test.infra.activemq.services.LegacyEmbeddedBroker;
@@ -79,11 +80,11 @@ public class ManagedJmsSelectorTest extends CamelTestSupport {
         template.sendBodyAndHeader("activemq:queue:startManagedJmsSelectorTest", "Pepsi", "brand", "softdrink");
         template.sendBodyAndHeader("activemq:queue:startManagedJmsSelectorTest", "Carlsberg", "brand", "beer");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // change the selector at runtime
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         mbeanServer.setAttribute(on, new Attribute("MessageSelector", "brand='softdrink'"));
 
@@ -95,7 +96,7 @@ public class ManagedJmsSelectorTest extends CamelTestSupport {
         template.sendBodyAndHeader("activemq:queue:startManagedJmsSelectorTest", "Pepsi", "brand", "softdrink");
         template.sendBodyAndHeader("activemq:queue:startManagedJmsSelectorTest", "Carlsberg", "brand", "beer");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         selector = (String) mbeanServer.getAttribute(on, "MessageSelector");
         assertEquals("brand='softdrink'", selector);

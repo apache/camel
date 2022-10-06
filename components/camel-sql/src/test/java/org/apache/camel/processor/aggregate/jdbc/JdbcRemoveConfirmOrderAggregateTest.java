@@ -26,6 +26,7 @@ import javax.sql.DataSource;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -94,7 +95,7 @@ public class JdbcRemoveConfirmOrderAggregateTest extends AbstractJdbcAggregation
 
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template.sendBodyAndHeader("direct:start", "B", "id", 123);
-        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
         // Wait until the recovery has been run
         await().atMost(500, TimeUnit.MILLISECONDS).until(this::checkCompletedNotPresent);
         Assertions.assertEquals(1, JdbcRemoveConfirmOrderAggregateTest.completedExchangeCount,

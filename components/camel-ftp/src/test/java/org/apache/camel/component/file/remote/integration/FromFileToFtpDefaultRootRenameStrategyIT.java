@@ -68,7 +68,7 @@ public class FromFileToFtpDefaultRootRenameStrategyIT extends FtpServerTestSuppo
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         await().atMost(250, TimeUnit.MILLISECONDS).untilAsserted(() -> assertFalse(expectedOnFtpServer.exists()));
     }

@@ -18,6 +18,7 @@ package org.apache.camel.builder.endpoint;
 
 import java.util.Properties;
 
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,7 +45,7 @@ public class OptionalPropertyPlaceholderTest extends BaseEndpointDslTest {
         template.sendBody("direct:start", "Hello World");
         template.sendBody("direct:start", "Bye World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals(2, getMockEndpoint("mock:result").getReceivedExchanges().size());
     }
@@ -68,7 +69,7 @@ public class OptionalPropertyPlaceholderTest extends BaseEndpointDslTest {
         template.sendBody("direct:start", "Hello World");
         template.sendBody("direct:start", "Bye World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals(1, getMockEndpoint("mock:result?retainFirst=1").getReceivedExchanges().size());
     }
@@ -88,7 +89,7 @@ public class OptionalPropertyPlaceholderTest extends BaseEndpointDslTest {
         template.sendBody("direct:start", "Hello World");
         template.sendBody("direct:start", "Bye World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals(2, getMockEndpoint("mock:result").getReceivedExchanges().size());
     }
@@ -112,7 +113,7 @@ public class OptionalPropertyPlaceholderTest extends BaseEndpointDslTest {
         template.sendBody("direct:start", "Hello World");
         template.sendBody("direct:start", "Bye World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals(2, getMockEndpoint("mock:result").getReceivedExchanges().size());
     }

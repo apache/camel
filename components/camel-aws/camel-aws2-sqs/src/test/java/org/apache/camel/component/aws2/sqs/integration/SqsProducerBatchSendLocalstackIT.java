@@ -53,7 +53,7 @@ public class SqsProducerBatchSendLocalstackIT extends Aws2SQSBaseTest {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

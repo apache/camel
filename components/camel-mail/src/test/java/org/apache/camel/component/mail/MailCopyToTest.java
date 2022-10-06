@@ -50,7 +50,7 @@ public class MailCopyToTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(5);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // windows need a little slack
         Awaitility.await().atMost(500, TimeUnit.MILLISECONDS)

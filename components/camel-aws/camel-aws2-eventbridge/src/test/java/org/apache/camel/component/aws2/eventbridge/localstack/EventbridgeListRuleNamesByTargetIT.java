@@ -74,7 +74,7 @@ public class EventbridgeListRuleNamesByTargetIT extends Aws2EventbridgeBase {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEquals(1, result.getExchanges().size());
         assertEquals(1, result.getExchanges().get(0).getIn().getBody(ListRuleNamesByTargetResponse.class).ruleNames().size());
         assertEquals("firstrule",

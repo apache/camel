@@ -45,7 +45,7 @@ public class AtlasMapJavaToJsonTest extends CamelSpringTestSupport {
         ProducerTemplate producerTemplate = context.createProducerTemplate();
         producerTemplate.sendBody("direct:start", Util.generateMockTwitterStatus());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Message msg = result.getExchanges().get(0).getIn();
         assertEquals("application/json", msg.getHeader(Exchange.CONTENT_TYPE));
         Object body = msg.getBody();

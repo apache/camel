@@ -51,7 +51,7 @@ public class IAMListUserIT extends Aws2IAMBase {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         ListUsersResponse resultGet = (ListUsersResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.users().size());

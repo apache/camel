@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Disabled;
@@ -58,7 +59,7 @@ public class JettyAsyncDefaultContinuationTimeoutTest extends BaseJettyTest {
             assertTrue(taken < 34000, "Timeout should occur faster than " + taken);
         }
 
-        assertMockEndpointsSatisfied(2, TimeUnit.MINUTES);
+        MockEndpoint.assertIsSatisfied(context, 2, TimeUnit.MINUTES);
     }
 
     @Override

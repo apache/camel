@@ -467,6 +467,14 @@ public class BoxConfiguration {
             return true;
         }
 
+        if (o == null) {
+            return false;
+        }
+
+        if (this.getClass() != o.getClass()) {
+            return false;
+        }
+
         BoxConfiguration that = (BoxConfiguration) o;
 
         return maxCacheEntries == that.maxCacheEntries

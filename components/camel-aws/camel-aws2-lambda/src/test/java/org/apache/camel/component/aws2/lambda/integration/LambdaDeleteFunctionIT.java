@@ -70,7 +70,7 @@ public class LambdaDeleteFunctionIT extends Aws2LambdaBase {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         DeleteFunctionResponse resp = result.getExchanges().get(0).getIn().getBody(DeleteFunctionResponse.class);
         assertTrue(resp.sdkHttpResponse().isSuccessful());
     }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.jsonpath;
 
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -37,7 +38,7 @@ public class SpringJsonPathSuppressTest extends CamelSpringTestSupport {
 
         template.sendBody("direct:start", json);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -49,7 +50,7 @@ public class SpringJsonPathSuppressTest extends CamelSpringTestSupport {
 
         template.sendBody("direct:start", json);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

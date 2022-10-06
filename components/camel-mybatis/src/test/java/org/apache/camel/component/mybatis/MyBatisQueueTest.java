@@ -59,7 +59,7 @@ public class MyBatisQueueTest extends MyBatisTestSupport {
 
         template.sendBody("direct:start", new Account[] { account1, account2 });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // need a delay here on slower machines
         List<?> body = await()

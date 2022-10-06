@@ -17,10 +17,12 @@
 package org.apache.camel.component.file.remote.integration;
 
 import java.io.FileOutputStream;
+import java.nio.file.Path;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.apache.camel.test.junit5.TestSupport.createDirectory;
 
@@ -28,6 +30,8 @@ import static org.apache.camel.test.junit5.TestSupport.createDirectory;
  *
  */
 public class FtpChangedZeroLengthReadLockIT extends FtpServerTestSupport {
+    @TempDir
+    Path testDirectory;
 
     protected String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}"
@@ -38,11 +42,11 @@ public class FtpChangedZeroLengthReadLockIT extends FtpServerTestSupport {
     public void testChangedReadLock() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists(testFile("zerofile.dat"));
+        mock.expectedFileExists(testDirectory.resolve("zerofile.dat"));
 
         writeZeroFile();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private void writeZeroFile() throws Exception {
@@ -57,7 +61,7 @@ public class FtpChangedZeroLengthReadLockIT extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(getFtpUrl()).to(fileUri(), "mock:result");
+                from(getFtpUrl()).to(fileUri(testDirectory), "mock:result");
             }
         };
     }

@@ -37,7 +37,7 @@ public class RestJettyBindingModeXmlTest extends BaseJettyTest {
         String body = "<user name=\"Donald Duck\" id=\"123\"></user>";
         template.sendBody("http://localhost:" + getPort() + "/users/new", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         UserJaxbPojo user = mock.getReceivedExchanges().get(0).getIn().getBody(UserJaxbPojo.class);
         assertNotNull(user);
@@ -59,7 +59,7 @@ public class RestJettyBindingModeXmlTest extends BaseJettyTest {
             // expected
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

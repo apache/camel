@@ -67,7 +67,7 @@ public class AWS2S3Configuration implements Cloneable {
     @UriParam(label = "producer")
     private boolean multiPartUpload;
     @UriParam(label = "producer", defaultValue = "" + 25 * 1024 * 1024)
-    private long partSize = 25 * 1024 * 1024;
+    private long partSize = (long) 25 * 1024 * 1024;
     @UriParam
     private String policy;
     @UriParam(label = "producer")

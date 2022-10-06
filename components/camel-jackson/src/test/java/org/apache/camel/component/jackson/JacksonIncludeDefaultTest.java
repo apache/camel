@@ -34,7 +34,7 @@ public class JacksonIncludeDefaultTest extends CamelTestSupport {
 
         template.sendBody("direct:marshal", pojo);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

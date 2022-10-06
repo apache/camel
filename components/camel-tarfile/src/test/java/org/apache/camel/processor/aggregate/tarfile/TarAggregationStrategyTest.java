@@ -54,7 +54,7 @@ public class TarAggregationStrategyTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived("foo", "bar");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Thread.sleep(500);
 

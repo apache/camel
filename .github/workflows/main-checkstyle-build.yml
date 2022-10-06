@@ -47,7 +47,11 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: 'maven'
       - name: mvn sourcecheck
-        run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -l checkstyle.log -Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -Psourcecheck -Dcheckstyle.failOnViolation=true -DskipTests checkstyle:checkstyle verify
+        run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -l checkstyle.log -Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -Psourcecheck -Dcheckstyle.failOnViolation=true -e -DskipTests checkstyle:checkstyle verify
+      - name: Generate a thread dump in case of a lock issue
+        if: failure()
+        run: cat checkstyle.log | grep "Could not acquire write lock for '.*.resolverlock'" > /dev/null && jstack $(jcmd | grep MavenDaemon | awk '{print $1;}') >> checkstyle.log
+        shell: bash
       - name: archive logs
         uses: actions/upload-artifact@v3
         if: always()

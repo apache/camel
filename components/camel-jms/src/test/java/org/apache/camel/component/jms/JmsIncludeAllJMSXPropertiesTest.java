@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.activemq.services.ActiveMQService;
 import org.junit.jupiter.api.Test;
 
@@ -40,7 +41,7 @@ public class JmsIncludeAllJMSXPropertiesTest extends AbstractJMSTest {
 
         template.sendBodyAndHeaders("activemq:queue:JmsIncludeAllJMSXPropertiesTest", "Hello World", headers);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

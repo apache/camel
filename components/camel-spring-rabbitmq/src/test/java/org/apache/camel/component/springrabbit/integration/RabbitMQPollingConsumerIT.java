@@ -66,7 +66,7 @@ public class RabbitMQPollingConsumerIT extends RabbitMQITSupport {
 
         template.sendBody("direct:start", "Hello");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -88,7 +88,7 @@ public class RabbitMQPollingConsumerIT extends RabbitMQITSupport {
 
         template.sendBody("direct:start", "Hello");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -108,7 +108,7 @@ public class RabbitMQPollingConsumerIT extends RabbitMQITSupport {
 
         template.sendBody("direct:start", "Hello");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

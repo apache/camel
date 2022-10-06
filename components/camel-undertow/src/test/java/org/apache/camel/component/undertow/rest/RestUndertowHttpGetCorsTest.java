@@ -18,6 +18,7 @@ package org.apache.camel.component.undertow.rest;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.apache.camel.spi.RestConfiguration;
 import org.junit.jupiter.api.Test;
@@ -42,9 +43,9 @@ public class RestUndertowHttpGetCorsTest extends BaseUndertowTest {
                 out.getMessage().getHeader("Access-Control-Allow-Headers"));
         assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_MAX_AGE, out.getMessage().getHeader("Access-Control-Max-Age"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         getMockEndpoint("mock:inputGet").expectedMessageCount(1);
 
         // send GET request which should be routed
@@ -54,7 +55,7 @@ public class RestUndertowHttpGetCorsTest extends BaseUndertowTest {
                 .request(String.class);
         assertEquals("123;Donald Duck", out2);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -73,9 +74,9 @@ public class RestUndertowHttpGetCorsTest extends BaseUndertowTest {
                 out.getMessage().getHeader("Access-Control-Allow-Headers"));
         assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_MAX_AGE, out.getMessage().getHeader("Access-Control-Max-Age"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         getMockEndpoint("mock:inputPut").expectedMessageCount(1);
 
         // send PUT request which should be routed
@@ -85,7 +86,7 @@ public class RestUndertowHttpGetCorsTest extends BaseUndertowTest {
                 .request(String.class);
         assertEquals("123;Donald Duck", out2);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.sshd.common.NamedFactory;
 import org.apache.sshd.common.cipher.BuiltinCiphers;
 import org.apache.sshd.common.cipher.Cipher;
@@ -107,7 +108,7 @@ public class ScpAlgorithmsTest extends ScpServerTestSupport {
             String uri = getScpUri() + "?username=admin&password=admin&knownHostsFile=" + getKnownHostsFile();
             template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(context);
             super.tearDown();
         }
     }

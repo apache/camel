@@ -32,7 +32,7 @@ public class SoapPayloadBeanTest extends CamelTestSupport {
         mock.message(0).body().contains("<givenName>John</givenName>");
         mock.message(0).body().endsWith("</inputReportIncident></payload>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

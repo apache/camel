@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -51,7 +52,7 @@ public class JBPMComponentIT extends CamelTestSupport {
         headers.put(JBPMConstants.PARAMETERS, params);
 
         template.sendBodyAndHeaders("direct:start", null, headers);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Long processInstanceId = (Long) getMockEndpoint("mock:result").getExchanges().get(0).getIn().getBody();
         assertNotNull(processInstanceId);
 
@@ -61,7 +62,7 @@ public class JBPMComponentIT extends CamelTestSupport {
 
         template.sendBodyAndHeaders("direct:start", null, headers);
         getMockEndpoint("mock:result").expectedMessageCount(2);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<TaskSummary> tasks = (List<TaskSummary>) getMockEndpoint("mock:result").getExchanges().get(1).getIn().getBody();
         assertEquals(1, tasks.size());
@@ -73,7 +74,7 @@ public class JBPMComponentIT extends CamelTestSupport {
 
         template.sendBodyAndHeaders("direct:start", null, headers);
         getMockEndpoint("mock:result").expectedMessageCount(3);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // lastly let's abort process instance we just created
         headers = new HashMap<>();
@@ -82,7 +83,7 @@ public class JBPMComponentIT extends CamelTestSupport {
 
         template.sendBodyAndHeaders("direct:start", null, headers);
         getMockEndpoint("mock:result").expectedMessageCount(4);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -32,11 +32,11 @@ public class JmsSuspendResumeTest extends AbstractPersistentJMSTest {
 
         template.sendBody("activemq:queue:JmsSuspendResumeTest", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         context.getRouteController().suspendRoute("JmsSuspendResumeTest");
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         mock.expectedMessageCount(0);
 
         // sleep a bit to ensure its properly suspended
@@ -45,14 +45,14 @@ public class JmsSuspendResumeTest extends AbstractPersistentJMSTest {
 
         template.sendBody("activemq:queue:JmsSuspendResumeTest", "Bye World");
 
-        assertMockEndpointsSatisfied(1, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 1, TimeUnit.SECONDS);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         mock.expectedBodiesReceived("Bye World");
 
         context.getRouteController().resumeRoute("JmsSuspendResumeTest");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

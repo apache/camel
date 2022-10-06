@@ -58,7 +58,7 @@ public class SaxonXsltDTDTest extends CamelTestSupport {
 
         template.sendBody("direct:start1", message);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<Exchange> list = endpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);

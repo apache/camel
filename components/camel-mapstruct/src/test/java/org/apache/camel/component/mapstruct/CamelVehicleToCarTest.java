@@ -21,6 +21,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mapstruct.dto.CarDto;
 import org.apache.camel.component.mapstruct.dto.VehicleDto;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -55,7 +56,7 @@ public class CamelVehicleToCarTest extends CamelTestSupport {
         Assertions.assertEquals(2021, car.getYear());
         Assertions.assertEquals(true, car.isElectric());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

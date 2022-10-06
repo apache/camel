@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -69,8 +70,8 @@ public class DynamicRoutersWithJMSMessageLostHeadersIssueTest extends AbstractJM
 
         template.sendBody("direct:foo", "A");
 
-        assertMockEndpointsSatisfied();
-        resetMocks();
+        MockEndpoint.assertIsSatisfied(context);
+        MockEndpoint.resetMocks(context);
 
         // actvivemq
         getMockEndpoint("mock:checkHeader").expectedMessageCount(1);
@@ -78,7 +79,7 @@ public class DynamicRoutersWithJMSMessageLostHeadersIssueTest extends AbstractJM
 
         template.sendBody("activemq:queue1", "A");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     public static class DynamicRouter {

@@ -32,7 +32,7 @@ public class XQueryExampleTest extends CamelSpringTestSupport {
         template.sendBody("direct:start", "<person user='James'><firstName>James</firstName>"
                                           + "<lastName>Strachan</lastName><city>London</city></person>");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

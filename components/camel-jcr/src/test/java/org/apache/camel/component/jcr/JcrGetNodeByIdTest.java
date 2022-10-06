@@ -64,7 +64,7 @@ public class JcrGetNodeByIdTest extends JcrRouteTestSupport {
 
         Exchange exchange = createExchangeWithBody(identifier);
         template.send("direct:a", exchange);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

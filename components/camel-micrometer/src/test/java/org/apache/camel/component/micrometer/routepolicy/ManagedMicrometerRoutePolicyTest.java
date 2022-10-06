@@ -23,6 +23,7 @@ import javax.management.ObjectName;
 
 import io.micrometer.core.instrument.Meter;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -49,7 +50,7 @@ public class ManagedMicrometerRoutePolicyTest extends AbstractMicrometerRoutePol
             }
         }
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // there should be 13 names
         List<Meter> meters = meterRegistry.getMeters();

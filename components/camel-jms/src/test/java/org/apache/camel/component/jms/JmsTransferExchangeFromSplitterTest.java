@@ -38,7 +38,7 @@ public class JmsTransferExchangeFromSplitterTest extends AbstractJMSTest {
             exchange.setProperty("bar", 123);
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

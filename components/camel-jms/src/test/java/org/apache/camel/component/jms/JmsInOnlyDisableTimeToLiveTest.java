@@ -19,6 +19,7 @@ package org.apache.camel.component.jms;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class JmsInOnlyDisableTimeToLiveTest extends AbstractJMSTest {
@@ -39,17 +40,17 @@ public class JmsInOnlyDisableTimeToLiveTest extends AbstractJMSTest {
         // and that the disableTimeToLive is defaulting to false
         template.sendBody("direct:timeout", "World 1");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // wait after the msg has expired
         Thread.sleep(2500);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         getMockEndpoint("mock:end").expectedMessageCount(0);
 
         cool.someBusinessLogic();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -66,17 +67,17 @@ public class JmsInOnlyDisableTimeToLiveTest extends AbstractJMSTest {
         //      by the CoolBean
         template.sendBody("direct:disable", "World 2");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // wait after the msg has expired
         Thread.sleep(2500);
 
-        resetMocks();
+        MockEndpoint.resetMocks(context);
         getMockEndpoint("mock:end").expectedBodiesReceived("Hello World 2");
 
         cool.someBusinessLogic();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

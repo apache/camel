@@ -17,6 +17,7 @@
 package org.apache.camel.component.jetty;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.jsse.FilterParameters;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
@@ -54,7 +55,7 @@ public class ExcludeCipherSuitesTest extends BaseJettyTest {
 
         template.sendBody("jetty:https://localhost:" + getPort() + "/test", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

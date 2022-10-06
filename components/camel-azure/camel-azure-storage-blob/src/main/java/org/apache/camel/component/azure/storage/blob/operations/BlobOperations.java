@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.http.rest.Response;
 import com.azure.core.http.rest.ResponseBase;
 import com.azure.storage.blob.BlobClient;
@@ -45,8 +46,8 @@ import com.azure.storage.blob.models.BlockListType;
 import com.azure.storage.blob.models.DeleteSnapshotsOptionType;
 import com.azure.storage.blob.models.DownloadRetryOptions;
 import com.azure.storage.blob.models.PageBlobItem;
-import com.azure.storage.blob.models.PageList;
 import com.azure.storage.blob.models.PageRange;
+import com.azure.storage.blob.models.PageRangeItem;
 import com.azure.storage.blob.models.ParallelTransferOptions;
 import com.azure.storage.blob.sas.BlobSasPermission;
 import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
@@ -420,8 +421,9 @@ public class BlobOperations {
         LOG.trace("Getting the page blob ranges [{}] from exchange [{}]...", configurationProxy.getBlobName(exchange),
                 exchange);
 
-        final Response<PageList> response = client.getPageBlobRanges(blobRange, commonRequestOptions.getBlobRequestConditions(),
-                commonRequestOptions.getTimeout());
+        final PagedIterable<PageRangeItem> response
+                = client.getPageBlobRanges(blobRange, commonRequestOptions.getBlobRequestConditions(),
+                        commonRequestOptions.getTimeout());
 
         return BlobOperationResponse.create(response);
     }

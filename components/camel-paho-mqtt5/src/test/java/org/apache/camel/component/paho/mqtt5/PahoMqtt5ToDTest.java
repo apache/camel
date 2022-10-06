@@ -17,6 +17,7 @@
 package org.apache.camel.component.paho.mqtt5;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class PahoMqtt5ToDTest extends PahoMqtt5TestSupport {
@@ -29,7 +30,7 @@ public class PahoMqtt5ToDTest extends PahoMqtt5TestSupport {
         template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar");
         template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

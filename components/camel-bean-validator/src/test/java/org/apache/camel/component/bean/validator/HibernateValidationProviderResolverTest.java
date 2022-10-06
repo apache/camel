@@ -61,7 +61,7 @@ public class HibernateValidationProviderResolverTest extends CamelTestSupport {
         sendBody("direct:test", carWithNullFields);
 
         // Then
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

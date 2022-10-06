@@ -20,6 +20,7 @@ import java.nio.charset.Charset;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,7 +42,7 @@ public class JettyHttpContentTypeTest extends BaseJettyTest {
                 "text/plain; charset=\"" + CHARSET + "\"", String.class);
         assertEquals("Bye World", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -58,7 +59,7 @@ public class JettyHttpContentTypeTest extends BaseJettyTest {
                 "text/plain;charset=\"" + CHARSET + "\";action=\"http://somewhere.com/foo\"", String.class);
         assertEquals("Bye World", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

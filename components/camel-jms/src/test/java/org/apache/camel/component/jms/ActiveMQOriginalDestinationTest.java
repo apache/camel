@@ -45,7 +45,7 @@ public class ActiveMQOriginalDestinationTest extends AbstractJMSTest {
 
         template.sendBody("activemq:queue:ActiveMQOriginalDestinationTest", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // consume from bar
         Exchange out = consumer.receive("activemq:queue:ActiveMQOriginalDestinationTest.dest", 5000);

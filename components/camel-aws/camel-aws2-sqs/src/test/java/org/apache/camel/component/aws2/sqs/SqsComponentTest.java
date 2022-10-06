@@ -51,7 +51,7 @@ public class SqsComponentTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange resultExchange = result.getExchanges().get(0);
         assertEquals("This is my message text.", resultExchange.getIn().getBody());
@@ -76,7 +76,7 @@ public class SqsComponentTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange resultExchange = result.getExchanges().get(0);
         assertEquals("This is my message text.", resultExchange.getIn().getBody());

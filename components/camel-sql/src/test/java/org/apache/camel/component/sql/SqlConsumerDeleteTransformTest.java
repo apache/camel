@@ -65,7 +65,7 @@ public class SqlConsumerDeleteTransformTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("The project is Camel", "The project is AMQ", "The project is Linux");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // some servers may be a bit slow for this
         for (int i = 0; i < 5; i++) {

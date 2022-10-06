@@ -35,7 +35,7 @@ public class JsonbSkipNullTest extends CamelTestSupport {
 
         template.sendBody("direct:marshal", pojo);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

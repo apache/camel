@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.CircuitBreakerConstants;
@@ -66,7 +67,7 @@ public class FaultToleranceRefConfigurationNoReflectionTest extends CamelTestSup
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals(0, bi.getInvokedCounter());
     }

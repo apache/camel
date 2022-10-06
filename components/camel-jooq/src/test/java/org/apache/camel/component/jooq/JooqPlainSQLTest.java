@@ -41,7 +41,7 @@ public class JooqPlainSQLTest extends BaseJooqTest {
         BookStoreRecord bookStoreRecord = new BookStoreRecord("test");
         producerTemplate.sendBody(context.getEndpoint("direct:insert"), ExchangePattern.InOut, bookStoreRecord);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEquals(bookStoreRecord, mockResult.getExchanges().get(0).getMessage().getBody());
     }
 

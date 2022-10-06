@@ -43,7 +43,7 @@ public class MyBatisConsumerIdleMessageTest extends MyBatisTestSupport {
 
         await()
                 .atLeast(110, TimeUnit.MILLISECONDS)
-                .untilAsserted(() -> assertMockEndpointsSatisfied());
+                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
         assertNull(mock.getExchanges().get(0).getIn().getBody());
         assertNull(mock.getExchanges().get(1).getIn().getBody());
     }

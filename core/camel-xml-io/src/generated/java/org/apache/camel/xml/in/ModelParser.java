@@ -157,11 +157,12 @@ public class ModelParser extends BaseParser {
     }
     protected <T extends ProcessorDefinition> AttributeHandler<T> processorDefinitionAttributeHandler() {
         return (def, key, val) -> {
-            if ("inheritErrorHandler".equals(key)) {
-                def.setInheritErrorHandler(Boolean.valueOf(val));
-                return true;
+            switch (key) {
+                case "disabled": def.setDisabled(val); break;
+                case "inheritErrorHandler": def.setInheritErrorHandler(Boolean.valueOf(val)); break;
+                default: return optionalIdentifiedDefinitionAttributeHandler().accept(def, key, val);
             }
-            return optionalIdentifiedDefinitionAttributeHandler().accept(def, key, val);
+            return true;
         };
     }
     protected <T extends OptionalIdentifiedDefinition> AttributeHandler<T> optionalIdentifiedDefinitionAttributeHandler() {

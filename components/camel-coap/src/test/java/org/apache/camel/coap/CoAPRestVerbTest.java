@@ -51,7 +51,7 @@ public class CoAPRestVerbTest extends CoAPTestSupport {
         CoapClient client = createClient("/users");
         client.post(body, MediaTypeRegistry.APPLICATION_JSON);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -65,7 +65,7 @@ public class CoAPRestVerbTest extends CoAPTestSupport {
         CoapClient client = createClient("/users/1");
         client.put(body, MediaTypeRegistry.APPLICATION_JSON);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -76,7 +76,7 @@ public class CoAPRestVerbTest extends CoAPTestSupport {
         CoapClient client = createClient("/users/1");
         client.delete();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

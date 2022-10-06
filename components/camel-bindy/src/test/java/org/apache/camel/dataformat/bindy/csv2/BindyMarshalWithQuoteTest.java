@@ -41,7 +41,7 @@ public class BindyMarshalWithQuoteTest extends CamelTestSupport {
 
         template.sendBody("direct:start", model);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

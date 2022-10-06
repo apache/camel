@@ -52,7 +52,7 @@ public class KMSProducerTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         ListKeysResponse resultGet = (ListKeysResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.keys().size());
@@ -71,7 +71,7 @@ public class KMSProducerTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         ListKeysResponse resultGet = (ListKeysResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.keys().size());
@@ -89,7 +89,7 @@ public class KMSProducerTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         CreateKeyResponse resultGet = (CreateKeyResponse) exchange.getIn().getBody();
         assertEquals("test", resultGet.keyMetadata().keyId());
@@ -108,7 +108,7 @@ public class KMSProducerTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
     }
 
@@ -124,7 +124,7 @@ public class KMSProducerTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
     }
 
@@ -140,7 +140,7 @@ public class KMSProducerTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         ScheduleKeyDeletionResponse resultGet = (ScheduleKeyDeletionResponse) exchange.getIn().getBody();
         assertEquals("test", resultGet.keyId());
@@ -158,7 +158,7 @@ public class KMSProducerTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         DescribeKeyResponse resultGet = exchange.getIn().getBody(DescribeKeyResponse.class);
         assertEquals("test", resultGet.keyMetadata().keyId());

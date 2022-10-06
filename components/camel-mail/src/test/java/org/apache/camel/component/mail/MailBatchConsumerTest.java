@@ -65,7 +65,7 @@ public class MailBatchConsumerTest extends CamelTestSupport {
         mock.message(4).exchangeProperty(Exchange.BATCH_COMPLETE).isEqualTo(true);
         mock.expectedPropertyReceived(Exchange.BATCH_SIZE, 5);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     private void prepareMailbox() throws Exception {

@@ -6,9 +6,9 @@
     "description": "Camel CXF REST Spring support",
     "deprecated": false,
     "firstVersion": "3.18.0",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-cxf-spring-rest",
-    "version": "3.19.0-SNAPSHOT"
+    "version": "3.20.0-SNAPSHOT"
   }
 }

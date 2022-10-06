@@ -47,7 +47,7 @@ public class VelocitySupplementalContextTest extends CamelTestSupport {
                 "#set( $headers.body = ${body} )\n#set( $headers['in.body'] = $in.body )\n" + "bar");
         inputEndpoint.sendBodyAndHeaders("old_body", headers);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

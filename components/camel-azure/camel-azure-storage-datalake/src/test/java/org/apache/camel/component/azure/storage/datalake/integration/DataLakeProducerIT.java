@@ -55,6 +55,7 @@ public class DataLakeProducerIT extends Base {
                     null,
                     List.class);
 
+            Assertions.assertThat(filesystems.stream().map(FileSystemItem::getName)).isNotEmpty();
             Assertions.assertThat(filesystems.stream().map(FileSystemItem::getName)).doesNotContain(fileSystemName);
         }
 
@@ -99,6 +100,7 @@ public class DataLakeProducerIT extends Base {
                     null,
                     List.class);
 
+            Assertions.assertThat(filesystems.stream().map(FileSystemItem::getName)).isNotEmpty();
             Assertions.assertThat(filesystems.stream().map(FileSystemItem::getName)).doesNotContain(fileSystemName);
         }
 

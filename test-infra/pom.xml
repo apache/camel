@@ -22,7 +22,7 @@
     <parent>
         <artifactId>camel-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>3.19.0-SNAPSHOT</version>
+        <version>3.20.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -75,5 +75,6 @@
         <module>camel-test-infra-ignite</module>
         <module>camel-test-infra-hashicorp-vault</module>
         <module>camel-test-infra-jetty</module>
+        <module>camel-test-infra-etcd3</module>
     </modules>
 </project>

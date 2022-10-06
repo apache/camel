@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
@@ -36,7 +37,7 @@ public class JmsReplyToLoopIssueTest extends AbstractJMSTest {
         template.sendBodyAndHeader("direct:start", "World", "JMSReplyTo", "queue:JmsReplyToLoopIssueTest.bar");
 
         // sleep a little to ensure we do not do endless loop
-        Awaitility.await().atMost(250, TimeUnit.MILLISECONDS).untilAsserted(this::assertMockEndpointsSatisfied);
+        Awaitility.await().atMost(250, TimeUnit.MILLISECONDS).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
     }
 
     @Override

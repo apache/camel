@@ -35,7 +35,7 @@ public class RealtimeSearchManualTest extends SplunkTest {
         MockEndpoint searchMock = getMockEndpoint("mock:search-saved");
         searchMock.expectedMessageCount(1);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         SplunkEvent received = searchMock.getReceivedExchanges().get(0).getIn().getBody(SplunkEvent.class);
         assertNotNull(received);
         Map<String, String> data = received.getEventData();

@@ -18,6 +18,7 @@ package org.apache.camel.component.jms.activemq;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -36,7 +37,7 @@ public class ActiveMQConsumeWildcardQueuesTest extends AbstractJMSTest {
         template.sendBody("activemq:queue:sport.pl.arsenal", "C");
         template.sendBody("activemq:queue:sport.1st.leeds", "D");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

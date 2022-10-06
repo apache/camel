@@ -24,6 +24,7 @@ import javax.security.auth.login.LoginException;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
@@ -58,7 +59,7 @@ public class NettyHttpBasicAuthCustomSecurityAuthenticatorTest extends BaseNetty
                             auth, String.class);
                     assertEquals("Bye World", out);
                 });
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

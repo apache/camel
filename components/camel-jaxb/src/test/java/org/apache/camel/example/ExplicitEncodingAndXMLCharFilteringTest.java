@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -30,10 +31,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ExplicitEncodingAndXMLCharFilteringTest extends CamelTestSupport {
+    @TempDir
+    Path testDirectory;
 
     @Test
     public void testIsoAndCharacterFiltering() throws Exception {
@@ -46,14 +50,14 @@ public class ExplicitEncodingAndXMLCharFilteringTest extends CamelTestSupport {
         order.setPrice(2.22);
 
         MockEndpoint result = getMockEndpoint("mock:file");
-        result.expectedFileExists(testFile("output.xml"));
+        result.expectedFileExists(testDirectory.resolve("output.xml"));
 
         template.sendBody("direct:start", order);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         JAXBContext jaxbContext = JAXBContext.newInstance("org.apache.camel.example");
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        InputStream inputStream = new FileInputStream(testFile("output.xml").toFile());
+        InputStream inputStream = new FileInputStream(testDirectory.resolve("output.xml").toFile());
         Reader reader = new InputStreamReader(inputStream, StandardCharsets.ISO_8859_1);
         PurchaseOrder obj = (PurchaseOrder) unmarshaller.unmarshal(reader);
         assertEquals(expected, obj.getName());
@@ -70,7 +74,7 @@ public class ExplicitEncodingAndXMLCharFilteringTest extends CamelTestSupport {
 
                 from("direct:start")
                         .marshal(jaxb)
-                        .to(fileUri("?fileName=output.xml&charset=iso-8859-1"));
+                        .to(fileUri(testDirectory, "?fileName=output.xml&charset=iso-8859-1"));
             }
         };
     }

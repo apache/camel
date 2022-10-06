@@ -42,7 +42,7 @@ public class JdbcParameterizedQueryTest extends AbstractJdbcTestSupport {
         template.sendBodyAndHeaders("direct:start", "select * from customer where id = 'cust1' and name = ? order by ID",
                 jdbcParams);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<?> received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
         assertEquals(1, received.size());
@@ -62,7 +62,7 @@ public class JdbcParameterizedQueryTest extends AbstractJdbcTestSupport {
         template.sendBodyAndHeaders("direct:start", "select * from customer where id = :?id and name = :?name order by ID",
                 jdbcParams);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<?> received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
         assertEquals(1, received.size());
@@ -87,7 +87,7 @@ public class JdbcParameterizedQueryTest extends AbstractJdbcTestSupport {
         template.sendBodyAndHeaders("direct:start", "select * from customer where id = :?id and name = :?name order by ID",
                 headers);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<?> received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
         assertEquals(1, received.size());

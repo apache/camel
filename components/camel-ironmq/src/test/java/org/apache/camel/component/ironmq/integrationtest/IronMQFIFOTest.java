@@ -57,7 +57,7 @@ public class IronMQFIFOTest extends CamelTestSupport {
     @Test
     public void testIronMQFifo() throws Exception {
         result.setExpectedMessageCount(50);
-        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
         int i = 1;
         List<Exchange> exchanges = result.getExchanges();
         for (Exchange exchange : exchanges) {

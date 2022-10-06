@@ -29,7 +29,7 @@ public class SshComponentConsumerTest extends SshComponentTestSupport {
         mock.expectedBodiesReceived("test");
         mock.expectedHeaderReceived(SshConstants.EXIT_VALUE, 0);
         mock.expectedHeaderReceived(SshConstants.STDERR, "Error:test");
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

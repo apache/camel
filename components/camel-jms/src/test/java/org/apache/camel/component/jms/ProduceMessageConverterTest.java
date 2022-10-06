@@ -45,7 +45,7 @@ public class ProduceMessageConverterTest extends AbstractJMSTest {
 
         template.sendBody("activemq:queue:ProduceMessageConverterTest?messageConverter=#myMessageConverter", "World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

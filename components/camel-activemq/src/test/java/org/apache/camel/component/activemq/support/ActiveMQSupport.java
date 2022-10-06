@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.activemq.support;
 
-import java.nio.file.Path;
-
-import org.apache.camel.test.junit5.CamelTestSupport;
-
 public interface ActiveMQSupport {
 
     default String vmUri() {
@@ -28,9 +24,5 @@ public interface ActiveMQSupport {
 
     default String vmUri(String query) {
         return "vm://" + getClass().getSimpleName() + (query.startsWith("?") ? "" : "-") + query;
-    }
-
-    default Path testDirectory() {
-        return CamelTestSupport.testDirectory(getClass(), false);
     }
 }

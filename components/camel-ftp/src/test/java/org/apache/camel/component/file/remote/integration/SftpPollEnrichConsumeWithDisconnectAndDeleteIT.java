@@ -49,7 +49,7 @@ public class SftpPollEnrichConsumeWithDisconnectAndDeleteIT extends SftpServerTe
         ProducerTemplate triggerTemplate = context.createProducerTemplate();
         triggerTemplate.sendBody("vm:trigger", "");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         File file = ftpFile("hello.txt").toFile();
         await().atMost(3, TimeUnit.SECONDS)

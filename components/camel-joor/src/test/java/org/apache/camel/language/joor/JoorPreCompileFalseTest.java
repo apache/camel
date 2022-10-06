@@ -18,6 +18,7 @@ package org.apache.camel.language.joor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -46,10 +47,10 @@ public class JoorPreCompileFalseTest extends CamelTestSupport {
         template.sendBody("direct:start", "World");
         template.sendBody("direct:start", "Camel");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // update file
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         template.sendBodyAndHeader("file:target?fileExist=Override", "'Bye ' + body", Exchange.FILE_NAME, "update.joor");
 
@@ -58,7 +59,7 @@ public class JoorPreCompileFalseTest extends CamelTestSupport {
         template.sendBody("direct:start", "World");
         template.sendBody("direct:start", "Camel");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
 }

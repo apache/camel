@@ -52,7 +52,7 @@ public class MyBatisInsertListTest extends MyBatisTestSupport {
         // insert 2 new rows
         template.sendBody("direct:start", accountList);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // there should be 4 rows now
         Integer rows = template.requestBody("mybatis:count?statementType=SelectOne", null, Integer.class);

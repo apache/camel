@@ -47,7 +47,7 @@ public class SqsComponentLocalstackIT extends Aws2SQSBaseTest {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange resultExchange = result.getExchanges().get(0);
         assertEquals("This is my message text.", resultExchange.getIn().getBody());
@@ -71,7 +71,7 @@ public class SqsComponentLocalstackIT extends Aws2SQSBaseTest {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         Exchange resultExchange = result.getExchanges().get(0);
         assertEquals("This is my message text.", resultExchange.getIn().getBody());

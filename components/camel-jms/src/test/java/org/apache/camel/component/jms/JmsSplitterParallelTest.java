@@ -18,6 +18,7 @@ package org.apache.camel.component.jms;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class JmsSplitterParallelTest extends AbstractJMSTest {
@@ -34,7 +35,7 @@ public class JmsSplitterParallelTest extends AbstractJMSTest {
 
         template.sendBody("direct:start", "A,B,C,D,E");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

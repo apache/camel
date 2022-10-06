@@ -55,7 +55,7 @@ public class XsltRouteAllowStAXTest extends CamelTestSupport {
 
         template.sendBody("direct:start", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<Exchange> list = endpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);

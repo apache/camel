@@ -35,7 +35,7 @@ public class JmsInOnlyWithReplyToHeaderTest extends AbstractJMSTest {
             exchange.getIn().setHeader("JMSReplyTo", "JmsInOnlyWithReplyToHeaderTest.Reply");
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // reply is in JmsInOnlyWithReplyToHeaderTest.Reply queue so lets consume it
         String reply = consumer.receiveBody("activemq:queue:JmsInOnlyWithReplyToHeaderTest.Reply", 5000, String.class);

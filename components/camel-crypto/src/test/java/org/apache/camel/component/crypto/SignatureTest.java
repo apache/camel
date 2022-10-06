@@ -198,7 +198,7 @@ public class SignatureTest extends CamelTestSupport {
     void testBasicSignatureRoute() throws Exception {
         setupMock();
         sendBody("direct:keypair", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         Exchange e = mock.getExchanges().get(0);
@@ -210,35 +210,35 @@ public class SignatureTest extends CamelTestSupport {
     void testSetAlgorithmInRouteDefinition() throws Exception {
         setupMock();
         sendBody("direct:algorithm", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     void testRSASHA1() throws Exception {
         setupMock();
         sendBody("direct:rsa-sha1", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     void testRSASHA256() throws Exception {
         setupMock();
         sendBody("direct:rsa-sha256", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     void testSetBufferInRouteDefinition() throws Exception {
         setupMock();
         sendBody("direct:buffersize", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     void testSetRandomInRouteDefinition() throws Exception {
         setupMock();
         sendBody("direct:random", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -246,28 +246,28 @@ public class SignatureTest extends CamelTestSupport {
         assumeFalse(isJavaVendor("ibm"), "can only be run on SUN JDK");
         setupMock();
         sendBody("direct:provider", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     void testSetCertificateInRouteDefinition() throws Exception {
         setupMock();
         sendBody("direct:certificate", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     void testSetKeystoreInRouteDefinition() throws Exception {
         setupMock();
         sendBody("direct:keystore", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     void testSetKeystoreParametersInRouteDefinition() throws Exception {
         setupMock();
         sendBody("direct:keystoreParameters", payload);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -278,7 +278,7 @@ public class SignatureTest extends CamelTestSupport {
         template.send("direct:signature-header", signed);
         assertNotNull(signed.getIn().getHeader("AnotherDigitalSignature"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -298,7 +298,7 @@ public class SignatureTest extends CamelTestSupport {
         template.send("direct:alias-verify", signed);
         // START SNIPPET: alias-send
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -320,7 +320,7 @@ public class SignatureTest extends CamelTestSupport {
         signed.getIn().setHeader(SIGNATURE_PUBLIC_KEY_OR_CERT, pair.getPublic());
         template.send("direct:headerkey-verify", signed);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -344,15 +344,15 @@ public class SignatureTest extends CamelTestSupport {
         signed.getIn().setHeader(SIGNATURE_PUBLIC_KEY_OR_CERT, certificate);
         template.send("direct:headerkey-verify", signed);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     void testVerifyHeadersNotCleared() throws Exception {
         setupMock();
         template.requestBody("direct:headers", payload);
-        assertMockEndpointsSatisfied();
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
+        MockEndpoint.assertIsSatisfied(context);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         Exchange e = mock.getExchanges().get(0);
@@ -384,7 +384,7 @@ public class SignatureTest extends CamelTestSupport {
             } else {
                 template.sendBodyAndHeaders("direct:in", payload, headers);
             }
-            assertMockEndpointsSatisfied();
+            MockEndpoint.assertIsSatisfied(SignatureTest.this.context);
             return mock.getReceivedExchanges().get(0);
         }
     }

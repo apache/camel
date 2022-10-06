@@ -94,7 +94,7 @@ public class S3CreateDownloadLinkOperationIT extends Aws2S3Base {
         assertNotNull(downloadLinkWithUriOverride);
         assertTrue(downloadLinkWithUriOverride.startsWith("http://localhost:8080"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

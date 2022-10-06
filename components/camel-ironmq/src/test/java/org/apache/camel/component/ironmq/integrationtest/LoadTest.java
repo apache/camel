@@ -53,7 +53,7 @@ public class LoadTest extends CamelTestSupport {
         MockEndpoint endpoint = getMockEndpoint(datasetEndpoint);
         endpoint.expectedMessageCount((int) dataSet.getSize());
 
-        assertMockEndpointsSatisfied(4, TimeUnit.MINUTES);
+        MockEndpoint.assertIsSatisfied(context, 4, TimeUnit.MINUTES);
     }
 
     @Override

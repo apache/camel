@@ -17,11 +17,13 @@
 package org.apache.camel.component.file.remote.sftp.integration;
 
 import java.io.FileOutputStream;
+import java.nio.file.Path;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
+import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +35,9 @@ public class SftpChangedReadLockIT extends SftpServerTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(SftpChangedReadLockIT.class);
 
+    @TempDir
+    Path testDirectory;
+
     protected String getFtpUrl() {
         return "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}/changed" +
                "?username=admin&password=admin&readLock=changed&readLockCheckInterval=1000&delete=true";
@@ -42,15 +47,15 @@ public class SftpChangedReadLockIT extends SftpServerTestSupport {
     public void testChangedReadLock() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists(testFile("out/slowfile.dat"));
+        mock.expectedFileExists(testDirectory.resolve("out/slowfile.dat"));
 
         context.getRouteController().startRoute("foo");
 
         writeSlowFile();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
-        String content = context.getTypeConverter().convertTo(String.class, testFile("out/slowfile.dat").toFile());
+        String content = context.getTypeConverter().convertTo(String.class, testDirectory.resolve("out/slowfile.dat").toFile());
         String[] lines = content.split(LS);
         assertEquals(20, lines.length, "There should be 20 lines in the file");
         for (int i = 0; i < 20; i++) {
@@ -78,7 +83,7 @@ public class SftpChangedReadLockIT extends SftpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(getFtpUrl()).routeId("foo").noAutoStartup().to(fileUri("out"), "mock:result");
+                from(getFtpUrl()).routeId("foo").noAutoStartup().to(fileUri(testDirectory, "out"), "mock:result");
             }
         };
     }

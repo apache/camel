@@ -41,7 +41,7 @@ public class FtpProducerRecipientListParallelTimeoutManualIT extends FtpServerTe
 
         template.sendBodyAndHeader("direct:start", "Hello", "slip", "direct:a," + getFtpUrl() + ",direct:c");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

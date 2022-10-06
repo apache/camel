@@ -20,6 +20,7 @@ import io.netty.handler.codec.http.HttpRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,7 +35,7 @@ public class NettyHttpAccessHttpRequestTest extends BaseNettyTest {
         String out = template.requestBody("netty-http:http://localhost:{{port}}/foo", "Hello World", String.class);
         assertEquals("Bye World", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

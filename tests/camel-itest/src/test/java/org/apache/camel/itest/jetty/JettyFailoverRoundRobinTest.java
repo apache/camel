@@ -19,6 +19,7 @@ package org.apache.camel.itest.jetty;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -50,11 +51,11 @@ public class JettyFailoverRoundRobinTest extends CamelTestSupport {
         String reply = template.requestBody("direct:start", null, String.class);
         assertEquals("Good", reply);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // reset mocks and send a message again to see that round robin
         // continue where it should
-        resetMocks();
+        MockEndpoint.resetMocks(context);
 
         getMockEndpoint("mock:bad").expectedMessageCount(0);
         getMockEndpoint("mock:bad2").expectedMessageCount(0);

@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -47,7 +48,7 @@ public class JsonPathCharsetTest extends CamelTestSupport {
 
         sendBody("direct:start", new File("src/test/resources/booksUTF16BE.json"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         check();
     }
@@ -58,7 +59,7 @@ public class JsonPathCharsetTest extends CamelTestSupport {
 
         sendBody("direct:start", new File("src/test/resources/booksUTF16LE.json"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         check();
     }
@@ -71,7 +72,7 @@ public class JsonPathCharsetTest extends CamelTestSupport {
         assertNotNull(input);
         sendBody("direct:start", input);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         check();
     }
@@ -104,7 +105,7 @@ public class JsonPathCharsetTest extends CamelTestSupport {
     }
 
     private void check(String title1, String title2) throws InterruptedException {
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         List<?> authors = getMockEndpoint("mock:authors").getReceivedExchanges().get(0).getIn().getBody(List.class);
 

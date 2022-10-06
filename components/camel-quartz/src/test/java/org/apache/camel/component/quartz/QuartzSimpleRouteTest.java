@@ -36,7 +36,7 @@ public class QuartzSimpleRouteTest extends BaseQuartzTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(3);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         Trigger trigger = mock.getReceivedExchanges().get(0).getIn().getHeader("trigger", Trigger.class);
         assertThat(trigger instanceof SimpleTrigger, CoreMatchers.is(true));
 

@@ -104,6 +104,6 @@ public class MonitorItemTest extends AbstractMiloServerTest {
         testBody(this.test1Endpoint.message(2), assertGoodValue("Baz"));
 
         // assert
-        assertMockEndpointsSatisfied(time, TimeUnit.MILLISECONDS);
+        MockEndpoint.assertIsSatisfied(context, time, TimeUnit.MILLISECONDS);
     }
 }

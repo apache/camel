@@ -47,7 +47,7 @@ public class ConsumeMessageConverterTest extends AbstractJMSTest {
 
         template.sendBody("activemq:queue:ConsumeMessageConverterTest", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -58,7 +58,7 @@ public class ConsumeMessageConverterTest extends AbstractJMSTest {
 
         template.sendBody("activemq:queue:ConsumeMessageConverterTest", "Hello World".getBytes());
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

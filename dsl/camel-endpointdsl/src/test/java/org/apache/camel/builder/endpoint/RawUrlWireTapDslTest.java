@@ -36,7 +36,7 @@ public class RawUrlWireTapDslTest extends BaseEndpointDslTest {
 
         template.requestBodyAndHeader("direct:a", "Hello World", "size", 1, String.class);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

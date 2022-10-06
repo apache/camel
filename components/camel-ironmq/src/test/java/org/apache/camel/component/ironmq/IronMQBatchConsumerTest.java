@@ -42,7 +42,7 @@ public class IronMQBatchConsumerTest extends CamelTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(5);
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         mock.message(0).exchangeProperty(Exchange.BATCH_INDEX).isEqualTo(0);
         mock.message(1).exchangeProperty(Exchange.BATCH_INDEX).isEqualTo(1);

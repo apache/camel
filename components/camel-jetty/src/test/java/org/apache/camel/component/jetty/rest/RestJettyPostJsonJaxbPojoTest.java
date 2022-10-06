@@ -36,7 +36,7 @@ public class RestJettyPostJsonJaxbPojoTest extends BaseJettyTest {
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
         template.sendBody("http://localhost:" + getPort() + "/users/new", body);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         UserJaxbPojo user = mock.getReceivedExchanges().get(0).getIn().getBody(UserJaxbPojo.class);
         assertNotNull(user);

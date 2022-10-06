@@ -37,7 +37,7 @@ public class XQueryPropogateHeadersTest extends CamelTestSupport {
         template.sendBodyAndHeader("direct:one",
                 "<mail><subject>Hey</subject><body>Hello world!</body></mail>", "foo", "bar");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -50,7 +50,7 @@ public class XQueryPropogateHeadersTest extends CamelTestSupport {
         template.sendBodyAndHeader("direct:two",
                 "<person name='James' city='London'/>", "foo", "bar");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -63,7 +63,7 @@ public class XQueryPropogateHeadersTest extends CamelTestSupport {
         template.sendBodyAndHeader("direct:three",
                 "<person name='James' city='London'/>", "foo", "bar");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

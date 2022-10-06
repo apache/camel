@@ -35,7 +35,7 @@ public class JdbcProducerOutputTypeSelectOneOutputClassTest extends AbstractJdbc
 
         template.sendBody("direct:start", "select * from customer where ID = 'cust1'");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         CustomerModel model = assertIsInstanceOf(CustomerModel.class,
                 mock.getReceivedExchanges().get(0).getIn().getBody(CustomerModel.class));

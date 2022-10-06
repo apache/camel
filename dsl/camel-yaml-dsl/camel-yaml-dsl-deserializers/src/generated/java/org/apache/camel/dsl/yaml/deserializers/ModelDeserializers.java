@@ -315,6 +315,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "completion-timeout-expression", type = "object:org.apache.camel.model.ExpressionSubElementDefinition"),
                     @YamlProperty(name = "correlation-expression", type = "object:org.apache.camel.model.ExpressionSubElementDefinition"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "discard-on-aggregation-failure", type = "boolean"),
                     @YamlProperty(name = "discard-on-completion-timeout", type = "boolean"),
                     @YamlProperty(name = "eager-check-completion", type = "boolean"),
@@ -427,6 +428,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "correlation-expression": {
                     org.apache.camel.model.ExpressionSubElementDefinition val = asType(node, org.apache.camel.model.ExpressionSubElementDefinition.class);
                     target.setCorrelationExpression(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "discard-on-aggregation-failure": {
@@ -1022,6 +1028,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "bean-type", type = "string"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "method", type = "string"),
@@ -1051,6 +1058,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "bean-type": {
                     String val = asText(node);
                     target.setBeanType(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "inherit-error-handler": {
@@ -1519,6 +1531,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "exception", type = "array:string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
@@ -1540,6 +1553,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(CatchDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "exception": {
                     java.util.List<String> val = asStringList(node);
                     target.setExceptions(val);
@@ -1583,6 +1601,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "otherwise", type = "object:org.apache.camel.model.OtherwiseDefinition"),
@@ -1605,6 +1624,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(ChoiceDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
@@ -1657,6 +1681,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "configuration", type = "string"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "fault-tolerance-configuration", type = "object:org.apache.camel.model.FaultToleranceConfigurationDefinition"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
@@ -1682,6 +1707,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "configuration": {
                     String val = asText(node);
                     target.setConfiguration(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "fault-tolerance-configuration": {
@@ -1737,6 +1767,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "aggregation-strategy", type = "string"),
                     @YamlProperty(name = "aggregation-strategy-method-name", type = "string"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "filter", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
@@ -1766,6 +1797,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "aggregation-strategy-method-name": {
                     String val = asText(node);
                     target.setAggregationStrategyMethodName(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "filter": {
@@ -2230,6 +2266,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "charset", type = "string"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "mandatory", type = "boolean"),
@@ -2258,6 +2295,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "charset": {
                     String val = asText(node);
                     target.setCharset(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "inherit-error-handler": {
@@ -3996,6 +4038,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "async-delayed", type = "boolean"),
                     @YamlProperty(name = "caller-runs-when-rejected", type = "boolean"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "executor-service", type = "string"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "id", type = "string"),
@@ -4024,6 +4067,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "caller-runs-when-rejected": {
                     String val = asText(node);
                     target.setCallerRunsWhenRejected(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "executor-service": {
@@ -4319,6 +4367,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "cache-size", type = "number"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "ignore-invalid-endpoints", type = "boolean"),
@@ -4343,6 +4392,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "cache-size": {
                     String val = asText(node);
                     target.setCacheSize(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "expression": {
@@ -4509,6 +4563,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "allow-optimised-components", type = "boolean"),
                     @YamlProperty(name = "cache-size", type = "number"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "ignore-invalid-endpoint", type = "boolean"),
@@ -4558,6 +4613,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "cache-size": {
                     String val = asText(node);
                     target.setCacheSize(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "expression": {
@@ -5203,6 +5263,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
@@ -5224,6 +5285,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(FilterDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "expression": {
                     org.apache.camel.model.language.ExpressionDefinition val = asType(node, org.apache.camel.model.language.ExpressionDefinition.class);
                     target.setExpression(val);
@@ -5279,6 +5345,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition")
@@ -5298,6 +5365,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(FinallyDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
@@ -6180,6 +6252,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "completion-eager", type = "boolean"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "eager", type = "boolean"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "id", type = "string"),
@@ -6207,6 +6280,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "completion-eager": {
                     String val = asText(node);
                     target.setCompletionEager(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "eager": {
@@ -6280,6 +6358,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "parameters", type = "object"),
@@ -6311,6 +6390,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(InOnlyDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
@@ -6349,6 +6433,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "parameters", type = "object"),
@@ -6380,6 +6465,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(InOutDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
@@ -6470,6 +6560,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition")
@@ -6489,6 +6580,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(InterceptDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
@@ -6526,6 +6622,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
@@ -6551,6 +6648,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(InterceptFromDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
@@ -6594,6 +6696,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "after-uri", type = "string"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "skip-send-to-original-endpoint", type = "string"),
@@ -6623,6 +6726,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "after-uri": {
                     String val = asText(node);
                     target.setAfterUri(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "inherit-error-handler": {
@@ -7817,6 +7925,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "custom-load-balancer", type = "object:org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "failover", type = "object:org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
@@ -7842,6 +7951,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(LoadBalanceDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
@@ -7916,6 +8030,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "log-name", type = "string"),
@@ -7944,6 +8059,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(LogDefinition target, String propertyKey, String propertyName,
                 Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
@@ -8001,6 +8121,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "break-on-shutdown", type = "boolean"),
                     @YamlProperty(name = "copy", type = "boolean"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "do-while", type = "boolean"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "id", type = "string"),
@@ -8030,6 +8151,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "copy": {
                     String val = asText(node);
                     target.setCopy(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "do-while": {
@@ -8094,6 +8220,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "csv", type = "object:org.apache.camel.model.dataformat.CsvDataFormat"),
                     @YamlProperty(name = "custom", type = "object:org.apache.camel.model.dataformat.CustomDataFormat"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "fhir-json", type = "object:org.apache.camel.model.dataformat.FhirJsonDataFormat"),
                     @YamlProperty(name = "fhir-xml", type = "object:org.apache.camel.model.dataformat.FhirXmlDataFormat"),
                     @YamlProperty(name = "flatpack", type = "object:org.apache.camel.model.dataformat.FlatpackDataFormat"),
@@ -8341,6 +8468,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
@@ -8521,6 +8653,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "aggregation-strategy-method-allow-null", type = "boolean"),
                     @YamlProperty(name = "aggregation-strategy-method-name", type = "string"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "executor-service", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
@@ -8561,6 +8694,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "aggregation-strategy-method-name": {
                     String val = asText(node);
                     target.setAggregationStrategyMethodName(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "executor-service": {
@@ -8914,6 +9052,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "executor-service", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
@@ -8940,6 +9079,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(OnCompletionDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "executor-service": {
                     String val = asText(node);
                     target.setExecutorService(val);
@@ -9013,6 +9157,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "continued", type = "object:org.apache.camel.model.ExpressionSubElementDefinition"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "exception", type = "array:string"),
                     @YamlProperty(name = "handled", type = "object:org.apache.camel.model.ExpressionSubElementDefinition"),
                     @YamlProperty(name = "id", type = "string"),
@@ -9045,6 +9190,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "continued": {
                     org.apache.camel.model.ExpressionSubElementDefinition val = asType(node, org.apache.camel.model.ExpressionSubElementDefinition.class);
                     target.setContinued(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "exception": {
@@ -9133,6 +9283,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "fallback-via-network", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
@@ -9153,6 +9304,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(OnFallbackDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "fallback-via-network": {
                     String val = asText(node);
                     target.setFallbackViaNetwork(val);
@@ -9303,6 +9459,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition")
@@ -9322,6 +9479,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(OtherwiseDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
@@ -9354,6 +9516,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition")
@@ -9373,6 +9536,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(OutputDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
@@ -9906,6 +10074,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "consumer-listener", type = "string", required = true),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "until-check", type = "string", required = true)
@@ -9928,6 +10097,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "consumer-listener": {
                     String val = asText(node);
                     target.setConsumerListener(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "inherit-error-handler": {
@@ -9964,6 +10138,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition")
@@ -9983,6 +10158,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(PipelineDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
@@ -10016,6 +10196,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "ref", type = "string", required = true),
@@ -10036,6 +10217,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(PolicyDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
@@ -10083,6 +10269,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "aggregation-strategy-method-name", type = "string"),
                     @YamlProperty(name = "cache-size", type = "number"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "ignore-invalid-endpoint", type = "boolean"),
@@ -10127,6 +10314,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "cache-size": {
                     String val = asText(node);
                     target.setCacheSize(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "expression": {
@@ -10359,6 +10551,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "ref", type = "string", required = true)
@@ -10378,6 +10571,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(ProcessDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
@@ -10904,6 +11102,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "cache-size", type = "number"),
                     @YamlProperty(name = "delimiter", type = "string"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "executor-service", type = "string"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "id", type = "string"),
@@ -10955,6 +11154,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "delimiter": {
                     String val = asText(node);
                     target.setDelimiter(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "executor-service": {
@@ -11293,6 +11497,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "name", type = "string", required = true)
@@ -11317,6 +11522,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(RemoveHeaderDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
@@ -11355,6 +11565,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "exclude-pattern", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
@@ -11380,6 +11591,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(RemoveHeadersDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "exclude-pattern": {
                     String val = asText(node);
                     target.setExcludePattern(val);
@@ -11423,6 +11639,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "exclude-pattern", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
@@ -11448,6 +11665,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(RemovePropertiesDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "exclude-pattern": {
                     String val = asText(node);
                     target.setExcludePattern(val);
@@ -11491,6 +11713,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "name", type = "string", required = true)
@@ -11515,6 +11738,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(RemovePropertyDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
@@ -11551,6 +11779,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "batch-config", type = "object:org.apache.camel.model.config.BatchResequencerConfig"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition", required = true),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
@@ -11572,6 +11801,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(ResequenceDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "expression": {
                     org.apache.camel.model.language.ExpressionDefinition val = asType(node, org.apache.camel.model.language.ExpressionDefinition.class);
                     target.setExpression(val);
@@ -12585,6 +12819,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "intermittent", type = "boolean"),
@@ -12605,6 +12840,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(ResumableDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
@@ -12645,6 +12885,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "mark-rollback-only", type = "boolean"),
@@ -12671,6 +12912,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(RollbackDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
@@ -12886,6 +13132,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition")
@@ -12910,6 +13157,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(RouteDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
@@ -13005,6 +13257,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "cache-size", type = "number"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "ignore-invalid-endpoints", type = "boolean"),
@@ -13034,6 +13287,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "cache-size": {
                     String val = asText(node);
                     target.setCacheSize(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "expression": {
@@ -13122,6 +13380,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "parameters", type = "object"),
@@ -13153,6 +13412,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(SagaActionUriDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
@@ -13190,6 +13454,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "completion", type = "object:org.apache.camel.model.SagaActionUriDefinition"),
                     @YamlProperty(name = "completion-mode", type = "enum:AUTO,MANUAL"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "option", type = "array:org.apache.camel.model.PropertyExpressionDefinition"),
@@ -13226,6 +13491,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "completion-mode": {
                     String val = asText(node);
                     target.setCompletionMode(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "inherit-error-handler": {
@@ -13282,6 +13552,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "message-frequency", type = "number"),
@@ -13307,6 +13578,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(SamplingDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
@@ -13347,6 +13623,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean")
@@ -13366,6 +13643,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(ScriptDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "expression": {
                     org.apache.camel.model.language.ExpressionDefinition val = asType(node, org.apache.camel.model.language.ExpressionDefinition.class);
                     target.setExpression(val);
@@ -13643,6 +13925,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "custom-service-filter", type = "object:org.apache.camel.model.cloud.CustomServiceCallServiceFilterConfiguration"),
                     @YamlProperty(name = "default-load-balancer", type = "object:org.apache.camel.model.cloud.DefaultServiceCallServiceLoadBalancerConfiguration"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "dns-service-discovery", type = "object:org.apache.camel.model.cloud.DnsServiceCallServiceDiscoveryConfiguration"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.cloud.ServiceCallExpressionConfiguration"),
                     @YamlProperty(name = "expression-ref", type = "string"),
@@ -13689,6 +13972,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "configuration-ref": {
                     String val = asText(node);
                     target.setConfigurationRef(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "expression": {
@@ -14082,6 +14370,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean")
@@ -14101,6 +14390,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(SetBodyDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "expression": {
                     org.apache.camel.model.language.ExpressionDefinition val = asType(node, org.apache.camel.model.language.ExpressionDefinition.class);
                     target.setExpression(val);
@@ -14148,6 +14442,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "pattern", type = "enum:InOnly,InOut,InOptionalOut", required = true)
@@ -14172,6 +14467,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(SetExchangePatternDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
@@ -14210,6 +14510,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
@@ -14230,6 +14531,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(SetHeaderDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "expression": {
                     org.apache.camel.model.language.ExpressionDefinition val = asType(node, org.apache.camel.model.language.ExpressionDefinition.class);
                     target.setExpression(val);
@@ -14282,6 +14588,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
@@ -14302,6 +14609,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(SetPropertyDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "expression": {
                     org.apache.camel.model.language.ExpressionDefinition val = asType(node, org.apache.camel.model.language.ExpressionDefinition.class);
                     target.setExpression(val);
@@ -14497,6 +14809,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "comparator", type = "string"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean")
@@ -14519,6 +14832,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "comparator": {
                     String val = asText(node);
                     target.setComparator(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "expression": {
@@ -14631,6 +14949,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "aggregation-strategy-method-name", type = "string"),
                     @YamlProperty(name = "delimiter", type = "string"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "executor-service", type = "string"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "id", type = "string"),
@@ -14677,6 +14996,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "delimiter": {
                     String val = asText(node);
                     target.setDelimiter(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "executor-service": {
@@ -14938,6 +15262,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition")
@@ -14957,6 +15282,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(StepDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
@@ -15031,6 +15361,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean")
             }
@@ -15049,6 +15380,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(StopDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
@@ -15376,6 +15712,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "allow-core-thread-time-out", type = "boolean"),
                     @YamlProperty(name = "caller-runs-when-rejected", type = "string"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "executor-service", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
@@ -15410,6 +15747,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "caller-runs-when-rejected": {
                     String val = asText(node);
                     target.setCallerRunsWhenRejected(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "executor-service": {
@@ -15544,6 +15886,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "caller-runs-when-rejected", type = "boolean"),
                     @YamlProperty(name = "correlation-expression", type = "object:org.apache.camel.model.ExpressionSubElementDefinition"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "executor-service", type = "string"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "id", type = "string"),
@@ -15579,6 +15922,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "correlation-expression": {
                     org.apache.camel.model.ExpressionSubElementDefinition val = asType(node, org.apache.camel.model.ExpressionSubElementDefinition.class);
                     target.setCorrelationExpression(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "executor-service": {
@@ -15642,6 +15990,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "exception-type", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
@@ -15663,6 +16012,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(ThrowExceptionDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "exception-type": {
                     String val = asText(node);
                     target.setExceptionType(val);
@@ -15758,6 +16112,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "parameters", type = "object"),
@@ -15790,6 +16145,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(ToDefinition target, String propertyKey, String propertyName,
                 Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
@@ -15836,6 +16196,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "auto-start-components", type = "boolean"),
                     @YamlProperty(name = "cache-size", type = "number"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "ignore-invalid-endpoint", type = "boolean"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
@@ -15882,6 +16243,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "cache-size": {
                     String val = asText(node);
                     target.setCacheSize(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "ignore-invalid-endpoint": {
@@ -16077,6 +16443,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "ref", type = "string"),
@@ -16097,6 +16464,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(TransactedDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
@@ -16136,6 +16508,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean")
@@ -16155,6 +16528,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(TransformDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "expression": {
                     org.apache.camel.model.language.ExpressionDefinition val = asType(node, org.apache.camel.model.language.ExpressionDefinition.class);
                     target.setExpression(val);
@@ -16268,6 +16646,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "do-catch", type = "array:org.apache.camel.model.CatchDefinition"),
                     @YamlProperty(name = "do-finally", type = "object:org.apache.camel.model.FinallyDefinition"),
                     @YamlProperty(name = "id", type = "string"),
@@ -16292,6 +16671,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "do-catch": {
                     java.util.List<org.apache.camel.model.CatchDefinition> val = asFlatList(node, org.apache.camel.model.CatchDefinition.class);
                     target.setCatchClauses(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "do-finally": {
@@ -16801,6 +17185,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "csv", type = "object:org.apache.camel.model.dataformat.CsvDataFormat"),
                     @YamlProperty(name = "custom", type = "object:org.apache.camel.model.dataformat.CustomDataFormat"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "fhir-json", type = "object:org.apache.camel.model.dataformat.FhirJsonDataFormat"),
                     @YamlProperty(name = "fhir-xml", type = "object:org.apache.camel.model.dataformat.FhirXmlDataFormat"),
                     @YamlProperty(name = "flatpack", type = "object:org.apache.camel.model.dataformat.FlatpackDataFormat"),
@@ -17053,6 +17438,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "inherit-error-handler": {
                     String val = asText(node);
                     target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
@@ -17083,6 +17473,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
@@ -17103,6 +17494,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(ValidateDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "expression": {
                     org.apache.camel.model.language.ExpressionDefinition val = asType(node, org.apache.camel.model.language.ExpressionDefinition.class);
                     target.setExpression(val);
@@ -17272,6 +17668,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
@@ -17292,6 +17689,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(WhenDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "expression": {
                     org.apache.camel.model.language.ExpressionDefinition val = asType(node, org.apache.camel.model.language.ExpressionDefinition.class);
                     target.setExpression(val);
@@ -17343,6 +17745,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
@@ -17363,6 +17766,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(WhenSkipSendToEndpointDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
                 case "expression": {
                     org.apache.camel.model.language.ExpressionDefinition val = asType(node, org.apache.camel.model.language.ExpressionDefinition.class);
                     target.setExpression(val);
@@ -17417,6 +17825,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "cache-size", type = "number"),
                     @YamlProperty(name = "copy", type = "boolean"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "dynamic-uri", type = "boolean"),
                     @YamlProperty(name = "executor-service", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
@@ -17466,6 +17875,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "copy": {
                     String val = asText(node);
                     target.setCopy(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "dynamic-uri": {

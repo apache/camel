@@ -52,7 +52,7 @@ public class JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest extends A
                 "Hello World", "foo", "bar", String.class);
         assertEquals("Hello Back", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // we should get an ActiveMQTextMessage with the body and custom header intact
         assertEquals(ActiveMQTextMessage.class, oneMock.getExchanges().get(0).getIn().getBody().getClass());
@@ -82,7 +82,7 @@ public class JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest extends A
                 "Hello World", "foo", "bar", String.class);
         assertEquals("Bye World", out);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals(ActiveMQTextMessage.class, threeMock.getExchanges().get(0).getIn().getBody().getClass());
         assertEquals("Hello World", ((ActiveMQTextMessage) threeMock.getExchanges().get(0).getIn().getBody()).getText());

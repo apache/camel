@@ -60,7 +60,7 @@ public class SqlProducerNoopTest extends CamelTestSupport {
 
         template.requestBody("direct:insert", "Hi there!");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -72,7 +72,7 @@ public class SqlProducerNoopTest extends CamelTestSupport {
 
         template.requestBody("direct:query", "Hi there!");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -84,7 +84,7 @@ public class SqlProducerNoopTest extends CamelTestSupport {
 
         template.requestBody("direct:update", "Hi there!");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -96,7 +96,7 @@ public class SqlProducerNoopTest extends CamelTestSupport {
 
         template.requestBody("direct:delete", "Hi there!");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

@@ -72,7 +72,7 @@ public class LevelDBAggregateLoadConcurrentTest extends LevelDBTestSupport {
 
         LOG.info("Sending all " + SIZE + " message done. Now waiting for aggregation to complete.");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         executor.shutdownNow();
     }
 

@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
@@ -46,7 +47,7 @@ public class FromFtpThirdPoolOkIT extends FtpServerTestSupport {
         // 2 first attempt should fail
         getMockEndpoint("mock:error").expectedMessageCount(2);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         // give time to delete file
         await().atMost(200, TimeUnit.MILLISECONDS)

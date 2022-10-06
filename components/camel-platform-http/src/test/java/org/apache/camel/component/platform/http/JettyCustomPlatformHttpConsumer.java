@@ -43,7 +43,7 @@ public class JettyCustomPlatformHttpConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
         final PlatformHttpEndpoint endpoint = getEndpoint();
-        final String path = configureEndpointPath(endpoint);
+        final String path = endpoint.getPath();
 
         JettyServerTest jettyServerTest = CamelContextHelper.mandatoryLookup(
                 getEndpoint().getCamelContext(),
@@ -111,15 +111,6 @@ public class JettyCustomPlatformHttpConsumer extends DefaultConsumer {
     @Override
     public PlatformHttpEndpoint getEndpoint() {
         return (PlatformHttpEndpoint) super.getEndpoint();
-    }
-
-    private String configureEndpointPath(PlatformHttpEndpoint endpoint) {
-        String path = endpoint.getPath();
-        if (endpoint.isMatchOnUriPrefix()) {
-            path += "*";
-        }
-        // Transform from the Camel path param syntax /path/{key} to vert.x web's /path/:key
-        return PATH_PARAMETER_PATTERN.matcher(path).replaceAll(":$1");
     }
 
 }

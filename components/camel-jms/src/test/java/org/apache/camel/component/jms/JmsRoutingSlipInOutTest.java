@@ -23,6 +23,7 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Headers;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
@@ -38,7 +39,7 @@ public class JmsRoutingSlipInOutTest extends AbstractJMSTest {
 
         template.sendBody("activemq:queue:JmsRoutingSlipInOutTest.start", "Hello");
 
-        assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
     }
 
     @Override

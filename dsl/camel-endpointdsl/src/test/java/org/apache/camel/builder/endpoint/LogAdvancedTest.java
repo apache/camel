@@ -46,7 +46,7 @@ public class LogAdvancedTest extends BaseEndpointDslTest {
 
         context.getRouteController().startAllRoutes();
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertTrue(handled.get());
     }

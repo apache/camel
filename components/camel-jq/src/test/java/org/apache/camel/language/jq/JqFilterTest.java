@@ -17,6 +17,7 @@
 package org.apache.camel.language.jq;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class JqFilterTest extends JqTestSupport {
@@ -39,6 +40,6 @@ public class JqFilterTest extends JqTestSupport {
         template.sendBody("direct:start", MAPPER.createObjectNode().put("foo", "baz"));
         template.sendBody("direct:start", MAPPER.createObjectNode().put("foo", "bar"));
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 }

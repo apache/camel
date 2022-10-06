@@ -38,7 +38,7 @@ public class JmsToFileMessageIdTest extends AbstractJMSTest {
 
         template.sendBody("activemq:JmsToFileMessageIdTest", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

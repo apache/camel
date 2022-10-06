@@ -85,7 +85,7 @@ public class ConcurrentConsumerLoadManualTest extends CamelTestSupport {
         context.getRouteController().startRoute("iron");
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.expectedMessageCount(NO_OF_MESSAGES);
-        assertMockEndpointsSatisfied(4, TimeUnit.MINUTES);
+        MockEndpoint.assertIsSatisfied(context, 4, TimeUnit.MINUTES);
         long delta = System.currentTimeMillis() - start;
         int seconds = (int) delta / 1000;
         int msgPrSec = NO_OF_MESSAGES / seconds;

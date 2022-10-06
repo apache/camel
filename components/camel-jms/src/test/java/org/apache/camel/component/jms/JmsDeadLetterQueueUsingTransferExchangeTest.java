@@ -36,7 +36,7 @@ public class JmsDeadLetterQueueUsingTransferExchangeTest extends AbstractJMSTest
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -46,7 +46,7 @@ public class JmsDeadLetterQueueUsingTransferExchangeTest extends AbstractJMSTest
 
         template.sendBody("direct:start", "Kabom");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

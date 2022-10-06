@@ -67,7 +67,7 @@ public class S3ConsumerIncludeBodyIT extends Aws2S3Base {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         assertEquals(3, result.getExchanges().size());
         assertNotNull(result.getExchanges().get(0).getMessage().getBody());
     }

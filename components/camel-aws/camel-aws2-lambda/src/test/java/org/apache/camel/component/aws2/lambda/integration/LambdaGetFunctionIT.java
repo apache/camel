@@ -71,7 +71,7 @@ public class LambdaGetFunctionIT extends Aws2LambdaBase {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
         GetFunctionResponse resp = result.getExchanges().get(0).getIn().getBody(GetFunctionResponse.class);
         assertEquals("GetHelloWithName", resp.configuration().functionName());
         assertEquals("Hello with node.js on Lambda", resp.configuration().description());

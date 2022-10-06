@@ -77,7 +77,7 @@ public class MinaFiltersTest extends BaseMinaTest {
         exchange.getIn().setBody("Hello World");
         producer.process(exchange);
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
 
         assertEquals(2, TestFilter.called, "The filter should have been called twice (producer and consumer)");
 
