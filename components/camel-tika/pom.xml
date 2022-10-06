@@ -48,7 +48,12 @@
         </dependency>
         <dependency>
             <groupId>org.apache.tika</groupId>
-            <artifactId>tika-parsers-standard-package</artifactId>
+            <artifactId>tika-parser-html-commons</artifactId>
+            <version>${tika-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-parser-text-module</artifactId>
             <version>${tika-version}</version>
         </dependency>
 
