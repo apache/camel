@@ -27,9 +27,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.infra.microprofile.lra.services.MicroprofileLRAService;
+import org.apache.camel.test.infra.microprofile.lra.services.MicroprofileLRAServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
@@ -40,6 +43,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Base class for LRA based tests.
  */
 public abstract class AbstractLRATestSupport extends CamelTestSupport {
+
+    @RegisterExtension
+    static MicroprofileLRAService service = MicroprofileLRAServiceFactory.createService();
 
     private Integer serverPort;
 
@@ -76,7 +82,8 @@ public abstract class AbstractLRATestSupport extends CamelTestSupport {
     protected LRASagaService createLRASagaService() {
         LRASagaService sagaService = new LRASagaService();
         sagaService.setCoordinatorUrl(getCoordinatorURL());
-        sagaService.setLocalParticipantUrl("http://localhost:" + getServerPort());
+        sagaService.setLocalParticipantUrl(
+                String.format("http://%s:%d", service.callbackHost(), getServerPort()));
         return sagaService;
     }
 
@@ -95,11 +102,7 @@ public abstract class AbstractLRATestSupport extends CamelTestSupport {
     }
 
     private String getCoordinatorURL() {
-        String url = System.getenv("LRA_COORDINATOR_URL");
-        if (url == null) {
-            throw new IllegalStateException("Cannot run test: environment variable LRA_COORDINATOR_URL is missing");
-        }
-        return url;
+        return service.getServiceAddress();
     }
 
     protected int getServerPort() {

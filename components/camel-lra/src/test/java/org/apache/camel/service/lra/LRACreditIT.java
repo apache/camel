@@ -28,14 +28,11 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.SagaPropagation;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.fail;
 
-@EnabledIfEnvironmentVariable(named = "LRA_COORDINATOR_URL", matches = ".*",
-                              disabledReason = "Coordinator URL not provided")
 public class LRACreditIT extends AbstractLRATestSupport {
 
     private OrderManagerService orderManagerService;

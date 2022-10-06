@@ -57,6 +57,7 @@
         <module>camel-test-infra-google-pubsub</module>
         <module>camel-test-infra-hbase</module>
         <module>camel-test-infra-infinispan</module>
+        <module>camel-test-infra-microprofile-lra</module>
         <module>camel-test-infra-minio</module>
         <module>camel-test-infra-nats</module>
         <module>camel-test-infra-pulsar</module>
