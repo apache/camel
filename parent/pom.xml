@@ -512,7 +512,7 @@
         <stringtemplate-version>4.3.3</stringtemplate-version>
         <templating-maven-plugin-version>1.0.0</templating-maven-plugin-version>
         <testcontainers-version>1.17.4</testcontainers-version>
-        <tika-version>2.4.1</tika-version>
+        <tika-version>2.5.0</tika-version>
         <twilio-version>7.55.3</twilio-version>
         <twitter4j-version>4.0.7</twitter4j-version>
         <undertow-version>2.2.19.Final</undertow-version>
