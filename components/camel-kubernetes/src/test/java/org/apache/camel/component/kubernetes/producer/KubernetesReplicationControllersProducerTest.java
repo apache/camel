@@ -97,7 +97,7 @@ public class KubernetesReplicationControllersProducerTest extends KubernetesTest
     }
 
     @Test
-    void createAndDeleteReplicationController() {
+    void deleteReplicationController() {
         server.expect().withPath("/api/v1/namespaces/test/replicationcontrollers/repl1")
                 .andReturn(200, new ReplicationControllerBuilder().withNewMetadata().withName("repl1")
                         .withResourceVersion("1").endMetadata().withNewSpec().withReplicas(0).endSpec().withNewStatus()
@@ -121,7 +121,7 @@ public class KubernetesReplicationControllersProducerTest extends KubernetesTest
     }
 
     @Test
-    void createScaleAndDeleteReplicationController() {
+    void scaleReplicationController() {
         server.expect().withPath("/api/v1/namespaces/test/replicationcontrollers/repl1")
                 .andReturn(200, new ReplicationControllerBuilder().withNewMetadata().withName("repl1")
                         .withResourceVersion("1").endMetadata().withNewSpec().withReplicas(5).endSpec().withNewStatus()
@@ -154,8 +154,6 @@ public class KubernetesReplicationControllersProducerTest extends KubernetesTest
                         "kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=listReplicationControllersByLabels");
                 from("direct:getReplicationController").to(
                         "kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=getReplicationController");
-                from("direct:createReplicationController").to(
-                        "kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=createReplicationController");
                 from("direct:scaleReplicationController").to(
                         "kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=scaleReplicationController");
                 from("direct:deleteReplicationController").to(

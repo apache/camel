@@ -72,7 +72,7 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    void createAndDeleteNamespace() {
+    void deleteNamespace() {
         Namespace ns1 = new NamespaceBuilder().withNewMetadata().withName("ns1").endMetadata().build();
         server.expect().withPath("/api/v1/namespaces/ns1").andReturn(200, ns1).once();
 

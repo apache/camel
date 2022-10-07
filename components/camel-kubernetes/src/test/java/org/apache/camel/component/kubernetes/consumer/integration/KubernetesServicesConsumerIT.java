@@ -112,10 +112,6 @@ public class KubernetesServicesConsumerIT extends KubernetesTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:list").toF("kubernetes-services://%s?oauthToken=%s&operation=listServices", host, authToken);
-                from("direct:listByLabels").toF("kubernetes-services://%s?oauthToken=%s&operation=listServicesByLabels", host,
-                        authToken);
-                from("direct:getServices").toF("kubernetes-services://%s?oauthToken=%s&operation=getService", host, authToken);
                 from("direct:createService").toF("kubernetes-services://%s?oauthToken=%s&operation=createService", host,
                         authToken);
                 from("direct:deleteService").toF("kubernetes-services://%s?oauthToken=%s&operation=deleteService", host,

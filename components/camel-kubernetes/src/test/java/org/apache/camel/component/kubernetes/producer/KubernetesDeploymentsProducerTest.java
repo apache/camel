@@ -77,7 +77,7 @@ public class KubernetesDeploymentsProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    void createAndDeleteDeployment() {
+    void deleteDeployment() {
         Deployment de1 = new DeploymentBuilder().withNewMetadata().withNamespace("test").withName("de1")
                 .withResourceVersion("1").withGeneration(2L).endMetadata().withNewSpec()
                 .withReplicas(0).endSpec().withNewStatus().withReplicas(1).withObservedGeneration(1L).endStatus().build();
@@ -100,7 +100,7 @@ public class KubernetesDeploymentsProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    void createScaleAndDeleteDeployment() {
+    void scaleDeployment() {
         server.expect().withPath("/apis/apps/v1/namespaces/test/deployments/de1")
                 .andReturn(200, new DeploymentBuilder().withNewMetadata().withName("de1")
                         .withResourceVersion("1").endMetadata().withNewSpec().withReplicas(5).endSpec().withNewStatus()
@@ -134,8 +134,6 @@ public class KubernetesDeploymentsProducerTest extends KubernetesTestSupport {
                         .toF("kubernetes-deployments:///?kubernetesClient=#kubernetesClient&operation=listDeploymentsByLabels");
                 from("direct:deleteDeployment")
                         .toF("kubernetes-deployments:///?kubernetesClient=#kubernetesClient&operation=deleteDeployment");
-                from("direct:createDeployment")
-                        .toF("kubernetes-deployments:///?kubernetesClient=#kubernetesClient&operation=createDeployment");
                 from("direct:scaleDeployment")
                         .toF("kubernetes-deployments:///?kubernetesClient=#kubernetesClient&operation=scaleDeployment");
             }

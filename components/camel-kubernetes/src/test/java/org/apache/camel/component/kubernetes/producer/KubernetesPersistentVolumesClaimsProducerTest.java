@@ -80,7 +80,7 @@ public class KubernetesPersistentVolumesClaimsProducerTest extends KubernetesTes
     }
 
     @Test
-    void createListAndDeletePersistentVolumeClaim() {
+    void deletePersistentVolumeClaim() {
         ObjectMeta meta = new ObjectMeta();
         meta.setName("pvc1");
         server.expect().withPath("/api/v1/namespaces/test/persistentvolumeclaims/pvc1")

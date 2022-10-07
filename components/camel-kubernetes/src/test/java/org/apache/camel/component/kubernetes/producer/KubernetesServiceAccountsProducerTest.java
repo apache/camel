@@ -78,7 +78,7 @@ public class KubernetesServiceAccountsProducerTest extends KubernetesTestSupport
     }
 
     @Test
-    void createAndDeleteServiceAccount() {
+    void deleteServiceAccount() {
         ServiceAccount pod1 = new ServiceAccountBuilder().withNewMetadata().withName("sa1").withNamespace("test").and().build();
 
         server.expect().withPath("/api/v1/namespaces/test/serviceaccounts/sa1").andReturn(200, pod1).once();

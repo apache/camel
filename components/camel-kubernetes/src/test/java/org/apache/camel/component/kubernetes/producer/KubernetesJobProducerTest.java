@@ -99,8 +99,6 @@ public class KubernetesJobProducerTest extends KubernetesTestSupport {
                 from("direct:list").to("kubernetes-job:foo?operation=listJob");
                 from("direct:listByLabels").to("kubernetes-job:foo?operation=listJobByLabels");
                 from("direct:get").to("kubernetes-job:foo?operation=getJob");
-                from("direct:create").to("kubernetes-job:foo?operation=createJob");
-                from("direct:delete").to("kubernetes-job:foo?operation=deleteJob");
             }
         };
     }

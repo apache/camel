@@ -91,7 +91,7 @@ public class KubernetesServicesProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    void createAndDeleteService() {
+    void deleteService() {
         Service se1 = new ServiceBuilder().withNewMetadata().withName("se1").withNamespace("test").and().build();
 
         server.expect().withPath("/api/v1/namespaces/test/services/se1").andReturn(200, se1).once();

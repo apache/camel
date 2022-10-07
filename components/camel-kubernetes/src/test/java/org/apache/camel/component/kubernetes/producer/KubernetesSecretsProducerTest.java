@@ -92,7 +92,7 @@ public class KubernetesSecretsProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    void createAndDeleteSecret() {
+    void deleteSecret() {
         Secret sc1 = new SecretBuilder().withNewMetadata().withName("sc1").withNamespace("test").and().build();
 
         server.expect().withPath("/api/v1/namespaces/test/secrets/sc1").andReturn(200, sc1).once();
@@ -115,7 +115,6 @@ public class KubernetesSecretsProducerTest extends KubernetesTestSupport {
                 from("direct:listByLabels")
                         .to("kubernetes-secrets:///?kubernetesClient=#kubernetesClient&operation=listSecretsByLabels");
                 from("direct:get").to("kubernetes-secrets:///?kubernetesClient=#kubernetesClient&operation=getSecret");
-                from("direct:create").to("kubernetes-secrets:///?kubernetesClient=#kubernetesClient&operation=createSecret");
                 from("direct:delete").to("kubernetes-secrets:///?kubernetesClient=#kubernetesClient&operation=deleteSecret");
             }
         };

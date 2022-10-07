@@ -110,7 +110,7 @@ public class KubernetesConfigMapsProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    void createGetAndDeleteConfigMap() {
+    void deleteConfigMap() {
         ConfigMap cm1 = new ConfigMapBuilder().withNewMetadata().withName("cm1").withNamespace("test").and().build();
         server.expect().withPath("/api/v1/namespaces/test/configmaps/cm1").andReturn(200, cm1).once();
 
@@ -135,8 +135,6 @@ public class KubernetesConfigMapsProducerTest extends KubernetesTestSupport {
                         .to("kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&operation=listConfigMapsByLabels");
                 from("direct:getConfigMap")
                         .to("kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&operation=getConfigMap");
-                from("direct:createConfigMap")
-                        .to("kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&operation=createConfigMap");
                 from("direct:deleteConfigMap")
                         .to("kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&operation=deleteConfigMap");
             }

@@ -77,7 +77,7 @@ public class OpenshiftDeploymentConfigsProducerTest extends KubernetesTestSuppor
     }
 
     @Test
-    void createAndDeleteDeploymentConfig() {
+    void deleteDeploymentConfig() {
         DeploymentConfig de1 = new DeploymentConfigBuilder().withNewMetadata().withNamespace("test").withName("dc1")
                 .withResourceVersion("1").withGeneration(2L).endMetadata().withNewSpec()
                 .withReplicas(0).endSpec().withNewStatus().withReplicas(1).withObservedGeneration(1L).endStatus().build();
@@ -101,7 +101,7 @@ public class OpenshiftDeploymentConfigsProducerTest extends KubernetesTestSuppor
     }
 
     @Test
-    void createScaleAndDeleteDeploymentConfig() {
+    void scaleDeploymentConfig() {
         server.expect().withPath("/apis/apps.openshift.io/v1/namespaces/test/deploymentconfigs/dc1")
                 .andReturn(200, new DeploymentConfigBuilder().withNewMetadata().withName("dc1")
                         .withResourceVersion("1").endMetadata().withNewSpec().withReplicas(5).endSpec().withNewStatus()
@@ -136,8 +136,6 @@ public class OpenshiftDeploymentConfigsProducerTest extends KubernetesTestSuppor
                         .toF("openshift-deploymentconfigs:///?kubernetesClient=#kubernetesClient&operation=listDeploymentConfigsByLabels");
                 from("direct:delete")
                         .toF("openshift-deploymentconfigs:///?kubernetesClient=#kubernetesClient&operation=deleteDeploymentConfig");
-                from("direct:create")
-                        .toF("openshift-deploymentconfigs:///?kubernetesClient=#kubernetesClient&operation=createDeploymentConfig");
                 from("direct:scale")
                         .toF("openshift-deploymentconfigs:///?kubernetesClient=#kubernetesClient&operation=scaleDeploymentConfig");
             }

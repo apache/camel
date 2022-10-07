@@ -196,8 +196,6 @@ public class KubernetesCustomResourcesProducerTest extends KubernetesTestSupport
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:getCustomResource")
-                        .toF("kubernetes-custom-resources:///?kubernetesClient=#kubernetesClient&operation=getCustomResource");
                 from("direct:listCustomResources").toF(
                         "kubernetes-custom-resources:///?kubernetesClient=#kubernetesClient&operation=listCustomResources");
                 from("direct:listCustomResourcesByLabels").toF(
