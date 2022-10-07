@@ -41,7 +41,9 @@ import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.consumer.internals.ConsumerNetworkClient;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.InterruptException;
 import org.apache.kafka.common.errors.WakeupException;
 import org.slf4j.Logger;
@@ -381,6 +383,14 @@ public class KafkaFetchRecords implements Runnable {
                 break;
             case RESUME_REQUESTED:
                 LOG.info("Resuming the consumer as a response to a resume request");
+                if (consumer.committed(this.consumer.assignment()) != null) {
+                    consumer.committed(this.consumer.assignment()).forEach((k, v) -> {
+                        final TopicPartition tp = (TopicPartition) k;
+                        LOG.info("Resuming from the offset {} for the topic {} with partition {}",
+                                ((OffsetAndMetadata) v).offset(), tp.topic(), tp.partition());
+                        consumer.seek(tp, ((OffsetAndMetadata) v).offset());
+                    });
+                }
                 consumer.resume(consumer.assignment());
                 state = State.RUNNING;
                 break;
