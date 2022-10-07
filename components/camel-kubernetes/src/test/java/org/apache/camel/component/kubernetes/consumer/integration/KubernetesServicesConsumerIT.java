@@ -60,8 +60,7 @@ public class KubernetesServicesConsumerIT extends KubernetesTestSupport {
 
     @Test
     @Order(1)
-    public void createService() {
-        //        mockResultEndpoint.expectedMessageCount(1);
+    void createService() {
         mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED");
 
         Exchange ex = template.request("direct:createService", exchange -> {
@@ -94,7 +93,7 @@ public class KubernetesServicesConsumerIT extends KubernetesTestSupport {
 
     @Test
     @Order(2)
-    public void deleteService() {
+    void deleteService() {
         Exchange ex = template.request("direct:deleteService", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, TEST_SERVICE_NAME);
@@ -113,10 +112,6 @@ public class KubernetesServicesConsumerIT extends KubernetesTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:list").toF("kubernetes-services://%s?oauthToken=%s&operation=listServices", host, authToken);
-                from("direct:listByLabels").toF("kubernetes-services://%s?oauthToken=%s&operation=listServicesByLabels", host,
-                        authToken);
-                from("direct:getServices").toF("kubernetes-services://%s?oauthToken=%s&operation=getService", host, authToken);
                 from("direct:createService").toF("kubernetes-services://%s?oauthToken=%s&operation=createService", host,
                         authToken);
                 from("direct:deleteService").toF("kubernetes-services://%s?oauthToken=%s&operation=deleteService", host,

@@ -18,8 +18,10 @@ package org.apache.camel.component.openshift.deploymentconfigs;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import io.fabric8.kubernetes.api.model.StatusDetails;
+import io.fabric8.kubernetes.client.dsl.Resource;
 import io.fabric8.openshift.api.model.DeploymentConfig;
 import io.fabric8.openshift.api.model.DeploymentConfigBuilder;
 import io.fabric8.openshift.api.model.DeploymentConfigList;
@@ -74,6 +76,10 @@ public class OpenshiftDeploymentConfigsProducer extends DefaultProducer {
 
             case KubernetesOperations.CREATE_DEPLOYMENT_CONFIG:
                 doCreateDeployment(exchange);
+                break;
+
+            case KubernetesOperations.REPLACE_DEPLOYMENT_CONFIG:
+                doReplaceDeployment(exchange);
                 break;
 
             case KubernetesOperations.SCALE_DEPLOYMENT_CONFIG:
@@ -133,30 +139,43 @@ public class OpenshiftDeploymentConfigsProducer extends DefaultProducer {
         prepareOutboundMessage(exchange, deploymentConfigDeleted);
     }
 
+    protected void doReplaceDeployment(Exchange exchange) {
+        doCreateOrUpdateDeployment(exchange, "Replace", Resource::replace);
+    }
+
     protected void doCreateDeployment(Exchange exchange) {
+        doCreateOrUpdateDeployment(exchange, "Create", Resource::create);
+    }
+
+    private void doCreateOrUpdateDeployment(
+            Exchange exchange, String operationName, Function<Resource<DeploymentConfig>, DeploymentConfig> operation) {
         String deploymentName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         DeploymentConfigSpec dcSpec
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_CONFIG_SPEC, DeploymentConfigSpec.class);
         if (ObjectHelper.isEmpty(deploymentName)) {
-            LOG.error("Create a specific Deployment Config require specify a Deployment name");
-            throw new IllegalArgumentException("Create a specific Deployment Config require specify a pod name");
+            LOG.error("{} a specific Deployment Config require specify a Deployment name", operationName);
+            throw new IllegalArgumentException(
+                    String.format("%s a specific Deployment Config require specify a pod name", operationName));
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
-            LOG.error("Create a specific Deployment Config require specify a namespace name");
-            throw new IllegalArgumentException("Create a specific Deployment Config require specify a namespace name");
+            LOG.error("{} a specific Deployment Config require specify a namespace name", operationName);
+            throw new IllegalArgumentException(
+                    String.format("%s a specific Deployment Config require specify a namespace name", operationName));
         }
         if (ObjectHelper.isEmpty(dcSpec)) {
-            LOG.error("Create a specific Deployment Config require specify a Deployment Config spec bean");
+            LOG.error("{} a specific Deployment Config require specify a Deployment Config spec bean", operationName);
             throw new IllegalArgumentException(
-                    "Create a specific Deployment Config require specify a Deployment Config spec bean");
+                    String.format("%s a specific Deployment Config require specify a Deployment Config spec bean",
+                            operationName));
         }
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENTS_LABELS, Map.class);
         DeploymentConfig deploymentCreating = new DeploymentConfigBuilder().withNewMetadata().withName(deploymentName)
                 .withLabels(labels).endMetadata().withSpec(dcSpec).build();
-        DeploymentConfig deploymentConfig = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).deploymentConfigs()
-                .inNamespace(namespaceName)
-                .create(deploymentCreating);
+        DeploymentConfig deploymentConfig
+                = operation.apply(getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).deploymentConfigs()
+                        .inNamespace(namespaceName)
+                        .resource(deploymentCreating));
 
         prepareOutboundMessage(exchange, deploymentConfig);
     }

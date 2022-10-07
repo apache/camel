@@ -22,10 +22,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
-@EnabledIfEnvironmentVariable(named = "LRA_COORDINATOR_URL", matches = ".*",
-                              disabledReason = "Coordinator URL not provided")
 public class LRAFailuresIT extends AbstractLRATestSupport {
 
     private AtomicInteger maxFailures;

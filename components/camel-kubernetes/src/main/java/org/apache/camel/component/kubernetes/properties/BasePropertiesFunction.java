@@ -25,8 +25,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.fabric8.kubernetes.client.ConfigBuilder;
-import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.KubernetesClientBuilder;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
@@ -70,8 +70,7 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
     private String mountPathSecrets;
 
     @Override
-    @SuppressWarnings("unchecked")
-    protected void doInit() throws Exception {
+    protected void doInit() {
         ObjectHelper.notNull(camelContext, "CamelContext");
         if (localMode == null) {
             localMode = "true"
@@ -82,7 +81,7 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
         }
     }
 
-    protected void doInitKubernetesClient() throws Exception {
+    protected void doInitKubernetesClient() {
         if (clientEnabled == null) {
             clientEnabled = "true"
                     .equalsIgnoreCase(camelContext.getPropertiesComponent().resolveProperty(CLIENT_ENABLED).orElse("true"));
@@ -130,7 +129,7 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
                         properties.remove(e.getKey());
                     }
                 }
-                client = new DefaultKubernetesClient(config.build());
+                client = new KubernetesClientBuilder().withConfig(config.build()).build();
                 LOG.info("Auto-configuration KubernetesClient summary");
                 for (var entry : properties.entrySet()) {
                     String k = entry.getKey().toString();
@@ -150,7 +149,7 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
                 }
             } else {
                 // create a default client to use
-                client = new DefaultKubernetesClient();
+                client = new KubernetesClientBuilder().build();
                 LOG.debug("Created default KubernetesClient (auto-configured by itself)");
             }
             // add to registry so the client can be reused

@@ -17,45 +17,48 @@
 package org.apache.camel.component.kubernetes.producer;
 
 import java.util.List;
+import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.Namespace;
 import io.fabric8.kubernetes.api.model.NamespaceBuilder;
 import io.fabric8.kubernetes.api.model.NamespaceListBuilder;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.NamespacedKubernetesClient;
+import io.fabric8.kubernetes.client.server.mock.EnableKubernetesMockClient;
+import io.fabric8.kubernetes.client.server.mock.KubernetesMockServer;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.KubernetesServer;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@EnableKubernetesMockClient
 public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
 
-    @RegisterExtension
-    public KubernetesServer server = new KubernetesServer();
+    KubernetesMockServer server;
+    NamespacedKubernetesClient client;
 
     @BindToRegistry("kubernetesClient")
     public KubernetesClient getClient() {
-        return server.getClient();
+        return client;
     }
 
     @Test
-    public void listTest() {
+    void listTest() {
         server.expect().withPath("/api/v1/namespaces")
                 .andReturn(200, new NamespaceListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
                 .once();
-        List<Namespace> result = template.requestBody("direct:list", "", List.class);
+        List<?> result = template.requestBody("direct:list", "", List.class);
         assertEquals(3, result.size());
     }
 
     @Test
-    public void getNamespace() {
+    void getNamespace() {
         ObjectMeta meta = new ObjectMeta();
         meta.setName("test");
         server.expect().withPath("/api/v1/namespaces/test").andReturn(200, new NamespaceBuilder().withMetadata(meta).build())
@@ -70,7 +73,43 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    public void createAndDeleteNamespace() {
+    void createNamespace() {
+        Map<String, String> labels = Map.of("my.label.key", "my.label.value");
+        Namespace ns1 = new NamespaceBuilder().withNewMetadata().withName("ns1").withLabels(labels).endMetadata().build();
+        server.expect().post().withPath("/api/v1/namespaces").andReturn(200, ns1).once();
+
+        Exchange ex = template.request("direct:createNamespace", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "ns1");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_LABELS, labels);
+        });
+
+        Namespace result = ex.getMessage().getBody(Namespace.class);
+
+        assertEquals("ns1", result.getMetadata().getName());
+        assertEquals(labels, result.getMetadata().getLabels());
+    }
+
+    @Test
+    void replaceNamespace() {
+        Map<String, String> labels = Map.of("my.label.key", "my.label.value");
+        Namespace ns1 = new NamespaceBuilder().withNewMetadata().withName("ns1").withLabels(labels).endMetadata().build();
+        server.expect().get().withPath("/api/v1/namespaces/ns1")
+                .andReturn(200, new NamespaceBuilder().withNewMetadata().withName("ns1").endMetadata().build()).once();
+        server.expect().put().withPath("/api/v1/namespaces/ns1").andReturn(200, ns1).once();
+
+        Exchange ex = template.request("direct:replaceNamespace", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "ns1");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_LABELS, labels);
+        });
+
+        Namespace result = ex.getMessage().getBody(Namespace.class);
+
+        assertEquals("ns1", result.getMetadata().getName());
+        assertEquals(labels, result.getMetadata().getLabels());
+    }
+
+    @Test
+    void deleteNamespace() {
         Namespace ns1 = new NamespaceBuilder().withNewMetadata().withName("ns1").endMetadata().build();
         server.expect().withPath("/api/v1/namespaces/ns1").andReturn(200, ns1).once();
 
@@ -89,6 +128,10 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
             public void configure() {
                 from("direct:list").to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=listNamespaces");
                 from("direct:getNs").to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=getNamespace");
+                from("direct:createNamespace")
+                        .to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=createNamespace");
+                from("direct:replaceNamespace")
+                        .to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=replaceNamespace");
                 from("direct:deleteNamespace")
                         .to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=deleteNamespace");
             }

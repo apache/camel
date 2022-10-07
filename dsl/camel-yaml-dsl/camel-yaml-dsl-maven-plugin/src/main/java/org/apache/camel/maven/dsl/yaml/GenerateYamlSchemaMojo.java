@@ -102,6 +102,11 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                     .map(values -> Stream.of(values).collect(Collectors.toCollection(TreeSet::new)))
                     .orElseGet(TreeSet::new);
 
+            final DotName name = DotName.createSimple(entry.getKey());
+            final ClassInfo info = view.getClassByName(name);
+            if (isBanned(info)) {
+                continue;
+            }
             if (hasAnnotation(entry.getValue(), YAML_IN_ANNOTATION)) {
                 nodes.forEach(node -> {
                     items.with("properties")
@@ -109,9 +114,6 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                             .put("$ref", "#/items/definitions/" + entry.getKey());
                 });
             } else {
-                final DotName name = DotName.createSimple(entry.getKey());
-                final ClassInfo info = view.getClassByName(name);
-
                 if (extendsType(info, PROCESSOR_DEFINITION_CLASS)) {
                     nodes.forEach(node -> {
                         step.with("properties")

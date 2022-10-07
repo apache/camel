@@ -18,12 +18,14 @@ package org.apache.camel.component.kubernetes.pods;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodBuilder;
 import io.fabric8.kubernetes.api.model.PodList;
 import io.fabric8.kubernetes.api.model.PodSpec;
 import io.fabric8.kubernetes.api.model.StatusDetails;
+import io.fabric8.kubernetes.client.dsl.Resource;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -71,6 +73,10 @@ public class KubernetesPodsProducer extends DefaultProducer {
                 doCreatePod(exchange);
                 break;
 
+            case KubernetesOperations.REPLACE_POD_OPERATION:
+                doReplacePod(exchange);
+                break;
+
             case KubernetesOperations.DELETE_POD_OPERATION:
                 doDeletePod(exchange);
                 break;
@@ -108,7 +114,6 @@ public class KubernetesPodsProducer extends DefaultProducer {
     }
 
     protected void doGetPod(Exchange exchange) {
-        Pod pod = null;
         String podName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_POD_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(podName)) {
@@ -119,32 +124,41 @@ public class KubernetesPodsProducer extends DefaultProducer {
             LOG.error("Get a specific pod require specify a namespace name");
             throw new IllegalArgumentException("Get a specific pod require specify a namespace name");
         }
-        pod = getEndpoint().getKubernetesClient().pods().inNamespace(namespaceName).withName(podName).get();
+        Pod pod = getEndpoint().getKubernetesClient().pods().inNamespace(namespaceName).withName(podName).get();
 
         prepareOutboundMessage(exchange, pod);
     }
 
+    protected void doReplacePod(Exchange exchange) {
+        doCreateOrUpdatePod(exchange, "Replace", Resource::replace);
+    }
+
     protected void doCreatePod(Exchange exchange) {
-        Pod pod = null;
+        doCreateOrUpdatePod(exchange, "Create", Resource::create);
+    }
+
+    private void doCreateOrUpdatePod(Exchange exchange, String operationName, Function<Resource<Pod>, Pod> operation) {
         String podName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_POD_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         PodSpec podSpec = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_POD_SPEC, PodSpec.class);
         if (ObjectHelper.isEmpty(podName)) {
-            LOG.error("Create a specific pod require specify a pod name");
-            throw new IllegalArgumentException("Create a specific pod require specify a pod name");
+            LOG.error("{} a specific pod require specify a pod name", operationName);
+            throw new IllegalArgumentException(String.format("%s a specific pod require specify a pod name", operationName));
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
-            LOG.error("Create a specific pod require specify a namespace name");
-            throw new IllegalArgumentException("Create a specific pod require specify a namespace name");
+            LOG.error("{} a specific pod require specify a namespace name", operationName);
+            throw new IllegalArgumentException(
+                    String.format("%s a specific pod require specify a namespace name", operationName));
         }
         if (ObjectHelper.isEmpty(podSpec)) {
-            LOG.error("Create a specific pod require specify a pod spec bean");
-            throw new IllegalArgumentException("Create a specific pod require specify a pod spec bean");
+            LOG.error("{} a specific pod require specify a pod spec bean", operationName);
+            throw new IllegalArgumentException(
+                    String.format("%s a specific pod require specify a pod spec bean", operationName));
         }
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, Map.class);
         Pod podCreating = new PodBuilder().withNewMetadata().withName(podName).withLabels(labels).endMetadata()
                 .withSpec(podSpec).build();
-        pod = getEndpoint().getKubernetesClient().pods().inNamespace(namespaceName).create(podCreating);
+        Pod pod = operation.apply(getEndpoint().getKubernetesClient().pods().inNamespace(namespaceName).resource(podCreating));
 
         prepareOutboundMessage(exchange, pod);
     }

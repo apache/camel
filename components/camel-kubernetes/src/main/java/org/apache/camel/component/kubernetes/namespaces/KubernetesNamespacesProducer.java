@@ -18,11 +18,13 @@ package org.apache.camel.component.kubernetes.namespaces;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import io.fabric8.kubernetes.api.model.Namespace;
 import io.fabric8.kubernetes.api.model.NamespaceBuilder;
 import io.fabric8.kubernetes.api.model.NamespaceList;
 import io.fabric8.kubernetes.api.model.StatusDetails;
+import io.fabric8.kubernetes.client.dsl.Resource;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -70,6 +72,10 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
                 doCreateNamespace(exchange);
                 break;
 
+            case KubernetesOperations.REPLACE_NAMESPACE_OPERATION:
+                doReplaceNamespace(exchange);
+                break;
+
             case KubernetesOperations.DELETE_NAMESPACE_OPERATION:
                 doDeleteNamespace(exchange);
                 break;
@@ -108,16 +114,26 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
         prepareOutboundMessage(exchange, namespace);
     }
 
+    protected void doReplaceNamespace(Exchange exchange) {
+        doCreateOrUpdateNamespace(exchange, "Replace", Resource::replace);
+    }
+
     protected void doCreateNamespace(Exchange exchange) {
+        doCreateOrUpdateNamespace(exchange, "Create", Resource::create);
+    }
+
+    private void doCreateOrUpdateNamespace(
+            Exchange exchange, String operationName, Function<Resource<Namespace>, Namespace> operation) {
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(namespaceName)) {
-            LOG.error("Create a specific namespace require specify a namespace name");
-            throw new IllegalArgumentException("Create a specific namespace require specify a namespace name");
+            LOG.error("{} a specific namespace require specify a namespace name", operationName);
+            throw new IllegalArgumentException(
+                    String.format("%s a specific namespace require specify a namespace name", operationName));
         }
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_LABELS, Map.class);
         Namespace ns
                 = new NamespaceBuilder().withNewMetadata().withName(namespaceName).withLabels(labels).endMetadata().build();
-        Namespace namespace = getEndpoint().getKubernetesClient().namespaces().create(ns);
+        Namespace namespace = operation.apply(getEndpoint().getKubernetesClient().namespaces().resource(ns));
 
         prepareOutboundMessage(exchange, namespace);
     }

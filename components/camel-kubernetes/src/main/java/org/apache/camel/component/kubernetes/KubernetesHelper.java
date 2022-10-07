@@ -20,8 +20,8 @@ import java.util.function.Supplier;
 
 import io.fabric8.kubernetes.client.Config;
 import io.fabric8.kubernetes.client.ConfigBuilder;
-import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.KubernetesClientBuilder;
 import io.fabric8.kubernetes.client.Watch;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.MessageHelper;
@@ -46,7 +46,7 @@ public final class KubernetesHelper {
             return createKubernetesClient(configuration);
         } else {
             LOG.info("Creating default kubernetes client without applying configuration");
-            return new DefaultKubernetesClient();
+            return new KubernetesClientBuilder().build();
         }
     }
 
@@ -76,7 +76,7 @@ public final class KubernetesHelper {
         ObjectHelper.ifNotEmpty(configuration.getNamespace(), builder::withNamespace);
 
         Config conf = builder.build();
-        return new DefaultKubernetesClient(conf);
+        return new KubernetesClientBuilder().withConfig(conf).build();
     }
 
     public static void close(Runnable runnable, Supplier<Watch> watchGetter) {

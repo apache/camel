@@ -83,13 +83,12 @@ public class KubernetesPersistentVolumesProducer extends DefaultProducer {
     }
 
     protected void doGetPersistentVolume(Exchange exchange) {
-        PersistentVolume pv = null;
         String pvName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUME_NAME, String.class);
         if (ObjectHelper.isEmpty(pvName)) {
             LOG.error("Get a specific Persistent Volume require specify a Persistent Volume name");
             throw new IllegalArgumentException("Get a specific Persistent Volume require specify a Persistent Volume name");
         }
-        pv = getEndpoint().getKubernetesClient().persistentVolumes().withName(pvName).get();
+        PersistentVolume pv = getEndpoint().getKubernetesClient().persistentVolumes().withName(pvName).get();
 
         prepareOutboundMessage(exchange, pv);
     }

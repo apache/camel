@@ -16,14 +16,15 @@
  */
 package org.apache.camel.component.kubernetes.customresources;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import io.fabric8.kubernetes.api.model.GenericKubernetesResource;
 import io.fabric8.kubernetes.api.model.GenericKubernetesResourceList;
 import io.fabric8.kubernetes.api.model.StatusDetails;
 import io.fabric8.kubernetes.client.KubernetesClientException;
+import io.fabric8.kubernetes.client.dsl.Resource;
 import io.fabric8.kubernetes.client.dsl.base.CustomResourceDefinitionContext;
 import io.fabric8.kubernetes.client.utils.Serialization;
 import org.apache.camel.Exchange;
@@ -88,6 +89,10 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
 
             case KubernetesOperations.CREATE_CUSTOMRESOURCE:
                 doCreate(exchange, namespace);
+                break;
+
+            case KubernetesOperations.REPLACE_CUSTOMRESOURCE:
+                doReplace(exchange, namespace);
                 break;
 
             default:
@@ -182,14 +187,24 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
 
     }
 
-    protected void doCreate(Exchange exchange, String namespaceName) throws IOException {
+    protected void doReplace(Exchange exchange, String namespaceName) {
+        doCreateOrReplace(exchange, namespaceName, Resource::replace);
+    }
+
+    protected void doCreate(Exchange exchange, String namespaceName) {
+        doCreateOrReplace(exchange, namespaceName, Resource::create);
+    }
+
+    private void doCreateOrReplace(
+            Exchange exchange, String namespaceName,
+            Function<Resource<GenericKubernetesResource>, GenericKubernetesResource> operation) {
         String customResourceInstance = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE, String.class);
         GenericKubernetesResource customResource = new GenericKubernetesResource();
         try {
-            customResource = getEndpoint().getKubernetesClient()
+            customResource = operation.apply(getEndpoint().getKubernetesClient()
                     .genericKubernetesResources(getCRDContext(exchange.getIn()))
                     .inNamespace(namespaceName)
-                    .create(Serialization.unmarshal(customResourceInstance, GenericKubernetesResource.class));
+                    .resource(Serialization.unmarshal(customResourceInstance, GenericKubernetesResource.class)));
         } catch (KubernetesClientException e) {
             if (e.getCode() == 409) {
                 LOG.info("Custom resource instance already exists", e);
