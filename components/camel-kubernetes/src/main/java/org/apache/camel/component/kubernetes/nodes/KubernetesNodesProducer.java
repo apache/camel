@@ -97,19 +97,17 @@ public class KubernetesNodesProducer extends DefaultProducer {
     }
 
     protected void doGetNode(Exchange exchange) {
-        Node node = null;
         String pvName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODE_NAME, String.class);
         if (ObjectHelper.isEmpty(pvName)) {
             LOG.error("Get a specific Node require specify a Node name");
             throw new IllegalArgumentException("Get a specific Node require specify a Node name");
         }
-        node = getEndpoint().getKubernetesClient().nodes().withName(pvName).get();
+        Node node = getEndpoint().getKubernetesClient().nodes().withName(pvName).get();
 
         prepareOutboundMessage(exchange, node);
     }
 
     protected void doCreateNode(Exchange exchange) {
-        Node node = null;
         String nodeName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODE_NAME, String.class);
         NodeSpec nodeSpec = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODE_SPEC, NodeSpec.class);
         if (ObjectHelper.isEmpty(nodeName)) {
@@ -123,7 +121,7 @@ public class KubernetesNodesProducer extends DefaultProducer {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, Map.class);
         Node nodeCreating = new NodeBuilder().withNewMetadata().withName(nodeName).withLabels(labels).endMetadata()
                 .withSpec(nodeSpec).build();
-        node = getEndpoint().getKubernetesClient().nodes().create(nodeCreating);
+        Node node = getEndpoint().getKubernetesClient().nodes().resource(nodeCreating).create();
 
         prepareOutboundMessage(exchange, node);
     }

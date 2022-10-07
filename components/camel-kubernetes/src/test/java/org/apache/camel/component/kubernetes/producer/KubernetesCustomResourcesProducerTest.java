@@ -25,12 +25,13 @@ import java.util.Map;
 import io.fabric8.kubernetes.api.model.GenericKubernetesResource;
 import io.fabric8.kubernetes.api.model.GenericKubernetesResourceList;
 import io.fabric8.kubernetes.client.KubernetesClient;
-import io.fabric8.kubernetes.client.dsl.base.CustomResourceDefinitionContext;
+import io.fabric8.kubernetes.client.NamespacedKubernetesClient;
+import io.fabric8.kubernetes.client.server.mock.EnableKubernetesMockClient;
+import io.fabric8.kubernetes.client.server.mock.KubernetesMockServer;
 import io.fabric8.kubernetes.client.utils.Serialization;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.KubernetesServer;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.apache.camel.util.IOHelper;
@@ -39,7 +40,6 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -47,22 +47,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@EnableKubernetesMockClient
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class KubernetesCustomResourcesProducerTest extends KubernetesTestSupport {
     private static String githubSourceString;
 
-    @RegisterExtension
-    public KubernetesServer server = new KubernetesServer();
-
-    private CustomResourceDefinitionContext getCustomResourceContext() {
-        return new CustomResourceDefinitionContext.Builder()
-                .withName("githubsources.sources.knative.dev")
-                .withGroup("sources.knative.dev")
-                .withScope("Namespaced")
-                .withVersion("v1alpha1")
-                .withPlural("githubsources")
-                .build();
-    }
+    KubernetesMockServer server;
+    NamespacedKubernetesClient client;
 
     @BeforeAll
     public static void readResource() throws IOException {
@@ -73,10 +64,10 @@ public class KubernetesCustomResourcesProducerTest extends KubernetesTestSupport
 
     @BindToRegistry("kubernetesClient")
     public KubernetesClient getClient() {
-        return server.getClient();
+        return client;
     }
 
-    private String setupGithubSourceList() throws Exception {
+    private String setupGithubSourceList() {
         GenericKubernetesResourceList list = new GenericKubernetesResourceList();
         list.getItems().add(Serialization.unmarshal(githubSourceString, GenericKubernetesResource.class));
         return Serialization.asJson(list);
@@ -84,7 +75,7 @@ public class KubernetesCustomResourcesProducerTest extends KubernetesTestSupport
 
     @Test
     @Order(1)
-    public void createTest() throws Exception {
+    void createTest() {
         server.expect().post().withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources")
                 .andReturn(200, githubSourceString).once();
         server.expect().delete().withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources/samplecr")
@@ -110,7 +101,7 @@ public class KubernetesCustomResourcesProducerTest extends KubernetesTestSupport
 
     @Test
     @Order(2)
-    public void listTest() throws Exception {
+    void listTest() throws Exception {
         server.expect().get().withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources")
                 .andReturn(200, setupGithubSourceList()).once();
 
@@ -126,14 +117,14 @@ public class KubernetesCustomResourcesProducerTest extends KubernetesTestSupport
         assertFalse(ex.isFailed());
         assertNull(ex.getException());
 
-        List<Map<String, Object>> result = ex.getMessage().getBody(List.class);
+        List<?> result = ex.getMessage().getBody(List.class);
 
         assertEquals(1, result.size());
     }
 
     @Test
     @Order(3)
-    public void listByLabelsTest() throws Exception {
+    void listByLabelsTest() throws Exception {
         server.expect().get()
                 .withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources?labelSelector="
                           + toUrlEncoded("key1=value1,key2=value2"))
@@ -155,14 +146,14 @@ public class KubernetesCustomResourcesProducerTest extends KubernetesTestSupport
         assertFalse(ex.isFailed());
         assertNull(ex.getException());
 
-        List<Map<String, Object>> result = ex.getMessage().getBody(List.class);
+        List<?> result = ex.getMessage().getBody(List.class);
 
         assertEquals(1, result.size());
     }
 
     @Test
     @Order(4)
-    public void deleteTest() throws Exception {
+    void deleteTest() {
         server.expect().post().withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources")
                 .andReturn(200, githubSourceString).once();
         server.expect().delete().withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources/samplecr")
@@ -184,7 +175,7 @@ public class KubernetesCustomResourcesProducerTest extends KubernetesTestSupport
 
     @Test
     @Order(5)
-    public void testListNotFound() {
+    void testListNotFound() {
         server.expect().get().withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources")
                 .andReturn(404, "").once();
         Exchange ex4 = template.request("direct:listCustomResources", exchange -> {

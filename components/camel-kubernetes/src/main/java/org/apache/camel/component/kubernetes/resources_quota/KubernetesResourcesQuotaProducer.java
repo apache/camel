@@ -90,10 +90,10 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
     }
 
     protected void doListResourceQuotasByLabels(Exchange exchange) {
-        ResourceQuotaList resList = null;
         Map<String, String> labels
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_LABELS, Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        ResourceQuotaList resList;
         if (!ObjectHelper.isEmpty(namespaceName)) {
             NonNamespaceOperation<ResourceQuota, ResourceQuotaList, Resource<ResourceQuota>> resQuota
                     = getEndpoint().getKubernetesClient().resourceQuotas().inNamespace(namespaceName);
@@ -114,7 +114,6 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
     }
 
     protected void doGetResourceQuota(Exchange exchange) {
-        ResourceQuota rq = null;
         String rqName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(rqName)) {
@@ -125,13 +124,13 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
             LOG.error("Get a specific Resource Quota require specify a namespace name");
             throw new IllegalArgumentException("Get a specific Resource Quota require specify a namespace name");
         }
-        rq = getEndpoint().getKubernetesClient().resourceQuotas().inNamespace(namespaceName).withName(rqName).get();
+        ResourceQuota rq
+                = getEndpoint().getKubernetesClient().resourceQuotas().inNamespace(namespaceName).withName(rqName).get();
 
         prepareOutboundMessage(exchange, rq);
     }
 
     protected void doCreateResourceQuota(Exchange exchange) {
-        ResourceQuota rq = null;
         String rqName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         ResourceQuotaSpec rqSpec
@@ -152,7 +151,8 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_LABELS, Map.class);
         ResourceQuota rqCreating = new ResourceQuotaBuilder().withNewMetadata().withName(rqName).withLabels(labels)
                 .endMetadata().withSpec(rqSpec).build();
-        rq = getEndpoint().getKubernetesClient().resourceQuotas().inNamespace(namespaceName).create(rqCreating);
+        ResourceQuota rq
+                = getEndpoint().getKubernetesClient().resourceQuotas().inNamespace(namespaceName).resource(rqCreating).create();
 
         prepareOutboundMessage(exchange, rq);
     }

@@ -87,10 +87,10 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
     }
 
     protected void doListPersistentVolumesClaimsByLabels(Exchange exchange) {
-        PersistentVolumeClaimList pvcList = null;
         Map<String, String> labels
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_CLAIMS_LABELS, Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        PersistentVolumeClaimList pvcList;
         if (!ObjectHelper.isEmpty(namespaceName)) {
             pvcList = getEndpoint()
                     .getKubernetesClient()
@@ -111,7 +111,6 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
     }
 
     protected void doGetPersistentVolumeClaim(Exchange exchange) {
-        PersistentVolumeClaim pvc = null;
         String pvcName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUME_CLAIM_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(pvcName)) {
@@ -123,13 +122,13 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
             LOG.error("Get a specific Persistent Volume Claim require specify a namespace name");
             throw new IllegalArgumentException("Get a specific Persistent Volume Claim require specify a namespace name");
         }
-        pvc = getEndpoint().getKubernetesClient().persistentVolumeClaims().inNamespace(namespaceName).withName(pvcName).get();
+        PersistentVolumeClaim pvc = getEndpoint().getKubernetesClient().persistentVolumeClaims().inNamespace(namespaceName)
+                .withName(pvcName).get();
 
         prepareOutboundMessage(exchange, pvc);
     }
 
     protected void doCreatePersistentVolumeClaim(Exchange exchange) {
-        PersistentVolumeClaim pvc = null;
         String pvcName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUME_CLAIM_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         PersistentVolumeClaimSpec pvcSpec = exchange.getIn()
@@ -152,7 +151,9 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_CLAIMS_LABELS, Map.class);
         PersistentVolumeClaim pvcCreating = new PersistentVolumeClaimBuilder().withNewMetadata().withName(pvcName)
                 .withLabels(labels).endMetadata().withSpec(pvcSpec).build();
-        pvc = getEndpoint().getKubernetesClient().persistentVolumeClaims().inNamespace(namespaceName).create(pvcCreating);
+        PersistentVolumeClaim pvc
+                = getEndpoint().getKubernetesClient().persistentVolumeClaims().inNamespace(namespaceName).resource(pvcCreating)
+                        .create();
 
         prepareOutboundMessage(exchange, pvc);
     }

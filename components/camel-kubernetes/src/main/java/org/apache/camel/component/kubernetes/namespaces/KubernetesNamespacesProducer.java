@@ -117,7 +117,7 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_LABELS, Map.class);
         Namespace ns
                 = new NamespaceBuilder().withNewMetadata().withName(namespaceName).withLabels(labels).endMetadata().build();
-        Namespace namespace = getEndpoint().getKubernetesClient().namespaces().create(ns);
+        Namespace namespace = getEndpoint().getKubernetesClient().namespaces().resource(ns).create();
 
         prepareOutboundMessage(exchange, namespace);
     }

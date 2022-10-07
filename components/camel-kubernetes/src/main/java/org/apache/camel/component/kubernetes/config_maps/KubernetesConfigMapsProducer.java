@@ -98,13 +98,13 @@ public class KubernetesConfigMapsProducer extends DefaultProducer {
     }
 
     protected void doGetConfigMap(Exchange exchange) {
-        ConfigMap configMap = null;
         String cfMapName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(cfMapName)) {
             LOG.error("Get a specific ConfigMap require specify a ConfigMap name");
             throw new IllegalArgumentException("Get a specific ConfigMap require specify a ConfigMap name");
         }
+        ConfigMap configMap;
         if (namespaceName != null) {
             configMap = getEndpoint().getKubernetesClient().configMaps().inNamespace(namespaceName).withName(cfMapName).get();
         } else {
@@ -115,7 +115,6 @@ public class KubernetesConfigMapsProducer extends DefaultProducer {
     }
 
     protected void doCreateConfigMap(Exchange exchange) {
-        ConfigMap configMap = null;
         String cfMapName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         HashMap<String, String> configMapData
@@ -135,7 +134,8 @@ public class KubernetesConfigMapsProducer extends DefaultProducer {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CONFIGMAPS_LABELS, Map.class);
         ConfigMap cfMapCreating = new ConfigMapBuilder().withNewMetadata().withName(cfMapName).withLabels(labels).endMetadata()
                 .withData(configMapData).build();
-        configMap = getEndpoint().getKubernetesClient().configMaps().inNamespace(namespaceName).create(cfMapCreating);
+        ConfigMap configMap
+                = getEndpoint().getKubernetesClient().configMaps().inNamespace(namespaceName).resource(cfMapCreating).create();
 
         prepareOutboundMessage(exchange, configMap);
     }

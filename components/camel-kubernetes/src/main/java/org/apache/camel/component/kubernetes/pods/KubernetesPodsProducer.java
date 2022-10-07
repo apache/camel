@@ -108,7 +108,6 @@ public class KubernetesPodsProducer extends DefaultProducer {
     }
 
     protected void doGetPod(Exchange exchange) {
-        Pod pod = null;
         String podName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_POD_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(podName)) {
@@ -119,13 +118,12 @@ public class KubernetesPodsProducer extends DefaultProducer {
             LOG.error("Get a specific pod require specify a namespace name");
             throw new IllegalArgumentException("Get a specific pod require specify a namespace name");
         }
-        pod = getEndpoint().getKubernetesClient().pods().inNamespace(namespaceName).withName(podName).get();
+        Pod pod = getEndpoint().getKubernetesClient().pods().inNamespace(namespaceName).withName(podName).get();
 
         prepareOutboundMessage(exchange, pod);
     }
 
     protected void doCreatePod(Exchange exchange) {
-        Pod pod = null;
         String podName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_POD_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         PodSpec podSpec = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_POD_SPEC, PodSpec.class);
@@ -144,7 +142,7 @@ public class KubernetesPodsProducer extends DefaultProducer {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, Map.class);
         Pod podCreating = new PodBuilder().withNewMetadata().withName(podName).withLabels(labels).endMetadata()
                 .withSpec(podSpec).build();
-        pod = getEndpoint().getKubernetesClient().pods().inNamespace(namespaceName).create(podCreating);
+        Pod pod = getEndpoint().getKubernetesClient().pods().inNamespace(namespaceName).resource(podCreating).create();
 
         prepareOutboundMessage(exchange, pod);
     }

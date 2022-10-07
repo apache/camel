@@ -156,7 +156,8 @@ public class OpenshiftDeploymentConfigsProducer extends DefaultProducer {
                 .withLabels(labels).endMetadata().withSpec(dcSpec).build();
         DeploymentConfig deploymentConfig = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).deploymentConfigs()
                 .inNamespace(namespaceName)
-                .create(deploymentCreating);
+                .resource(deploymentCreating)
+                .create();
 
         prepareOutboundMessage(exchange, deploymentConfig);
     }

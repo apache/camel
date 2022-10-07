@@ -22,8 +22,8 @@ import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceDefinition
 import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceDefinitionBuilder;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceDefinitionVersionBuilder;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.JSONSchemaPropsBuilder;
-import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.KubernetesClientBuilder;
 import io.fabric8.kubernetes.client.Watcher;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -54,22 +54,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class KubernetesCustomResourcesConsumerIT extends KubernetesTestSupport {
 
-    private static final KubernetesClient CLIENT = new DefaultKubernetesClient();
+    private static final KubernetesClient CLIENT = new KubernetesClientBuilder().build();
+    private static final String CRD_SOURCE_STRING = "{\n" +
+                                                    "  \"apiVersion\": \"camel.apache.org/v1\",\n" +
+                                                    "  \"kind\": \"CamelTest\",\n" +
+                                                    "  \"metadata\": {\n" +
+                                                    "    \"name\": \"camel-crd-itest\"\n" +
+                                                    "  },\n" +
+                                                    "  \"spec\": {\n" +
+                                                    "    \"message\": \"Apache Camel Rocks!\"\n" +
+                                                    "  }\n" +
+                                                    "}";
     private static CustomResourceDefinition crd;
 
     @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
-
-    private String crdSourceString = "{\n" +
-                                     "  \"apiVersion\": \"camel.apache.org/v1\",\n" +
-                                     "  \"kind\": \"CamelTest\",\n" +
-                                     "  \"metadata\": {\n" +
-                                     "    \"name\": \"camel-crd-itest\"\n" +
-                                     "  },\n" +
-                                     "  \"spec\": {\n" +
-                                     "    \"message\": \"Apache Camel Rocks!\"\n" +
-                                     "  }\n" +
-                                     "}";
 
     @BeforeAll
     public static void beforeAll() {
@@ -115,11 +114,11 @@ public class KubernetesCustomResourcesConsumerIT extends KubernetesTestSupport {
 
     @Test
     @Order(1)
-    public void createCustomResource() throws Exception {
+    void createCustomResource() throws Exception {
         mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_CRD_EVENT_ACTION,
                 Watcher.Action.ADDED);
         Exchange ex = template.request("direct:createCustomResource", exchange -> {
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE, crdSourceString);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE, CRD_SOURCE_STRING);
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE_NAME, "camel-crd-itest");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_NAME, "cameltests.camel.apache.org");
@@ -137,7 +136,7 @@ public class KubernetesCustomResourcesConsumerIT extends KubernetesTestSupport {
 
     @Test
     @Order(2)
-    public void deleteCustomResource() throws Exception {
+    void deleteCustomResource() throws Exception {
         mockResultEndpoint.reset();
         mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_CRD_EVENT_ACTION,
                 Watcher.Action.ADDED, Watcher.Action.DELETED);

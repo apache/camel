@@ -21,28 +21,27 @@ import java.util.List;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.APIGroupListBuilder;
-import io.fabric8.openshift.api.model.Build;
+import io.fabric8.kubernetes.client.NamespacedKubernetesClient;
+import io.fabric8.kubernetes.client.server.mock.EnableKubernetesMockClient;
+import io.fabric8.kubernetes.client.server.mock.KubernetesMockServer;
 import io.fabric8.openshift.api.model.BuildListBuilder;
-import io.fabric8.openshift.client.OpenShiftClient;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.OpenShiftServer;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@EnableKubernetesMockClient
 public class OpenshiftBuildsProducerTest extends KubernetesTestSupport {
 
-    @RegisterExtension
-    public OpenShiftServer server = new OpenShiftServer();
+    KubernetesMockServer server;
+    NamespacedKubernetesClient client;
 
     @BindToRegistry("client")
-    public OpenShiftClient loadClient() throws Exception {
+    public NamespacedKubernetesClient loadClient() throws Exception {
         server.expect().withPath("/apis/build.openshift.io/v1/builds")
                 .andReturn(200, new BuildListBuilder().addNewItem().and().addNewItem().and().build()).once();
         server.expect().withPath("/apis/build.openshift.io/v1/builds?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
@@ -53,30 +52,26 @@ public class OpenshiftBuildsProducerTest extends KubernetesTestSupport {
                                 .addNewGroup()
                                 .withApiVersion("v1").withName("security.openshift.io").endGroup().build())
                 .always();
-        return server.getOpenshiftClient();
+        return client;
     }
 
     @Test
-    public void listTest() {
-        List<Build> result = template.requestBody("direct:list", "", List.class);
+    void listTest() {
+        List<?> result = template.requestBody("direct:list", "", List.class);
 
         assertEquals(2, result.size());
     }
 
     @Test
-    public void listByLabelsTest() {
-        Exchange ex = template.request("direct:listByLabels", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) {
-                Map<String, String> labels = new HashMap<>();
-                labels.put("key1", "value1");
-                labels.put("key2", "value2");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_BUILDS_LABELS, labels);
-            }
+    void listByLabelsTest() {
+        Exchange ex = template.request("direct:listByLabels", exchange -> {
+            Map<String, String> labels = new HashMap<>();
+            labels.put("key1", "value1");
+            labels.put("key2", "value2");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_BUILDS_LABELS, labels);
         });
 
-        List<Build> result = ex.getMessage().getBody(List.class);
+        List<?> result = ex.getMessage().getBody(List.class);
 
         assertEquals(2, result.size());
     }

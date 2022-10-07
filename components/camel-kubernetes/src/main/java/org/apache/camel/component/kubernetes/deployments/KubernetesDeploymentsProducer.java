@@ -104,13 +104,12 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
     }
 
     protected void doGetDeployment(Exchange exchange) {
-        Deployment deployment = null;
         String deploymentName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_NAME, String.class);
         if (ObjectHelper.isEmpty(deploymentName)) {
             LOG.error("Get a specific Deployment require specify a Deployment name");
             throw new IllegalArgumentException("Get a specific Deployment require specify a Deployment name");
         }
-        deployment = getEndpoint().getKubernetesClient().apps().deployments().withName(deploymentName).get();
+        Deployment deployment = getEndpoint().getKubernetesClient().apps().deployments().withName(deploymentName).get();
 
         prepareOutboundMessage(exchange, deployment);
     }
@@ -135,7 +134,6 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
     }
 
     protected void doCreateDeployment(Exchange exchange) {
-        Deployment deployment = null;
         String deploymentName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         DeploymentSpec deSpec
@@ -155,8 +153,9 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENTS_LABELS, Map.class);
         Deployment deploymentCreating = new DeploymentBuilder().withNewMetadata().withName(deploymentName).withLabels(labels)
                 .endMetadata().withSpec(deSpec).build();
-        deployment = getEndpoint().getKubernetesClient().apps().deployments().inNamespace(namespaceName)
-                .create(deploymentCreating);
+        Deployment deployment = getEndpoint().getKubernetesClient().apps().deployments().inNamespace(namespaceName)
+                .resource(deploymentCreating)
+                .create();
 
         prepareOutboundMessage(exchange, deployment);
     }

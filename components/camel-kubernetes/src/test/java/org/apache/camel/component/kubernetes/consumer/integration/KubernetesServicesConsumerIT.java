@@ -60,8 +60,7 @@ public class KubernetesServicesConsumerIT extends KubernetesTestSupport {
 
     @Test
     @Order(1)
-    public void createService() {
-        //        mockResultEndpoint.expectedMessageCount(1);
+    void createService() {
         mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED");
 
         Exchange ex = template.request("direct:createService", exchange -> {
@@ -94,7 +93,7 @@ public class KubernetesServicesConsumerIT extends KubernetesTestSupport {
 
     @Test
     @Order(2)
-    public void deleteService() {
+    void deleteService() {
         Exchange ex = template.request("direct:deleteService", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, TEST_SERVICE_NAME);

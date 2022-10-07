@@ -81,8 +81,8 @@ public class KubernetesServicesProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange) {
-        ServiceList servicesList = null;
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        ServiceList servicesList;
         if (!ObjectHelper.isEmpty(namespaceName)) {
             servicesList = getEndpoint().getKubernetesClient().services().inNamespace(namespaceName).list();
         } else {
@@ -92,9 +92,9 @@ public class KubernetesServicesProducer extends DefaultProducer {
     }
 
     protected void doListServiceByLabels(Exchange exchange) {
-        ServiceList servicesList = null;
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_LABELS, Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        ServiceList servicesList;
         if (!ObjectHelper.isEmpty(namespaceName)) {
             servicesList = getEndpoint()
                     .getKubernetesClient()
@@ -115,7 +115,6 @@ public class KubernetesServicesProducer extends DefaultProducer {
     }
 
     protected void doGetService(Exchange exchange) {
-        Service service = null;
         String serviceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(serviceName)) {
@@ -126,13 +125,12 @@ public class KubernetesServicesProducer extends DefaultProducer {
             LOG.error("Get a specific service require specify a namespace name");
             throw new IllegalArgumentException("Get a specific service require specify a namespace name");
         }
-        service = getEndpoint().getKubernetesClient().services().inNamespace(namespaceName).withName(serviceName).get();
+        Service service = getEndpoint().getKubernetesClient().services().inNamespace(namespaceName).withName(serviceName).get();
 
         prepareOutboundMessage(exchange, service);
     }
 
     protected void doCreateService(Exchange exchange) {
-        Service service = null;
         String serviceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         ServiceSpec serviceSpec = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_SPEC, ServiceSpec.class);
@@ -151,7 +149,8 @@ public class KubernetesServicesProducer extends DefaultProducer {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_LABELS, Map.class);
         Service serviceCreating = new ServiceBuilder().withNewMetadata().withName(serviceName).withLabels(labels).endMetadata()
                 .withSpec(serviceSpec).build();
-        service = getEndpoint().getKubernetesClient().services().inNamespace(namespaceName).create(serviceCreating);
+        Service service
+                = getEndpoint().getKubernetesClient().services().inNamespace(namespaceName).resource(serviceCreating).create();
 
         prepareOutboundMessage(exchange, service);
     }

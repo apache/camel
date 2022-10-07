@@ -106,7 +106,6 @@ public class KubernetesHPAProducer extends DefaultProducer {
     }
 
     protected void doGetHPA(Exchange exchange) {
-        HorizontalPodAutoscaler hpa = null;
         String podName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_HPA_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(podName)) {
@@ -117,14 +116,14 @@ public class KubernetesHPAProducer extends DefaultProducer {
             LOG.error("Get a specific hpa require specify a namespace name");
             throw new IllegalArgumentException("Get a specific hpa require specify a namespace name");
         }
-        hpa = getEndpoint().getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers().inNamespace(namespaceName)
-                .withName(podName).get();
+        HorizontalPodAutoscaler hpa
+                = getEndpoint().getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers().inNamespace(namespaceName)
+                        .withName(podName).get();
 
         prepareOutboundMessage(exchange, hpa);
     }
 
     protected void doCreateHPA(Exchange exchange) {
-        HorizontalPodAutoscaler hpa = null;
         String hpaName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_HPA_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         HorizontalPodAutoscalerSpec hpaSpec
@@ -144,8 +143,10 @@ public class KubernetesHPAProducer extends DefaultProducer {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_HPA_LABELS, Map.class);
         HorizontalPodAutoscaler hpaCreating = new HorizontalPodAutoscalerBuilder().withNewMetadata().withName(hpaName)
                 .withLabels(labels).endMetadata().withSpec(hpaSpec).build();
-        hpa = getEndpoint().getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers().inNamespace(namespaceName)
-                .create(hpaCreating);
+        HorizontalPodAutoscaler hpa
+                = getEndpoint().getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers().inNamespace(namespaceName)
+                        .resource(hpaCreating)
+                        .create();
 
         prepareOutboundMessage(exchange, hpa);
     }

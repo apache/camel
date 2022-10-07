@@ -84,9 +84,9 @@ public class KubernetesSecretsProducer extends DefaultProducer {
     }
 
     protected void doListSecretsByLabels(Exchange exchange) {
-        SecretList secretsList = null;
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SECRETS_LABELS, Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        SecretList secretsList;
         if (!ObjectHelper.isEmpty(namespaceName)) {
             secretsList = getEndpoint()
                     .getKubernetesClient()
@@ -106,7 +106,6 @@ public class KubernetesSecretsProducer extends DefaultProducer {
     }
 
     protected void doGetSecret(Exchange exchange) {
-        Secret secret = null;
         String secretName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SECRET_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(secretName)) {
@@ -117,13 +116,12 @@ public class KubernetesSecretsProducer extends DefaultProducer {
             LOG.error("Get a specific Secret require specify a namespace name");
             throw new IllegalArgumentException("Get a specific Secret require specify a namespace name");
         }
-        secret = getEndpoint().getKubernetesClient().secrets().inNamespace(namespaceName).withName(secretName).get();
+        Secret secret = getEndpoint().getKubernetesClient().secrets().inNamespace(namespaceName).withName(secretName).get();
 
         prepareOutboundMessage(exchange, secret);
     }
 
     protected void doCreateSecret(Exchange exchange) {
-        Secret secret = null;
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         Secret secretToCreate = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SECRET, Secret.class);
         if (ObjectHelper.isEmpty(namespaceName)) {
@@ -134,7 +132,8 @@ public class KubernetesSecretsProducer extends DefaultProducer {
             LOG.error("Create a specific secret require specify a secret bean");
             throw new IllegalArgumentException("Create a specific secret require specify a secret bean");
         }
-        secret = getEndpoint().getKubernetesClient().secrets().inNamespace(namespaceName).create(secretToCreate);
+        Secret secret
+                = getEndpoint().getKubernetesClient().secrets().inNamespace(namespaceName).resource(secretToCreate).create();
 
         prepareOutboundMessage(exchange, secret);
     }

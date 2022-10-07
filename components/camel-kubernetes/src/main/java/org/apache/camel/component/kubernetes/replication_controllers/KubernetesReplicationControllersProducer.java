@@ -87,8 +87,8 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange) {
-        ReplicationControllerList rcList = null;
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        ReplicationControllerList rcList;
         if (!ObjectHelper.isEmpty(namespaceName)) {
             rcList = getEndpoint().getKubernetesClient().replicationControllers().inNamespace(namespaceName).list();
         } else {
@@ -99,10 +99,10 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
     }
 
     protected void doListReplicationControllersByLabels(Exchange exchange) {
-        ReplicationControllerList rcList = null;
         Map<String, String> labels
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLERS_LABELS, Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        ReplicationControllerList rcList;
         if (!ObjectHelper.isEmpty(namespaceName)) {
 
             NonNamespaceOperation<ReplicationController, ReplicationControllerList, RollableScalableResource<ReplicationController>> replicationControllers
@@ -123,7 +123,6 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
     }
 
     protected void doGetReplicationController(Exchange exchange) {
-        ReplicationController rc = null;
         String rcName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(rcName)) {
@@ -135,13 +134,13 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
             LOG.error("Get a specific replication controller require specify a namespace name");
             throw new IllegalArgumentException("Get a specific replication controller require specify a namespace name");
         }
-        rc = getEndpoint().getKubernetesClient().replicationControllers().inNamespace(namespaceName).withName(rcName).get();
+        ReplicationController rc = getEndpoint().getKubernetesClient().replicationControllers().inNamespace(namespaceName)
+                .withName(rcName).get();
 
         prepareOutboundMessage(exchange, rc);
     }
 
     protected void doCreateReplicationController(Exchange exchange) {
-        ReplicationController rc = null;
         String rcName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         ReplicationControllerSpec rcSpec = exchange.getIn()
@@ -164,7 +163,8 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLERS_LABELS, Map.class);
         ReplicationController rcCreating = new ReplicationControllerBuilder().withNewMetadata().withName(rcName)
                 .withLabels(labels).endMetadata().withSpec(rcSpec).build();
-        rc = getEndpoint().getKubernetesClient().replicationControllers().inNamespace(namespaceName).create(rcCreating);
+        ReplicationController rc = getEndpoint().getKubernetesClient().replicationControllers().inNamespace(namespaceName)
+                .resource(rcCreating).create();
 
         prepareOutboundMessage(exchange, rc);
     }

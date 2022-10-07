@@ -18,6 +18,7 @@ package org.apache.camel.component.kubernetes;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,6 +50,6 @@ public class KubernetesTestSupport extends CamelTestSupport {
     }
 
     public static String toUrlEncoded(String str) throws UnsupportedEncodingException {
-        return URLEncoder.encode(str, "UTF-8");
+        return URLEncoder.encode(str, StandardCharsets.UTF_8);
     }
 }

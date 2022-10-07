@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.kubernetes.customresources;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -182,14 +181,15 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
 
     }
 
-    protected void doCreate(Exchange exchange, String namespaceName) throws IOException {
+    protected void doCreate(Exchange exchange, String namespaceName) {
         String customResourceInstance = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE, String.class);
         GenericKubernetesResource customResource = new GenericKubernetesResource();
         try {
             customResource = getEndpoint().getKubernetesClient()
                     .genericKubernetesResources(getCRDContext(exchange.getIn()))
                     .inNamespace(namespaceName)
-                    .create(Serialization.unmarshal(customResourceInstance, GenericKubernetesResource.class));
+                    .resource(Serialization.unmarshal(customResourceInstance, GenericKubernetesResource.class))
+                    .create();
         } catch (KubernetesClientException e) {
             if (e.getCode() == 409) {
                 LOG.info("Custom resource instance already exists", e);

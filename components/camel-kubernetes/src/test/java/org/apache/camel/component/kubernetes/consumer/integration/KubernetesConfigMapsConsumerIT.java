@@ -65,7 +65,7 @@ public class KubernetesConfigMapsConsumerIT extends KubernetesTestSupport {
 
     @Test
     @Order(1)
-    public void createConfigMapWithProperties() {
+    void createConfigMapWithProperties() {
         configureMock();
 
         Exchange ex = template.request("direct:createConfigmap", exchange -> {
@@ -87,7 +87,7 @@ public class KubernetesConfigMapsConsumerIT extends KubernetesTestSupport {
 
     @Test
     @Order(2)
-    public void createConfigMap() {
+    void createConfigMap() {
         configureMock();
 
         Exchange ex = template.request("direct:createConfigmap", exchange -> {
@@ -108,7 +108,7 @@ public class KubernetesConfigMapsConsumerIT extends KubernetesTestSupport {
     @ParameterizedTest
     @Order(3)
     @ValueSource(strings = { "test", "test1" })
-    public void deleteConfigMaps(String configMapName) {
+    void deleteConfigMaps(String configMapName) {
         Exchange ex = template.request("direct:deleteConfigmap", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, configMapName);

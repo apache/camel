@@ -107,7 +107,6 @@ public class KubernetesJobProducer extends DefaultProducer {
     }
 
     protected void doGetJob(Exchange exchange) {
-        Job job = null;
         String jobName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(jobName)) {
@@ -118,13 +117,12 @@ public class KubernetesJobProducer extends DefaultProducer {
             LOG.error("Get a specific job require specify a namespace name");
             throw new IllegalArgumentException("Get a specific job require specify a namespace name");
         }
-        job = getEndpoint().getKubernetesClient().batch().v1().jobs().inNamespace(namespaceName).withName(jobName).get();
+        Job job = getEndpoint().getKubernetesClient().batch().v1().jobs().inNamespace(namespaceName).withName(jobName).get();
 
         prepareOutboundMessage(exchange, job);
     }
 
     protected void doCreateJob(Exchange exchange) {
-        Job job = null;
         String jobName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         JobSpec jobSpec = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_SPEC, JobSpec.class);
@@ -143,7 +141,8 @@ public class KubernetesJobProducer extends DefaultProducer {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_LABELS, Map.class);
         Job jobCreating = new JobBuilder().withNewMetadata().withName(jobName).withLabels(labels).endMetadata()
                 .withSpec(jobSpec).build();
-        job = getEndpoint().getKubernetesClient().batch().v1().jobs().inNamespace(namespaceName).create(jobCreating);
+        Job job = getEndpoint().getKubernetesClient().batch().v1().jobs().inNamespace(namespaceName).resource(jobCreating)
+                .create();
 
         prepareOutboundMessage(exchange, job);
     }

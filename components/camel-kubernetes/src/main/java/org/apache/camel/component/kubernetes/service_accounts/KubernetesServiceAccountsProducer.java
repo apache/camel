@@ -84,10 +84,10 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
     }
 
     protected void doListServiceAccountsByLabels(Exchange exchange) {
-        ServiceAccountList saList = null;
         Map<String, String> labels
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_ACCOUNTS_LABELS, Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        ServiceAccountList saList;
         if (!ObjectHelper.isEmpty(namespaceName)) {
             saList = getEndpoint()
                     .getKubernetesClient()
@@ -108,7 +108,6 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
     }
 
     protected void doGetServiceAccount(Exchange exchange) {
-        ServiceAccount sa = null;
         String saName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_ACCOUNT_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(saName)) {
@@ -119,13 +118,13 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
             LOG.error("Get a specific Service Account require specify a namespace name");
             throw new IllegalArgumentException("Get a specific Service Account require specify a namespace name");
         }
-        sa = getEndpoint().getKubernetesClient().serviceAccounts().inNamespace(namespaceName).withName(saName).get();
+        ServiceAccount sa
+                = getEndpoint().getKubernetesClient().serviceAccounts().inNamespace(namespaceName).withName(saName).get();
 
         prepareOutboundMessage(exchange, sa);
     }
 
     protected void doCreateServiceAccount(Exchange exchange) {
-        ServiceAccount sa = null;
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         ServiceAccount saToCreate
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_ACCOUNT, ServiceAccount.class);
@@ -137,7 +136,8 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
             LOG.error("Create a specific Service Account require specify a Service Account bean");
             throw new IllegalArgumentException("Create a specific Service Account require specify a Service Account bean");
         }
-        sa = getEndpoint().getKubernetesClient().serviceAccounts().inNamespace(namespaceName).create(saToCreate);
+        ServiceAccount sa = getEndpoint().getKubernetesClient().serviceAccounts().inNamespace(namespaceName)
+                .resource(saToCreate).create();
 
         prepareOutboundMessage(exchange, sa);
     }
