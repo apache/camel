@@ -169,7 +169,7 @@ public class KafkaFetchRecords implements Runnable {
         String time = TimeUtils.printDuration(task.elapsed(), true);
         String topic = getPrintableTopic();
         String msg = "Gave up subscribing org.apache.kafka.clients.consumer.KafkaConsumer " +
-                     threadId + " to " + topic + " after " + max + " attempts (elapsed: " + time + ").";
+                threadId + " to " + topic + " after " + max + " attempts (elapsed: " + time + ").";
         LOG.warn(msg);
         setLastError(new KafkaConsumerFatalException(msg, lastError));
     }
@@ -178,7 +178,7 @@ public class KafkaFetchRecords implements Runnable {
         String time = TimeUtils.printDuration(task.elapsed(), true);
         String topic = getPrintableTopic();
         String msg = "Gave up creating org.apache.kafka.clients.consumer.KafkaConsumer "
-                     + threadId + " to " + topic + " after " + max + " attempts (elapsed: " + time + ").";
+                + threadId + " to " + topic + " after " + max + " attempts (elapsed: " + time + ").";
 
         setLastError(new KafkaConsumerFatalException(msg, lastError));
     }
@@ -517,7 +517,7 @@ public class KafkaFetchRecords implements Runnable {
         } catch (Exception e) {
             // ignore
             LOG.debug("Cannot check hasReadyNodes on KafkaConsumer client (ConsumerNetworkClient) due to: "
-                      + e.getMessage() + ". This exception is ignored.",
+                            + e.getMessage() + ". This exception is ignored.",
                     e);
         }
         return ready;
