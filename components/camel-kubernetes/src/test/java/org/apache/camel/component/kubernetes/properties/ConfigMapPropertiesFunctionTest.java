@@ -21,8 +21,8 @@ import java.util.Map;
 import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
 import io.fabric8.kubernetes.client.ConfigBuilder;
-import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.KubernetesClientBuilder;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
@@ -47,14 +47,13 @@ public class ConfigMapPropertiesFunctionTest extends KubernetesTestSupport {
         builder.withOauthToken(authToken);
         builder.withMasterUrl(host);
 
-        KubernetesClient client = new DefaultKubernetesClient(builder.build());
+        KubernetesClient client = new KubernetesClientBuilder().withConfig(builder.build()).build();
 
         Map<String, String> data = Map.of("foo", "123", "bar", "Moes Bar");
         ConfigMap cm = new ConfigMapBuilder().editOrNewMetadata().withName("myconfig").endMetadata().withData(data).build();
         client.resource(cm).createOrReplace();
 
-        try {
-            ConfigMapPropertiesFunction cmf = new ConfigMapPropertiesFunction();
+        try (ConfigMapPropertiesFunction cmf = new ConfigMapPropertiesFunction()) {
             cmf.setClient(client);
             cmf.setCamelContext(context);
             cmf.start();
@@ -70,8 +69,6 @@ public class ConfigMapPropertiesFunctionTest extends KubernetesTestSupport {
 
             out = cmf.apply("myconfig/bar");
             Assertions.assertEquals("Moes Bar", out);
-
-            cmf.stop();
         } finally {
             client.resource(cm).delete();
         }

@@ -42,6 +42,7 @@ include::partial$component-endpoint-headers.adoc[]
 - getCustomResource
 - deleteCustomResource
 - createCustomResource
+- replaceCustomResource
 
 
 include::spring-boot:partial$starter.adoc[]

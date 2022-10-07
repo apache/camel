@@ -24,65 +24,64 @@ import io.fabric8.kubernetes.api.model.PodListBuilder;
 import io.fabric8.kubernetes.api.model.autoscaling.v1.HorizontalPodAutoscaler;
 import io.fabric8.kubernetes.api.model.autoscaling.v1.HorizontalPodAutoscalerBuilder;
 import io.fabric8.kubernetes.api.model.autoscaling.v1.HorizontalPodAutoscalerListBuilder;
+import io.fabric8.kubernetes.api.model.autoscaling.v1.HorizontalPodAutoscalerSpec;
+import io.fabric8.kubernetes.api.model.autoscaling.v1.HorizontalPodAutoscalerSpecBuilder;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.NamespacedKubernetesClient;
+import io.fabric8.kubernetes.client.server.mock.EnableKubernetesMockClient;
+import io.fabric8.kubernetes.client.server.mock.KubernetesMockServer;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.KubernetesServer;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@EnableKubernetesMockClient
 public class KubernetesHPAProducerTest extends KubernetesTestSupport {
 
-    @RegisterExtension
-    public KubernetesServer server = new KubernetesServer();
+    KubernetesMockServer server;
+    NamespacedKubernetesClient client;
 
     @BindToRegistry("kubernetesClient")
     public KubernetesClient getClient() {
-        return server.getClient();
+        return client;
     }
 
     @Test
-    public void listTest() {
+    void listTest() {
         server.expect().withPath("/apis/autoscaling/v1/namespaces/test/horizontalpodautoscalers")
                 .andReturn(200, new HorizontalPodAutoscalerListBuilder().addNewItem().and().addNewItem().and().addNewItem()
                         .and().build())
                 .once();
-        List<HorizontalPodAutoscaler> result = template.requestBody("direct:list", "", List.class);
+        List<?> result = template.requestBody("direct:list", "", List.class);
 
         assertEquals(3, result.size());
     }
 
     @Test
-    public void listByLabelsTest() throws Exception {
+    void listByLabelsTest() throws Exception {
         server.expect()
                 .withPath("/apis/autoscaling/v1/namespaces/test/horizontalpodautoscalers?labelSelector="
                           + toUrlEncoded("key1=value1,key2=value2"))
                 .andReturn(200, new PodListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
-        Exchange ex = template.request("direct:listByLabels", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) {
-                Map<String, String> labels = new HashMap<>();
-                labels.put("key1", "value1");
-                labels.put("key2", "value2");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_HPA_LABELS, labels);
-            }
+        Exchange ex = template.request("direct:listByLabels", exchange -> {
+            Map<String, String> labels = new HashMap<>();
+            labels.put("key1", "value1");
+            labels.put("key2", "value2");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_HPA_LABELS, labels);
         });
 
-        List<HorizontalPodAutoscaler> result = ex.getMessage().getBody(List.class);
+        List<?> result = ex.getMessage().getBody(List.class);
 
         assertEquals(3, result.size());
     }
 
     @Test
-    public void getHPATest() {
+    void getHPATest() {
         HorizontalPodAutoscaler hpa1
                 = new HorizontalPodAutoscalerBuilder().withNewMetadata().withName("hpa1").withNamespace("test").and().build();
         HorizontalPodAutoscaler hpa2
@@ -92,13 +91,9 @@ public class KubernetesHPAProducerTest extends KubernetesTestSupport {
                 .once();
         server.expect().withPath("/apis/autoscaling/v1/namespaces/ns1/horizontalpodautoscalers/hpa2").andReturn(200, hpa2)
                 .once();
-        Exchange ex = template.request("direct:getHPA", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) {
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_HPA_NAME, "hpa1");
-            }
+        Exchange ex = template.request("direct:getHPA", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_HPA_NAME, "hpa1");
         });
 
         HorizontalPodAutoscaler result = ex.getMessage().getBody(HorizontalPodAutoscaler.class);
@@ -107,19 +102,70 @@ public class KubernetesHPAProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    public void deleteHPATest() {
+    void createHPATest() {
+        Map<String, String> labels = Map.of("my.label.key", "my.label.value");
+        HorizontalPodAutoscalerSpec spec = new HorizontalPodAutoscalerSpecBuilder().withMinReplicas(13).build();
+        HorizontalPodAutoscaler hpa1 = new HorizontalPodAutoscalerBuilder().withNewMetadata().withName("hpa1")
+                .withNamespace("test").withLabels(labels).and()
+                .withSpec(spec).build();
+        server.expect().post().withPath("/apis/autoscaling/v1/namespaces/test/horizontalpodautoscalers").andReturn(200, hpa1)
+                .once();
+
+        Exchange ex = template.request("direct:createHPA", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_HPA_LABELS, labels);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_HPA_NAME, "hpa1");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_HPA_SPEC, spec);
+        });
+
+        HorizontalPodAutoscaler result = ex.getMessage().getBody(HorizontalPodAutoscaler.class);
+
+        assertEquals("test", result.getMetadata().getNamespace());
+        assertEquals("hpa1", result.getMetadata().getName());
+        assertEquals(labels, result.getMetadata().getLabels());
+        assertEquals(13, result.getSpec().getMinReplicas());
+    }
+
+    @Test
+    void replaceHPATest() {
+        Map<String, String> labels = Map.of("my.label.key", "my.label.value");
+        HorizontalPodAutoscalerSpec spec = new HorizontalPodAutoscalerSpecBuilder().withMinReplicas(13).build();
+        HorizontalPodAutoscaler hpa1 = new HorizontalPodAutoscalerBuilder().withNewMetadata().withName("hpa1")
+                .withNamespace("test").withLabels(labels).and()
+                .withSpec(spec).build();
+        server.expect().get().withPath("/apis/autoscaling/v1/namespaces/test/horizontalpodautoscalers/hpa1")
+                .andReturn(200, new HorizontalPodAutoscalerBuilder().withNewMetadata().withName("hpa1")
+                        .withNamespace("test").endMetadata().build())
+                .once();
+        server.expect().put().withPath("/apis/autoscaling/v1/namespaces/test/horizontalpodautoscalers/hpa1")
+                .andReturn(200, hpa1)
+                .once();
+
+        Exchange ex = template.request("direct:replaceHPA", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_HPA_LABELS, labels);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_HPA_NAME, "hpa1");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_HPA_SPEC, spec);
+        });
+
+        HorizontalPodAutoscaler result = ex.getMessage().getBody(HorizontalPodAutoscaler.class);
+
+        assertEquals("test", result.getMetadata().getNamespace());
+        assertEquals("hpa1", result.getMetadata().getName());
+        assertEquals(labels, result.getMetadata().getLabels());
+        assertEquals(13, result.getSpec().getMinReplicas());
+    }
+
+    @Test
+    void deleteHPATest() {
         HorizontalPodAutoscaler hpa1
                 = new HorizontalPodAutoscalerBuilder().withNewMetadata().withName("hpa1").withNamespace("test").and().build();
         server.expect().withPath("/apis/autoscaling/v1/namespaces/test/horizontalpodautoscalers/hpa1").andReturn(200, hpa1)
                 .once();
 
-        Exchange ex = template.request("direct:deleteHPA", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) {
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_HPA_NAME, "hpa1");
-            }
+        Exchange ex = template.request("direct:deleteHPA", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_HPA_NAME, "hpa1");
         });
 
         boolean podDeleted = ex.getMessage().getBody(Boolean.class);
@@ -136,6 +182,8 @@ public class KubernetesHPAProducerTest extends KubernetesTestSupport {
                 from("direct:listByLabels")
                         .to("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=listHPAByLabels");
                 from("direct:getHPA").to("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=getHPA");
+                from("direct:createHPA").to("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=createHPA");
+                from("direct:replaceHPA").to("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=replaceHPA");
                 from("direct:deleteHPA").to("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=deleteHPA");
             }
         };

@@ -40,6 +40,7 @@ include::partial$component-endpoint-headers.adoc[]
 - listResourcesQuotaByLabels
 - getResourcesQuota
 - createResourcesQuota
+- replaceResourceQuota
 - deleteResourcesQuota
 
 == Kubernetes Resource Quota Producer Examples

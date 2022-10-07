@@ -23,8 +23,8 @@ import java.util.Map;
 import io.fabric8.kubernetes.api.model.Secret;
 import io.fabric8.kubernetes.api.model.SecretBuilder;
 import io.fabric8.kubernetes.client.ConfigBuilder;
-import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.KubernetesClientBuilder;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -66,7 +66,7 @@ public class SecretPropertiesFunctionRouteTest extends KubernetesTestSupport {
         ConfigBuilder builder = new ConfigBuilder();
         builder.withOauthToken(authToken);
         builder.withMasterUrl(host);
-        client = new DefaultKubernetesClient(builder.build());
+        client = new KubernetesClientBuilder().withConfig(builder.build()).build();
         context.getRegistry().bind("KubernetesClient", client);
 
         Map<String, String> data
@@ -93,7 +93,7 @@ public class SecretPropertiesFunctionRouteTest extends KubernetesTestSupport {
 
     @Test
     @Order(1)
-    public void secretPropertiesFunction() throws Exception {
+    public void secretPropertiesFunction() {
         String out = template.requestBody("direct:start", null, String.class);
         Assertions.assertEquals("Connect with scott:tiger", out);
     }

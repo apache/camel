@@ -23,8 +23,8 @@ import java.util.Map;
 import io.fabric8.kubernetes.api.model.Secret;
 import io.fabric8.kubernetes.api.model.SecretBuilder;
 import io.fabric8.kubernetes.client.ConfigBuilder;
-import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.KubernetesClientBuilder;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
@@ -49,7 +49,7 @@ public class SecretPropertiesFunctionTest extends KubernetesTestSupport {
         builder.withOauthToken(authToken);
         builder.withMasterUrl(host);
 
-        KubernetesClient client = new DefaultKubernetesClient(builder.build());
+        KubernetesClient client = new KubernetesClientBuilder().withConfig(builder.build()).build();
 
         Map<String, String> data
                 = Map.of("myuser", Base64.getEncoder().encodeToString("scott".getBytes(StandardCharsets.UTF_8)),
@@ -57,8 +57,7 @@ public class SecretPropertiesFunctionTest extends KubernetesTestSupport {
         Secret sec = new SecretBuilder().editOrNewMetadata().withName("mysecret").endMetadata().withData(data).build();
         client.resource(sec).createOrReplace();
 
-        try {
-            SecretPropertiesFunction cmf = new SecretPropertiesFunction();
+        try (SecretPropertiesFunction cmf = new SecretPropertiesFunction()) {
             cmf.setClient(client);
             cmf.setCamelContext(context);
             cmf.start();
@@ -74,8 +73,6 @@ public class SecretPropertiesFunctionTest extends KubernetesTestSupport {
 
             out = cmf.apply("mysecret/mypass");
             Assertions.assertEquals("tiger", out);
-
-            cmf.stop();
         } finally {
             client.resource(sec).delete();
         }

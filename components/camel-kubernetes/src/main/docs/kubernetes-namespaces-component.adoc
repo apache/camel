@@ -41,6 +41,7 @@ include::partial$component-endpoint-headers.adoc[]
 - listNamespacesByLabels
 - getNamespace
 - createNamespace
+- replaceNamespace
 - deleteNamespace
 
 == Kubernetes Namespaces Producer Examples

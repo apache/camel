@@ -88,7 +88,7 @@ public class KubernetesPodsConsumerIT extends KubernetesTestSupport {
 
     @Test
     @Order(1)
-    public void createPod() throws Exception {
+    void createPod() throws Exception {
         mockResultEndpoint.expectedMessageCount(2);
         mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED",
                 "ADDED", "ADDED");
@@ -103,7 +103,7 @@ public class KubernetesPodsConsumerIT extends KubernetesTestSupport {
 
     @Test
     @Order(2)
-    public void deletePod() throws Exception {
+    void deletePod() throws Exception {
         mockResultEndpoint.expectedMessageCount(1);
         mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION,
                 "ADDED", "ADDED", "ADDED");

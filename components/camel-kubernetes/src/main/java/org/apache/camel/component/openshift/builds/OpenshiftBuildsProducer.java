@@ -75,9 +75,9 @@ public class OpenshiftBuildsProducer extends DefaultProducer {
     }
 
     protected void doListBuildByLabels(Exchange exchange) {
-        BuildList buildList = null;
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_BUILDS_LABELS, Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        BuildList buildList;
         if (!ObjectHelper.isEmpty(namespaceName)) {
             buildList = getEndpoint().getKubernetesClient()
                     .adapt(OpenShiftClient.class).builds().inNamespace(namespaceName).withLabels(labels).list();
@@ -90,7 +90,6 @@ public class OpenshiftBuildsProducer extends DefaultProducer {
     }
 
     protected void doGetBuild(Exchange exchange) {
-        Build build = null;
         String buildName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_BUILD_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(buildName)) {
@@ -101,7 +100,7 @@ public class OpenshiftBuildsProducer extends DefaultProducer {
             LOG.error("Get a specific Build require specify a namespace name");
             throw new IllegalArgumentException("Get a specific Build require specify a namespace name");
         }
-        build = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).builds().inNamespace(namespaceName)
+        Build build = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).builds().inNamespace(namespaceName)
                 .withName(buildName).get();
 
         prepareOutboundMessage(exchange, build);

@@ -29,25 +29,24 @@ public class SecretMountPropertiesFunctionTest extends KubernetesTestSupport {
     @Test
     @Order(1)
     public void secretMountPropertiesFunction() throws Exception {
-        SecretPropertiesFunction cmf = new SecretPropertiesFunction();
-        cmf.setMountPathSecrets("src/test/resources/");
-        cmf.setClientEnabled(false);
-        cmf.setCamelContext(context);
-        cmf.start();
+        try (SecretPropertiesFunction cmf = new SecretPropertiesFunction()) {
+            cmf.setMountPathSecrets("src/test/resources/");
+            cmf.setClientEnabled(false);
+            cmf.setCamelContext(context);
+            cmf.start();
 
-        String out = cmf.apply("mysecret/myuser");
-        Assertions.assertEquals("donald", out);
+            String out = cmf.apply("mysecret/myuser");
+            Assertions.assertEquals("donald", out);
 
-        out = cmf.apply("mysecret/unknown");
-        Assertions.assertNull(out);
+            out = cmf.apply("mysecret/unknown");
+            Assertions.assertNull(out);
 
-        out = cmf.apply("mysecret/unknown:444");
-        Assertions.assertEquals("444", out);
+            out = cmf.apply("mysecret/unknown:444");
+            Assertions.assertEquals("444", out);
 
-        out = cmf.apply("mysecret/mypass");
-        Assertions.assertEquals("seCre!t", out);
-
-        cmf.stop();
+            out = cmf.apply("mysecret/mypass");
+            Assertions.assertEquals("seCre!t", out);
+        }
     }
 
 }

@@ -19,25 +19,25 @@ package org.apache.camel.component.openshift.producer;
 import java.util.List;
 
 import io.fabric8.kubernetes.api.model.APIGroupListBuilder;
-import io.fabric8.openshift.api.model.BuildConfig;
+import io.fabric8.kubernetes.client.NamespacedKubernetesClient;
+import io.fabric8.kubernetes.client.server.mock.EnableKubernetesMockClient;
+import io.fabric8.kubernetes.client.server.mock.KubernetesMockServer;
 import io.fabric8.openshift.api.model.BuildConfigListBuilder;
-import io.fabric8.openshift.client.NamespacedOpenShiftClient;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.OpenShiftServer;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@EnableKubernetesMockClient
 public class OpenshiftBuildConfigsProducerTest extends KubernetesTestSupport {
 
-    @RegisterExtension
-    public OpenShiftServer server = new OpenShiftServer();
+    KubernetesMockServer server;
+    NamespacedKubernetesClient client;
 
     @BindToRegistry("client")
-    public NamespacedOpenShiftClient loadClient() {
+    public NamespacedKubernetesClient loadClient() {
         server.expect().withPath("/apis/build.openshift.io/v1/namespaces/test/buildconfigs")
                 .andReturn(200, new BuildConfigListBuilder().build()).once();
 
@@ -55,13 +55,12 @@ public class OpenshiftBuildConfigsProducerTest extends KubernetesTestSupport {
                 .andReturn(200, new BuildConfigListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
                 .once();
 
-        return server.getOpenshiftClient();
+        return client;
     }
 
     @Test
-    public void listTest() {
-        List<BuildConfig> result = template.requestBody("direct:list", "", List.class);
-
+    void listTest() {
+        List<?> result = template.requestBody("direct:list", "", List.class);
         assertEquals(3, result.size());
     }
 
