@@ -24,6 +24,8 @@ import io.fabric8.kubernetes.api.model.PodListBuilder;
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.ServiceBuilder;
 import io.fabric8.kubernetes.api.model.ServiceListBuilder;
+import io.fabric8.kubernetes.api.model.ServiceSpec;
+import io.fabric8.kubernetes.api.model.ServiceSpecBuilder;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.NamespacedKubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.EnableKubernetesMockClient;
@@ -91,6 +93,29 @@ public class KubernetesServicesProducerTest extends KubernetesTestSupport {
     }
 
     @Test
+    void createService() {
+        Map<String, String> labels = Map.of("my.label.key", "my.label.value");
+        ServiceSpec spec = new ServiceSpecBuilder().withClusterIP("SomeClusterIp").build();
+        Service se1 = new ServiceBuilder().withNewMetadata().withName("se1").withNamespace("test").withLabels(labels).and()
+                .withSpec(spec).build();
+        server.expect().post().withPath("/api/v1/namespaces/test/services").andReturn(200, se1).once();
+
+        Exchange ex = template.request("direct:createService", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_LABELS, labels);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, "se1");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_SPEC, spec);
+        });
+
+        Service result = ex.getMessage().getBody(Service.class);
+
+        assertEquals("test", result.getMetadata().getNamespace());
+        assertEquals("se1", result.getMetadata().getName());
+        assertEquals(labels, result.getMetadata().getLabels());
+        assertEquals("SomeClusterIp", result.getSpec().getClusterIP());
+    }
+
+    @Test
     void deleteService() {
         Service se1 = new ServiceBuilder().withNewMetadata().withName("se1").withNamespace("test").and().build();
 
@@ -116,6 +141,8 @@ public class KubernetesServicesProducerTest extends KubernetesTestSupport {
                         .to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=listServicesByLabels");
                 from("direct:getServices")
                         .to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=getService");
+                from("direct:createService")
+                        .to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=createService");
                 from("direct:deleteService")
                         .to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=deleteService");
             }

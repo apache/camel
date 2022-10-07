@@ -17,6 +17,7 @@
 package org.apache.camel.component.kubernetes.producer;
 
 import java.util.List;
+import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.Namespace;
 import io.fabric8.kubernetes.api.model.NamespaceBuilder;
@@ -72,6 +73,23 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
     }
 
     @Test
+    void createNamespace() {
+        Map<String, String> labels = Map.of("my.label.key", "my.label.value");
+        Namespace ns1 = new NamespaceBuilder().withNewMetadata().withName("ns1").withLabels(labels).endMetadata().build();
+        server.expect().post().withPath("/api/v1/namespaces").andReturn(200, ns1).once();
+
+        Exchange ex = template.request("direct:createNamespace", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_LABELS, labels);
+        });
+
+        Namespace result = ex.getMessage().getBody(Namespace.class);
+
+        assertEquals("ns1", result.getMetadata().getName());
+        assertEquals(labels, result.getMetadata().getLabels());
+    }
+
+    @Test
     void deleteNamespace() {
         Namespace ns1 = new NamespaceBuilder().withNewMetadata().withName("ns1").endMetadata().build();
         server.expect().withPath("/api/v1/namespaces/ns1").andReturn(200, ns1).once();
@@ -91,6 +109,8 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
             public void configure() {
                 from("direct:list").to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=listNamespaces");
                 from("direct:getNs").to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=getNamespace");
+                from("direct:createNamespace")
+                        .to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=createNamespace");
                 from("direct:deleteNamespace")
                         .to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=deleteNamespace");
             }

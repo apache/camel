@@ -26,6 +26,8 @@ import io.fabric8.kubernetes.client.server.mock.KubernetesMockServer;
 import io.fabric8.openshift.api.model.DeploymentConfig;
 import io.fabric8.openshift.api.model.DeploymentConfigBuilder;
 import io.fabric8.openshift.api.model.DeploymentConfigListBuilder;
+import io.fabric8.openshift.api.model.DeploymentConfigSpec;
+import io.fabric8.openshift.api.model.DeploymentConfigSpecBuilder;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -74,6 +76,30 @@ public class OpenshiftDeploymentConfigsProducerTest extends KubernetesTestSuppor
         List<?> result = ex.getMessage().getBody(List.class);
 
         assertEquals(3, result.size());
+    }
+
+    @Test
+    void createDeploymentConfig() {
+        Map<String, String> labels = Map.of("my.label.key", "my.label.value");
+        DeploymentConfigSpec spec = new DeploymentConfigSpecBuilder().withReplicas(13).build();
+        DeploymentConfig de1
+            = new DeploymentConfigBuilder().withNewMetadata().withName("de1").withNamespace("test").withLabels(labels).and()
+            .withSpec(spec).build();
+        server.expect().post().withPath("/apis/apps.openshift.io/v1/namespaces/test/deploymentconfigs").andReturn(200, de1).once();
+
+        Exchange ex = template.request("direct:create", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_DEPLOYMENTS_LABELS, labels);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_NAME, "de1");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_CONFIG_SPEC, spec);
+        });
+
+        DeploymentConfig result = ex.getMessage().getBody(DeploymentConfig.class);
+
+        assertEquals("test", result.getMetadata().getNamespace());
+        assertEquals("de1", result.getMetadata().getName());
+        assertEquals(labels, result.getMetadata().getLabels());
+        assertEquals(13, result.getSpec().getReplicas());
     }
 
     @Test
@@ -134,6 +160,8 @@ public class OpenshiftDeploymentConfigsProducerTest extends KubernetesTestSuppor
                         .toF("openshift-deploymentconfigs:///?kubernetesClient=#kubernetesClient&operation=listDeploymentConfigs");
                 from("direct:listByLabels")
                         .toF("openshift-deploymentconfigs:///?kubernetesClient=#kubernetesClient&operation=listDeploymentConfigsByLabels");
+                from("direct:create")
+                        .toF("openshift-deploymentconfigs:///?kubernetesClient=#kubernetesClient&operation=createDeploymentConfig");
                 from("direct:delete")
                         .toF("openshift-deploymentconfigs:///?kubernetesClient=#kubernetesClient&operation=deleteDeploymentConfig");
                 from("direct:scale")

@@ -78,10 +78,26 @@ public class KubernetesServiceAccountsProducerTest extends KubernetesTestSupport
     }
 
     @Test
-    void deleteServiceAccount() {
-        ServiceAccount pod1 = new ServiceAccountBuilder().withNewMetadata().withName("sa1").withNamespace("test").and().build();
+    void createServiceAccount() {
+        ServiceAccount sa1 = new ServiceAccountBuilder().withNewMetadata().withName("sa1").withNamespace("test").and().build();
+        server.expect().post().withPath("/api/v1/namespaces/test/serviceaccounts").andReturn(200, sa1).once();
 
-        server.expect().withPath("/api/v1/namespaces/test/serviceaccounts/sa1").andReturn(200, pod1).once();
+        Exchange ex = template.request("direct:create", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_ACCOUNT, sa1);
+        });
+
+        ServiceAccount result = ex.getMessage().getBody(ServiceAccount.class);
+
+        assertEquals("test", result.getMetadata().getNamespace());
+        assertEquals("sa1", result.getMetadata().getName());
+    }
+
+    @Test
+    void deleteServiceAccount() {
+        ServiceAccount sa1 = new ServiceAccountBuilder().withNewMetadata().withName("sa1").withNamespace("test").and().build();
+
+        server.expect().withPath("/api/v1/namespaces/test/serviceaccounts/sa1").andReturn(200, sa1).once();
         Exchange ex = template.request("direct:delete", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_ACCOUNT_NAME, "sa1");
@@ -101,6 +117,8 @@ public class KubernetesServiceAccountsProducerTest extends KubernetesTestSupport
                         .to("kubernetes-service-accounts:///?kubernetesClient=#kubernetesClient&operation=listServiceAccounts");
                 from("direct:listByLabels").to(
                         "kubernetes-service-accounts:///?kubernetesClient=#kubernetesClient&operation=listServiceAccountsByLabels");
+                from("direct:create").to(
+                        "kubernetes-service-accounts:///?kubernetesClient=#kubernetesClient&operation=createServiceAccount");
                 from("direct:delete").to(
                         "kubernetes-service-accounts:///?kubernetesClient=#kubernetesClient&operation=deleteServiceAccount");
             }

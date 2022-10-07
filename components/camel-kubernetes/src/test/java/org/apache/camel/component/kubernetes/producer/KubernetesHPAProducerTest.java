@@ -24,6 +24,8 @@ import io.fabric8.kubernetes.api.model.PodListBuilder;
 import io.fabric8.kubernetes.api.model.autoscaling.v1.HorizontalPodAutoscaler;
 import io.fabric8.kubernetes.api.model.autoscaling.v1.HorizontalPodAutoscalerBuilder;
 import io.fabric8.kubernetes.api.model.autoscaling.v1.HorizontalPodAutoscalerListBuilder;
+import io.fabric8.kubernetes.api.model.autoscaling.v1.HorizontalPodAutoscalerSpec;
+import io.fabric8.kubernetes.api.model.autoscaling.v1.HorizontalPodAutoscalerSpecBuilder;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.NamespacedKubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.EnableKubernetesMockClient;
@@ -100,6 +102,31 @@ public class KubernetesHPAProducerTest extends KubernetesTestSupport {
     }
 
     @Test
+    void createHPATest() {
+        Map<String, String> labels = Map.of("my.label.key", "my.label.value");
+        HorizontalPodAutoscalerSpec spec = new HorizontalPodAutoscalerSpecBuilder().withMinReplicas(13).build();
+        HorizontalPodAutoscaler hpa1 = new HorizontalPodAutoscalerBuilder().withNewMetadata().withName("hpa1")
+                .withNamespace("test").withLabels(labels).and()
+                .withSpec(spec).build();
+        server.expect().post().withPath("/apis/autoscaling/v1/namespaces/test/horizontalpodautoscalers").andReturn(200, hpa1)
+                .once();
+
+        Exchange ex = template.request("direct:createHPA", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_HPA_LABELS, labels);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_HPA_NAME, "hpa1");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_HPA_SPEC, spec);
+        });
+
+        HorizontalPodAutoscaler result = ex.getMessage().getBody(HorizontalPodAutoscaler.class);
+
+        assertEquals("test", result.getMetadata().getNamespace());
+        assertEquals("hpa1", result.getMetadata().getName());
+        assertEquals(labels, result.getMetadata().getLabels());
+        assertEquals(13, result.getSpec().getMinReplicas());
+    }
+
+    @Test
     void deleteHPATest() {
         HorizontalPodAutoscaler hpa1
                 = new HorizontalPodAutoscalerBuilder().withNewMetadata().withName("hpa1").withNamespace("test").and().build();
@@ -125,6 +152,7 @@ public class KubernetesHPAProducerTest extends KubernetesTestSupport {
                 from("direct:listByLabels")
                         .to("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=listHPAByLabels");
                 from("direct:getHPA").to("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=getHPA");
+                from("direct:createHPA").to("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=createHPA");
                 from("direct:deleteHPA").to("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=deleteHPA");
             }
         };
