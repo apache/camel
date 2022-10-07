@@ -40,6 +40,7 @@ include::partial$component-endpoint-headers.adoc[]
 - listPersistentVolumesClaimsByLabels
 - getPersistentVolumeClaim
 - createPersistentVolumeClaim
+- replacePersistentVolumeClaim
 - deletePersistentVolumeClaim
 
 == Kubernetes Persistent Volume Claims Producer Examples

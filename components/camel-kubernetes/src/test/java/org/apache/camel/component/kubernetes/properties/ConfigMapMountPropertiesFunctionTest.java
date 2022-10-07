@@ -29,25 +29,24 @@ public class ConfigMapMountPropertiesFunctionTest extends KubernetesTestSupport 
     @Test
     @Order(1)
     public void configMapMountPropertiesFunction() throws Exception {
-        ConfigMapPropertiesFunction cmf = new ConfigMapPropertiesFunction();
-        cmf.setClientEnabled(false);
-        cmf.setMountPathConfigMaps("src/test/resources/");
-        cmf.setCamelContext(context);
-        cmf.start();
+        try (ConfigMapPropertiesFunction cmf = new ConfigMapPropertiesFunction()) {
+            cmf.setClientEnabled(false);
+            cmf.setMountPathConfigMaps("src/test/resources/");
+            cmf.setCamelContext(context);
+            cmf.start();
 
-        String out = cmf.apply("myconfig/foo");
-        Assertions.assertEquals("456", out);
+            String out = cmf.apply("myconfig/foo");
+            Assertions.assertEquals("456", out);
 
-        out = cmf.apply("myconfig/unknown");
-        Assertions.assertNull(out);
+            out = cmf.apply("myconfig/unknown");
+            Assertions.assertNull(out);
 
-        out = cmf.apply("myconfig/unknown:444");
-        Assertions.assertEquals("444", out);
+            out = cmf.apply("myconfig/unknown:444");
+            Assertions.assertEquals("444", out);
 
-        out = cmf.apply("myconfig/bar");
-        Assertions.assertEquals("Jacks Bar", out);
-
-        cmf.stop();
+            out = cmf.apply("myconfig/bar");
+            Assertions.assertEquals("Jacks Bar", out);
+        }
     }
 
 }

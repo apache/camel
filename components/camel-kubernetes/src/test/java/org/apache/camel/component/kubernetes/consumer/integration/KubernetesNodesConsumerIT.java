@@ -47,7 +47,7 @@ public class KubernetesNodesConsumerIT extends KubernetesTestSupport {
 
     @Test
     @Order(1)
-    public void listNode() throws Exception {
+    void listNode() throws Exception {
         configureMock();
         Exchange ex = template.request("direct:listNode", exchange -> {
 

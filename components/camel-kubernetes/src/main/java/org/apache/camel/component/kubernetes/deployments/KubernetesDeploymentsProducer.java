@@ -18,6 +18,7 @@ package org.apache.camel.component.kubernetes.deployments;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import io.fabric8.kubernetes.api.model.StatusDetails;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
@@ -25,6 +26,7 @@ import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
 import io.fabric8.kubernetes.api.model.apps.DeploymentList;
 import io.fabric8.kubernetes.api.model.apps.DeploymentSpec;
 import io.fabric8.kubernetes.client.dsl.MixedOperation;
+import io.fabric8.kubernetes.client.dsl.Resource;
 import io.fabric8.kubernetes.client.dsl.RollableScalableResource;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
@@ -77,6 +79,10 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
                 doCreateDeployment(exchange);
                 break;
 
+            case KubernetesOperations.REPLACE_DEPLOYMENT:
+                doReplaceDeployment(exchange);
+                break;
+
             case KubernetesOperations.SCALE_DEPLOYMENT:
                 doScaleDeployment(exchange);
                 break;
@@ -104,13 +110,12 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
     }
 
     protected void doGetDeployment(Exchange exchange) {
-        Deployment deployment = null;
         String deploymentName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_NAME, String.class);
         if (ObjectHelper.isEmpty(deploymentName)) {
             LOG.error("Get a specific Deployment require specify a Deployment name");
             throw new IllegalArgumentException("Get a specific Deployment require specify a Deployment name");
         }
-        deployment = getEndpoint().getKubernetesClient().apps().deployments().withName(deploymentName).get();
+        Deployment deployment = getEndpoint().getKubernetesClient().apps().deployments().withName(deploymentName).get();
 
         prepareOutboundMessage(exchange, deployment);
     }
@@ -134,29 +139,41 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
         prepareOutboundMessage(exchange, deploymentDeleted);
     }
 
+    protected void doReplaceDeployment(Exchange exchange) {
+        doCreateOrUpdateDeployment(exchange, "Replace", Resource::replace);
+    }
+
     protected void doCreateDeployment(Exchange exchange) {
-        Deployment deployment = null;
+        doCreateOrUpdateDeployment(exchange, "Create", Resource::create);
+    }
+
+    private void doCreateOrUpdateDeployment(
+            Exchange exchange, String operationName, Function<Resource<Deployment>, Deployment> operation) {
         String deploymentName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         DeploymentSpec deSpec
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_SPEC, DeploymentSpec.class);
         if (ObjectHelper.isEmpty(deploymentName)) {
-            LOG.error("Create a specific Deployment require specify a Deployment name");
-            throw new IllegalArgumentException("Create a specific Deployment require specify a pod name");
+            LOG.error("{} a specific Deployment require specify a Deployment name", operationName);
+            throw new IllegalArgumentException(
+                    String.format("%s a specific Deployment require specify a pod name", operationName));
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
-            LOG.error("Create a specific Deployment require specify a namespace name");
-            throw new IllegalArgumentException("Create a specific Deployment require specify a namespace name");
+            LOG.error("{} a specific Deployment require specify a namespace name", operationName);
+            throw new IllegalArgumentException(
+                    String.format("%s a specific Deployment require specify a namespace name", operationName));
         }
         if (ObjectHelper.isEmpty(deSpec)) {
-            LOG.error("Create a specific Deployment require specify a Deployment spec bean");
-            throw new IllegalArgumentException("Create a specific Deployment require specify a Deployment spec bean");
+            LOG.error("{} a specific Deployment require specify a Deployment spec bean", operationName);
+            throw new IllegalArgumentException(
+                    String.format("%s a specific Deployment require specify a Deployment spec bean", operationName));
         }
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENTS_LABELS, Map.class);
         Deployment deploymentCreating = new DeploymentBuilder().withNewMetadata().withName(deploymentName).withLabels(labels)
                 .endMetadata().withSpec(deSpec).build();
-        deployment = getEndpoint().getKubernetesClient().apps().deployments().inNamespace(namespaceName)
-                .create(deploymentCreating);
+        Deployment deployment
+                = operation.apply(getEndpoint().getKubernetesClient().apps().deployments().inNamespace(namespaceName)
+                        .resource(deploymentCreating));
 
         prepareOutboundMessage(exchange, deployment);
     }

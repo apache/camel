@@ -55,8 +55,8 @@ public class ConfigMapLeaseResourceManager implements KubernetesLeaseResourceMan
         ConfigMap updatedConfigMap = getConfigMapWithoutLeader(leaseResource, group);
         return client.configMaps()
                 .inNamespace(leaseResource.getMetadata().getNamespace())
-                .withName(leaseResource.getMetadata().getName())
-                .lockResourceVersion(leaseResource.getMetadata().getResourceVersion()).replace(updatedConfigMap);
+                .resource(updatedConfigMap)
+                .lockResourceVersion(leaseResource.getMetadata().getResourceVersion()).replace();
     }
 
     @Override
@@ -64,8 +64,8 @@ public class ConfigMapLeaseResourceManager implements KubernetesLeaseResourceMan
         ConfigMap updatedConfigMap = getConfigMapWithNewLeader(leaseResource, newLeaderInfo);
         return client.configMaps()
                 .inNamespace(leaseResource.getMetadata().getNamespace())
-                .withName(leaseResource.getMetadata().getName())
-                .lockResourceVersion(leaseResource.getMetadata().getResourceVersion()).replace(updatedConfigMap);
+                .resource(updatedConfigMap)
+                .lockResourceVersion(leaseResource.getMetadata().getResourceVersion()).replace();
     }
 
     @Override
@@ -81,7 +81,8 @@ public class ConfigMapLeaseResourceManager implements KubernetesLeaseResourceMan
 
         return client.configMaps()
                 .inNamespace(namespace)
-                .create(newConfigMap);
+                .resource(newConfigMap)
+                .create();
     }
 
     @Override

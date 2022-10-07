@@ -60,7 +60,7 @@ public class KubernetesReplicationControllersConsumerIT extends KubernetesTestSu
 
     @Test
     @Order(1)
-    public void createReplicationController() throws Exception {
+    void createReplicationController() throws Exception {
         mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED",
                 "MODIFIED", "MODIFIED");
 
@@ -93,7 +93,7 @@ public class KubernetesReplicationControllersConsumerIT extends KubernetesTestSu
 
     @Test
     @Order(2)
-    public void deleteReplicationController() throws Exception {
+    void deleteReplicationController() throws Exception {
         Exchange ex = template.request("direct:deleteReplicationController", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_NAME, "test");
@@ -111,15 +111,6 @@ public class KubernetesReplicationControllersConsumerIT extends KubernetesTestSu
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:list").toF(
-                        "kubernetes-replication-controllers://%s?oauthToken=%s&operation=listReplicationControllers", host,
-                        authToken);
-                from("direct:listByLabels").toF(
-                        "kubernetes-replication-controllers://%s?oauthToken=%s&operation=listReplicationControllersByLabels",
-                        host, authToken);
-                from("direct:getReplicationController").toF(
-                        "kubernetes-replication-controllers://%s?oauthToken=%s&operation=getReplicationController", host,
-                        authToken);
                 from("direct:createReplicationController").toF(
                         "kubernetes-replication-controllers://%s?oauthToken=%s&operation=createReplicationController", host,
                         authToken);

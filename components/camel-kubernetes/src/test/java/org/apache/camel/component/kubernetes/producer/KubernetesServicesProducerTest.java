@@ -24,42 +24,46 @@ import io.fabric8.kubernetes.api.model.PodListBuilder;
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.ServiceBuilder;
 import io.fabric8.kubernetes.api.model.ServiceListBuilder;
+import io.fabric8.kubernetes.api.model.ServiceSpec;
+import io.fabric8.kubernetes.api.model.ServiceSpecBuilder;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.NamespacedKubernetesClient;
+import io.fabric8.kubernetes.client.server.mock.EnableKubernetesMockClient;
+import io.fabric8.kubernetes.client.server.mock.KubernetesMockServer;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.KubernetesServer;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@EnableKubernetesMockClient
 public class KubernetesServicesProducerTest extends KubernetesTestSupport {
 
-    @RegisterExtension
-    public KubernetesServer server = new KubernetesServer();
+    KubernetesMockServer server;
+    NamespacedKubernetesClient client;
 
     @BindToRegistry("kubernetesClient")
     public KubernetesClient getClient() {
-        return server.getClient();
+        return client;
     }
 
     @Test
-    public void listTest() {
+    void listTest() {
         server.expect().withPath("/api/v1/services")
                 .andReturn(200, new ServiceListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
                 .once();
-        List<Service> result = template.requestBody("direct:list", "", List.class);
+        List<?> result = template.requestBody("direct:list", "", List.class);
 
         assertEquals(3, result.size());
     }
 
     @Test
-    public void listByLabelsTest() throws Exception {
+    void listByLabelsTest() throws Exception {
         server.expect().withPath("/api/v1/services?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
                 .andReturn(200, new PodListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
         Exchange ex = template.request("direct:listByLabels", exchange -> {
@@ -69,12 +73,12 @@ public class KubernetesServicesProducerTest extends KubernetesTestSupport {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_LABELS, labels);
         });
 
-        List<Service> result = ex.getMessage().getBody(List.class);
+        List<?> result = ex.getMessage().getBody(List.class);
         assertEquals(3, result.size());
     }
 
     @Test
-    public void getServiceTest() {
+    void getServiceTest() {
         Service se1 = new ServiceBuilder().withNewMetadata().withName("se1").withNamespace("test").and().build();
 
         server.expect().withPath("/api/v1/namespaces/test/services/se1").andReturn(200, se1).once();
@@ -89,7 +93,57 @@ public class KubernetesServicesProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    public void createAndDeleteService() {
+    void createService() {
+        Map<String, String> labels = Map.of("my.label.key", "my.label.value");
+        ServiceSpec spec = new ServiceSpecBuilder().withClusterIP("SomeClusterIp").build();
+        Service se1 = new ServiceBuilder().withNewMetadata().withName("se1").withNamespace("test").withLabels(labels).and()
+                .withSpec(spec).build();
+        server.expect().post().withPath("/api/v1/namespaces/test/services").andReturn(200, se1).once();
+
+        Exchange ex = template.request("direct:createService", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_LABELS, labels);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, "se1");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_SPEC, spec);
+        });
+
+        Service result = ex.getMessage().getBody(Service.class);
+
+        assertEquals("test", result.getMetadata().getNamespace());
+        assertEquals("se1", result.getMetadata().getName());
+        assertEquals(labels, result.getMetadata().getLabels());
+        assertEquals("SomeClusterIp", result.getSpec().getClusterIP());
+    }
+
+    @Test
+    void replaceService() {
+        Map<String, String> labels = Map.of("my.label.key", "my.label.value");
+        ServiceSpec spec = new ServiceSpecBuilder().withExternalName("SomeExternalName").build();
+        Service se1 = new ServiceBuilder().withNewMetadata().withName("se1").withNamespace("test").withLabels(labels).and()
+                .withSpec(spec).build();
+        server.expect().get().withPath("/api/v1/namespaces/test/services/se1")
+                .andReturn(200, new ServiceBuilder().withNewMetadata().withName("se1").withNamespace("test").and()
+                        .withSpec(new ServiceSpecBuilder().withClusterIP("SomeClusterIp").build()).build())
+                .times(2);
+        server.expect().put().withPath("/api/v1/namespaces/test/services/se1").andReturn(200, se1).once();
+
+        Exchange ex = template.request("direct:replaceService", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_LABELS, labels);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, "se1");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_SPEC, spec);
+        });
+
+        Service result = ex.getMessage().getBody(Service.class);
+
+        assertEquals("test", result.getMetadata().getNamespace());
+        assertEquals("se1", result.getMetadata().getName());
+        assertEquals(labels, result.getMetadata().getLabels());
+        assertEquals("SomeExternalName", result.getSpec().getExternalName());
+    }
+
+    @Test
+    void deleteService() {
         Service se1 = new ServiceBuilder().withNewMetadata().withName("se1").withNamespace("test").and().build();
 
         server.expect().withPath("/api/v1/namespaces/test/services/se1").andReturn(200, se1).once();
@@ -114,6 +168,10 @@ public class KubernetesServicesProducerTest extends KubernetesTestSupport {
                         .to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=listServicesByLabels");
                 from("direct:getServices")
                         .to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=getService");
+                from("direct:createService")
+                        .to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=createService");
+                from("direct:replaceService")
+                        .to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=replaceService");
                 from("direct:deleteService")
                         .to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=deleteService");
             }

@@ -20,43 +20,44 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.fabric8.kubernetes.api.model.PersistentVolume;
 import io.fabric8.kubernetes.api.model.PersistentVolumeListBuilder;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.NamespacedKubernetesClient;
+import io.fabric8.kubernetes.client.server.mock.EnableKubernetesMockClient;
+import io.fabric8.kubernetes.client.server.mock.KubernetesMockServer;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.KubernetesServer;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@EnableKubernetesMockClient
 public class KubernetesPersistentVolumesProducerTest extends KubernetesTestSupport {
 
-    @RegisterExtension
-    public KubernetesServer server = new KubernetesServer();
+    KubernetesMockServer server;
+    NamespacedKubernetesClient client;
 
     @BindToRegistry("kubernetesClient")
     public KubernetesClient getClient() {
-        return server.getClient();
+        return client;
     }
 
     @Test
-    public void listTest() {
+    void listTest() {
         server.expect().withPath("/api/v1/persistentvolumes")
                 .andReturn(200,
                         new PersistentVolumeListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
                 .once();
-        List<PersistentVolume> result = template.requestBody("direct:list", "", List.class);
+        List<?> result = template.requestBody("direct:list", "", List.class);
 
         assertEquals(3, result.size());
     }
 
     @Test
-    public void listByLabelsTest() throws Exception {
+    void listByLabelsTest() throws Exception {
         server.expect().withPath("/api/v1/persistentvolumes?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
                 .andReturn(200,
                         new PersistentVolumeListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
@@ -68,7 +69,7 @@ public class KubernetesPersistentVolumesProducerTest extends KubernetesTestSuppo
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_LABELS, labels);
         });
 
-        List<PersistentVolume> result = ex.getMessage().getBody(List.class);
+        List<?> result = ex.getMessage().getBody(List.class);
 
         assertEquals(3, result.size());
     }

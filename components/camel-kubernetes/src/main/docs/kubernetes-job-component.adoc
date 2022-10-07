@@ -41,6 +41,7 @@ include::partial$component-endpoint-headers.adoc[]
 - listJobByLabels
 - getJob
 - createJob
+- replaceJob
 - deleteJob
 
 == Kubernetes Job Producer Examples

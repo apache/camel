@@ -21,8 +21,8 @@ import java.util.Map;
 import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
 import io.fabric8.kubernetes.client.ConfigBuilder;
-import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.KubernetesClientBuilder;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -64,7 +64,7 @@ public class ConfigMapPropertiesFunctionRouteTest extends KubernetesTestSupport 
         ConfigBuilder builder = new ConfigBuilder();
         builder.withOauthToken(authToken);
         builder.withMasterUrl(host);
-        client = new DefaultKubernetesClient(builder.build());
+        client = new KubernetesClientBuilder().withConfig(builder.build()).build();
         context.getRegistry().bind("KubernetesClient", client);
 
         Map<String, String> data = Map.of("foo", "123", "bar", "Moes Bar");
