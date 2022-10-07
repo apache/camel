@@ -266,9 +266,6 @@
                         <configuration>
                             <kebabCase>false</kebabCase>
                             <outputFile>src/generated/resources/schema/camelYamlDsl.json</outputFile>
-                            <bannedDefinitions>
-                                <bannedDefinition>org.apache.camel.model.FromDefinition</bannedDefinition>
-                            </bannedDefinitions>
                         </configuration>
                     </execution>
                     <!-- kebab-case -->
@@ -281,9 +278,6 @@
                         <configuration>
                             <kebabCase>true</kebabCase>
                             <outputFile>src/generated/resources/schema/camel-yaml-dsl.json</outputFile>
-                            <bannedDefinitions>
-                                <bannedDefinition>org.apache.camel.model.FromDefinition</bannedDefinition>
-                            </bannedDefinitions>
                         </configuration>
                     </execution>
                 </executions>
