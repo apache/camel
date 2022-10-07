@@ -41,6 +41,7 @@ include::partial$component-endpoint-headers.adoc[]
 - listReplicationControllersByLabels
 - getReplicationController
 - createReplicationController
+- replaceReplicationController
 - deleteReplicationController
 - scaleReplicationController
 

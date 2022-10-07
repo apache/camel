@@ -107,6 +107,34 @@ public class KubernetesPersistentVolumesClaimsProducerTest extends KubernetesTes
     }
 
     @Test
+    void replacePersistentVolumeClaim() {
+        Map<String, String> labels = Map.of("my.label.key", "my.label.value");
+        PersistentVolumeClaimSpec spec = new PersistentVolumeClaimSpecBuilder().withVolumeName("SomeVolumeName").build();
+        PersistentVolumeClaim vc1 = new PersistentVolumeClaimBuilder().withNewMetadata().withName("vc1").withNamespace("test")
+                .withLabels(labels).and()
+                .withSpec(spec).build();
+        server.expect().get().withPath("/api/v1/namespaces/test/persistentvolumeclaims/vc1")
+                .andReturn(200, new PersistentVolumeClaimBuilder().withNewMetadata().withName("vc1").withNamespace("test")
+                        .endMetadata().build())
+                .once();
+        server.expect().put().withPath("/api/v1/namespaces/test/persistentvolumeclaims/vc1").andReturn(200, vc1).once();
+
+        Exchange ex = template.request("direct:replace", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_CLAIMS_LABELS, labels);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUME_CLAIM_NAME, "vc1");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUME_CLAIM_SPEC, spec);
+        });
+
+        PersistentVolumeClaim result = ex.getMessage().getBody(PersistentVolumeClaim.class);
+
+        assertEquals("test", result.getMetadata().getNamespace());
+        assertEquals("vc1", result.getMetadata().getName());
+        assertEquals(labels, result.getMetadata().getLabels());
+        assertEquals("SomeVolumeName", result.getSpec().getVolumeName());
+    }
+
+    @Test
     void deletePersistentVolumeClaim() {
         ObjectMeta meta = new ObjectMeta();
         meta.setName("pvc1");
@@ -133,6 +161,8 @@ public class KubernetesPersistentVolumesClaimsProducerTest extends KubernetesTes
                         "kubernetes-persistent-volumes-claims:///?kubernetesClient=#kubernetesClient&operation=listPersistentVolumesClaimsByLabels");
                 from("direct:create").to(
                         "kubernetes-persistent-volumes-claims:///?kubernetesClient=#kubernetesClient&operation=createPersistentVolumeClaim");
+                from("direct:replace").to(
+                        "kubernetes-persistent-volumes-claims:///?kubernetesClient=#kubernetesClient&operation=replacePersistentVolumeClaim");
                 from("direct:delete").to(
                         "kubernetes-persistent-volumes-claims:///?kubernetesClient=#kubernetesClient&operation=deletePersistentVolumeClaim");
             }

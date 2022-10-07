@@ -18,12 +18,14 @@ package org.apache.camel.component.kubernetes.persistent_volumes_claims;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaim;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaimBuilder;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaimList;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaimSpec;
 import io.fabric8.kubernetes.api.model.StatusDetails;
+import io.fabric8.kubernetes.client.dsl.Resource;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -69,6 +71,10 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
 
             case KubernetesOperations.CREATE_PERSISTENT_VOLUME_CLAIM_OPERATION:
                 doCreatePersistentVolumeClaim(exchange);
+                break;
+
+            case KubernetesOperations.REPLACE_PERSISTENT_VOLUME_CLAIM_OPERATION:
+                doReplacePersistentVolumeClaim(exchange);
                 break;
 
             case KubernetesOperations.DELETE_PERSISTENT_VOLUME_CLAIM_OPERATION:
@@ -128,32 +134,46 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
         prepareOutboundMessage(exchange, pvc);
     }
 
+    protected void doReplacePersistentVolumeClaim(Exchange exchange) {
+        doCreateOrUpdatePersistentVolumeClaim(exchange, "Replace", Resource::replace);
+    }
+
     protected void doCreatePersistentVolumeClaim(Exchange exchange) {
+        doCreateOrUpdatePersistentVolumeClaim(exchange, "Create", Resource::create);
+    }
+
+    private void doCreateOrUpdatePersistentVolumeClaim(
+            Exchange exchange, String operationName,
+            Function<Resource<PersistentVolumeClaim>, PersistentVolumeClaim> operation) {
         String pvcName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUME_CLAIM_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         PersistentVolumeClaimSpec pvcSpec = exchange.getIn()
                 .getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUME_CLAIM_SPEC, PersistentVolumeClaimSpec.class);
         if (ObjectHelper.isEmpty(pvcName)) {
-            LOG.error("Create a specific Persistent Volume Claim require specify a Persistent Volume Claim name");
+            LOG.error("{} a specific Persistent Volume Claim require specify a Persistent Volume Claim name", operationName);
             throw new IllegalArgumentException(
-                    "Create a specific Persistent Volume Claim require specify a Persistent Volume Claim name");
+                    String.format("%s a specific Persistent Volume Claim require specify a Persistent Volume Claim name",
+                            operationName));
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
-            LOG.error("Create a specific Persistent Volume Claim require specify a namespace name");
-            throw new IllegalArgumentException("Create a specific Persistent Volume Claim require specify a namespace name");
+            LOG.error("{} a specific Persistent Volume Claim require specify a namespace name", operationName);
+            throw new IllegalArgumentException(
+                    String.format("%s a specific Persistent Volume Claim require specify a namespace name", operationName));
         }
         if (ObjectHelper.isEmpty(pvcSpec)) {
-            LOG.error("Create a specific Persistent Volume Claim require specify a Persistent Volume Claim spec bean");
+            LOG.error("{} a specific Persistent Volume Claim require specify a Persistent Volume Claim spec bean",
+                    operationName);
             throw new IllegalArgumentException(
-                    "Create a specific Persistent Volume Claim require specify a Persistent Volume Claim spec bean");
+                    String.format("%s a specific Persistent Volume Claim require specify a Persistent Volume Claim spec bean",
+                            operationName));
         }
         Map<String, String> labels
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_CLAIMS_LABELS, Map.class);
         PersistentVolumeClaim pvcCreating = new PersistentVolumeClaimBuilder().withNewMetadata().withName(pvcName)
                 .withLabels(labels).endMetadata().withSpec(pvcSpec).build();
         PersistentVolumeClaim pvc
-                = getEndpoint().getKubernetesClient().persistentVolumeClaims().inNamespace(namespaceName).resource(pvcCreating)
-                        .create();
+                = operation.apply(getEndpoint().getKubernetesClient().persistentVolumeClaims().inNamespace(namespaceName)
+                        .resource(pvcCreating));
 
         prepareOutboundMessage(exchange, pvc);
     }

@@ -123,6 +123,34 @@ public class KubernetesReplicationControllersProducerTest extends KubernetesTest
     }
 
     @Test
+    void replaceReplicationController() {
+        Map<String, String> labels = Map.of("my.label.key", "my.label.value");
+        ReplicationControllerSpec spec = new ReplicationControllerSpecBuilder().withReplicas(13).build();
+        ReplicationController rc1 = new ReplicationControllerBuilder().withNewMetadata().withName("rc1").withNamespace("test")
+                .withLabels(labels).and()
+                .withSpec(spec).build();
+        server.expect().get().withPath("/api/v1/namespaces/test/replicationcontrollers/rc1")
+                .andReturn(200, new ReplicationControllerBuilder().withNewMetadata().withName("rc1").withNamespace("test")
+                        .endMetadata().build())
+                .once();
+        server.expect().put().withPath("/api/v1/namespaces/test/replicationcontrollers/rc1").andReturn(200, rc1).once();
+
+        Exchange ex = template.request("direct:replaceReplicationController", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLERS_LABELS, labels);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_NAME, "rc1");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_SPEC, spec);
+        });
+
+        ReplicationController result = ex.getMessage().getBody(ReplicationController.class);
+
+        assertEquals("test", result.getMetadata().getNamespace());
+        assertEquals("rc1", result.getMetadata().getName());
+        assertEquals(labels, result.getMetadata().getLabels());
+        assertEquals(13, result.getSpec().getReplicas());
+    }
+
+    @Test
     void deleteReplicationController() {
         server.expect().withPath("/api/v1/namespaces/test/replicationcontrollers/repl1")
                 .andReturn(200, new ReplicationControllerBuilder().withNewMetadata().withName("repl1")
@@ -184,6 +212,8 @@ public class KubernetesReplicationControllersProducerTest extends KubernetesTest
                         "kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=scaleReplicationController");
                 from("direct:createReplicationController").to(
                         "kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=createReplicationController");
+                from("direct:replaceReplicationController").to(
+                        "kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=replaceReplicationController");
                 from("direct:deleteReplicationController").to(
                         "kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=deleteReplicationController");
             }

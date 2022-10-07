@@ -18,6 +18,7 @@ package org.apache.camel.component.kubernetes.resources_quota;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import io.fabric8.kubernetes.api.model.ResourceQuota;
 import io.fabric8.kubernetes.api.model.ResourceQuotaBuilder;
@@ -72,6 +73,10 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
 
             case KubernetesOperations.CREATE_RESOURCE_QUOTA_OPERATION:
                 doCreateResourceQuota(exchange);
+                break;
+
+            case KubernetesOperations.REPLACE_RESOURCE_QUOTA_OPERATION:
+                doReplaceResourceQuota(exchange);
                 break;
 
             case KubernetesOperations.DELETE_RESOURCE_QUOTA_OPERATION:
@@ -130,29 +135,41 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
         prepareOutboundMessage(exchange, rq);
     }
 
+    protected void doReplaceResourceQuota(Exchange exchange) {
+        doCreateOrUpdateResourceQuota(exchange, "Replace", Resource::replace);
+    }
+
     protected void doCreateResourceQuota(Exchange exchange) {
+        doCreateOrUpdateResourceQuota(exchange, "Create", Resource::create);
+    }
+
+    private void doCreateOrUpdateResourceQuota(
+            Exchange exchange, String operationName, Function<Resource<ResourceQuota>, ResourceQuota> operation) {
         String rqName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         ResourceQuotaSpec rqSpec
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCE_QUOTA_SPEC, ResourceQuotaSpec.class);
         if (ObjectHelper.isEmpty(rqName)) {
-            LOG.error("Create a specific resource quota require specify a resource quota name");
-            throw new IllegalArgumentException("Create a specific resource quota require specify a resource quota name");
+            LOG.error("{} a specific resource quota require specify a resource quota name", operationName);
+            throw new IllegalArgumentException(
+                    operationName + " a specific resource quota require specify a resource quota name");
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
-            LOG.error("Create a specific resource quota require specify a namespace name");
-            throw new IllegalArgumentException("Create a specific resource quota require specify a namespace name");
+            LOG.error("{} a specific resource quota require specify a namespace name", operationName);
+            throw new IllegalArgumentException(operationName + " a specific resource quota require specify a namespace name");
         }
         if (ObjectHelper.isEmpty(rqSpec)) {
-            LOG.error("Create a specific resource quota require specify a resource quota spec bean");
-            throw new IllegalArgumentException("Create a specific resource quota require specify a resource quota spec bean");
+            LOG.error("{} a specific resource quota require specify a resource quota spec bean", operationName);
+            throw new IllegalArgumentException(
+                    operationName + " a specific resource quota require specify a resource quota spec bean");
         }
         Map<String, String> labels
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_LABELS, Map.class);
         ResourceQuota rqCreating = new ResourceQuotaBuilder().withNewMetadata().withName(rqName).withLabels(labels)
                 .endMetadata().withSpec(rqSpec).build();
         ResourceQuota rq
-                = getEndpoint().getKubernetesClient().resourceQuotas().inNamespace(namespaceName).resource(rqCreating).create();
+                = operation.apply(
+                        getEndpoint().getKubernetesClient().resourceQuotas().inNamespace(namespaceName).resource(rqCreating));
 
         prepareOutboundMessage(exchange, rq);
     }

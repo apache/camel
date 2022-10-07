@@ -18,10 +18,12 @@ package org.apache.camel.component.kubernetes.secrets;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import io.fabric8.kubernetes.api.model.Secret;
 import io.fabric8.kubernetes.api.model.SecretList;
 import io.fabric8.kubernetes.api.model.StatusDetails;
+import io.fabric8.kubernetes.client.dsl.Resource;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -67,6 +69,10 @@ public class KubernetesSecretsProducer extends DefaultProducer {
 
             case KubernetesOperations.CREATE_SECRET_OPERATION:
                 doCreateSecret(exchange);
+                break;
+
+            case KubernetesOperations.REPLACE_SECRET_OPERATION:
+                doReplaceSecret(exchange);
                 break;
 
             case KubernetesOperations.DELETE_SECRET_OPERATION:
@@ -121,19 +127,30 @@ public class KubernetesSecretsProducer extends DefaultProducer {
         prepareOutboundMessage(exchange, secret);
     }
 
+    protected void doReplaceSecret(Exchange exchange) {
+        doCreateOrUpdateSecret(exchange, "Replace", Resource::replace);
+    }
+
     protected void doCreateSecret(Exchange exchange) {
+        doCreateOrUpdateSecret(exchange, "Create", Resource::create);
+    }
+
+    private void doCreateOrUpdateSecret(Exchange exchange, String operationName, Function<Resource<Secret>, Secret> operation) {
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         Secret secretToCreate = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SECRET, Secret.class);
         if (ObjectHelper.isEmpty(namespaceName)) {
-            LOG.error("Create a specific secret require specify a namespace name");
-            throw new IllegalArgumentException("Create a specific secret require specify a namespace name");
+            LOG.error("{} a specific secret require specify a namespace name", operationName);
+            throw new IllegalArgumentException(
+                    String.format("%s a specific secret require specify a namespace name", operationName));
         }
         if (ObjectHelper.isEmpty(secretToCreate)) {
-            LOG.error("Create a specific secret require specify a secret bean");
-            throw new IllegalArgumentException("Create a specific secret require specify a secret bean");
+            LOG.error("{} a specific secret require specify a secret bean", operationName);
+            throw new IllegalArgumentException(
+                    String.format("%s a specific secret require specify a secret bean", operationName));
         }
         Secret secret
-                = getEndpoint().getKubernetesClient().secrets().inNamespace(namespaceName).resource(secretToCreate).create();
+                = operation.apply(
+                        getEndpoint().getKubernetesClient().secrets().inNamespace(namespaceName).resource(secretToCreate));
 
         prepareOutboundMessage(exchange, secret);
     }

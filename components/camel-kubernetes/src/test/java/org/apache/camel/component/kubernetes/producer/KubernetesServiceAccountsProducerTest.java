@@ -94,6 +94,23 @@ public class KubernetesServiceAccountsProducerTest extends KubernetesTestSupport
     }
 
     @Test
+    void replaceServiceAccount() {
+        ServiceAccount sa1 = new ServiceAccountBuilder().withNewMetadata().withName("sa1").withNamespace("test").and().build();
+        server.expect().get().withPath("/api/v1/namespaces/test/serviceaccounts/sa1").andReturn(200, sa1).once();
+        server.expect().put().withPath("/api/v1/namespaces/test/serviceaccounts/sa1").andReturn(200, sa1).once();
+
+        Exchange ex = template.request("direct:replace", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_ACCOUNT, sa1);
+        });
+
+        ServiceAccount result = ex.getMessage().getBody(ServiceAccount.class);
+
+        assertEquals("test", result.getMetadata().getNamespace());
+        assertEquals("sa1", result.getMetadata().getName());
+    }
+
+    @Test
     void deleteServiceAccount() {
         ServiceAccount sa1 = new ServiceAccountBuilder().withNewMetadata().withName("sa1").withNamespace("test").and().build();
 
@@ -119,6 +136,8 @@ public class KubernetesServiceAccountsProducerTest extends KubernetesTestSupport
                         "kubernetes-service-accounts:///?kubernetesClient=#kubernetesClient&operation=listServiceAccountsByLabels");
                 from("direct:create").to(
                         "kubernetes-service-accounts:///?kubernetesClient=#kubernetesClient&operation=createServiceAccount");
+                from("direct:replace").to(
+                        "kubernetes-service-accounts:///?kubernetesClient=#kubernetesClient&operation=replaceServiceAccount");
                 from("direct:delete").to(
                         "kubernetes-service-accounts:///?kubernetesClient=#kubernetesClient&operation=deleteServiceAccount");
             }

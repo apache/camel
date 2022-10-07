@@ -123,6 +123,32 @@ public class KubernetesPodsProducerTest extends KubernetesTestSupport {
     }
 
     @Test
+    void replacePod() {
+        Map<String, String> labels = Map.of("my.label.key", "my.label.value");
+        PodSpec spec = new PodSpecBuilder().withHostname("SomeHostname").build();
+        Pod pod1 = new PodBuilder().withNewMetadata().withName("pod1").withNamespace("test").withLabels(labels).and()
+                .withSpec(spec).build();
+        server.expect().get().withPath("/api/v1/namespaces/test/pods/pod1")
+                .andReturn(200, new PodBuilder().withNewMetadata().withName("pod1").withNamespace("test").endMetadata().build())
+                .once();
+        server.expect().put().withPath("/api/v1/namespaces/test/pods/pod1").andReturn(200, pod1).once();
+
+        Exchange ex = template.request("direct:replacePod", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, labels);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_POD_NAME, "pod1");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_POD_SPEC, spec);
+        });
+
+        Pod result = ex.getMessage().getBody(Pod.class);
+
+        assertEquals("test", result.getMetadata().getNamespace());
+        assertEquals("pod1", result.getMetadata().getName());
+        assertEquals(labels, result.getMetadata().getLabels());
+        assertEquals("SomeHostname", result.getSpec().getHostname());
+    }
+
+    @Test
     void deletePod() {
         Pod pod1 = new PodBuilder().withNewMetadata().withName("pod1").withNamespace("test").and().build();
         server.expect().withPath("/api/v1/namespaces/test/pods/pod1").andReturn(200, pod1).once();
@@ -147,6 +173,7 @@ public class KubernetesPodsProducerTest extends KubernetesTestSupport {
                         .to("kubernetes-pods:///?kubernetesClient=#kubernetesClient&operation=listPodsByLabels");
                 from("direct:getPod").to("kubernetes-pods:///?kubernetesClient=#kubernetesClient&operation=getPod");
                 from("direct:createPod").to("kubernetes-pods:///?kubernetesClient=#kubernetesClient&operation=createPod");
+                from("direct:replacePod").to("kubernetes-pods:///?kubernetesClient=#kubernetesClient&operation=replacePod");
                 from("direct:deletePod").to("kubernetes-pods:///?kubernetesClient=#kubernetesClient&operation=deletePod");
             }
         };

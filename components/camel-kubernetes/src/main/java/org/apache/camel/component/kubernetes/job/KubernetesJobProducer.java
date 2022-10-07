@@ -17,12 +17,14 @@
 package org.apache.camel.component.kubernetes.job;
 
 import java.util.Map;
+import java.util.function.Function;
 
 import io.fabric8.kubernetes.api.model.batch.v1.Job;
 import io.fabric8.kubernetes.api.model.batch.v1.JobBuilder;
 import io.fabric8.kubernetes.api.model.batch.v1.JobList;
 import io.fabric8.kubernetes.api.model.batch.v1.JobSpec;
 import io.fabric8.kubernetes.client.dsl.MixedOperation;
+import io.fabric8.kubernetes.client.dsl.Resource;
 import io.fabric8.kubernetes.client.dsl.ScalableResource;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
@@ -77,6 +79,10 @@ public class KubernetesJobProducer extends DefaultProducer {
                 doCreateJob(exchange);
                 break;
 
+            case KubernetesOperations.REPLACE_JOB_OPERATION:
+                doReplaceJob(exchange);
+                break;
+
             case KubernetesOperations.DELETE_JOB_OPERATION:
                 doDeleteJob(exchange);
                 break;
@@ -122,27 +128,37 @@ public class KubernetesJobProducer extends DefaultProducer {
         prepareOutboundMessage(exchange, job);
     }
 
+    protected void doReplaceJob(Exchange exchange) {
+        doCreateOrUpdateJob(exchange, "Replace", Resource::replace);
+    }
+
     protected void doCreateJob(Exchange exchange) {
+        doCreateOrUpdateJob(exchange, "Create", Resource::create);
+    }
+
+    private void doCreateOrUpdateJob(Exchange exchange, String operationName, Function<Resource<Job>, Job> operation) {
         String jobName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         JobSpec jobSpec = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_SPEC, JobSpec.class);
         if (ObjectHelper.isEmpty(jobName)) {
-            LOG.error("Create a specific job require specify a job name");
-            throw new IllegalArgumentException("Create a specific job require specify a job name");
+            LOG.error("{} a specific job require specify a job name", operationName);
+            throw new IllegalArgumentException(String.format("%s a specific job require specify a job name", operationName));
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
-            LOG.error("Create a specific job require specify a namespace name");
-            throw new IllegalArgumentException("Create a specific job require specify a namespace name");
+            LOG.error("{} a specific job require specify a namespace name", operationName);
+            throw new IllegalArgumentException(
+                    String.format("%s a specific job require specify a namespace name", operationName));
         }
         if (ObjectHelper.isEmpty(jobSpec)) {
-            LOG.error("Create a specific job require specify a hpa spec bean");
-            throw new IllegalArgumentException("Create a specific job require specify a hpa spec bean");
+            LOG.error("{} a specific job require specify a hpa spec bean", operationName);
+            throw new IllegalArgumentException(
+                    String.format("%s a specific job require specify a hpa spec bean", operationName));
         }
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_LABELS, Map.class);
         Job jobCreating = new JobBuilder().withNewMetadata().withName(jobName).withLabels(labels).endMetadata()
                 .withSpec(jobSpec).build();
-        Job job = getEndpoint().getKubernetesClient().batch().v1().jobs().inNamespace(namespaceName).resource(jobCreating)
-                .create();
+        Job job = operation.apply(
+                getEndpoint().getKubernetesClient().batch().v1().jobs().inNamespace(namespaceName).resource(jobCreating));
 
         prepareOutboundMessage(exchange, job);
     }

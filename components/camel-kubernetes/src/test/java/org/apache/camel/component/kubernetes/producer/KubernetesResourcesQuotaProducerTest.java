@@ -84,6 +84,33 @@ public class KubernetesResourcesQuotaProducerTest extends KubernetesTestSupport 
     }
 
     @Test
+    void replaceResourceQuota() {
+        Map<String, String> labels = Map.of("my.label.key", "my.label.value");
+        ResourceQuotaSpec spec = new ResourceQuotaSpecBuilder().withScopes("SomeScope").build();
+        ResourceQuota rq1
+                = new ResourceQuotaBuilder().withNewMetadata().withName("rq1").withNamespace("test").withLabels(labels).and()
+                        .withSpec(spec).build();
+        server.expect().get().withPath("/api/v1/namespaces/test/resourcequotas/rq1").andReturn(200,
+                new ResourceQuotaBuilder().withNewMetadata().withName("rq1").withNamespace("test").endMetadata().build())
+                .once();
+        server.expect().put().withPath("/api/v1/namespaces/test/resourcequotas/rq1").andReturn(200, rq1).once();
+
+        Exchange ex = template.request("direct:replace", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_LABELS, labels);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME, "rq1");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_RESOURCE_QUOTA_SPEC, spec);
+        });
+
+        ResourceQuota result = ex.getMessage().getBody(ResourceQuota.class);
+
+        assertEquals("test", result.getMetadata().getNamespace());
+        assertEquals("rq1", result.getMetadata().getName());
+        assertEquals(labels, result.getMetadata().getLabels());
+        assertEquals(List.of("SomeScope"), result.getSpec().getScopes());
+    }
+
+    @Test
     void deleteResourceQuota() {
         ResourceQuota rq1 = new ResourceQuotaBuilder().withNewMetadata().withName("rq1").withNamespace("test").and().build();
         server.expect().withPath("/api/v1/namespaces/test/resourcequotas/rq1").andReturn(200, rq1).once();
@@ -107,6 +134,8 @@ public class KubernetesResourcesQuotaProducerTest extends KubernetesTestSupport 
                         .to("kubernetes-resources-quota:///?kubernetesClient=#kubernetesClient&operation=listResourcesQuota");
                 from("direct:create")
                         .to("kubernetes-resources-quota:///?kubernetesClient=#kubernetesClient&operation=createResourceQuota");
+                from("direct:replace")
+                        .to("kubernetes-resources-quota:///?kubernetesClient=#kubernetesClient&operation=replaceResourceQuota");
                 from("direct:delete")
                         .to("kubernetes-resources-quota:///?kubernetesClient=#kubernetesClient&operation=deleteResourceQuota");
             }

@@ -116,6 +116,33 @@ public class KubernetesServicesProducerTest extends KubernetesTestSupport {
     }
 
     @Test
+    void replaceService() {
+        Map<String, String> labels = Map.of("my.label.key", "my.label.value");
+        ServiceSpec spec = new ServiceSpecBuilder().withExternalName("SomeExternalName").build();
+        Service se1 = new ServiceBuilder().withNewMetadata().withName("se1").withNamespace("test").withLabels(labels).and()
+                .withSpec(spec).build();
+        server.expect().get().withPath("/api/v1/namespaces/test/services/se1")
+                .andReturn(200, new ServiceBuilder().withNewMetadata().withName("se1").withNamespace("test").and()
+                        .withSpec(new ServiceSpecBuilder().withClusterIP("SomeClusterIp").build()).build())
+                .times(2);
+        server.expect().put().withPath("/api/v1/namespaces/test/services/se1").andReturn(200, se1).once();
+
+        Exchange ex = template.request("direct:replaceService", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_LABELS, labels);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, "se1");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_SPEC, spec);
+        });
+
+        Service result = ex.getMessage().getBody(Service.class);
+
+        assertEquals("test", result.getMetadata().getNamespace());
+        assertEquals("se1", result.getMetadata().getName());
+        assertEquals(labels, result.getMetadata().getLabels());
+        assertEquals("SomeExternalName", result.getSpec().getExternalName());
+    }
+
+    @Test
     void deleteService() {
         Service se1 = new ServiceBuilder().withNewMetadata().withName("se1").withNamespace("test").and().build();
 
@@ -143,6 +170,8 @@ public class KubernetesServicesProducerTest extends KubernetesTestSupport {
                         .to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=getService");
                 from("direct:createService")
                         .to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=createService");
+                from("direct:replaceService")
+                        .to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=replaceService");
                 from("direct:deleteService")
                         .to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=deleteService");
             }

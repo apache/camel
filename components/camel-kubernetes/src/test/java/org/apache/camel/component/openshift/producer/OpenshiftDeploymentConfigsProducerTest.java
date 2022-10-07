@@ -83,11 +83,40 @@ public class OpenshiftDeploymentConfigsProducerTest extends KubernetesTestSuppor
         Map<String, String> labels = Map.of("my.label.key", "my.label.value");
         DeploymentConfigSpec spec = new DeploymentConfigSpecBuilder().withReplicas(13).build();
         DeploymentConfig de1
-            = new DeploymentConfigBuilder().withNewMetadata().withName("de1").withNamespace("test").withLabels(labels).and()
-            .withSpec(spec).build();
-        server.expect().post().withPath("/apis/apps.openshift.io/v1/namespaces/test/deploymentconfigs").andReturn(200, de1).once();
+                = new DeploymentConfigBuilder().withNewMetadata().withName("de1").withNamespace("test").withLabels(labels).and()
+                        .withSpec(spec).build();
+        server.expect().post().withPath("/apis/apps.openshift.io/v1/namespaces/test/deploymentconfigs").andReturn(200, de1)
+                .once();
 
         Exchange ex = template.request("direct:create", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_DEPLOYMENTS_LABELS, labels);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_NAME, "de1");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_CONFIG_SPEC, spec);
+        });
+
+        DeploymentConfig result = ex.getMessage().getBody(DeploymentConfig.class);
+
+        assertEquals("test", result.getMetadata().getNamespace());
+        assertEquals("de1", result.getMetadata().getName());
+        assertEquals(labels, result.getMetadata().getLabels());
+        assertEquals(13, result.getSpec().getReplicas());
+    }
+
+    @Test
+    void replaceDeploymentConfig() {
+        Map<String, String> labels = Map.of("my.label.key", "my.label.value");
+        DeploymentConfigSpec spec = new DeploymentConfigSpecBuilder().withReplicas(13).build();
+        DeploymentConfig de1
+                = new DeploymentConfigBuilder().withNewMetadata().withName("de1").withNamespace("test").withLabels(labels).and()
+                        .withSpec(spec).build();
+        server.expect().get().withPath("/apis/apps.openshift.io/v1/namespaces/test/deploymentconfigs/de1").andReturn(200,
+                new DeploymentConfigBuilder().withNewMetadata().withName("de1").withNamespace("test").endMetadata().build())
+                .once();
+        server.expect().put().withPath("/apis/apps.openshift.io/v1/namespaces/test/deploymentconfigs/de1").andReturn(200, de1)
+                .once();
+
+        Exchange ex = template.request("direct:replace", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_DEPLOYMENTS_LABELS, labels);
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_NAME, "de1");
@@ -162,6 +191,8 @@ public class OpenshiftDeploymentConfigsProducerTest extends KubernetesTestSuppor
                         .toF("openshift-deploymentconfigs:///?kubernetesClient=#kubernetesClient&operation=listDeploymentConfigsByLabels");
                 from("direct:create")
                         .toF("openshift-deploymentconfigs:///?kubernetesClient=#kubernetesClient&operation=createDeploymentConfig");
+                from("direct:replace")
+                        .toF("openshift-deploymentconfigs:///?kubernetesClient=#kubernetesClient&operation=replaceDeploymentConfig");
                 from("direct:delete")
                         .toF("openshift-deploymentconfigs:///?kubernetesClient=#kubernetesClient&operation=deleteDeploymentConfig");
                 from("direct:scale")

@@ -20,6 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.fabric8.kubernetes.api.model.LabelSelector;
+import io.fabric8.kubernetes.api.model.ObjectMeta;
+import io.fabric8.kubernetes.api.model.PodTemplateSpecBuilder;
 import io.fabric8.kubernetes.api.model.batch.v1.Job;
 import io.fabric8.kubernetes.api.model.batch.v1.JobBuilder;
 import io.fabric8.kubernetes.api.model.batch.v1.JobListBuilder;
@@ -115,6 +118,36 @@ public class KubernetesJobProducerTest extends KubernetesTestSupport {
     }
 
     @Test
+    void replaceJobTest() {
+        Map<String, String> labels = Map.of("my.label.key", "my.label.value");
+        JobSpec spec = new JobSpecBuilder().withBackoffLimit(13).withSelector(new LabelSelector())
+                .withTemplate(new PodTemplateSpecBuilder().build()).build();
+        Job j1 = new JobBuilder().withNewMetadata().withName("j1").withNamespace("test").withLabels(labels).and()
+                .withSpec(spec).build();
+        server.expect().get().withPath("/apis/batch/v1/namespaces/test/jobs/j1")
+                .andReturn(200, new JobBuilder().withNewMetadata().withName("j1").withNamespace("test").endMetadata()
+                        .withSpec(new JobSpecBuilder()
+                                .withTemplate(new PodTemplateSpecBuilder().withMetadata(new ObjectMeta()).build()).build())
+                        .build())
+                .times(2);
+        server.expect().put().withPath("/apis/batch/v1/namespaces/test/jobs/j1").andReturn(200, j1).once();
+
+        Exchange ex = template.request("direct:replace", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_JOB_LABELS, labels);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_JOB_NAME, "j1");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_JOB_SPEC, spec);
+        });
+
+        Job result = ex.getMessage().getBody(Job.class);
+
+        assertEquals("test", result.getMetadata().getNamespace());
+        assertEquals("j1", result.getMetadata().getName());
+        assertEquals(labels, result.getMetadata().getLabels());
+        assertEquals(13, result.getSpec().getBackoffLimit());
+    }
+
+    @Test
     void deleteJobTest() {
         Job j1 = new JobBuilder().withNewMetadata().withName("j1").withNamespace("test").and().build();
         server.expect().delete().withPath("/apis/batch/v1/namespaces/test/jobs/j1").andReturn(200, j1)
@@ -139,6 +172,7 @@ public class KubernetesJobProducerTest extends KubernetesTestSupport {
                 from("direct:listByLabels").to("kubernetes-job:foo?operation=listJobByLabels");
                 from("direct:get").to("kubernetes-job:foo?operation=getJob");
                 from("direct:create").to("kubernetes-job:foo?operation=createJob");
+                from("direct:replace").to("kubernetes-job:foo?operation=replaceJob");
                 from("direct:delete").to("kubernetes-job:foo?operation=deleteJob");
             }
         };

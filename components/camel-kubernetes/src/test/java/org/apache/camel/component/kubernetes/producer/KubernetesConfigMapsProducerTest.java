@@ -132,6 +132,32 @@ public class KubernetesConfigMapsProducerTest extends KubernetesTestSupport {
     }
 
     @Test
+    void replaceConfigMap() {
+        Map<String, String> labels = Map.of("my.label.key", "my.label.value");
+        Map<String, String> data = Map.of("my.data.key", "my.data.value");
+        ConfigMap cm1 = new ConfigMapBuilder().withNewMetadata().withName("cm1").withNamespace("test").withLabels(labels).and()
+                .withData(data).build();
+        server.expect().get().withPath("/api/v1/namespaces/test/configmaps/cm1")
+                .andReturn(200,
+                        new ConfigMapBuilder().withNewMetadata().withName("cm1").withNamespace("test").endMetadata().build())
+                .once();
+        server.expect().put().withPath("/api/v1/namespaces/test/configmaps/cm1").andReturn(200, cm1).once();
+
+        Exchange ex = template.request("direct:replaceConfigMap", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAPS_LABELS, labels);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, "cm1");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_DATA, data);
+        });
+
+        ConfigMap result = ex.getMessage().getBody(ConfigMap.class);
+
+        assertEquals("test", result.getMetadata().getNamespace());
+        assertEquals("cm1", result.getMetadata().getName());
+        assertEquals(labels, result.getMetadata().getLabels());
+    }
+
+    @Test
     void deleteConfigMap() {
         ConfigMap cm1 = new ConfigMapBuilder().withNewMetadata().withName("cm1").withNamespace("test").and().build();
         server.expect().withPath("/api/v1/namespaces/test/configmaps/cm1").andReturn(200, cm1).once();
@@ -159,6 +185,8 @@ public class KubernetesConfigMapsProducerTest extends KubernetesTestSupport {
                         .to("kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&operation=getConfigMap");
                 from("direct:createConfigMap")
                         .to("kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&operation=createConfigMap");
+                from("direct:replaceConfigMap")
+                        .to("kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&operation=replaceConfigMap");
                 from("direct:deleteConfigMap")
                         .to("kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&operation=deleteConfigMap");
             }

@@ -108,6 +108,23 @@ public class KubernetesSecretsProducerTest extends KubernetesTestSupport {
     }
 
     @Test
+    void replaceSecret() {
+        Secret sc1 = new SecretBuilder().withNewMetadata().withName("sc1").withNamespace("test").and().build();
+        server.expect().get().withPath("/api/v1/namespaces/test/secrets/sc1").andReturn(200, sc1).once();
+        server.expect().put().withPath("/api/v1/namespaces/test/secrets/sc1").andReturn(200, sc1).once();
+
+        Exchange ex = template.request("direct:replace", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SECRET, sc1);
+        });
+
+        Secret result = ex.getMessage().getBody(Secret.class);
+
+        assertEquals("test", result.getMetadata().getNamespace());
+        assertEquals("sc1", result.getMetadata().getName());
+    }
+
+    @Test
     void deleteSecret() {
         Secret sc1 = new SecretBuilder().withNewMetadata().withName("sc1").withNamespace("test").and().build();
 
@@ -132,6 +149,7 @@ public class KubernetesSecretsProducerTest extends KubernetesTestSupport {
                         .to("kubernetes-secrets:///?kubernetesClient=#kubernetesClient&operation=listSecretsByLabels");
                 from("direct:get").to("kubernetes-secrets:///?kubernetesClient=#kubernetesClient&operation=getSecret");
                 from("direct:create").to("kubernetes-secrets:///?kubernetesClient=#kubernetesClient&operation=createSecret");
+                from("direct:replace").to("kubernetes-secrets:///?kubernetesClient=#kubernetesClient&operation=replaceSecret");
                 from("direct:delete").to("kubernetes-secrets:///?kubernetesClient=#kubernetesClient&operation=deleteSecret");
             }
         };

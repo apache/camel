@@ -79,7 +79,26 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
         server.expect().post().withPath("/api/v1/namespaces").andReturn(200, ns1).once();
 
         Exchange ex = template.request("direct:createNamespace", exchange -> {
-            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "ns1");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_LABELS, labels);
+        });
+
+        Namespace result = ex.getMessage().getBody(Namespace.class);
+
+        assertEquals("ns1", result.getMetadata().getName());
+        assertEquals(labels, result.getMetadata().getLabels());
+    }
+
+    @Test
+    void replaceNamespace() {
+        Map<String, String> labels = Map.of("my.label.key", "my.label.value");
+        Namespace ns1 = new NamespaceBuilder().withNewMetadata().withName("ns1").withLabels(labels).endMetadata().build();
+        server.expect().get().withPath("/api/v1/namespaces/ns1")
+                .andReturn(200, new NamespaceBuilder().withNewMetadata().withName("ns1").endMetadata().build()).once();
+        server.expect().put().withPath("/api/v1/namespaces/ns1").andReturn(200, ns1).once();
+
+        Exchange ex = template.request("direct:replaceNamespace", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "ns1");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_LABELS, labels);
         });
 
@@ -111,6 +130,8 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
                 from("direct:getNs").to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=getNamespace");
                 from("direct:createNamespace")
                         .to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=createNamespace");
+                from("direct:replaceNamespace")
+                        .to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=replaceNamespace");
                 from("direct:deleteNamespace")
                         .to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=deleteNamespace");
             }

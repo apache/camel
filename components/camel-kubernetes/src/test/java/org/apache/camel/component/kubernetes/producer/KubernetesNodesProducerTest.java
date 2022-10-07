@@ -96,6 +96,28 @@ public class KubernetesNodesProducerTest extends KubernetesTestSupport {
     }
 
     @Test
+    void replaceNodeTest() {
+        ObjectMeta meta = new ObjectMeta();
+        meta.setName("test");
+        server.expect().get().withPath("/api/v1/nodes/test").andReturn(200, new NodeBuilder().build()).once();
+        server.expect().put().withPath("/api/v1/nodes/test").andReturn(200, new NodeBuilder().withMetadata(meta).build())
+                .once();
+        Exchange ex = template.request("direct:replaceNode", exchange -> {
+            Map<String, String> labels = new HashMap<>();
+            labels.put("key1", "value1");
+            labels.put("key2", "value2");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NODES_LABELS, labels);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NODE_NAME, "test");
+            NodeSpec spec = new NodeSpecBuilder().build();
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NODE_SPEC, spec);
+        });
+
+        Node result = ex.getMessage().getBody(Node.class);
+
+        assertEquals("test", result.getMetadata().getName());
+    }
+
+    @Test
     void deleteNode() {
         Node node1 = new NodeBuilder().withNewMetadata().withName("node1").withNamespace("test").and().build();
         server.expect().withPath("/api/v1/nodes/node1").andReturn(200, node1).once();
@@ -117,6 +139,7 @@ public class KubernetesNodesProducerTest extends KubernetesTestSupport {
                 from("direct:listByLabels")
                         .toF("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=listNodesByLabels");
                 from("direct:createNode").toF("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=createNode");
+                from("direct:replaceNode").toF("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=replaceNode");
                 from("direct:deleteNode").toF("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=deleteNode");
             }
         };
