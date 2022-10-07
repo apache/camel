@@ -17,8 +17,8 @@
 The Scheduler component is used to generate message exchanges when a
 scheduler fires. This component is similar to the
  xref:timer-component.adoc[Timer] component, but it offers more functionality in
-terms of scheduling. Also this component uses
-JDK `ScheduledExecutorService`. Where as the timer uses a JDK `Timer`.
+terms of scheduling. Also, this component uses
+JDK `ScheduledExecutorService`, whereas the timer uses a JDK `Timer`.
 
 You can only consume events from this endpoint.
 
