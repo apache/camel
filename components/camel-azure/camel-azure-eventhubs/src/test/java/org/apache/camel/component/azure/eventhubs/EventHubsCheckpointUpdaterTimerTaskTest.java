@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.azure.eventhubs;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import com.azure.messaging.eventhubs.models.EventContext;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import reactor.core.publisher.Mono;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
