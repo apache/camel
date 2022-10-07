@@ -180,9 +180,9 @@ public class DefaultCxfBindingTest {
         assertNotNull(headers);
         assertEquals(3, headers.size());
 
-        verifyHeader(headers, "soapaction", "urn:hello:world");
-        verifyHeader(headers, "SoapAction", "urn:hello:world");
-        verifyHeader(headers, "SOAPAction", "urn:hello:world");
+        verifyHeader(headers, "soapaction", "\"urn:hello:world\"");
+        verifyHeader(headers, "SoapAction", "\"urn:hello:world\"");
+        verifyHeader(headers, "SOAPAction", "\"urn:hello:world\"");
         verifyHeader(headers, "myfruitheader", "peach");
         verifyHeader(headers, "myFruitHeader", "peach");
         verifyHeader(headers, "MYFRUITHEADER", "peach");
@@ -319,9 +319,9 @@ public class DefaultCxfBindingTest {
         assertNotNull(headers);
         assertEquals(2, headers.size());
 
-        verifyHeader(headers, "soapaction", "urn:hello:world");
-        verifyHeader(headers, "SoapAction", "urn:hello:world");
-        verifyHeader(headers, "SOAPAction", "urn:hello:world");
+        verifyHeader(headers, "soapaction", "\"urn:hello:world\"");
+        verifyHeader(headers, "SoapAction", "\"urn:hello:world\"");
+        verifyHeader(headers, "SOAPAction", "\"urn:hello:world\"");
         verifyHeader(headers, "myfruitheader", "peach");
         verifyHeader(headers, "myFruitHeader", "peach");
         verifyHeader(headers, "MYFRUITHEADER", "peach");
@@ -345,7 +345,7 @@ public class DefaultCxfBindingTest {
         Map<String, List<String>> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         headers.put("content-type", Arrays.asList("text/xml;charset=UTF-8"));
         headers.put("Content-Length", Arrays.asList("241"));
-        headers.put("soapAction", Arrays.asList("urn:hello:world"));
+        headers.put("soapAction", Arrays.asList("\"urn:hello:world\""));
         headers.put("myfruitheader", Arrays.asList("peach"));
         headers.put("mybrewheader", Arrays.asList("cappuccino", "espresso"));
         cxfMessage.put(org.apache.cxf.message.Message.PROTOCOL_HEADERS, headers);
