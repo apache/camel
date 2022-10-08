@@ -348,7 +348,7 @@
         <jython-version>2.7.2</jython-version>
         <jython-standalone-version>2.7.2</jython-standalone-version>
         <jzlib-version>1.1.3</jzlib-version>
-        <kafka-version>3.1.1</kafka-version>
+        <kafka-version>3.1.2</kafka-version>
         <kafka-vertx-version>2.8.1</kafka-vertx-version>
         <kotlin-version>1.6.21</kotlin-version>
         <kubernetes-client-version>5.12.3</kubernetes-client-version>
