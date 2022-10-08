@@ -232,7 +232,7 @@
         <hbase-version>2.5.0</hbase-version>
         <hdrhistrogram-version>2.1.11</hdrhistrogram-version>
         <hibernate-validator-version>6.2.5.Final</hibernate-validator-version>
-        <hibernate-version>5.6.11.Final</hibernate-version>
+        <hibernate-version>5.6.12.Final</hibernate-version>
         <hk2-version>2.6.1</hk2-version>
         <hsqldb-version>2.7.0</hsqldb-version>
         <httpunit-version>1.7</httpunit-version>
