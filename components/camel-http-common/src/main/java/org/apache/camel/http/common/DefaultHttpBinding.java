@@ -157,20 +157,28 @@ public class DefaultHttpBinding implements HttpBinding {
 
         Map<String, Object> headers = message.getHeaders();
 
-        //apply the headerFilterStrategy
         Enumeration<?> names = request.getHeaderNames();
         while (names.hasMoreElements()) {
             String name = (String) names.nextElement();
-            String value = request.getHeader(name);
-            // use http helper to extract parameter value as it may contain multiple values
-            Object extracted = HttpHelper.extractHttpParameterValue(value);
             // mapping the content-type
             if (name.equalsIgnoreCase("content-type")) {
                 name = Exchange.CONTENT_TYPE;
             }
-            if (headerFilterStrategy != null
-                    && !headerFilterStrategy.applyFilterToExternalHeaders(name, extracted, message.getExchange())) {
-                HttpHelper.appendHeader(headers, name, extracted);
+            // some implementations like Jetty might return unique header names, while some others might not.
+            // Since we are going to call request.getHeaders() to get all values for a header name,
+            // we only need to process a header once.
+            if (!headers.containsKey(name)) {
+                Enumeration<String> values = request.getHeaders(name);
+                while (values.hasMoreElements()) {
+                    String value = values.nextElement();
+                    // use http helper to extract parameter value as it may contain multiple values
+                    Object extracted = HttpHelper.extractHttpParameterValue(value);
+                    //apply the headerFilterStrategy
+                    if (headerFilterStrategy != null
+                            && !headerFilterStrategy.applyFilterToExternalHeaders(name, extracted, message.getExchange())) {
+                        HttpHelper.appendHeader(headers, name, extracted);
+                    }
+                }
             }
         }
 
