@@ -131,8 +131,11 @@ public class KafkaRecordProcessor {
                 LOG.warn("Will seek consumer to offset {} and start polling again.", partitionLastOffset);
             }
 
-            // force commit, so we resume on next poll where we failed
-            commitManager.forceCommit(partition, partitionLastOffset);
+            // force commit, so we resume on next poll where we failed except when the failure happened
+            // at the first message in a poll
+            if(partitionLastOffset != -1) {
+                commitManager.forceCommit(partition, partitionLastOffset);
+            }
 
             // continue to next partition
             return true;
