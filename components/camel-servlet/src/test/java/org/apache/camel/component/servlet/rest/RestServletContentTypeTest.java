@@ -39,7 +39,7 @@ public class RestServletContentTypeTest extends ServletCamelRouterTestSupport {
                 null);
         WebResponse response = query(req, false);
 
-        assertEquals("{ \"status\": \"ok\" }", response.getText());
+        assertEquals(415, response.getResponseCode());
     }
 
     @Test
