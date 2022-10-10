@@ -376,6 +376,20 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                         root.put("logger", json);
                     }
                 }
+                DevConsole dc7 = dcr.resolveById("inflight");
+                if (dc7 != null) {
+                    JsonObject json = (JsonObject) dc7.call(DevConsole.MediaType.JSON);
+                    if (json != null && !json.isEmpty()) {
+                        root.put("inflight", json);
+                    }
+                }
+                DevConsole dc8 = dcr.resolveById("blocked");
+                if (dc8 != null) {
+                    JsonObject json = (JsonObject) dc8.call(DevConsole.MediaType.JSON);
+                    if (json != null && !json.isEmpty()) {
+                        root.put("blocked", json);
+                    }
+                }
             }
             // various details
             JsonObject services = collectServices();
