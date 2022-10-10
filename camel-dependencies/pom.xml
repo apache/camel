@@ -517,7 +517,7 @@
     <sshd-version>2.8.0</sshd-version>
     <stax-api-version>1.0.1</stax-api-version>
     <stompjms-version>1.19</stompjms-version>
-    <stringtemplate-version>4.3.3</stringtemplate-version>
+    <stringtemplate-version>4.3.4</stringtemplate-version>
     <swagger-java-guava-version>27.1-jre</swagger-java-guava-version>
     <swagger-java-parser-version>1.0.56</swagger-java-parser-version>
     <swagger-java-version>1.6.4</swagger-java-version>
