@@ -59,7 +59,7 @@ import org.slf4j.LoggerFactory;
  * A resume strategy that publishes offsets to a Kafka topic. This resume strategy is suitable for single node
  * integrations.
  */
-public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements KafkaResumeStrategy<T> {
+public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements KafkaResumeStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(SingleNodeKafkaResumeStrategy.class);
 
     private Consumer<byte[], byte[]> consumer;
@@ -124,7 +124,7 @@ public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements Kafka
     }
 
     @Override
-    public void updateLastOffset(T offset) throws Exception {
+    public <T extends Resumable> void updateLastOffset(T offset) throws Exception {
         OffsetKey<?> key = offset.getOffsetKey();
         Offset<?> offsetValue = offset.getLastOffset();
 

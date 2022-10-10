@@ -17,15 +17,11 @@
 
 package org.apache.camel.processor.resume.kafka;
 
-import org.apache.camel.resume.Resumable;
 import org.apache.camel.resume.ResumeStrategy;
-import org.apache.camel.resume.UpdatableConsumerResumeStrategy;
 
 /**
  * Base interface for resume strategies that publish the offsets to a Kafka topic
- * 
- * @param <T> the type of resumable
  */
-public interface KafkaResumeStrategy<T extends Resumable> extends UpdatableConsumerResumeStrategy<T>, ResumeStrategy {
+public interface KafkaResumeStrategy extends ResumeStrategy {
 
 }
