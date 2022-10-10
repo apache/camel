@@ -34,7 +34,6 @@ import org.apache.camel.resume.Offset;
 import org.apache.camel.resume.OffsetKey;
 import org.apache.camel.resume.Resumable;
 import org.apache.camel.resume.ResumeAdapter;
-import org.apache.camel.resume.UpdatableConsumerResumeStrategy;
 import org.apache.camel.support.resume.Resumables;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -62,8 +61,7 @@ public class KafkaConsumerWithResumeRouteStrategyIT extends BaseEmbeddedKafkaTes
     private TestUpdateStrategy resumeStrategy;
     private CountDownLatch messagesLatch;
 
-    private static class TestUpdateStrategy extends TransientResumeStrategy
-            implements UpdatableConsumerResumeStrategy<Resumable> {
+    private static class TestUpdateStrategy extends TransientResumeStrategy {
         private final CountDownLatch messagesLatch;
         private boolean startCalled;
         private boolean offsetNull = true;

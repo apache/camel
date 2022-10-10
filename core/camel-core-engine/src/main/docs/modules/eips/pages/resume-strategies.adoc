@@ -93,7 +93,7 @@ available for each strategy. For instance, to configure either one of the Kafka 
 
 === Implementing New Builtin Resume Strategies
 
-New builtin resume strategies can be created by implementing the `UpdatableConsumerResumeStrategy` and the `ResumeStrategy` interfaces. Check the code for `SingleNodeKafkaResumeStrategy` for implementation details.
+New builtin resume strategies can be created by implementing the `ResumeStrategy` interface. Check the code for `SingleNodeKafkaResumeStrategy` for implementation details.
 
 == Local Cache Support
 

@@ -32,8 +32,6 @@ import org.apache.camel.component.file.consumer.FileResumeAdapter;
 import org.apache.camel.component.file.consumer.adapters.DirectoryEntries;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.resume.TransientResumeStrategy;
-import org.apache.camel.resume.Resumable;
-import org.apache.camel.resume.UpdatableConsumerResumeStrategy;
 import org.apache.camel.support.resume.Resumables;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -75,8 +73,7 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
     }
 
     private static class FailResumeAdapter
-            implements FileResumeAdapter, DirectoryEntriesResumeAdapter, UpdatableConsumerResumeStrategy<Resumable> {
-        private boolean called;
+            implements FileResumeAdapter, DirectoryEntriesResumeAdapter {
 
         @Override
         public void resume() {
@@ -88,10 +85,7 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
             DirectoryEntries.doResume(fileSet, f -> true);
         }
 
-        @Override
-        public void updateLastOffset(Resumable offset) {
-            called = true;
-        }
+
     }
 
     private static final TransientResumeStrategy FAIL_RESUME_STRATEGY = new TransientResumeStrategy(new FailResumeAdapter());
@@ -125,7 +119,6 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
 
         List<Exchange> exchangeList = mock.getExchanges();
         Assertions.assertFalse(exchangeList.isEmpty(), "It should have received a few messages");
-        Assertions.assertFalse(((FailResumeAdapter) FAIL_RESUME_STRATEGY.getAdapter()).called);
     }
 
     @DisplayName("Tests whether it a missing offset does not cause a failure when using intermittent mode")
@@ -141,7 +134,6 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
 
         List<Exchange> exchangeList = mock.getExchanges();
         Assertions.assertFalse(exchangeList.isEmpty(), "It should have received a few messages");
-        Assertions.assertFalse(((FailResumeAdapter) FAIL_RESUME_STRATEGY.getAdapter()).called);
     }
 
     @DisplayName("Tests whether we can start from the beginning (i.e.: no resume strategy)")

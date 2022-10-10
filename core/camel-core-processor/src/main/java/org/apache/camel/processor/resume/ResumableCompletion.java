@@ -21,7 +21,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.resume.Resumable;
 import org.apache.camel.resume.ResumeStrategy;
-import org.apache.camel.resume.UpdatableConsumerResumeStrategy;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ExchangeHelper;
@@ -57,17 +56,12 @@ public class ResumableCompletion implements Synchronization {
                 LOG.trace("Processing the resumable of type: {}", resumable.getLastOffset().getValue());
             }
 
-            if (resumeStrategy instanceof UpdatableConsumerResumeStrategy) {
-                UpdatableConsumerResumeStrategy updatableConsumerResumeStrategy
-                        = (UpdatableConsumerResumeStrategy) resumeStrategy;
-                try {
-                    updatableConsumerResumeStrategy.updateLastOffset(resumable);
-                } catch (Exception e) {
-                    LOG.error("Unable to update the offset: {}", e.getMessage(), e);
-                }
-            } else {
-                LOG.debug("Cannot perform an offset update because the strategy is not updatable");
+            try {
+                resumeStrategy.updateLastOffset(resumable);
+            } catch (Exception e) {
+                LOG.error("Unable to update the offset: {}", e.getMessage(), e);
             }
+
         } else {
             if (!intermittent) {
                 exchange.setException(new NoOffsetException(exchange));
