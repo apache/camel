@@ -23,6 +23,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.kafka.KafkaConfiguration;
 import org.apache.camel.component.kafka.KafkaConstants;
+import org.apache.camel.component.kafka.consumer.AbstractCommitManager;
 import org.apache.camel.component.kafka.consumer.CommitManager;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
 import org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer;
@@ -131,8 +132,11 @@ public class KafkaRecordProcessor {
                 LOG.warn("Will seek consumer to offset {} and start polling again.", partitionLastOffset);
             }
 
-            // force commit, so we resume on next poll where we failed
-            commitManager.forceCommit(partition, partitionLastOffset);
+            // force commit, so we resume on next poll where we failed except when the failure happened
+            // at the first message in a poll
+            if (partitionLastOffset != AbstractCommitManager.START_OFFSET) {
+                commitManager.forceCommit(partition, partitionLastOffset);
+            }
 
             // continue to next partition
             return true;
