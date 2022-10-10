@@ -509,7 +509,7 @@
         <swagger-java-parser-version>1.0.56</swagger-java-parser-version>
         <swagger-java-guava-version>27.1-jre</swagger-java-guava-version>
         <stax-api-version>1.0.1</stax-api-version>
-        <stringtemplate-version>4.3.3</stringtemplate-version>
+        <stringtemplate-version>4.3.4</stringtemplate-version>
         <templating-maven-plugin-version>1.0.0</templating-maven-plugin-version>
         <testcontainers-version>1.17.4</testcontainers-version>
         <tika-version>2.5.0</tika-version>
