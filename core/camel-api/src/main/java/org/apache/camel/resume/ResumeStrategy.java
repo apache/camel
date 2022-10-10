@@ -57,4 +57,12 @@ public interface ResumeStrategy extends Service {
     default void loadCache() throws Exception {
 
     }
+
+    /**
+     * Updates the last processed offset
+     *
+     * @param  offset    the offset to update
+     * @throws Exception if unable to update the offset
+     */
+    <T extends Resumable> void updateLastOffset(T offset) throws Exception;
 }

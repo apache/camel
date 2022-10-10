@@ -208,10 +208,6 @@ public class CamelContextTop extends ProcessBaseCommand {
         return r.threadCount + "/" + r.peakThreadCount;
     }
 
-    private String getClassLoading(Row r) {
-        return r.loadedClassCount + "/" + r.totalLoadedClassCount;
-    }
-
     private String getGC(Row r) {
         if (r.gcTime <= 0) {
             return "";

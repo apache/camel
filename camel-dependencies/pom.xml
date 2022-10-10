@@ -40,7 +40,7 @@
     <apache-gora-version>0.9</apache-gora-version>
     <apacheds-version>2.0.0.AM26</apacheds-version>
     <apicurio-version>1.1.20</apicurio-version>
-    <arangodb-java-version>6.18.0</arangodb-java-version>
+    <arangodb-java-version>6.19.0</arangodb-java-version>
     <aries-blueprint-api-version>1.0.1</aries-blueprint-api-version>
     <aries-blueprint-cm-version>1.3.2</aries-blueprint-cm-version>
     <aries-blueprint-core-version>1.10.3</aries-blueprint-core-version>
@@ -64,7 +64,7 @@
     <avro-ipc-netty-version>1.11.1</avro-ipc-netty-version>
     <avro-version>1.11.1</avro-version>
     <awaitility-version>4.2.0</awaitility-version>
-    <aws-java-sdk2-version>2.17.289</aws-java-sdk2-version>
+    <aws-java-sdk2-version>2.17.290</aws-java-sdk2-version>
     <aws-xray-version>2.6.1</aws-xray-version>
     <axiom-version>1.2.14</axiom-version>
     <azure-sdk-bom-version>1.2.6</azure-sdk-bom-version>
@@ -418,7 +418,7 @@
     <mongo-java-driver-version>4.7.1</mongo-java-driver-version>
     <mustache-java-version>0.9.10</mustache-java-version>
     <mvel-version>2.4.14.Final</mvel-version>
-    <mybatis-version>3.5.10</mybatis-version>
+    <mybatis-version>3.5.11</mybatis-version>
     <narayana-version>5.12.7.Final</narayana-version>
     <neoscada-version>0.4.0</neoscada-version>
     <nessus-hyperledger-aries-version>0.2.0</nessus-hyperledger-aries-version>
@@ -517,7 +517,7 @@
     <sshd-version>2.8.0</sshd-version>
     <stax-api-version>1.0.1</stax-api-version>
     <stompjms-version>1.19</stompjms-version>
-    <stringtemplate-version>4.3.3</stringtemplate-version>
+    <stringtemplate-version>4.3.4</stringtemplate-version>
     <swagger-java-guava-version>27.1-jre</swagger-java-guava-version>
     <swagger-java-parser-version>1.0.56</swagger-java-parser-version>
     <swagger-java-version>1.6.4</swagger-java-version>
@@ -551,7 +551,7 @@
     <xml-apis-ext-version>1.3.04</xml-apis-ext-version>
     <xml-apis-version>1.4.01</xml-apis-version>
     <xml-resolver-version>1.2</xml-resolver-version>
-    <xmlgraphics-batik-version>1.14</xmlgraphics-batik-version>
+    <xmlgraphics-batik-version>1.15</xmlgraphics-batik-version>
     <xmlsec-version>2.2.3</xmlsec-version>
     <xmlunit-version>2.9.0</xmlunit-version>
     <xpp3-version>1.1.4c</xpp3-version>
