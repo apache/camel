@@ -28,19 +28,33 @@ import org.apache.camel.util.json.JsonObject;
 @DevConsole("inflight")
 public class InflightConsole extends AbstractDevConsole {
 
+    /**
+     * Filters the routes matching by route id, route uri
+     */
+    public static final String FILTER = "filter";
+
+    /**
+     * Limits the number of entries displayed
+     */
+    public static final String LIMIT = "limit";
+
     public InflightConsole() {
         super("camel", "inflight", "Inflight Exchanges", "Display inflight exchanges");
     }
 
     @Override
     protected String doCallText(Map<String, Object> options) {
+        String filter = (String) options.get(FILTER);
+        String limit = (String) options.get(LIMIT);
+        int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
+
         StringBuilder sb = new StringBuilder();
 
         InflightRepository repo = getCamelContext().getInflightRepository();
         sb.append(String.format("\n    Inflight: %s", repo.size()));
         sb.append(String.format("\n    InflightBrowseEnabled: %s", repo.isInflightBrowseEnabled()));
         if (repo.isInflightBrowseEnabled()) {
-            for (InflightRepository.InflightExchange ie : repo.browse()) {
+            for (InflightRepository.InflightExchange ie : repo.browse(filter, max, false)) {
                 String age = TimeUtils.printDuration(ie.getDuration(), true);
                 sb.append(String.format("\n    %s (from: %s at: %s/%s age: %s)",
                         ie.getExchange().getExchangeId(), ie.getFromRouteId(), ie.getAtRouteId(), ie.getNodeId(), age));
@@ -52,6 +66,10 @@ public class InflightConsole extends AbstractDevConsole {
 
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
+        String filter = (String) options.get(FILTER);
+        String limit = (String) options.get(LIMIT);
+        int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
+
         JsonObject root = new JsonObject();
 
         InflightRepository repo = getCamelContext().getInflightRepository();
@@ -59,7 +77,7 @@ public class InflightConsole extends AbstractDevConsole {
         root.put("inflightBrowseEnabled", repo.isInflightBrowseEnabled());
         if (repo.isInflightBrowseEnabled()) {
             final List<JsonObject> list = new ArrayList<>();
-            for (InflightRepository.InflightExchange ie : repo.browse()) {
+            for (InflightRepository.InflightExchange ie : repo.browse(filter, max, false)) {
                 JsonObject props = new JsonObject();
                 props.put("exchangeId", ie.getExchange().getExchangeId());
                 props.put("fromRouteId", ie.getFromRouteId());
