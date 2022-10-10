@@ -17,6 +17,7 @@
 
 package org.apache.camel.processor.resume;
 
+import org.apache.camel.resume.Resumable;
 import org.apache.camel.resume.ResumeAdapter;
 import org.apache.camel.resume.ResumeStrategy;
 
@@ -44,6 +45,11 @@ public class TransientResumeStrategy implements ResumeStrategy {
     @Override
     public <T extends ResumeAdapter> T getAdapter(Class<T> clazz) {
         return ResumeStrategy.super.getAdapter(clazz);
+    }
+
+    @Override
+    public <T extends Resumable> void updateLastOffset(T offset) {
+        // this is NO-OP
     }
 
     @Override
