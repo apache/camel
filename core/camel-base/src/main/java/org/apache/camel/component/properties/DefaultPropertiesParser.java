@@ -132,10 +132,15 @@ public class DefaultPropertiesParser implements PropertiesParser {
                 if (parsed != null) {
                     answer.append(before);
                     answer.append(parsed);
+                } else if (property.getBeginIndex() == 0 && input.length() == property.getEndIndex()) {
+                    // its only a single placeholder which is parsed as null
+                    return null;
                 }
                 input = after;
             }
-            answer.append(input);
+            if (!input.isEmpty()) {
+                answer.append(input);
+            }
             return answer.toString();
         }
 

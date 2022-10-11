@@ -32,6 +32,7 @@ public class PropertiesComponentConcatenatePropertiesTest extends ContextTestSup
         CamelContext context = super.createCamelContext();
         context.getPropertiesComponent()
                 .setLocation("classpath:org/apache/camel/component/properties/concatenation.properties");
+        context.getPropertiesComponent().setNestedPlaceholder(true);
         return context;
     }
 

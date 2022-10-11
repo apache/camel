@@ -50,6 +50,7 @@ public class PropertiesComponentNestedTest extends ContextTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
+        context.getPropertiesComponent().setNestedPlaceholder(true);
         return context;
     }
 
