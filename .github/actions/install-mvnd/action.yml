@@ -21,7 +21,7 @@ inputs:
   version:
     description: 'The version of the maven daemon to install'
     required: true
-    default: '0.8.22'
+    default: '0.8.2'
 outputs:
   mvnd-dir:
     description: "The directory where the command mvnd is located"
