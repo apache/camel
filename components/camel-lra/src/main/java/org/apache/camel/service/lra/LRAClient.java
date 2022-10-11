@@ -59,7 +59,7 @@ public class LRAClient implements Closeable {
 
     public CompletableFuture<URL> newLRA() {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(lraUrl + "/" + COORDINATOR_PATH_START))
+                .uri(URI.create(lraUrl + COORDINATOR_PATH_START))
                 .POST(HttpRequest.BodyPublishers.ofString(""))
                 .build();
 
@@ -131,7 +131,7 @@ public class LRAClient implements Closeable {
 
     public CompletableFuture<Void> complete(URL lra) {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(lra.toString() + "/" + COORDINATOR_PATH_CLOSE))
+                .uri(URI.create(lra.toString() + COORDINATOR_PATH_CLOSE))
                 .header("Content-Type", "text/plain")
                 .PUT(HttpRequest.BodyPublishers.ofString(""))
                 .build();
@@ -149,7 +149,7 @@ public class LRAClient implements Closeable {
 
     public CompletableFuture<Void> compensate(URL lra) {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(lra.toString() + "/" + COORDINATOR_PATH_CANCEL))
+                .uri(URI.create(lra.toString() + COORDINATOR_PATH_CANCEL))
                 .header("Content-Type", "text/plain")
                 .PUT(HttpRequest.BodyPublishers.ofString(""))
                 .build();
