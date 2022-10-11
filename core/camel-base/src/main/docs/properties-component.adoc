@@ -119,6 +119,13 @@ For fine grained configuration of the location, then this can be done as follows
 </camelContext>
 ----
 
+=== Escape a placeholder
+
+The component allows to refer to the value of a property thanks to placeholders of type `{{property-name}}` but sometimes it can be problematic if the double curly braces are used by a third party library.
+
+To work around that it is possible to escape the double curly braces with a backslash character like for example `\{{ property-name \}}`. This way, it won't be interpreted as a placeholder to resolve and will be resolved as `{{property-name}}`.
+
+If for some reason, the backslash character before the double curly braces must not be interpreted as an escape character, it is possible to add another backslash in front of it to escape it, it will then be seen as a backslash.
 
 == Options
 

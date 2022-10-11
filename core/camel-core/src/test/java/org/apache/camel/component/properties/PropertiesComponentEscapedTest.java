@@ -16,35 +16,38 @@
  */
 package org.apache.camel.component.properties;
 
-import java.util.Properties;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-class PropertiesComponentLoadPropertiesTest extends ContextTestSupport {
-
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
+class PropertiesComponentEscapedTest extends ContextTestSupport {
 
     @Test
-    void testLoadProperties() {
-        context.start();
+    void testEscaped() throws Exception {
+        getMockEndpoint("mock:result")
+                .expectedBodiesReceived("{{before}}mock:{{cool.result}}{\"query\":{\"match_all\":{}}}{{after}}");
+        getMockEndpoint("mock:result").expectedHeaderReceived("foo",
+                "Hello mock:{{cool.result}}{\"query\":{\"match_all\":{}}} and {{before}}Cheese{{after}}/\\Cheese how are you?");
 
-        org.apache.camel.spi.PropertiesComponent pc = context.getPropertiesComponent();
-        Properties prop = pc.loadProperties();
+        template.sendBody("direct:start", "Hello World");
 
-        assertNotNull(prop);
-        assertEquals(21, prop.size());
+        assertMockEndpointsSatisfied();
+    }
 
-        assertEquals("{{cool.b}}", prop.getProperty("cool.a"));
-        assertEquals("10", prop.getProperty("myQueueSize"));
-        assertEquals("true", prop.getProperty("integration.ftpEnabled"));
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                        .setBody().constant("\\{{before\\}}{{cool.concat.escaped}}\\{{after\\}}")
+                        .setHeader("foo")
+                        .constant(
+                                "Hello {{cool.concat.escaped}} and \\{{before\\}}{{cool.other.name}}\\{{after\\}}/\\\\{{cool.other.name}} how are you?")
+                        .to("mock:result");
+            }
+        };
     }
 
     @Override
