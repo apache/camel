@@ -205,6 +205,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.KubernetesConfigMapsEndpointBuilderFactory.KubernetesConfigMapsBuilders,
             org.apache.camel.builder.endpoint.dsl.KubernetesCustomResourcesEndpointBuilderFactory.KubernetesCustomResourcesBuilders,
             org.apache.camel.builder.endpoint.dsl.KubernetesDeploymentsEndpointBuilderFactory.KubernetesDeploymentsBuilders,
+            org.apache.camel.builder.endpoint.dsl.KubernetesEventsEndpointBuilderFactory.KubernetesEventsBuilders,
             org.apache.camel.builder.endpoint.dsl.KubernetesHPAEndpointBuilderFactory.KubernetesHPABuilders,
             org.apache.camel.builder.endpoint.dsl.KubernetesJobEndpointBuilderFactory.KubernetesJobBuilders,
             org.apache.camel.builder.endpoint.dsl.KubernetesNamespacesEndpointBuilderFactory.KubernetesNamespacesBuilders,

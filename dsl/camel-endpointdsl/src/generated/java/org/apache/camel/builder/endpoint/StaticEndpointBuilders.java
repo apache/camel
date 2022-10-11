@@ -8925,6 +8925,51 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.KubernetesDeploymentsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Kubernetes Event (camel-kubernetes)
+     * Perform operations on Kubernetes Events and get notified on Events
+     * changes.
+     * 
+     * Category: container,cloud,paas
+     * Since: 3.20
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * Syntax: <code>kubernetes-events:masterUrl</code>
+     * 
+     * Path parameter: masterUrl (required)
+     * Kubernetes Master url
+     * 
+     * @param path masterUrl
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.KubernetesEventsEndpointBuilderFactory.KubernetesEventsEndpointBuilder kubernetesEvents(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.KubernetesEventsEndpointBuilderFactory.endpointBuilder("kubernetes-events", path);
+    }
+    /**
+     * Kubernetes Event (camel-kubernetes)
+     * Perform operations on Kubernetes Events and get notified on Events
+     * changes.
+     * 
+     * Category: container,cloud,paas
+     * Since: 3.20
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * Syntax: <code>kubernetes-events:masterUrl</code>
+     * 
+     * Path parameter: masterUrl (required)
+     * Kubernetes Master url
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path masterUrl
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.KubernetesEventsEndpointBuilderFactory.KubernetesEventsEndpointBuilder kubernetesEvents(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.KubernetesEventsEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Kubernetes HPA (camel-kubernetes)
      * Perform operations on Kubernetes Horizontal Pod Autoscalers (HPA) and get
      * notified on HPA changes.
