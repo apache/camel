@@ -205,6 +205,12 @@ public interface PropertiesComponent extends StaticService {
     void setIgnoreMissingLocation(boolean ignoreMissingLocation);
 
     /**
+     * Whether to support nested property placeholders. A nested placeholder, means that a placeholder, has also a
+     * placeholder, that should be resolved (recursively).
+     */
+    void setNestedPlaceholder(boolean nestedPlaceholder);
+
+    /**
      * Sets initial properties which will be added before any property locations are loaded.
      */
     void setInitialProperties(Properties initialProperties);

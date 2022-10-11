@@ -41,6 +41,8 @@ public class PropertiesComponentConfigurer extends org.apache.camel.support.comp
         case "Location": target.setLocation(property(camelContext, java.lang.String.class, value)); return true;
         case "locations":
         case "Locations": target.setLocations(property(camelContext, java.util.List.class, value)); return true;
+        case "nestedplaceholder":
+        case "NestedPlaceholder": target.setNestedPlaceholder(property(camelContext, boolean.class, value)); return true;
         case "overrideproperties":
         case "OverrideProperties": target.setOverrideProperties(property(camelContext, java.util.Properties.class, value)); return true;
         case "propertiesfunctionresolver":
@@ -76,6 +78,8 @@ public class PropertiesComponentConfigurer extends org.apache.camel.support.comp
         case "Location": return java.lang.String.class;
         case "locations":
         case "Locations": return java.util.List.class;
+        case "nestedplaceholder":
+        case "NestedPlaceholder": return boolean.class;
         case "overrideproperties":
         case "OverrideProperties": return java.util.Properties.class;
         case "propertiesfunctionresolver":
@@ -112,6 +116,8 @@ public class PropertiesComponentConfigurer extends org.apache.camel.support.comp
         case "Location": return target.getLocation();
         case "locations":
         case "Locations": return target.getLocations();
+        case "nestedplaceholder":
+        case "NestedPlaceholder": return target.isNestedPlaceholder();
         case "overrideproperties":
         case "OverrideProperties": return target.getOverrideProperties();
         case "propertiesfunctionresolver":
