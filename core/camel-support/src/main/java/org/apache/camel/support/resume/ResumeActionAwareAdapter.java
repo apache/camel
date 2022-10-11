@@ -73,8 +73,8 @@ public class ResumeActionAwareAdapter implements ResumeActionAware, Cacheable, D
 
     @Override
     public boolean deserialize(ByteBuffer keyBuffer, ByteBuffer valueBuffer) {
-        Object key = deserializeObject(keyBuffer);
-        Object value = deserializeObject(valueBuffer);
+        Object key = deserializeKey(keyBuffer);
+        Object value = deserializeValue(valueBuffer);
 
         return add(key, value);
     }
