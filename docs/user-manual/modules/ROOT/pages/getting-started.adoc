@@ -6,7 +6,7 @@ You can get started with Apache Camel in a variety of ways, such as:
 - Using the Camel CLI (command line)
 - Using Camel Karavan (visual UI Camel designer)
 
-And more advanced methods:
+And some more alternative methods:
 
 - Adding Camel to an existing project
 - Using IDE tooling wizards
