@@ -121,6 +121,9 @@ public class SyncPropertiesMojo extends AbstractMojo {
             String out = sb.toString();
             out = out.replace("https://maven.apache.org/xsd/maven-4.0.0.xsd", "http://maven.apache.org/xsd/maven-4.0.0.xsd");
 
+            // avoid IDE complaining about empty tag
+            out = out.replace("<relativePath></relativePath>", "<relativePath />");
+
             // write lines
             boolean updated = FileUtil.updateFile(targetPom.toPath(), out, StandardCharsets.UTF_8);
             if (updated) {
