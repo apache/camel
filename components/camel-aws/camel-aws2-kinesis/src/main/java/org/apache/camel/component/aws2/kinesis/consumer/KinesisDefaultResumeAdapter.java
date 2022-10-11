@@ -88,8 +88,8 @@ public class KinesisDefaultResumeAdapter implements KinesisResumeAdapter, Cachea
 
     @Override
     public boolean deserialize(ByteBuffer keyBuffer, ByteBuffer valueBuffer) {
-        Object keyObj = deserializeObject(keyBuffer);
-        Object valueObj = deserializeObject(valueBuffer);
+        Object keyObj = deserializeKey(keyBuffer);
+        Object valueObj = deserializeValue(valueBuffer);
 
         add(keyObj, valueObj);
 
