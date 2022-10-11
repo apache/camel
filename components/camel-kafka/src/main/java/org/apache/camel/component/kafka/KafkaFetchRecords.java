@@ -319,8 +319,8 @@ public class KafkaFetchRecords implements Runnable {
                 }
 
                 ProcessingResult result = recordProcessorFacade.processPolledRecords(allRecords, lastResult);
-
-                if (result.isBreakOnErrorHit()) {
+                updateTaskState();
+                if (result.isBreakOnErrorHit() && !this.state.equals(State.PAUSED)) {
                     LOG.debug("We hit an error ... setting flags to force reconnect");
                     // force re-connect
                     setReconnect(true);
@@ -329,7 +329,6 @@ public class KafkaFetchRecords implements Runnable {
                     lastResult = result;
                 }
 
-                updateTaskState();
             }
 
             if (!isConnected()) {
