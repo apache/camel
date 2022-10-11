@@ -120,9 +120,9 @@ For fine grained configuration of the location, then this can be done as follows
 ----
 
 
-== Spring Boot Auto-Configuration
+== Options
 
-The component supports 10 options, which are listed below.
+The component supports the following options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
