@@ -65,4 +65,13 @@ public interface ResumeStrategy extends Service {
      * @throws Exception if unable to update the offset
      */
     <T extends Resumable> void updateLastOffset(T offset) throws Exception;
+
+    /**
+     * Updates the last processed offset
+     *
+     * @param  offset    the offset key to update
+     * @param  offset    the offset value to update
+     * @throws Exception if unable to update the offset
+     */
+    void updateLastOffset(OffsetKey<?> offsetKey, Offset<?> offset) throws Exception;
 }

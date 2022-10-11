@@ -132,8 +132,13 @@ public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements Kafka
             LOG.debug("Updating offset on Kafka with key {} to {}", key.getValue(), offsetValue.getValue());
         }
 
-        ByteBuffer keyBuffer = key.serialize();
-        ByteBuffer valueBuffer = offsetValue.serialize();
+        updateLastOffset(key, offsetValue);
+    }
+
+    @Override
+    public void updateLastOffset(OffsetKey<?> offsetKey, Offset<?> offset) throws Exception {
+        ByteBuffer keyBuffer = offsetKey.serialize();
+        ByteBuffer valueBuffer = offsetKey.serialize();
 
         try {
             lock.lock();
@@ -142,7 +147,7 @@ public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements Kafka
             lock.unlock();
         }
 
-        doAdd(key, offsetValue);
+        doAdd(offsetKey, offset);
     }
 
     /**
