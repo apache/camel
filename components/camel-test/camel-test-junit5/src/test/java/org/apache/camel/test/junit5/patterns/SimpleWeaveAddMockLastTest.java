@@ -20,7 +20,6 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -44,7 +43,7 @@ public class SimpleWeaveAddMockLastTest extends CamelTestSupport {
 
         template.sendBody("seda:start", "Camel");
 
-        MockEndpoint.assertIsSatisfied(context);
+        assertMockEndpointsSatisfied();
     }
 
     @Override

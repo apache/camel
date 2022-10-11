@@ -17,7 +17,6 @@
 package org.apache.camel.test.junit5.patterns;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -37,7 +36,7 @@ public class FilterCreateCamelContextPerClassTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("direct:start", expectedBody, "foo", "bar");
 
-        MockEndpoint.assertIsSatisfied(context);
+        assertMockEndpointsSatisfied();
     }
 
     @Test
@@ -46,7 +45,7 @@ public class FilterCreateCamelContextPerClassTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("direct:start", "<notMatched/>", "foo", "notMatchedHeaderValue");
 
-        MockEndpoint.assertIsSatisfied(context);
+        assertMockEndpointsSatisfied();
     }
 
     @Override

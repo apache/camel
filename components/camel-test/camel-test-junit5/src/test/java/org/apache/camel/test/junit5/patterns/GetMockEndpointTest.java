@@ -18,7 +18,6 @@ package org.apache.camel.test.junit5.patterns;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +29,7 @@ public class GetMockEndpointTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "Hello World");
 
-        MockEndpoint.assertIsSatisfied(context);
+        assertMockEndpointsSatisfied();
     }
 
     @Override

@@ -17,7 +17,6 @@
 package org.apache.camel.test.junit5.patterns;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.seda.SedaEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -45,7 +44,7 @@ public class IsMockEndpointsAndSkipJUnit5Test extends CamelTestSupport {
 
         template.sendBody("direct:start", "Hello World");
 
-        MockEndpoint.assertIsSatisfied(context);
+        assertMockEndpointsSatisfied();
 
         // the message was not send to the direct:foo route and thus not sent to
         // the seda endpoint

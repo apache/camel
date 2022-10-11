@@ -16,7 +16,6 @@
  */
 package org.apache.camel.test.junit5.patterns;
 
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -43,7 +42,7 @@ public class AsyncSendMockTest extends CamelTestSupport {
             dfex.getIn().setHeader("password", "admin");
             dfex.getIn().setBody("Hello");
             template.asyncSend("seda:start", dfex);
-            MockEndpoint.assertIsSatisfied(context);
+            assertMockEndpointsSatisfied();
         } catch (Exception e) {
             LOG.warn("Failed to make async call to api: {}", e.getMessage(), e);
             assertTrue(false, "Failed to make async call to api");

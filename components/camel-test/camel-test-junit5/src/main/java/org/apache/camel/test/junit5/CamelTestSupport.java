@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
@@ -980,6 +981,27 @@ public abstract class CamelTestSupport
         Language language = context.resolveLanguage(languageName);
         assertNotNull(language, "Nog language found for name: " + languageName);
         return language;
+    }
+
+    /**
+     * Asserts that all the expectations of the Mock endpoints are valid
+     *
+     * @see MockEndpoint#assertIsSatisfied(CamelContext)
+     */
+    protected void assertMockEndpointsSatisfied() throws InterruptedException {
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    /**
+     * Asserts that all the expectations of the Mock endpoints are valid
+     *
+     * @see           MockEndpoint#assertIsSatisfied(CamelContext, long, TimeUnit)
+     *
+     * @param timeout
+     * @param unit
+     */
+    protected void assertMockEndpointsSatisfied(long timeout, TimeUnit unit) throws InterruptedException {
+        MockEndpoint.assertIsSatisfied(context, timeout, unit);
     }
 
     protected void assertValidContext(CamelContext context) {
