@@ -53,6 +53,24 @@ public interface DependencyDownloader extends CamelContextAware, StaticService {
      */
     void setFresh(boolean fresh);
 
+    String getMavenSettings();
+
+    /**
+     * Configure location of Maven settings.xml file
+     * 
+     * @param mavenSettings
+     */
+    void setMavenSettings(String mavenSettings);
+
+    String getMavenSettingsSecurity();
+
+    /**
+     * Configure location of Maven settings-security.xml file
+     * 
+     * @param mavenSettingsSecurity
+     */
+    void setMavenSettingsSecurity(String mavenSettingsSecurity);
+
     /**
      * Downloads the dependency incl transitive dependencies
      *

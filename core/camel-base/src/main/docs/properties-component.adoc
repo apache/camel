@@ -120,9 +120,9 @@ For fine grained configuration of the location, then this can be done as follows
 ----
 
 
-== Spring Boot Auto-Configuration
+== Options
 
-The component supports 10 options, which are listed below.
+The component supports the following options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -140,6 +140,7 @@ The option is a java.util.Properties type. |  | String
 | *camel.component.properties.location* | A list of locations to load properties.
 You can use comma to separate multiple locations.
 This option will override any default locations and only use the locations from this option. |  | String
+| *camel.component.properties.nested-placeholder* | Whether to support nested property placeholders. A nested placeholder, means that a placeholder, has also a placeholder, that should be resolved (recursively). | false | Boolean
 | *camel.component.properties.override-properties* | Sets a special list of override properties that take precedence and will use first, if a property exist.
 The option is a java.util.Properties type. |  | String
 | *camel.component.properties.properties-parser* | To use a custom PropertiesParser.

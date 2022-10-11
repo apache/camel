@@ -25,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -64,6 +65,7 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.cxf.attachment.AttachmentImpl;
 import org.apache.cxf.binding.soap.Soap11;
 import org.apache.cxf.binding.soap.Soap12;
@@ -658,6 +660,12 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                             LOG.trace("Find the multi-part Conent-Type, and replace it with {}", contentType);
                             camelHeaders.put(entry.getKey(), contentType);
                         }
+                    } else if (SoapBindingConstants.SOAP_ACTION.compareToIgnoreCase(entry.getKey()) == 0
+                            && entry.getValue().get(0) != null) {
+                        String soapAction = entry.getValue().get(0);
+                        // SOAPAction header may contain quoted value. Remove the quotes here.
+                        soapAction = StringHelper.removeLeadingAndEndingQuotes(soapAction);
+                        camelHeaders.put(SoapBindingConstants.SOAP_ACTION, soapAction);
                     } else {
                         LOG.trace("Populate header from CXF header={} value={}",
                                 entry.getKey(), entry.getValue());
@@ -831,6 +839,14 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         }
 
         if (transportHeaders.size() > 0) {
+            List<String> soapActionList = transportHeaders.get(SoapBindingConstants.SOAP_ACTION);
+            if (soapActionList != null && soapActionList.size() == 1) {
+                String soapAction = soapActionList.get(0);
+                if (!soapAction.isEmpty() && !soapAction.startsWith("\"")) {
+                    //Per RFC, the SOAPAction HTTP header should be quoted if not empty
+                    transportHeaders.put(SoapBindingConstants.SOAP_ACTION, Collections.singletonList("\"" + soapAction + "\""));
+                }
+            }
             cxfContext.put(CxfConstants.PROTOCOL_HEADERS, transportHeaders);
         } else {
             // no propagated transport headers does really mean no headers, not the ones

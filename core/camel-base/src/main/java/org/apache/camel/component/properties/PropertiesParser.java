@@ -28,10 +28,15 @@ public interface PropertiesParser {
      * @param  properties               the properties resolved which values should be looked up
      * @param  fallback                 whether to support using fallback values if a property cannot be found
      * @param  keepUnresolvedOptional   whether to keep placeholders that are optional and was unresolved
+     * @param  nestedPlaceholder        whether to support nested property placeholders. A nested placeholder, means
+     *                                  that a placeholder, has also a placeholder, that should be resolved
+     *                                  (recursively).
      * @return                          the parsed text with replaced placeholders
      * @throws IllegalArgumentException if uri syntax is not valid or a property is not found
      */
-    String parseUri(String text, PropertiesLookup properties, boolean fallback, boolean keepUnresolvedOptional)
+    String parseUri(
+            String text, PropertiesLookup properties, boolean fallback, boolean keepUnresolvedOptional,
+            boolean nestedPlaceholder)
             throws IllegalArgumentException;
 
     /**

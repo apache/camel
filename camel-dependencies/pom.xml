@@ -23,7 +23,8 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>23</version>
+    <version>25</version>
+    <relativePath />
   </parent>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-dependencies</artifactId>
@@ -55,7 +56,7 @@
     <asn1bean-version>1.13.0</asn1bean-version>
     <assertj-version>3.23.1</assertj-version>
     <asterisk-java-version>3.12.0</asterisk-java-version>
-    <atlasmap-version>2.5.0</atlasmap-version>
+    <atlasmap-version>2.5.2</atlasmap-version>
     <atlassian-fugue-version>3.0.0</atlassian-fugue-version>
     <atmos-client-version>3.2.1</atmos-client-version>
     <atmosphere-version>2.6.4</atmosphere-version>
@@ -235,6 +236,7 @@
     <grpc-guava-version>31.1-jre</grpc-guava-version>
     <grpc-java-jwt-version>3.19.2</grpc-java-jwt-version>
     <grpc-netty-tcnative-boringssl-static-version>2.0.54.Final</grpc-netty-tcnative-boringssl-static-version>
+    <grpc-protobuf-version>3.21.1</grpc-protobuf-version>
     <grpc-version>1.48.1</grpc-version>
     <gson-version>2.9.1</gson-version>
     <guava-eventbus-version>28.2-jre</guava-eventbus-version>
@@ -388,7 +390,6 @@
     <maven-jar-plugin-version>3.2.2</maven-jar-plugin-version>
     <maven-javadoc-plugin-version>3.2.0</maven-javadoc-plugin-version>
     <maven-jboss-as-maven-plugin-version>7.9.Final</maven-jboss-as-maven-plugin-version>
-    <maven-model-version>3.2.5</maven-model-version>
     <maven-owasp-plugin-version>7.2.1</maven-owasp-plugin-version>
     <maven-plugin-annotations-version>3.6.4</maven-plugin-annotations-version>
     <maven-plugin-plugin-version>3.6.4</maven-plugin-plugin-version>
@@ -396,9 +397,12 @@
     <maven-remote-resources-plugin-version>1.7.0</maven-remote-resources-plugin-version>
     <maven-reporting-api-version>2.2.1</maven-reporting-api-version>
     <maven-reporting-impl-version>2.0.5</maven-reporting-impl-version>
+    <maven-resolver-version>1.8.2</maven-resolver-version>
     <maven-resources-plugin-version>3.2.0</maven-resources-plugin-version>
     <maven-shade-plugin-version>3.2.3</maven-shade-plugin-version>
     <maven-surefire-report-plugin-version>3.0.0-M4</maven-surefire-report-plugin-version>
+    <maven-version>3.8.6</maven-version>
+    <maven-wagon-version>3.5.2</maven-wagon-version>
     <maven-war-plugin-version>3.3.1</maven-war-plugin-version>
     <metrics-version>4.2.9</metrics-version>
     <micrometer-version>1.9.3</micrometer-version>
@@ -450,7 +454,7 @@
     <powermock-version>2.0.7</powermock-version>
     <properties-maven-plugin-version>1.0-alpha-2</properties-maven-plugin-version>
     <protobuf-maven-plugin-version>0.6.1</protobuf-maven-plugin-version>
-    <protobuf-version>3.19.4</protobuf-version>
+    <protobuf-version>3.19.6</protobuf-version>
     <protonpack-version>1.8</protonpack-version>
     <protostream-version>4.5.0.Final</protostream-version>
     <pubnub-version>4.25.0</pubnub-version>
@@ -481,6 +485,7 @@
     <servlet-version-range>[3,4)</servlet-version-range>
     <shiro-version>1.9.1</shiro-version>
     <shrinkwrap-descriptors-version>2.0.0</shrinkwrap-descriptors-version>
+    <shrinkwrap-maven-version>3.6.3</shrinkwrap-maven-version>
     <shrinkwrap-resolver-version>3.1.4</shrinkwrap-resolver-version>
     <shrinkwrap-version>1.2.6</shrinkwrap-version>
     <slack-api-model-version>1.8.1</slack-api-model-version>
@@ -523,7 +528,7 @@
     <swagger-java-version>1.6.4</swagger-java-version>
     <swagger-openapi3-version>2.1.13</swagger-openapi3-version>
     <templating-maven-plugin-version>1.0.0</templating-maven-plugin-version>
-    <testcontainers-version>1.17.4</testcontainers-version>
+    <testcontainers-version>1.17.5</testcontainers-version>
     <tika-version>2.5.0</tika-version>
     <trimStackTrace>false</trimStackTrace>
     <twilio-version>7.55.3</twilio-version>

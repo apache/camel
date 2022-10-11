@@ -2611,6 +2611,20 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.KubernetesDeploymentsComponentBuilderFactory.kubernetesDeployments();
     }
     /**
+     * Kubernetes Event (camel-kubernetes)
+     * Perform operations on Kubernetes Events and get notified on Events
+     * changes.
+     * 
+     * Category: container,cloud,paas
+     * Since: 3.20
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.KubernetesEventsComponentBuilderFactory.KubernetesEventsComponentBuilder kubernetesEvents() {
+        return org.apache.camel.builder.component.dsl.KubernetesEventsComponentBuilderFactory.kubernetesEvents();
+    }
+    /**
      * Kubernetes HPA (camel-kubernetes)
      * Perform operations on Kubernetes Horizontal Pod Autoscalers (HPA) and get
      * notified on HPA changes.

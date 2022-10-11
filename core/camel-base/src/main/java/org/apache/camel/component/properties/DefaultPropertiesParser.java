@@ -62,9 +62,11 @@ public class DefaultPropertiesParser implements PropertiesParser {
 
     @Override
     public String parseUri(
-            String text, PropertiesLookup properties, boolean defaultFallbackEnabled, boolean keepUnresolvedOptional)
+            String text, PropertiesLookup properties, boolean defaultFallbackEnabled, boolean keepUnresolvedOptional,
+            boolean nestedPlaceholder)
             throws IllegalArgumentException {
-        ParsingContext context = new ParsingContext(properties, defaultFallbackEnabled, keepUnresolvedOptional);
+        ParsingContext context
+                = new ParsingContext(properties, defaultFallbackEnabled, keepUnresolvedOptional, nestedPlaceholder);
         String answer = context.parse(text);
         if (keepUnresolvedOptional && answer != null && answer.contains(UNRESOLVED_PREFIX_TOKEN)) {
             // replace temporary unresolved keys back to with placeholders so they are kept as-is
@@ -86,11 +88,14 @@ public class DefaultPropertiesParser implements PropertiesParser {
         private final PropertiesLookup properties;
         private final boolean defaultFallbackEnabled;
         private final boolean keepUnresolvedOptional;
+        private final boolean nestedPlaceholder;
 
-        ParsingContext(PropertiesLookup properties, boolean defaultFallbackEnabled, boolean keepUnresolvedOptional) {
+        ParsingContext(PropertiesLookup properties, boolean defaultFallbackEnabled, boolean keepUnresolvedOptional,
+                       boolean nestedPlaceholder) {
             this.properties = properties;
             this.defaultFallbackEnabled = defaultFallbackEnabled;
             this.keepUnresolvedOptional = keepUnresolvedOptional;
+            this.nestedPlaceholder = nestedPlaceholder;
         }
 
         /**
@@ -100,7 +105,43 @@ public class DefaultPropertiesParser implements PropertiesParser {
          * @return       Evaluated string
          */
         public String parse(String input) {
-            return doParse(input, new HashSet<String>());
+            if (nestedPlaceholder) {
+                return doParseNested(input, new HashSet<String>());
+            } else {
+                return doParse(input);
+            }
+        }
+
+        /**
+         * Parses the given input string and replaces all properties (not nested)
+         *
+         * @param  input Input string
+         * @return       Evaluated string
+         */
+        private String doParse(String input) {
+            if (input == null) {
+                return null;
+            }
+
+            StringBuilder answer = new StringBuilder();
+            Property property;
+            while ((property = readProperty(input)) != null) {
+                String before = input.substring(0, property.getBeginIndex());
+                String after = input.substring(property.getEndIndex());
+                String parsed = property.getValue();
+                if (parsed != null) {
+                    answer.append(before);
+                    answer.append(parsed);
+                } else if (property.getBeginIndex() == 0 && input.length() == property.getEndIndex()) {
+                    // its only a single placeholder which is parsed as null
+                    return null;
+                }
+                input = after;
+            }
+            if (!input.isEmpty()) {
+                answer.append(input);
+            }
+            return answer.toString();
         }
 
         /**
@@ -110,7 +151,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
          * @param  replacedPropertyKeys Already replaced property keys used for tracking circular references
          * @return                      Evaluated string
          */
-        private String doParse(String input, Set<String> replacedPropertyKeys) {
+        private String doParseNested(String input, Set<String> replacedPropertyKeys) {
             if (input == null) {
                 return null;
             }
@@ -133,7 +174,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
 
                 String before = answer.substring(0, property.getBeginIndex());
                 String after = answer.substring(property.getEndIndex());
-                String parsed = doParse(property.getValue(), newReplaced);
+                String parsed = doParseNested(property.getValue(), newReplaced);
                 if (parsed != null) {
                     answer = before + parsed + after;
                 } else {

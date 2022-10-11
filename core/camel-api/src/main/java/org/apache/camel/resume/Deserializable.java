@@ -53,5 +53,13 @@ public interface Deserializable {
         }
     }
 
+    default Object deserializeKey(ByteBuffer keyBuffer) {
+        return deserializeObject(keyBuffer);
+    }
+
+    default Object deserializeValue(ByteBuffer valueBuffer) {
+        return deserializeObject(valueBuffer);
+    }
+
     boolean deserialize(ByteBuffer keyBuffer, ByteBuffer valueBuffer);
 }

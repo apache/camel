@@ -121,6 +121,14 @@ public final class KubernetesOperations {
     public static final String DELETE_CONFIGMAP_OPERATION = "deleteConfigMap";
     public static final String REPLACE_CONFIGMAP_OPERATION = "replaceConfigMap";
 
+    // Events
+    public static final String LIST_EVENTS_OPERATION = "listEvents";
+    public static final String LIST_EVENTS_BY_LABELS_OPERATION = "listEventsByLabels";
+    public static final String GET_EVENT_OPERATION = "getEvent";
+    public static final String CREATE_EVENT_OPERATION = "createEvent";
+    public static final String DELETE_EVENT_OPERATION = "deleteEvent";
+    public static final String REPLACE_EVENT_OPERATION = "replaceEvent";
+
     // Builds
     public static final String LIST_BUILD = "listBuilds";
     public static final String LIST_BUILD_BY_LABELS_OPERATION = "listBuildsByLabels";

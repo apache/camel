@@ -114,6 +114,7 @@ public class PropertiesComponent extends ServiceSupport
     private List<PropertiesLocation> locations = new ArrayList<>();
     private String location;
     private boolean ignoreMissingLocation;
+    private boolean nestedPlaceholder = true;
     private String encoding;
     private boolean defaultFallbackEnabled = true;
     private Properties initialProperties;
@@ -310,7 +311,8 @@ public class PropertiesComponent extends ServiceSupport
             key = PREFIX_TOKEN + key.substring(NEGATE_PREFIX.length());
         }
 
-        String answer = propertiesParser.parseUri(key, properties, defaultFallbackEnabled, keepUnresolvedOptional);
+        String answer
+                = propertiesParser.parseUri(key, properties, defaultFallbackEnabled, keepUnresolvedOptional, nestedPlaceholder);
         if (negate) {
             if ("true".equalsIgnoreCase(answer)) {
                 answer = "false";
@@ -459,6 +461,20 @@ public class PropertiesComponent extends ServiceSupport
     @Override
     public void setIgnoreMissingLocation(boolean ignoreMissingLocation) {
         this.ignoreMissingLocation = ignoreMissingLocation;
+    }
+
+    @ManagedAttribute(description = "Nested placeholder")
+    public boolean isNestedPlaceholder() {
+        return nestedPlaceholder;
+    }
+
+    /**
+     * Whether to support nested property placeholders. A nested placeholder, means that a placeholder, has also a
+     * placeholder, that should be resolved (recursively).
+     */
+    @Override
+    public void setNestedPlaceholder(boolean nestedPlaceholder) {
+        this.nestedPlaceholder = nestedPlaceholder;
     }
 
     /**

@@ -175,7 +175,7 @@ We send a Hello World message and expects the reply to be OK.
         assertEquals("OK", out);
         // END SNIPPET: e2
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
@@ -215,7 +215,7 @@ In this example we have defined two consumers.
 
         template.sendBody("seda:foo", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
     
     @Override
