@@ -23,6 +23,7 @@ public final class KubernetesConstants {
     public static final String SCHEME_CONFIG_MAPS = "kubernetes-config-maps";
     public static final String SCHEME_CUSTOM_RESOURCES = "kubernetes-custom-resources";
     public static final String SCHEME_DEPLOYMENTS = "kubernetes-deployments";
+    public static final String SCHEME_EVENTS = "kubernetes-events";
     public static final String SCHEME_HPA = "kubernetes-hpa";
     public static final String SCHEME_JOB = "kubernetes-job";
     public static final String SCHEME_NAMESPACES = "kubernetes-namespaces";
@@ -46,7 +47,7 @@ public final class KubernetesConstants {
                       SCHEME_CONFIG_MAPS, SCHEME_CUSTOM_RESOURCES, SCHEME_DEPLOYMENTS,
                       SCHEME_HPA, SCHEME_JOB, SCHEME_NAMESPACES, SCHEME_PERSISTENT_VOLUMES_CLAIMS, SCHEME_PODS,
                       SCHEME_REPLICATION_CONTROLLERS, SCHEME_RESOURCES_QUOTA, SCHEME_SECRETS, SCHEME_SERVICE_ACCOUNTS,
-                      SCHEME_SERVICES, SCHEME_BUILD_CONFIG, SCHEME_BUILDS, SCHEME_DEPLOYMENT_CONFIGS })
+                      SCHEME_SERVICES, SCHEME_BUILD_CONFIG, SCHEME_BUILDS, SCHEME_DEPLOYMENT_CONFIGS, SCHEME_EVENTS })
     public static final String KUBERNETES_NAMESPACE_NAME = "CamelKubernetesNamespaceName";
     @Metadata(label = "producer", description = "The namespace labels", javaType = "Map<String, String>",
               applicableFor = SCHEME_NAMESPACES)
@@ -73,6 +74,35 @@ public final class KubernetesConstants {
               description = "The number of replicas for a replication controller during the Scale operation",
               javaType = "Integer", applicableFor = SCHEME_REPLICATION_CONTROLLERS)
     public static final String KUBERNETES_REPLICATION_CONTROLLER_REPLICAS = "CamelKubernetesReplicationControllerReplicas";
+    @Metadata(label = "producer", description = "The event labels", javaType = "Map<String, String>",
+              applicableFor = SCHEME_EVENTS)
+    public static final String KUBERNETES_EVENTS_LABELS = "CamelKubernetesEventsLabels";
+    @Metadata(label = "producer",
+              description = "The event time in ISO-8601 extended offset date-time format, such as '2011-12-03T10:15:30+01:00'.",
+              javaType = "String", defaultValue = "server time", applicableFor = SCHEME_EVENTS)
+    public static final String KUBERNETES_EVENT_TIME = "CamelKubernetesEventTime";
+    @Metadata(label = "producer", description = "The event action", javaType = "String", applicableFor = SCHEME_EVENTS)
+    public static final String KUBERNETES_EVENT_ACTION_PRODUCER = "CamelKubernetesEventAction";
+    @Metadata(label = "producer", description = "The event type", javaType = "String", applicableFor = SCHEME_EVENTS)
+    public static final String KUBERNETES_EVENT_TYPE = "CamelKubernetesEventType";
+    @Metadata(label = "producer", description = "The event reason", javaType = "String", applicableFor = SCHEME_EVENTS)
+    public static final String KUBERNETES_EVENT_REASON = "CamelKubernetesEventReason";
+    @Metadata(label = "producer", description = "The event note", javaType = "String", applicableFor = SCHEME_EVENTS)
+    public static final String KUBERNETES_EVENT_NOTE = "CamelKubernetesEventNote";
+    @Metadata(label = "producer", description = "The event regarding",
+              javaType = "io.fabric8.kubernetes.api.model.ObjectReference", applicableFor = SCHEME_EVENTS)
+    public static final String KUBERNETES_EVENT_REGARDING = "CamelKubernetesEventRegarding";
+    @Metadata(label = "producer", description = "The event related",
+              javaType = "io.fabric8.kubernetes.api.model.ObjectReference", applicableFor = SCHEME_EVENTS)
+    public static final String KUBERNETES_EVENT_RELATED = "CamelKubernetesEventRelated";
+    @Metadata(label = "producer", description = "The event reporting controller", javaType = "String",
+              applicableFor = SCHEME_EVENTS)
+    public static final String KUBERNETES_EVENT_REPORTING_CONTROLLER = "CamelKubernetesEventReportingController";
+    @Metadata(label = "producer", description = "The event reporting instance", javaType = "String",
+              applicableFor = SCHEME_EVENTS)
+    public static final String KUBERNETES_EVENT_REPORTING_INSTANCE = "CamelKubernetesEventReportingInstance";
+    @Metadata(label = "producer", description = "The event name", javaType = "String", applicableFor = SCHEME_EVENTS)
+    public static final String KUBERNETES_EVENT_NAME = "CamelKubernetesEventName";
     @Metadata(label = "producer", description = "The pod labels", javaType = "Map<String, String>", applicableFor = SCHEME_PODS)
     public static final String KUBERNETES_PODS_LABELS = "CamelKubernetesPodsLabels";
     @Metadata(label = "producer", description = "The pod name", javaType = "String", applicableFor = SCHEME_PODS)
@@ -218,12 +248,12 @@ public final class KubernetesConstants {
               javaType = "io.fabric8.kubernetes.client.Watcher.Action",
               applicableFor = {
                       SCHEME_CONFIG_MAPS, SCHEME_DEPLOYMENTS, SCHEME_HPA, SCHEME_NAMESPACES, SCHEME_NODES, SCHEME_PODS,
-                      SCHEME_REPLICATION_CONTROLLERS, SCHEME_SERVICES, SCHEME_DEPLOYMENT_CONFIGS })
+                      SCHEME_REPLICATION_CONTROLLERS, SCHEME_SERVICES, SCHEME_DEPLOYMENT_CONFIGS, SCHEME_EVENTS })
     public static final String KUBERNETES_EVENT_ACTION = "CamelKubernetesEventAction";
     @Metadata(label = "consumer", description = "Timestamp of the action watched by the consumer", javaType = "long",
               applicableFor = {
                       SCHEME_CONFIG_MAPS, SCHEME_DEPLOYMENTS, SCHEME_HPA, SCHEME_NAMESPACES, SCHEME_NODES, SCHEME_PODS,
-                      SCHEME_REPLICATION_CONTROLLERS, SCHEME_SERVICES, SCHEME_DEPLOYMENT_CONFIGS })
+                      SCHEME_REPLICATION_CONTROLLERS, SCHEME_SERVICES, SCHEME_DEPLOYMENT_CONFIGS, SCHEME_EVENTS })
     public static final String KUBERNETES_EVENT_TIMESTAMP = "CamelKubernetesEventTimestamp";
 
     private KubernetesConstants() {

@@ -30,7 +30,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesHelper;
-import org.apache.camel.component.kubernetes.consumer.common.NodeEvent;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -99,10 +98,9 @@ public class KubernetesNodesConsumer extends DefaultConsumer {
 
                 @Override
                 public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action, Node resource) {
-                    NodeEvent ne = new NodeEvent(action, resource);
                     Exchange exchange = createExchange(false);
-                    exchange.getIn().setBody(ne.getNode());
-                    exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, ne.getAction());
+                    exchange.getIn().setBody(resource);
+                    exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, action);
                     exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
                     try {
                         processor.process(exchange);
