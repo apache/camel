@@ -14,34 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kubernetes.consumer.common;
+package org.apache.camel.component.kubernetes.events;
 
-import io.fabric8.kubernetes.api.model.Node;
-import io.fabric8.kubernetes.client.Watcher.Action;
+import org.apache.camel.component.kubernetes.AbstractKubernetesComponent;
+import org.apache.camel.component.kubernetes.KubernetesConfiguration;
+import org.apache.camel.spi.annotations.Component;
 
-public class NodeEvent {
-    private io.fabric8.kubernetes.client.Watcher.Action action;
+@Component("kubernetes-events")
+public class KubernetesEventsComponent extends AbstractKubernetesComponent {
 
-    private Node node;
-
-    public NodeEvent(Action action, Node node) {
-        this.action = action;
-        this.node = node;
-    }
-
-    public io.fabric8.kubernetes.client.Watcher.Action getAction() {
-        return action;
-    }
-
-    public void setAction(io.fabric8.kubernetes.client.Watcher.Action action) {
-        this.action = action;
-    }
-
-    public Node getNode() {
-        return node;
-    }
-
-    public void setNode(Node node) {
-        this.node = node;
+    @Override
+    protected KubernetesEventsEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config) {
+        return new KubernetesEventsEndpoint(uri, this, config);
     }
 }

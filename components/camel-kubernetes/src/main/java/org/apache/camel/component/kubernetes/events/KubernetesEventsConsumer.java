@@ -14,19 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kubernetes.deployments;
+package org.apache.camel.component.kubernetes.events;
 
 import java.util.concurrent.ExecutorService;
 
-import io.fabric8.kubernetes.api.model.apps.Deployment;
-import io.fabric8.kubernetes.api.model.apps.DeploymentList;
+import io.fabric8.kubernetes.api.model.events.v1.Event;
+import io.fabric8.kubernetes.api.model.events.v1.EventList;
 import io.fabric8.kubernetes.client.Watch;
 import io.fabric8.kubernetes.client.Watcher;
 import io.fabric8.kubernetes.client.WatcherException;
-import io.fabric8.kubernetes.client.dsl.MixedOperation;
-import io.fabric8.kubernetes.client.dsl.RollableScalableResource;
+import io.fabric8.kubernetes.client.dsl.FilterWatchListDeletable;
+import io.fabric8.kubernetes.client.dsl.Resource;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesHelper;
@@ -35,15 +36,15 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class KubernetesDeploymentsConsumer extends DefaultConsumer {
+public class KubernetesEventsConsumer extends DefaultConsumer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KubernetesDeploymentsConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KubernetesEventsConsumer.class);
 
     private final Processor processor;
     private ExecutorService executor;
-    private DeploymentsConsumerTask deploymentsWatcher;
+    private EventsConsumerTask eventWatcher;
 
-    public KubernetesDeploymentsConsumer(AbstractKubernetesEndpoint endpoint, Processor processor) {
+    public KubernetesEventsConsumer(AbstractKubernetesEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.processor = processor;
     }
@@ -58,17 +59,17 @@ public class KubernetesDeploymentsConsumer extends DefaultConsumer {
         super.doStart();
         executor = getEndpoint().createExecutor();
 
-        deploymentsWatcher = new DeploymentsConsumerTask();
-        executor.submit(deploymentsWatcher);
+        eventWatcher = new EventsConsumerTask();
+        executor.submit(eventWatcher);
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
 
-        LOG.debug("Stopping Kubernetes Deployments Consumer");
+        LOG.debug("Stopping Kubernetes Event Consumer");
         if (executor != null) {
-            KubernetesHelper.close(deploymentsWatcher, deploymentsWatcher::getWatch);
+            KubernetesHelper.close(eventWatcher, eventWatcher::getWatch);
 
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
                 getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
@@ -79,27 +80,33 @@ public class KubernetesDeploymentsConsumer extends DefaultConsumer {
         executor = null;
     }
 
-    class DeploymentsConsumerTask implements Runnable {
+    class EventsConsumerTask implements Runnable {
 
         private Watch watch;
 
         @Override
         public void run() {
-            MixedOperation<Deployment, DeploymentList, RollableScalableResource<Deployment>> w
-                    = getEndpoint().getKubernetesClient()
-                            .apps().deployments();
+
+            FilterWatchListDeletable<Event, EventList, Resource<Event>> w = null;
             if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelKey())
                     && ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelValue())) {
-                w.withLabel(getEndpoint().getKubernetesConfiguration().getLabelKey(),
+                w = getEndpoint().getKubernetesClient().events().v1().events().withLabel(
+                        getEndpoint().getKubernetesConfiguration().getLabelKey(),
                         getEndpoint().getKubernetesConfiguration().getLabelValue());
             }
-
-            ObjectHelper.ifNotEmpty(getEndpoint().getKubernetesConfiguration().getResourceName(), w::withName);
-
-            watch = w.watch(new Watcher<Deployment>() {
+            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getResourceName())) {
+                Resource<Event> eventResource = getEndpoint()
+                        .getKubernetesClient().events().v1().events()
+                        .withName(getEndpoint().getKubernetesConfiguration().getResourceName());
+                w = (FilterWatchListDeletable<Event, EventList, Resource<Event>>) eventResource;
+            }
+            if (w == null) {
+                throw new RuntimeCamelException("Consumer label key or consumer resource name need to be set.");
+            }
+            watch = w.watch(new Watcher<>() {
 
                 @Override
-                public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action, Deployment resource) {
+                public void eventReceived(Action action, Event resource) {
                     Exchange exchange = createExchange(false);
                     exchange.getIn().setBody(resource);
                     exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, action);
@@ -118,7 +125,6 @@ public class KubernetesDeploymentsConsumer extends DefaultConsumer {
                     if (cause != null) {
                         LOG.error(cause.getMessage(), cause);
                     }
-
                 }
             });
         }
