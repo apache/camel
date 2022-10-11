@@ -17,6 +17,8 @@
 
 package org.apache.camel.processor.resume;
 
+import org.apache.camel.resume.Offset;
+import org.apache.camel.resume.OffsetKey;
 import org.apache.camel.resume.Resumable;
 import org.apache.camel.resume.ResumeAdapter;
 import org.apache.camel.resume.ResumeStrategy;
@@ -49,6 +51,11 @@ public class TransientResumeStrategy implements ResumeStrategy {
 
     @Override
     public <T extends Resumable> void updateLastOffset(T offset) {
+        // this is NO-OP
+    }
+
+    @Override
+    public void updateLastOffset(OffsetKey<?> offsetKey, Offset<?> offset) {
         // this is NO-OP
     }
 
