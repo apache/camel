@@ -16,14 +16,14 @@
  */
 package org.apache.camel.processor;
 
+import java.util.Properties;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import java.util.Properties;
 
 @Disabled("CAMEL-18576")
 public class ExpressionPlaceholderTest extends ContextTestSupport {

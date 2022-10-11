@@ -85,7 +85,6 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
             DirectoryEntries.doResume(fileSet, f -> true);
         }
 
-
     }
 
     private static final TransientResumeStrategy FAIL_RESUME_STRATEGY = new TransientResumeStrategy(new FailResumeAdapter());
