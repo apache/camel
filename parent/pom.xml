@@ -72,7 +72,7 @@
         <asn1bean-version>1.13.0</asn1bean-version>
         <assertj-version>3.23.1</assertj-version>
         <asterisk-java-version>3.12.0</asterisk-java-version>
-        <atlasmap-version>2.5.0</atlasmap-version>
+        <atlasmap-version>2.5.2</atlasmap-version>
         <atlassian-fugue-version>3.0.0</atlassian-fugue-version>
         <atmos-client-version>3.2.1</atmos-client-version>
         <atmosphere-version>2.6.4</atmosphere-version>
