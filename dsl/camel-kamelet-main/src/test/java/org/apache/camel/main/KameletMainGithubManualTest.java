@@ -27,7 +27,7 @@ public class KameletMainGithubManualTest {
         KameletMain main = new KameletMain();
         main.setDownload(true);
         main.configure().withDurationMaxSeconds(10);
-        main.configure().withRoutesIncludePattern("github:apache:camel-k:examples/languages/routes.yaml");
+        main.configure().withRoutesIncludePattern("github:apache:camel-kamelets-examples:jbang/languages/routes.yaml");
 
         main.run();
     }
@@ -37,7 +37,7 @@ public class KameletMainGithubManualTest {
         KameletMain main = new KameletMain();
         main.setDownload(true);
         main.configure().withDurationMaxSeconds(10);
-        main.configure().withRoutesIncludePattern("github:apache:camel-k:examples/languages/simple.groovy");
+        main.configure().withRoutesIncludePattern("github:apache:camel-kamelets-examples:jbang/languages/simple.groovy");
 
         main.run();
     }
