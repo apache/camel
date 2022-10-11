@@ -4281,6 +4281,28 @@
     "producerOnly": false,
     "lenientProperties": false
   },
+  "KubernetesEventsComponentBuilderFactory": {
+    "kind": "component",
+    "name": "kubernetes-events",
+    "title": "Kubernetes Event",
+    "description": "Perform operations on Kubernetes Events and get notified on Events changes.",
+    "deprecated": false,
+    "firstVersion": "3.20.0",
+    "label": "container,cloud,paas",
+    "javaType": "org.apache.camel.component.kubernetes.events.KubernetesEventsComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-kubernetes",
+    "version": "3.20.0-SNAPSHOT",
+    "scheme": "kubernetes-events",
+    "extendsScheme": "",
+    "syntax": "kubernetes-events:masterUrl",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false
+  },
   "KubernetesHpaComponentBuilderFactory": {
     "kind": "component",
     "name": "kubernetes-hpa",
