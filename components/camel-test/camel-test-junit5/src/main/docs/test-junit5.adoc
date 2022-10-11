@@ -24,6 +24,7 @@ see more at the javadoc of this class.
 ----
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +36,7 @@ public class SimpleMockTest extends CamelTestSupport {
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
@@ -77,6 +78,7 @@ TIP: It's possible to run JUnit4 & JUnit5 based Camel tests side by side includi
 * Usage of the method `CamelTestSupport.createRegistry` should be replaced by `CamelTestSupport.createCamelRegistry()`
 * Overrides of `isCreateCamelContextPerClass()` returning `false` should be removed
 * Overrides of `isCreateCamelContextPerClass()` returning `true` should be replaced by `@TestInstance(Lifecycle.PER_CLASS)`
+* Usage of the method `CamelTestSupport.assertMockEndpointsSatisfied` should be replaced by `MockEndpoint.assertIsSatisfied(context)`
 
 Once Camel related steps have been performed, there are still typical JUnit 5 migration steps to remember:
 
