@@ -113,7 +113,7 @@ mock.expectedBodiesReceived("Hello World");
 
 template.sendBody("mina:tcp://localhost:" + port1 + "?textline=true&sync=false", "Hello World");
 
-assertMockEndpointsSatisfied();
+MockEndpoint.assertIsSatisfied(context);
 -------------------------------------------------------------------------------------------------
 
 === Sample with sync=true

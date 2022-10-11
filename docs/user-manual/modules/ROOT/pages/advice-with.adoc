@@ -218,7 +218,7 @@ public void testMockEndpoints() throws Exception {
 
     // send messages
 
-    assertMockEndpointsSatisfied();
+    MockEndpoint.assertIsSatisfied(context);
 }
 ----
 
