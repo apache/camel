@@ -130,8 +130,8 @@
         <module>camel-docker</module>
         <module>camel-dozer</module>
         <module>camel-drill</module>
-	    <module>camel-dropbox</module>
-	    <module>camel-dynamic-router</module>
+        <module>camel-dropbox</module>
+        <module>camel-dynamic-router</module>
         <module>camel-ehcache</module>
         <module>camel-elasticsearch</module>
         <module>camel-elasticsearch-rest</module>
