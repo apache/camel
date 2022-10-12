@@ -36,6 +36,8 @@
         <property name="location" value="classpath:org/apache/camel/component/jasypt/myproperties.properties"/>
         <!-- and let it leverage the jasypt parser -->
         <property name="propertiesParser" ref="jasypt"/>
+        <!-- end enable nested placeholder -->
+        <property name="nestedPlaceholder" value="true"/>
     </bean>
     <!-- END SNIPPET: e1 -->
 

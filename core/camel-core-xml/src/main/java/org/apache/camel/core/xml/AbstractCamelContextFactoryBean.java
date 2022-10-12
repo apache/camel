@@ -889,6 +889,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             if (def.isIgnoreMissingLocation() != null) {
                 pc.setIgnoreMissingLocation(def.isIgnoreMissingLocation());
             }
+            if (def.isNestedPlaceholder() != null) {
+                pc.setNestedPlaceholder(def.isNestedPlaceholder());
+            }
 
             // if using a custom parser
             if (org.apache.camel.util.ObjectHelper.isNotEmpty(def.getPropertiesParserRef())) {

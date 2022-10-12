@@ -132,15 +132,15 @@ mandatory. See below for more details.
 == Protecting the master password
 
 The master password used by Jasypt must be provided,
-so that it's capable of decrypting the values. However having this
-master password out in the open may not be an ideal solution. Therefore
-you could for example provide it as a JVM system property or as a OS
+so that it's capable of decrypting the values. However, having this
+master password out in the open may not be an ideal solution. Therefore,
+you could for example provide it as a JVM system property or as an OS
 environment setting. If you decide to do so then the `password` option
 supports prefixes which dictates this. `sysenv:` means to lookup the OS
 system environment with the given key. `sys:` means to lookup a JVM
 system property.
 
-For example you could provided the password before you start the
+For example, you could provide the password before you start the
 application
 
 [source,bash]
@@ -191,6 +191,8 @@ the properties.
     <property name="location" value="classpath:org/apache/camel/component/jasypt/myproperties.properties"/>
     <!-- and let it leverage the jasypt parser -->
     <property name="propertiesParser" ref="jasypt"/>
+    <!-- end enable nested placeholder -->
+    <property name="nestedPlaceholder" value="true"/>
 </bean>
 -----------------------------------------------------------------------------------------------------------
 
@@ -212,6 +214,7 @@ Jasypt.
     <!-- define the camel properties placeholder, and let it leverage jasypt -->
     <propertyPlaceholder id="properties"
                          location="classpath:org/apache/camel/component/jasypt/myproperties.properties"
+                         nestedPlaceholder="true"
                          propertiesParserRef="jasypt"/>
     <route>
         <from uri="direct:start"/>
@@ -254,6 +257,7 @@ up in the properties.
       <!-- define the camel properties placeholder, and let it leverage jasypt -->
       <propertyPlaceholder id="properties"
                            location="blueprint:myblue"
+                           nestedPlaceholder="true"
                            propertiesParserRef="jasypt"/>
         <route>
             <from uri="direct:start"/>
@@ -286,6 +290,7 @@ to Jasypt.
       <!-- define the camel properties placeholder, and let it leverage jasypt -->
       <propertyPlaceholder id="properties"
                            location="classpath:org/apache/camel/component/jasypt/myproperties.properties"
+                           nestedPlaceholder="true"
                            propertiesParserRef="jasypt"/>
         <route>
             <from uri="direct:start"/>

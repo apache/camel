@@ -29,6 +29,12 @@
     <property name="password" value="secret"/>
   </bean>
 
+  <!-- define the camel properties component -->
+  <bean id="properties" class="org.apache.camel.component.properties.PropertiesComponent">
+    <!-- enable nested placeholder -->
+    <property name="nestedPlaceholder" value="true"/>
+  </bean>
+
   <!-- bridge to spring property placeholder -->
   <bean id="bridgePropertyPlaceholder" class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer">
     <property name="location" value="classpath:org/apache/camel/component/jasypt/myproperties.properties"/>

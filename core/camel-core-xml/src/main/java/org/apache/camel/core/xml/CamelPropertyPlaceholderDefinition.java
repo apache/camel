@@ -43,6 +43,9 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
     @Metadata(defaultValue = "false")
     private Boolean ignoreMissingLocation;
     @XmlAttribute
+    @Metadata(defaultValue = "true")
+    private Boolean nestedPlaceholder;
+    @XmlAttribute
     private String propertiesParserRef;
     @XmlAttribute
     @Metadata(defaultValue = "true")
@@ -109,6 +112,18 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
      */
     public void setIgnoreMissingLocation(Boolean ignoreMissingLocation) {
         this.ignoreMissingLocation = ignoreMissingLocation;
+    }
+
+    public Boolean isNestedPlaceholder() {
+        return nestedPlaceholder;
+    }
+
+    /**
+     * Whether to support nested property placeholders. A nested placeholder, means that a placeholder, has also a
+     * placeholder, that should be resolved (recursively).
+     */
+    public void setNestedPlaceholder(Boolean nestedPlaceholder) {
+        this.nestedPlaceholder = nestedPlaceholder;
     }
 
     public List<CamelPropertyPlaceholderFunctionDefinition> getFunctions() {

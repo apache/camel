@@ -49,6 +49,8 @@ public class JasyptPropertiesTest extends CamelTestSupport {
         pc.setLocation("classpath:org/apache/camel/component/jasypt/myproperties.properties");
         // and use the jasypt properties parser so we can decrypt values
         pc.setPropertiesParser(jasypt);
+        // end enable nested placeholder
+        pc.setNestedPlaceholder(true);
 
         // add properties component to camel context
         context.setPropertiesComponent(pc);
