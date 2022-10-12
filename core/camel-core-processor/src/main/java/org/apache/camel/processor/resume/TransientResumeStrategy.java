@@ -36,7 +36,7 @@ public class TransientResumeStrategy implements ResumeStrategy {
 
     @Override
     public void setAdapter(ResumeAdapter adapter) {
-
+        // this is NO-OP
     }
 
     @Override
@@ -51,6 +51,16 @@ public class TransientResumeStrategy implements ResumeStrategy {
 
     @Override
     public <T extends Resumable> void updateLastOffset(T offset) {
+        // this is NO-OP
+    }
+
+    @Override
+    public <T extends Resumable> void updateLastOffset(T offset, UpdateCallBack updateCallBack) throws Exception {
+        // this is NO-OP
+    }
+
+    @Override
+    public void updateLastOffset(OffsetKey<?> offsetKey, Offset<?> offset, UpdateCallBack updateCallBack) throws Exception {
         // this is NO-OP
     }
 

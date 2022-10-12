@@ -24,8 +24,6 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -66,8 +64,6 @@ public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements Kafka
     private Producer<byte[], byte[]> producer;
     private Duration pollDuration = Duration.ofSeconds(1);
 
-    private final Queue<RecordError> producerErrors = new ConcurrentLinkedQueue<>();
-
     private boolean subscribed;
     private ResumeAdapter adapter;
     private final KafkaResumeStrategyConfiguration resumeStrategyConfiguration;
@@ -102,15 +98,19 @@ public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements Kafka
      * @param  message              the message to send
      * @throws ExecutionException
      * @throws InterruptedException
-     * @see                         SingleNodeKafkaResumeStrategy#getProducerErrors()
+     *
      */
-    protected void produce(byte[] key, byte[] message) throws ExecutionException, InterruptedException {
+    protected void produce(byte[] key, byte[] message, UpdateCallBack updateCallBack)
+            throws ExecutionException, InterruptedException {
         ProducerRecord<byte[], byte[]> record = new ProducerRecord<>(resumeStrategyConfiguration.getTopic(), key, message);
 
         producer.send(record, (recordMetadata, e) -> {
-            if (e != null) {
-                LOG.error("Failed to send message {}", e.getMessage(), e);
-                producerErrors.add(new RecordError(recordMetadata, e));
+            LOG.error("Failed to send message {}", e.getMessage(), e);
+
+            if (updateCallBack != null) {
+                updateCallBack.onUpdate(e);
+            } else {
+                LOG.warn("The is no callback installed for handling errors when producing records to Kafka");
             }
         });
     }
@@ -125,6 +125,11 @@ public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements Kafka
 
     @Override
     public <T extends Resumable> void updateLastOffset(T offset) throws Exception {
+        updateLastOffset(offset, null);
+    }
+
+    @Override
+    public <T extends Resumable> void updateLastOffset(T offset, UpdateCallBack updateCallBack) throws Exception {
         OffsetKey<?> key = offset.getOffsetKey();
         Offset<?> offsetValue = offset.getLastOffset();
 
@@ -137,12 +142,17 @@ public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements Kafka
 
     @Override
     public void updateLastOffset(OffsetKey<?> offsetKey, Offset<?> offset) throws Exception {
+        updateLastOffset(offsetKey, offset, null);
+    }
+
+    @Override
+    public void updateLastOffset(OffsetKey<?> offsetKey, Offset<?> offset, UpdateCallBack updateCallBack) throws Exception {
         ByteBuffer keyBuffer = offsetKey.serialize();
         ByteBuffer valueBuffer = offsetKey.serialize();
 
         try {
             lock.lock();
-            produce(keyBuffer.array(), valueBuffer.array());
+            produce(keyBuffer.array(), valueBuffer.array(), updateCallBack);
         } finally {
             lock.unlock();
         }
@@ -337,15 +347,6 @@ public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements Kafka
         this.adapter = adapter;
     }
 
-    /**
-     * Gets the set record of sent items
-     *
-     * @return A collection with all the record errors
-     */
-    protected Collection<RecordError> getProducerErrors() {
-        return Collections.unmodifiableCollection(producerErrors);
-    }
-
     @Override
     public void build() {
         // NO-OP
@@ -417,13 +418,6 @@ public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements Kafka
 
     protected Producer<byte[], byte[]> getProducer() {
         return producer;
-    }
-
-    /**
-     * Clear the producer errors
-     */
-    public void resetProducerErrors() {
-        producerErrors.clear();
     }
 
     protected KafkaResumeStrategyConfiguration getResumeStrategyConfiguration() {
