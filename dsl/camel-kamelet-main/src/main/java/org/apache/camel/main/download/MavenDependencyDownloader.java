@@ -555,11 +555,6 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
 
     /**
      * Configure entire {@link RepositorySystem} service
-     * 
-     * @param  registry
-     * @param  systemProperties
-     * @param  settingsSecurityLocation
-     * @return
      */
     public RepositorySystem configureRepositorySystem(
             DIRegistry registry,
@@ -573,9 +568,6 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
 
     /**
      * Configure the basic, necessary requirements of {@link RepositorySystem} in {@link DIRegistry}
-     *
-     * @param registry
-     * @param systemProperties
      */
     private static void basicRepositorySystemConfiguration(DIRegistry registry, Properties systemProperties) {
         // this is the first one registered in DefaultServiceLocator - what follows up is BFS dependencies
@@ -656,9 +648,6 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
 
     /**
      * Configure the transport related requirements of {@link RepositorySystem} in {@link DIRegistry}
-     *
-     * @param registry
-     * @param systemProperties
      */
     private static void transportConfiguration(DIRegistry registry, Properties systemProperties) {
         // in order to resolve the artifacts we need some connector factories
@@ -711,9 +700,6 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
 
     /**
      * Configure the Maven services in {@link DIRegistry} needed to process {@link Settings Maven settings}
-     *
-     * @param registry
-     * @param localSettingsSecurity
      */
     private static void settingsConfiguration(DIRegistry registry, String localSettingsSecurity) {
         // before getting/creating an org.eclipse.aether.RepositorySystemSession, we need settings as a source
@@ -743,12 +729,6 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
 
     /**
      * Using the configured {@link DIRegistry}, load {@link Settings Maven settings}
-     *
-     * @param  registry
-     * @param  repositorySystem
-     * @param  systemProperties
-     * @param  mavenSettings
-     * @return
      */
     public Settings mavenConfiguration(
             DIRegistry registry, RepositorySystem repositorySystem,
@@ -815,12 +795,6 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     /**
      * Using the configured {@link DIRegistry}, obtain thread-safe {@link RepositorySystemSession} used to resolve and
      * download Maven dependencies.
-     *
-     * @param  registry
-     * @param  systemProperties
-     * @param  settings
-     * @param  localRepository
-     * @return
      */
     public RepositorySystemSession configureRepositorySystemSession(
             DIRegistry registry,
@@ -1071,10 +1045,9 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
      * during Maven resolution. These repositories are <b>not yet</b> mirrored/proxied. Use
      * {@link RepositorySystem#newResolutionRepositories} first.
      *
-     * @param  settings
-     * @param  repos    optional, comma-separated list of URLs
-     * @param  fresh    whether to check for remote updates of the artifacts (SNAPSHOTs)
-     * @return
+     * @param settings maven settings
+     * @param repos    optional, comma-separated list of URLs
+     * @param fresh    whether to check for remote updates of the artifacts (SNAPSHOTs)
      */
     public List<RemoteRepository> configureRemoteRepositories(Settings settings, String repos, boolean fresh) {
         List<RemoteRepository> repositories = new ArrayList<>();

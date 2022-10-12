@@ -194,6 +194,7 @@ abstract class ExportBaseCommand extends CamelCommand {
                     // include yaml-dsl and kamelet catalog if we use kamelets
                     answer.add("camel:yaml-dsl");
                     answer.add("org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
+                    answer.add("org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
                 }
             } else if (line.startsWith("camel.jbang.dependencies=")) {
                 String deps = StringHelper.after(line, "camel.jbang.dependencies=");
@@ -235,6 +236,7 @@ abstract class ExportBaseCommand extends CamelCommand {
             } else if (line.startsWith("camel.component.kamelet.location=")) {
                 // include kamelet catalog if we use kamelets
                 answer.add("mvn:org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
+                answer.add("mvn:org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
             }
         }
 

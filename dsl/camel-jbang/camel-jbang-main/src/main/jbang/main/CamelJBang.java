@@ -22,7 +22,6 @@
 //DEPS org.apache.camel:camel-bom:${camel.jbang.version:3.19.0}@pom
 //DEPS org.apache.camel:camel-jbang-core:${camel.jbang.version:3.19.0}
 //DEPS org.apache.camel.kamelets:camel-kamelets:${camel-kamelets.version:0.9.0}
-//DEPS org.apache.camel.kamelets:camel-kamelets-utils:${camel-kamelets.version:0.9.0}
 
 package main;
 
