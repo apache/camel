@@ -298,11 +298,10 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                             return;
                         }
 
-
                         if (propertyType.startsWith("object:")) {
                             final DotName dn = DotName.createSimple(propertyType.substring(7));
                             if (isBanned(view.getClassByName(dn))) {
-                                return;
+                                continue;
                             }
                         }
 
