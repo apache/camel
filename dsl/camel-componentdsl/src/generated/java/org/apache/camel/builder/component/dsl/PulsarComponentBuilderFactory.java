@@ -657,6 +657,7 @@ public interface PulsarComponentBuilderFactory {
          * @param maxPendingMessagesAcrossPartitions the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default PulsarComponentBuilder maxPendingMessagesAcrossPartitions(
                 int maxPendingMessagesAcrossPartitions) {
             doSetProperty("maxPendingMessagesAcrossPartitions", maxPendingMessagesAcrossPartitions);
