@@ -28,93 +28,82 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-public class BoxSharedConnectionTest {
+class BoxSharedConnectionTest {
 
     private static final String PATH_PREFIX
             = BoxApiCollection.getCollection().getApiName(BoxFilesManagerApiMethod.class).getName();
 
     @Test
-    public void testEndpointUsesSharedConnection() throws Exception {
+    void testEndpointUsesSharedConnection() throws Exception {
         final String boxUri = "box:" + PATH_PREFIX + "/getFileInfo";
 
-        BoxConfiguration configuration = new BoxConfiguration();
-        configuration.setUserName("camel@apache.org");
-        configuration.setUserPassword("p4ssw0rd");
-        configuration.setClientId("camel-client-id");
-        configuration.setClientSecret("camel-client-secret");
-        configuration.setAuthenticationType("STANDARD_AUTHENTICATION");
+        BoxConfiguration configuration = createBoxConfiguration();
 
         BoxComponent component = new BoxComponent();
         component.setConfiguration(configuration);
 
-        CamelContext camelContext = new DefaultCamelContext();
-        camelContext.addComponent("box", component);
-        camelContext.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("direct:start").to(boxUri);
-            }
-        });
+        try (CamelContext camelContext = createCamelContext(boxUri, component)) {
 
-        BoxAPIConnection connection = Mockito.mock(BoxAPIConnection.class);
+            BoxAPIConnection connection = Mockito.mock(BoxAPIConnection.class);
 
-        try (MockedStatic<BoxConnectionHelper> helper = Mockito.mockStatic(BoxConnectionHelper.class)) {
-            helper.when(() -> BoxConnectionHelper.createConnection(configuration)).thenReturn(connection);
+            try (MockedStatic<BoxConnectionHelper> helper = Mockito.mockStatic(BoxConnectionHelper.class)) {
+                helper.when(() -> BoxConnectionHelper.createConnection(configuration)).thenReturn(connection);
 
-            camelContext.start();
-            try {
+                camelContext.start();
                 BoxEndpoint endpoint = camelContext.getEndpoint(boxUri, BoxEndpoint.class);
 
                 helper.verify(() -> BoxConnectionHelper.createConnection(configuration), Mockito.times(1));
 
                 Assertions.assertSame(component.getBoxConnection(), endpoint.getBoxConnection());
-            } finally {
-                camelContext.stop();
             }
         }
     }
 
     @Test
-    public void testEndpointOverridesSharedConnection() throws Exception {
+    void testEndpointOverridesSharedConnection() throws Exception {
         String boxUri = "box:" + PATH_PREFIX + "/getFileInfo?userPassword=0th3rP4ssw0rd";
 
-        BoxConfiguration configuration = new BoxConfiguration();
-        configuration.setUserName("camel@apache.org");
-        configuration.setUserPassword("p4ssw0rd");
-        configuration.setClientId("camel-client-id");
-        configuration.setClientSecret("camel-client-secret");
-        configuration.setAuthenticationType("STANDARD_AUTHENTICATION");
-
         BoxComponent component = new BoxComponent();
-        component.setConfiguration(configuration);
+        component.setConfiguration(createBoxConfiguration());
 
-        CamelContext camelContext = new DefaultCamelContext();
-        camelContext.addComponent("box", component);
-        camelContext.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("direct:start").to(boxUri);
-            }
-        });
+        try (CamelContext camelContext = createCamelContext(boxUri, component)) {
+            BoxAPIConnection componentConnection = Mockito.mock(BoxAPIConnection.class);
+            BoxAPIConnection endpointConnection = Mockito.mock(BoxAPIConnection.class);
 
-        BoxAPIConnection componentConnection = Mockito.mock(BoxAPIConnection.class);
-        BoxAPIConnection endpointConnection = Mockito.mock(BoxAPIConnection.class);
+            try (MockedStatic<BoxConnectionHelper> helper = Mockito.mockStatic(BoxConnectionHelper.class)) {
+                helper.when(() -> BoxConnectionHelper.createConnection(Mockito.isA(BoxConfiguration.class)))
+                        .thenReturn(componentConnection, endpointConnection);
 
-        try (MockedStatic<BoxConnectionHelper> helper = Mockito.mockStatic(BoxConnectionHelper.class)) {
-            helper.when(() -> BoxConnectionHelper.createConnection(Mockito.isA(BoxConfiguration.class)))
-                    .thenReturn(componentConnection, endpointConnection);
-
-            camelContext.start();
-            try {
+                camelContext.start();
                 BoxEndpoint endpoint = camelContext.getEndpoint(boxUri, BoxEndpoint.class);
 
                 helper.verify(() -> BoxConnectionHelper.createConnection(Mockito.any()), Mockito.times(2));
 
                 Assertions.assertSame(componentConnection, component.getBoxConnection());
                 Assertions.assertSame(endpointConnection, endpoint.getBoxConnection());
-            } finally {
-                camelContext.stop();
             }
         }
+    }
+
+    private static CamelContext createCamelContext(String boxUri, BoxComponent component) throws Exception {
+        CamelContext camelContext = new DefaultCamelContext();
+        camelContext.addComponent("box", component);
+        camelContext.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start").to(boxUri);
+            }
+        });
+        return camelContext;
+    }
+
+    private static BoxConfiguration createBoxConfiguration() {
+        BoxConfiguration configuration = new BoxConfiguration();
+        configuration.setUserName("camel@apache.org");
+        configuration.setUserPassword("p4ssw0rd");
+        configuration.setClientId("camel-client-id");
+        configuration.setClientSecret("camel-client-secret");
+        configuration.setAuthenticationType("STANDARD_AUTHENTICATION");
+        return configuration;
     }
 }

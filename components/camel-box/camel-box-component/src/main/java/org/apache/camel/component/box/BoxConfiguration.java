@@ -467,11 +467,8 @@ public class BoxConfiguration {
             return true;
         }
 
-        if (o == null) {
-            return false;
-        }
-
-        if (this.getClass() != o.getClass()) {
+        // Don't check that the classes are equal intentionally to support subclasses
+        if (!(o instanceof BoxConfiguration)) {
             return false;
         }
 
