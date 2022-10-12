@@ -1178,6 +1178,7 @@ public interface PulsarEndpointBuilderFactory {
          * @param maxPendingMessagesAcrossPartitions the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default PulsarEndpointProducerBuilder maxPendingMessagesAcrossPartitions(
                 int maxPendingMessagesAcrossPartitions) {
             doSetProperty("maxPendingMessagesAcrossPartitions", maxPendingMessagesAcrossPartitions);
@@ -1197,6 +1198,7 @@ public interface PulsarEndpointBuilderFactory {
          * @param maxPendingMessagesAcrossPartitions the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default PulsarEndpointProducerBuilder maxPendingMessagesAcrossPartitions(
                 String maxPendingMessagesAcrossPartitions) {
             doSetProperty("maxPendingMessagesAcrossPartitions", maxPendingMessagesAcrossPartitions);
