@@ -455,9 +455,6 @@ public class PropertiesComponent extends ServiceSupport
         return ignoreMissingLocation;
     }
 
-    /**
-     * Whether to silently ignore if a location cannot be located, such as a properties file not found.
-     */
     @Override
     public void setIgnoreMissingLocation(boolean ignoreMissingLocation) {
         this.ignoreMissingLocation = ignoreMissingLocation;
@@ -468,10 +465,6 @@ public class PropertiesComponent extends ServiceSupport
         return nestedPlaceholder;
     }
 
-    /**
-     * Whether to support nested property placeholders. A nested placeholder, means that a placeholder, has also a
-     * placeholder, that should be resolved (recursively).
-     */
     @Override
     public void setNestedPlaceholder(boolean nestedPlaceholder) {
         this.nestedPlaceholder = nestedPlaceholder;
@@ -488,9 +481,6 @@ public class PropertiesComponent extends ServiceSupport
         return initialProperties;
     }
 
-    /**
-     * Sets initial properties which will be used before any locations are resolved.
-     */
     @Override
     public void setInitialProperties(Properties initialProperties) {
         this.initialProperties = initialProperties;
@@ -515,9 +505,6 @@ public class PropertiesComponent extends ServiceSupport
         return overrideProperties;
     }
 
-    /**
-     * Sets a special list of override properties that take precedence and will use first, if a property exists.
-     */
     @Override
     public void setOverrideProperties(Properties overrideProperties) {
         this.overrideProperties = overrideProperties;
@@ -532,10 +519,6 @@ public class PropertiesComponent extends ServiceSupport
 
     }
 
-    /**
-     * Sets a special list of local properties (ie thread local) that take precedence and will use first, if a property
-     * exists.
-     */
     @Override
     public void setLocalProperties(Properties localProperties) {
         if (localProperties != null) {
