@@ -320,6 +320,10 @@ public class PropertiesComponent extends ServiceSupport
                 answer = "true";
             }
         }
+        if (answer != null) {
+            // Remove the escape characters if any
+            answer = unescape(answer);
+        }
         LOG.trace("Parsed uri {} -> {}", uri, answer);
         return answer;
     }
@@ -815,4 +819,38 @@ public class PropertiesComponent extends ServiceSupport
         return answer;
     }
 
+    /**
+     * Replaces all the double curly braces that have been escaped by double curly braces.
+     *
+     * @param  input the content to unescape
+     * @return       the provided content with all the escaped double curly braces restored.
+     */
+    private static String unescape(String input) {
+        int index = input.indexOf('\\');
+        if (index == -1) {
+            return input;
+        }
+        int length = input.length();
+        StringBuilder result = new StringBuilder(length);
+        int start = 0;
+        do {
+            result.append(input, start, index);
+            start = index + 1;
+            if (index + 2 < length) {
+                char next = input.charAt(index + 1);
+                char afterNext = input.charAt(index + 2);
+                if (next == '{' && afterNext == '{' || next == '}' && afterNext == '}') {
+                    // Escaped double curly braces detected, so let's keep the escape character
+                    continue;
+                }
+                result.append('\\');
+            } else {
+                break;
+            }
+        } while ((index = input.indexOf('\\', start)) != -1);
+        if (start < length) {
+            result.append(input, start, length);
+        }
+        return result.toString();
+    }
 }

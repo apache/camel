@@ -172,13 +172,18 @@ public class DefaultPropertiesParser implements PropertiesParser {
                 Set<String> newReplaced = new HashSet<>(replacedPropertyKeys);
                 newReplaced.add(property.getKey());
 
-                String before = answer.substring(0, property.getBeginIndex());
+                int beginIndex = property.getBeginIndex();
+                if (beginIndex > 0 && answer.charAt(beginIndex - 1) == '\\') {
+                    // The escape character has been escaped, so we need to restore it
+                    beginIndex--;
+                }
+                String before = answer.substring(0, beginIndex);
                 String after = answer.substring(property.getEndIndex());
                 String parsed = doParseNested(property.getValue(), newReplaced);
                 if (parsed != null) {
                     answer = before + parsed + after;
                 } else {
-                    if (property.getBeginIndex() == 0 && input.length() == property.getEndIndex()) {
+                    if (beginIndex == 0 && input.length() == property.getEndIndex()) {
                         // its only a single placeholder which is parsed as null
                         answer = null;
                         break;
@@ -229,7 +234,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
             int index = -1;
             do {
                 index = input.indexOf(SUFFIX_TOKEN, index + 1);
-            } while (index != -1 && isQuoted(input, index, SUFFIX_TOKEN));
+            } while (index != -1 && (isQuoted(input, index, SUFFIX_TOKEN) || isEscaped(input, index - 1)));
             return index;
         }
 
@@ -246,12 +251,12 @@ public class DefaultPropertiesParser implements PropertiesParser {
             int index = suffixIndex;
             do {
                 index = input.lastIndexOf(PREFIX_TOKEN, index - 1);
-            } while (index != -1 && isQuoted(input, index, PREFIX_TOKEN));
+            } while (index != -1 && (isQuoted(input, index, PREFIX_TOKEN) || isEscaped(input, index - 1)));
             return index;
         }
 
         /**
-         * Indicates whether or not the token at the given index is surrounded by single or double quotes
+         * Indicates whether the token at the given index is surrounded by single or double quotes
          *
          * @param  input Input string
          * @param  index Index of the token
@@ -265,6 +270,21 @@ public class DefaultPropertiesParser implements PropertiesParser {
                 char before = input.charAt(beforeIndex);
                 char after = input.charAt(afterIndex);
                 return before == after && (before == '\'' || before == '"');
+            }
+            return false;
+        }
+
+        /**
+         * Indicates whether the escape character is at the given index.
+         *
+         * @param  input Input string
+         * @param  index Index where the escape character is checked.
+         * @return       {@code true} if the escape character is at the given index, and it is not itself escaped,
+         *               {@code false} otherwise.
+         */
+        private boolean isEscaped(String input, int index) {
+            if (index >= 0) {
+                return input.charAt(index) == '\\' && (index == 0 || input.charAt(index - 1) != '\\');
             }
             return false;
         }
