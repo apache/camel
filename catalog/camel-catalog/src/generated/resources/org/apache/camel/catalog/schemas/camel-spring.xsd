@@ -3261,6 +3261,18 @@ file not found. Default value: false
           </xs:annotation>
         </xs:attribute>
                 
+        <xs:attribute name="nestedPlaceholder" type="xs:boolean">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+              <![CDATA[
+Whether to support nested property placeholders. A nested placeholder, means
+that a placeholder, has also a placeholder, that should be resolved
+(recursively). Default value: true
+            ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
         <xs:attribute name="propertiesParserRef" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
