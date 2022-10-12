@@ -77,7 +77,7 @@ The Developer Console is easily available when using xref:camel-jbang.adoc[Camel
 by the `--console` argument when running JBang.
 
 For example to run a Camel route from `foo.yaml` and additional configurations from `myapp.properties` you can run as follows
-and have the console started and accessible from `http://localhost:8080/dev`
+and have the console started and accessible from `http://localhost:8080/q/dev`
 
 [source,bash]
 ----
