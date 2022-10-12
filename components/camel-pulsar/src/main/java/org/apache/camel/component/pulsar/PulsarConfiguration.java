@@ -102,6 +102,7 @@ public class PulsarConfiguration implements Cloneable {
               description = "The maximum number of pending messages for partitioned topics. The maxPendingMessages value will be reduced if "
                             + "(number of partitions * maxPendingMessages) exceeds this value. Partitioned topics have a pending message queue for each partition.",
               defaultValue = "50000")
+    @Deprecated
     private int maxPendingMessagesAcrossPartitions = 50000;
     @UriParam(label = "producer",
               description = "The maximum time period within which the messages sent will be batched if batchingEnabled is true.",
@@ -312,12 +313,15 @@ public class PulsarConfiguration implements Cloneable {
     }
 
     /**
-     * Set the number of max pending messages across all the partitions. Default is 50000.
+     * Set the number of max pending messages across all the partitions. Default is 50000. This option is deprecated and
+     * will be removed in a future version.
      */
+    @Deprecated
     public void setMaxPendingMessagesAcrossPartitions(int maxPendingMessagesAcrossPartitions) {
         this.maxPendingMessagesAcrossPartitions = maxPendingMessagesAcrossPartitions;
     }
 
+    @Deprecated
     public int getMaxPendingMessagesAcrossPartitions() {
         return maxPendingMessagesAcrossPartitions;
     }
