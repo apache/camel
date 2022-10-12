@@ -86,7 +86,7 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String localKameletDir;
 
     @CommandLine.Option(names = { "--spring-boot-version" }, description = "Spring Boot version",
-                        defaultValue = "2.7.3")
+                        defaultValue = "2.7.4")
     protected String springBootVersion;
 
     @CommandLine.Option(names = { "--quarkus-group-id" }, description = "Quarkus Platform Maven groupId",
