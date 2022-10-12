@@ -16,6 +16,8 @@
  */
 package org.apache.camel.main.download;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -32,6 +34,7 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RouteTemplateLoaderListener;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snakeyaml.engine.v2.nodes.Node;
@@ -47,12 +50,12 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.nodeAt;
 public final class DependencyDownloaderKamelet extends ServiceSupport
         implements CamelContextAware, RouteTemplateLoaderListener {
 
-    private final KameletDependencyDownloader downloader;
+    private static final String KAMELETS_VERSION = "0.9.0";
+    private KameletDependencyDownloader downloader;
     private CamelContext camelContext;
 
     public DependencyDownloaderKamelet(CamelContext camelContext) {
         this.camelContext = camelContext;
-        this.downloader = new KameletDependencyDownloader(camelContext, "yaml");
     }
 
     @Override
@@ -69,13 +72,18 @@ public final class DependencyDownloaderKamelet extends ServiceSupport
     protected void doBuild() throws Exception {
         KameletComponent kc = camelContext.getComponent("kamelet", KameletComponent.class);
         kc.setRouteTemplateLoaderListener(this);
-
-        downloader.setCamelContext(camelContext);
-        ServiceHelper.buildService(downloader);
     }
 
     @Override
     protected void doInit() throws Exception {
+        String version = KAMELETS_VERSION;
+        RuntimeMXBean mb = ManagementFactory.getRuntimeMXBean();
+        if (mb != null) {
+            String[] bootClasspath = mb.getClassPath().split("[:|;]");
+            version = extractKameletsVersion(bootClasspath);
+        }
+        this.downloader = new KameletDependencyDownloader(camelContext, "yaml", version);
+        this.downloader.setCamelContext(camelContext);
         ServiceHelper.initService(downloader);
     }
 
@@ -100,6 +108,21 @@ public final class DependencyDownloaderKamelet extends ServiceSupport
         }
     }
 
+    private static String extractKameletsVersion(String[] bootClasspath) {
+        if (bootClasspath != null) {
+            for (String s : bootClasspath) {
+                if (s.contains("camel-kamelets-")) {
+                    String version = StringHelper.after(s, "camel-kamelets-");
+                    version = StringHelper.before(version, ".jar");
+                    if (version != null) {
+                        return version;
+                    }
+                }
+            }
+        }
+        return KAMELETS_VERSION;
+    }
+
     /**
      * To automatic downloaded dependencies that Kamelets requires.
      */
@@ -109,16 +132,20 @@ public final class DependencyDownloaderKamelet extends ServiceSupport
         private final CamelContext camelContext;
         private final DependencyDownloader downloader;
         private final Set<String> downloaded = new HashSet<>();
+        private final String kameletsVersion;
 
-        public KameletDependencyDownloader(CamelContext camelContext, String extension) {
+        public KameletDependencyDownloader(CamelContext camelContext, String extension, String kameletsVersion) {
             super(extension);
             this.camelContext = camelContext;
             this.downloader = camelContext.hasService(DependencyDownloader.class);
+            this.kameletsVersion = kameletsVersion;
         }
 
         @Override
         protected RouteBuilder builder(YamlDeserializationContext ctx, Node node) {
             final List<String> dependencies = new ArrayList<>();
+            // always include kamelets-utils
+            dependencies.add("org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
 
             Node deps = nodeAt(node, "/spec/dependencies");
             if (deps != null && deps.getNodeType() == NodeType.SEQUENCE) {
@@ -184,6 +211,5 @@ public final class DependencyDownloaderKamelet extends ServiceSupport
             // valid if not already on classpath
             return !exists;
         }
-
     }
 }
