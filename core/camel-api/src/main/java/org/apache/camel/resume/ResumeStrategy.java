@@ -24,6 +24,18 @@ import org.apache.camel.Service;
  * processing records.
  */
 public interface ResumeStrategy extends Service {
+    /**
+     * A callback that can be executed after the last offset is updated
+     */
+    @FunctionalInterface
+    interface UpdateCallBack {
+        /**
+         * The method to execute after the last offset is updated
+         * @param throwable an instance of a Throwable if an exception was thrown during the update process
+         */
+        void onUpdate(Throwable throwable);
+    }
+
     String DEFAULT_NAME = "resumeStrategy";
 
     /**
@@ -66,12 +78,32 @@ public interface ResumeStrategy extends Service {
      */
     <T extends Resumable> void updateLastOffset(T offset) throws Exception;
 
+
     /**
      * Updates the last processed offset
      *
-     * @param  offset    the offset key to update
-     * @param  offset    the offset value to update
+     * @param  offset    the offset to update
+     * @param updateCallBack a callback to be executed after the updated has occurred (null if not available)
      * @throws Exception if unable to update the offset
      */
-    void updateLastOffset(OffsetKey<?> offsetKey, Offset<?> offset) throws Exception;
+    <T extends Resumable> void updateLastOffset(T offset, UpdateCallBack updateCallBack) throws Exception;
+
+    /**
+     * Updates the last processed offset
+     *
+     * @param  offsetKey    the offset key to update
+     * @param  offsetValue    the offset value to update
+     * @throws Exception if unable to update the offset
+     */
+    void updateLastOffset(OffsetKey<?> offsetKey, Offset<?> offsetValue) throws Exception;
+
+    /**
+     * Updates the last processed offset
+     *
+     * @param  offsetKey    the offset key to update
+     * @param  offset    the offset value to update
+     * @param updateCallBack a callback to be executed after the updated has occurred (null if not available)
+     * @throws Exception if unable to update the offset
+     */
+    void updateLastOffset(OffsetKey<?> offsetKey, Offset<?> offset, UpdateCallBack updateCallBack) throws Exception;
 }
