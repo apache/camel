@@ -116,11 +116,11 @@ public class PrinterProducer extends DefaultProducer {
     }
 
     private PrintService assignPrintService() throws PrintException {
-        PrintService printService;
+        PrintService retPrintService;
 
         if ((config.getHostname().equalsIgnoreCase("localhost"))
                 && (config.getPrintername().equalsIgnoreCase("default"))) {
-            printService = PrintServiceLookup.lookupDefaultPrintService();
+            retPrintService = PrintServiceLookup.lookupDefaultPrintService();
         } else {
             PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
             String name;
@@ -141,9 +141,9 @@ public class PrinterProducer extends DefaultProducer {
                         "No printer found with name: " + printer
                                          + ". Please verify that the host and printer are registered and reachable from this machine.");
             }
-            printService = services[position];
+            retPrintService = services[position];
         }
-        return printService;
+        return retPrintService;
     }
 
     private int findPrinter(PrintService[] services, String printer) {

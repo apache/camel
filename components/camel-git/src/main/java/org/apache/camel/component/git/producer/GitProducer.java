@@ -646,19 +646,15 @@ public class GitProducer extends DefaultProducer {
 
     private Repository getLocalRepository() throws IOException {
         FileRepositoryBuilder builder = new FileRepositoryBuilder();
-        Repository repo = null;
         try {
-            repo = builder.setGitDir(new File(endpoint.getLocalPath(), ".git")).readEnvironment() // scan
-                    // environment
-                    // GIT_*
-                    // variables
+            // scan environment GIT_* variables
+            return builder.setGitDir(new File(endpoint.getLocalPath(), ".git")).readEnvironment()
                     .findGitDir() // scan up the file system tree
                     .build();
         } catch (IOException e) {
             LOG.error("There was an error, cannot open {} repository", endpoint.getLocalPath());
             throw e;
         }
-        return repo;
     }
 
     private void updateExchange(Exchange exchange, Object body) {
