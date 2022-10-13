@@ -101,6 +101,7 @@ function coreTest() {
 
   cd "core"
   runTest "core" "1" "1"
+  find . -iname '*test*.log' -exec mv {} "${logDir}"/ \;
 }
 
 function main() {
