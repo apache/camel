@@ -52,7 +52,11 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `:warning: This PR changes Camel components and will be tested automatically.`
+              body: `:star2: Thanks for your contribution to the Apache Camel project! :star2: 
+            
+            :warning: Please note that the changes on this PR may be **tested automatically**. 
+            
+            If necessary Apache Camel Committers may access logs and test results in the job summaries!`
             })
       - name: 'Download artifact'
         uses: actions/github-script@v3.1.0
@@ -101,7 +105,7 @@ jobs:
                 message = ":no_entry_sign: There are (likely) no components to be tested in this PR"
               } else {
                 if (total > 20) {
-                  message = `:leftwards_arrow_with_hook: There are too many components to be tested in this PR, components were removed or the code needs a rebase: (${total} likely to be tested)`
+                  message = `:leftwards_arrow_with_hook: There are either **too many** changes to be tested in this PR or the code **needs be rebased**: (${total} components likely to be affected)`
                 }
               }
             } else {
