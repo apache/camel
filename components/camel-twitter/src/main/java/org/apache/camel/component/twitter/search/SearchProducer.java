@@ -50,16 +50,16 @@ public class SearchProducer extends DefaultProducer {
         long myLastId = lastId;
         // KEYWORDS
         // keywords from header take precedence
-        String keywords = exchange.getIn().getHeader(TwitterConstants.TWITTER_KEYWORDS, String.class);
-        if (keywords == null) {
-            keywords = this.keywords;
+        String queryKeywords = exchange.getIn().getHeader(TwitterConstants.TWITTER_KEYWORDS, String.class);
+        if (queryKeywords == null) {
+            queryKeywords = this.keywords;
         }
 
-        if (keywords == null) {
+        if (queryKeywords == null) {
             throw new CamelExchangeException("No keywords to use for query", exchange);
         }
 
-        Query query = new Query(keywords);
+        Query query = new Query(queryKeywords);
 
         // filter of older tweets
         if (endpoint.getProperties().isFilterOld() && myLastId != 0) {
@@ -107,7 +107,7 @@ public class SearchProducer extends DefaultProducer {
         }
 
         Twitter twitter = endpoint.getProperties().getTwitter();
-        LOG.debug("Searching twitter with keywords: {}", keywords);
+        LOG.debug("Searching twitter with keywords: {}", queryKeywords);
         QueryResult results = twitter.search(query);
         List<Status> list = results.getTweets();
 
