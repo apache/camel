@@ -394,7 +394,6 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
             applyProducerSslConfiguration(props);
         }
 
-        final String securityProtocol = getSecurityProtocol();
         addPropertyIfNotEmpty(props, CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, securityProtocol);
 
         // SASL
@@ -421,8 +420,6 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     private void applyProducerSslConfiguration(Properties props) {
-        final String securityProtocol = getSecurityProtocol();
-
         if (securityProtocol.equals(SecurityProtocol.SSL.name()) || securityProtocol.equals(SecurityProtocol.SASL_SSL.name())) {
             addPropertyIfNotEmpty(props, CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, getSecurityProtocol());
             addPropertyIfNotEmpty(props, SslConfigs.SSL_KEY_PASSWORD_CONFIG, getSslKeyPassword());
@@ -486,7 +483,6 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         }
 
         // Security protocol
-        final String securityProtocol = getSecurityProtocol();
         addPropertyIfNotEmpty(props, CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, securityProtocol);
 
         // SASL
@@ -506,8 +502,6 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     private void applySslConsumerConfigurationFromOptions(Properties props) {
-        final String securityProtocol = getSecurityProtocol();
-
         if (securityProtocol.equals(SecurityProtocol.SSL.name()) || securityProtocol.equals(SecurityProtocol.SASL_SSL.name())) {
             addPropertyIfNotEmpty(props, SslConfigs.SSL_KEY_PASSWORD_CONFIG, getSslKeyPassword());
             addPropertyIfNotEmpty(props, SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, getSslKeystoreLocation());
