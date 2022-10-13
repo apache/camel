@@ -63,7 +63,7 @@ function runTest() {
   echo ""
 
   echo "Logging test to ${logDir}/${component/\//-}.log"
-  mvn -Psourcecheck ${MVN_OPTS} verify 2>&1 >> "${logDir}/${component/\//-}.log"
+  mvn -l "${logDir}/${component/\//-}.log" -Psourcecheck ${MVN_OPTS} verify
   if [[ $? -ne 0 ]]; then
     ((failures++))
     notifyError "${component} test" "${total}" "${current}" "${failures}"
