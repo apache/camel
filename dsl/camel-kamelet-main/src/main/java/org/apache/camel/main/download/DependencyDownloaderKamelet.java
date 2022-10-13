@@ -50,7 +50,7 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.nodeAt;
 public final class DependencyDownloaderKamelet extends ServiceSupport
         implements CamelContextAware, RouteTemplateLoaderListener {
 
-    private static final String KAMELETS_VERSION = "0.9.0";
+    private static final String KAMELETS_VERSION = "0.9.1";
     private KameletDependencyDownloader downloader;
     private CamelContext camelContext;
 
