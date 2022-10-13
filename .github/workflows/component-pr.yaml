@@ -100,7 +100,7 @@ jobs:
               if (total === 0) {
                 message = ":no_entry_sign: There are (likely) no components to be tested in this PR"
               } else {
-                if (total > 10) {
+                if (total > 20) {
                   message = `There are too many components to be tested in this PR, components were removed or the code needs a rebase: (${total} likely to be tested)`
                 }
               }
