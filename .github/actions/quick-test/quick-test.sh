@@ -27,7 +27,7 @@ MVN_OPTS=${MVN_OPTS:-$MVN_DEFAULT_OPTS}
 
 # Script variables
 failures=0
-maxNumberOfTestableComponents=15
+maxNumberOfTestableComponents=20
 basedir=$(pwd)
 testDate=$(date '+%Y-%m-%d-%H%M%S')
 logDir=${basedir}/automated-build-log
