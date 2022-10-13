@@ -183,13 +183,13 @@ public class SjmsProducer extends DefaultAsyncProducer {
 
     protected ReplyManager createReplyManager() throws Exception {
         // use a temporary queue
-        ReplyManager replyManager = new TemporaryQueueReplyManager(getEndpoint().getCamelContext());
-        replyManager.setEndpoint(getEndpoint());
+        ReplyManager temporaryQueueReplyManager = new TemporaryQueueReplyManager(getEndpoint().getCamelContext());
+        temporaryQueueReplyManager.setEndpoint(getEndpoint());
 
         String name = "JmsReplyManagerTimeoutChecker[" + getEndpoint().getEndpointConfiguredDestinationName() + "]";
         ScheduledExecutorService replyManagerScheduledExecutorService
                 = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(name, name);
-        replyManager.setScheduledExecutorService(replyManagerScheduledExecutorService);
+        temporaryQueueReplyManager.setScheduledExecutorService(replyManagerScheduledExecutorService);
 
         name = "JmsReplyManagerOnTimeout[" + getEndpoint().getEndpointConfiguredDestinationName() + "]";
         // allow the timeout thread to timeout so during normal operation we do not have a idle thread
@@ -198,12 +198,13 @@ public class SjmsProducer extends DefaultAsyncProducer {
             throw new IllegalArgumentException("The option replyToOnTimeoutMaxConcurrentConsumers must be >= 1");
         }
         ExecutorService replyManagerExecutorService
-                = getEndpoint().getCamelContext().getExecutorServiceManager().newThreadPool(replyManager, name, 0, max);
-        replyManager.setOnTimeoutExecutorService(replyManagerExecutorService);
+                = getEndpoint().getCamelContext().getExecutorServiceManager().newThreadPool(temporaryQueueReplyManager, name, 0,
+                        max);
+        temporaryQueueReplyManager.setOnTimeoutExecutorService(replyManagerExecutorService);
 
-        ServiceHelper.startService(replyManager);
+        ServiceHelper.startService(temporaryQueueReplyManager);
 
-        return replyManager;
+        return temporaryQueueReplyManager;
     }
 
     /**

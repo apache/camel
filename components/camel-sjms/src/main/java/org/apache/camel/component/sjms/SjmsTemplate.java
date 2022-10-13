@@ -19,6 +19,7 @@ package org.apache.camel.component.sjms;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
+import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
@@ -186,22 +187,27 @@ public class SjmsTemplate {
             // property to store it - CamelJMSDeliveryMode. Otherwise we could not keep
             // track whether it was set or not as getJMSDeliveryMode() will default return 1 regardless
             // if it was set or not, so we can never tell if end user provided it in a header
-            int deliveryMode;
-            if (JmsMessageHelper.hasProperty(message, JmsConstants.JMS_DELIVERY_MODE)) {
-                deliveryMode = message.getIntProperty(JmsConstants.JMS_DELIVERY_MODE);
-                // remove the temporary property
-                JmsMessageHelper.removeJmsProperty(message, JmsConstants.JMS_DELIVERY_MODE);
-            } else {
-                // use the existing delivery mode from the message
-                deliveryMode = message.getJMSDeliveryMode();
-            }
+            int resolvedDeliveryMode = resolveDeliveryMode(message);
 
-            producer.send(message, deliveryMode, priority, ttl);
+            producer.send(message, resolvedDeliveryMode, priority, ttl);
         } else if (explicitQosEnabled) {
             producer.send(message, deliveryMode, priority, timeToLive);
         } else {
             producer.send(message);
         }
+    }
+
+    private static int resolveDeliveryMode(Message message) throws JMSException {
+        int resolvedDeliveryMode;
+        if (JmsMessageHelper.hasProperty(message, JmsConstants.JMS_DELIVERY_MODE)) {
+            resolvedDeliveryMode = message.getIntProperty(JmsConstants.JMS_DELIVERY_MODE);
+            // remove the temporary property
+            JmsMessageHelper.removeJmsProperty(message, JmsConstants.JMS_DELIVERY_MODE);
+        } else {
+            // use the existing delivery mode from the message
+            resolvedDeliveryMode = message.getJMSDeliveryMode();
+        }
+        return resolvedDeliveryMode;
     }
 
     public Message receive(String destinationName, String messageSelector, boolean isTopic, long timeout) throws Exception {
