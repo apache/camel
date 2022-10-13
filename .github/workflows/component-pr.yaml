@@ -23,6 +23,7 @@ on:
       - opened
       - reopened
     paths:
+      - 'core/**'
       - 'components/**'
   workflow_run:
     workflows: [ "main pr build" ]
