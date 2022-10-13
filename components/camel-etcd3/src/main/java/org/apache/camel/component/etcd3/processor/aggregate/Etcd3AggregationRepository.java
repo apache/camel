@@ -180,7 +180,8 @@ public class Etcd3AggregationRepository extends ServiceSupport
                     .Then(Op.put(ByteSequence
                             .from(String.format("%s/%s", prefixName, key).getBytes()), convertToEtcd3Format(newHolder),
                             PutOption.DEFAULT))
-                    .commit();
+                    .commit()
+                    .get();
         } catch (InterruptedException | ExecutionException | IOException e) {
             LOG.error(e.getMessage(), e);
             throw new RuntimeCamelException(e.getMessage(), e);
@@ -409,7 +410,8 @@ public class Etcd3AggregationRepository extends ServiceSupport
                                     Op.put(ByteSequence
                                             .from(String.format("%s/%s", persistencePrefixName, key).getBytes()),
                                             convertToEtcd3Format(removedHolder), PutOption.DEFAULT))
-                            .commit();
+                            .commit()
+                            .get();
                     LOG.trace("Removed an exchange with ID {} for key {} in a thread-safe manner.",
                             exchange.getExchangeId(), key);
                     LOG.trace(
@@ -476,7 +478,7 @@ public class Etcd3AggregationRepository extends ServiceSupport
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doStart() {
         if (client == null) {
             client = Client.builder().endpoints(endpoint).build();
             shutdownClient = true;
