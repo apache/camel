@@ -1409,11 +1409,11 @@ public abstract class AbstractCamelContext extends BaseService
         RouteService routeService = routeServices.get(routeId);
         if (routeService != null) {
             try {
-                List<RouteStartupOrder> routes = new ArrayList<>(1);
+                List<RouteStartupOrder> routeList = new ArrayList<>(1);
                 RouteStartupOrder order = new DefaultRouteStartupOrder(1, routeService.getRoute(), routeService);
-                routes.add(order);
+                routeList.add(order);
 
-                getShutdownStrategy().shutdown(this, routes, timeout, timeUnit);
+                getShutdownStrategy().shutdown(this, routeList, timeout, timeUnit);
                 // must stop route service as well (and remove the routes from
                 // management)
                 stopRouteService(routeService, removingRoutes, loggingLevel);
@@ -1458,8 +1458,8 @@ public abstract class AbstractCamelContext extends BaseService
                     for (Endpoint endpoint : endpointsInUse.get(routeId)) {
                         // how many times is the endpoint in use
                         int count = 0;
-                        for (Set<Endpoint> endpoints : endpointsInUse.values()) {
-                            if (endpoints.contains(endpoint)) {
+                        for (Set<Endpoint> endpointSet : endpointsInUse.values()) {
+                            if (endpointSet.contains(endpoint)) {
                                 count++;
                             }
                         }
@@ -1501,12 +1501,12 @@ public abstract class AbstractCamelContext extends BaseService
 
             RouteService routeService = routeServices.get(routeId);
             if (routeService != null) {
-                List<RouteStartupOrder> routes = new ArrayList<>(1);
+                List<RouteStartupOrder> routeList = new ArrayList<>(1);
                 Route route = routeService.getRoute();
                 RouteStartupOrder order = new DefaultRouteStartupOrder(1, route, routeService);
-                routes.add(order);
+                routeList.add(order);
 
-                getShutdownStrategy().suspend(this, routes, timeout, timeUnit);
+                getShutdownStrategy().suspend(this, routeList, timeout, timeUnit);
                 // must suspend route service as well
                 suspendRouteService(routeService);
                 // must suspend the route as well
@@ -2528,7 +2528,7 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     private String doGetVersion() {
-        String version = null;
+        String resolvedVersion = null;
 
         InputStream is = null;
         // try to load from maven properties first
@@ -2538,7 +2538,7 @@ public abstract class AbstractCamelContext extends BaseService
                     .getResourceAsStream("/META-INF/maven/org.apache.camel/camel-base-engine/pom.properties");
             if (is != null) {
                 p.load(is);
-                version = p.getProperty("version", "");
+                resolvedVersion = p.getProperty("version", "");
             }
         } catch (Exception e) {
             // ignore
@@ -2549,22 +2549,22 @@ public abstract class AbstractCamelContext extends BaseService
         }
 
         // fallback to using Java API
-        if (version == null) {
+        if (resolvedVersion == null) {
             Package aPackage = getClass().getPackage();
             if (aPackage != null) {
-                version = aPackage.getImplementationVersion();
-                if (version == null) {
-                    version = aPackage.getSpecificationVersion();
+                resolvedVersion = aPackage.getImplementationVersion();
+                if (resolvedVersion == null) {
+                    resolvedVersion = aPackage.getSpecificationVersion();
                 }
             }
         }
 
-        if (version == null) {
+        if (resolvedVersion == null) {
             // we could not compute the version so use a blank
-            version = "";
+            resolvedVersion = "";
         }
 
-        return version;
+        return resolvedVersion;
     }
 
     @Override
@@ -3290,8 +3290,7 @@ public abstract class AbstractCamelContext extends BaseService
         }
 
         // start management strategy before lifecycles are started
-        ManagementStrategy managementStrategy = getManagementStrategy();
-        startService(managementStrategy);
+        startService(getManagementStrategy());
 
         // start lifecycle strategies
         if (!lifecycleStrategies.isEmpty()) {
@@ -3779,8 +3778,8 @@ public abstract class AbstractCamelContext extends BaseService
                     internalRouteStartupManager.safelyStartRouteServices(true, true, true, false, addingRoutes, routeService);
                     // start route services if it was configured to auto startup
                     // and we are not adding routes
-                    boolean autoStartup = routeService.isAutoStartup();
-                    if (!addingRoutes || autoStartup) {
+                    boolean isAutoStartup = routeService.isAutoStartup();
+                    if (!addingRoutes || isAutoStartup) {
                         // start the route since auto start is enabled or we are
                         // starting a route (not adding new routes)
                         routeService.start();
@@ -4307,11 +4306,7 @@ public abstract class AbstractCamelContext extends BaseService
                         = getBootstrapFactoryFinder().newInstance(Debugger.FACTORY, DebuggerFactory.class).orElse(null);
                 if (df != null) {
                     LOG.info("Detected: {} JAR (Enabling Camel Debugging)", df);
-                    setDebugging(true);
-                    Debugger debugger = df.createDebugger(this);
-                    if (debugger != null) {
-                        setDebugger(debugger);
-                    }
+                    enableDebugging(df);
                 }
             } catch (Exception e) {
                 LOG.warn("Cannot create JmxManagementStrategyFactory. Will fallback and disable JMX.", e);
@@ -4338,6 +4333,14 @@ public abstract class AbstractCamelContext extends BaseService
         } catch (Exception e) {
             LOG.warn("Error setting up management due {}", e.getMessage());
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        }
+    }
+
+    private void enableDebugging(DebuggerFactory df) throws Exception {
+        setDebugging(true);
+        Debugger newDebugger = df.createDebugger(this);
+        if (newDebugger != null) {
+            setDebugger(newDebugger);
         }
     }
 
