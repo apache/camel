@@ -352,14 +352,14 @@ public class PropertiesComponent extends ServiceSupport
      * locations from this option.
      */
     public void setLocations(String[] locationStrings) {
-        List<PropertiesLocation> locations = new ArrayList<>();
+        List<PropertiesLocation> propertiesLocations = new ArrayList<>();
         if (locationStrings != null) {
             for (String locationString : locationStrings) {
-                locations.add(new PropertiesLocation(locationString));
+                propertiesLocations.add(new PropertiesLocation(locationString));
             }
         }
 
-        setLocations(locations);
+        setLocations(propertiesLocations);
     }
 
     /**
@@ -803,23 +803,23 @@ public class PropertiesComponent extends ServiceSupport
     private List<PropertiesLocation> parseLocations(List<PropertiesLocation> locations) {
         List<PropertiesLocation> answer = new ArrayList<>();
 
-        for (PropertiesLocation location : locations) {
-            LOG.trace("Parsing location: {}", location);
+        for (PropertiesLocation propertiesLocation : locations) {
+            LOG.trace("Parsing location: {}", propertiesLocation);
 
             try {
-                String path = FilePathResolver.resolvePath(location.getPath());
+                String path = FilePathResolver.resolvePath(propertiesLocation.getPath());
                 LOG.debug("Parsed location: {}", path);
                 if (ObjectHelper.isNotEmpty(path)) {
                     answer.add(new PropertiesLocation(
-                            location.getResolver(),
+                            propertiesLocation.getResolver(),
                             path,
-                            location.isOptional()));
+                            propertiesLocation.isOptional()));
                 }
             } catch (IllegalArgumentException e) {
-                if (!ignoreMissingLocation && !location.isOptional()) {
+                if (!ignoreMissingLocation && !propertiesLocation.isOptional()) {
                     throw e;
                 } else {
-                    LOG.debug("Ignored missing location: {}", location);
+                    LOG.debug("Ignored missing location: {}", propertiesLocation);
                 }
             }
         }
