@@ -39,6 +39,7 @@ function notifySuccess() {
   local current=$3
 
   echo "${component} test completed successfully: ${current} verified / ${failures} failed"
+  echo "| ${component} | :white_check_mark: pass" >> $GITHUB_STEP_SUMMARY
 }
 
 function notifyError() {
@@ -47,6 +48,7 @@ function notifyError() {
   local current=$3
 
   echo "Failed ${component} test: ${current} verified / ${failures} failed"
+  echo "| ${component} | :x: fail" >> $GITHUB_STEP_SUMMARY
 }
 
 function runTest() {
@@ -60,6 +62,9 @@ function runTest() {
   echo ""
 
   echo "Logging test to ${logDir}/${component/\//-}.log"
+  echo "| Component | Result |" >> $GITHUB_STEP_SUMMARY
+  echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
+
   mvn -Psourcecheck ${MVN_OPTS} verify 2>&1 >> "${logDir}/${component/\//-}.log"
   if [[ $? -ne 0 ]]; then
     ((failures++))
