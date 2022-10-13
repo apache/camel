@@ -58,9 +58,7 @@ public class EhcacheComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        EhcacheConfiguration configuration = this.configuration.copy();
-
-        EhcacheEndpoint endpoint = new EhcacheEndpoint(uri, this, remaining, configuration);
+        EhcacheEndpoint endpoint = new EhcacheEndpoint(uri, this, remaining, this.configuration.copy());
         setProperties(endpoint, parameters);
         return endpoint;
     }
