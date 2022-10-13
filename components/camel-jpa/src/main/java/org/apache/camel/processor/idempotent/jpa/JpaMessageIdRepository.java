@@ -46,6 +46,9 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
     protected static final String QUERY_CLEAR_STRING
             = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1";
 
+    private static final String SOMETHING_WENT_WRONG
+            = "Something went wrong trying to add message to repository %s";
+
     private static final Logger LOG = LoggerFactory.getLogger(JpaMessageIdRepository.class);
 
     private final String processorName;
@@ -90,37 +93,35 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
                 = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager, true);
         // Run this in single transaction.
         final Boolean[] rc = new Boolean[1];
-        transactionStrategy.executeInTransaction(new Runnable() {
-            public void run() {
-                if (isJoinTransaction()) {
-                    entityManager.joinTransaction();
-                }
+        transactionStrategy.executeInTransaction(() -> {
+            if (isJoinTransaction()) {
+                entityManager.joinTransaction();
+            }
 
+            try {
+                List<?> list = query(entityManager, messageId);
+                if (list.isEmpty()) {
+                    MessageProcessed processed = new MessageProcessed();
+                    processed.setProcessorName(processorName);
+                    processed.setMessageId(messageId);
+                    processed.setCreatedAt(new Date());
+                    entityManager.persist(processed);
+                    entityManager.flush();
+                    entityManager.close();
+                    rc[0] = Boolean.TRUE;
+                } else {
+                    rc[0] = Boolean.FALSE;
+                }
+            } catch (Exception ex) {
+                String contextInfo = String.format(SOMETHING_WENT_WRONG, ex.getMessage());
+                throw new PersistenceException(contextInfo, ex);
+            } finally {
                 try {
-                    List<?> list = query(entityManager, messageId);
-                    if (list.isEmpty()) {
-                        MessageProcessed processed = new MessageProcessed();
-                        processed.setProcessorName(processorName);
-                        processed.setMessageId(messageId);
-                        processed.setCreatedAt(new Date());
-                        entityManager.persist(processed);
-                        entityManager.flush();
+                    if (entityManager.isOpen()) {
                         entityManager.close();
-                        rc[0] = Boolean.TRUE;
-                    } else {
-                        rc[0] = Boolean.FALSE;
                     }
-                } catch (Exception ex) {
-                    LOG.error("Something went wrong trying to add message to repository {}", ex.getMessage(), ex);
-                    throw new PersistenceException(ex);
-                } finally {
-                    try {
-                        if (entityManager.isOpen()) {
-                            entityManager.close();
-                        }
-                    } catch (Exception e) {
-                        // ignore
-                    }
+                } catch (Exception e) {
+                    // ignore
                 }
             }
         });
@@ -142,29 +143,27 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
 
         // Run this in single transaction.
         final Boolean[] rc = new Boolean[1];
-        transactionStrategy.executeInTransaction(new Runnable() {
-            public void run() {
-                if (isJoinTransaction()) {
-                    entityManager.joinTransaction();
+        transactionStrategy.executeInTransaction(() -> {
+            if (isJoinTransaction()) {
+                entityManager.joinTransaction();
+            }
+            try {
+                List<?> list = query(entityManager, messageId);
+                if (list.isEmpty()) {
+                    rc[0] = Boolean.FALSE;
+                } else {
+                    rc[0] = Boolean.TRUE;
                 }
+            } catch (Exception ex) {
+                String contextInfo = String.format(SOMETHING_WENT_WRONG, ex.getMessage());
+                throw new PersistenceException(contextInfo, ex);
+            } finally {
                 try {
-                    List<?> list = query(entityManager, messageId);
-                    if (list.isEmpty()) {
-                        rc[0] = Boolean.FALSE;
-                    } else {
-                        rc[0] = Boolean.TRUE;
+                    if (entityManager.isOpen()) {
+                        entityManager.close();
                     }
-                } catch (Exception ex) {
-                    LOG.error("Something went wrong trying to check message in repository {}", ex.getMessage(), ex);
-                    throw new PersistenceException(ex);
-                } finally {
-                    try {
-                        if (entityManager.isOpen()) {
-                            entityManager.close();
-                        }
-                    } catch (Exception e) {
-                        // ignore
-                    }
+                } catch (Exception e) {
+                    // ignore
                 }
             }
         });
@@ -185,33 +184,31 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
                 = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager, true);
 
         Boolean rc[] = new Boolean[1];
-        transactionStrategy.executeInTransaction(new Runnable() {
-            public void run() {
-                if (isJoinTransaction()) {
-                    entityManager.joinTransaction();
+        transactionStrategy.executeInTransaction(() -> {
+            if (isJoinTransaction()) {
+                entityManager.joinTransaction();
+            }
+            try {
+                List<?> list = query(entityManager, messageId);
+                if (list.isEmpty()) {
+                    rc[0] = Boolean.FALSE;
+                } else {
+                    MessageProcessed processed = (MessageProcessed) list.get(0);
+                    entityManager.remove(processed);
+                    entityManager.flush();
+                    entityManager.close();
+                    rc[0] = Boolean.TRUE;
                 }
+            } catch (Exception ex) {
+                String contextInfo = String.format(SOMETHING_WENT_WRONG, ex.getMessage());
+                throw new PersistenceException(contextInfo, ex);
+            } finally {
                 try {
-                    List<?> list = query(entityManager, messageId);
-                    if (list.isEmpty()) {
-                        rc[0] = Boolean.FALSE;
-                    } else {
-                        MessageProcessed processed = (MessageProcessed) list.get(0);
-                        entityManager.remove(processed);
-                        entityManager.flush();
+                    if (entityManager.isOpen()) {
                         entityManager.close();
-                        rc[0] = Boolean.TRUE;
                     }
-                } catch (Exception ex) {
-                    LOG.error("Something went wrong trying to remove message to repository {}", ex.getMessage(), ex);
-                    throw new PersistenceException(ex);
-                } finally {
-                    try {
-                        if (entityManager.isOpen()) {
-                            entityManager.close();
-                        }
-                    } catch (Exception e) {
-                        // ignore
-                    }
+                } catch (Exception e) {
+                    // ignore
                 }
             }
         });
@@ -236,33 +233,31 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
     public void clear() {
         final EntityManager entityManager = getTargetEntityManager(null, entityManagerFactory, true, sharedEntityManager, true);
 
-        transactionStrategy.executeInTransaction(new Runnable() {
-            public void run() {
-                if (isJoinTransaction()) {
-                    entityManager.joinTransaction();
+        transactionStrategy.executeInTransaction(() -> {
+            if (isJoinTransaction()) {
+                entityManager.joinTransaction();
+            }
+            try {
+                List<?> list = queryClear(entityManager);
+                if (!list.isEmpty()) {
+                    Iterator<?> it = list.iterator();
+                    while (it.hasNext()) {
+                        Object item = it.next();
+                        entityManager.remove(item);
+                    }
+                    entityManager.flush();
+                    entityManager.close();
                 }
+            } catch (Exception ex) {
+                String contextInfo = String.format(SOMETHING_WENT_WRONG, ex.getMessage());
+                throw new PersistenceException(contextInfo, ex);
+            } finally {
                 try {
-                    List<?> list = queryClear(entityManager);
-                    if (!list.isEmpty()) {
-                        Iterator it = list.iterator();
-                        while (it.hasNext()) {
-                            Object item = it.next();
-                            entityManager.remove(item);
-                        }
-                        entityManager.flush();
+                    if (entityManager.isOpen()) {
                         entityManager.close();
                     }
-                } catch (Exception ex) {
-                    LOG.error("Something went wrong trying to clear the repository {}", ex.getMessage(), ex);
-                    throw new PersistenceException(ex);
-                } finally {
-                    try {
-                        if (entityManager.isOpen()) {
-                            entityManager.close();
-                        }
-                    } catch (Exception e) {
-                        // ignore
-                    }
+                } catch (Exception e) {
+                    // ignore
                 }
             }
         });

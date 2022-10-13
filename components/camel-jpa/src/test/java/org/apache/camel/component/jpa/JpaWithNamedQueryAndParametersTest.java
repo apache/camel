@@ -143,7 +143,7 @@ public class JpaWithNamedQueryAndParametersTest {
         endpoint = (JpaEndpoint) value;
 
         transactionTemplate = endpoint.createTransactionTemplate();
-        entityManager = endpoint.createEntityManager();
+        entityManager = endpoint.getEntityManagerFactory().createEntityManager();
     }
 
     protected String getEndpointUri() {

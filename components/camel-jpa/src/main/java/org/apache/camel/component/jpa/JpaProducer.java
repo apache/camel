@@ -173,30 +173,27 @@ public class JpaProducer extends DefaultProducer {
     }
 
     protected void processQuery(Exchange exchange, EntityManager entityManager) {
-        Query query = getQueryFactory().createQuery(entityManager);
-        configureParameters(query, exchange);
+        Query innerQuery = getQueryFactory().createQuery(entityManager);
+        configureParameters(innerQuery, exchange);
 
-        transactionStrategy.executeInTransaction(new Runnable() {
-            @Override
-            public void run() {
-                if (getEndpoint().isJoinTransaction()) {
-                    entityManager.joinTransaction();
-                }
+        transactionStrategy.executeInTransaction(() -> {
+            if (getEndpoint().isJoinTransaction()) {
+                entityManager.joinTransaction();
+            }
 
-                Message target;
-                if (ExchangeHelper.isOutCapable(exchange)) {
-                    target = exchange.getOut();
-                    // preserve headers
-                    target.getHeaders().putAll(exchange.getIn().getHeaders());
-                } else {
-                    target = exchange.getIn();
-                }
-                Object answer = isUseExecuteUpdate() ? query.executeUpdate() : query.getResultList();
-                target.setBody(answer);
+            Message target;
+            if (ExchangeHelper.isOutCapable(exchange)) {
+                target = exchange.getMessage();
+                // preserve headers
+                target.getHeaders().putAll(exchange.getIn().getHeaders());
+            } else {
+                target = exchange.getIn();
+            }
+            Object answer = isUseExecuteUpdate() ? innerQuery.executeUpdate() : innerQuery.getResultList();
+            target.setBody(answer);
 
-                if (getEndpoint().isFlushOnSend()) {
-                    entityManager.flush();
-                }
+            if (getEndpoint().isFlushOnSend()) {
+                entityManager.flush();
             }
         });
     }
@@ -229,29 +226,26 @@ public class JpaProducer extends DefaultProducer {
         final Object key = exchange.getMessage().getBody();
 
         if (key != null) {
-            transactionStrategy.executeInTransaction(new Runnable() {
-                @Override
-                public void run() {
-                    if (getEndpoint().isJoinTransaction()) {
-                        entityManager.joinTransaction();
-                    }
+            transactionStrategy.executeInTransaction(() -> {
+                if (getEndpoint().isJoinTransaction()) {
+                    entityManager.joinTransaction();
+                }
 
-                    Object answer = entityManager.find(getEndpoint().getEntityType(), key);
-                    LOG.debug("Find: {} -> {}", key, answer);
+                Object answer = entityManager.find(getEndpoint().getEntityType(), key);
+                LOG.debug("Find: {} -> {}", key, answer);
 
-                    Message target;
-                    if (ExchangeHelper.isOutCapable(exchange)) {
-                        target = exchange.getOut();
-                        // preserve headers
-                        target.getHeaders().putAll(exchange.getIn().getHeaders());
-                    } else {
-                        target = exchange.getIn();
-                    }
-                    target.setBody(answer);
+                Message target;
+                if (ExchangeHelper.isOutCapable(exchange)) {
+                    target = exchange.getMessage();
+                    // preserve headers
+                    target.getHeaders().putAll(exchange.getIn().getHeaders());
+                } else {
+                    target = exchange.getIn();
+                }
+                target.setBody(answer);
 
-                    if (getEndpoint().isFlushOnSend()) {
-                        entityManager.flush();
-                    }
+                if (getEndpoint().isFlushOnSend()) {
+                    entityManager.flush();
                 }
             });
         }
@@ -292,7 +286,7 @@ public class JpaProducer extends DefaultProducer {
                         Collection<?> collection = (Collection<?>) values;
                         // need to create a list to store returned values as they can be updated
                         // by JPA such as setting auto assigned ids
-                        Collection managedCollection = new ArrayList<>(collection.size());
+                        Collection<Object> managedCollection = new ArrayList<>(collection.size());
                         Object managedEntity;
                         for (Object entity : collection) {
                             if (!getEndpoint().isRemove()) {

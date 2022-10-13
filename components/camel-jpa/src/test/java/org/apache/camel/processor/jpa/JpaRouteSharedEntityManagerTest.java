@@ -82,7 +82,7 @@ public class JpaRouteSharedEntityManagerTest extends AbstractJpaTest {
         Expression expression = parser.parseExpression("nativeEntityManagerFactory.brokerFactory.openBrokers");
         List<?> brokers = expression.getValue(context, List.class);
 
-        return brokers.size();
+        return brokers != null ? brokers.size() : 0;
     }
 
     @Test
