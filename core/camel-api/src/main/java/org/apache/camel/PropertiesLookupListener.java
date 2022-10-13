@@ -25,10 +25,11 @@ public interface PropertiesLookupListener {
     /**
      * Triggers when the given property was found.
      *
-     * @param name   property name
-     * @param value  the resolved value
-     * @param source optional source containing the properties
+     * @param name         property name
+     * @param value        the resolved value
+     * @param defaultValue optional default value
+     * @param source       optional source containing the properties
      */
-    void onLookup(String name, String value, String source);
+    void onLookup(String name, String value, String defaultValue, String source);
 
 }

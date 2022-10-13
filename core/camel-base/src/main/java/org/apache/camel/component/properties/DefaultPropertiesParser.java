@@ -385,8 +385,16 @@ public class DefaultPropertiesParser implements PropertiesParser {
             if (local != null) {
                 value = local.getProperty(key);
                 if (value != null) {
+                    String defaultValue = null;
                     String loc = location(local, key, "LocalProperties");
-                    onLookup(key, value, loc);
+                    if (local instanceof OrderedLocationProperties) {
+                        Object val = ((OrderedLocationProperties) local).getDefaultValue(key);
+                        if (val != null) {
+                            defaultValue
+                                    = propertiesComponent.getCamelContext().getTypeConverter().tryConvertTo(String.class, val);
+                        }
+                    }
+                    onLookup(key, value, defaultValue, loc);
                     log.debug("Found local property: {} with value: {} to be used.", key, value);
                 }
             }
@@ -402,14 +410,14 @@ public class DefaultPropertiesParser implements PropertiesParser {
             if (value == null && envMode == PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_OVERRIDE) {
                 value = lookupEnvironmentVariable(key);
                 if (value != null) {
-                    onLookup(key, value, "ENV");
+                    onLookup(key, value, null, "ENV");
                     log.debug("Found an OS environment property: {} with value: {} to be used.", key, value);
                 }
             }
             if (value == null && sysMode == PropertiesComponent.SYSTEM_PROPERTIES_MODE_OVERRIDE) {
                 value = System.getProperty(key);
                 if (value != null) {
-                    onLookup(key, value, "SYS");
+                    onLookup(key, value, null, "SYS");
                     log.debug("Found a JVM system property: {} with value: {} to be used.", key, value);
                 }
             }
@@ -424,14 +432,14 @@ public class DefaultPropertiesParser implements PropertiesParser {
             if (value == null && envMode == PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_FALLBACK) {
                 value = lookupEnvironmentVariable(key);
                 if (value != null) {
-                    onLookup(key, value, "ENV");
+                    onLookup(key, value, null, "ENV");
                     log.debug("Found an OS environment property: {} with value: {} to be used.", key, value);
                 }
             }
             if (value == null && sysMode == PropertiesComponent.SYSTEM_PROPERTIES_MODE_FALLBACK) {
                 value = System.getProperty(key);
                 if (value != null) {
-                    onLookup(key, value, "SYS");
+                    onLookup(key, value, null, "SYS");
                     log.debug("Found a JVM system property: {} with value: {} to be used.", key, value);
                 }
             }
@@ -445,10 +453,10 @@ public class DefaultPropertiesParser implements PropertiesParser {
         }
     }
 
-    private void onLookup(String name, String value, String source) {
+    private void onLookup(String name, String value, String defaultValue, String source) {
         for (PropertiesLookupListener listener : propertiesComponent.getPropertiesLookupListeners()) {
             try {
-                listener.onLookup(name, value, source);
+                listener.onLookup(name, value, defaultValue, source);
             } catch (Exception e) {
                 // ignore
             }

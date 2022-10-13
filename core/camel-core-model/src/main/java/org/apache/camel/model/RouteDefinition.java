@@ -91,6 +91,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     private OutputTypeDefinition outputType;
     private List<PropertyDefinition> routeProperties;
     private Map<String, Object> templateParameters;
+    private Map<String, Object> templateDefaultParameters;
     private RouteTemplateContext routeTemplateContext;
     private Resource resource;
     private String precondition;
@@ -722,6 +723,15 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     @XmlTransient
     public void setTemplateParameters(Map<String, Object> templateParameters) {
         this.templateParameters = templateParameters;
+    }
+
+    public Map<String, Object> getTemplateDefaultParameters() {
+        return templateDefaultParameters;
+    }
+
+    @XmlTransient
+    public void setTemplateDefaultParameters(Map<String, Object> templateDefaultParameters) {
+        this.templateDefaultParameters = templateDefaultParameters;
     }
 
     public RouteTemplateContext getRouteTemplateContext() {

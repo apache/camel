@@ -57,7 +57,14 @@ public class DefaultPropertiesLookup implements PropertiesLookup {
             if (value != null) {
                 answer = component.getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, value);
                 String loc = location(local, name, "LocalProperties");
-                onLookup(name, answer, loc);
+                String defaultValue = null;
+                if (local instanceof OrderedLocationProperties) {
+                    Object val = ((OrderedLocationProperties) local).getDefaultValue(name);
+                    if (val != null) {
+                        defaultValue = component.getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, val);
+                    }
+                }
+                onLookup(name, answer, defaultValue, loc);
             }
         }
 
@@ -68,7 +75,7 @@ public class DefaultPropertiesLookup implements PropertiesLookup {
             if (value != null) {
                 answer = component.getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, value);
                 String loc = location(local, name, "OverrideProperties");
-                onLookup(name, answer, loc);
+                onLookup(name, answer, null, loc);
             }
         }
         if (answer == null) {
@@ -92,7 +99,7 @@ public class DefaultPropertiesLookup implements PropertiesLookup {
                             source = olp.getLocation(name);
                         }
                     }
-                    onLookup(name, answer, source);
+                    onLookup(name, answer, null, source);
                     break;
                 }
             }
@@ -104,17 +111,17 @@ public class DefaultPropertiesLookup implements PropertiesLookup {
             if (value != null) {
                 answer = component.getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, value);
                 String loc = location(local, name, "InitialProperties");
-                onLookup(name, answer, loc);
+                onLookup(name, answer, null, loc);
             }
         }
 
         return answer;
     }
 
-    private void onLookup(String name, String value, String source) {
+    private void onLookup(String name, String value, String defaultValue, String source) {
         for (PropertiesLookupListener listener : component.getPropertiesLookupListeners()) {
             try {
-                listener.onLookup(name, value, source);
+                listener.onLookup(name, value, defaultValue, source);
             } catch (Exception e) {
                 // ignore
             }

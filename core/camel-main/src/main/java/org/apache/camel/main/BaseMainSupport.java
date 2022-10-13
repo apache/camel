@@ -727,12 +727,18 @@ public abstract class BaseMainSupport extends BaseService {
                         for (var entry : propertyPlaceholders.entrySet()) {
                             String k = entry.getKey().toString();
                             Object v = entry.getValue();
-                            String loc = locationSummary(propertyPlaceholders, k);
-
-                            if (SensitiveUtils.containsSensitive(k)) {
-                                LOG.info("    {} {}=xxxxxx", loc, k);
-                            } else {
-                                LOG.info("    {} {}={}", loc, k, v);
+                            Object dv = propertyPlaceholders.getDefaultValue(k);
+                            // skip logging configurations that are using default-value
+                            // or a kamelet that uses templateId as a parameter
+                            boolean same = ObjectHelper.equal(v, dv);
+                            boolean skip = "templateId".equals(k);
+                            if (!same && !skip) {
+                                String loc = locationSummary(propertyPlaceholders, k);
+                                if (SensitiveUtils.containsSensitive(k)) {
+                                    LOG.info("    {} {}=xxxxxx", loc, k);
+                                } else {
+                                    LOG.info("    {} {}={}", loc, k, v);
+                                }
                             }
                         }
                     }
@@ -1766,11 +1772,11 @@ public abstract class BaseMainSupport extends BaseService {
         }
 
         @Override
-        public void onLookup(String name, String value, String source) {
+        public void onLookup(String name, String value, String defaultValue, String source) {
             if (source == null) {
                 source = "unknown";
             }
-            olp.put(source, name, value);
+            olp.put(source, name, value, defaultValue);
         }
     }
 

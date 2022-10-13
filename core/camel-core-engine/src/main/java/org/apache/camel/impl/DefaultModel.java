@@ -383,6 +383,7 @@ public class DefaultModel implements Model {
 
         // support both camelCase and kebab-case keys
         final Map<String, Object> prop = new HashMap<>();
+        final Map<String, Object> propDefaultValues = new HashMap<>();
         // include default values first from the template (and validate that we have inputs for all required parameters)
         if (target.getTemplateParameters() != null) {
             StringJoiner templatesBuilder = new StringJoiner(", ");
@@ -390,6 +391,7 @@ public class DefaultModel implements Model {
             for (RouteTemplateParameterDefinition temp : target.getTemplateParameters()) {
                 if (temp.getDefaultValue() != null) {
                     addProperty(prop, temp.getName(), temp.getDefaultValue());
+                    addProperty(propDefaultValues, temp.getName(), temp.getDefaultValue());
                 } else {
                     if (temp.isRequired() && !routeTemplateContext.hasParameter(temp.getName())) {
                         // this is a required parameter which is missing
@@ -441,6 +443,7 @@ public class DefaultModel implements Model {
             def.setId(routeId);
         }
         def.setTemplateParameters(prop);
+        def.setTemplateDefaultParameters(propDefaultValues);
         def.setRouteTemplateContext(routeTemplateContext);
 
         // setup local beans

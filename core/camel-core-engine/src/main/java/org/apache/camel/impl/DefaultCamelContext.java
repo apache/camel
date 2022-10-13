@@ -821,7 +821,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                                 .accept(routeDefinition.getRouteTemplateContext());
                     }
 
-                    // copy parameters/bean repository to not cause side-effect
+                    // copy parameters/bean repository to not cause side effect
                     Map<Object, Object> params = new HashMap<>(routeDefinition.getTemplateParameters());
                     LocalBeanRegistry bbr
                             = (LocalBeanRegistry) routeDefinition.getRouteTemplateContext().getLocalBeanRepository();
@@ -866,7 +866,15 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                     }
 
                     OrderedLocationProperties prop = new OrderedLocationProperties();
-                    prop.putAll(routeDefinition.getLocation(), params);
+                    if (routeDefinition.getTemplateDefaultParameters() != null) {
+                        // need to keep track if a parameter is set as default value or end user configured value
+                        params.forEach((k, v) -> {
+                            Object dv = routeDefinition.getTemplateDefaultParameters().get(k);
+                            prop.put(routeDefinition.getLocation(), k, v, dv);
+                        });
+                    } else {
+                        prop.putAll(routeDefinition.getLocation(), params);
+                    }
                     pc.setLocalProperties(prop);
 
                     // we need to shadow the bean registry on the CamelContext with the local beans from the route template context
