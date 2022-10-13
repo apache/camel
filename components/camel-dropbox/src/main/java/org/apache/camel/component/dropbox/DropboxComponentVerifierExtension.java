@@ -64,10 +64,11 @@ public class DropboxComponentVerifierExtension extends DefaultComponentVerifierE
 
         try {
             // Create Dropbox client
-            DbxRequestConfig config = new DbxRequestConfig(clientId, Locale.getDefault().toString());
+            DbxRequestConfig config = DbxRequestConfig.newBuilder(clientId)
+                    .withUserLocaleFrom(Locale.getDefault())
+                    .build();
             DbxClientV2 client = new DbxClientV2(config, token);
             client.users().getCurrentAccount();
-            client = null;
         } catch (Exception e) {
             builder.error(ResultErrorBuilder
                     .withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION,

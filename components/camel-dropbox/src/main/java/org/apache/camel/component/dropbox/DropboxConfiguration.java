@@ -74,7 +74,7 @@ public class DropboxConfiguration {
     private DbxClientV2 client;
 
     /**
-     * To use an existing DbxClient instance as DropBox client.
+     * To use an existing DbxClient instance as Dropbox client.
      */
     public void setClient(DbxClientV2 client) {
         this.client = client;

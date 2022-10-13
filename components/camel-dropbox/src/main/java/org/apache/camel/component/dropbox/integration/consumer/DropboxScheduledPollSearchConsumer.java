@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.dropbox.integration.consumer;
 
-import com.dropbox.core.v2.files.SearchMatch;
+import com.dropbox.core.v2.files.Metadata;
+import com.dropbox.core.v2.files.SearchMatchV2;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.dropbox.DropboxConfiguration;
@@ -45,9 +46,10 @@ public class DropboxScheduledPollSearchConsumer extends DropboxScheduledPollCons
                     .search(configuration.getRemotePath(), configuration.getQuery());
 
             StringBuilder fileExtracted = new StringBuilder();
-            for (SearchMatch entry : result.getFound()) {
-                fileExtracted.append(entry.getMetadata().getName()).append("-").append(entry.getMetadata().getPathDisplay())
-                        .append("\n");
+            for (SearchMatchV2 entry : result.getFound()) {
+                Metadata metadata = entry.getMetadata().getMetadataValue();
+                fileExtracted.append(metadata.getName()).append('-').append(metadata.getPathDisplay())
+                        .append('\n');
             }
 
             exchange.getIn().setHeader(DropboxConstants.FOUND_FILES, fileExtracted.toString());

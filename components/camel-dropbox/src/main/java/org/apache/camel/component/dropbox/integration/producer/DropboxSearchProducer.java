@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.dropbox.integration.producer;
 
-import com.dropbox.core.v2.files.SearchMatch;
+import com.dropbox.core.v2.files.Metadata;
+import com.dropbox.core.v2.files.SearchMatchV2;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.dropbox.DropboxConfiguration;
 import org.apache.camel.component.dropbox.DropboxEndpoint;
@@ -43,9 +44,10 @@ public class DropboxSearchProducer extends DropboxProducer {
                 .search(remotePath, query);
 
         StringBuilder fileExtracted = new StringBuilder();
-        for (SearchMatch entry : result.getFound()) {
-            fileExtracted.append(entry.getMetadata().getName()).append("-").append(entry.getMetadata().getPathDisplay())
-                    .append("\n");
+        for (SearchMatchV2 entry : result.getFound()) {
+            Metadata metadataValue = entry.getMetadata().getMetadataValue();
+            fileExtracted.append(metadataValue.getName()).append('-').append(metadataValue.getPathDisplay())
+                    .append('\n');
         }
         exchange.getIn().setHeader(DropboxConstants.FOUND_FILES, fileExtracted.toString());
         exchange.getIn().setBody(result.getFound());

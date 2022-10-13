@@ -335,13 +335,8 @@ The following objects are set on message body result:
 |===
 |Object type |Description
 
-|`List<DbxEntry>` |list of file path founded. For more information on this object refer to
-Dropbox documentation,
+|`List<com.dropbox.core.v2.files.SearchMatchV2>` |list of file path founded. For more information on this object refer to
+https://javadoc.io/doc/com.dropbox.core/dropbox-core-sdk/latest/com/dropbox/core/v2/files/SearchMatchV2.html[Dropbox documentation].
 |===
-
-
-
- 
-
 
 include::spring-boot:partial$starter.adoc[]
