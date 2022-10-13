@@ -220,7 +220,7 @@ context.getPropertiesComponent().setNestedPlaceholder(false);
 
 The property placeholder can be problematic if the double curly brackets are used by a third party library like for example a query in ElasticSearch of type `{"query":{"match_all":{}}}`.
 
-To work around that it is possible to escape the double curly brackets with a backslash character like for example `\{{ property-name \}}`. This way, it won't be interpreted as a property placeholder to resolve and will be resolved as `{{property-name}}`.
+To work around that it is possible to escape the double curly brackets with a backslash character like for example `\{{ property-name \}}`. This way, it won't be interpreted as a property placeholder to resolve and will be resolved as `{{ property-name }}`.
 
 If for some reason, the backslash character before the double curly brackets must not be interpreted as an escape character, it is possible to add another backslash in front of it to escape it, it will then be seen as a backslash.
 
