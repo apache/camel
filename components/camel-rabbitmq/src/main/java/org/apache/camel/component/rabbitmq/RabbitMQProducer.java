@@ -398,16 +398,16 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
 
     protected ReplyManager createReplyManager() {
         // use a temporary queue
-        ReplyManager replyManager = new TemporaryQueueReplyManager(getEndpoint().getCamelContext());
-        replyManager.setEndpoint(getEndpoint());
+        ReplyManager newReplyManager = new TemporaryQueueReplyManager(getEndpoint().getCamelContext());
+        newReplyManager.setEndpoint(getEndpoint());
 
         String name = "RabbitMQReplyManagerTimeoutChecker[" + getEndpoint().getExchangeName() + "]";
         ScheduledExecutorService replyManagerExecutorService
                 = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(name, name);
-        replyManager.setScheduledExecutorService(replyManagerExecutorService);
+        newReplyManager.setScheduledExecutorService(replyManagerExecutorService);
         LOG.debug("Staring ReplyManager: {}", name);
-        ServiceHelper.startService(replyManager);
+        ServiceHelper.startService(newReplyManager);
 
-        return replyManager;
+        return newReplyManager;
     }
 }

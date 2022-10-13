@@ -194,9 +194,9 @@ public class MailConfiguration implements Cloneable {
             }
         }
 
-        int port = uri.getPort();
-        if (port > 0) {
-            setPort(port);
+        int uriPort = uri.getPort();
+        if (uriPort > 0) {
+            setPort(uriPort);
         } else if (this.port <= 0) {
             // resolve default port if no port number was provided, and not already configured with a port number
             setPort(MailUtils.getDefaultPortForProtocol(uri.getScheme()));
@@ -237,13 +237,13 @@ public class MailConfiguration implements Cloneable {
         }
         if (session != null) {
             answer.setSession(session);
-            String host = session.getProperty("mail.smtp.host");
-            if (host != null && !host.isEmpty()) {
-                answer.setHost(host);
+            String hostPropertyValue = session.getProperty("mail.smtp.host");
+            if (hostPropertyValue != null && !hostPropertyValue.isEmpty()) {
+                answer.setHost(hostPropertyValue);
             }
-            String port = session.getProperty("mail.smtp.port");
-            if (port != null && !port.isEmpty()) {
-                answer.setPort(Integer.parseInt(port));
+            String portPropertyValue = session.getProperty("mail.smtp.port");
+            if (portPropertyValue != null && !portPropertyValue.isEmpty()) {
+                answer.setPort(Integer.parseInt(portPropertyValue));
             }
         } else {
             ClassLoader tccl = Thread.currentThread().getContextClassLoader();
@@ -252,11 +252,11 @@ public class MailConfiguration implements Cloneable {
                     Thread.currentThread().setContextClassLoader(applicationClassLoader);
                 }
                 // use our authenticator that does no live user interaction but returns the already configured username and password
-                Session session = Session.getInstance(answer.getJavaMailProperties(),
+                Session sessionInstance = Session.getInstance(answer.getJavaMailProperties(),
                         authenticator == null ? new DefaultAuthenticator(getUsername(), getPassword()) : authenticator);
                 // sets the debug mode of the underlying mail framework
-                session.setDebug(debugMode);
-                answer.setSession(session);
+                sessionInstance.setDebug(debugMode);
+                answer.setSession(sessionInstance);
             } finally {
                 Thread.currentThread().setContextClassLoader(tccl);
             }

@@ -67,21 +67,22 @@ public class RabbitMQMessagePublisher {
     }
 
     private Message resolveMessageFrom(final Exchange camelExchange) {
-        Message message = camelExchange.getMessage();
+        Message exchangeMessage = camelExchange.getMessage();
 
         // Remove the SERIALIZE_HEADER in case it was previously set
-        if (message.getHeaders() != null && message.getHeaders().containsKey(RabbitMQEndpoint.SERIALIZE_HEADER)) {
+        if (exchangeMessage.getHeaders() != null
+                && exchangeMessage.getHeaders().containsKey(RabbitMQEndpoint.SERIALIZE_HEADER)) {
             LOG.trace("Removing header: {}", RabbitMQEndpoint.SERIALIZE_HEADER);
-            message.getHeaders().remove(RabbitMQEndpoint.SERIALIZE_HEADER);
+            exchangeMessage.getHeaders().remove(RabbitMQEndpoint.SERIALIZE_HEADER);
         }
         if (routingKey != null && routingKey.startsWith(RabbitMQConstants.RABBITMQ_DIRECT_REPLY_ROUTING_KEY)) {
             // use default exchange for reply-to messages
-            message.setHeader(RabbitMQConstants.EXCHANGE_NAME, RabbitMQConstants.RABBITMQ_DIRECT_REPLY_EXCHANGE);
-            message.setHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME,
+            exchangeMessage.setHeader(RabbitMQConstants.EXCHANGE_NAME, RabbitMQConstants.RABBITMQ_DIRECT_REPLY_EXCHANGE);
+            exchangeMessage.setHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME,
                     RabbitMQConstants.RABBITMQ_DIRECT_REPLY_EXCHANGE);
         }
 
-        return message;
+        return exchangeMessage;
     }
 
     public void publish() throws IOException {

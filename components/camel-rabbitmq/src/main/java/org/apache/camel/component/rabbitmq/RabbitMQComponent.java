@@ -183,16 +183,16 @@ public class RabbitMQComponent extends DefaultComponent {
         }
 
         // ConnectionFactory reference
-        ConnectionFactory connectionFactory = resolveAndRemoveReferenceParameter(params, "connectionFactory",
+        ConnectionFactory resolvedConnectionFactory = resolveAndRemoveReferenceParameter(params, "connectionFactory",
                 ConnectionFactory.class, getConnectionFactory());
 
         // try to lookup if there is a single instance in the registry of the
         // ConnectionFactory
-        if (connectionFactory == null && isAutoDetectConnectionFactory()) {
+        if (resolvedConnectionFactory == null && isAutoDetectConnectionFactory()) {
             Map<String, ConnectionFactory> map = getCamelContext().getRegistry().findByTypeWithName(ConnectionFactory.class);
             if (map != null && map.size() == 1) {
                 Map.Entry<String, ConnectionFactory> entry = map.entrySet().iterator().next();
-                connectionFactory = entry.getValue();
+                resolvedConnectionFactory = entry.getValue();
                 String name = entry.getKey();
                 if (name == null) {
                     name = "anonymous";
@@ -204,23 +204,23 @@ public class RabbitMQComponent extends DefaultComponent {
         }
 
         @SuppressWarnings("unchecked")
-        Map<String, Object> clientProperties
+        Map<String, Object> resolvedClientProperties
                 = resolveAndRemoveReferenceParameter(params, "clientProperties", Map.class, getClientProperties());
-        TrustManager trustManager
+        TrustManager resolvedTrustManager
                 = resolveAndRemoveReferenceParameter(params, "trustManager", TrustManager.class, getTrustManager());
-        Map<String, Object> additionalHeaders
+        Map<String, Object> resolvedAdditionalHeaders
                 = resolveAndRemoveReferenceParameter(params, "additionalHeaders", Map.class);
-        Map<String, Object> additionalProperties
+        Map<String, Object> resolvedAdditionalProperties
                 = resolveAndRemoveReferenceParameter(params, "additionalProperties", Map.class);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Additional headers: {}", additionalHeaders);
-            LOG.debug("Additional properties: {}", additionalProperties);
+            LOG.debug("Additional headers: {}", resolvedAdditionalHeaders);
+            LOG.debug("Additional properties: {}", resolvedAdditionalProperties);
         }
         RabbitMQEndpoint endpoint;
-        if (connectionFactory == null) {
+        if (resolvedConnectionFactory == null) {
             endpoint = new RabbitMQEndpoint(uri, this);
         } else {
-            endpoint = new RabbitMQEndpoint(uri, this, connectionFactory);
+            endpoint = new RabbitMQEndpoint(uri, this, resolvedConnectionFactory);
         }
         endpoint.setHostname(host);
         endpoint.setPortNumber(port);
@@ -230,11 +230,11 @@ public class RabbitMQComponent extends DefaultComponent {
         endpoint.setAddresses(getAddresses());
         endpoint.setThreadPoolSize(getThreadPoolSize());
         endpoint.setExchangeName(exchangeName);
-        endpoint.setClientProperties(clientProperties);
-        endpoint.setAdditionalHeaders(additionalHeaders);
-        endpoint.setAdditionalProperties(additionalProperties);
+        endpoint.setClientProperties(resolvedClientProperties);
+        endpoint.setAdditionalHeaders(resolvedAdditionalHeaders);
+        endpoint.setAdditionalProperties(resolvedAdditionalProperties);
         endpoint.setSslProtocol(getSslProtocol());
-        endpoint.setTrustManager(trustManager);
+        endpoint.setTrustManager(resolvedTrustManager);
         endpoint.setConnectionTimeout(getConnectionTimeout());
         endpoint.setRequestedChannelMax(getRequestedChannelMax());
         endpoint.setRequestedFrameMax(getRequestedFrameMax());

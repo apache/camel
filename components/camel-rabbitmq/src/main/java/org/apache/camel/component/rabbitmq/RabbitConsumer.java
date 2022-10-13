@@ -386,11 +386,11 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
      */
     private Channel openChannel(Connection conn) throws IOException {
         LOG.trace("Creating channel...");
-        Channel channel = conn.createChannel();
-        LOG.debug("Created channel: {}", channel);
+        Channel newChannel = conn.createChannel();
+        LOG.debug("Created channel: {}", newChannel);
         // setup the basicQos
         if (consumer.getEndpoint().isPrefetchEnabled()) {
-            channel.basicQos(consumer.getEndpoint().getPrefetchSize(), consumer.getEndpoint().getPrefetchCount(),
+            newChannel.basicQos(consumer.getEndpoint().getPrefetchSize(), consumer.getEndpoint().getPrefetchCount(),
                     consumer.getEndpoint().isPrefetchGlobal());
         }
 
@@ -398,11 +398,11 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
         // reconnections.
         if (consumer.getEndpoint().isDeclare()) {
             try {
-                consumer.getEndpoint().declareExchangeAndQueue(channel);
+                consumer.getEndpoint().declareExchangeAndQueue(newChannel);
             } catch (IOException e) {
-                if (channel != null && channel.isOpen()) {
+                if (newChannel != null && newChannel.isOpen()) {
                     try {
-                        channel.close();
+                        newChannel.close();
                     } catch (Exception innerEx) {
                         e.addSuppressed(innerEx);
                     }
@@ -415,7 +415,7 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
                 }
             }
         }
-        return channel;
+        return newChannel;
     }
 
 }
