@@ -66,7 +66,6 @@ public class AvroListener {
      */
     private Server initAndStartServer(AvroConfiguration configuration, CamelContext camelContext) throws Exception {
         SpecificResponder responder;
-        Server server;
 
         if (configuration.isReflectionProtocol()) {
             responder = new AvroReflectResponder(configuration.getProtocol(), this);
@@ -74,6 +73,15 @@ public class AvroListener {
             responder = new AvroSpecificResponder(configuration.getProtocol(), this);
         }
 
+        final Server newServer = createServer(configuration, camelContext, responder);
+
+        newServer.start();
+
+        return newServer;
+    }
+
+    private static Server createServer(AvroConfiguration configuration, CamelContext camelContext, SpecificResponder responder)
+            throws Exception {
         if (AVRO_HTTP_TRANSPORT.equalsIgnoreCase(configuration.getTransport().name())) {
             AvroRpcHttpServerFactory factory = camelContext
                     .adapt(ExtendedCamelContext.class)
@@ -81,16 +89,12 @@ public class AvroListener {
                     .newInstance("avro-rpc-http-server-factory", AvroRpcHttpServerFactory.class)
                     .orElseThrow(() -> new IllegalStateException(
                             "AvroRpcHttpServerFactory is neither set on this endpoint neither found in Camel Registry or FactoryFinder."));
-            server = factory.create(responder, configuration.getPort());
+            return factory.create(responder, configuration.getPort());
         } else if (AVRO_NETTY_TRANSPORT.equalsIgnoreCase(configuration.getTransport().name())) {
-            server = new NettyServer(responder, new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+            return new NettyServer(responder, new InetSocketAddress(configuration.getHost(), configuration.getPort()));
         } else {
             throw new IllegalArgumentException("Unknown transport " + configuration.getTransport());
         }
-
-        server.start();
-
-        return server;
     }
 
     /**
