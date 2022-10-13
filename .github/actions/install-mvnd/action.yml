@@ -39,5 +39,5 @@ runs:
     - run: unzip mvnd.zip -d /tmp/
       shell: bash
     - id: mvnd-location
-      run: echo "::set-output name=mvnd-dir::/tmp/maven-mvnd-${{ inputs.version }}-linux-amd64/bin"
+      run: echo "mvnd-dir=/tmp/maven-mvnd-${{ inputs.version }}-linux-amd64/bin" >> $GITHUB_OUTPUT
       shell: bash
