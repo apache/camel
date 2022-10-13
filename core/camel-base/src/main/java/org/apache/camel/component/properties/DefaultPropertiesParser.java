@@ -105,7 +105,16 @@ public class DefaultPropertiesParser implements PropertiesParser {
          * @return       Evaluated string
          */
         public String parse(String input) {
-            if (nestedPlaceholder) {
+            // does the key turn on or off nested?
+            boolean nested = nestedPlaceholder;
+            if (input.contains("?nested=true")) {
+                nested = true;
+                input = input.replace("?nested=true", "");
+            } else if (input.contains("?nested=false")) {
+                nested = false;
+                input = input.replace("?nested=false", "");
+            }
+            if (nested) {
                 return doParseNested(input, new HashSet<String>());
             } else {
                 return doParse(input);
@@ -474,14 +483,14 @@ public class DefaultPropertiesParser implements PropertiesParser {
         }
 
         /**
-         * Gets the begin index of the property (including the prefix token).
+         * Gets the beginning index of the property (including the prefix token).
          */
         public int getBeginIndex() {
             return beginIndex;
         }
 
         /**
-         * Gets the end index of the property (including the suffix token).
+         * Gets the ending index of the property (including the suffix token).
          */
         public int getEndIndex() {
             return endIndex;
