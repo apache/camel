@@ -62,9 +62,6 @@ function runTest() {
   echo ""
 
   echo "Logging test to ${logDir}/${component/\//-}.log"
-  echo "| Component | Result |" >> $GITHUB_STEP_SUMMARY
-  echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
-
   mvn -Psourcecheck ${MVN_OPTS} verify 2>&1 >> "${logDir}/${component/\//-}.log"
   if [[ $? -ne 0 ]]; then
     ((failures++))
@@ -123,6 +120,8 @@ function main() {
   echo "It will test the following ${total} components:"
   echo "${components}"
 
+  echo "| Component | Result |" >> $GITHUB_STEP_SUMMARY
+  echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
   current=0
   for component in $(echo $components); do
     ((current++))
