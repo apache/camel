@@ -96,6 +96,9 @@ function componentTest() {
 }
 
 function coreTest() {
+  echo "| Core | Result |" >> $GITHUB_STEP_SUMMARY
+  echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
+
   cd "core"
   runTest "core" "1" "1"
 }
@@ -135,6 +138,7 @@ function main() {
   echo "It will test the following ${total} components:"
   echo "${components}"
 
+  echo "" >> $GITHUB_STEP_SUMMARY
   echo "| Component | Result |" >> $GITHUB_STEP_SUMMARY
   echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
   current=0
