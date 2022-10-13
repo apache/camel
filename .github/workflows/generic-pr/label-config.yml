@@ -22,6 +22,11 @@ ci:
 core:
   - core/**/*
 
+core-build-and-dependencies:
+  - apache-camel/**
+  - camel-dependencies/**
+  - parent/**
+
 catalog:
   - catalog/**/*
 
