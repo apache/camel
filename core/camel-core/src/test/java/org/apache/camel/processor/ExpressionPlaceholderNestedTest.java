@@ -20,13 +20,14 @@ import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-@Disabled("CAMEL-18576")
-public class ExpressionPlaceholderTest extends ContextTestSupport {
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class ExpressionPlaceholderNestedTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -34,6 +35,7 @@ public class ExpressionPlaceholderTest extends ContextTestSupport {
 
         Properties myProp = new Properties();
         myProp.put("query", "{\"query\":{\"match_all\":{}}}");
+        myProp.put("queryEscaped", "{\"query\":{\"match_all\":{}\\}}");
 
         context.getPropertiesComponent().setInitialProperties(myProp);
 
@@ -41,11 +43,38 @@ public class ExpressionPlaceholderTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPlaceholder() throws Exception {
+    public void testPlaceholderFalse() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("{\"query\":{\"match_all\":{}}}");
 
-        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:off", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testPlaceholderOn() throws Exception {
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("direct:on")
+                            .setBody().constant("{{query?nested=true}}")
+                            .to("mock:result");
+                }
+            });
+            fail();
+        } catch (FailedToCreateRouteException e) {
+            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        }
+    }
+
+    @Test
+    public void testPlaceholderEscaped() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("{\"query\":{\"match_all\":{}}}");
+
+        template.sendBody("direct:escaped", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -55,8 +84,12 @@ public class ExpressionPlaceholderTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .setBody().constant("{{query}}")
+                from("direct:off")
+                        .setBody().constant("{{query?nested=false}}")
+                        .to("mock:result");
+
+                from("direct:escaped")
+                        .setBody().constant("{{queryEscaped}}")
                         .to("mock:result");
             }
         };

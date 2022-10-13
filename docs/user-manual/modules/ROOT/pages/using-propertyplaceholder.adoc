@@ -164,7 +164,7 @@ from("direct:start")
 In the example above the mock endpoint, is already hardcoded to start with `mock:`,
 and the `where` placeholder has the value `cheese` so the resolved uri becomes `mock:cheese`.
 
-=== Property placeholders referring to other properties
+=== Property placeholders referring to other properties (nested placeholders)
 
 You can also have properties with refer to each other such as:
 
@@ -186,9 +186,39 @@ And the route in XML:
 </route>
 ----
 
+==== Turning off nested placeholders
+
+If the placeholder value contains data that interfere with the property placeholder syntax `{{` and `}}` (such as JSon data),
+you can be then explicit turn off nested placeholder by `?nested=false` in the key name, such as shown:
+
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <to uri="elasticsearch:foo?query={{myQuery?nested=false}}"/>
+</route>
+----
+
+In the example above the placeholder _myQuery_ placeholder value is as follows
+
+[source,json]
+----
+{"query":{"match_all":{}}}
+----
+
+Notice how the json query ends with `}}` which interfere with the Camel property placeholder syntax.
+
+Nested placeholders can also be turned off globally on the xref:components::properties-component.adoc[Properties] component, such as:
+
+[source,java]
+----
+CamelContext context = ...
+context.getPropertiesComponent().setNestedPlaceholder(false);
+----
+
 === Using property placeholders multiple times
 
-You can of couse also use placeholders several times:
+You can of course also use placeholders several times:
 
 [source,properties]
 ----
