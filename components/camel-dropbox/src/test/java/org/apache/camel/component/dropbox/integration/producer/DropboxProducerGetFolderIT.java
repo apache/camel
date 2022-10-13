@@ -31,7 +31,7 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @EnabledIf("org.apache.camel.component.dropbox.integration.DropboxTestSupport#hasCredentials")
-public class DropboxProducerGetFolderIT extends DropboxTestSupport {
+class DropboxProducerGetFolderIT extends DropboxTestSupport {
 
     public static final String FILE_NAME1 = "myFile.txt";
     public static final String FILE_NAME2 = "myFile2.txt";
@@ -45,17 +45,17 @@ public class DropboxProducerGetFolderIT extends DropboxTestSupport {
     }
 
     @Test
-    public void testCamelDropbox() throws Exception {
+    void testCamelDropbox() throws Exception {
         test("direct:start");
     }
 
     @Test
-    public void testCamelDropboxWithOptionInHeader() throws Exception {
+    void testCamelDropboxWithOptionInHeader() throws Exception {
         test("direct:start2");
     }
 
     @Test
-    public void testCamelDropboxHeaderHasPriorityOnParameter() throws Exception {
+    void testCamelDropboxHeaderHasPriorityOnParameter() throws Exception {
         test("direct:start3");
     }
 
@@ -79,6 +79,7 @@ public class DropboxProducerGetFolderIT extends DropboxTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
+                        .noStreamCaching()
                         .to("dropbox://get?accessToken={{accessToken}}" +
                             "&expireIn={{expireIn}}" +
                             "&refreshToken={{refreshToken}}" +
@@ -87,6 +88,7 @@ public class DropboxProducerGetFolderIT extends DropboxTestSupport {
                         .to("mock:result");
 
                 from("direct:start2")
+                        .noStreamCaching()
                         .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant(workdir))
                         .to("dropbox://get?accessToken={{accessToken}}" +
                             "&expireIn={{expireIn}}" +
@@ -95,6 +97,7 @@ public class DropboxProducerGetFolderIT extends DropboxTestSupport {
                         .to("mock:result");
 
                 from("direct:start3")
+                        .noStreamCaching()
                         .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant(workdir))
                         .to("dropbox://get?accessToken={{accessToken}}" +
                             "&expireIn={{expireIn}}" +

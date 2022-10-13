@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DropboxGetProducer extends DropboxProducer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(DropboxGetProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DropboxGetProducer.class);
 
     public DropboxGetProducer(DropboxEndpoint endpoint, DropboxConfiguration configuration) {
         super(endpoint, configuration);
@@ -53,7 +53,7 @@ public class DropboxGetProducer extends DropboxProducer {
         } else {
             StringBuilder pathsExtracted = new StringBuilder();
             for (Map.Entry<String, Object> entry : map.entrySet()) {
-                pathsExtracted.append(entry.getKey()).append("\n");
+                pathsExtracted.append(entry.getKey()).append('\n');
             }
             exchange.getIn().setHeader(DropboxConstants.DOWNLOADED_FILES, pathsExtracted.toString());
             exchange.getIn().setBody(map);

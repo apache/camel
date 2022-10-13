@@ -45,7 +45,7 @@ public class DropboxTestSupport extends CamelTestSupport {
     protected String refreshToken;
     protected Long expireIn;
 
-    private DbxClientV2 client;
+    private final DbxClientV2 client;
 
     protected DropboxTestSupport() {
         properties = loadProperties();
@@ -91,12 +91,12 @@ public class DropboxTestSupport extends CamelTestSupport {
         try {
             removeDir(name);
         } finally {
-            client.files().createFolder(name);
+            client.files().createFolderV2(name);
         }
     }
 
     protected void removeDir(String name) throws DbxException {
-        client.files().delete(name);
+        client.files().deleteV2(name);
     }
 
     protected void createFile(String fileName, String content) throws IOException {
@@ -113,12 +113,13 @@ public class DropboxTestSupport extends CamelTestSupport {
     }
 
     protected String getFileContent(String path) throws DbxException, IOException {
-        ByteArrayOutputStream target = new ByteArrayOutputStream();
-        DbxDownloader<FileMetadata> downloadedFile = client.files().download(path);
-        if (downloadedFile != null) {
-            downloadedFile.download(target);
+        try (ByteArrayOutputStream target = new ByteArrayOutputStream();
+             DbxDownloader<FileMetadata> downloadedFile = client.files().download(path)) {
+            if (downloadedFile != null) {
+                downloadedFile.download(target);
+            }
+            return target.toString();
         }
-        return new String(target.toByteArray());
     }
 
     @Override
