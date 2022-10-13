@@ -60,7 +60,7 @@ jobs:
             If necessary Apache Camel Committers may access logs and test results in the job summaries!`
             })
       - name: 'Download artifact'
-        uses: actions/github-script@v3.1.1
+        uses: actions/github-script@v6
         if: |
           github.event_name == 'workflow_run'
         with:
@@ -68,7 +68,7 @@ jobs:
 # - https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
 # - https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_run
           script: |
-            var artifacts = await github.actions.listWorkflowRunArtifacts({
+            var artifacts = await github.rest.actions.listWorkflowRunArtifacts({
                owner: context.repo.owner,
                repo: context.repo.repo,
                run_id: ${{github.event.workflow_run.id }},
@@ -76,7 +76,7 @@ jobs:
             var matchArtifact = artifacts.data.artifacts.filter((artifact) => {
               return artifact.name == "test-logs"
             })[0];
-            var download = await github.actions.downloadArtifact({
+            var download = await github.rest.actions.downloadArtifact({
                owner: context.repo.owner,
                repo: context.repo.repo,
                artifact_id: matchArtifact.id,
