@@ -173,9 +173,9 @@ The following objects are set on message body result:
 |===
 |Object type |Description
 
-|`ByteArrayOutputStream` |in case of single file download, stream representing the file downloaded
+|`byte[]` or `CachedOutputStream`  if stream caching is enabled |in case of single file download, stream representing the file downloaded
 
-|`Map<String, ByteArrayOutputStream>` |in case of multiple files download, a map with as key the path of the
+|`Map<String, byte[]>` or `Map<String, CachedOutputStream>` if stream caching is enabled |in case of multiple files download, a map with as key the path of the
 remote file downloaded and as value the stream representing the file
 downloaded
 |===

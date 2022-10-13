@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.dropbox.integration.DropboxTestSupport;
 import org.apache.camel.component.dropbox.util.DropboxConstants;
@@ -35,14 +36,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 @EnabledIf("org.apache.camel.component.dropbox.integration.DropboxTestSupport#hasCredentials")
-public class DropboxProducerPutSingleFileIT extends DropboxTestSupport {
+class DropboxProducerPutSingleFileIT extends DropboxTestSupport {
     public static final String FILENAME = "newFile.txt";
 
     @Test
-    public void testCamelDropboxWithOptionInHeader() throws Exception {
+    void testCamelDropboxWithOptionInHeader() throws Exception {
         final Path file = Files.createTempFile("camel", ".txt");
         final Map<String, Object> headers = new HashMap<>();
         headers.put(DropboxConstants.HEADER_LOCAL_PATH, file.toAbsolutePath().toString());
@@ -53,25 +54,25 @@ public class DropboxProducerPutSingleFileIT extends DropboxTestSupport {
     }
 
     @Test
-    public void uploadBodyTest() throws Exception {
-        template.sendBodyAndHeader("direct:start", "Helo Camels", DropboxConstants.HEADER_UPLOAD_MODE, DropboxUploadMode.add);
+    void uploadBodyTest() throws Exception {
+        template.sendBodyAndHeader("direct:start", "Hello Camels", DropboxConstants.HEADER_UPLOAD_MODE, DropboxUploadMode.add);
 
         assertFileUploaded();
     }
 
     @Test
-    public void uploadIfExistsAddTest() throws Exception {
+    void uploadIfExistsAddTest() throws Exception {
         createFile(FILENAME, "content");
         final Path file = Files.createTempFile("camel", ".txt");
         final Map<String, Object> headers = new HashMap<>();
         headers.put(DropboxConstants.HEADER_LOCAL_PATH, file.toAbsolutePath().toString());
         headers.put(DropboxConstants.HEADER_UPLOAD_MODE, DropboxUploadMode.add);
-        assertThrows(DropboxException.class,
-                () -> template.sendBodyAndHeaders("direct:start", null, headers));
+        Exchange exchange = template.send("direct:start", ex -> ex.getIn().setHeaders(headers));
+        assertInstanceOf(DropboxException.class, exchange.getException());
     }
 
     @Test
-    public void uploadIfExistsForceTest() throws Exception {
+    void uploadIfExistsForceTest() throws Exception {
         final String newContent = UUID.randomUUID().toString();
         createFile(FILENAME, "Hi camels");
         final Path file = Files.createTempFile("camel", ".txt");

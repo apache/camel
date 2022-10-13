@@ -24,21 +24,21 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
 @EnabledIf("org.apache.camel.component.dropbox.integration.DropboxTestSupport#hasCredentials")
-public class DropboxConsumerGetSingleIT extends DropboxTestSupport {
+class DropboxConsumerGetSingleIT extends DropboxTestSupport {
 
     public static final String FILE_NAME = "myFile.txt";
 
     @Test
-    public void testCamelDropbox() throws Exception {
+    void testCamelDropbox() throws Exception {
         final String content = "Hi camels";
         createFile(FILE_NAME, content);
-
-        context.start();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived(content);
         mock.expectedHeaderReceived(DropboxResultHeader.DOWNLOADED_FILE.name(), String.format("%s/%s", workdir, FILE_NAME));
+
+        context.getRouteController().startRoute("consumer");
         mock.assertIsSatisfied();
     }
 
@@ -46,12 +46,12 @@ public class DropboxConsumerGetSingleIT extends DropboxTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(String.format("dropbox://get?accessToken={{accessToken}}" +
-                                   "&expireIn={{expireIn}}" +
-                                   "&refreshToken={{refreshToken}}" +
-                                   "&apiKey={{apiKey}}&apiSecret={{apiSecret}}" +
-                                   "&remotePath=%s/%s",
-                        workdir, FILE_NAME))
+                fromF("dropbox://get?accessToken={{accessToken}}" +
+                      "&expireIn={{expireIn}}" +
+                      "&refreshToken={{refreshToken}}" +
+                      "&apiKey={{apiKey}}&apiSecret={{apiSecret}}" +
+                      "&remotePath=%s/%s",
+                        workdir, FILE_NAME)
                                 .autoStartup(false).id("consumer")
                                 .to("mock:result");
             }
