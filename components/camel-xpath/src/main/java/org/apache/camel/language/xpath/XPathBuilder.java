@@ -659,8 +659,8 @@ public class XPathBuilder extends ServiceSupport
                 if (!list.isEmpty()) {
                     Object value = list.get(0);
                     if (value != null) {
-                        String text = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
-                        return exchange.get().getIn().getHeader(text);
+                        String headerText = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
+                        return exchange.get().getIn().getHeader(headerText);
                     }
                 }
                 return null;
@@ -719,8 +719,8 @@ public class XPathBuilder extends ServiceSupport
                 if (exchange.get() != null && !list.isEmpty()) {
                     Object value = list.get(0);
                     if (value != null) {
-                        String text = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
-                        return exchange.get().getOut().getHeader(text);
+                        String headerText = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
+                        return exchange.get().getOut().getHeader(headerText);
                     }
                 }
                 return null;
@@ -751,11 +751,11 @@ public class XPathBuilder extends ServiceSupport
                 if (!list.isEmpty()) {
                     Object value = list.get(0);
                     if (value != null) {
-                        String text = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
+                        String propertyText = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
                         try {
                             // use the property placeholder resolver to lookup
                             // the property for us
-                            Object answer = exchange.get().getContext().resolvePropertyPlaceholders("{{" + text + "}}");
+                            Object answer = exchange.get().getContext().resolvePropertyPlaceholders("{{" + propertyText + "}}");
                             return answer;
                         } catch (Exception e) {
                             throw new XPathFunctionException(e);
@@ -791,9 +791,9 @@ public class XPathBuilder extends ServiceSupport
                 if (!list.isEmpty()) {
                     Object value = list.get(0);
                     if (value != null) {
-                        String text = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
+                        String exprText = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
                         Language simple = exchange.get().getContext().resolveLanguage("simple");
-                        Expression exp = simple.createExpression(text);
+                        Expression exp = simple.createExpression(exprText);
                         Object answer = exp.evaluate(exchange.get(), Object.class);
                         return answer;
                     }
@@ -1012,7 +1012,6 @@ public class XPathBuilder extends ServiceSupport
 
             // Check if we need to apply the XPath expression to a header
             if (ObjectHelper.isNotEmpty(getHeaderName())) {
-                String headerName = getHeaderName();
                 // only convert to input stream if really needed
                 if (isInputStreamNeeded(exchange, headerName)) {
                     is = exchange.getIn().getHeader(headerName, InputStream.class);
