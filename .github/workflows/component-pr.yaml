@@ -52,7 +52,7 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `:star2: Thanks for your contribution to the Apache Camel project! :star2: 
+              body: `:star2: Thank you for your contribution to the Apache Camel project! :star2: 
             
             :warning: Please note that the changes on this PR may be **tested automatically**. 
             
@@ -97,7 +97,8 @@ jobs:
             let total = Number(fs.readFileSync('./total'));
             let tested = Number(fs.readFileSync('./tested'));
             let failures = Number(fs.readFileSync('./failures'));
-
+            let successes = Number(fs.readFileSync('./successes'));
+                                
             var message = ""
 
             if (tested === 0) {
@@ -109,11 +110,11 @@ jobs:
                 }
               }
             } else {
-              if (failures === 0) {
-                message = `:heavy_check_mark: Finished component verification: ${failures} component(s) test failed out of **${tested} component(s) tested**`
-              } else {
-                message = `:x: Finished component verification: **${failures} component(s) test failed** out of ${tested} component(s) tested`
-              }
+              message = `### Components tested: 
+                    | Total | Tested | Failed :x: | Passed :white_check_mark: | 
+                    | --- | --- | --- |  --- |
+                    | ${total} | ${tested} | ${failures} | ${successes} | 
+                    `
             }
 
             await github.rest.issues.createComment({
