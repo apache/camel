@@ -55,7 +55,7 @@ jobs:
             If necessary Apache Camel Committers may access logs and test results in the job summaries!`
             })
       - name: 'Download artifact'
-        uses: actions/github-script@v3.1.0
+        uses: actions/github-script@v6
         if: |
           github.event_name == 'workflow_run'
         with:
