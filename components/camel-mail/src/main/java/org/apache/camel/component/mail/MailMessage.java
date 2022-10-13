@@ -120,10 +120,10 @@ public class MailMessage extends DefaultMessage {
             setMessageId(that.getMessageId());
         }
         if (that instanceof MailMessage) {
-            MailMessage mailMessage = (MailMessage) that;
-            this.originalMailMessage = mailMessage.originalMailMessage;
-            this.mailMessage = mailMessage.mailMessage;
-            this.mapMailMessage = mailMessage.mapMailMessage;
+            MailMessage tmpMailMessage = (MailMessage) that;
+            this.originalMailMessage = tmpMailMessage.originalMailMessage;
+            this.mailMessage = tmpMailMessage.mailMessage;
+            this.mapMailMessage = tmpMailMessage.mapMailMessage;
         }
         // cover over exchange if none has been assigned
         if (getExchange() == null) {
