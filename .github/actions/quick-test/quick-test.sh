@@ -93,12 +93,24 @@ function componentTest() {
   fi
 }
 
+function coreTest() {
+  cd "core"
+  runTest "core" "1" "1"
+}
+
 function main() {
   local current=0
   local startCommit=${1:-""}
   local endCommit=${2:-""}
 
   mkdir -p "${logDir}"
+
+  echo "Searching for camel core changes"
+  local core=$(git diff "${startCommit}..${endCommit}" --name-only --pretty=format:"" | grep -e '^core' | grep -v -e '^$' | cut -d / -f 1 | uniq | sort)
+  if [[ ! -z "${core}" ]] ; then
+    coreTest
+  fi
+
 
   echo "Searching for modified components"
   local components=$(git diff "${startCommit}..${endCommit}" --name-only --pretty=format:"" | grep -e '^components' | grep -v -e '^$' | cut -d / -f 1-2 | uniq | sort)
