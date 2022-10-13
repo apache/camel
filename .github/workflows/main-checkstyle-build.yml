@@ -54,3 +54,13 @@ jobs:
         with:
           name: checkstyle.log
           path: checkstyle.log
+      - name: Generate failure checkstyle summary
+        if: failure()
+        run: |
+          echo ":x: Checkstyle failed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+      - name: Generate successful checkstyle summary
+        if: failure()
+        run: |
+          echo ":white_check_mark: Checkstyle passed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
