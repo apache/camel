@@ -27,6 +27,11 @@ core-build-and-dependencies:
   - camel-dependencies/**
   - parent/**
 
+core-build-tooling:
+  - buildingtools/**/*
+  - etc/**/*
+  - init/**/*
+
 catalog:
   - catalog/**/*
 
@@ -62,7 +67,6 @@ tests:
 
 tooling:
   - tooling/**/*
-  - buildingtools/**/*
 
 tooling-maven:
   - archetypes/**/*
