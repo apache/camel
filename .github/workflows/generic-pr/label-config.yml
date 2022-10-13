@@ -57,6 +57,7 @@ tests:
 
 tooling:
   - tooling/**/*
+  - buildingtools/**/*
 
 tooling-maven:
   - archetypes/**/*
