@@ -144,9 +144,9 @@ public class DefaultLineBuilderStrategy implements LineBuilderStrategy {
         }
 
         public String buildLine() {
-            String line = this.line.toString();
+            String savedLine = this.line.toString();
             reset();
-            return line;
+            return savedLine;
         }
 
         public int getWordsCount() {
