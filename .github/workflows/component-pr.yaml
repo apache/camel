@@ -96,7 +96,7 @@ jobs:
                 message = ":no_entry_sign: There are (likely) no components to be tested in this PR"
               } else {
                 if (total > 20) {
-                  message = `There are too many components to be tested in this PR, components were removed or the code needs a rebase: (${total} likely to be tested)`
+                  message = `:leftwards_arrow_with_hook: There are too many components to be tested in this PR, components were removed or the code needs a rebase: (${total} likely to be tested)`
                 }
               }
             } else {
