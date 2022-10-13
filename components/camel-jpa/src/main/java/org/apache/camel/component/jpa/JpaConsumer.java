@@ -83,12 +83,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         this.transactionStrategy = endpoint.getTransactionStrategy();
     }
 
-    @Override
-    protected int poll() throws Exception {
-        // must reset for each poll
-        shutdownRunningTask = null;
-        pendingExchanges = 0;
-
+    private void recreateEntityManagerIfNeeded() {
         // Recreate EntityManager in case it is disposed due to transaction rollback
         if (entityManager == null) {
             if (getEndpoint().isSharedEntityManager()) {
@@ -98,61 +93,65 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
             }
             LOG.trace("Recreated EntityManager {} on {}", entityManager, this);
         }
+    }
+
+    @Override
+    protected int poll() throws Exception {
+        // must reset for each poll
+        shutdownRunningTask = null;
+        pendingExchanges = 0;
+
+        recreateEntityManagerIfNeeded();
 
         final int[] messagePolled = { 0 };
         try {
-            transactionStrategy.executeInTransaction(new Runnable() {
-                @Override
-                public void run() {
-                    if (getEndpoint().isJoinTransaction()) {
-                        entityManager.joinTransaction();
-                    }
-
-                    Queue<DataHolder> answer = new LinkedList<>();
-
-                    Query query = getQueryFactory().createQuery(entityManager);
-                    configureParameters(query);
-                    LOG.trace("Created query {}", query);
-
-                    List<?> results = query.getResultList();
-                    LOG.trace("Got result list from query {}", results);
-
-                    for (Object result : results) {
-                        DataHolder holder = new DataHolder();
-                        holder.manager = entityManager;
-                        holder.result = result;
-                        holder.exchange = createExchange(result, entityManager);
-                        answer.add(holder);
-                    }
-
-                    PersistenceException cause = null;
-                    try {
-                        messagePolled[0] = processBatch(CastUtils.cast(answer));
-                    } catch (Exception e) {
-                        if (e instanceof PersistenceException) {
-                            cause = (PersistenceException) e;
-                        } else {
-                            cause = new PersistenceException(e);
-                        }
-                    }
-
-                    if (cause != null) {
-                        if (!isTransacted()) {
-                            LOG.warn(
-                                    "Error processing last message due: {}. Will commit all previous successful processed message, and ignore this last failure.",
-                                    cause.getMessage(), cause);
-                        } else {
-                            // rollback all by throwing exception
-                            throw cause;
-                        }
-                    }
-
-                    // commit
-                    LOG.debug("Flushing EntityManager");
-                    entityManager.flush();
-                    // must clear after flush
-                    entityManager.clear();
+            transactionStrategy.executeInTransaction(() -> {
+                if (getEndpoint().isJoinTransaction()) {
+                    entityManager.joinTransaction();
                 }
+
+                Queue<DataHolder> answer = new LinkedList<>();
+
+                Query toExecute = getQueryFactory().createQuery(entityManager);
+                configureParameters(toExecute);
+                LOG.trace("Created query {}", toExecute);
+
+                List<?> results = toExecute.getResultList();
+                LOG.trace("Got result list from query {}", results);
+
+                for (Object result : results) {
+                    DataHolder holder = new DataHolder();
+                    holder.manager = entityManager;
+                    holder.result = result;
+                    holder.exchange = createExchange(result, entityManager);
+                    answer.add(holder);
+                }
+
+                PersistenceException cause = null;
+                try {
+                    messagePolled[0] = processBatch(CastUtils.cast(answer));
+                } catch (PersistenceException e) {
+                    cause = e;
+                } catch (Exception e) {
+                    cause = new PersistenceException(e);
+                }
+
+                if (cause != null) {
+                    if (!isTransacted()) {
+                        LOG.warn(
+                                "Error processing last message due: {}. Will commit all previous successful processed message, and ignore this last failure.",
+                                cause.getMessage(), cause);
+                    } else {
+                        // rollback all by throwing exception
+                        throw cause;
+                    }
+                }
+
+                // commit
+                LOG.debug("Flushing EntityManager");
+                entityManager.flush();
+                // must clear after flush
+                entityManager.clear();
             });
         } catch (Exception e) {
             // Potentially EntityManager could be in an inconsistent state after transaction rollback,
@@ -180,7 +179,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         for (int index = 0; index < total && isBatchAllowed(); index++) {
             // only loop if we are started (allowed to run)
             DataHolder holder = org.apache.camel.util.ObjectHelper.cast(DataHolder.class, exchanges.poll());
-            EntityManager entityManager = holder.manager;
+            EntityManager batchEntityManager = holder.manager;
             Exchange exchange = holder.exchange;
             Object result = holder.result;
 
@@ -191,9 +190,9 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
-            if (lockEntity(result, entityManager)) {
+            if (lockEntity(result, batchEntityManager)) {
                 // Run the @PreConsumed callback
-                createPreDeleteHandler().deleteObject(entityManager, result, exchange);
+                createPreDeleteHandler().deleteObject(batchEntityManager, result, exchange);
 
                 // process the current exchange
                 LOG.debug("Processing exchange: {}", exchange);
@@ -209,7 +208,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
                         throw exchange.getException();
                     } else {
                         // Run the @Consumed callback
-                        getDeleteHandler().deleteObject(entityManager, result, exchange);
+                        getDeleteHandler().deleteObject(batchEntityManager, result, exchange);
                     }
                 } finally {
                     releaseExchange(exchange, false);
@@ -370,10 +369,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
             }
             //TODO: Find if possible an alternative way to handle results of native queries.
             //Result of native queries are Arrays and cannot be locked by all JPA Providers.
-            if (entity.getClass().isArray()) {
-                return true;
-            }
-            return false;
+            return entity.getClass().isArray();
         }
     }
 
@@ -430,16 +426,13 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
                 // Inspect the parameters of the @PreConsumed method
                 final Method method = methods.get(0);
                 final boolean useExchangeParameter = checkParameters(method);
-                return new DeleteHandler<Object>() {
-                    @Override
-                    public void deleteObject(EntityManager entityManager, Object entityBean, Exchange exchange) {
-                        // The entityBean could be an Object array
-                        if (entityType.isInstance(entityBean)) {
-                            if (useExchangeParameter) {
-                                ObjectHelper.invokeMethod(method, entityBean, exchange);
-                            } else {
-                                ObjectHelper.invokeMethod(method, entityBean);
-                            }
+                return (EntityManager em, Object entityBean, Exchange exchange) -> {
+                    // The entityBean could be an Object array
+                    if (entityType.isInstance(entityBean)) {
+                        if (useExchangeParameter) {
+                            ObjectHelper.invokeMethod(method, entityBean, exchange);
+                        } else {
+                            ObjectHelper.invokeMethod(method, entityBean);
                         }
                     }
                 };
@@ -447,11 +440,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         }
 
         // else do nothing
-        return new DeleteHandler<Object>() {
-            @Override
-            public void deleteObject(EntityManager entityManager, Object entityBean, Exchange exchange) {
-                // Do nothing
-            }
+        return (EntityManager em, Object entityBean, Exchange exchange) -> {
         };
     }
 
@@ -466,41 +455,33 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
             } else if (methods.size() == 1) {
                 final Method method = methods.get(0);
                 final boolean useExchangeParameter = checkParameters(method);
-                return new DeleteHandler<Object>() {
-                    public void deleteObject(EntityManager entityManager, Object entityBean, Exchange exchange) {
-                        if (entityType.isInstance(entityBean)) {
-                            if (useExchangeParameter) {
-                                ObjectHelper.invokeMethod(method, entityBean, exchange);
-                            } else {
-                                ObjectHelper.invokeMethod(method, entityBean);
-                            }
+                return (EntityManager em, Object entityBean, Exchange exchange) -> {
+                    if (entityType.isInstance(entityBean)) {
+                        if (useExchangeParameter) {
+                            ObjectHelper.invokeMethod(method, entityBean, exchange);
+                        } else {
+                            ObjectHelper.invokeMethod(method, entityBean);
                         }
                     }
                 };
             }
         }
         if (getEndpoint().isConsumeDelete()) {
-            return new DeleteHandler<Object>() {
-                public void deleteObject(EntityManager entityManager, Object entityBean, Exchange exchange) {
-                    entityManager.remove(entityBean);
-                }
-            };
-        } else {
-            return new DeleteHandler<Object>() {
-                public void deleteObject(EntityManager entityManager, Object entityBean, Exchange exchange) {
-                    // do nothing
-                }
-            };
+            return (EntityManager em, Object entityBean, Exchange exchange) -> em.remove(entityBean);
         }
+
+        return (EntityManager em, Object entityBean, Exchange exchange) -> {
+        };
+
     }
 
     protected boolean checkParameters(Method method) {
         boolean result = false;
-        Class<?>[] parameters = method.getParameterTypes();
-        if (parameters.length == 1 && parameters[0].isAssignableFrom(Exchange.class)) {
+        Class<?>[] receivedParameters = method.getParameterTypes();
+        if (receivedParameters.length == 1 && receivedParameters[0].isAssignableFrom(Exchange.class)) {
             result = true;
         }
-        if (parameters.length > 0 && !result) {
+        if (receivedParameters.length > 0 && !result) {
             throw new IllegalStateException("@PreConsumed annotated method cannot have parameter other than Exchange");
         }
         return result;

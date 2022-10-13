@@ -57,6 +57,7 @@ public class JpaComponent extends DefaultComponent {
     private Map<String, Class<?>> aliases = new HashMap<>();
 
     public JpaComponent() {
+        // default constructor
     }
 
     // Properties
@@ -175,10 +176,7 @@ public class JpaComponent extends DefaultComponent {
         return endpoint;
     }
 
-    @Override
-    protected void doInit() throws Exception {
-        super.doInit();
-
+    private void initEntityManagerFactory() {
         // lookup entity manager factory and use it if only one provided
         if (entityManagerFactory == null) {
             Map<String, EntityManagerFactory> map
@@ -196,12 +194,9 @@ public class JpaComponent extends DefaultComponent {
         } else {
             LOG.info("Using EntityManagerFactory configured: {}", entityManagerFactory);
         }
+    }
 
-        if (transactionStrategy != null) {
-            LOG.info("Using TransactionStrategy configured: {}", transactionStrategy);
-            return;
-        }
-
+    private void initTransactionManager() {
         // lookup transaction manager and use it if only one provided
         if (transactionManager == null) {
             Map<String, PlatformTransactionManager> map
@@ -233,6 +228,19 @@ public class JpaComponent extends DefaultComponent {
                 }
             }
         }
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        initEntityManagerFactory();
+
+        if (transactionStrategy != null) {
+            LOG.info("Using TransactionStrategy configured: {}", transactionStrategy);
+            return;
+        }
+
+        initTransactionManager();
 
         // warn about missing configuration
         if (entityManagerFactory == null) {

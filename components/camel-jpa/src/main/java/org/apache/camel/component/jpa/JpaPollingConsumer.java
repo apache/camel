@@ -44,7 +44,7 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(JpaPollingConsumer.class);
 
-    private transient ExecutorService executorService;
+    private volatile ExecutorService executorService;
     private final EntityManagerFactory entityManagerFactory;
     private final TransactionStrategy transactionStrategy;
     private String query;
@@ -137,19 +137,19 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
                     entityManager.joinTransaction();
                 }
 
-                Query query = getQueryFactory().createQuery(entityManager);
-                configureParameters(query);
+                Query innerQuery = getQueryFactory().createQuery(entityManager);
+                configureParameters(innerQuery);
 
                 if (getEndpoint().isConsumeLockEntity()) {
-                    query.setLockMode(getLockModeType());
+                    innerQuery.setLockMode(getLockModeType());
                 }
 
-                LOG.trace("Created query {}", query);
+                LOG.trace("Created query {}", innerQuery);
 
                 Object answer;
 
                 try {
-                    List<?> results = query.getResultList();
+                    List<?> results = innerQuery.getResultList();
 
                     if (results != null && results.size() == 1) {
                         // we only have 1 entity so return that

@@ -21,18 +21,14 @@ import javax.persistence.EntityManagerFactory;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 public class DefaultTransactionStrategy implements TransactionStrategy {
     private final TransactionTemplate transactionTemplate;
     private final PlatformTransactionManager transactionManager;
-    private final EntityManagerFactory entityManagerFactory;
 
     public DefaultTransactionStrategy(PlatformTransactionManager transactionManager,
                                       EntityManagerFactory entityManagerFactory) {
-        this.entityManagerFactory = entityManagerFactory;
         if (transactionManager == null) {
             this.transactionManager = createTransactionManager(entityManagerFactory);
         } else {
@@ -43,11 +39,9 @@ public class DefaultTransactionStrategy implements TransactionStrategy {
 
     @Override
     public void executeInTransaction(Runnable runnable) {
-        transactionTemplate.execute(new TransactionCallback<Object>() {
-            public Object doInTransaction(TransactionStatus status) {
-                runnable.run();
-                return null;
-            }
+        transactionTemplate.execute(status -> {
+            runnable.run();
+            return null;
         });
     }
 
@@ -62,9 +56,9 @@ public class DefaultTransactionStrategy implements TransactionStrategy {
     }
 
     protected TransactionTemplate createTransactionTemplate() {
-        TransactionTemplate transactionTemplate = new TransactionTemplate(getTransactionManager());
-        transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-        transactionTemplate.afterPropertiesSet();
-        return transactionTemplate;
+        TransactionTemplate newTransactionTemplate = new TransactionTemplate(getTransactionManager());
+        newTransactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        newTransactionTemplate.afterPropertiesSet();
+        return newTransactionTemplate;
     }
 }

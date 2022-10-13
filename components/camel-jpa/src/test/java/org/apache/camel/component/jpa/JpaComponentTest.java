@@ -34,74 +34,80 @@ public class JpaComponentTest extends CamelTestSupport {
 
     @Test
     public void testJpaComponentConsumerHasLockModeType() throws Exception {
-        JpaComponent comp = new JpaComponent();
-        comp.setCamelContext(context);
-        assertNull(comp.getEntityManagerFactory());
-        assertNull(comp.getTransactionManager());
+        try (JpaComponent comp = new JpaComponent()) {
+            comp.setCamelContext(context);
+            assertNull(comp.getEntityManagerFactory());
+            assertNull(comp.getTransactionManager());
 
-        JpaEndpoint jpa
-                = (JpaEndpoint) comp.createEndpoint("jpa://" + SendEmail.class.getName() + "?lockModeType=PESSIMISTIC_WRITE");
-        JpaConsumer consumer = (JpaConsumer) jpa.createConsumer(null);
+            JpaEndpoint jpa
+                    = (JpaEndpoint) comp
+                            .createEndpoint("jpa://" + SendEmail.class.getName() + "?lockModeType=PESSIMISTIC_WRITE");
+            JpaConsumer consumer = (JpaConsumer) jpa.createConsumer(null);
 
-        assertEquals(LockModeType.PESSIMISTIC_WRITE, consumer.getLockModeType());
+            assertEquals(LockModeType.PESSIMISTIC_WRITE, consumer.getLockModeType());
+        }
     }
 
     @Test
     public void testJpaComponentCtr() throws Exception {
-        JpaComponent comp = new JpaComponent();
-        comp.setCamelContext(context);
-        assertNull(comp.getEntityManagerFactory());
-        assertNull(comp.getTransactionManager());
+        try (JpaComponent comp = new JpaComponent()) {
+            comp.setCamelContext(context);
+            assertNull(comp.getEntityManagerFactory());
+            assertNull(comp.getTransactionManager());
 
-        JpaEndpoint jpa = (JpaEndpoint) comp.createEndpoint("jpa://" + SendEmail.class.getName());
-        assertNotNull(jpa);
-        assertNotNull(jpa.getEntityType());
+            JpaEndpoint jpa = (JpaEndpoint) comp.createEndpoint("jpa://" + SendEmail.class.getName());
+            assertNotNull(jpa);
+            assertNotNull(jpa.getEntityType());
+        }
     }
 
     @Test
     public void testJpaComponentEMFandTM() throws Exception {
-        JpaComponent comp = new JpaComponent();
-        comp.setCamelContext(context);
-        assertNull(comp.getEntityManagerFactory());
-        assertNull(comp.getTransactionManager());
+        try (JpaComponent comp = new JpaComponent()) {
+            comp.setCamelContext(context);
+            assertNull(comp.getEntityManagerFactory());
+            assertNull(comp.getTransactionManager());
 
-        EntityManagerFactory fac = Persistence.createEntityManagerFactory("camel");
-        JpaTransactionManager tm = new JpaTransactionManager(fac);
-        tm.afterPropertiesSet();
+            EntityManagerFactory fac = Persistence.createEntityManagerFactory("camel");
+            JpaTransactionManager tm = new JpaTransactionManager(fac);
+            tm.afterPropertiesSet();
 
-        comp.setEntityManagerFactory(fac);
-        comp.setTransactionManager(tm);
+            comp.setEntityManagerFactory(fac);
+            comp.setTransactionManager(tm);
 
-        assertSame(fac, comp.getEntityManagerFactory());
-        assertSame(tm, comp.getTransactionManager());
+            assertSame(fac, comp.getEntityManagerFactory());
+            assertSame(tm, comp.getTransactionManager());
 
-        JpaEndpoint jpa = (JpaEndpoint) comp.createEndpoint("jpa://" + SendEmail.class.getName());
-        assertNotNull(jpa);
-        assertNotNull(jpa.getEntityType());
+            JpaEndpoint jpa = (JpaEndpoint) comp.createEndpoint("jpa://" + SendEmail.class.getName());
+            assertNotNull(jpa);
+            assertNotNull(jpa.getEntityType());
+        }
     }
 
     @Test
     public void testJpaComponentWithPath() throws Exception {
-        JpaComponent comp = new JpaComponent();
-        comp.setCamelContext(context);
-        assertNull(comp.getEntityManagerFactory());
-        assertNull(comp.getTransactionManager());
+        try (JpaComponent comp = new JpaComponent()) {
+            comp.setCamelContext(context);
+            assertNull(comp.getEntityManagerFactory());
+            assertNull(comp.getTransactionManager());
 
-        JpaEndpoint jpa = (JpaEndpoint) comp.createEndpoint(
-                "jpa://" + SendEmail.class.getName() + "?persistenceUnit=journalPersistenceUnit&usePersist=true");
-        assertNotNull(jpa);
-        assertNotNull(jpa.getEntityType());
+            JpaEndpoint jpa = (JpaEndpoint) comp.createEndpoint(
+                    "jpa://" + SendEmail.class.getName() + "?persistenceUnit=journalPersistenceUnit&usePersist=true");
+            assertNotNull(jpa);
+            assertNotNull(jpa.getEntityType());
+        }
     }
 
     @Test
     public void testJpaComponentEmptyPath() throws Exception {
-        JpaComponent comp = new JpaComponent();
-        comp.setCamelContext(context);
-        assertNull(comp.getEntityManagerFactory());
-        assertNull(comp.getTransactionManager());
+        try (JpaComponent comp = new JpaComponent()) {
+            comp.setCamelContext(context);
+            assertNull(comp.getEntityManagerFactory());
+            assertNull(comp.getTransactionManager());
 
-        JpaEndpoint jpa = (JpaEndpoint) comp.createEndpoint("jpa:?persistenceUnit=journalPersistenceUnit&usePersist=true");
-        assertNotNull(jpa);
-        assertNull(jpa.getEntityType());
+            JpaEndpoint jpa = (JpaEndpoint) comp.createEndpoint("jpa:?persistenceUnit=journalPersistenceUnit&usePersist=true");
+            assertNotNull(jpa);
+            assertNull(jpa.getEntityType());
+        }
     }
 }
