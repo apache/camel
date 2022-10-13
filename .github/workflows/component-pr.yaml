@@ -106,11 +106,11 @@ jobs:
                 }
               }
             } else {
-              message = `### Components tested: 
-                    | Total | Tested | Failed :x: | Passed :white_check_mark: | 
-                    | --- | --- | --- |  --- |
-                    | ${total} | ${tested} | ${failures} | ${successes} | 
-                    `
+              message = `### Components tested:
+            
+            | Total | Tested | Failed :x: | Passed :white_check_mark: | 
+            | --- | --- | --- |  --- |
+            | ${total} | ${tested} | ${failures} | ${successes} |`
             }
 
             await github.rest.issues.createComment({
