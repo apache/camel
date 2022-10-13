@@ -80,12 +80,13 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         Boolean bridgeEndpoint = getAndRemoveParameter(parameters, "bridgeEndpoint", Boolean.class);
         HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
         Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
-        String servletName = getAndRemoveParameter(parameters, "servletName", String.class, getServletName());
+        String filteredServletName = getAndRemoveParameter(parameters, "servletName", String.class, getServletName());
         String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
         HeaderFilterStrategy headerFilterStrategy
                 = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
         Boolean async = getAndRemoveParameter(parameters, "async", Boolean.class);
-        Boolean attachmentMultipartBinding = getAndRemoveParameter(parameters, "attachmentMultipartBinding", Boolean.class);
+        Boolean filteredAttachmentMultipartBinding
+                = getAndRemoveParameter(parameters, "attachmentMultipartBinding", Boolean.class);
         Boolean disableStreamCache = getAndRemoveParameter(parameters, "disableStreamCache", Boolean.class);
 
         if (lenientContextPath()) {
@@ -105,7 +106,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         URI httpUri = URISupport.createRemainingURI(new URI(UnsafeUriCharactersEncoder.encodeHttpURI(uri)), parameters);
 
         ServletEndpoint endpoint = createServletEndpoint(uri, this, httpUri);
-        endpoint.setServletName(servletName);
+        endpoint.setServletName(filteredServletName);
         endpoint.setFileNameExtWhitelist(fileNameExtWhitelist);
         if (async != null) {
             endpoint.setAsync(async);
@@ -142,8 +143,8 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         if (httpMethodRestrict != null) {
             endpoint.setHttpMethodRestrict(httpMethodRestrict);
         }
-        if (attachmentMultipartBinding != null) {
-            endpoint.setAttachmentMultipartBinding(attachmentMultipartBinding);
+        if (filteredAttachmentMultipartBinding != null) {
+            endpoint.setAttachmentMultipartBinding(filteredAttachmentMultipartBinding);
         } else {
             endpoint.setAttachmentMultipartBinding(isAttachmentMultipartBinding());
         }
