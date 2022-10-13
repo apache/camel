@@ -27,6 +27,7 @@ MVN_OPTS=${MVN_OPTS:-$MVN_DEFAULT_OPTS}
 
 # Script variables
 failures=0
+successes=0
 maxNumberOfTestableComponents=20
 basedir=$(pwd)
 testDate=$(date '+%Y-%m-%d-%H%M%S')
@@ -67,6 +68,7 @@ function runTest() {
     ((failures++))
     notifyError "${component} test" "${total}" "${current}" "${failures}"
   else
+    ((successes++))
     notifySuccess "${component}" "${total}" "${current}" "${failures}"
   fi
 
@@ -111,7 +113,6 @@ function main() {
     coreTest
   fi
 
-
   echo "Searching for modified components"
   local components=$(git diff "${startCommit}..${endCommit}" --name-only --pretty=format:"" | grep -e '^components' | grep -v -e '^$' | cut -d / -f 1-2 | uniq | sort)
   local total=$(echo "${components}" | grep -v -e '^$' | wc -l)
@@ -120,11 +121,13 @@ function main() {
   if [[ ${total} -eq 0 ]]; then
     echo "0" > "${logDir}/tested"
     echo "0" > "${logDir}/failures"
+    echo "0" > "${logDir}/successes"
     exit 0
   else
     if [[ ${total} -gt ${maxNumberOfTestableComponents} ]]; then
       echo "0" > "${logDir}/tested"
       echo "0" > "${logDir}/failures"
+      echo "0" > "${logDir}/successes"
       exit 0
     fi
   fi
@@ -142,6 +145,7 @@ function main() {
 
   echo "${total}" > "${logDir}/tested"
   echo "${failures}" > "${logDir}/failures"
+  echo "${successes}" > "${logDir}/successes"
   exit "${failures}"
 }
 
