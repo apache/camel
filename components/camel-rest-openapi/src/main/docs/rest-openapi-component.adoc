@@ -108,16 +108,16 @@ include::partial$component-endpoint-options.adoc[]
 
 == Example: PetStore
 
-Checkout the example in the `camel-example-rest-openapi` project in
-the `examples` directory.
+Checkout the `rest-openapi-simple` example project in
+the https://github.com/apache/camel-spring-boot-examples repository.
 
 For example if you wanted to use the 
 https://petstore3.swagger.io/api/v3/[_PetStore_] provided REST API simply
 reference the specification URI and desired operation id from the
 OpenApi specification or download the specification and store it as
 `openapi.json` (in the root) of CLASSPATH that way it will be 
-automaticaly used. Let's use the xref:undertow-component.adoc[Undertow]
-component to perform all the requests and Camels excelent support for 
+automaticaly used. Let's use the xref:http-component.adoc[HTTP]
+component to perform all the requests and Camel's excellent support for 
 Spring Boot.
 
 Here are our dependencies defined in Maven POM file:
@@ -126,7 +126,7 @@ Here are our dependencies defined in Maven POM file:
 ----
 <dependency>
   <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-undertow-starter</artifactId>
+  <artifactId>camel-http-starter</artifactId>
 </dependency>
 
 <dependency>
@@ -135,17 +135,15 @@ Here are our dependencies defined in Maven POM file:
 </dependency>
 ----
 
-Start by defining the _Undertow_ component and the
-_RestOpenApiComponent_:
+Start by defining a _RestOpenApiComponent_ bean:
 
 [source,java]
 ----
 @Bean
-public Component petstore(CamelContext camelContext, UndertowComponent undertow) {
+public Component petstore(CamelContext camelContext) {
     RestOpenApiComponent petstore = new RestOpenApiComponent(camelContext);
-    petstore.setSpecificationUri("https://petstore3.swagger.io/api/v3/openapi.json");
-    petstore.setDelegate(undertow);
-
+    petstore.setSpecificationUri(new URI("https://petstore3.swagger.io/api/v3/openapi.json"));
+    petstore.setHost("https://petstore3.swagger.io");
     return petstore;
 }
 ----
@@ -153,13 +151,20 @@ public Component petstore(CamelContext camelContext, UndertowComponent undertow)
 [NOTE]
 ====
 Support in Camel for Spring Boot will auto create the 
-`UndertowComponent` Spring bean, and you can configure it using
+`HttpComponent` Spring bean, and you can configure it using
 `application.properties` (or `application.yml`) using prefix
-`camel.component.undertow.`. We are defining the `petstore`
+`camel.component.http.`. We are defining the `petstore`
 component here in order to have a named component in the Camel context
 that we can use to interact with the PetStore REST API, if this is the
 only `rest-openapi` component used we might configure it in the same
 manner (using `application.properties`).
+
+In this example, there is no need to explicitly associate the `petstore`
+component with the `HttpComponent` as Camel will use the first class on 
+the CLASSPATH that implements `RestProducerFactory`. However, if a different
+component is required, then calling `petstore.setComponentName("http")` 
+would use the named component from the Camel registry.
+
 ====
 
 Now in our application we can simply use the `ProducerTemplate` to
@@ -171,7 +176,7 @@ invoke PetStore REST methods:
 ProducerTemplate template;
 
 String getPetJsonById(int petId) {
-    return template.requestBodyAndHeaders("petstore:getPetById", null, "petId", petId);
+    return template.requestBodyAndHeader("petstore:getPetById", null, "petId", petId);
 }
 ----
 
