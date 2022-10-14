@@ -98,7 +98,7 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
     public void testSecretNotFoundFunction() {
         context.getVaultConfiguration().gcp().setServiceAccountKey(System.getProperty("camel.vault.gcp.serviceAccountKey"));
         context.getVaultConfiguration().gcp().setProjectId(System.getProperty("camel.vault.gcp.projectId"));
-        Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
+        assertThrows(FailedToCreateRouteException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
@@ -159,7 +159,7 @@ public class GoogleSecretManagerPropertiesNoEnvSourceTestIT extends CamelTestSup
     public void testComplexCustomPropertiesExceptionFunction() {
         context.getVaultConfiguration().gcp().setServiceAccountKey(System.getProperty("camel.vault.gcp.serviceAccountKey"));
         context.getVaultConfiguration().gcp().setProjectId(System.getProperty("camel.vault.gcp.projectId"));
-        Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
+        assertThrows(FailedToCreateRouteException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
