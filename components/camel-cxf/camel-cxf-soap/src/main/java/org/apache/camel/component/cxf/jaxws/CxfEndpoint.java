@@ -216,6 +216,10 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
               description = "Sets whether synchronous processing should be strictly used")
     private boolean synchronous;
 
+    @UriParam(defaultValue = "false", label = "advanced",
+              description = "Enable schema validation for request and response. Disabled by default for performance reason")
+    private Boolean schemaValidationEnabled;
+
     public CxfEndpoint() {
         setExchangePattern(ExchangePattern.InOut);
     }
@@ -372,6 +376,13 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
                 sfb.setProperties(new HashMap<String, Object>());
             }
             sfb.getProperties().put(FaultListener.class.getName(), new NullFaultListener());
+        }
+
+        if (this.getSchemaValidationEnabled() != null) {
+            if (sfb.getProperties() == null) {
+                sfb.setProperties(new HashMap<>());
+            }
+            sfb.getProperties().put(Message.SCHEMA_VALIDATION_ENABLED, schemaValidationEnabled);
         }
 
         sfb.setBus(getBus());
@@ -568,6 +579,13 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
                 factoryBean.setProperties(new HashMap<String, Object>());
             }
             factoryBean.getProperties().put(FaultListener.class.getName(), new NullFaultListener());
+        }
+
+        if (this.getSchemaValidationEnabled() != null) {
+            if (factoryBean.getProperties() == null) {
+                factoryBean.setProperties(new HashMap<>());
+            }
+            factoryBean.getProperties().put(Message.SCHEMA_VALIDATION_ENABLED, schemaValidationEnabled);
         }
 
         factoryBean.setBus(getBus());
@@ -1489,5 +1507,13 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
             LOG.error("cannot determine request URI", e);
             return null;
         }
+    }
+
+    public Boolean getSchemaValidationEnabled() {
+        return schemaValidationEnabled;
+    }
+
+    public void setSchemaValidationEnabled(Boolean schemaValidationEnabled) {
+        this.schemaValidationEnabled = schemaValidationEnabled;
     }
 }
