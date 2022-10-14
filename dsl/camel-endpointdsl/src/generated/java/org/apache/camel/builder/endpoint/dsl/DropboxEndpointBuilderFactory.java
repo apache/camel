@@ -308,7 +308,7 @@ public interface DropboxEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use an existing DbxClient instance as DropBox client.
+         * To use an existing DbxClient instance as Dropbox client.
          * 
          * The option is a:
          * &lt;code&gt;com.dropbox.core.v2.DbxClientV2&lt;/code&gt; type.
@@ -324,7 +324,7 @@ public interface DropboxEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use an existing DbxClient instance as DropBox client.
+         * To use an existing DbxClient instance as Dropbox client.
          * 
          * The option will be converted to a
          * &lt;code&gt;com.dropbox.core.v2.DbxClientV2&lt;/code&gt; type.
@@ -615,7 +615,7 @@ public interface DropboxEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use an existing DbxClient instance as DropBox client.
+         * To use an existing DbxClient instance as Dropbox client.
          * 
          * The option is a:
          * &lt;code&gt;com.dropbox.core.v2.DbxClientV2&lt;/code&gt; type.
@@ -631,7 +631,7 @@ public interface DropboxEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use an existing DbxClient instance as DropBox client.
+         * To use an existing DbxClient instance as Dropbox client.
          * 
          * The option will be converted to a
          * &lt;code&gt;com.dropbox.core.v2.DbxClientV2&lt;/code&gt; type.
@@ -806,7 +806,7 @@ public interface DropboxEndpointBuilderFactory {
             return (DropboxEndpointBuilder) this;
         }
         /**
-         * To use an existing DbxClient instance as DropBox client.
+         * To use an existing DbxClient instance as Dropbox client.
          * 
          * The option is a:
          * &lt;code&gt;com.dropbox.core.v2.DbxClientV2&lt;/code&gt; type.
@@ -822,7 +822,7 @@ public interface DropboxEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use an existing DbxClient instance as DropBox client.
+         * To use an existing DbxClient instance as Dropbox client.
          * 
          * The option will be converted to a
          * &lt;code&gt;com.dropbox.core.v2.DbxClientV2&lt;/code&gt; type.
