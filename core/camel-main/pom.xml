@@ -151,7 +151,16 @@
                             <goal>generate-configurer</goal>
                         </goals>
                         <configuration>
-                            <classes>org.apache.camel.vault.AwsVaultConfiguration,org.apache.camel.vault.AzureVaultConfiguration,org.apache.camel.vault.GcpVaultConfiguration,org.apache.camel.vault.HashicorpVaultConfiguration</classes>
+                            <classes>
+                                <!-- we want to have configurer for AwsVaultConfiguration in the package main to prevent a split packages issue -->
+                                <class>org.apache.camel.vault.AwsVaultConfiguration=org.apache.camel.main.AwsVaultConfiguration</class>
+                                <!-- we want to have configurer for AzureVaultConfiguration in the package main to prevent a split packages issue -->
+                                <class>org.apache.camel.vault.AzureVaultConfiguration=org.apache.camel.main.AzureVaultConfiguration</class>
+                                <!-- we want to have configurer for GcpVaultConfiguration in the package main to prevent a split packages issue -->
+                                <class>org.apache.camel.vault.GcpVaultConfiguration=org.apache.camel.main.GcpVaultConfiguration</class>
+                                <!-- we want to have configurer for HashicorpVaultConfiguration in the package main to prevent a split packages issue -->
+                                <class>org.apache.camel.vault.HashicorpVaultConfiguration=org.apache.camel.main.HashicorpVaultConfiguration</class>
+                            </classes>
                         </configuration>
                     </execution>
                     <execution>
