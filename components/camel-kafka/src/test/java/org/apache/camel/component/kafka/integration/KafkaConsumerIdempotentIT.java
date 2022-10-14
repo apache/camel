@@ -33,7 +33,7 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import static org.apache.camel.component.kafka.serde.KafkaSerdeHelper.numericHeader;
 
 @DisabledIfSystemProperty(named = "enable.kafka.consumer.idempotency.tests", matches = "false")
-public class KafkaConsumerIdempotentIT extends KafkaConsumerIdempotentTestSupport {
+class KafkaConsumerIdempotentIT extends KafkaConsumerIdempotentTestSupport {
 
     public static final String TOPIC = "idempt";
 
@@ -82,7 +82,7 @@ public class KafkaConsumerIdempotentIT extends KafkaConsumerIdempotentTestSuppor
 
     @Test
     @DisplayName("Numeric headers is consumable when using idempotent (CAMEL-16914)")
-    public void kafkaIdempotentMessageIsConsumedByCamel() throws InterruptedException {
+    void kafkaIdempotentMessageIsConsumedByCamel() {
         doRun(to, size);
     }
 }

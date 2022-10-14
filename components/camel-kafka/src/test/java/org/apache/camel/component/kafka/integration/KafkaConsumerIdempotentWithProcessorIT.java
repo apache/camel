@@ -29,7 +29,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class KafkaConsumerIdempotentWithProcessorIT extends KafkaConsumerIdempotentTestSupport {
+class KafkaConsumerIdempotentWithProcessorIT extends KafkaConsumerIdempotentTestSupport {
     public static final String TOPIC = "testidemp3";
 
     @BindToRegistry("kafkaIdempotentRepository")
@@ -85,7 +85,7 @@ public class KafkaConsumerIdempotentWithProcessorIT extends KafkaConsumerIdempot
     }
 
     @Test
-    public void kafkaMessageIsConsumedByCamel() throws InterruptedException {
+    void kafkaMessageIsConsumedByCamel() {
         doRun(to, size);
     }
 }

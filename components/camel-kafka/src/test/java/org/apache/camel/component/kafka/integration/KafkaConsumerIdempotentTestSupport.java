@@ -18,15 +18,15 @@
 package org.apache.camel.component.kafka.integration;
 
 import java.math.BigInteger;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.internals.RecordHeader;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -34,10 +34,8 @@ public abstract class KafkaConsumerIdempotentTestSupport extends BaseEmbeddedKaf
 
     protected void doSend(int size, String topic) {
         Properties props = getDefaultProperties();
-        org.apache.kafka.clients.producer.KafkaProducer<String, String> producer
-                = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
-
-        try {
+        try (org.apache.kafka.clients.producer.KafkaProducer<String, String> producer
+                = new org.apache.kafka.clients.producer.KafkaProducer<>(props)) {
             for (int k = 0; k < size; k++) {
                 String msg = "message-" + k;
                 ProducerRecord<String, String> data = new ProducerRecord<>(topic, String.valueOf(k), msg);
@@ -45,21 +43,13 @@ public abstract class KafkaConsumerIdempotentTestSupport extends BaseEmbeddedKaf
                 data.headers().add(new RecordHeader("id", BigInteger.valueOf(k).toByteArray()));
                 producer.send(data);
             }
-        } finally {
-            if (producer != null) {
-                producer.close();
-            }
         }
     }
 
-    protected void doRun(MockEndpoint mockEndpoint, int size) throws InterruptedException {
-        mockEndpoint.expectedMessageCount(size);
+    protected void doRun(MockEndpoint mockEndpoint, int size) {
 
-        List<Exchange> exchangeList = mockEndpoint.getReceivedExchanges();
-
-        mockEndpoint.assertIsSatisfied(10000);
-
-        assertEquals(size, exchangeList.size());
+        await().atMost(1, TimeUnit.MINUTES).untilAsserted(
+                () -> assertEquals(size, mockEndpoint.getReceivedExchanges().size()));
 
         Map<String, Object> headers = mockEndpoint.getExchanges().get(0).getIn().getHeaders();
         assertTrue(headers.containsKey("id"), "0");

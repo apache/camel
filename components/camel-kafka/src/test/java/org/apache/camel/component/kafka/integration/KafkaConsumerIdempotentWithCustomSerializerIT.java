@@ -28,7 +28,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class KafkaConsumerIdempotentWithCustomSerializerIT extends KafkaConsumerIdempotentTestSupport {
+class KafkaConsumerIdempotentWithCustomSerializerIT extends KafkaConsumerIdempotentTestSupport {
 
     public static final String TOPIC = "idempt2";
 
@@ -77,7 +77,7 @@ public class KafkaConsumerIdempotentWithCustomSerializerIT extends KafkaConsumer
     }
 
     @Test
-    public void kafkaMessageIsConsumedByCamel() throws InterruptedException {
+    void kafkaMessageIsConsumedByCamel() {
         doRun(to, size);
     }
 }
