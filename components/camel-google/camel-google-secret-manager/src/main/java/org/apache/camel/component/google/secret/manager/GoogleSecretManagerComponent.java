@@ -41,11 +41,11 @@ public class GoogleSecretManagerComponent extends DefaultComponent {
         if (remaining == null || remaining.trim().length() == 0) {
             throw new IllegalArgumentException("Project id must be specified.");
         }
-        final GoogleSecretManagerConfiguration configuration
+        final GoogleSecretManagerConfiguration endpointConfiguration
                 = this.configuration != null ? this.configuration.copy() : new GoogleSecretManagerConfiguration();
-        configuration.setProject(remaining);
+        endpointConfiguration.setProject(remaining);
 
-        Endpoint endpoint = new GoogleSecretManagerEndpoint(uri, this, configuration);
+        Endpoint endpoint = new GoogleSecretManagerEndpoint(uri, this, endpointConfiguration);
         setProperties(endpoint, parameters);
         return endpoint;
     }
