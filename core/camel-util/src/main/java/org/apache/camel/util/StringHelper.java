@@ -1142,7 +1142,7 @@ public final class StringHelper {
     /**
      * Fills the string with repeating chars
      *
-     * @param ch  the char
+     * @param ch    the char
      * @param count number of chars
      */
     public static String fillChars(char ch, int count) {
