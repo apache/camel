@@ -39,8 +39,13 @@ public class EventHubsCheckpointUpdaterTimerTask extends TimerTask {
     public void run() {
         if (processedEvents.get() > 0) {
             LOG.debug("checkpointing offset after reaching timeout, with a batch of {}", processedEvents.get());
-            eventContext.updateCheckpoint();
-            processedEvents.set(0);
+            eventContext.updateCheckpointAsync()
+                    .subscribe(unused -> LOG.debug("Processed one event..."),
+                            error -> LOG.debug("Error when updating Checkpoint: {}", error.getMessage()),
+                            () -> {
+                                LOG.debug("Checkpoint updated.");
+                                processedEvents.set(0);
+                            });
         } else {
             LOG.debug("skip checkpointing offset even if timeout is reached. No events processed");
         }

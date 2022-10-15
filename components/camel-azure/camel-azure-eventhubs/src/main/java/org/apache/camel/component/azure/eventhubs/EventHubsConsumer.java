@@ -173,8 +173,14 @@ public class EventHubsConsumer extends DefaultConsumer {
         try {
             var completionCondition = processCheckpoint(exchange);
             if (completionCondition.equals(COMPLETED_BY_SIZE)) {
-                eventContext.updateCheckpoint();
-                processedEvents.set(0);
+                eventContext.updateCheckpointAsync()
+                        .subscribe(unused -> LOG.debug("Processed one event..."),
+                                error -> LOG.debug("Error when updating Checkpoint: {}", error.getMessage()),
+                                () -> {
+                                    processedEvents.set(0);
+                                    LOG.debug("Checkpoint updated.");
+                                });
+
             } else if (!completionCondition.equals(COMPLETED_BY_TIMEOUT)) {
                 processedEvents.incrementAndGet();
             }
