@@ -263,8 +263,11 @@ public class RouteControllerAction extends ActionBaseCommand {
     }
 
     protected String getLast(Row r) {
-        if (!r.lastAttemptAgo.isEmpty()) {
-            return r.lastAttemptAgo + " (" + r.elapsed + ")";
+        if (r.lastAttemptAgo != null && !r.lastAttemptAgo.isEmpty()) {
+            String s = r.lastAttemptAgo;
+            if (r.elapsed != null && !r.elapsed.isEmpty()) {
+                s += " (" + r.elapsed + ")";
+            }
         }
         return "";
     }

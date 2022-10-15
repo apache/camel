@@ -137,6 +137,11 @@ public class RouteControllerConsole extends AbstractDevConsole {
         } else {
             Set<Route> routes = new TreeSet<>(Comparator.comparing(Route::getId));
             routes.addAll(rc.getControlledRoutes());
+            if (routes.isEmpty()) {
+                // default route controller does not control routes but let's then just grab
+                // routes from context, so we have that to show
+                routes.addAll(getCamelContext().getRoutes());
+            }
             sb.append(String.format("Total Routes: %d", routes.size()));
             sb.append("\nRoutes:\n");
             for (Route route : routes) {
@@ -240,6 +245,11 @@ public class RouteControllerConsole extends AbstractDevConsole {
         } else {
             Set<Route> routes = new TreeSet<>(Comparator.comparing(Route::getId));
             routes.addAll(rc.getControlledRoutes());
+            if (routes.isEmpty()) {
+                // default route controller does not control routes but let's then just grab
+                // routes from context, so we have that to show
+                routes.addAll(getCamelContext().getRoutes());
+            }
 
             root.put("controller", "DefaultRouteController");
             root.put("totalRoutes", routes.size());
