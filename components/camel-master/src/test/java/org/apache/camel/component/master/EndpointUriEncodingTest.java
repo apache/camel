@@ -32,14 +32,15 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class EndpointUriEncodingTest extends CamelTestSupport {
+class EndpointUriEncodingTest extends CamelTestSupport {
 
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.message(0).header("foo").isEqualTo("hello} world");
         mock.message(0).header("bar").isEqualTo("hello}+world");
+        mock.setResultWaitTime(60_000);
         mock.assertIsSatisfied();
     }
 
@@ -61,7 +62,7 @@ public class EndpointUriEncodingTest extends CamelTestSupport {
         context().addService(fileLockClusterService);
     }
 
-    private class DummyComponent extends DefaultComponent {
+    private static class DummyComponent extends DefaultComponent {
         @Override
         protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
             return new DefaultEndpoint(uri, this) {
@@ -90,15 +91,11 @@ public class EndpointUriEncodingTest extends CamelTestSupport {
                             Exchange exchange = createExchange(true);
                             exchange.getMessage().setHeader("foo", foo);
                             exchange.getMessage().setHeader("bar", bar);
-                            try {
-                                getProcessor().process(exchange);
-                            } catch (Exception e) {
-                            }
+                            getProcessor().process(exchange);
                         }
                     };
                 }
             };
         }
     }
-
 }
