@@ -34,14 +34,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The Google Secret Manager producer.
  */
 public class GoogleSecretManagerProducer extends DefaultProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(GoogleSecretManagerProducer.class);
 
     private GoogleSecretManagerEndpoint endpoint;
 

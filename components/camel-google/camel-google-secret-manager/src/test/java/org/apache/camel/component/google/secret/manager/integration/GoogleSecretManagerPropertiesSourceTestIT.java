@@ -90,7 +90,7 @@ public class GoogleSecretManagerPropertiesSourceTestIT extends CamelTestSupport 
     @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_GCP_PROJECT_ID", matches = ".*")
     @Test
     public void testSecretNotFoundFunction() {
-        Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
+        assertThrows(FailedToCreateRouteException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
@@ -151,7 +151,7 @@ public class GoogleSecretManagerPropertiesSourceTestIT extends CamelTestSupport 
     @EnabledIfEnvironmentVariable(named = "CAMEL_VAULT_GCP_PROJECT_ID", matches = ".*")
     @Test
     public void testComplexCustomPropertiesExceptionFunction() {
-        Exception exception = assertThrows(FailedToCreateRouteException.class, () -> {
+        assertThrows(FailedToCreateRouteException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
