@@ -48,7 +48,7 @@ public abstract class KafkaConsumerIdempotentTestSupport extends BaseEmbeddedKaf
 
     protected void doRun(MockEndpoint mockEndpoint, int size) {
 
-        await().atMost(1, TimeUnit.MINUTES).untilAsserted(
+        await().atMost(5, TimeUnit.MINUTES).untilAsserted(
                 () -> assertEquals(size, mockEndpoint.getReceivedExchanges().size()));
 
         Map<String, Object> headers = mockEndpoint.getExchanges().get(0).getIn().getHeaders();
