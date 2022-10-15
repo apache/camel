@@ -278,6 +278,14 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     LOG.trace("Updating output file: {}", outputFile);
                     IOHelper.writeText(json.toJson(), outputFile);
                 }
+            } else if ("route-controller".equals(action)) {
+                DevConsole dc = camelContext.getExtension(DevConsoleRegistry.class).resolveById("route-controller");
+                if (dc != null) {
+                    String stacktrace = root.getString("stacktrace");
+                    JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("stacktrace", stacktrace));
+                    LOG.trace("Updating output file: {}", outputFile);
+                    IOHelper.writeText(json.toJson(), outputFile);
+                }
             }
 
             // action done so delete file

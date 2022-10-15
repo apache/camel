@@ -19,6 +19,7 @@ package org.apache.camel.impl.console;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -93,7 +94,7 @@ public class RouteControllerConsole extends AbstractDevConsole {
                 long time = state != null && BackOffTimer.Task.Status.Active == state.getStatus()
                         ? state.getFirstAttemptTime() : 0;
                 if (time > 0) {
-                    elapsed = TimeUtils.printSince(time);
+                    elapsed = TimeUtils.printDuration(time);
                 }
                 time = state != null && BackOffTimer.Task.Status.Active == state.getStatus() ? state.getLastAttemptTime() : 0;
                 if (time > 0) {
@@ -169,6 +170,7 @@ public class RouteControllerConsole extends AbstractDevConsole {
             long started = routes.stream().filter(r -> src.getRouteStatus(r.getRouteId()).isStarted())
                     .count();
 
+            root.put("controller", "SupervisingRouteController");
             root.put("totalRoutes", routes.size());
             root.put("startedRoutes", started);
             root.put("restartingRoutes", src.getRestartingRoutes().size());
@@ -198,7 +200,7 @@ public class RouteControllerConsole extends AbstractDevConsole {
                 long time = state != null && BackOffTimer.Task.Status.Active == state.getStatus()
                         ? state.getCurrentElapsedTime() : 0;
                 if (time > 0) {
-                    elapsed = TimeUtils.printSince(time);
+                    elapsed = TimeUtils.printDuration(time);
                 }
                 time = state != null && BackOffTimer.Task.Status.Active == state.getStatus() ? state.getLastAttemptTime() : 0;
                 if (time > 0) {
@@ -225,10 +227,12 @@ public class RouteControllerConsole extends AbstractDevConsole {
                         jo.put("error", Jsoner.escape(error));
                         if (includeStacktrace) {
                             JsonArray arr2 = new JsonArray();
+                            StringWriter writer = new StringWriter();
+                            cause.printStackTrace(new PrintWriter(writer));
+                            writer.flush();
+                            String trace = writer.toString();
                             jo.put("stackTrace", arr2);
-                            for (StackTraceElement e : cause.getStackTrace()) {
-                                arr2.add(e.toString());
-                            }
+                            Collections.addAll(arr2, trace.split("\n"));
                         }
                     }
                 }
@@ -237,6 +241,7 @@ public class RouteControllerConsole extends AbstractDevConsole {
             Set<Route> routes = new TreeSet<>(Comparator.comparing(Route::getId));
             routes.addAll(rc.getControlledRoutes());
 
+            root.put("controller", "DefaultRouteController");
             root.put("totalRoutes", routes.size());
             root.put("routes", list);
             for (Route route : routes) {

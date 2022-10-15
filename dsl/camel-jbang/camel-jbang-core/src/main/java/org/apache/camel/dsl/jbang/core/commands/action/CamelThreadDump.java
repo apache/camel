@@ -52,7 +52,7 @@ public class CamelThreadDump extends ActionBaseCommand {
     String filter;
 
     @CommandLine.Option(names = { "--trace" },
-                        description = "Include stack traces", defaultValue = "false")
+                        description = "Include stack-traces", defaultValue = "false")
     boolean trace;
 
     @CommandLine.Option(names = { "--depth" },

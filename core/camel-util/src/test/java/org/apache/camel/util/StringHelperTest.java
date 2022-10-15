@@ -225,4 +225,12 @@ public class StringHelperTest {
         assertEquals("", StringHelper.padString(0));
         assertEquals("", StringHelper.padString(0, 2));
     }
+
+    @Test
+    public void testFillChars() {
+        assertEquals("", StringHelper.fillChars('-', 0));
+        assertEquals("==", StringHelper.fillChars('=', 2));
+        assertEquals("----", StringHelper.fillChars('-', 4));
+        assertEquals("..........", StringHelper.fillChars('.', 10));
+    }
 }
