@@ -174,7 +174,7 @@
     <dnsjava-version>3.5.1</dnsjava-version>
     <docker-java-version>3.2.13</docker-java-version>
     <dozer-version>6.5.2</dozer-version>
-    <dropbox-version>5.4.2</dropbox-version>
+    <dropbox-version>5.4.3</dropbox-version>
     <eddsa-version>0.3.0</eddsa-version>
     <egit-github-core-version>2.1.5</egit-github-core-version>
     <ehcache3-version>3.10.1</ehcache3-version>
