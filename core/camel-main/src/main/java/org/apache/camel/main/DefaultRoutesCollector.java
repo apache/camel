@@ -16,7 +16,6 @@
  */
 package org.apache.camel.main;
 
-import java.io.FileNotFoundException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -151,8 +150,6 @@ public class DefaultRoutesCollector implements RoutesCollector {
                 log.debug("Found {} route builder from locations: {}", builders.size(), includes);
                 answer.addAll(builders);
             }
-        } catch (FileNotFoundException e) {
-            log.debug("No RoutesBuilder found in {}. Skipping detection.", includes);
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
         }
