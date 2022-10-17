@@ -42,21 +42,19 @@ public final class RestProducerFactoryHelper {
 
     public static void setupComponentFor(
             final String url, final CamelContext camelContext,
-            final Map<String, Object> componentProperties)
-            throws Exception {
-        final String scheme = StringHelper.before(url, ":");
+            final Map<String, Object> componentProperties) {
 
+        final String scheme = StringHelper.before(url, ":");
         setupComponent(scheme, camelContext, componentProperties);
     }
 
     public static Component setupComponent(
             final String componentName, final CamelContext camelContext,
-            final Map<String, Object> componentProperties)
-            throws Exception {
+            final Map<String, Object> componentProperties) {
+
         if (componentName == null) {
             return null;
         }
-
         if (componentProperties == null || componentProperties.isEmpty()) {
             return camelContext.getComponent(componentName);
         }
@@ -76,6 +74,11 @@ public final class RestProducerFactoryHelper {
 
         // component was not added to the context we can configure it
         final Component newlyCreated = camelContext.getComponent(componentName, true, false);
+        if (newlyCreated == null) {
+            throw new IllegalArgumentException(
+                    "Cannot find component with name " + componentName
+                            + ". Make sure you have the component on the classpath");
+        }
         PropertyBindingSupport.build().withRemoveParameters(false).withIgnoreCase(true)
                 .withConfigurer(newlyCreated.getComponentPropertyConfigurer())
                 .bind(camelContext, newlyCreated, componentProperties);
