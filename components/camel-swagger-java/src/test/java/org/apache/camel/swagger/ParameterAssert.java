@@ -79,7 +79,7 @@ public final class ParameterAssert extends ObjectAssert<Parameter> {
         Assertions.assertThat(items).isNotNull();
         final String actualArrayType = items.getType();
         Assertions.assertThat(actualArrayType).as("Parameter array should be of %s type, but it's of %s", type,
-                actualArrayType);
+                actualArrayType).isEqualTo(type);
 
         return this;
     }
@@ -89,7 +89,8 @@ public final class ParameterAssert extends ObjectAssert<Parameter> {
 
         final SerializableParameter serializableParameter = (SerializableParameter) actual;
         final String actualType = serializableParameter.getType();
-        Assertions.assertThat(actualType).as("Parameter should be of %s type, but it's of %s", type, actualType);
+        Assertions.assertThat(actualType).as("Parameter should be of %s type, but it's of %s", type, actualType)
+                .isEqualTo(type);
 
         return this;
     }

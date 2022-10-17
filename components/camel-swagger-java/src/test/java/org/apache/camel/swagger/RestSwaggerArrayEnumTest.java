@@ -72,20 +72,20 @@ public class RestSwaggerArrayEnumTest extends CamelTestSupport {
         ParameterAssert.assertThat(parameters.get(0)).hasName("pathParam").isGivenIn("path").isOfType("string")
                 .hasEnumSpecifiedWith("a", "b", "c");
 
-        ParameterAssert.assertThat(parameters.get(1)).hasName("queryParam").isGivenIn("query").isOfType("string")
+        ParameterAssert.assertThat(parameters.get(1)).hasName("queryParam").isGivenIn("query").isOfType("int")
                 .hasEnumSpecifiedWith("1", "2", "3");
 
-        ParameterAssert.assertThat(parameters.get(2)).hasName("headerParam").isGivenIn("header").isOfType("string")
+        ParameterAssert.assertThat(parameters.get(2)).hasName("headerParam").isGivenIn("header").isOfType("float")
                 .hasEnumSpecifiedWith("1.1", "2.2", "3.3");
 
         ParameterAssert.assertThat(parameters.get(3)).hasName("pathArrayParam").isGivenIn("path").isOfType("array")
                 .isOfArrayType("string").hasArrayEnumSpecifiedWith("a", "b", "c");
 
         ParameterAssert.assertThat(parameters.get(4)).hasName("queryArrayParam").isGivenIn("query").isOfType("array")
-                .isOfArrayType("int").hasArrayEnumSpecifiedWith(1, 2, 3);
+                .isOfArrayType("integer").hasArrayEnumSpecifiedWith(1, 2, 3);
 
         ParameterAssert.assertThat(parameters.get(5)).hasName("headerArrayParam").isGivenIn("header").isOfType("array")
-                .isOfArrayType("float").hasArrayEnumSpecifiedWith(1.1f, 2.2f, 3.3f);
+                .isOfArrayType("number").hasArrayEnumSpecifiedWith(1.1f, 2.2f, 3.3f);
     }
 
 }

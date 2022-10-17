@@ -47,7 +47,7 @@ public class RestDslXmlGeneratorTest {
 
         final String xml = RestDslGenerator.toXml(swagger).withBlueprint().generate(context);
         assertThat(xml).isNotEmpty();
-        assertThat(xml.contains("http://camel.apache.org/schema/blueprint"));
+        assertThat(xml).contains("http://camel.apache.org/schema/blueprint");
     }
 
     @Test
@@ -56,7 +56,7 @@ public class RestDslXmlGeneratorTest {
 
         final String xml = RestDslGenerator.toXml(swagger).generate(context);
         assertThat(xml).isNotEmpty();
-        assertThat(xml.contains("http://camel.apache.org/schema/spring"));
+        assertThat(xml).contains("http://camel.apache.org/schema/spring");
     }
 
     @Test
