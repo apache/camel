@@ -68,6 +68,8 @@ public class CxfEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "properties": target.setProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "publishedendpointurl":
         case "publishedEndpointUrl": target.setPublishedEndpointUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "schemavalidationenabled":
+        case "schemaValidationEnabled": target.setSchemaValidationEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "serviceclass":
         case "serviceClass": target.setServiceClass(property(camelContext, java.lang.Class.class, value)); return true;
         case "servicename":
@@ -139,6 +141,8 @@ public class CxfEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "properties": return java.util.Map.class;
         case "publishedendpointurl":
         case "publishedEndpointUrl": return java.lang.String.class;
+        case "schemavalidationenabled":
+        case "schemaValidationEnabled": return java.lang.Boolean.class;
         case "serviceclass":
         case "serviceClass": return java.lang.Class.class;
         case "servicename":
@@ -211,6 +215,8 @@ public class CxfEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "properties": return target.getProperties();
         case "publishedendpointurl":
         case "publishedEndpointUrl": return target.getPublishedEndpointUrl();
+        case "schemavalidationenabled":
+        case "schemaValidationEnabled": return target.getSchemaValidationEnabled();
         case "serviceclass":
         case "serviceClass": return target.getServiceClass();
         case "servicename":
