@@ -16,26 +16,28 @@
  */
 package org.apache.camel.component.xmpp.integration;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class XmppMultiUserChatIT extends XmppBaseIT {
+class XmppMultiUserChatIT extends XmppBaseIT {
 
-    protected MockEndpoint consumerEndpoint;
-    protected String body1 = "the first message";
-    protected String body2 = "the second message";
+    private static final String BODY_1 = "the first message";
+    private static final String BODY_2 = "the second message";
 
     @Test
-    public void testXmppChat() throws Exception {
-        consumerEndpoint = context.getEndpoint("mock:out", MockEndpoint.class);
-        consumerEndpoint.expectedBodiesReceived(body1, body2);
+    void testXmppChat() throws Exception {
+        MockEndpoint consumerEndpoint = context.getEndpoint("mock:out", MockEndpoint.class);
+        consumerEndpoint.expectedBodiesReceived(BODY_1, BODY_2);
 
         //will send chat messages to the room
-        template.sendBody("direct:toProducer", body1);
+        template.sendBody("direct:toProducer", BODY_1);
         Thread.sleep(50);
-        template.sendBody("direct:toProducer", body2);
+        template.sendBody("direct:toProducer", BODY_2);
 
+        consumerEndpoint.setResultWaitTime(TimeUnit.MINUTES.toMillis(1));
         consumerEndpoint.assertIsSatisfied();
     }
 
@@ -54,7 +56,7 @@ public class XmppMultiUserChatIT extends XmppBaseIT {
     }
 
     protected String getProducerUri() {
-        // the nickname parameter is necessary in these URLs because the '@' in the user name can not be parsed by
+        // the nickname parameter is necessary in these URLs because the '@' in the username can not be parsed by
         // vysper during chat room message routing.
 
         // here on purpose we provide the room query parameter without the domain name as 'camel-test', and Camel
