@@ -124,8 +124,9 @@ public abstract class ZooKeeperServiceRegistrationITBase extends CamelTestSuppor
         context().getRouteController().startRoute(SERVICE_ID);
 
         // check that service has been registered
+        await().atMost(2, TimeUnit.MINUTES)
+                .untilAsserted(() -> assertEquals(1, discovery.queryForInstances(SERVICE_NAME).size()));
         Collection<ServiceInstance<ZooKeeperServiceRegistry.MetaData>> services = discovery.queryForInstances(SERVICE_NAME);
-        await().atMost(2, TimeUnit.MINUTES).untilAsserted(() -> assertEquals(1, services.size()));
 
         ServiceInstance<ZooKeeperServiceRegistry.MetaData> instance = services.iterator().next();
         assertEquals(SERVICE_PORT, (int) instance.getPort());
