@@ -17,45 +17,14 @@ public class MinaEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":protocol:host:port";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(30);
-        props.add("allowDefaultCodec");
-        props.add("autoStartTls");
-        props.add("bridgeErrorHandler");
-        props.add("cachedAddress");
-        props.add("clientMode");
-        props.add("codec");
-        props.add("decoderMaxLineLength");
-        props.add("disconnect");
-        props.add("disconnectOnNoReply");
-        props.add("encoderMaxLineLength");
-        props.add("encoding");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("filters");
-        props.add("host");
-        props.add("lazySessionCreation");
-        props.add("lazyStartProducer");
-        props.add("maximumPoolSize");
-        props.add("minaLogger");
-        props.add("noReplyLogLevel");
-        props.add("orderedThreadPoolExecutor");
-        props.add("port");
-        props.add("protocol");
-        props.add("sslContextParameters");
-        props.add("sync");
-        props.add("textline");
-        props.add("textlineDelimiter");
-        props.add("timeout");
-        props.add("transferExchange");
-        props.add("writeTimeout");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "allowDefaultCodec", "autoStartTls", "bridgeErrorHandler", "cachedAddress", "clientMode", "codec",
+            "decoderMaxLineLength", "disconnect", "disconnectOnNoReply", "encoderMaxLineLength", "encoding",
+            "exceptionHandler", "exchangePattern", "filters", "host", "lazySessionCreation", "lazyStartProducer",
+            "maximumPoolSize", "minaLogger", "noReplyLogLevel", "orderedThreadPoolExecutor", "port", "protocol",
+            "sslContextParameters", "sync", "textline", "textlineDelimiter", "timeout", "transferExchange", "writeTimeout");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

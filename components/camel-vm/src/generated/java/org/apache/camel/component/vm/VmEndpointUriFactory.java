@@ -17,34 +17,13 @@ public class VmEndpointUriFactory extends org.apache.camel.support.component.End
 
     private static final String BASE = ":name";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(19);
-        props.add("blockWhenFull");
-        props.add("bridgeErrorHandler");
-        props.add("concurrentConsumers");
-        props.add("discardIfNoConsumers");
-        props.add("discardWhenFull");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("failIfNoConsumers");
-        props.add("lazyStartProducer");
-        props.add("limitConcurrentConsumers");
-        props.add("multipleConsumers");
-        props.add("name");
-        props.add("offerTimeout");
-        props.add("pollTimeout");
-        props.add("purgeWhenStopping");
-        props.add("queue");
-        props.add("size");
-        props.add("timeout");
-        props.add("waitForTaskToComplete");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "blockWhenFull", "bridgeErrorHandler", "concurrentConsumers", "discardIfNoConsumers", "discardWhenFull",
+            "exceptionHandler", "exchangePattern", "failIfNoConsumers", "lazyStartProducer", "limitConcurrentConsumers",
+            "multipleConsumers", "name", "offerTimeout", "pollTimeout", "purgeWhenStopping", "queue", "size", "timeout",
+            "waitForTaskToComplete");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

@@ -17,80 +17,25 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
 
     private static final String BASE = ":name";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(63);
-        props.add("additionalProperties");
-        props.add("bridgeErrorHandler");
-        props.add("captureMode");
-        props.add("collectionExcludeList");
-        props.add("collectionIncludeList");
-        props.add("connectBackoffInitialDelayMs");
-        props.add("connectBackoffMaxDelayMs");
-        props.add("connectMaxAttempts");
-        props.add("converters");
-        props.add("cursorMaxAwaitTimeMs");
-        props.add("databaseExcludeList");
-        props.add("databaseHistoryFileFilename");
-        props.add("databaseIncludeList");
-        props.add("eventProcessingFailureHandlingMode");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("fieldExcludeList");
-        props.add("fieldRenames");
-        props.add("heartbeatIntervalMs");
-        props.add("heartbeatTopicsPrefix");
-        props.add("internalKeyConverter");
-        props.add("internalValueConverter");
-        props.add("maxBatchSize");
-        props.add("maxQueueSize");
-        props.add("maxQueueSizeInBytes");
-        props.add("mongodbAuthsource");
-        props.add("mongodbConnectTimeoutMs");
-        props.add("mongodbHosts");
-        props.add("mongodbMembersAutoDiscover");
-        props.add("mongodbName");
-        props.add("mongodbPassword");
-        props.add("mongodbPollIntervalMs");
-        props.add("mongodbServerSelectionTimeoutMs");
-        props.add("mongodbSocketTimeoutMs");
-        props.add("mongodbSslEnabled");
-        props.add("mongodbSslInvalidHostnameAllowed");
-        props.add("mongodbUser");
-        props.add("name");
-        props.add("offsetCommitPolicy");
-        props.add("offsetCommitTimeoutMs");
-        props.add("offsetFlushIntervalMs");
-        props.add("offsetStorage");
-        props.add("offsetStorageFileName");
-        props.add("offsetStoragePartitions");
-        props.add("offsetStorageReplicationFactor");
-        props.add("offsetStorageTopic");
-        props.add("pollIntervalMs");
-        props.add("provideTransactionMetadata");
-        props.add("queryFetchSize");
-        props.add("retriableRestartConnectorWaitMs");
-        props.add("sanitizeFieldNames");
-        props.add("schemaNameAdjustmentMode");
-        props.add("signalDataCollection");
-        props.add("skippedOperations");
-        props.add("snapshotCollectionFilterOverrides");
-        props.add("snapshotDelayMs");
-        props.add("snapshotFetchSize");
-        props.add("snapshotIncludeCollectionList");
-        props.add("snapshotMaxThreads");
-        props.add("snapshotMode");
-        props.add("sourceStructVersion");
-        props.add("tombstonesOnDelete");
-        props.add("transactionTopic");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("additionalProperties.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "additionalProperties", "bridgeErrorHandler", "captureMode", "collectionExcludeList", "collectionIncludeList",
+            "connectBackoffInitialDelayMs", "connectBackoffMaxDelayMs", "connectMaxAttempts", "converters",
+            "cursorMaxAwaitTimeMs", "databaseExcludeList", "databaseHistoryFileFilename", "databaseIncludeList",
+            "eventProcessingFailureHandlingMode", "exceptionHandler", "exchangePattern", "fieldExcludeList",
+            "fieldRenames", "heartbeatIntervalMs", "heartbeatTopicsPrefix", "internalKeyConverter",
+            "internalValueConverter", "maxBatchSize", "maxQueueSize", "maxQueueSizeInBytes", "mongodbAuthsource",
+            "mongodbConnectTimeoutMs", "mongodbHosts", "mongodbMembersAutoDiscover", "mongodbName", "mongodbPassword",
+            "mongodbPollIntervalMs", "mongodbServerSelectionTimeoutMs", "mongodbSocketTimeoutMs", "mongodbSslEnabled",
+            "mongodbSslInvalidHostnameAllowed", "mongodbUser", "name", "offsetCommitPolicy", "offsetCommitTimeoutMs",
+            "offsetFlushIntervalMs", "offsetStorage", "offsetStorageFileName", "offsetStoragePartitions",
+            "offsetStorageReplicationFactor", "offsetStorageTopic", "pollIntervalMs", "provideTransactionMetadata",
+            "queryFetchSize", "retriableRestartConnectorWaitMs", "sanitizeFieldNames", "schemaNameAdjustmentMode",
+            "signalDataCollection", "skippedOperations", "snapshotCollectionFilterOverrides", "snapshotDelayMs",
+            "snapshotFetchSize", "snapshotIncludeCollectionList", "snapshotMaxThreads", "snapshotMode",
+            "sourceStructVersion", "tombstonesOnDelete", "transactionTopic");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "additionalProperties.");
 
     @Override
     public boolean isEnabled(String scheme) {

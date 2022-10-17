@@ -17,22 +17,11 @@ public class IgniteIdGenEndpointUriFactory extends org.apache.camel.support.comp
 
     private static final String BASE = ":name";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(7);
-        props.add("batchSize");
-        props.add("initialValue");
-        props.add("lazyStartProducer");
-        props.add("name");
-        props.add("operation");
-        props.add("propagateIncomingBodyIfNoReturnValue");
-        props.add("treatCollectionsAsCacheObjects");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "batchSize", "initialValue", "lazyStartProducer", "name", "operation", "propagateIncomingBodyIfNoReturnValue",
+            "treatCollectionsAsCacheObjects");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

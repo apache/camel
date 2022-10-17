@@ -17,40 +17,14 @@ public class SpringWebserviceEndpointUriFactory extends org.apache.camel.support
 
     private static final String BASE = ":type:lookupKey:webServiceEndpointUri";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(25);
-        props.add("allowResponseAttachmentOverride");
-        props.add("allowResponseHeaderOverride");
-        props.add("bridgeErrorHandler");
-        props.add("endpointDispatcher");
-        props.add("endpointMapping");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("expression");
-        props.add("faultAction");
-        props.add("faultTo");
-        props.add("lazyStartProducer");
-        props.add("lookupKey");
-        props.add("messageFactory");
-        props.add("messageFilter");
-        props.add("messageIdStrategy");
-        props.add("messageSender");
-        props.add("outputAction");
-        props.add("replyTo");
-        props.add("soapAction");
-        props.add("sslContextParameters");
-        props.add("timeout");
-        props.add("type");
-        props.add("webServiceEndpointUri");
-        props.add("webServiceTemplate");
-        props.add("wsAddressingAction");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "allowResponseAttachmentOverride", "allowResponseHeaderOverride", "bridgeErrorHandler", "endpointDispatcher",
+            "endpointMapping", "exceptionHandler", "exchangePattern", "expression", "faultAction", "faultTo",
+            "lazyStartProducer", "lookupKey", "messageFactory", "messageFilter", "messageIdStrategy", "messageSender",
+            "outputAction", "replyTo", "soapAction", "sslContextParameters", "timeout", "type", "webServiceEndpointUri",
+            "webServiceTemplate", "wsAddressingAction");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

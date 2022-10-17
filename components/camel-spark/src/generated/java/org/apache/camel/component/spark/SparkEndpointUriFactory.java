@@ -17,22 +17,10 @@ public class SparkEndpointUriFactory extends org.apache.camel.support.component.
 
     private static final String BASE = ":endpointType";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(7);
-        props.add("collect");
-        props.add("dataFrame");
-        props.add("dataFrameCallback");
-        props.add("endpointType");
-        props.add("lazyStartProducer");
-        props.add("rdd");
-        props.add("rddCallback");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "collect", "dataFrame", "dataFrameCallback", "endpointType", "lazyStartProducer", "rdd", "rddCallback");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

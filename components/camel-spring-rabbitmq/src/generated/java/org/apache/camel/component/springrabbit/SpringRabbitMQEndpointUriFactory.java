@@ -17,52 +17,17 @@ public class SpringRabbitMQEndpointUriFactory extends org.apache.camel.support.c
 
     private static final String BASE = ":exchangeName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(35);
-        props.add("acknowledgeMode");
-        props.add("args");
-        props.add("asyncConsumer");
-        props.add("autoDeclare");
-        props.add("autoStartup");
-        props.add("bridgeErrorHandler");
-        props.add("concurrentConsumers");
-        props.add("connectionFactory");
-        props.add("deadLetterExchange");
-        props.add("deadLetterExchangeType");
-        props.add("deadLetterQueue");
-        props.add("deadLetterRoutingKey");
-        props.add("disableReplyTo");
-        props.add("exceptionHandler");
-        props.add("exchangeName");
-        props.add("exchangePattern");
-        props.add("exchangeType");
-        props.add("exclusive");
-        props.add("lazyStartProducer");
-        props.add("maxConcurrentConsumers");
-        props.add("maximumRetryAttempts");
-        props.add("messageConverter");
-        props.add("messageListenerContainerType");
-        props.add("messagePropertiesConverter");
-        props.add("noLocal");
-        props.add("prefetchCount");
-        props.add("queues");
-        props.add("rejectAndDontRequeue");
-        props.add("replyTimeout");
-        props.add("retry");
-        props.add("retryDelay");
-        props.add("routingKey");
-        props.add("synchronous");
-        props.add("testConnectionOnStartup");
-        props.add("usePublisherConnection");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("arg.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "acknowledgeMode", "args", "asyncConsumer", "autoDeclare", "autoStartup", "bridgeErrorHandler",
+            "concurrentConsumers", "connectionFactory", "deadLetterExchange", "deadLetterExchangeType", "deadLetterQueue",
+            "deadLetterRoutingKey", "disableReplyTo", "exceptionHandler", "exchangeName", "exchangePattern",
+            "exchangeType", "exclusive", "lazyStartProducer", "maxConcurrentConsumers", "maximumRetryAttempts",
+            "messageConverter", "messageListenerContainerType", "messagePropertiesConverter", "noLocal", "prefetchCount",
+            "queues", "rejectAndDontRequeue", "replyTimeout", "retry", "retryDelay", "routingKey", "synchronous",
+            "testConnectionOnStartup", "usePublisherConnection");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "arg.");
 
     @Override
     public boolean isEnabled(String scheme) {

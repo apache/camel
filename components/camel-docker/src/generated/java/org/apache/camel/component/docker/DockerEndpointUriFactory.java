@@ -17,40 +17,14 @@ public class DockerEndpointUriFactory extends org.apache.camel.support.component
 
     private static final String BASE = ":operation";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(22);
-        props.add("bridgeErrorHandler");
-        props.add("certPath");
-        props.add("cmdExecFactory");
-        props.add("email");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("followRedirectFilter");
-        props.add("host");
-        props.add("lazyStartProducer");
-        props.add("loggingFilter");
-        props.add("maxPerRouteConnections");
-        props.add("maxTotalConnections");
-        props.add("operation");
-        props.add("parameters");
-        props.add("password");
-        props.add("port");
-        props.add("requestTimeout");
-        props.add("secure");
-        props.add("serverAddress");
-        props.add("socket");
-        props.add("tlsVerify");
-        props.add("username");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
-        secretProps.add("password");
-        secretProps.add("username");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "bridgeErrorHandler", "certPath", "cmdExecFactory", "email", "exceptionHandler", "exchangePattern",
+            "followRedirectFilter", "host", "lazyStartProducer", "loggingFilter", "maxPerRouteConnections",
+            "maxTotalConnections", "operation", "parameters", "password", "port", "requestTimeout", "secure",
+            "serverAddress", "socket", "tlsVerify", "username");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "password", "username");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

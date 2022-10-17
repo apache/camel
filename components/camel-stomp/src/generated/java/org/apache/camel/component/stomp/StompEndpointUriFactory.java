@@ -17,31 +17,12 @@ public class StompEndpointUriFactory extends org.apache.camel.support.component.
 
     private static final String BASE = ":destination";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(13);
-        props.add("bridgeErrorHandler");
-        props.add("brokerURL");
-        props.add("customHeaders");
-        props.add("destination");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("headerFilterStrategy");
-        props.add("host");
-        props.add("lazyStartProducer");
-        props.add("login");
-        props.add("passcode");
-        props.add("sslContextParameters");
-        props.add("version");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
-        secretProps.add("login");
-        secretProps.add("passcode");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "bridgeErrorHandler", "brokerURL", "customHeaders", "destination", "exceptionHandler", "exchangePattern",
+            "headerFilterStrategy", "host", "lazyStartProducer", "login", "passcode", "sslContextParameters", "version");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "login", "passcode");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

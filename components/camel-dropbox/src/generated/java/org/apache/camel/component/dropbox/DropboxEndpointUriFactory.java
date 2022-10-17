@@ -17,38 +17,13 @@ public class DropboxEndpointUriFactory extends org.apache.camel.support.componen
 
     private static final String BASE = ":operation";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(17);
-        props.add("accessToken");
-        props.add("apiKey");
-        props.add("apiSecret");
-        props.add("bridgeErrorHandler");
-        props.add("client");
-        props.add("clientIdentifier");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("expireIn");
-        props.add("lazyStartProducer");
-        props.add("localPath");
-        props.add("newRemotePath");
-        props.add("operation");
-        props.add("query");
-        props.add("refreshToken");
-        props.add("remotePath");
-        props.add("uploadMode");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(5);
-        secretProps.add("accessToken");
-        secretProps.add("apiKey");
-        secretProps.add("apiSecret");
-        secretProps.add("expireIn");
-        secretProps.add("refreshToken");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "accessToken", "apiKey", "apiSecret", "bridgeErrorHandler", "client", "clientIdentifier", "exceptionHandler",
+            "exchangePattern", "expireIn", "lazyStartProducer", "localPath", "newRemotePath", "operation", "query",
+            "refreshToken", "remotePath", "uploadMode");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "accessToken", "apiKey", "apiSecret", "expireIn", "refreshToken");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

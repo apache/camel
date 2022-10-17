@@ -452,7 +452,7 @@ public class Etcd3AggregationRepository extends ServiceSupport
     public Set<String> getKeys() {
         CompletableFuture<GetResponse> completableGetResponse = kvClient.get(ByteSequence.from(prefixName.getBytes()),
                 GetOption.newBuilder().withRange(ByteSequence.from(prefixName.getBytes())).build());
-        Set<String> scanned = Collections.unmodifiableSet(new TreeSet<>());
+        Set<String> scanned;
         try {
             GetResponse getResponse = completableGetResponse.get();
             Set<String> keys = new TreeSet<>();

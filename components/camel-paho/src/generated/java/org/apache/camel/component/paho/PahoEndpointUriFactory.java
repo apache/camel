@@ -17,50 +17,16 @@ public class PahoEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":topic";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(32);
-        props.add("automaticReconnect");
-        props.add("bridgeErrorHandler");
-        props.add("brokerUrl");
-        props.add("cleanSession");
-        props.add("client");
-        props.add("clientId");
-        props.add("connectionTimeout");
-        props.add("customWebSocketHeaders");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("executorServiceTimeout");
-        props.add("filePersistenceDirectory");
-        props.add("httpsHostnameVerificationEnabled");
-        props.add("keepAliveInterval");
-        props.add("lazyStartProducer");
-        props.add("maxInflight");
-        props.add("maxReconnectDelay");
-        props.add("mqttVersion");
-        props.add("password");
-        props.add("persistence");
-        props.add("qos");
-        props.add("retained");
-        props.add("serverURIs");
-        props.add("socketFactory");
-        props.add("sslClientProps");
-        props.add("sslHostnameVerifier");
-        props.add("topic");
-        props.add("userName");
-        props.add("willPayload");
-        props.add("willQos");
-        props.add("willRetained");
-        props.add("willTopic");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
-        secretProps.add("password");
-        secretProps.add("userName");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "automaticReconnect", "bridgeErrorHandler", "brokerUrl", "cleanSession", "client", "clientId",
+            "connectionTimeout", "customWebSocketHeaders", "exceptionHandler", "exchangePattern", "executorServiceTimeout",
+            "filePersistenceDirectory", "httpsHostnameVerificationEnabled", "keepAliveInterval", "lazyStartProducer",
+            "maxInflight", "maxReconnectDelay", "mqttVersion", "password", "persistence", "qos", "retained", "serverURIs",
+            "socketFactory", "sslClientProps", "sslHostnameVerifier", "topic", "userName", "willPayload", "willQos",
+            "willRetained", "willTopic");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "password", "userName");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

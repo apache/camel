@@ -17,146 +17,33 @@ public class FtpsEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":host:port/directoryName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(121);
-        props.add("account");
-        props.add("activePortRange");
-        props.add("allowNullBody");
-        props.add("antExclude");
-        props.add("antFilterCaseSensitive");
-        props.add("antInclude");
-        props.add("autoCreate");
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("binary");
-        props.add("bridgeErrorHandler");
-        props.add("bufferSize");
-        props.add("charset");
-        props.add("chmod");
-        props.add("connectTimeout");
-        props.add("delay");
-        props.add("delete");
-        props.add("directoryName");
-        props.add("disableSecureDataChannelDefaults");
-        props.add("disconnect");
-        props.add("disconnectOnBatchComplete");
-        props.add("doneFileName");
-        props.add("download");
-        props.add("eagerDeleteTargetFile");
-        props.add("eagerMaxMessagesPerPoll");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("exclude");
-        props.add("excludeExt");
-        props.add("exclusiveReadLockStrategy");
-        props.add("execPbsz");
-        props.add("execProt");
-        props.add("fastExistsCheck");
-        props.add("fileExist");
-        props.add("fileName");
-        props.add("filter");
-        props.add("filterDirectory");
-        props.add("filterFile");
-        props.add("flatten");
-        props.add("ftpClient");
-        props.add("ftpClientConfig");
-        props.add("ftpClientConfigParameters");
-        props.add("ftpClientKeyStoreParameters");
-        props.add("ftpClientParameters");
-        props.add("ftpClientTrustStoreParameters");
-        props.add("greedy");
-        props.add("handleDirectoryParserAbsoluteResult");
-        props.add("host");
-        props.add("idempotent");
-        props.add("idempotentKey");
-        props.add("idempotentRepository");
-        props.add("ignoreFileNotFoundOrPermissionError");
-        props.add("implicit");
-        props.add("inProgressRepository");
-        props.add("include");
-        props.add("includeExt");
-        props.add("initialDelay");
-        props.add("jailStartingDirectory");
-        props.add("keepLastModified");
-        props.add("lazyStartProducer");
-        props.add("localWorkDirectory");
-        props.add("maxDepth");
-        props.add("maxMessagesPerPoll");
-        props.add("maximumReconnectAttempts");
-        props.add("minDepth");
-        props.add("move");
-        props.add("moveExisting");
-        props.add("moveExistingFileStrategy");
-        props.add("moveFailed");
-        props.add("noop");
-        props.add("onCompletionExceptionHandler");
-        props.add("passiveMode");
-        props.add("password");
-        props.add("pollStrategy");
-        props.add("port");
-        props.add("preMove");
-        props.add("preSort");
-        props.add("processStrategy");
-        props.add("readLock");
-        props.add("readLockCheckInterval");
-        props.add("readLockDeleteOrphanLockFiles");
-        props.add("readLockLoggingLevel");
-        props.add("readLockMarkerFile");
-        props.add("readLockMinAge");
-        props.add("readLockMinLength");
-        props.add("readLockRemoveOnCommit");
-        props.add("readLockRemoveOnRollback");
-        props.add("readLockTimeout");
-        props.add("reconnectDelay");
-        props.add("recursive");
-        props.add("repeatCount");
-        props.add("resumeDownload");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("securityProtocol");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("sendNoop");
-        props.add("separator");
-        props.add("shuffle");
-        props.add("siteCommand");
-        props.add("soTimeout");
-        props.add("sortBy");
-        props.add("sorter");
-        props.add("sslContextParameters");
-        props.add("startScheduler");
-        props.add("stepwise");
-        props.add("streamDownload");
-        props.add("tempFileName");
-        props.add("tempPrefix");
-        props.add("throwExceptionOnConnectFailed");
-        props.add("timeUnit");
-        props.add("timeout");
-        props.add("transferLoggingIntervalSeconds");
-        props.add("transferLoggingLevel");
-        props.add("transferLoggingVerbose");
-        props.add("useFixedDelay");
-        props.add("useList");
-        props.add("username");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(3);
-        secretProps.add("account");
-        secretProps.add("password");
-        secretProps.add("username");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Set<String> prefixes = new HashSet<>(5);
-        prefixes.add("ftpClient.");
-        prefixes.add("ftpClient.keyStore.");
-        prefixes.add("ftpClient.trustStore.");
-        prefixes.add("ftpClientConfig.");
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "account", "activePortRange", "allowNullBody", "antExclude", "antFilterCaseSensitive", "antInclude",
+            "autoCreate", "backoffErrorThreshold", "backoffIdleThreshold", "backoffMultiplier", "binary",
+            "bridgeErrorHandler", "bufferSize", "charset", "chmod", "connectTimeout", "delay", "delete", "directoryName",
+            "disableSecureDataChannelDefaults", "disconnect", "disconnectOnBatchComplete", "doneFileName", "download",
+            "eagerDeleteTargetFile", "eagerMaxMessagesPerPoll", "exceptionHandler", "exchangePattern", "exclude",
+            "excludeExt", "exclusiveReadLockStrategy", "execPbsz", "execProt", "fastExistsCheck", "fileExist", "fileName",
+            "filter", "filterDirectory", "filterFile", "flatten", "ftpClient", "ftpClientConfig",
+            "ftpClientConfigParameters", "ftpClientKeyStoreParameters", "ftpClientParameters",
+            "ftpClientTrustStoreParameters", "greedy", "handleDirectoryParserAbsoluteResult", "host", "idempotent",
+            "idempotentKey", "idempotentRepository", "ignoreFileNotFoundOrPermissionError", "implicit",
+            "inProgressRepository", "include", "includeExt", "initialDelay", "jailStartingDirectory", "keepLastModified",
+            "lazyStartProducer", "localWorkDirectory", "maxDepth", "maxMessagesPerPoll", "maximumReconnectAttempts",
+            "minDepth", "move", "moveExisting", "moveExistingFileStrategy", "moveFailed", "noop",
+            "onCompletionExceptionHandler", "passiveMode", "password", "pollStrategy", "port", "preMove", "preSort",
+            "processStrategy", "readLock", "readLockCheckInterval", "readLockDeleteOrphanLockFiles",
+            "readLockLoggingLevel", "readLockMarkerFile", "readLockMinAge", "readLockMinLength", "readLockRemoveOnCommit",
+            "readLockRemoveOnRollback", "readLockTimeout", "reconnectDelay", "recursive", "repeatCount", "resumeDownload",
+            "runLoggingLevel", "scheduledExecutorService", "scheduler", "schedulerProperties", "securityProtocol",
+            "sendEmptyMessageWhenIdle", "sendNoop", "separator", "shuffle", "siteCommand", "soTimeout", "sortBy", "sorter",
+            "sslContextParameters", "startScheduler", "stepwise", "streamDownload", "tempFileName", "tempPrefix",
+            "throwExceptionOnConnectFailed", "timeUnit", "timeout", "transferLoggingIntervalSeconds",
+            "transferLoggingLevel", "transferLoggingVerbose", "useFixedDelay", "useList", "username");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "account", "password", "username");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "ftpClient.", "ftpClient.keyStore.", "ftpClient.trustStore.", "ftpClientConfig.", "scheduler.");
 
     @Override
     public boolean isEnabled(String scheme) {

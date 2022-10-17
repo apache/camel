@@ -17,164 +17,30 @@ public class ZendeskEndpointUriFactory extends org.apache.camel.support.componen
 
     private static final String BASE = ":methodName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(142);
-        props.add("active");
-        props.add("article");
-        props.add("articleAttachments");
-        props.add("articleId");
-        props.add("articleId0");
-        props.add("attachment");
-        props.add("attachments");
-        props.add("audit");
-        props.add("auditId");
-        props.add("automation");
-        props.add("automationId");
-        props.add("automationId0");
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("bridgeErrorHandler");
-        props.add("category");
-        props.add("categoryId");
-        props.add("categoryId0");
-        props.add("category_id");
-        props.add("comment");
-        props.add("commentId");
-        props.add("content");
-        props.add("contentType");
-        props.add("delay");
-        props.add("email");
-        props.add("endTime");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("externalId");
-        props.add("externalId0");
-        props.add("externalId0s");
-        props.add("field");
-        props.add("file");
-        props.add("fileName");
-        props.add("forum");
-        props.add("forum_id");
-        props.add("greedy");
-        props.add("group");
-        props.add("groupMembership");
-        props.add("group_id");
-        props.add("group_membership_id");
-        props.add("id");
-        props.add("idArticle");
-        props.add("identity");
-        props.add("identityId");
-        props.add("ids");
-        props.add("inBody");
-        props.add("includeArchived");
-        props.add("initialDelay");
-        props.add("inline");
-        props.add("installationId");
-        props.add("item");
-        props.add("itemId");
-        props.add("json");
-        props.add("labels");
-        props.add("lazyStartProducer");
-        props.add("locale");
-        props.add("macro");
-        props.add("macroId");
-        props.add("macroId0");
-        props.add("methodName");
-        props.add("monitorId");
-        props.add("name");
-        props.add("newPassword");
-        props.add("notifySubscribers");
-        props.add("oauthToken");
-        props.add("oldPassword");
-        props.add("order");
-        props.add("organization");
-        props.add("organizationId");
-        props.add("organizationList");
-        props.add("organizationMembership");
-        props.add("organizationMembershipList");
-        props.add("organizationMemberships");
-        props.add("organization_id");
-        props.add("organization_membership_id");
-        props.add("organizations");
-        props.add("page");
-        props.add("password");
-        props.add("permissionGroup");
-        props.add("pollStrategy");
-        props.add("query");
-        props.add("queryParams");
-        props.add("repeatCount");
-        props.add("request");
-        props.add("requestId");
-        props.add("role");
-        props.add("roles");
-        props.add("runLoggingLevel");
-        props.add("satisfactionRating");
-        props.add("schedule");
-        props.add("scheduleId");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("searchTerm");
-        props.add("section");
-        props.add("sectionId");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("serverUrl");
-        props.add("sortBy");
-        props.add("sortOrder");
-        props.add("startScheduler");
-        props.add("startTime");
-        props.add("status");
-        props.add("statuses");
-        props.add("suspendedTicket");
-        props.add("tags");
-        props.add("target");
-        props.add("targetId");
-        props.add("ticket");
-        props.add("ticketForm");
-        props.add("ticketId");
-        props.add("ticketId0");
-        props.add("ticketImport");
-        props.add("ticketList");
-        props.add("tickets");
-        props.add("timeUnit");
-        props.add("token");
-        props.add("topic");
-        props.add("translation");
-        props.add("translationId");
-        props.add("trigger");
-        props.add("triggerId");
-        props.add("triggerId0");
-        props.add("tweetId");
-        props.add("unixEpochTime");
-        props.add("upload");
-        props.add("useFixedDelay");
-        props.add("user");
-        props.add("userId");
-        props.add("userId0");
-        props.add("userIdThatWillBeMerged");
-        props.add("userIdThatWillRemain");
-        props.add("userList");
-        props.add("userSegment");
-        props.add("user_id");
-        props.add("username");
-        props.add("users");
-        props.add("usersList");
-        props.add("variant");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(4);
-        secretProps.add("oauthToken");
-        secretProps.add("password");
-        secretProps.add("token");
-        secretProps.add("username");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "active", "article", "articleAttachments", "articleId", "articleId0", "attachment", "attachments", "audit",
+            "auditId", "automation", "automationId", "automationId0", "backoffErrorThreshold", "backoffIdleThreshold",
+            "backoffMultiplier", "bridgeErrorHandler", "category", "categoryId", "categoryId0", "category_id", "comment",
+            "commentId", "content", "contentType", "delay", "email", "endTime", "exceptionHandler", "exchangePattern",
+            "externalId", "externalId0", "externalId0s", "field", "file", "fileName", "forum", "forum_id", "greedy",
+            "group", "groupMembership", "group_id", "group_membership_id", "id", "idArticle", "identity", "identityId",
+            "ids", "inBody", "includeArchived", "initialDelay", "inline", "installationId", "item", "itemId", "json",
+            "labels", "lazyStartProducer", "locale", "macro", "macroId", "macroId0", "methodName", "monitorId", "name",
+            "newPassword", "notifySubscribers", "oauthToken", "oldPassword", "order", "organization", "organizationId",
+            "organizationList", "organizationMembership", "organizationMembershipList", "organizationMemberships",
+            "organization_id", "organization_membership_id", "organizations", "page", "password", "permissionGroup",
+            "pollStrategy", "query", "queryParams", "repeatCount", "request", "requestId", "role", "roles",
+            "runLoggingLevel", "satisfactionRating", "schedule", "scheduleId", "scheduledExecutorService", "scheduler",
+            "schedulerProperties", "searchTerm", "section", "sectionId", "sendEmptyMessageWhenIdle", "serverUrl", "sortBy",
+            "sortOrder", "startScheduler", "startTime", "status", "statuses", "suspendedTicket", "tags", "target",
+            "targetId", "ticket", "ticketForm", "ticketId", "ticketId0", "ticketImport", "ticketList", "tickets",
+            "timeUnit", "token", "topic", "translation", "translationId", "trigger", "triggerId", "triggerId0", "tweetId",
+            "unixEpochTime", "upload", "useFixedDelay", "user", "userId", "userId0", "userIdThatWillBeMerged",
+            "userIdThatWillRemain", "userList", "userSegment", "user_id", "username", "users", "usersList", "variant");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "oauthToken", "password", "token", "username");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "scheduler.");
 
     @Override
     public boolean isEnabled(String scheme) {

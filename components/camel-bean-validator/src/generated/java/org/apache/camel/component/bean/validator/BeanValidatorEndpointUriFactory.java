@@ -17,24 +17,11 @@ public class BeanValidatorEndpointUriFactory extends org.apache.camel.support.co
 
     private static final String BASE = ":label";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(9);
-        props.add("constraintValidatorFactory");
-        props.add("group");
-        props.add("ignoreXmlConfiguration");
-        props.add("label");
-        props.add("lazyStartProducer");
-        props.add("messageInterpolator");
-        props.add("traversableResolver");
-        props.add("validationProviderResolver");
-        props.add("validatorFactory");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "constraintValidatorFactory", "group", "ignoreXmlConfiguration", "label", "lazyStartProducer",
+            "messageInterpolator", "traversableResolver", "validationProviderResolver", "validatorFactory");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

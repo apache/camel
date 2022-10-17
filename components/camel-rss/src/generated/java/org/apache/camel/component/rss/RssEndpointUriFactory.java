@@ -17,43 +17,15 @@ public class RssEndpointUriFactory extends org.apache.camel.support.component.En
 
     private static final String BASE = ":feedUri";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(26);
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("bridgeErrorHandler");
-        props.add("delay");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("feedHeader");
-        props.add("feedUri");
-        props.add("greedy");
-        props.add("initialDelay");
-        props.add("password");
-        props.add("pollStrategy");
-        props.add("repeatCount");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("sortEntries");
-        props.add("splitEntries");
-        props.add("startScheduler");
-        props.add("throttleEntries");
-        props.add("timeUnit");
-        props.add("useFixedDelay");
-        props.add("username");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "backoffErrorThreshold", "backoffIdleThreshold", "backoffMultiplier", "bridgeErrorHandler", "delay",
+            "exceptionHandler", "exchangePattern", "feedHeader", "feedUri", "greedy", "initialDelay", "password",
+            "pollStrategy", "repeatCount", "runLoggingLevel", "scheduledExecutorService", "scheduler",
+            "schedulerProperties", "sendEmptyMessageWhenIdle", "sortEntries", "splitEntries", "startScheduler",
+            "throttleEntries", "timeUnit", "useFixedDelay", "username");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "scheduler.");
 
     @Override
     public boolean isEnabled(String scheme) {

@@ -17,28 +17,12 @@ public class DynamicRouterEndpointUriFactory extends org.apache.camel.support.co
 
     private static final String BASE = ":channel";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(13);
-        props.add("channel");
-        props.add("controlAction");
-        props.add("destinationUri");
-        props.add("expressionLanguage");
-        props.add("lazyStartProducer");
-        props.add("predicate");
-        props.add("predicateBean");
-        props.add("priority");
-        props.add("recipientMode");
-        props.add("subscribeChannel");
-        props.add("subscriptionId");
-        props.add("synchronous");
-        props.add("warnDroppedMessage");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "channel", "controlAction", "destinationUri", "expressionLanguage", "lazyStartProducer", "predicate",
+            "predicateBean", "priority", "recipientMode", "subscribeChannel", "subscriptionId", "synchronous",
+            "warnDroppedMessage");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

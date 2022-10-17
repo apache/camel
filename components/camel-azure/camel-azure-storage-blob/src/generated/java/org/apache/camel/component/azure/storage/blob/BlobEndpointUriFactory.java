@@ -17,71 +17,20 @@ public class BlobEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":accountName/containerName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(51);
-        props.add("accessKey");
-        props.add("accountName");
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("blobName");
-        props.add("blobOffset");
-        props.add("blobSequenceNumber");
-        props.add("blobServiceClient");
-        props.add("blobType");
-        props.add("blockListType");
-        props.add("bridgeErrorHandler");
-        props.add("changeFeedContext");
-        props.add("changeFeedEndTime");
-        props.add("changeFeedStartTime");
-        props.add("closeStreamAfterRead");
-        props.add("closeStreamAfterWrite");
-        props.add("commitBlockListLater");
-        props.add("containerName");
-        props.add("createAppendBlob");
-        props.add("createPageBlob");
-        props.add("credentialType");
-        props.add("credentials");
-        props.add("dataCount");
-        props.add("delay");
-        props.add("downloadLinkExpiration");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("fileDir");
-        props.add("greedy");
-        props.add("initialDelay");
-        props.add("lazyStartProducer");
-        props.add("maxResultsPerPage");
-        props.add("maxRetryRequests");
-        props.add("operation");
-        props.add("pageBlobSize");
-        props.add("pollStrategy");
-        props.add("prefix");
-        props.add("regex");
-        props.add("repeatCount");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("serviceClient");
-        props.add("sourceBlobAccessKey");
-        props.add("startScheduler");
-        props.add("timeUnit");
-        props.add("timeout");
-        props.add("useFixedDelay");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
-        secretProps.add("accessKey");
-        secretProps.add("sourceBlobAccessKey");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "accessKey", "accountName", "backoffErrorThreshold", "backoffIdleThreshold", "backoffMultiplier", "blobName",
+            "blobOffset", "blobSequenceNumber", "blobServiceClient", "blobType", "blockListType", "bridgeErrorHandler",
+            "changeFeedContext", "changeFeedEndTime", "changeFeedStartTime", "closeStreamAfterRead",
+            "closeStreamAfterWrite", "commitBlockListLater", "containerName", "createAppendBlob", "createPageBlob",
+            "credentialType", "credentials", "dataCount", "delay", "downloadLinkExpiration", "exceptionHandler",
+            "exchangePattern", "fileDir", "greedy", "initialDelay", "lazyStartProducer", "maxResultsPerPage",
+            "maxRetryRequests", "operation", "pageBlobSize", "pollStrategy", "prefix", "regex", "repeatCount",
+            "runLoggingLevel", "scheduledExecutorService", "scheduler", "schedulerProperties", "sendEmptyMessageWhenIdle",
+            "serviceClient", "sourceBlobAccessKey", "startScheduler", "timeUnit", "timeout", "useFixedDelay");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "accessKey", "sourceBlobAccessKey");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "scheduler.");
 
     @Override
     public boolean isEnabled(String scheme) {

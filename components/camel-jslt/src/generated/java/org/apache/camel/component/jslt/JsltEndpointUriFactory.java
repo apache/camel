@@ -17,23 +17,11 @@ public class JsltEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":resourceUri";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(8);
-        props.add("allowContextMapAll");
-        props.add("allowTemplateFromHeader");
-        props.add("contentCache");
-        props.add("lazyStartProducer");
-        props.add("mapBigDecimalAsFloats");
-        props.add("objectMapper");
-        props.add("prettyPrint");
-        props.add("resourceUri");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "allowContextMapAll", "allowTemplateFromHeader", "contentCache", "lazyStartProducer", "mapBigDecimalAsFloats",
+            "objectMapper", "prettyPrint", "resourceUri");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

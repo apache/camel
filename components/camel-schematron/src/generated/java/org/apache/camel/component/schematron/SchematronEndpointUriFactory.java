@@ -17,20 +17,10 @@ public class SchematronEndpointUriFactory extends org.apache.camel.support.compo
 
     private static final String BASE = ":path";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(5);
-        props.add("abort");
-        props.add("lazyStartProducer");
-        props.add("path");
-        props.add("rules");
-        props.add("uriResolver");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "abort", "lazyStartProducer", "path", "rules", "uriResolver");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

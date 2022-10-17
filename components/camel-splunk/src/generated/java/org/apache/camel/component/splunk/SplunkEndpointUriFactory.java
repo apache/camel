@@ -17,67 +17,18 @@ public class SplunkEndpointUriFactory extends org.apache.camel.support.component
 
     private static final String BASE = ":name";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(46);
-        props.add("app");
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("bridgeErrorHandler");
-        props.add("connectionTimeout");
-        props.add("count");
-        props.add("delay");
-        props.add("earliestTime");
-        props.add("eventHost");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("greedy");
-        props.add("host");
-        props.add("index");
-        props.add("initEarliestTime");
-        props.add("initialDelay");
-        props.add("latestTime");
-        props.add("lazyStartProducer");
-        props.add("name");
-        props.add("owner");
-        props.add("password");
-        props.add("pollStrategy");
-        props.add("port");
-        props.add("raw");
-        props.add("repeatCount");
-        props.add("runLoggingLevel");
-        props.add("savedSearch");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("scheme");
-        props.add("search");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("source");
-        props.add("sourceType");
-        props.add("sslProtocol");
-        props.add("startScheduler");
-        props.add("streaming");
-        props.add("tcpReceiverLocalPort");
-        props.add("tcpReceiverPort");
-        props.add("timeUnit");
-        props.add("token");
-        props.add("useFixedDelay");
-        props.add("useSunHttpsHandler");
-        props.add("username");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(3);
-        secretProps.add("password");
-        secretProps.add("token");
-        secretProps.add("username");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "app", "backoffErrorThreshold", "backoffIdleThreshold", "backoffMultiplier", "bridgeErrorHandler",
+            "connectionTimeout", "count", "delay", "earliestTime", "eventHost", "exceptionHandler", "exchangePattern",
+            "greedy", "host", "index", "initEarliestTime", "initialDelay", "latestTime", "lazyStartProducer", "name",
+            "owner", "password", "pollStrategy", "port", "raw", "repeatCount", "runLoggingLevel", "savedSearch",
+            "scheduledExecutorService", "scheduler", "schedulerProperties", "scheme", "search", "sendEmptyMessageWhenIdle",
+            "source", "sourceType", "sslProtocol", "startScheduler", "streaming", "tcpReceiverLocalPort",
+            "tcpReceiverPort", "timeUnit", "token", "useFixedDelay", "useSunHttpsHandler", "username");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "password", "token", "username");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "scheduler.");
 
     @Override
     public boolean isEnabled(String scheme) {

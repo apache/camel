@@ -17,32 +17,12 @@ public class AtmosEndpointUriFactory extends org.apache.camel.support.component.
 
     private static final String BASE = ":name/operation";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(14);
-        props.add("bridgeErrorHandler");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("fullTokenId");
-        props.add("lazyStartProducer");
-        props.add("localPath");
-        props.add("name");
-        props.add("newRemotePath");
-        props.add("operation");
-        props.add("query");
-        props.add("remotePath");
-        props.add("secretKey");
-        props.add("sslValidation");
-        props.add("uri");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
-        secretProps.add("fullTokenId");
-        secretProps.add("secretKey");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "bridgeErrorHandler", "exceptionHandler", "exchangePattern", "fullTokenId", "lazyStartProducer", "localPath",
+            "name", "newRemotePath", "operation", "query", "remotePath", "secretKey", "sslValidation", "uri");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "fullTokenId", "secretKey");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

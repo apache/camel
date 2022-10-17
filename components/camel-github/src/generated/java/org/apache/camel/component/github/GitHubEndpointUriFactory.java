@@ -17,49 +17,16 @@ public class GitHubEndpointUriFactory extends org.apache.camel.support.component
 
     private static final String BASE = ":type/branchName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(30);
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("branchName");
-        props.add("bridgeErrorHandler");
-        props.add("delay");
-        props.add("encoding");
-        props.add("eventFetchStrategy");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("greedy");
-        props.add("initialDelay");
-        props.add("lazyStartProducer");
-        props.add("oauthToken");
-        props.add("pollStrategy");
-        props.add("repeatCount");
-        props.add("repoName");
-        props.add("repoOwner");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("startScheduler");
-        props.add("startingSha");
-        props.add("state");
-        props.add("targetUrl");
-        props.add("timeUnit");
-        props.add("type");
-        props.add("useFixedDelay");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(1);
-        secretProps.add("oauthToken");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "backoffErrorThreshold", "backoffIdleThreshold", "backoffMultiplier", "branchName", "bridgeErrorHandler",
+            "delay", "encoding", "eventFetchStrategy", "exceptionHandler", "exchangePattern", "greedy", "initialDelay",
+            "lazyStartProducer", "oauthToken", "pollStrategy", "repeatCount", "repoName", "repoOwner", "runLoggingLevel",
+            "scheduledExecutorService", "scheduler", "schedulerProperties", "sendEmptyMessageWhenIdle", "startScheduler",
+            "startingSha", "state", "targetUrl", "timeUnit", "type", "useFixedDelay");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "oauthToken");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "scheduler.");
 
     @Override
     public boolean isEnabled(String scheme) {

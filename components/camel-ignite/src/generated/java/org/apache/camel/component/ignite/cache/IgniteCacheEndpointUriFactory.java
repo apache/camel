@@ -17,32 +17,13 @@ public class IgniteCacheEndpointUriFactory extends org.apache.camel.support.comp
 
     private static final String BASE = ":cacheName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(17);
-        props.add("autoUnsubscribe");
-        props.add("bridgeErrorHandler");
-        props.add("cacheName");
-        props.add("cachePeekMode");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("failIfInexistentCache");
-        props.add("fireExistingQueryResults");
-        props.add("lazyStartProducer");
-        props.add("oneExchangePerUpdate");
-        props.add("operation");
-        props.add("pageSize");
-        props.add("propagateIncomingBodyIfNoReturnValue");
-        props.add("query");
-        props.add("remoteFilter");
-        props.add("timeInterval");
-        props.add("treatCollectionsAsCacheObjects");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "autoUnsubscribe", "bridgeErrorHandler", "cacheName", "cachePeekMode", "exceptionHandler", "exchangePattern",
+            "failIfInexistentCache", "fireExistingQueryResults", "lazyStartProducer", "oneExchangePerUpdate", "operation",
+            "pageSize", "propagateIncomingBodyIfNoReturnValue", "query", "remoteFilter", "timeInterval",
+            "treatCollectionsAsCacheObjects");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

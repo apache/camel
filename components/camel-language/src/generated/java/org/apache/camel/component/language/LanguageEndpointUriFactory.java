@@ -17,24 +17,11 @@ public class LanguageEndpointUriFactory extends org.apache.camel.support.compone
 
     private static final String BASE = ":languageName:resourceUri";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(9);
-        props.add("allowContextMapAll");
-        props.add("binary");
-        props.add("cacheScript");
-        props.add("contentCache");
-        props.add("languageName");
-        props.add("lazyStartProducer");
-        props.add("resourceUri");
-        props.add("script");
-        props.add("transform");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "allowContextMapAll", "binary", "cacheScript", "contentCache", "languageName", "lazyStartProducer",
+            "resourceUri", "script", "transform");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

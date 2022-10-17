@@ -17,23 +17,11 @@ public class ClassEndpointUriFactory extends org.apache.camel.support.component.
 
     private static final String BASE = ":beanName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(6);
-        props.add("beanName");
-        props.add("cache");
-        props.add("lazyStartProducer");
-        props.add("method");
-        props.add("parameters");
-        props.add("scope");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("bean.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "beanName", "cache", "lazyStartProducer", "method", "parameters", "scope");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "bean.");
 
     @Override
     public boolean isEnabled(String scheme) {

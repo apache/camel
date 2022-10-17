@@ -17,51 +17,16 @@ public class CassandraEndpointUriFactory extends org.apache.camel.support.compon
 
     private static final String BASE = ":beanRef:hosts:port/keyspace";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(34);
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("beanRef");
-        props.add("bridgeErrorHandler");
-        props.add("clusterName");
-        props.add("consistencyLevel");
-        props.add("cql");
-        props.add("datacenter");
-        props.add("delay");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("greedy");
-        props.add("hosts");
-        props.add("initialDelay");
-        props.add("keyspace");
-        props.add("lazyStartProducer");
-        props.add("loadBalancingPolicyClass");
-        props.add("password");
-        props.add("pollStrategy");
-        props.add("port");
-        props.add("prepareStatements");
-        props.add("repeatCount");
-        props.add("resultSetConversionStrategy");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("session");
-        props.add("startScheduler");
-        props.add("timeUnit");
-        props.add("useFixedDelay");
-        props.add("username");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "backoffErrorThreshold", "backoffIdleThreshold", "backoffMultiplier", "beanRef", "bridgeErrorHandler",
+            "clusterName", "consistencyLevel", "cql", "datacenter", "delay", "exceptionHandler", "exchangePattern",
+            "greedy", "hosts", "initialDelay", "keyspace", "lazyStartProducer", "loadBalancingPolicyClass", "password",
+            "pollStrategy", "port", "prepareStatements", "repeatCount", "resultSetConversionStrategy", "runLoggingLevel",
+            "scheduledExecutorService", "scheduler", "schedulerProperties", "sendEmptyMessageWhenIdle", "session",
+            "startScheduler", "timeUnit", "useFixedDelay", "username");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "scheduler.");
 
     @Override
     public boolean isEnabled(String scheme) {

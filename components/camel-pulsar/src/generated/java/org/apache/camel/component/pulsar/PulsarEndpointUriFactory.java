@@ -17,59 +17,19 @@ public class PulsarEndpointUriFactory extends org.apache.camel.support.component
 
     private static final String BASE = ":persistence://tenant/namespace/topic";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(44);
-        props.add("ackGroupTimeMillis");
-        props.add("ackTimeoutMillis");
-        props.add("ackTimeoutRedeliveryBackoff");
-        props.add("allowManualAcknowledgement");
-        props.add("authenticationClass");
-        props.add("authenticationParams");
-        props.add("batcherBuilder");
-        props.add("batchingEnabled");
-        props.add("batchingMaxMessages");
-        props.add("batchingMaxPublishDelayMicros");
-        props.add("blockIfQueueFull");
-        props.add("bridgeErrorHandler");
-        props.add("compressionType");
-        props.add("consumerName");
-        props.add("consumerNamePrefix");
-        props.add("consumerQueueSize");
-        props.add("deadLetterTopic");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("initialSequenceId");
-        props.add("lazyStartProducer");
-        props.add("maxPendingMessages");
-        props.add("maxPendingMessagesAcrossPartitions");
-        props.add("maxRedeliverCount");
-        props.add("messageListener");
-        props.add("messageRouter");
-        props.add("messageRoutingMode");
-        props.add("namespace");
-        props.add("negativeAckRedeliveryBackoff");
-        props.add("negativeAckRedeliveryDelayMicros");
-        props.add("numberOfConsumerThreads");
-        props.add("numberOfConsumers");
-        props.add("persistence");
-        props.add("producerName");
-        props.add("readCompacted");
-        props.add("sendTimeoutMs");
-        props.add("serviceUrl");
-        props.add("subscriptionInitialPosition");
-        props.add("subscriptionName");
-        props.add("subscriptionTopicsMode");
-        props.add("subscriptionType");
-        props.add("tenant");
-        props.add("topic");
-        props.add("topicsPattern");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "ackGroupTimeMillis", "ackTimeoutMillis", "ackTimeoutRedeliveryBackoff", "allowManualAcknowledgement",
+            "authenticationClass", "authenticationParams", "batcherBuilder", "batchingEnabled", "batchingMaxMessages",
+            "batchingMaxPublishDelayMicros", "blockIfQueueFull", "bridgeErrorHandler", "compressionType", "consumerName",
+            "consumerNamePrefix", "consumerQueueSize", "deadLetterTopic", "exceptionHandler", "exchangePattern",
+            "initialSequenceId", "lazyStartProducer", "maxPendingMessages", "maxPendingMessagesAcrossPartitions",
+            "maxRedeliverCount", "messageListener", "messageRouter", "messageRoutingMode", "namespace",
+            "negativeAckRedeliveryBackoff", "negativeAckRedeliveryDelayMicros", "numberOfConsumerThreads",
+            "numberOfConsumers", "persistence", "producerName", "readCompacted", "sendTimeoutMs", "serviceUrl",
+            "subscriptionInitialPosition", "subscriptionName", "subscriptionTopicsMode", "subscriptionType", "tenant",
+            "topic", "topicsPattern");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

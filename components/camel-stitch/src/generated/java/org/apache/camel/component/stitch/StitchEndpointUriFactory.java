@@ -17,26 +17,12 @@ public class StitchEndpointUriFactory extends org.apache.camel.support.component
 
     private static final String BASE = ":tableName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(9);
-        props.add("connectionProvider");
-        props.add("httpClient");
-        props.add("keyNames");
-        props.add("lazyStartProducer");
-        props.add("region");
-        props.add("stitchClient");
-        props.add("stitchSchema");
-        props.add("tableName");
-        props.add("token");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(1);
-        secretProps.add("token");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "connectionProvider", "httpClient", "keyNames", "lazyStartProducer", "region", "stitchClient", "stitchSchema",
+            "tableName", "token");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "token");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

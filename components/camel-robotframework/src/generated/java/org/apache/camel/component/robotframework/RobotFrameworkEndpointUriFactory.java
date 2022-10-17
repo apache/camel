@@ -17,86 +17,21 @@ public class RobotFrameworkEndpointUriFactory extends org.apache.camel.support.c
 
     private static final String BASE = ":resourceUri";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(69);
-        props.add("allowContextMapAll");
-        props.add("allowTemplateFromHeader");
-        props.add("argumentFile");
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("bridgeErrorHandler");
-        props.add("combinedTagStats");
-        props.add("contentCache");
-        props.add("criticalTags");
-        props.add("debugFile");
-        props.add("delay");
-        props.add("document");
-        props.add("dryrun");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("excludes");
-        props.add("exitOnFailure");
-        props.add("greedy");
-        props.add("includes");
-        props.add("initialDelay");
-        props.add("lazyStartProducer");
-        props.add("listener");
-        props.add("listeners");
-        props.add("log");
-        props.add("logLevel");
-        props.add("logTitle");
-        props.add("metadata");
-        props.add("monitorColors");
-        props.add("monitorWidth");
-        props.add("name");
-        props.add("noStatusReturnCode");
-        props.add("nonCriticalTags");
-        props.add("output");
-        props.add("outputDirectory");
-        props.add("pollStrategy");
-        props.add("randomize");
-        props.add("repeatCount");
-        props.add("report");
-        props.add("reportBackground");
-        props.add("reportTitle");
-        props.add("resourceUri");
-        props.add("runEmptySuite");
-        props.add("runFailed");
-        props.add("runLoggingLevel");
-        props.add("runMode");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("skipTeardownOnExit");
-        props.add("splitOutputs");
-        props.add("startScheduler");
-        props.add("suiteStatLevel");
-        props.add("suites");
-        props.add("summaryTitle");
-        props.add("tagDocs");
-        props.add("tagStatExcludes");
-        props.add("tagStatIncludes");
-        props.add("tagStatLinks");
-        props.add("tags");
-        props.add("tests");
-        props.add("timeUnit");
-        props.add("timestampOutputs");
-        props.add("useFixedDelay");
-        props.add("variableFiles");
-        props.add("variables");
-        props.add("warnOnSkippedFiles");
-        props.add("xunitFile");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "allowContextMapAll", "allowTemplateFromHeader", "argumentFile", "backoffErrorThreshold",
+            "backoffIdleThreshold", "backoffMultiplier", "bridgeErrorHandler", "combinedTagStats", "contentCache",
+            "criticalTags", "debugFile", "delay", "document", "dryrun", "exceptionHandler", "exchangePattern", "excludes",
+            "exitOnFailure", "greedy", "includes", "initialDelay", "lazyStartProducer", "listener", "listeners", "log",
+            "logLevel", "logTitle", "metadata", "monitorColors", "monitorWidth", "name", "noStatusReturnCode",
+            "nonCriticalTags", "output", "outputDirectory", "pollStrategy", "randomize", "repeatCount", "report",
+            "reportBackground", "reportTitle", "resourceUri", "runEmptySuite", "runFailed", "runLoggingLevel", "runMode",
+            "scheduledExecutorService", "scheduler", "schedulerProperties", "sendEmptyMessageWhenIdle",
+            "skipTeardownOnExit", "splitOutputs", "startScheduler", "suiteStatLevel", "suites", "summaryTitle", "tagDocs",
+            "tagStatExcludes", "tagStatIncludes", "tagStatLinks", "tags", "tests", "timeUnit", "timestampOutputs",
+            "useFixedDelay", "variableFiles", "variables", "warnOnSkippedFiles", "xunitFile");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "scheduler.");
 
     @Override
     public boolean isEnabled(String scheme) {

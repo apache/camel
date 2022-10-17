@@ -17,45 +17,15 @@ public class FlatpackEndpointUriFactory extends org.apache.camel.support.compone
 
     private static final String BASE = ":type:resourceUri";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(28);
-        props.add("allowShortLines");
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("bridgeErrorHandler");
-        props.add("delay");
-        props.add("delimiter");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("greedy");
-        props.add("ignoreExtraColumns");
-        props.add("ignoreFirstRecord");
-        props.add("initialDelay");
-        props.add("lazyStartProducer");
-        props.add("pollStrategy");
-        props.add("repeatCount");
-        props.add("resourceUri");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("splitRows");
-        props.add("startScheduler");
-        props.add("textQualifier");
-        props.add("timeUnit");
-        props.add("type");
-        props.add("useFixedDelay");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "allowShortLines", "backoffErrorThreshold", "backoffIdleThreshold", "backoffMultiplier", "bridgeErrorHandler",
+            "delay", "delimiter", "exceptionHandler", "exchangePattern", "greedy", "ignoreExtraColumns",
+            "ignoreFirstRecord", "initialDelay", "lazyStartProducer", "pollStrategy", "repeatCount", "resourceUri",
+            "runLoggingLevel", "scheduledExecutorService", "scheduler", "schedulerProperties", "sendEmptyMessageWhenIdle",
+            "splitRows", "startScheduler", "textQualifier", "timeUnit", "type", "useFixedDelay");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "scheduler.");
 
     @Override
     public boolean isEnabled(String scheme) {

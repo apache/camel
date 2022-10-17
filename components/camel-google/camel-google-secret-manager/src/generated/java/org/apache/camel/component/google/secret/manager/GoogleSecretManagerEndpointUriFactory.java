@@ -17,21 +17,10 @@ public class GoogleSecretManagerEndpointUriFactory extends org.apache.camel.supp
 
     private static final String BASE = ":project";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(6);
-        props.add("client");
-        props.add("lazyStartProducer");
-        props.add("operation");
-        props.add("pojoRequest");
-        props.add("project");
-        props.add("serviceAccountKey");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "client", "lazyStartProducer", "operation", "pojoRequest", "project", "serviceAccountKey");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

@@ -17,37 +17,13 @@ public class WebsocketEndpointUriFactory extends org.apache.camel.support.compon
 
     private static final String BASE = ":host:port/resourceUri";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(22);
-        props.add("allowedOrigins");
-        props.add("bridgeErrorHandler");
-        props.add("bufferSize");
-        props.add("crossOriginFilterOn");
-        props.add("enableJmx");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("filterPath");
-        props.add("host");
-        props.add("lazyStartProducer");
-        props.add("maxBinaryMessageSize");
-        props.add("maxIdleTime");
-        props.add("maxTextMessageSize");
-        props.add("minVersion");
-        props.add("port");
-        props.add("resourceUri");
-        props.add("sendTimeout");
-        props.add("sendToAll");
-        props.add("sessionSupport");
-        props.add("sslContextParameters");
-        props.add("staticResources");
-        props.add("subprotocol");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "allowedOrigins", "bridgeErrorHandler", "bufferSize", "crossOriginFilterOn", "enableJmx", "exceptionHandler",
+            "exchangePattern", "filterPath", "host", "lazyStartProducer", "maxBinaryMessageSize", "maxIdleTime",
+            "maxTextMessageSize", "minVersion", "port", "resourceUri", "sendTimeout", "sendToAll", "sessionSupport",
+            "sslContextParameters", "staticResources", "subprotocol");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

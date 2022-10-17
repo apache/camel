@@ -17,25 +17,11 @@ public class IgniteMessagingEndpointUriFactory extends org.apache.camel.support.
 
     private static final String BASE = ":topic";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(10);
-        props.add("bridgeErrorHandler");
-        props.add("clusterGroupExpression");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("lazyStartProducer");
-        props.add("propagateIncomingBodyIfNoReturnValue");
-        props.add("sendMode");
-        props.add("timeout");
-        props.add("topic");
-        props.add("treatCollectionsAsCacheObjects");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "bridgeErrorHandler", "clusterGroupExpression", "exceptionHandler", "exchangePattern", "lazyStartProducer",
+            "propagateIncomingBodyIfNoReturnValue", "sendMode", "timeout", "topic", "treatCollectionsAsCacheObjects");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

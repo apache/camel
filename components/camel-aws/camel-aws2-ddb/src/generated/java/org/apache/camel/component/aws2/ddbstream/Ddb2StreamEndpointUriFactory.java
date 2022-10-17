@@ -17,53 +17,18 @@ public class Ddb2StreamEndpointUriFactory extends org.apache.camel.support.compo
 
     private static final String BASE = ":tableName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(33);
-        props.add("accessKey");
-        props.add("amazonDynamoDbStreamsClient");
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("bridgeErrorHandler");
-        props.add("delay");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("greedy");
-        props.add("initialDelay");
-        props.add("maxResultsPerRequest");
-        props.add("overrideEndpoint");
-        props.add("pollStrategy");
-        props.add("proxyHost");
-        props.add("proxyPort");
-        props.add("proxyProtocol");
-        props.add("region");
-        props.add("repeatCount");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("secretKey");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("startScheduler");
-        props.add("streamIteratorType");
-        props.add("tableName");
-        props.add("timeUnit");
-        props.add("trustAllCertificates");
-        props.add("uriEndpointOverride");
-        props.add("useDefaultCredentialsProvider");
-        props.add("useFixedDelay");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
-        secretProps.add("accessKey");
-        secretProps.add("secretKey");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "accessKey", "amazonDynamoDbStreamsClient", "backoffErrorThreshold", "backoffIdleThreshold",
+            "backoffMultiplier", "bridgeErrorHandler", "delay", "exceptionHandler", "exchangePattern", "greedy",
+            "initialDelay", "maxResultsPerRequest", "overrideEndpoint", "pollStrategy", "proxyHost", "proxyPort",
+            "proxyProtocol", "region", "repeatCount", "runLoggingLevel", "scheduledExecutorService", "scheduler",
+            "schedulerProperties", "secretKey", "sendEmptyMessageWhenIdle", "startScheduler", "streamIteratorType",
+            "tableName", "timeUnit", "trustAllCertificates", "uriEndpointOverride", "useDefaultCredentialsProvider",
+            "useFixedDelay");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "accessKey", "secretKey");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "scheduler.");
 
     @Override
     public boolean isEnabled(String scheme) {

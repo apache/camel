@@ -17,66 +17,18 @@ public class GoogleCalendarEndpointUriFactory extends org.apache.camel.support.c
 
     private static final String BASE = ":apiName/methodName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(42);
-        props.add("accessToken");
-        props.add("apiName");
-        props.add("applicationName");
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("bridgeErrorHandler");
-        props.add("calendarId");
-        props.add("clientId");
-        props.add("clientSecret");
-        props.add("content");
-        props.add("contentChannel");
-        props.add("delay");
-        props.add("delegate");
-        props.add("destination");
-        props.add("emailAddress");
-        props.add("eventId");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("greedy");
-        props.add("inBody");
-        props.add("initialDelay");
-        props.add("lazyStartProducer");
-        props.add("methodName");
-        props.add("p12FileName");
-        props.add("pollStrategy");
-        props.add("refreshToken");
-        props.add("repeatCount");
-        props.add("ruleId");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("scopes");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("serviceAccountKey");
-        props.add("setting");
-        props.add("startScheduler");
-        props.add("text");
-        props.add("timeUnit");
-        props.add("useFixedDelay");
-        props.add("user");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(6);
-        secretProps.add("accessToken");
-        secretProps.add("clientSecret");
-        secretProps.add("emailAddress");
-        secretProps.add("p12FileName");
-        secretProps.add("refreshToken");
-        secretProps.add("user");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "accessToken", "apiName", "applicationName", "backoffErrorThreshold", "backoffIdleThreshold",
+            "backoffMultiplier", "bridgeErrorHandler", "calendarId", "clientId", "clientSecret", "content",
+            "contentChannel", "delay", "delegate", "destination", "emailAddress", "eventId", "exceptionHandler",
+            "exchangePattern", "greedy", "inBody", "initialDelay", "lazyStartProducer", "methodName", "p12FileName",
+            "pollStrategy", "refreshToken", "repeatCount", "ruleId", "runLoggingLevel", "scheduledExecutorService",
+            "scheduler", "schedulerProperties", "scopes", "sendEmptyMessageWhenIdle", "serviceAccountKey", "setting",
+            "startScheduler", "text", "timeUnit", "useFixedDelay", "user");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "accessToken", "clientSecret", "emailAddress", "p12FileName", "refreshToken", "user");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "scheduler.");
 
     @Override
     public boolean isEnabled(String scheme) {

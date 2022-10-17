@@ -17,31 +17,12 @@ public class ThriftEndpointUriFactory extends org.apache.camel.support.component
 
     private static final String BASE = ":host:port/service";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(16);
-        props.add("bridgeErrorHandler");
-        props.add("clientTimeout");
-        props.add("compressionType");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("exchangeProtocol");
-        props.add("host");
-        props.add("lazyStartProducer");
-        props.add("maxPoolSize");
-        props.add("method");
-        props.add("negotiationType");
-        props.add("poolSize");
-        props.add("port");
-        props.add("service");
-        props.add("sslParameters");
-        props.add("synchronous");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "bridgeErrorHandler", "clientTimeout", "compressionType", "exceptionHandler", "exchangePattern",
+            "exchangeProtocol", "host", "lazyStartProducer", "maxPoolSize", "method", "negotiationType", "poolSize",
+            "port", "service", "sslParameters", "synchronous");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

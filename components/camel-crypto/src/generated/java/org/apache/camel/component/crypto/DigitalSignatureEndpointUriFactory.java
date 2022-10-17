@@ -17,41 +17,14 @@ public class DigitalSignatureEndpointUriFactory extends org.apache.camel.support
 
     private static final String BASE = ":cryptoOperation:name";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(21);
-        props.add("algorithm");
-        props.add("alias");
-        props.add("bufferSize");
-        props.add("certificate");
-        props.add("certificateName");
-        props.add("clearHeaders");
-        props.add("cryptoOperation");
-        props.add("keyStoreParameters");
-        props.add("keystore");
-        props.add("keystoreName");
-        props.add("lazyStartProducer");
-        props.add("name");
-        props.add("password");
-        props.add("privateKey");
-        props.add("privateKeyName");
-        props.add("provider");
-        props.add("publicKey");
-        props.add("publicKeyName");
-        props.add("secureRandom");
-        props.add("secureRandomName");
-        props.add("signatureHeaderName");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(4);
-        secretProps.add("password");
-        secretProps.add("privateKey");
-        secretProps.add("privateKeyName");
-        secretProps.add("secureRandom");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "algorithm", "alias", "bufferSize", "certificate", "certificateName", "clearHeaders", "cryptoOperation",
+            "keyStoreParameters", "keystore", "keystoreName", "lazyStartProducer", "name", "password", "privateKey",
+            "privateKeyName", "provider", "publicKey", "publicKeyName", "secureRandom", "secureRandomName",
+            "signatureHeaderName");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "password", "privateKey", "privateKeyName", "secureRandom");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

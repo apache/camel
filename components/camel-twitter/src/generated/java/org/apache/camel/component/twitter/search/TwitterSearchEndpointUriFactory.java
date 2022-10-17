@@ -17,65 +17,18 @@ public class TwitterSearchEndpointUriFactory extends org.apache.camel.support.co
 
     private static final String BASE = ":keywords";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(43);
-        props.add("accessToken");
-        props.add("accessTokenSecret");
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("bridgeErrorHandler");
-        props.add("consumerKey");
-        props.add("consumerSecret");
-        props.add("count");
-        props.add("delay");
-        props.add("distanceMetric");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("extendedMode");
-        props.add("filterOld");
-        props.add("greedy");
-        props.add("httpProxyHost");
-        props.add("httpProxyPassword");
-        props.add("httpProxyPort");
-        props.add("httpProxyUser");
-        props.add("initialDelay");
-        props.add("keywords");
-        props.add("lang");
-        props.add("latitude");
-        props.add("lazyStartProducer");
-        props.add("locations");
-        props.add("longitude");
-        props.add("numberOfPages");
-        props.add("pollStrategy");
-        props.add("radius");
-        props.add("repeatCount");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("sinceId");
-        props.add("sortById");
-        props.add("startScheduler");
-        props.add("timeUnit");
-        props.add("type");
-        props.add("useFixedDelay");
-        props.add("userIds");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(4);
-        secretProps.add("accessToken");
-        secretProps.add("accessTokenSecret");
-        secretProps.add("consumerKey");
-        secretProps.add("consumerSecret");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "accessToken", "accessTokenSecret", "backoffErrorThreshold", "backoffIdleThreshold", "backoffMultiplier",
+            "bridgeErrorHandler", "consumerKey", "consumerSecret", "count", "delay", "distanceMetric", "exceptionHandler",
+            "exchangePattern", "extendedMode", "filterOld", "greedy", "httpProxyHost", "httpProxyPassword",
+            "httpProxyPort", "httpProxyUser", "initialDelay", "keywords", "lang", "latitude", "lazyStartProducer",
+            "locations", "longitude", "numberOfPages", "pollStrategy", "radius", "repeatCount", "runLoggingLevel",
+            "scheduledExecutorService", "scheduler", "schedulerProperties", "sendEmptyMessageWhenIdle", "sinceId",
+            "sortById", "startScheduler", "timeUnit", "type", "useFixedDelay", "userIds");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "accessToken", "accessTokenSecret", "consumerKey", "consumerSecret");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "scheduler.");
 
     @Override
     public boolean isEnabled(String scheme) {

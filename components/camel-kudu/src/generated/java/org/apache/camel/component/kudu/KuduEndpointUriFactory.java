@@ -17,20 +17,10 @@ public class KuduEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":host:port/tableName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(5);
-        props.add("host");
-        props.add("lazyStartProducer");
-        props.add("operation");
-        props.add("port");
-        props.add("tableName");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "host", "lazyStartProducer", "operation", "port", "tableName");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

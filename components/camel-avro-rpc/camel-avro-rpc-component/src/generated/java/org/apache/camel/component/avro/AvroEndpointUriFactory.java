@@ -17,29 +17,12 @@ public class AvroEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":transport:host:port/messageName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(14);
-        props.add("bridgeErrorHandler");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("host");
-        props.add("lazyStartProducer");
-        props.add("messageName");
-        props.add("port");
-        props.add("protocol");
-        props.add("protocolClassName");
-        props.add("protocolLocation");
-        props.add("reflectionProtocol");
-        props.add("singleParameter");
-        props.add("transport");
-        props.add("uriAuthority");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "bridgeErrorHandler", "exceptionHandler", "exchangePattern", "host", "lazyStartProducer", "messageName",
+            "port", "protocol", "protocolClassName", "protocolLocation", "reflectionProtocol", "singleParameter",
+            "transport", "uriAuthority");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

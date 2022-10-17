@@ -17,23 +17,11 @@ public class DozerEndpointUriFactory extends org.apache.camel.support.component.
 
     private static final String BASE = ":name";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(8);
-        props.add("lazyStartProducer");
-        props.add("mappingConfiguration");
-        props.add("mappingFile");
-        props.add("marshalId");
-        props.add("name");
-        props.add("sourceModel");
-        props.add("targetModel");
-        props.add("unmarshalId");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "lazyStartProducer", "mappingConfiguration", "mappingFile", "marshalId", "name", "sourceModel", "targetModel",
+            "unmarshalId");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

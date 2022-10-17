@@ -16,9 +16,13 @@
  */
 package org.apache.camel.maven.packaging;
 
+import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeSet;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
@@ -55,14 +59,9 @@ public final class EndpointUriFactoryGenerator {
             w.append("    private static final String[] SCHEMES = ").append(alternative).append(";\n");
         }
         w.append("\n");
-        w.append("    private static final Set<String> PROPERTY_NAMES;\n");
-        w.append("    private static final Set<String> SECRET_PROPERTY_NAMES;\n");
-        w.append("    private static final Set<String> MULTI_VALUE_PREFIXES;\n");
-        w.append("    static {\n");
-        w.append(generatePropertyNames(model));
-        w.append(generateSecretPropertyNames(model));
-        w.append(generateMultiValuePrefixes(model));
-        w.append("    }\n");
+        w.append("    private static final Set<String> PROPERTY_NAMES = Set.of(").append(format(generatePropertyNames(model), "            ")).append(");\n");
+        w.append("    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(").append(format(generateSecretPropertyNames(model), "            ")).append(");\n");
+        w.append("    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(").append(format(generateMultiValuePrefixes(model), "            ")).append(");\n");
         w.append("\n");
         w.append("    @Override\n");
         w.append("    public boolean isEnabled(String scheme) {\n");
@@ -119,89 +118,81 @@ public final class EndpointUriFactoryGenerator {
         return w.toString();
     }
 
-    private static String generatePropertyNames(ComponentModel model) {
-        Set<String> properties = new TreeSet<>();
-        model.getEndpointOptions().stream()
-                .map(ComponentModel.EndpointOptionModel::getName)
-                .forEach(properties::add);
-
-        // gather all the option names from the api (they can be duplicated as the same name
-        // can be used by multiple methods)
-        model.getApiOptions().stream()
-                .flatMap(a -> a.getMethods().stream())
-                .flatMap(m -> m.getOptions().stream())
-                .map(ComponentModel.ApiOptionModel::getName)
-                .forEach(properties::add);
-
-        if (properties.isEmpty()) {
-            return "        PROPERTY_NAMES = Collections.emptySet();\n";
+    private static String format(Stream<String> string, String indent) {
+        List<String> strings = string.collect(Collectors.toList());
+        if (strings.isEmpty()) {
+            return "";
         }
-
         StringBuilder sb = new StringBuilder();
-        sb.append("        Set<String> props = new HashSet<>(").append(properties.size()).append(");\n");
-        for (String property : properties) {
-            sb.append("        props.add(\"").append(property).append("\");\n");
+        int current = 0;
+        for (String s : strings ) {
+            int len = s.length();
+            if (current > 0 && current + len > 120) {
+                sb.append( ",\n" ).append( indent );
+                current = indent.length();
+            } else if (sb.length() == 0) {
+                sb.append("\n").append(indent);
+                current = indent.length();
+            } else {
+                sb.append(", ");
+                current += 2;
+            }
+            sb.append(s);
+            current += len;
         }
-        sb.append("        PROPERTY_NAMES = Collections.unmodifiableSet(props);\n");
         return sb.toString();
     }
 
-    private static String generateSecretPropertyNames(ComponentModel model) {
-        Set<String> properties = new TreeSet<>();
-        model.getEndpointOptions().stream()
-                .filter(ComponentModel.EndpointOptionModel::isSecret)
-                .map(ComponentModel.EndpointOptionModel::getName)
-                .forEach(properties::add);
-
-        // gather all the option names from the api (they can be duplicated as the same name
-        // can be used by multiple methods)
-        model.getApiOptions().stream()
-                .flatMap(a -> a.getMethods().stream())
-                .flatMap(m -> m.getOptions().stream())
-                .filter(ComponentModel.ApiOptionModel::isSecret)
-                .map(ComponentModel.ApiOptionModel::getName)
-                .forEach(properties::add);
-
-        if (properties.isEmpty()) {
-            return "        SECRET_PROPERTY_NAMES = Collections.emptySet();\n";
-        }
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("        Set<String> secretProps = new HashSet<>(").append(properties.size()).append(");\n");
-        for (String property : properties) {
-            sb.append("        secretProps.add(\"").append(property).append("\");\n");
-        }
-        sb.append("        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);\n");
-        return sb.toString();
+    private static Stream<String> generatePropertyNames(ComponentModel model) {
+        return Stream.concat(
+            model.getEndpointOptions().stream()
+                    .map(ComponentModel.EndpointOptionModel::getName),
+            // gather all the option names from the api (they can be duplicated as the same name
+            // can be used by multiple methods)
+            model.getApiOptions().stream()
+                    .flatMap(a -> a.getMethods().stream())
+                    .flatMap(m -> m.getOptions().stream())
+                    .map(ComponentModel.ApiOptionModel::getName))
+                // grab all, sort, unique, and join
+                .sorted()
+                .distinct()
+                .map(s -> "\"" + s + "\"");
     }
 
-    private static String generateMultiValuePrefixes(ComponentModel model) {
-        Set<String> prefixes = new TreeSet<>();
-        model.getEndpointOptions().stream()
-                .filter(ComponentModel.EndpointOptionModel::isMultiValue)
-                .map(ComponentModel.EndpointOptionModel::getPrefix)
-                .forEach(prefixes::add);
+    private static Stream<String> generateSecretPropertyNames(ComponentModel model) {
+        return Stream.concat(
+            model.getEndpointOptions().stream()
+                    .filter(ComponentModel.EndpointOptionModel::isSecret)
+                    .map(ComponentModel.EndpointOptionModel::getName),
+            // gather all the option names from the api (they can be duplicated as the same name
+            // can be used by multiple methods)
+            model.getApiOptions().stream()
+                    .flatMap(a -> a.getMethods().stream())
+                    .flatMap(m -> m.getOptions().stream())
+                    .filter(ComponentModel.ApiOptionModel::isSecret)
+                    .map(ComponentModel.ApiOptionModel::getName))
+                // grab all, sort, unique, and join
+                .sorted()
+                .distinct()
+                .map(s -> "\"" + s + "\"");
+    }
 
-        // gather all the option names from the api (they can be duplicated as the same name
-        // can be used by multiple methods)
-        model.getApiOptions().stream()
-                .flatMap(a -> a.getMethods().stream())
-                .flatMap(m -> m.getOptions().stream())
-                .filter(ComponentModel.ApiOptionModel::isMultiValue)
-                .map(ComponentModel.ApiOptionModel::getPrefix)
-                .forEach(prefixes::add);
-
-        if (prefixes.isEmpty()) {
-            return "        MULTI_VALUE_PREFIXES = Collections.emptySet();\n";
-        }
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("        Set<String> prefixes = new HashSet<>(").append(prefixes.size()).append(");\n");
-        for (String property : prefixes) {
-            sb.append("        prefixes.add(\"").append(property).append("\");\n");
-        }
-        sb.append("        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);\n");
-        return sb.toString();
+    private static Stream<String> generateMultiValuePrefixes(ComponentModel model) {
+        return Stream.concat(
+            model.getEndpointOptions().stream()
+                    .filter(ComponentModel.EndpointOptionModel::isMultiValue)
+                    .map(ComponentModel.EndpointOptionModel::getPrefix),
+            // gather all the option names from the api (they can be duplicated as the same name
+            // can be used by multiple methods)
+            model.getApiOptions().stream()
+                    .flatMap(a -> a.getMethods().stream())
+                    .flatMap(m -> m.getOptions().stream())
+                    .filter(ComponentModel.ApiOptionModel::isMultiValue)
+                    .map(ComponentModel.ApiOptionModel::getPrefix))
+                // grab all, sort, unique, and join
+                .sorted()
+                .distinct()
+                .map(s -> "\"" + s + "\"");
     }
 
     private static String alternativeSchemes(ComponentModel model) {

@@ -17,51 +17,15 @@ public class JBPMEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":connectionURL";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(33);
-        props.add("attachmentId");
-        props.add("bridgeErrorHandler");
-        props.add("connectionURL");
-        props.add("contentId");
-        props.add("deploymentId");
-        props.add("emitterSendItems");
-        props.add("entities");
-        props.add("event");
-        props.add("eventListenerType");
-        props.add("eventType");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("extraJaxbClasses");
-        props.add("identifier");
-        props.add("lazyStartProducer");
-        props.add("maxNumber");
-        props.add("operation");
-        props.add("page");
-        props.add("pageSize");
-        props.add("parameters");
-        props.add("password");
-        props.add("processId");
-        props.add("processInstanceId");
-        props.add("statuses");
-        props.add("synchronous");
-        props.add("targetUserId");
-        props.add("task");
-        props.add("taskId");
-        props.add("timeout");
-        props.add("userId");
-        props.add("userName");
-        props.add("value");
-        props.add("workItemId");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
-        secretProps.add("password");
-        secretProps.add("userName");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "attachmentId", "bridgeErrorHandler", "connectionURL", "contentId", "deploymentId", "emitterSendItems",
+            "entities", "event", "eventListenerType", "eventType", "exceptionHandler", "exchangePattern",
+            "extraJaxbClasses", "identifier", "lazyStartProducer", "maxNumber", "operation", "page", "pageSize",
+            "parameters", "password", "processId", "processInstanceId", "statuses", "synchronous", "targetUserId", "task",
+            "taskId", "timeout", "userId", "userName", "value", "workItemId");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "password", "userName");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

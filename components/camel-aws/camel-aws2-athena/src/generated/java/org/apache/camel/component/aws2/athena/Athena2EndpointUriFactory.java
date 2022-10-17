@@ -17,47 +17,15 @@ public class Athena2EndpointUriFactory extends org.apache.camel.support.componen
 
     private static final String BASE = ":label";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(29);
-        props.add("accessKey");
-        props.add("amazonAthenaClient");
-        props.add("clientRequestToken");
-        props.add("database");
-        props.add("delay");
-        props.add("encryptionOption");
-        props.add("includeTrace");
-        props.add("initialDelay");
-        props.add("kmsKey");
-        props.add("label");
-        props.add("lazyStartProducer");
-        props.add("maxAttempts");
-        props.add("maxResults");
-        props.add("nextToken");
-        props.add("operation");
-        props.add("outputLocation");
-        props.add("outputType");
-        props.add("proxyHost");
-        props.add("proxyPort");
-        props.add("proxyProtocol");
-        props.add("queryExecutionId");
-        props.add("queryString");
-        props.add("region");
-        props.add("resetWaitTimeoutOnRetry");
-        props.add("retry");
-        props.add("secretKey");
-        props.add("useDefaultCredentialsProvider");
-        props.add("waitTimeout");
-        props.add("workGroup");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
-        secretProps.add("accessKey");
-        secretProps.add("secretKey");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "accessKey", "amazonAthenaClient", "clientRequestToken", "database", "delay", "encryptionOption",
+            "includeTrace", "initialDelay", "kmsKey", "label", "lazyStartProducer", "maxAttempts", "maxResults",
+            "nextToken", "operation", "outputLocation", "outputType", "proxyHost", "proxyPort", "proxyProtocol",
+            "queryExecutionId", "queryString", "region", "resetWaitTimeoutOnRetry", "retry", "secretKey",
+            "useDefaultCredentialsProvider", "waitTimeout", "workGroup");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "accessKey", "secretKey");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

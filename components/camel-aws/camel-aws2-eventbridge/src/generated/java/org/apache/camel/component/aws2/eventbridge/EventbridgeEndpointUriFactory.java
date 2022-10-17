@@ -17,34 +17,13 @@ public class EventbridgeEndpointUriFactory extends org.apache.camel.support.comp
 
     private static final String BASE = "://eventbusNameOrArn";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(16);
-        props.add("accessKey");
-        props.add("eventPatternFile");
-        props.add("eventbridgeClient");
-        props.add("eventbusNameOrArn");
-        props.add("lazyStartProducer");
-        props.add("operation");
-        props.add("overrideEndpoint");
-        props.add("pojoRequest");
-        props.add("proxyHost");
-        props.add("proxyPort");
-        props.add("proxyProtocol");
-        props.add("region");
-        props.add("secretKey");
-        props.add("trustAllCertificates");
-        props.add("uriEndpointOverride");
-        props.add("useDefaultCredentialsProvider");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
-        secretProps.add("accessKey");
-        secretProps.add("secretKey");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "accessKey", "eventPatternFile", "eventbridgeClient", "eventbusNameOrArn", "lazyStartProducer", "operation",
+            "overrideEndpoint", "pojoRequest", "proxyHost", "proxyPort", "proxyProtocol", "region", "secretKey",
+            "trustAllCertificates", "uriEndpointOverride", "useDefaultCredentialsProvider");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "accessKey", "secretKey");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

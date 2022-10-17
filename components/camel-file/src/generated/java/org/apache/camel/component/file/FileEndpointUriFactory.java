@@ -17,111 +17,28 @@ public class FileEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":directoryName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(94);
-        props.add("allowNullBody");
-        props.add("antExclude");
-        props.add("antFilterCaseSensitive");
-        props.add("antInclude");
-        props.add("appendChars");
-        props.add("autoCreate");
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("bridgeErrorHandler");
-        props.add("bufferSize");
-        props.add("charset");
-        props.add("chmod");
-        props.add("chmodDirectory");
-        props.add("copyAndDeleteOnRenameFail");
-        props.add("delay");
-        props.add("delete");
-        props.add("directoryMustExist");
-        props.add("directoryName");
-        props.add("doneFileName");
-        props.add("eagerDeleteTargetFile");
-        props.add("eagerMaxMessagesPerPoll");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("exclude");
-        props.add("excludeExt");
-        props.add("exclusiveReadLockStrategy");
-        props.add("extendedAttributes");
-        props.add("fileExist");
-        props.add("fileName");
-        props.add("filter");
-        props.add("filterDirectory");
-        props.add("filterFile");
-        props.add("flatten");
-        props.add("forceWrites");
-        props.add("greedy");
-        props.add("idempotent");
-        props.add("idempotentKey");
-        props.add("idempotentRepository");
-        props.add("inProgressRepository");
-        props.add("include");
-        props.add("includeExt");
-        props.add("initialDelay");
-        props.add("jailStartingDirectory");
-        props.add("keepLastModified");
-        props.add("lazyStartProducer");
-        props.add("localWorkDirectory");
-        props.add("maxDepth");
-        props.add("maxMessagesPerPoll");
-        props.add("minDepth");
-        props.add("move");
-        props.add("moveExisting");
-        props.add("moveExistingFileStrategy");
-        props.add("moveFailed");
-        props.add("noop");
-        props.add("onCompletionExceptionHandler");
-        props.add("pollStrategy");
-        props.add("preMove");
-        props.add("preSort");
-        props.add("probeContentType");
-        props.add("processStrategy");
-        props.add("readLock");
-        props.add("readLockCheckInterval");
-        props.add("readLockDeleteOrphanLockFiles");
-        props.add("readLockIdempotentReleaseAsync");
-        props.add("readLockIdempotentReleaseAsyncPoolSize");
-        props.add("readLockIdempotentReleaseDelay");
-        props.add("readLockIdempotentReleaseExecutorService");
-        props.add("readLockLoggingLevel");
-        props.add("readLockMarkerFile");
-        props.add("readLockMinAge");
-        props.add("readLockMinLength");
-        props.add("readLockRemoveOnCommit");
-        props.add("readLockRemoveOnRollback");
-        props.add("readLockTimeout");
-        props.add("recursive");
-        props.add("renameUsingCopy");
-        props.add("repeatCount");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("shuffle");
-        props.add("sortBy");
-        props.add("sorter");
-        props.add("startScheduler");
-        props.add("startingDirectoryMustExist");
-        props.add("startingDirectoryMustHaveAccess");
-        props.add("synchronous");
-        props.add("tempFileName");
-        props.add("tempPrefix");
-        props.add("timeUnit");
-        props.add("useFixedDelay");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "allowNullBody", "antExclude", "antFilterCaseSensitive", "antInclude", "appendChars", "autoCreate",
+            "backoffErrorThreshold", "backoffIdleThreshold", "backoffMultiplier", "bridgeErrorHandler", "bufferSize",
+            "charset", "chmod", "chmodDirectory", "copyAndDeleteOnRenameFail", "delay", "delete", "directoryMustExist",
+            "directoryName", "doneFileName", "eagerDeleteTargetFile", "eagerMaxMessagesPerPoll", "exceptionHandler",
+            "exchangePattern", "exclude", "excludeExt", "exclusiveReadLockStrategy", "extendedAttributes", "fileExist",
+            "fileName", "filter", "filterDirectory", "filterFile", "flatten", "forceWrites", "greedy", "idempotent",
+            "idempotentKey", "idempotentRepository", "inProgressRepository", "include", "includeExt", "initialDelay",
+            "jailStartingDirectory", "keepLastModified", "lazyStartProducer", "localWorkDirectory", "maxDepth",
+            "maxMessagesPerPoll", "minDepth", "move", "moveExisting", "moveExistingFileStrategy", "moveFailed", "noop",
+            "onCompletionExceptionHandler", "pollStrategy", "preMove", "preSort", "probeContentType", "processStrategy",
+            "readLock", "readLockCheckInterval", "readLockDeleteOrphanLockFiles", "readLockIdempotentReleaseAsync",
+            "readLockIdempotentReleaseAsyncPoolSize", "readLockIdempotentReleaseDelay",
+            "readLockIdempotentReleaseExecutorService", "readLockLoggingLevel", "readLockMarkerFile", "readLockMinAge",
+            "readLockMinLength", "readLockRemoveOnCommit", "readLockRemoveOnRollback", "readLockTimeout", "recursive",
+            "renameUsingCopy", "repeatCount", "runLoggingLevel", "scheduledExecutorService", "scheduler",
+            "schedulerProperties", "sendEmptyMessageWhenIdle", "shuffle", "sortBy", "sorter", "startScheduler",
+            "startingDirectoryMustExist", "startingDirectoryMustHaveAccess", "synchronous", "tempFileName", "tempPrefix",
+            "timeUnit", "useFixedDelay");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "scheduler.");
 
     @Override
     public boolean isEnabled(String scheme) {

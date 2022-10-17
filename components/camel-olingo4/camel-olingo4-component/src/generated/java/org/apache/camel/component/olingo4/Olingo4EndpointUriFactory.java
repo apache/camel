@@ -17,57 +17,17 @@ public class Olingo4EndpointUriFactory extends org.apache.camel.support.componen
 
     private static final String BASE = ":apiName/methodName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(40);
-        props.add("apiName");
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("bridgeErrorHandler");
-        props.add("connectTimeout");
-        props.add("contentType");
-        props.add("data");
-        props.add("delay");
-        props.add("edm");
-        props.add("endpointHttpHeaders");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("filterAlreadySeen");
-        props.add("greedy");
-        props.add("httpAsyncClientBuilder");
-        props.add("httpClientBuilder");
-        props.add("httpHeaders");
-        props.add("inBody");
-        props.add("initialDelay");
-        props.add("lazyStartProducer");
-        props.add("methodName");
-        props.add("pollStrategy");
-        props.add("proxy");
-        props.add("queryParams");
-        props.add("repeatCount");
-        props.add("resourcePath");
-        props.add("responseHandler");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("serviceUri");
-        props.add("socketTimeout");
-        props.add("splitResult");
-        props.add("sslContextParameters");
-        props.add("startScheduler");
-        props.add("timeUnit");
-        props.add("useFixedDelay");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "apiName", "backoffErrorThreshold", "backoffIdleThreshold", "backoffMultiplier", "bridgeErrorHandler",
+            "connectTimeout", "contentType", "data", "delay", "edm", "endpointHttpHeaders", "exceptionHandler",
+            "exchangePattern", "filterAlreadySeen", "greedy", "httpAsyncClientBuilder", "httpClientBuilder", "httpHeaders",
+            "inBody", "initialDelay", "lazyStartProducer", "methodName", "pollStrategy", "proxy", "queryParams",
+            "repeatCount", "resourcePath", "responseHandler", "runLoggingLevel", "scheduledExecutorService", "scheduler",
+            "schedulerProperties", "sendEmptyMessageWhenIdle", "serviceUri", "socketTimeout", "splitResult",
+            "sslContextParameters", "startScheduler", "timeUnit", "useFixedDelay");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "scheduler.");
 
     @Override
     public boolean isEnabled(String scheme) {

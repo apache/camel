@@ -18,72 +18,21 @@ public class HttpEndpointUriFactory extends org.apache.camel.support.component.E
     private static final String BASE = "://httpUri";
     private static final String[] SCHEMES = new String[]{"http", "https"};
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(50);
-        props.add("authDomain");
-        props.add("authHost");
-        props.add("authMethod");
-        props.add("authMethodPriority");
-        props.add("authPassword");
-        props.add("authUsername");
-        props.add("authenticationPreemptive");
-        props.add("bridgeEndpoint");
-        props.add("clearExpiredCookies");
-        props.add("clientBuilder");
-        props.add("clientConnectionManager");
-        props.add("connectionClose");
-        props.add("connectionsPerRoute");
-        props.add("cookieHandler");
-        props.add("cookieStore");
-        props.add("copyHeaders");
-        props.add("customHostHeader");
-        props.add("deleteWithBody");
-        props.add("disableStreamCache");
-        props.add("followRedirects");
-        props.add("getWithBody");
-        props.add("headerFilterStrategy");
-        props.add("httpClient");
-        props.add("httpClientConfigurer");
-        props.add("httpClientOptions");
-        props.add("httpContext");
-        props.add("httpMethod");
-        props.add("httpUri");
-        props.add("ignoreResponseBody");
-        props.add("lazyStartProducer");
-        props.add("maxTotalConnections");
-        props.add("okStatusCodeRange");
-        props.add("preserveHostHeader");
-        props.add("proxyAuthDomain");
-        props.add("proxyAuthHost");
-        props.add("proxyAuthMethod");
-        props.add("proxyAuthNtHost");
-        props.add("proxyAuthPassword");
-        props.add("proxyAuthPort");
-        props.add("proxyAuthScheme");
-        props.add("proxyAuthUsername");
-        props.add("proxyHost");
-        props.add("proxyPort");
-        props.add("skipRequestHeaders");
-        props.add("skipResponseHeaders");
-        props.add("sslContextParameters");
-        props.add("throwExceptionOnFailure");
-        props.add("useSystemProperties");
-        props.add("userAgent");
-        props.add("x509HostnameVerifier");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(4);
-        secretProps.add("authPassword");
-        secretProps.add("authUsername");
-        secretProps.add("proxyAuthPassword");
-        secretProps.add("proxyAuthUsername");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("httpClient.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "authDomain", "authHost", "authMethod", "authMethodPriority", "authPassword", "authUsername",
+            "authenticationPreemptive", "bridgeEndpoint", "clearExpiredCookies", "clientBuilder",
+            "clientConnectionManager", "connectionClose", "connectionsPerRoute", "cookieHandler", "cookieStore",
+            "copyHeaders", "customHostHeader", "deleteWithBody", "disableStreamCache", "followRedirects", "getWithBody",
+            "headerFilterStrategy", "httpClient", "httpClientConfigurer", "httpClientOptions", "httpContext", "httpMethod",
+            "httpUri", "ignoreResponseBody", "lazyStartProducer", "maxTotalConnections", "okStatusCodeRange",
+            "preserveHostHeader", "proxyAuthDomain", "proxyAuthHost", "proxyAuthMethod", "proxyAuthNtHost",
+            "proxyAuthPassword", "proxyAuthPort", "proxyAuthScheme", "proxyAuthUsername", "proxyHost", "proxyPort",
+            "skipRequestHeaders", "skipResponseHeaders", "sslContextParameters", "throwExceptionOnFailure",
+            "useSystemProperties", "userAgent", "x509HostnameVerifier");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "authPassword", "authUsername", "proxyAuthPassword", "proxyAuthUsername");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "httpClient.");
 
     @Override
     public boolean isEnabled(String scheme) {

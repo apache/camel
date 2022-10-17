@@ -18,28 +18,12 @@ public class DisruptorEndpointUriFactory extends org.apache.camel.support.compon
     private static final String BASE = ":name";
     private static final String[] SCHEMES = new String[]{"disruptor", "disruptor-vm"};
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(13);
-        props.add("blockWhenFull");
-        props.add("bridgeErrorHandler");
-        props.add("concurrentConsumers");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("lazyStartProducer");
-        props.add("multipleConsumers");
-        props.add("name");
-        props.add("producerType");
-        props.add("size");
-        props.add("timeout");
-        props.add("waitForTaskToComplete");
-        props.add("waitStrategy");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "blockWhenFull", "bridgeErrorHandler", "concurrentConsumers", "exceptionHandler", "exchangePattern",
+            "lazyStartProducer", "multipleConsumers", "name", "producerType", "size", "timeout", "waitForTaskToComplete",
+            "waitStrategy");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

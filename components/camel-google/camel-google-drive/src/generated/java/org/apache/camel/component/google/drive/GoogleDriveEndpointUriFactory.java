@@ -17,72 +17,19 @@ public class GoogleDriveEndpointUriFactory extends org.apache.camel.support.comp
 
     private static final String BASE = ":apiName/methodName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(51);
-        props.add("accessToken");
-        props.add("apiName");
-        props.add("appId");
-        props.add("applicationName");
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("bridgeErrorHandler");
-        props.add("changeId");
-        props.add("childId");
-        props.add("clientFactory");
-        props.add("clientId");
-        props.add("clientSecret");
-        props.add("commentId");
-        props.add("content");
-        props.add("contentChannel");
-        props.add("delay");
-        props.add("delegate");
-        props.add("driveId");
-        props.add("email");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("fileId");
-        props.add("folderId");
-        props.add("greedy");
-        props.add("inBody");
-        props.add("initialDelay");
-        props.add("lazyStartProducer");
-        props.add("mediaContent");
-        props.add("methodName");
-        props.add("mimeType");
-        props.add("parentId");
-        props.add("permissionId");
-        props.add("pollStrategy");
-        props.add("propertyKey");
-        props.add("refreshToken");
-        props.add("repeatCount");
-        props.add("replyId");
-        props.add("requestId");
-        props.add("revisionId");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("scopes");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("serviceAccountKey");
-        props.add("startScheduler");
-        props.add("teamDriveId");
-        props.add("timeUnit");
-        props.add("useFixedDelay");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(3);
-        secretProps.add("accessToken");
-        secretProps.add("clientSecret");
-        secretProps.add("refreshToken");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "accessToken", "apiName", "appId", "applicationName", "backoffErrorThreshold", "backoffIdleThreshold",
+            "backoffMultiplier", "bridgeErrorHandler", "changeId", "childId", "clientFactory", "clientId", "clientSecret",
+            "commentId", "content", "contentChannel", "delay", "delegate", "driveId", "email", "exceptionHandler",
+            "exchangePattern", "fileId", "folderId", "greedy", "inBody", "initialDelay", "lazyStartProducer",
+            "mediaContent", "methodName", "mimeType", "parentId", "permissionId", "pollStrategy", "propertyKey",
+            "refreshToken", "repeatCount", "replyId", "requestId", "revisionId", "runLoggingLevel",
+            "scheduledExecutorService", "scheduler", "schedulerProperties", "scopes", "sendEmptyMessageWhenIdle",
+            "serviceAccountKey", "startScheduler", "teamDriveId", "timeUnit", "useFixedDelay");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "accessToken", "clientSecret", "refreshToken");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "scheduler.");
 
     @Override
     public boolean isEnabled(String scheme) {

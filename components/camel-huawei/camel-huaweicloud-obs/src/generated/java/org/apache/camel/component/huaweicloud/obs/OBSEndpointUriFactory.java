@@ -17,65 +17,18 @@ public class OBSEndpointUriFactory extends org.apache.camel.support.component.En
 
     private static final String BASE = ":operation";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(42);
-        props.add("accessKey");
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("bridgeErrorHandler");
-        props.add("bucketLocation");
-        props.add("bucketName");
-        props.add("delay");
-        props.add("deleteAfterRead");
-        props.add("delimiter");
-        props.add("destinationBucket");
-        props.add("endpoint");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("fileName");
-        props.add("greedy");
-        props.add("ignoreSslVerification");
-        props.add("includeFolders");
-        props.add("initialDelay");
-        props.add("lazyStartProducer");
-        props.add("maxMessagesPerPoll");
-        props.add("moveAfterRead");
-        props.add("objectName");
-        props.add("operation");
-        props.add("pollStrategy");
-        props.add("prefix");
-        props.add("proxyHost");
-        props.add("proxyPassword");
-        props.add("proxyPort");
-        props.add("proxyUser");
-        props.add("region");
-        props.add("repeatCount");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("secretKey");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("serviceKeys");
-        props.add("startScheduler");
-        props.add("timeUnit");
-        props.add("useFixedDelay");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(5);
-        secretProps.add("accessKey");
-        secretProps.add("proxyPassword");
-        secretProps.add("proxyUser");
-        secretProps.add("secretKey");
-        secretProps.add("serviceKeys");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "accessKey", "backoffErrorThreshold", "backoffIdleThreshold", "backoffMultiplier", "bridgeErrorHandler",
+            "bucketLocation", "bucketName", "delay", "deleteAfterRead", "delimiter", "destinationBucket", "endpoint",
+            "exceptionHandler", "exchangePattern", "fileName", "greedy", "ignoreSslVerification", "includeFolders",
+            "initialDelay", "lazyStartProducer", "maxMessagesPerPoll", "moveAfterRead", "objectName", "operation",
+            "pollStrategy", "prefix", "proxyHost", "proxyPassword", "proxyPort", "proxyUser", "region", "repeatCount",
+            "runLoggingLevel", "scheduledExecutorService", "scheduler", "schedulerProperties", "secretKey",
+            "sendEmptyMessageWhenIdle", "serviceKeys", "startScheduler", "timeUnit", "useFixedDelay");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "accessKey", "proxyPassword", "proxyUser", "secretKey", "serviceKeys");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "scheduler.");
 
     @Override
     public boolean isEnabled(String scheme) {

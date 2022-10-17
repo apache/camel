@@ -17,29 +17,11 @@ public class MicroProfileMetricsEndpointUriFactory extends org.apache.camel.supp
 
     private static final String BASE = ":metricType:metricName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(14);
-        props.add("action");
-        props.add("counterIncrement");
-        props.add("description");
-        props.add("displayName");
-        props.add("gaugeDecrement");
-        props.add("gaugeIncrement");
-        props.add("gaugeValue");
-        props.add("lazyStartProducer");
-        props.add("mark");
-        props.add("metricName");
-        props.add("metricType");
-        props.add("metricUnit");
-        props.add("tags");
-        props.add("value");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "action", "counterIncrement", "description", "displayName", "gaugeDecrement", "gaugeIncrement", "gaugeValue",
+            "lazyStartProducer", "mark", "metricName", "metricType", "metricUnit", "tags", "value");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

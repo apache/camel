@@ -17,69 +17,19 @@ public class DataLakeEndpointUriFactory extends org.apache.camel.support.compone
 
     private static final String BASE = ":accountName/fileSystemName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(52);
-        props.add("accountKey");
-        props.add("accountName");
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("bridgeErrorHandler");
-        props.add("clientId");
-        props.add("clientSecret");
-        props.add("clientSecretCredential");
-        props.add("close");
-        props.add("closeStreamAfterRead");
-        props.add("dataCount");
-        props.add("dataLakeServiceClient");
-        props.add("delay");
-        props.add("directoryName");
-        props.add("downloadLinkExpiration");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("expression");
-        props.add("fileDir");
-        props.add("fileName");
-        props.add("fileOffset");
-        props.add("fileSystemName");
-        props.add("greedy");
-        props.add("initialDelay");
-        props.add("lazyStartProducer");
-        props.add("maxResults");
-        props.add("maxRetryRequests");
-        props.add("openOptions");
-        props.add("operation");
-        props.add("path");
-        props.add("permission");
-        props.add("pollStrategy");
-        props.add("position");
-        props.add("recursive");
-        props.add("regex");
-        props.add("repeatCount");
-        props.add("retainUncommitedData");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("serviceClient");
-        props.add("sharedKeyCredential");
-        props.add("startScheduler");
-        props.add("tenantId");
-        props.add("timeUnit");
-        props.add("timeout");
-        props.add("umask");
-        props.add("useFixedDelay");
-        props.add("userPrincipalNameReturned");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "accountKey", "accountName", "backoffErrorThreshold", "backoffIdleThreshold", "backoffMultiplier",
+            "bridgeErrorHandler", "clientId", "clientSecret", "clientSecretCredential", "close", "closeStreamAfterRead",
+            "dataCount", "dataLakeServiceClient", "delay", "directoryName", "downloadLinkExpiration", "exceptionHandler",
+            "exchangePattern", "expression", "fileDir", "fileName", "fileOffset", "fileSystemName", "greedy",
+            "initialDelay", "lazyStartProducer", "maxResults", "maxRetryRequests", "openOptions", "operation", "path",
+            "permission", "pollStrategy", "position", "recursive", "regex", "repeatCount", "retainUncommitedData",
+            "runLoggingLevel", "scheduledExecutorService", "scheduler", "schedulerProperties", "sendEmptyMessageWhenIdle",
+            "serviceClient", "sharedKeyCredential", "startScheduler", "tenantId", "timeUnit", "timeout", "umask",
+            "useFixedDelay", "userPrincipalNameReturned");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "scheduler.");
 
     @Override
     public boolean isEnabled(String scheme) {

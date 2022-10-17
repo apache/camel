@@ -17,30 +17,12 @@ public class DigitalOceanEndpointUriFactory extends org.apache.camel.support.com
 
     private static final String BASE = ":operation";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(11);
-        props.add("digitalOceanClient");
-        props.add("httpProxyHost");
-        props.add("httpProxyPassword");
-        props.add("httpProxyPort");
-        props.add("httpProxyUser");
-        props.add("lazyStartProducer");
-        props.add("oAuthToken");
-        props.add("operation");
-        props.add("page");
-        props.add("perPage");
-        props.add("resource");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(3);
-        secretProps.add("httpProxyPassword");
-        secretProps.add("httpProxyUser");
-        secretProps.add("oAuthToken");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "digitalOceanClient", "httpProxyHost", "httpProxyPassword", "httpProxyPort", "httpProxyUser",
+            "lazyStartProducer", "oAuthToken", "operation", "page", "perPage", "resource");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "httpProxyPassword", "httpProxyUser", "oAuthToken");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

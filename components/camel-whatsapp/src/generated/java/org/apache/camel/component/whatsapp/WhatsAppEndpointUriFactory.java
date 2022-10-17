@@ -17,26 +17,12 @@ public class WhatsAppEndpointUriFactory extends org.apache.camel.support.compone
 
     private static final String BASE = ":phoneNumberId";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(9);
-        props.add("apiVersion");
-        props.add("authorizationToken");
-        props.add("baseUri");
-        props.add("httpClient");
-        props.add("lazyStartProducer");
-        props.add("phoneNumberId");
-        props.add("webhookPath");
-        props.add("webhookVerifyToken");
-        props.add("whatsappService");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(1);
-        secretProps.add("authorizationToken");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "apiVersion", "authorizationToken", "baseUri", "httpClient", "lazyStartProducer", "phoneNumberId",
+            "webhookPath", "webhookVerifyToken", "whatsappService");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "authorizationToken");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

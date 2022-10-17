@@ -17,29 +17,11 @@ public class TimerEndpointUriFactory extends org.apache.camel.support.component.
 
     private static final String BASE = ":timerName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(14);
-        props.add("bridgeErrorHandler");
-        props.add("daemon");
-        props.add("delay");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("fixedRate");
-        props.add("includeMetadata");
-        props.add("pattern");
-        props.add("period");
-        props.add("repeatCount");
-        props.add("synchronous");
-        props.add("time");
-        props.add("timer");
-        props.add("timerName");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "bridgeErrorHandler", "daemon", "delay", "exceptionHandler", "exchangePattern", "fixedRate", "includeMetadata",
+            "pattern", "period", "repeatCount", "synchronous", "time", "timer", "timerName");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

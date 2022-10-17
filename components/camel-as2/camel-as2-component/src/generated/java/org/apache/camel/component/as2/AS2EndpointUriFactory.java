@@ -17,51 +17,16 @@ public class AS2EndpointUriFactory extends org.apache.camel.support.component.En
 
     private static final String BASE = ":apiName/methodName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(36);
-        props.add("apiName");
-        props.add("as2From");
-        props.add("as2MessageStructure");
-        props.add("as2To");
-        props.add("as2Version");
-        props.add("attachedFileName");
-        props.add("clientFqdn");
-        props.add("compressionAlgorithm");
-        props.add("decryptingPrivateKey");
-        props.add("dispositionNotificationTo");
-        props.add("ediMessage");
-        props.add("ediMessageContentType");
-        props.add("ediMessageTransferEncoding");
-        props.add("ediMessageType");
-        props.add("encryptingAlgorithm");
-        props.add("encryptingCertificateChain");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("from");
-        props.add("inBody");
-        props.add("lazyStartProducer");
-        props.add("mdnMessageTemplate");
-        props.add("methodName");
-        props.add("requestUri");
-        props.add("requestUriPattern");
-        props.add("server");
-        props.add("serverFqdn");
-        props.add("serverPortNumber");
-        props.add("signedReceiptMicAlgorithms");
-        props.add("signingAlgorithm");
-        props.add("signingCertificateChain");
-        props.add("signingPrivateKey");
-        props.add("subject");
-        props.add("targetHostname");
-        props.add("targetPortNumber");
-        props.add("userAgent");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "apiName", "as2From", "as2MessageStructure", "as2To", "as2Version", "attachedFileName", "clientFqdn",
+            "compressionAlgorithm", "decryptingPrivateKey", "dispositionNotificationTo", "ediMessage",
+            "ediMessageContentType", "ediMessageTransferEncoding", "ediMessageType", "encryptingAlgorithm",
+            "encryptingCertificateChain", "exceptionHandler", "exchangePattern", "from", "inBody", "lazyStartProducer",
+            "mdnMessageTemplate", "methodName", "requestUri", "requestUriPattern", "server", "serverFqdn",
+            "serverPortNumber", "signedReceiptMicAlgorithms", "signingAlgorithm", "signingCertificateChain",
+            "signingPrivateKey", "subject", "targetHostname", "targetPortNumber", "userAgent");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

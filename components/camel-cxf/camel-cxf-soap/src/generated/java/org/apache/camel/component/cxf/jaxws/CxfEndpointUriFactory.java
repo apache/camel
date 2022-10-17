@@ -17,58 +17,18 @@ public class CxfEndpointUriFactory extends org.apache.camel.support.component.En
 
     private static final String BASE = ":beanId:address";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(38);
-        props.add("address");
-        props.add("allowStreaming");
-        props.add("beanId");
-        props.add("bindingId");
-        props.add("bridgeErrorHandler");
-        props.add("bus");
-        props.add("continuationTimeout");
-        props.add("cookieHandler");
-        props.add("cxfBinding");
-        props.add("cxfConfigurer");
-        props.add("dataFormat");
-        props.add("defaultBus");
-        props.add("defaultOperationName");
-        props.add("defaultOperationNamespace");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("headerFilterStrategy");
-        props.add("hostnameVerifier");
-        props.add("lazyStartProducer");
-        props.add("loggingFeatureEnabled");
-        props.add("loggingSizeLimit");
-        props.add("mergeProtocolHeaders");
-        props.add("mtomEnabled");
-        props.add("password");
-        props.add("portName");
-        props.add("properties");
-        props.add("publishedEndpointUrl");
-        props.add("schemaValidationEnabled");
-        props.add("serviceClass");
-        props.add("serviceName");
-        props.add("skipFaultLogging");
-        props.add("skipPayloadMessagePartCheck");
-        props.add("sslContextParameters");
-        props.add("synchronous");
-        props.add("username");
-        props.add("wrapped");
-        props.add("wrappedStyle");
-        props.add("wsdlURL");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
-        secretProps.add("password");
-        secretProps.add("username");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("properties.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "address", "allowStreaming", "beanId", "bindingId", "bridgeErrorHandler", "bus", "continuationTimeout",
+            "cookieHandler", "cxfBinding", "cxfConfigurer", "dataFormat", "defaultBus", "defaultOperationName",
+            "defaultOperationNamespace", "exceptionHandler", "exchangePattern", "headerFilterStrategy", "hostnameVerifier",
+            "lazyStartProducer", "loggingFeatureEnabled", "loggingSizeLimit", "mergeProtocolHeaders", "mtomEnabled",
+            "password", "portName", "properties", "publishedEndpointUrl", "schemaValidationEnabled", "serviceClass",
+            "serviceName", "skipFaultLogging", "skipPayloadMessagePartCheck", "sslContextParameters", "synchronous",
+            "username", "wrapped", "wrappedStyle", "wsdlURL");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "password", "username");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "properties.");
 
     @Override
     public boolean isEnabled(String scheme) {

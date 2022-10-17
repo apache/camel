@@ -17,106 +17,28 @@ public class NettyHttpEndpointUriFactory extends org.apache.camel.support.compon
 
     private static final String BASE = ":protocol://host:port/path";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(86);
-        props.add("allowSerializedHeaders");
-        props.add("backlog");
-        props.add("bossCount");
-        props.add("bossGroup");
-        props.add("bridgeEndpoint");
-        props.add("bridgeErrorHandler");
-        props.add("channelGroup");
-        props.add("chunkedMaxContentLength");
-        props.add("clientInitializerFactory");
-        props.add("compression");
-        props.add("configuration");
-        props.add("connectTimeout");
-        props.add("cookieHandler");
-        props.add("decoders");
-        props.add("disableStreamCache");
-        props.add("disconnect");
-        props.add("disconnectOnNoReply");
-        props.add("enabledProtocols");
-        props.add("encoders");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("headerFilterStrategy");
-        props.add("host");
-        props.add("hostnameVerification");
-        props.add("httpMethodRestrict");
-        props.add("keepAlive");
-        props.add("keyStoreFile");
-        props.add("keyStoreFormat");
-        props.add("keyStoreResource");
-        props.add("lazyChannelCreation");
-        props.add("lazyStartProducer");
-        props.add("logWarnOnBadRequest");
-        props.add("mapHeaders");
-        props.add("matchOnUriPrefix");
-        props.add("maxChunkSize");
-        props.add("maxHeaderSize");
-        props.add("maxInitialLineLength");
-        props.add("muteException");
-        props.add("nativeTransport");
-        props.add("needClientAuth");
-        props.add("nettyHttpBinding");
-        props.add("nettyServerBootstrapFactory");
-        props.add("nettySharedHttpServer");
-        props.add("noReplyLogLevel");
-        props.add("okStatusCodeRange");
-        props.add("options");
-        props.add("passphrase");
-        props.add("path");
-        props.add("port");
-        props.add("producerPoolEnabled");
-        props.add("producerPoolMaxIdle");
-        props.add("producerPoolMaxTotal");
-        props.add("producerPoolMinEvictableIdle");
-        props.add("producerPoolMinIdle");
-        props.add("protocol");
-        props.add("receiveBufferSize");
-        props.add("receiveBufferSizePredictor");
-        props.add("requestTimeout");
-        props.add("reuseAddress");
-        props.add("reuseChannel");
-        props.add("securityConfiguration");
-        props.add("securityOptions");
-        props.add("securityProvider");
-        props.add("send503whenSuspended");
-        props.add("sendBufferSize");
-        props.add("serverClosedChannelExceptionCaughtLogLevel");
-        props.add("serverExceptionCaughtLogLevel");
-        props.add("serverInitializerFactory");
-        props.add("ssl");
-        props.add("sslClientCertHeaders");
-        props.add("sslContextParameters");
-        props.add("sslHandler");
-        props.add("sync");
-        props.add("synchronous");
-        props.add("tcpNoDelay");
-        props.add("throwExceptionOnFailure");
-        props.add("traceEnabled");
-        props.add("transferException");
-        props.add("transferExchange");
-        props.add("trustStoreFile");
-        props.add("trustStoreResource");
-        props.add("urlDecodeHeaders");
-        props.add("useRelativePath");
-        props.add("usingExecutorService");
-        props.add("workerCount");
-        props.add("workerGroup");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(1);
-        secretProps.add("passphrase");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Set<String> prefixes = new HashSet<>(2);
-        prefixes.add("option.");
-        prefixes.add("securityConfiguration.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "allowSerializedHeaders", "backlog", "bossCount", "bossGroup", "bridgeEndpoint", "bridgeErrorHandler",
+            "channelGroup", "chunkedMaxContentLength", "clientInitializerFactory", "compression", "configuration",
+            "connectTimeout", "cookieHandler", "decoders", "disableStreamCache", "disconnect", "disconnectOnNoReply",
+            "enabledProtocols", "encoders", "exceptionHandler", "exchangePattern", "headerFilterStrategy", "host",
+            "hostnameVerification", "httpMethodRestrict", "keepAlive", "keyStoreFile", "keyStoreFormat",
+            "keyStoreResource", "lazyChannelCreation", "lazyStartProducer", "logWarnOnBadRequest", "mapHeaders",
+            "matchOnUriPrefix", "maxChunkSize", "maxHeaderSize", "maxInitialLineLength", "muteException",
+            "nativeTransport", "needClientAuth", "nettyHttpBinding", "nettyServerBootstrapFactory",
+            "nettySharedHttpServer", "noReplyLogLevel", "okStatusCodeRange", "options", "passphrase", "path", "port",
+            "producerPoolEnabled", "producerPoolMaxIdle", "producerPoolMaxTotal", "producerPoolMinEvictableIdle",
+            "producerPoolMinIdle", "protocol", "receiveBufferSize", "receiveBufferSizePredictor", "requestTimeout",
+            "reuseAddress", "reuseChannel", "securityConfiguration", "securityOptions", "securityProvider",
+            "send503whenSuspended", "sendBufferSize", "serverClosedChannelExceptionCaughtLogLevel",
+            "serverExceptionCaughtLogLevel", "serverInitializerFactory", "ssl", "sslClientCertHeaders",
+            "sslContextParameters", "sslHandler", "sync", "synchronous", "tcpNoDelay", "throwExceptionOnFailure",
+            "traceEnabled", "transferException", "transferExchange", "trustStoreFile", "trustStoreResource",
+            "urlDecodeHeaders", "useRelativePath", "usingExecutorService", "workerCount", "workerGroup");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "passphrase");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "option.", "securityConfiguration.");
 
     @Override
     public boolean isEnabled(String scheme) {

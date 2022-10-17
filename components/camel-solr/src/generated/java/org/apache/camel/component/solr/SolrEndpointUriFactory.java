@@ -18,38 +18,14 @@ public class SolrEndpointUriFactory extends org.apache.camel.support.component.E
     private static final String BASE = ":url";
     private static final String[] SCHEMES = new String[]{"solr", "solrs", "solrCloud"};
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(20);
-        props.add("allowCompression");
-        props.add("autoCommit");
-        props.add("collection");
-        props.add("connectionTimeout");
-        props.add("defaultMaxConnectionsPerHost");
-        props.add("followRedirects");
-        props.add("httpClient");
-        props.add("lazyStartProducer");
-        props.add("maxRetries");
-        props.add("maxTotalConnections");
-        props.add("password");
-        props.add("requestHandler");
-        props.add("soTimeout");
-        props.add("solrClient");
-        props.add("streamingQueueSize");
-        props.add("streamingThreadCount");
-        props.add("url");
-        props.add("username");
-        props.add("zkChroot");
-        props.add("zkHost");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
-        secretProps.add("password");
-        secretProps.add("username");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "allowCompression", "autoCommit", "collection", "connectionTimeout", "defaultMaxConnectionsPerHost",
+            "followRedirects", "httpClient", "lazyStartProducer", "maxRetries", "maxTotalConnections", "password",
+            "requestHandler", "soTimeout", "solrClient", "streamingQueueSize", "streamingThreadCount", "url", "username",
+            "zkChroot", "zkHost");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "password", "username");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

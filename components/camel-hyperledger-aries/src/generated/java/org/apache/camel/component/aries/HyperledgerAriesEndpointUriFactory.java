@@ -17,21 +17,10 @@ public class HyperledgerAriesEndpointUriFactory extends org.apache.camel.support
 
     private static final String BASE = ":walletName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(6);
-        props.add("autoSchema");
-        props.add("lazyStartProducer");
-        props.add("schemaName");
-        props.add("schemaVersion");
-        props.add("service");
-        props.add("walletName");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "autoSchema", "lazyStartProducer", "schemaName", "schemaVersion", "service", "walletName");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

@@ -17,112 +17,22 @@ public class BoxEndpointUriFactory extends org.apache.camel.support.component.En
 
     private static final String BASE = ":apiName/methodName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(90);
-        props.add("access");
-        props.add("accessTokenCache");
-        props.add("action");
-        props.add("after");
-        props.add("apiName");
-        props.add("assignTo");
-        props.add("authenticationType");
-        props.add("before");
-        props.add("check");
-        props.add("clientId");
-        props.add("clientSecret");
-        props.add("collaborationId");
-        props.add("collaborator");
-        props.add("commentId");
-        props.add("content");
-        props.add("created");
-        props.add("description");
-        props.add("destinationFolderId");
-        props.add("dueAt");
-        props.add("email");
-        props.add("emailAliasId");
-        props.add("encryptionAlgorithm");
-        props.add("enterpriseId");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("externalSyncIdentifier");
-        props.add("fields");
-        props.add("fileContent");
-        props.add("fileId");
-        props.add("fileName");
-        props.add("fileSize");
-        props.add("fileType");
-        props.add("filterTerm");
-        props.add("folderId");
-        props.add("folderName");
-        props.add("force");
-        props.add("groupId");
-        props.add("groupInfo");
-        props.add("groupMembershipId");
-        props.add("httpParams");
-        props.add("inBody");
-        props.add("info");
-        props.add("invitabilityLevel");
-        props.add("lazyStartProducer");
-        props.add("limit");
-        props.add("listener");
-        props.add("login");
-        props.add("maxCacheEntries");
-        props.add("maxHeight");
-        props.add("maxWidth");
-        props.add("memberViewabilityLevel");
-        props.add("message");
-        props.add("metadata");
-        props.add("methodName");
-        props.add("minHeight");
-        props.add("minWidth");
-        props.add("modified");
-        props.add("name");
-        props.add("newFileName");
-        props.add("newFolderName");
-        props.add("newName");
-        props.add("notifyUser");
-        props.add("offset");
-        props.add("output");
-        props.add("params");
-        props.add("parentFolderId");
-        props.add("path");
-        props.add("permissions");
-        props.add("position");
-        props.add("privateKeyFile");
-        props.add("privateKeyPassword");
-        props.add("provenance");
-        props.add("publicKeyId");
-        props.add("query");
-        props.add("rangeEnd");
-        props.add("rangeStart");
-        props.add("role");
-        props.add("size");
-        props.add("sourceUserId");
-        props.add("sslContextParameters");
-        props.add("startingPosition");
-        props.add("taskAssignmentId");
-        props.add("taskId");
-        props.add("typeName");
-        props.add("types");
-        props.add("unshareDate");
-        props.add("userId");
-        props.add("userName");
-        props.add("userPassword");
-        props.add("version");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(6);
-        secretProps.add("clientSecret");
-        secretProps.add("privateKeyFile");
-        secretProps.add("privateKeyPassword");
-        secretProps.add("publicKeyId");
-        secretProps.add("userName");
-        secretProps.add("userPassword");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "access", "accessTokenCache", "action", "after", "apiName", "assignTo", "authenticationType", "before",
+            "check", "clientId", "clientSecret", "collaborationId", "collaborator", "commentId", "content", "created",
+            "description", "destinationFolderId", "dueAt", "email", "emailAliasId", "encryptionAlgorithm", "enterpriseId",
+            "exceptionHandler", "exchangePattern", "externalSyncIdentifier", "fields", "fileContent", "fileId", "fileName",
+            "fileSize", "fileType", "filterTerm", "folderId", "folderName", "force", "groupId", "groupInfo",
+            "groupMembershipId", "httpParams", "inBody", "info", "invitabilityLevel", "lazyStartProducer", "limit",
+            "listener", "login", "maxCacheEntries", "maxHeight", "maxWidth", "memberViewabilityLevel", "message",
+            "metadata", "methodName", "minHeight", "minWidth", "modified", "name", "newFileName", "newFolderName",
+            "newName", "notifyUser", "offset", "output", "params", "parentFolderId", "path", "permissions", "position",
+            "privateKeyFile", "privateKeyPassword", "provenance", "publicKeyId", "query", "rangeEnd", "rangeStart", "role",
+            "size", "sourceUserId", "sslContextParameters", "startingPosition", "taskAssignmentId", "taskId", "typeName",
+            "types", "unshareDate", "userId", "userName", "userPassword", "version");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "clientSecret", "privateKeyFile", "privateKeyPassword", "publicKeyId", "userName", "userPassword");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

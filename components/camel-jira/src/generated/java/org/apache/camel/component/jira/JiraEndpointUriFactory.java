@@ -17,39 +17,13 @@ public class JiraEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":type";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(17);
-        props.add("accessToken");
-        props.add("bridgeErrorHandler");
-        props.add("consumerKey");
-        props.add("delay");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("jiraUrl");
-        props.add("jql");
-        props.add("lazyStartProducer");
-        props.add("maxResults");
-        props.add("password");
-        props.add("privateKey");
-        props.add("sendOnlyUpdatedField");
-        props.add("type");
-        props.add("username");
-        props.add("verificationCode");
-        props.add("watchedFields");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(6);
-        secretProps.add("accessToken");
-        secretProps.add("consumerKey");
-        secretProps.add("password");
-        secretProps.add("privateKey");
-        secretProps.add("username");
-        secretProps.add("verificationCode");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "accessToken", "bridgeErrorHandler", "consumerKey", "delay", "exceptionHandler", "exchangePattern", "jiraUrl",
+            "jql", "lazyStartProducer", "maxResults", "password", "privateKey", "sendOnlyUpdatedField", "type", "username",
+            "verificationCode", "watchedFields");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "accessToken", "consumerKey", "password", "privateKey", "username", "verificationCode");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

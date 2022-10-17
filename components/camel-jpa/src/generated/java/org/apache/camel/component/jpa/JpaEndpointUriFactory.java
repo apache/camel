@@ -17,64 +17,18 @@ public class JpaEndpointUriFactory extends org.apache.camel.support.component.En
 
     private static final String BASE = ":entityType";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(45);
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("bridgeErrorHandler");
-        props.add("consumeDelete");
-        props.add("consumeLockEntity");
-        props.add("delay");
-        props.add("deleteHandler");
-        props.add("entityManagerProperties");
-        props.add("entityType");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("findEntity");
-        props.add("flushOnSend");
-        props.add("greedy");
-        props.add("initialDelay");
-        props.add("joinTransaction");
-        props.add("lazyStartProducer");
-        props.add("lockModeType");
-        props.add("maxMessagesPerPoll");
-        props.add("maximumResults");
-        props.add("namedQuery");
-        props.add("nativeQuery");
-        props.add("parameters");
-        props.add("persistenceUnit");
-        props.add("pollStrategy");
-        props.add("preDeleteHandler");
-        props.add("query");
-        props.add("remove");
-        props.add("repeatCount");
-        props.add("resultClass");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("sharedEntityManager");
-        props.add("skipLockedEntity");
-        props.add("startScheduler");
-        props.add("timeUnit");
-        props.add("transacted");
-        props.add("useExecuteUpdate");
-        props.add("useFixedDelay");
-        props.add("usePassedInEntityManager");
-        props.add("usePersist");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        Set<String> prefixes = new HashSet<>(3);
-        prefixes.add("emf.");
-        prefixes.add("parameters.");
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "backoffErrorThreshold", "backoffIdleThreshold", "backoffMultiplier", "bridgeErrorHandler", "consumeDelete",
+            "consumeLockEntity", "delay", "deleteHandler", "entityManagerProperties", "entityType", "exceptionHandler",
+            "exchangePattern", "findEntity", "flushOnSend", "greedy", "initialDelay", "joinTransaction",
+            "lazyStartProducer", "lockModeType", "maxMessagesPerPoll", "maximumResults", "namedQuery", "nativeQuery",
+            "parameters", "persistenceUnit", "pollStrategy", "preDeleteHandler", "query", "remove", "repeatCount",
+            "resultClass", "runLoggingLevel", "scheduledExecutorService", "scheduler", "schedulerProperties",
+            "sendEmptyMessageWhenIdle", "sharedEntityManager", "skipLockedEntity", "startScheduler", "timeUnit",
+            "transacted", "useExecuteUpdate", "useFixedDelay", "usePassedInEntityManager", "usePersist");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "emf.", "parameters.", "scheduler.");
 
     @Override
     public boolean isEnabled(String scheme) {

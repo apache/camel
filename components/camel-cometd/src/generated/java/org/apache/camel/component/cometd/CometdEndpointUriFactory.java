@@ -18,34 +18,13 @@ public class CometdEndpointUriFactory extends org.apache.camel.support.component
     private static final String BASE = ":host:port/channelName";
     private static final String[] SCHEMES = new String[]{"cometd", "cometds"};
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(19);
-        props.add("allowedOrigins");
-        props.add("baseResource");
-        props.add("bridgeErrorHandler");
-        props.add("channelName");
-        props.add("crossOriginFilterOn");
-        props.add("disconnectLocalSession");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("filterPath");
-        props.add("host");
-        props.add("interval");
-        props.add("jsonCommented");
-        props.add("lazyStartProducer");
-        props.add("logLevel");
-        props.add("maxInterval");
-        props.add("multiFrameInterval");
-        props.add("port");
-        props.add("sessionHeadersEnabled");
-        props.add("timeout");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "allowedOrigins", "baseResource", "bridgeErrorHandler", "channelName", "crossOriginFilterOn",
+            "disconnectLocalSession", "exceptionHandler", "exchangePattern", "filterPath", "host", "interval",
+            "jsonCommented", "lazyStartProducer", "logLevel", "maxInterval", "multiFrameInterval", "port",
+            "sessionHeadersEnabled", "timeout");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

@@ -17,52 +17,17 @@ public class MiloClientEndpointUriFactory extends org.apache.camel.support.compo
 
     private static final String BASE = ":endpointUri";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(34);
-        props.add("allowedSecurityPolicies");
-        props.add("applicationName");
-        props.add("applicationUri");
-        props.add("bridgeErrorHandler");
-        props.add("channelLifetime");
-        props.add("clientId");
-        props.add("dataChangeFilterDeadbandType");
-        props.add("dataChangeFilterDeadbandValue");
-        props.add("dataChangeFilterTrigger");
-        props.add("defaultAwaitWrites");
-        props.add("discoveryEndpointSuffix");
-        props.add("discoveryEndpointUri");
-        props.add("endpointUri");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("keyAlias");
-        props.add("keyPassword");
-        props.add("keyStorePassword");
-        props.add("keyStoreType");
-        props.add("keyStoreUrl");
-        props.add("lazyStartProducer");
-        props.add("maxPendingPublishRequests");
-        props.add("maxResponseMessageSize");
-        props.add("method");
-        props.add("monitorFilterType");
-        props.add("node");
-        props.add("omitNullValues");
-        props.add("overrideHost");
-        props.add("productUri");
-        props.add("requestTimeout");
-        props.add("requestedPublishingInterval");
-        props.add("samplingInterval");
-        props.add("sessionName");
-        props.add("sessionTimeout");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
-        secretProps.add("keyPassword");
-        secretProps.add("keyStorePassword");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "allowedSecurityPolicies", "applicationName", "applicationUri", "bridgeErrorHandler", "channelLifetime",
+            "clientId", "dataChangeFilterDeadbandType", "dataChangeFilterDeadbandValue", "dataChangeFilterTrigger",
+            "defaultAwaitWrites", "discoveryEndpointSuffix", "discoveryEndpointUri", "endpointUri", "exceptionHandler",
+            "exchangePattern", "keyAlias", "keyPassword", "keyStorePassword", "keyStoreType", "keyStoreUrl",
+            "lazyStartProducer", "maxPendingPublishRequests", "maxResponseMessageSize", "method", "monitorFilterType",
+            "node", "omitNullValues", "overrideHost", "productUri", "requestTimeout", "requestedPublishingInterval",
+            "samplingInterval", "sessionName", "sessionTimeout");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "keyPassword", "keyStorePassword");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

@@ -17,45 +17,14 @@ public class MllpEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":hostname:port";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(30);
-        props.add("acceptTimeout");
-        props.add("autoAck");
-        props.add("backlog");
-        props.add("bindRetryInterval");
-        props.add("bindTimeout");
-        props.add("bridgeErrorHandler");
-        props.add("charsetName");
-        props.add("connectTimeout");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("hl7Headers");
-        props.add("hostname");
-        props.add("idleTimeout");
-        props.add("idleTimeoutStrategy");
-        props.add("keepAlive");
-        props.add("lazyStartProducer");
-        props.add("lenientBind");
-        props.add("maxBufferSize");
-        props.add("maxConcurrentConsumers");
-        props.add("minBufferSize");
-        props.add("port");
-        props.add("readTimeout");
-        props.add("receiveBufferSize");
-        props.add("receiveTimeout");
-        props.add("requireEndOfData");
-        props.add("reuseAddress");
-        props.add("sendBufferSize");
-        props.add("stringPayload");
-        props.add("tcpNoDelay");
-        props.add("validatePayload");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "acceptTimeout", "autoAck", "backlog", "bindRetryInterval", "bindTimeout", "bridgeErrorHandler", "charsetName",
+            "connectTimeout", "exceptionHandler", "exchangePattern", "hl7Headers", "hostname", "idleTimeout",
+            "idleTimeoutStrategy", "keepAlive", "lazyStartProducer", "lenientBind", "maxBufferSize",
+            "maxConcurrentConsumers", "minBufferSize", "port", "readTimeout", "receiveBufferSize", "receiveTimeout",
+            "requireEndOfData", "reuseAddress", "sendBufferSize", "stringPayload", "tcpNoDelay", "validatePayload");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

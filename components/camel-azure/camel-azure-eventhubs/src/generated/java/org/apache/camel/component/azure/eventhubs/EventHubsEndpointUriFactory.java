@@ -17,46 +17,15 @@ public class EventHubsEndpointUriFactory extends org.apache.camel.support.compon
 
     private static final String BASE = ":namespace/eventHubName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(25);
-        props.add("amqpRetryOptions");
-        props.add("amqpTransportType");
-        props.add("blobAccessKey");
-        props.add("blobAccountName");
-        props.add("blobContainerName");
-        props.add("blobStorageSharedKeyCredential");
-        props.add("bridgeErrorHandler");
-        props.add("checkpointBatchSize");
-        props.add("checkpointBatchTimeout");
-        props.add("checkpointStore");
-        props.add("connectionString");
-        props.add("consumerGroupName");
-        props.add("eventHubName");
-        props.add("eventPosition");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("lazyStartProducer");
-        props.add("namespace");
-        props.add("partitionId");
-        props.add("partitionKey");
-        props.add("prefetchCount");
-        props.add("producerAsyncClient");
-        props.add("sharedAccessKey");
-        props.add("sharedAccessName");
-        props.add("tokenCredential");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(5);
-        secretProps.add("blobAccessKey");
-        secretProps.add("blobStorageSharedKeyCredential");
-        secretProps.add("connectionString");
-        secretProps.add("sharedAccessKey");
-        secretProps.add("tokenCredential");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "amqpRetryOptions", "amqpTransportType", "blobAccessKey", "blobAccountName", "blobContainerName",
+            "blobStorageSharedKeyCredential", "bridgeErrorHandler", "checkpointBatchSize", "checkpointBatchTimeout",
+            "checkpointStore", "connectionString", "consumerGroupName", "eventHubName", "eventPosition",
+            "exceptionHandler", "exchangePattern", "lazyStartProducer", "namespace", "partitionId", "partitionKey",
+            "prefetchCount", "producerAsyncClient", "sharedAccessKey", "sharedAccessName", "tokenCredential");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "blobAccessKey", "blobStorageSharedKeyCredential", "connectionString", "sharedAccessKey", "tokenCredential");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

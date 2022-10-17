@@ -17,26 +17,11 @@ public class KeyVaultEndpointUriFactory extends org.apache.camel.support.compone
 
     private static final String BASE = ":vaultName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(7);
-        props.add("clientId");
-        props.add("clientSecret");
-        props.add("lazyStartProducer");
-        props.add("operation");
-        props.add("secretClient");
-        props.add("tenantId");
-        props.add("vaultName");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(3);
-        secretProps.add("clientId");
-        secretProps.add("clientSecret");
-        secretProps.add("tenantId");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "clientId", "clientSecret", "lazyStartProducer", "operation", "secretClient", "tenantId", "vaultName");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "clientId", "clientSecret", "tenantId");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

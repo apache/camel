@@ -17,48 +17,18 @@ public class CosmosDbEndpointUriFactory extends org.apache.camel.support.compone
 
     private static final String BASE = ":databaseName/containerName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(31);
-        props.add("accountKey");
-        props.add("bridgeErrorHandler");
-        props.add("changeFeedProcessorOptions");
-        props.add("clientTelemetryEnabled");
-        props.add("connectionSharingAcrossClientsEnabled");
-        props.add("consistencyLevel");
-        props.add("containerName");
-        props.add("containerPartitionKeyPath");
-        props.add("contentResponseOnWriteEnabled");
-        props.add("cosmosAsyncClient");
-        props.add("createContainerIfNotExists");
-        props.add("createDatabaseIfNotExists");
-        props.add("createLeaseContainerIfNotExists");
-        props.add("createLeaseDatabaseIfNotExists");
-        props.add("databaseEndpoint");
-        props.add("databaseName");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("hostName");
-        props.add("itemId");
-        props.add("itemPartitionKey");
-        props.add("lazyStartProducer");
-        props.add("leaseContainerName");
-        props.add("leaseDatabaseName");
-        props.add("multipleWriteRegionsEnabled");
-        props.add("operation");
-        props.add("preferredRegions");
-        props.add("query");
-        props.add("queryRequestOptions");
-        props.add("readRequestsFallbackEnabled");
-        props.add("throughputProperties");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(1);
-        secretProps.add("accountKey");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "accountKey", "bridgeErrorHandler", "changeFeedProcessorOptions", "clientTelemetryEnabled",
+            "connectionSharingAcrossClientsEnabled", "consistencyLevel", "containerName", "containerPartitionKeyPath",
+            "contentResponseOnWriteEnabled", "cosmosAsyncClient", "createContainerIfNotExists",
+            "createDatabaseIfNotExists", "createLeaseContainerIfNotExists", "createLeaseDatabaseIfNotExists",
+            "databaseEndpoint", "databaseName", "exceptionHandler", "exchangePattern", "hostName", "itemId",
+            "itemPartitionKey", "lazyStartProducer", "leaseContainerName", "leaseDatabaseName",
+            "multipleWriteRegionsEnabled", "operation", "preferredRegions", "query", "queryRequestOptions",
+            "readRequestsFallbackEnabled", "throughputProperties");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "accountKey");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

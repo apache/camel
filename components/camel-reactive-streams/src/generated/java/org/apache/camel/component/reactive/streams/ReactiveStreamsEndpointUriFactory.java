@@ -17,26 +17,12 @@ public class ReactiveStreamsEndpointUriFactory extends org.apache.camel.support.
 
     private static final String BASE = ":stream";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(11);
-        props.add("backpressureStrategy");
-        props.add("bridgeErrorHandler");
-        props.add("concurrentConsumers");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("exchangesRefillLowWatermark");
-        props.add("forwardOnComplete");
-        props.add("forwardOnError");
-        props.add("lazyStartProducer");
-        props.add("maxInflightExchanges");
-        props.add("stream");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "backpressureStrategy", "bridgeErrorHandler", "concurrentConsumers", "exceptionHandler", "exchangePattern",
+            "exchangesRefillLowWatermark", "forwardOnComplete", "forwardOnError", "lazyStartProducer",
+            "maxInflightExchanges", "stream");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

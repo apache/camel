@@ -17,63 +17,17 @@ public class BraintreeEndpointUriFactory extends org.apache.camel.support.compon
 
     private static final String BASE = ":apiName/methodName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(44);
-        props.add("accessToken");
-        props.add("amount");
-        props.add("apiName");
-        props.add("associationFilterId");
-        props.add("challenge");
-        props.add("cloneRequest");
-        props.add("content");
-        props.add("currencyRequest");
-        props.add("customerId");
-        props.add("deleteRequest");
-        props.add("disputeId");
-        props.add("documentId");
-        props.add("environment");
-        props.add("evidenceId");
-        props.add("fileEvidenceRequest");
-        props.add("grantRequest");
-        props.add("groupByCustomField");
-        props.add("httpLogLevel");
-        props.add("httpLogName");
-        props.add("httpReadTimeout");
-        props.add("id");
-        props.add("inBody");
-        props.add("lazyStartProducer");
-        props.add("logHandlerEnabled");
-        props.add("merchantId");
-        props.add("methodName");
-        props.add("page");
-        props.add("payload");
-        props.add("paymentMethodNonce");
-        props.add("paymentMethodToken");
-        props.add("privateKey");
-        props.add("proxyHost");
-        props.add("proxyPort");
-        props.add("publicKey");
-        props.add("query");
-        props.add("refundRequest");
-        props.add("request");
-        props.add("searchRequest");
-        props.add("settlementDate");
-        props.add("signature");
-        props.add("submitForSettlement");
-        props.add("subscriptionId");
-        props.add("textEvidenceRequest");
-        props.add("token");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(3);
-        secretProps.add("accessToken");
-        secretProps.add("privateKey");
-        secretProps.add("publicKey");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "accessToken", "amount", "apiName", "associationFilterId", "challenge", "cloneRequest", "content",
+            "currencyRequest", "customerId", "deleteRequest", "disputeId", "documentId", "environment", "evidenceId",
+            "fileEvidenceRequest", "grantRequest", "groupByCustomField", "httpLogLevel", "httpLogName", "httpReadTimeout",
+            "id", "inBody", "lazyStartProducer", "logHandlerEnabled", "merchantId", "methodName", "page", "payload",
+            "paymentMethodNonce", "paymentMethodToken", "privateKey", "proxyHost", "proxyPort", "publicKey", "query",
+            "refundRequest", "request", "searchRequest", "settlementDate", "signature", "submitForSettlement",
+            "subscriptionId", "textEvidenceRequest", "token");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "accessToken", "privateKey", "publicKey");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

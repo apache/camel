@@ -17,55 +17,17 @@ public class GoogleSheetsStreamEndpointUriFactory extends org.apache.camel.suppo
 
     private static final String BASE = ":spreadsheetId";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(34);
-        props.add("accessToken");
-        props.add("applicationName");
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("bridgeErrorHandler");
-        props.add("clientId");
-        props.add("clientSecret");
-        props.add("delay");
-        props.add("delegate");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("greedy");
-        props.add("includeGridData");
-        props.add("initialDelay");
-        props.add("majorDimension");
-        props.add("maxResults");
-        props.add("pollStrategy");
-        props.add("range");
-        props.add("refreshToken");
-        props.add("repeatCount");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("scopes");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("serviceAccountKey");
-        props.add("splitResults");
-        props.add("spreadsheetId");
-        props.add("startScheduler");
-        props.add("timeUnit");
-        props.add("useFixedDelay");
-        props.add("valueRenderOption");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(3);
-        secretProps.add("accessToken");
-        secretProps.add("clientSecret");
-        secretProps.add("refreshToken");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "accessToken", "applicationName", "backoffErrorThreshold", "backoffIdleThreshold", "backoffMultiplier",
+            "bridgeErrorHandler", "clientId", "clientSecret", "delay", "delegate", "exceptionHandler", "exchangePattern",
+            "greedy", "includeGridData", "initialDelay", "majorDimension", "maxResults", "pollStrategy", "range",
+            "refreshToken", "repeatCount", "runLoggingLevel", "scheduledExecutorService", "scheduler",
+            "schedulerProperties", "scopes", "sendEmptyMessageWhenIdle", "serviceAccountKey", "splitResults",
+            "spreadsheetId", "startScheduler", "timeUnit", "useFixedDelay", "valueRenderOption");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "accessToken", "clientSecret", "refreshToken");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "scheduler.");
 
     @Override
     public boolean isEnabled(String scheme) {

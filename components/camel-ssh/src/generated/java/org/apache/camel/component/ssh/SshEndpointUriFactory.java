@@ -17,56 +17,17 @@ public class SshEndpointUriFactory extends org.apache.camel.support.component.En
 
     private static final String BASE = ":host:port";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(35);
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("bridgeErrorHandler");
-        props.add("certResource");
-        props.add("certResourcePassword");
-        props.add("channelType");
-        props.add("delay");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("failOnUnknownHost");
-        props.add("greedy");
-        props.add("host");
-        props.add("initialDelay");
-        props.add("keyPairProvider");
-        props.add("keyType");
-        props.add("knownHostsResource");
-        props.add("lazyStartProducer");
-        props.add("password");
-        props.add("pollCommand");
-        props.add("pollStrategy");
-        props.add("port");
-        props.add("repeatCount");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("shellPrompt");
-        props.add("sleepForShellPrompt");
-        props.add("startScheduler");
-        props.add("timeUnit");
-        props.add("timeout");
-        props.add("useFixedDelay");
-        props.add("username");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(3);
-        secretProps.add("certResourcePassword");
-        secretProps.add("password");
-        secretProps.add("username");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "backoffErrorThreshold", "backoffIdleThreshold", "backoffMultiplier", "bridgeErrorHandler", "certResource",
+            "certResourcePassword", "channelType", "delay", "exceptionHandler", "exchangePattern", "failOnUnknownHost",
+            "greedy", "host", "initialDelay", "keyPairProvider", "keyType", "knownHostsResource", "lazyStartProducer",
+            "password", "pollCommand", "pollStrategy", "port", "repeatCount", "runLoggingLevel",
+            "scheduledExecutorService", "scheduler", "schedulerProperties", "sendEmptyMessageWhenIdle", "shellPrompt",
+            "sleepForShellPrompt", "startScheduler", "timeUnit", "timeout", "useFixedDelay", "username");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "certResourcePassword", "password", "username");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "scheduler.");
 
     @Override
     public boolean isEnabled(String scheme) {

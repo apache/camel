@@ -17,39 +17,13 @@ public class StreamEndpointUriFactory extends org.apache.camel.support.component
 
     private static final String BASE = ":kind";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(24);
-        props.add("appendNewLine");
-        props.add("autoCloseCount");
-        props.add("bridgeErrorHandler");
-        props.add("closeOnDone");
-        props.add("delay");
-        props.add("encoding");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("fileName");
-        props.add("fileWatcher");
-        props.add("groupLines");
-        props.add("groupStrategy");
-        props.add("httpHeaders");
-        props.add("httpUrl");
-        props.add("initialPromptDelay");
-        props.add("kind");
-        props.add("lazyStartProducer");
-        props.add("promptDelay");
-        props.add("promptMessage");
-        props.add("readLine");
-        props.add("readTimeout");
-        props.add("retry");
-        props.add("scanStream");
-        props.add("scanStreamDelay");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "appendNewLine", "autoCloseCount", "bridgeErrorHandler", "closeOnDone", "delay", "encoding",
+            "exceptionHandler", "exchangePattern", "fileName", "fileWatcher", "groupLines", "groupStrategy", "httpHeaders",
+            "httpUrl", "initialPromptDelay", "kind", "lazyStartProducer", "promptDelay", "promptMessage", "readLine",
+            "readTimeout", "retry", "scanStream", "scanStreamDelay");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

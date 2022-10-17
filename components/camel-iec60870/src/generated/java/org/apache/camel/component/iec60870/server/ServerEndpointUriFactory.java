@@ -17,37 +17,14 @@ public class ServerEndpointUriFactory extends org.apache.camel.support.component
 
     private static final String BASE = ":uriPath";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(22);
-        props.add("acknowledgeWindow");
-        props.add("adsuAddressType");
-        props.add("bridgeErrorHandler");
-        props.add("causeOfTransmissionType");
-        props.add("causeSourceAddress");
-        props.add("connectionId");
-        props.add("connectionTimeout");
-        props.add("dataModuleOptions");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("filterNonExecute");
-        props.add("ignoreBackgroundScan");
-        props.add("ignoreDaylightSavingTime");
-        props.add("informationObjectAddressType");
-        props.add("lazyStartProducer");
-        props.add("maxUnacknowledged");
-        props.add("protocolOptions");
-        props.add("timeZone");
-        props.add("timeout1");
-        props.add("timeout2");
-        props.add("timeout3");
-        props.add("uriPath");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "acknowledgeWindow", "adsuAddressType", "bridgeErrorHandler", "causeOfTransmissionType", "causeSourceAddress",
+            "connectionId", "connectionTimeout", "dataModuleOptions", "exceptionHandler", "exchangePattern",
+            "filterNonExecute", "ignoreBackgroundScan", "ignoreDaylightSavingTime", "informationObjectAddressType",
+            "lazyStartProducer", "maxUnacknowledged", "protocolOptions", "timeZone", "timeout1", "timeout2", "timeout3",
+            "uriPath");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

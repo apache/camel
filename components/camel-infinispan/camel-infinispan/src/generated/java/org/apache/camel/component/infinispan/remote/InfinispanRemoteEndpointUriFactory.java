@@ -17,44 +17,15 @@ public class InfinispanRemoteEndpointUriFactory extends org.apache.camel.support
 
     private static final String BASE = ":cacheName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(27);
-        props.add("bridgeErrorHandler");
-        props.add("cacheContainer");
-        props.add("cacheContainerConfiguration");
-        props.add("cacheName");
-        props.add("configurationProperties");
-        props.add("configurationUri");
-        props.add("customListener");
-        props.add("defaultValue");
-        props.add("eventTypes");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("flags");
-        props.add("hosts");
-        props.add("key");
-        props.add("lazyStartProducer");
-        props.add("oldValue");
-        props.add("operation");
-        props.add("password");
-        props.add("queryBuilder");
-        props.add("remappingFunction");
-        props.add("resultHeader");
-        props.add("saslMechanism");
-        props.add("secure");
-        props.add("securityRealm");
-        props.add("securityServerName");
-        props.add("username");
-        props.add("value");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(1);
-        secretProps.add("password");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "bridgeErrorHandler", "cacheContainer", "cacheContainerConfiguration", "cacheName", "configurationProperties",
+            "configurationUri", "customListener", "defaultValue", "eventTypes", "exceptionHandler", "exchangePattern",
+            "flags", "hosts", "key", "lazyStartProducer", "oldValue", "operation", "password", "queryBuilder",
+            "remappingFunction", "resultHeader", "saslMechanism", "secure", "securityRealm", "securityServerName",
+            "username", "value");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "password");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

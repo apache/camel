@@ -17,24 +17,11 @@ public class MetricsEndpointUriFactory extends org.apache.camel.support.componen
 
     private static final String BASE = ":metricsType:metricsName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(9);
-        props.add("action");
-        props.add("decrement");
-        props.add("increment");
-        props.add("lazyStartProducer");
-        props.add("mark");
-        props.add("metricsName");
-        props.add("metricsType");
-        props.add("subject");
-        props.add("value");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "action", "decrement", "increment", "lazyStartProducer", "mark", "metricsName", "metricsType", "subject",
+            "value");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

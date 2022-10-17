@@ -17,33 +17,12 @@ public class CouchDbEndpointUriFactory extends org.apache.camel.support.componen
 
     private static final String BASE = ":protocol:hostname:port/database";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(15);
-        props.add("bridgeErrorHandler");
-        props.add("createDatabase");
-        props.add("database");
-        props.add("deletes");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("heartbeat");
-        props.add("hostname");
-        props.add("lazyStartProducer");
-        props.add("password");
-        props.add("port");
-        props.add("protocol");
-        props.add("style");
-        props.add("updates");
-        props.add("username");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
-        secretProps.add("password");
-        secretProps.add("username");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "bridgeErrorHandler", "createDatabase", "database", "deletes", "exceptionHandler", "exchangePattern",
+            "heartbeat", "hostname", "lazyStartProducer", "password", "port", "protocol", "style", "updates", "username");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "password", "username");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

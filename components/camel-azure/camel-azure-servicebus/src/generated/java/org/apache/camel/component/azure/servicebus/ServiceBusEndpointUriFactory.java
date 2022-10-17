@@ -17,44 +17,16 @@ public class ServiceBusEndpointUriFactory extends org.apache.camel.support.compo
 
     private static final String BASE = ":topicOrQueueName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(26);
-        props.add("amqpRetryOptions");
-        props.add("amqpTransportType");
-        props.add("bridgeErrorHandler");
-        props.add("clientOptions");
-        props.add("connectionString");
-        props.add("consumerOperation");
-        props.add("disableAutoComplete");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("fullyQualifiedNamespace");
-        props.add("lazyStartProducer");
-        props.add("maxAutoLockRenewDuration");
-        props.add("peekNumMaxMessages");
-        props.add("prefetchCount");
-        props.add("producerOperation");
-        props.add("proxyOptions");
-        props.add("receiverAsyncClient");
-        props.add("scheduledEnqueueTime");
-        props.add("senderAsyncClient");
-        props.add("serviceBusReceiveMode");
-        props.add("serviceBusTransactionContext");
-        props.add("serviceBusType");
-        props.add("subQueue");
-        props.add("subscriptionName");
-        props.add("tokenCredential");
-        props.add("topicOrQueueName");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
-        secretProps.add("connectionString");
-        secretProps.add("tokenCredential");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "amqpRetryOptions", "amqpTransportType", "bridgeErrorHandler", "clientOptions", "connectionString",
+            "consumerOperation", "disableAutoComplete", "exceptionHandler", "exchangePattern", "fullyQualifiedNamespace",
+            "lazyStartProducer", "maxAutoLockRenewDuration", "peekNumMaxMessages", "prefetchCount", "producerOperation",
+            "proxyOptions", "receiverAsyncClient", "scheduledEnqueueTime", "senderAsyncClient", "serviceBusReceiveMode",
+            "serviceBusTransactionContext", "serviceBusType", "subQueue", "subscriptionName", "tokenCredential",
+            "topicOrQueueName");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "connectionString", "tokenCredential");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

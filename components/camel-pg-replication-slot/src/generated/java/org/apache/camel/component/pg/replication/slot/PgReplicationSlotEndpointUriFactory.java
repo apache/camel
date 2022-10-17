@@ -17,49 +17,16 @@ public class PgReplicationSlotEndpointUriFactory extends org.apache.camel.suppor
 
     private static final String BASE = ":host:port/database/slot:outputPlugin";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(29);
-        props.add("autoCreateSlot");
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("bridgeErrorHandler");
-        props.add("database");
-        props.add("delay");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("greedy");
-        props.add("host");
-        props.add("initialDelay");
-        props.add("outputPlugin");
-        props.add("password");
-        props.add("pollStrategy");
-        props.add("port");
-        props.add("repeatCount");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("slot");
-        props.add("slotOptions");
-        props.add("startScheduler");
-        props.add("statusInterval");
-        props.add("timeUnit");
-        props.add("useFixedDelay");
-        props.add("user");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(1);
-        secretProps.add("password");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Set<String> prefixes = new HashSet<>(2);
-        prefixes.add("scheduler.");
-        prefixes.add("slotOptions.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "autoCreateSlot", "backoffErrorThreshold", "backoffIdleThreshold", "backoffMultiplier", "bridgeErrorHandler",
+            "database", "delay", "exceptionHandler", "exchangePattern", "greedy", "host", "initialDelay", "outputPlugin",
+            "password", "pollStrategy", "port", "repeatCount", "runLoggingLevel", "scheduledExecutorService", "scheduler",
+            "schedulerProperties", "sendEmptyMessageWhenIdle", "slot", "slotOptions", "startScheduler", "statusInterval",
+            "timeUnit", "useFixedDelay", "user");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "password");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "scheduler.", "slotOptions.");
 
     @Override
     public boolean isEnabled(String scheme) {

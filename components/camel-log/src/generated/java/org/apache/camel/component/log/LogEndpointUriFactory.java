@@ -17,45 +17,14 @@ public class LogEndpointUriFactory extends org.apache.camel.support.component.En
 
     private static final String BASE = ":loggerName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(30);
-        props.add("exchangeFormatter");
-        props.add("groupActiveOnly");
-        props.add("groupDelay");
-        props.add("groupInterval");
-        props.add("groupSize");
-        props.add("lazyStartProducer");
-        props.add("level");
-        props.add("logMask");
-        props.add("loggerName");
-        props.add("marker");
-        props.add("maxChars");
-        props.add("multiline");
-        props.add("plain");
-        props.add("showAll");
-        props.add("showAllProperties");
-        props.add("showBody");
-        props.add("showBodyType");
-        props.add("showCaughtException");
-        props.add("showException");
-        props.add("showExchangeId");
-        props.add("showExchangePattern");
-        props.add("showFiles");
-        props.add("showFuture");
-        props.add("showHeaders");
-        props.add("showProperties");
-        props.add("showStackTrace");
-        props.add("showStreams");
-        props.add("skipBodyLineSeparator");
-        props.add("sourceLocationLoggerName");
-        props.add("style");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "exchangeFormatter", "groupActiveOnly", "groupDelay", "groupInterval", "groupSize", "lazyStartProducer",
+            "level", "logMask", "loggerName", "marker", "maxChars", "multiline", "plain", "showAll", "showAllProperties",
+            "showBody", "showBodyType", "showCaughtException", "showException", "showExchangeId", "showExchangePattern",
+            "showFiles", "showFuture", "showHeaders", "showProperties", "showStackTrace", "showStreams",
+            "skipBodyLineSeparator", "sourceLocationLoggerName", "style");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

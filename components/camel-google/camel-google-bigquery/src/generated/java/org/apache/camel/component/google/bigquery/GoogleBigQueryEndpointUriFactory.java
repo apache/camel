@@ -17,22 +17,11 @@ public class GoogleBigQueryEndpointUriFactory extends org.apache.camel.support.c
 
     private static final String BASE = ":projectId:datasetId:tableId";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(7);
-        props.add("connectionFactory");
-        props.add("datasetId");
-        props.add("lazyStartProducer");
-        props.add("projectId");
-        props.add("serviceAccountKey");
-        props.add("tableId");
-        props.add("useAsInsertId");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "connectionFactory", "datasetId", "lazyStartProducer", "projectId", "serviceAccountKey", "tableId",
+            "useAsInsertId");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

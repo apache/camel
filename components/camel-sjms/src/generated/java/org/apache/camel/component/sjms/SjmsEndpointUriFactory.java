@@ -17,61 +17,19 @@ public class SjmsEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":destinationType:destinationName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(46);
-        props.add("acknowledgementMode");
-        props.add("allowNullBody");
-        props.add("asyncConsumer");
-        props.add("asyncStartListener");
-        props.add("asyncStopListener");
-        props.add("autoStartup");
-        props.add("bridgeErrorHandler");
-        props.add("clientId");
-        props.add("concurrentConsumers");
-        props.add("connectionFactory");
-        props.add("deliveryMode");
-        props.add("deliveryPersistent");
-        props.add("destinationCreationStrategy");
-        props.add("destinationName");
-        props.add("destinationType");
-        props.add("disableReplyTo");
-        props.add("disableTimeToLive");
-        props.add("durableSubscriptionName");
-        props.add("eagerLoadingOfProperties");
-        props.add("eagerPoisonBody");
-        props.add("exceptionHandler");
-        props.add("exceptionListener");
-        props.add("exchangePattern");
-        props.add("explicitQosEnabled");
-        props.add("headerFilterStrategy");
-        props.add("includeAllJMSXProperties");
-        props.add("jmsKeyFormatStrategy");
-        props.add("lazyStartProducer");
-        props.add("mapJmsMessage");
-        props.add("messageCreatedStrategy");
-        props.add("messageSelector");
-        props.add("preserveMessageQos");
-        props.add("priority");
-        props.add("recoveryInterval");
-        props.add("replyTo");
-        props.add("replyToConcurrentConsumers");
-        props.add("replyToDeliveryPersistent");
-        props.add("replyToOverride");
-        props.add("replyToSameDestinationAllowed");
-        props.add("replyToType");
-        props.add("requestTimeout");
-        props.add("synchronous");
-        props.add("testConnectionOnStartup");
-        props.add("timeToLive");
-        props.add("transacted");
-        props.add("transferException");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "acknowledgementMode", "allowNullBody", "asyncConsumer", "asyncStartListener", "asyncStopListener",
+            "autoStartup", "bridgeErrorHandler", "clientId", "concurrentConsumers", "connectionFactory", "deliveryMode",
+            "deliveryPersistent", "destinationCreationStrategy", "destinationName", "destinationType", "disableReplyTo",
+            "disableTimeToLive", "durableSubscriptionName", "eagerLoadingOfProperties", "eagerPoisonBody",
+            "exceptionHandler", "exceptionListener", "exchangePattern", "explicitQosEnabled", "headerFilterStrategy",
+            "includeAllJMSXProperties", "jmsKeyFormatStrategy", "lazyStartProducer", "mapJmsMessage",
+            "messageCreatedStrategy", "messageSelector", "preserveMessageQos", "priority", "recoveryInterval", "replyTo",
+            "replyToConcurrentConsumers", "replyToDeliveryPersistent", "replyToOverride", "replyToSameDestinationAllowed",
+            "replyToType", "requestTimeout", "synchronous", "testConnectionOnStartup", "timeToLive", "transacted",
+            "transferException");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {
