@@ -77,7 +77,7 @@ public final class RestProducerFactoryHelper {
         if (newlyCreated == null) {
             throw new IllegalArgumentException(
                     "Cannot find component with name " + componentName
-                            + ". Make sure you have the component on the classpath");
+                                               + ". Make sure you have the component on the classpath");
         }
         PropertyBindingSupport.build().withRemoveParameters(false).withIgnoreCase(true)
                 .withConfigurer(newlyCreated.getComponentPropertyConfigurer())
