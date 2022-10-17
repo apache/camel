@@ -18,7 +18,6 @@ package org.apache.camel.support.jsse;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -112,8 +111,8 @@ public class FilterParameters extends JsseParameters {
         private final List<Pattern> excludes;
 
         public Patterns(List<Pattern> includes, List<Pattern> excludes) {
-            this.includes = Collections.unmodifiableList(new ArrayList<>(includes));
-            this.excludes = Collections.unmodifiableList(new ArrayList<>(excludes));
+            this.includes = List.copyOf(includes);
+            this.excludes = List.copyOf(excludes);
         }
 
         public List<Pattern> getIncludes() {

@@ -157,9 +157,7 @@ public final class CollectionHelper {
      * @return     an unmodifiable map.
      */
     public static <K, V> Map<K, V> unmodifiableMap(Map<K, V> map) {
-        return map == null
-                ? Collections.emptyMap()
-                : Collections.unmodifiableMap(new HashMap<>(map));
+        return map != null ? Map.copyOf(map) : Map.of();
     }
 
     /**

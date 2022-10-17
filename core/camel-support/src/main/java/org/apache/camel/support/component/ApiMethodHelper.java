@@ -75,7 +75,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
         }
 
         if (nullableArguments != null && !nullableArguments.isEmpty()) {
-            this.nullableArguments = Collections.unmodifiableList(new ArrayList<>(nullableArguments));
+            this.nullableArguments = List.copyOf(nullableArguments);
         } else {
             this.nullableArguments = Collections.emptyList();
         }
