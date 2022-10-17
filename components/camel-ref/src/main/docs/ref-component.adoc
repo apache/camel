@@ -61,10 +61,10 @@ exchange.getIn().setBody(payloadToSend);
 producer.process(exchange);
 ----
 
-And you could have a list of endpoints defined in the
+With Spring XML, you could have a list of endpoints defined in the
 Registry such as:
 
-[source,xml]
+[source,java]
 ----
 <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
     <endpoint id="normalOrder" uri="activemq:order.slow"/>
@@ -74,17 +74,25 @@ Registry such as:
 
 == Sample
 
-In the sample below we use the `ref:` in the URI to reference the
-endpoint with the spring ID, `endpoint2`:
-
-You could, of course, have used the `ref` attribute instead:
-
-[source,xml]
+Bind endpoints to the Camel registry:
+[source,java]
 ----
-<to uri="ref:endpoint2"/>
+context.getRegistry().bind("endpoint1", context.getEndpoint("direct:start"));
+context.getRegistry().bind("endpoint2", context.getEndpoint("log:end"));
 ----
 
-Which is the more common way to write it.
+Use the `ref` URI scheme to refer to endpoints bond to the Camel registry:
+[source,java]
+----
+public class MyRefRoutes extends RouteBuilder {
+    @Override
+    public void configure() {
+        // direct:start -> log:end
+        from("ref:endpoint1")
+            .to("ref:endpoint2");
+    }
+}
+----
 
 
 include::spring-boot:partial$starter.adoc[]
