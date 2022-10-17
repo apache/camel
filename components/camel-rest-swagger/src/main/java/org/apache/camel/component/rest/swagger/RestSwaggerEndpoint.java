@@ -308,24 +308,14 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
         return (RestSwaggerComponent) getComponent();
     }
 
-    @Override
-    public boolean equals(Object object) {
-        return super.equals(object);
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
-
     Producer createProducerFor(
             final Swagger swagger, final Operation operation, final String method,
             final String uriTemplate)
             throws Exception {
-        final String producerBasePath = determineBasePath(swagger);
+        final String basePath = determineBasePath(swagger);
 
         final StringBuilder componentEndpointUri = new StringBuilder(200).append("rest:").append(method).append(":")
-                .append(producerBasePath).append(":").append(uriTemplate);
+                .append(basePath).append(":").append(uriTemplate);
 
         final CamelContext camelContext = getCamelContext();
 
@@ -383,16 +373,16 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
     }
 
     Map<String, Object> determineEndpointParameters(final Swagger swagger, final Operation operation) {
-        final Map<String, Object> endpointParameters = new HashMap<>();
+        final Map<String, Object> parameters = new HashMap<>();
 
-        final String producerComponentName = determineComponentName();
-        if (producerComponentName != null) {
-            endpointParameters.put("producerComponentName", producerComponentName);
+        final String componentName = determineComponentName();
+        if (componentName != null) {
+            parameters.put("producerComponentName", componentName);
         }
 
-        final String endpointHost = determineHost(swagger);
-        if (endpointHost != null) {
-            endpointParameters.put("host", endpointHost);
+        final String host = determineHost(swagger);
+        if (host != null) {
+            parameters.put("host", host);
         }
 
         final RestSwaggerComponent component = component();
@@ -403,7 +393,7 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
                 component.getConsumes(), consumes);
 
         if (isNotEmpty(determinedConsumes)) {
-            endpointParameters.put("consumes", determinedConsumes);
+            parameters.put("consumes", determinedConsumes);
         }
 
         // what we produce is what the API defined by Swagger specification
@@ -412,13 +402,13 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
                 component.getProduces(), produces);
 
         if (isNotEmpty(determinedProduces)) {
-            endpointParameters.put("produces", determinedProduces);
+            parameters.put("produces", determinedProduces);
         }
 
         final String queryParameters = determineQueryParameters(swagger, operation).map(this::queryParameter)
                 .collect(Collectors.joining("&"));
         if (isNotEmpty(queryParameters)) {
-            endpointParameters.put("queryParameters", queryParameters);
+            parameters.put("queryParameters", queryParameters);
         }
 
         // pass properties that might be applied if the delegate component is
@@ -436,18 +426,18 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
 
         final Map<Object, Object> nestedParameters = new HashMap<>();
         if (!componentParameters.isEmpty()) {
-            // we're trying to set RestEndpoint.endpointParameters['component']
+            // we're trying to set RestEndpoint.parameters['component']
             nestedParameters.put("component", componentParameters);
         }
 
-        // Add rest endpoint endpointParameters
+        // Add rest endpoint parameters
         addRestEndpointParameters(operation, nestedParameters);
 
         if (!nestedParameters.isEmpty()) {
-            endpointParameters.put("endpointParameters", nestedParameters);
+            parameters.put("parameters", nestedParameters);
         }
 
-        return endpointParameters;
+        return parameters;
     }
 
     private void addRestEndpointParameters(Operation operation, Map<Object, Object> nestedParameters) {
@@ -517,7 +507,9 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
         final String name = parameter.getName();
 
         final String valueStr = String.valueOf(parameters.get(name));
-        return UnsafeUriCharactersEncoder.encode(valueStr);
+        final String encoded = UnsafeUriCharactersEncoder.encode(valueStr);
+
+        return encoded;
     }
 
     String literalQueryParameterValue(final Parameter parameter) {
