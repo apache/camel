@@ -4844,8 +4844,7 @@
                         <artifactId>maven-compiler-plugin</artifactId>
                         <version>${maven-compiler-plugin-version}</version>
                         <configuration>
-                            <source>${jdk.version}</source>
-                            <target>${jdk.version}</target>
+                            <release>${jdk.version}</release>
                             <maxmem>512M</maxmem>
                             <fork>${compiler.fork}</fork>
                             <compilerId>javac-with-errorprone</compilerId>
