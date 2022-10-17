@@ -144,6 +144,7 @@ public abstract class HttpsTest extends CamelTestSupport {
     public static Iterable<String> knownProducers() {
         final List<String> producers = new ArrayList<>(Arrays.asList(RestEndpoint.DEFAULT_REST_PRODUCER_COMPONENTS));
         // skip http due security certificate testing problems
+        producers.remove("undertow");
         producers.remove("vertx-http");
         producers.remove("http");
         return producers;
