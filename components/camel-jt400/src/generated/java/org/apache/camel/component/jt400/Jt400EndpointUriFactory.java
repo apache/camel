@@ -17,58 +17,18 @@ public class Jt400EndpointUriFactory extends org.apache.camel.support.component.
 
     private static final String BASE = ":userID:password@systemName/QSYS.LIB/objectPath.type";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(38);
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("bridgeErrorHandler");
-        props.add("ccsid");
-        props.add("delay");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("format");
-        props.add("greedy");
-        props.add("guiAvailable");
-        props.add("initialDelay");
-        props.add("keyed");
-        props.add("lazyStartProducer");
-        props.add("messageAction");
-        props.add("objectPath");
-        props.add("outputFieldsIdxArray");
-        props.add("outputFieldsLengthArray");
-        props.add("password");
-        props.add("pollStrategy");
-        props.add("procedureName");
-        props.add("readTimeout");
-        props.add("repeatCount");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("searchKey");
-        props.add("searchType");
-        props.add("secured");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("sendingReply");
-        props.add("startScheduler");
-        props.add("systemName");
-        props.add("timeUnit");
-        props.add("type");
-        props.add("useFixedDelay");
-        props.add("userID");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
-        secretProps.add("password");
-        secretProps.add("userID");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "backoffErrorThreshold", "backoffIdleThreshold", "backoffMultiplier", "bridgeErrorHandler", "ccsid", "delay",
+            "exceptionHandler", "exchangePattern", "format", "greedy", "guiAvailable", "initialDelay", "keyed",
+            "lazyStartProducer", "messageAction", "objectPath", "outputFieldsIdxArray", "outputFieldsLengthArray",
+            "password", "pollStrategy", "procedureName", "readTimeout", "repeatCount", "runLoggingLevel",
+            "scheduledExecutorService", "scheduler", "schedulerProperties", "searchKey", "searchType", "secured",
+            "sendEmptyMessageWhenIdle", "sendingReply", "startScheduler", "systemName", "timeUnit", "type",
+            "useFixedDelay", "userID");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "password", "userID");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "scheduler.");
 
     @Override
     public boolean isEnabled(String scheme) {

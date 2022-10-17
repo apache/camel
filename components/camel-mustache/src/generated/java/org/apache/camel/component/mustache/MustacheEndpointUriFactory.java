@@ -17,23 +17,11 @@ public class MustacheEndpointUriFactory extends org.apache.camel.support.compone
 
     private static final String BASE = ":resourceUri";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(8);
-        props.add("allowContextMapAll");
-        props.add("allowTemplateFromHeader");
-        props.add("contentCache");
-        props.add("encoding");
-        props.add("endDelimiter");
-        props.add("lazyStartProducer");
-        props.add("resourceUri");
-        props.add("startDelimiter");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "allowContextMapAll", "allowTemplateFromHeader", "contentCache", "encoding", "endDelimiter",
+            "lazyStartProducer", "resourceUri", "startDelimiter");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

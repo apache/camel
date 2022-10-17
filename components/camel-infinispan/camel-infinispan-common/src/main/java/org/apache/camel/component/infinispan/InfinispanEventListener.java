@@ -27,7 +27,7 @@ public abstract class InfinispanEventListener<T> {
     private String cacheName;
 
     public InfinispanEventListener(Set<T> events) {
-        this.events = Collections.unmodifiableSet(new HashSet<>(events));
+        this.events = Set.copyOf(events);
     }
 
     public String getCacheName() {

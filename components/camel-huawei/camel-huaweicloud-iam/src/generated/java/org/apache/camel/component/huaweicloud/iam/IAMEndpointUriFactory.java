@@ -17,36 +17,12 @@ public class IAMEndpointUriFactory extends org.apache.camel.support.component.En
 
     private static final String BASE = ":operation";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(13);
-        props.add("accessKey");
-        props.add("groupId");
-        props.add("ignoreSslVerification");
-        props.add("lazyStartProducer");
-        props.add("operation");
-        props.add("proxyHost");
-        props.add("proxyPassword");
-        props.add("proxyPort");
-        props.add("proxyUser");
-        props.add("region");
-        props.add("secretKey");
-        props.add("serviceKeys");
-        props.add("userId");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(7);
-        secretProps.add("accessKey");
-        secretProps.add("groupId");
-        secretProps.add("proxyPassword");
-        secretProps.add("proxyUser");
-        secretProps.add("secretKey");
-        secretProps.add("serviceKeys");
-        secretProps.add("userId");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "accessKey", "groupId", "ignoreSslVerification", "lazyStartProducer", "operation", "proxyHost",
+            "proxyPassword", "proxyPort", "proxyUser", "region", "secretKey", "serviceKeys", "userId");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "accessKey", "groupId", "proxyPassword", "proxyUser", "secretKey", "serviceKeys", "userId");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

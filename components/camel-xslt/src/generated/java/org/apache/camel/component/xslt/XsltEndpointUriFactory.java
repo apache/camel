@@ -17,29 +17,12 @@ public class XsltEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":resourceUri";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(14);
-        props.add("contentCache");
-        props.add("deleteOutputFile");
-        props.add("entityResolver");
-        props.add("errorListener");
-        props.add("failOnNullBody");
-        props.add("lazyStartProducer");
-        props.add("output");
-        props.add("resourceUri");
-        props.add("resultHandlerFactory");
-        props.add("transformerCacheSize");
-        props.add("transformerFactory");
-        props.add("transformerFactoryClass");
-        props.add("transformerFactoryConfigurationStrategy");
-        props.add("uriResolver");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "contentCache", "deleteOutputFile", "entityResolver", "errorListener", "failOnNullBody", "lazyStartProducer",
+            "output", "resourceUri", "resultHandlerFactory", "transformerCacheSize", "transformerFactory",
+            "transformerFactoryClass", "transformerFactoryConfigurationStrategy", "uriResolver");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

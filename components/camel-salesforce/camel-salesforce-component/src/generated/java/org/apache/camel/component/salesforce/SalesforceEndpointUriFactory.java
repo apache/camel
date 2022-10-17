@@ -17,75 +17,20 @@ public class SalesforceEndpointUriFactory extends org.apache.camel.support.compo
 
     private static final String BASE = ":operationName:topicName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(60);
-        props.add("allOrNone");
-        props.add("apexMethod");
-        props.add("apexQueryParams");
-        props.add("apexUrl");
-        props.add("apiVersion");
-        props.add("backoffIncrement");
-        props.add("batchId");
-        props.add("bridgeErrorHandler");
-        props.add("compositeMethod");
-        props.add("contentType");
-        props.add("defaultReplayId");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("fallBackReplayId");
-        props.add("format");
-        props.add("httpClient");
-        props.add("includeDetails");
-        props.add("initialReplayIdMap");
-        props.add("instanceId");
-        props.add("jobId");
-        props.add("lazyStartProducer");
-        props.add("limit");
-        props.add("locator");
-        props.add("maxBackoff");
-        props.add("maxRecords");
-        props.add("notFoundBehaviour");
-        props.add("notifyForFields");
-        props.add("notifyForOperationCreate");
-        props.add("notifyForOperationDelete");
-        props.add("notifyForOperationUndelete");
-        props.add("notifyForOperationUpdate");
-        props.add("notifyForOperations");
-        props.add("objectMapper");
-        props.add("operationName");
-        props.add("pkChunking");
-        props.add("pkChunkingChunkSize");
-        props.add("pkChunkingParent");
-        props.add("pkChunkingStartRow");
-        props.add("queryLocator");
-        props.add("rawHttpHeaders");
-        props.add("rawMethod");
-        props.add("rawPath");
-        props.add("rawPayload");
-        props.add("rawQueryParameters");
-        props.add("replayId");
-        props.add("reportId");
-        props.add("reportMetadata");
-        props.add("resultId");
-        props.add("sObjectBlobFieldName");
-        props.add("sObjectClass");
-        props.add("sObjectFields");
-        props.add("sObjectId");
-        props.add("sObjectIdName");
-        props.add("sObjectIdValue");
-        props.add("sObjectName");
-        props.add("sObjectQuery");
-        props.add("sObjectSearch");
-        props.add("streamQueryResult");
-        props.add("topicName");
-        props.add("updateTopic");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "allOrNone", "apexMethod", "apexQueryParams", "apexUrl", "apiVersion", "backoffIncrement", "batchId",
+            "bridgeErrorHandler", "compositeMethod", "contentType", "defaultReplayId", "exceptionHandler",
+            "exchangePattern", "fallBackReplayId", "format", "httpClient", "includeDetails", "initialReplayIdMap",
+            "instanceId", "jobId", "lazyStartProducer", "limit", "locator", "maxBackoff", "maxRecords",
+            "notFoundBehaviour", "notifyForFields", "notifyForOperationCreate", "notifyForOperationDelete",
+            "notifyForOperationUndelete", "notifyForOperationUpdate", "notifyForOperations", "objectMapper",
+            "operationName", "pkChunking", "pkChunkingChunkSize", "pkChunkingParent", "pkChunkingStartRow", "queryLocator",
+            "rawHttpHeaders", "rawMethod", "rawPath", "rawPayload", "rawQueryParameters", "replayId", "reportId",
+            "reportMetadata", "resultId", "sObjectBlobFieldName", "sObjectClass", "sObjectFields", "sObjectId",
+            "sObjectIdName", "sObjectIdValue", "sObjectName", "sObjectQuery", "sObjectSearch", "streamQueryResult",
+            "topicName", "updateTopic");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

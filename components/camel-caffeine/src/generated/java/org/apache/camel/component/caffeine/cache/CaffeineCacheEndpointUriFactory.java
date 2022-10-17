@@ -17,31 +17,12 @@ public class CaffeineCacheEndpointUriFactory extends org.apache.camel.support.co
 
     private static final String BASE = ":cacheName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(16);
-        props.add("action");
-        props.add("cacheLoader");
-        props.add("cacheName");
-        props.add("createCacheIfNotExist");
-        props.add("evictionType");
-        props.add("expireAfterAccessTime");
-        props.add("expireAfterWriteTime");
-        props.add("initialCapacity");
-        props.add("key");
-        props.add("keyType");
-        props.add("lazyStartProducer");
-        props.add("maximumSize");
-        props.add("removalListener");
-        props.add("statsCounter");
-        props.add("statsEnabled");
-        props.add("valueType");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "action", "cacheLoader", "cacheName", "createCacheIfNotExist", "evictionType", "expireAfterAccessTime",
+            "expireAfterWriteTime", "initialCapacity", "key", "keyType", "lazyStartProducer", "maximumSize",
+            "removalListener", "statsCounter", "statsEnabled", "valueType");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

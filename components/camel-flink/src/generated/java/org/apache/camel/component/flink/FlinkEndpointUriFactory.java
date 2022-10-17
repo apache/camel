@@ -17,22 +17,11 @@ public class FlinkEndpointUriFactory extends org.apache.camel.support.component.
 
     private static final String BASE = ":endpointType";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(7);
-        props.add("collect");
-        props.add("dataSet");
-        props.add("dataSetCallback");
-        props.add("dataStream");
-        props.add("dataStreamCallback");
-        props.add("endpointType");
-        props.add("lazyStartProducer");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "collect", "dataSet", "dataSetCallback", "dataStream", "dataStreamCallback", "endpointType",
+            "lazyStartProducer");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

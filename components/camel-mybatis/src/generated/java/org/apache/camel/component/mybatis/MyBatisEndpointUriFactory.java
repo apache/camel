@@ -17,48 +17,16 @@ public class MyBatisEndpointUriFactory extends org.apache.camel.support.componen
 
     private static final String BASE = ":statement";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(31);
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("bridgeErrorHandler");
-        props.add("delay");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("executorType");
-        props.add("greedy");
-        props.add("initialDelay");
-        props.add("inputHeader");
-        props.add("lazyStartProducer");
-        props.add("maxMessagesPerPoll");
-        props.add("onConsume");
-        props.add("outputHeader");
-        props.add("pollStrategy");
-        props.add("processingStrategy");
-        props.add("repeatCount");
-        props.add("routeEmptyResultSet");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("startScheduler");
-        props.add("statement");
-        props.add("statementType");
-        props.add("timeUnit");
-        props.add("transacted");
-        props.add("useFixedDelay");
-        props.add("useIterator");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "backoffErrorThreshold", "backoffIdleThreshold", "backoffMultiplier", "bridgeErrorHandler", "delay",
+            "exceptionHandler", "exchangePattern", "executorType", "greedy", "initialDelay", "inputHeader",
+            "lazyStartProducer", "maxMessagesPerPoll", "onConsume", "outputHeader", "pollStrategy", "processingStrategy",
+            "repeatCount", "routeEmptyResultSet", "runLoggingLevel", "scheduledExecutorService", "scheduler",
+            "schedulerProperties", "sendEmptyMessageWhenIdle", "startScheduler", "statement", "statementType", "timeUnit",
+            "transacted", "useFixedDelay", "useIterator");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "scheduler.");
 
     @Override
     public boolean isEnabled(String scheme) {

@@ -17,37 +17,13 @@ public class DataSetEndpointUriFactory extends org.apache.camel.support.componen
 
     private static final String BASE = ":name";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(22);
-        props.add("assertPeriod");
-        props.add("bridgeErrorHandler");
-        props.add("consumeDelay");
-        props.add("copyOnExchange");
-        props.add("dataSetIndex");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("expectedCount");
-        props.add("failFast");
-        props.add("initialDelay");
-        props.add("lazyStartProducer");
-        props.add("log");
-        props.add("minRate");
-        props.add("name");
-        props.add("preloadSize");
-        props.add("produceDelay");
-        props.add("reportGroup");
-        props.add("resultMinimumWaitTime");
-        props.add("resultWaitTime");
-        props.add("retainFirst");
-        props.add("retainLast");
-        props.add("sleepForEmptyTest");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "assertPeriod", "bridgeErrorHandler", "consumeDelay", "copyOnExchange", "dataSetIndex", "exceptionHandler",
+            "exchangePattern", "expectedCount", "failFast", "initialDelay", "lazyStartProducer", "log", "minRate", "name",
+            "preloadSize", "produceDelay", "reportGroup", "resultMinimumWaitTime", "resultWaitTime", "retainFirst",
+            "retainLast", "sleepForEmptyTest");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

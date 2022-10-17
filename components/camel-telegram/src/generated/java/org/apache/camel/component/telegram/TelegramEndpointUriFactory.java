@@ -17,50 +17,16 @@ public class TelegramEndpointUriFactory extends org.apache.camel.support.compone
 
     private static final String BASE = ":type";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(31);
-        props.add("authorizationToken");
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("baseUri");
-        props.add("bridgeErrorHandler");
-        props.add("bufferSize");
-        props.add("chatId");
-        props.add("client");
-        props.add("delay");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("greedy");
-        props.add("initialDelay");
-        props.add("lazyStartProducer");
-        props.add("limit");
-        props.add("pollStrategy");
-        props.add("proxyHost");
-        props.add("proxyPort");
-        props.add("proxyType");
-        props.add("repeatCount");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("startScheduler");
-        props.add("timeUnit");
-        props.add("timeout");
-        props.add("type");
-        props.add("useFixedDelay");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(1);
-        secretProps.add("authorizationToken");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "authorizationToken", "backoffErrorThreshold", "backoffIdleThreshold", "backoffMultiplier", "baseUri",
+            "bridgeErrorHandler", "bufferSize", "chatId", "client", "delay", "exceptionHandler", "exchangePattern",
+            "greedy", "initialDelay", "lazyStartProducer", "limit", "pollStrategy", "proxyHost", "proxyPort", "proxyType",
+            "repeatCount", "runLoggingLevel", "scheduledExecutorService", "scheduler", "schedulerProperties",
+            "sendEmptyMessageWhenIdle", "startScheduler", "timeUnit", "timeout", "type", "useFixedDelay");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "authorizationToken");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "scheduler.");
 
     @Override
     public boolean isEnabled(String scheme) {

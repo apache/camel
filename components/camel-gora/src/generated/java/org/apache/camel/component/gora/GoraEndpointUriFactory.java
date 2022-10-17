@@ -17,37 +17,13 @@ public class GoraEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":name";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(22);
-        props.add("bridgeErrorHandler");
-        props.add("concurrentConsumers");
-        props.add("dataStoreClass");
-        props.add("endKey");
-        props.add("endTime");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("fields");
-        props.add("flushOnEveryOperation");
-        props.add("hadoopConfiguration");
-        props.add("keyClass");
-        props.add("keyRangeFrom");
-        props.add("keyRangeTo");
-        props.add("lazyStartProducer");
-        props.add("limit");
-        props.add("name");
-        props.add("startKey");
-        props.add("startTime");
-        props.add("timeRangeFrom");
-        props.add("timeRangeTo");
-        props.add("timestamp");
-        props.add("valueClass");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "bridgeErrorHandler", "concurrentConsumers", "dataStoreClass", "endKey", "endTime", "exceptionHandler",
+            "exchangePattern", "fields", "flushOnEveryOperation", "hadoopConfiguration", "keyClass", "keyRangeFrom",
+            "keyRangeTo", "lazyStartProducer", "limit", "name", "startKey", "startTime", "timeRangeFrom", "timeRangeTo",
+            "timestamp", "valueClass");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

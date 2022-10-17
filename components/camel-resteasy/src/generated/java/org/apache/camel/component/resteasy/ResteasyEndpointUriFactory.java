@@ -17,60 +17,19 @@ public class ResteasyEndpointUriFactory extends org.apache.camel.support.compone
 
     private static final String BASE = ":httpUri";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(42);
-        props.add("async");
-        props.add("bridgeEndpoint");
-        props.add("bridgeErrorHandler");
-        props.add("clearExpiredCookies");
-        props.add("connectionClose");
-        props.add("cookieHandler");
-        props.add("copyHeaders");
-        props.add("customHostHeader");
-        props.add("deleteWithBody");
-        props.add("disableStreamCache");
-        props.add("eagerCheckContentAvailable");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("followRedirects");
-        props.add("getWithBody");
-        props.add("headerFilterStrategy");
-        props.add("httpMethod");
-        props.add("httpMethodRestrict");
-        props.add("httpUri");
-        props.add("ignoreResponseBody");
-        props.add("lazyStartProducer");
-        props.add("mapHttpMessageBody");
-        props.add("mapHttpMessageFormUrlEncodedBody");
-        props.add("mapHttpMessageHeaders");
-        props.add("muteException");
-        props.add("okStatusCodeRange");
-        props.add("optionsEnabled");
-        props.add("password");
-        props.add("preserveHostHeader");
-        props.add("proxyClientClass");
-        props.add("responseBufferSize");
-        props.add("resteasyMethod");
-        props.add("servletName");
-        props.add("setHttpResponseDuringProcessing");
-        props.add("skipRequestHeaders");
-        props.add("skipResponseHeaders");
-        props.add("skipServletProcessing");
-        props.add("throwExceptionOnFailure");
-        props.add("traceEnabled");
-        props.add("useSystemProperties");
-        props.add("userAgent");
-        props.add("username");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
-        secretProps.add("password");
-        secretProps.add("username");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "async", "bridgeEndpoint", "bridgeErrorHandler", "clearExpiredCookies", "connectionClose", "cookieHandler",
+            "copyHeaders", "customHostHeader", "deleteWithBody", "disableStreamCache", "eagerCheckContentAvailable",
+            "exceptionHandler", "exchangePattern", "followRedirects", "getWithBody", "headerFilterStrategy", "httpMethod",
+            "httpMethodRestrict", "httpUri", "ignoreResponseBody", "lazyStartProducer", "mapHttpMessageBody",
+            "mapHttpMessageFormUrlEncodedBody", "mapHttpMessageHeaders", "muteException", "okStatusCodeRange",
+            "optionsEnabled", "password", "preserveHostHeader", "proxyClientClass", "responseBufferSize", "resteasyMethod",
+            "servletName", "setHttpResponseDuringProcessing", "skipRequestHeaders", "skipResponseHeaders",
+            "skipServletProcessing", "throwExceptionOnFailure", "traceEnabled", "useSystemProperties", "userAgent",
+            "username");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "password", "username");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

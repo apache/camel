@@ -17,50 +17,16 @@ public class SlackEndpointUriFactory extends org.apache.camel.support.component.
 
     private static final String BASE = ":channel";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(30);
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("bridgeErrorHandler");
-        props.add("channel");
-        props.add("conversationType");
-        props.add("delay");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("greedy");
-        props.add("iconEmoji");
-        props.add("iconUrl");
-        props.add("initialDelay");
-        props.add("lazyStartProducer");
-        props.add("maxResults");
-        props.add("naturalOrder");
-        props.add("pollStrategy");
-        props.add("repeatCount");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("serverUrl");
-        props.add("startScheduler");
-        props.add("timeUnit");
-        props.add("token");
-        props.add("useFixedDelay");
-        props.add("username");
-        props.add("webhookUrl");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
-        secretProps.add("token");
-        secretProps.add("username");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "backoffErrorThreshold", "backoffIdleThreshold", "backoffMultiplier", "bridgeErrorHandler", "channel",
+            "conversationType", "delay", "exceptionHandler", "exchangePattern", "greedy", "iconEmoji", "iconUrl",
+            "initialDelay", "lazyStartProducer", "maxResults", "naturalOrder", "pollStrategy", "repeatCount",
+            "runLoggingLevel", "scheduledExecutorService", "scheduler", "schedulerProperties", "sendEmptyMessageWhenIdle",
+            "serverUrl", "startScheduler", "timeUnit", "token", "useFixedDelay", "username", "webhookUrl");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "token", "username");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "scheduler.");
 
     @Override
     public boolean isEnabled(String scheme) {

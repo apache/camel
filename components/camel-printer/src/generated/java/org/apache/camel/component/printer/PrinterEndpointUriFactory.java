@@ -17,29 +17,11 @@ public class PrinterEndpointUriFactory extends org.apache.camel.support.componen
 
     private static final String BASE = ":hostname:port/printername";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(14);
-        props.add("copies");
-        props.add("docFlavor");
-        props.add("flavor");
-        props.add("hostname");
-        props.add("lazyStartProducer");
-        props.add("mediaSize");
-        props.add("mediaTray");
-        props.add("mimeType");
-        props.add("orientation");
-        props.add("port");
-        props.add("printerPrefix");
-        props.add("printername");
-        props.add("sendToPrinter");
-        props.add("sides");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "copies", "docFlavor", "flavor", "hostname", "lazyStartProducer", "mediaSize", "mediaTray", "mimeType",
+            "orientation", "port", "printerPrefix", "printername", "sendToPrinter", "sides");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

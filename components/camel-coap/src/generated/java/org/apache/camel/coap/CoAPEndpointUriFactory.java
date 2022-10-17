@@ -18,32 +18,13 @@ public class CoAPEndpointUriFactory extends org.apache.camel.support.component.E
     private static final String BASE = "coaps+tcp:uri";
     private static final String[] SCHEMES = new String[]{"coap", "coaps", "coap+tcp", "coaps+tcp"};
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(15);
-        props.add("alias");
-        props.add("bridgeErrorHandler");
-        props.add("cipherSuites");
-        props.add("clientAuthentication");
-        props.add("coapMethodRestrict");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("lazyStartProducer");
-        props.add("privateKey");
-        props.add("pskStore");
-        props.add("publicKey");
-        props.add("recommendedCipherSuitesOnly");
-        props.add("sslContextParameters");
-        props.add("trustedRpkStore");
-        props.add("uri");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(1);
-        secretProps.add("privateKey");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "alias", "bridgeErrorHandler", "cipherSuites", "clientAuthentication", "coapMethodRestrict",
+            "exceptionHandler", "exchangePattern", "lazyStartProducer", "privateKey", "pskStore", "publicKey",
+            "recommendedCipherSuitesOnly", "sslContextParameters", "trustedRpkStore", "uri");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "privateKey");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

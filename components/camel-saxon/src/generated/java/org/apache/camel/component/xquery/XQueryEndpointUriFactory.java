@@ -17,50 +17,16 @@ public class XQueryEndpointUriFactory extends org.apache.camel.support.component
 
     private static final String BASE = ":resourceUri";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(33);
-        props.add("allowStAX");
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("bridgeErrorHandler");
-        props.add("configuration");
-        props.add("configurationProperties");
-        props.add("delay");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("greedy");
-        props.add("headerName");
-        props.add("initialDelay");
-        props.add("lazyStartProducer");
-        props.add("moduleURIResolver");
-        props.add("namespacePrefixes");
-        props.add("parameters");
-        props.add("pollStrategy");
-        props.add("properties");
-        props.add("repeatCount");
-        props.add("resourceUri");
-        props.add("resultType");
-        props.add("resultsFormat");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("startScheduler");
-        props.add("staticQueryContext");
-        props.add("stripsAllWhiteSpace");
-        props.add("timeUnit");
-        props.add("useFixedDelay");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "allowStAX", "backoffErrorThreshold", "backoffIdleThreshold", "backoffMultiplier", "bridgeErrorHandler",
+            "configuration", "configurationProperties", "delay", "exceptionHandler", "exchangePattern", "greedy",
+            "headerName", "initialDelay", "lazyStartProducer", "moduleURIResolver", "namespacePrefixes", "parameters",
+            "pollStrategy", "properties", "repeatCount", "resourceUri", "resultType", "resultsFormat", "runLoggingLevel",
+            "scheduledExecutorService", "scheduler", "schedulerProperties", "sendEmptyMessageWhenIdle", "startScheduler",
+            "staticQueryContext", "stripsAllWhiteSpace", "timeUnit", "useFixedDelay");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "scheduler.");
 
     @Override
     public boolean isEnabled(String scheme) {

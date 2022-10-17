@@ -455,7 +455,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     }
 
     public void setConfigurationProperties(Map<String, Object> configurationProperties) {
-        this.configurationProperties = Collections.unmodifiableMap(new HashMap<>(configurationProperties));
+        this.configurationProperties = Map.copyOf(configurationProperties);
     }
 
     public StaticQueryContext getStaticQueryContext() {

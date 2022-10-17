@@ -18,93 +18,24 @@ public class MailEndpointUriFactory extends org.apache.camel.support.component.E
     private static final String BASE = ":host:port";
     private static final String[] SCHEMES = new String[]{"imap", "imaps", "pop3", "pop3s", "smtp", "smtps"};
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(71);
-        props.add("additionalJavaMailProperties");
-        props.add("alternativeBodyHeader");
-        props.add("attachmentsContentTransferEncodingResolver");
-        props.add("authenticator");
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("bcc");
-        props.add("binding");
-        props.add("bridgeErrorHandler");
-        props.add("cc");
-        props.add("closeFolder");
-        props.add("connectionTimeout");
-        props.add("contentType");
-        props.add("contentTypeResolver");
-        props.add("copyTo");
-        props.add("debugMode");
-        props.add("decodeFilename");
-        props.add("delay");
-        props.add("delete");
-        props.add("disconnect");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("failOnDuplicateFileAttachment");
-        props.add("fetchSize");
-        props.add("folderName");
-        props.add("from");
-        props.add("generateMissingAttachmentNames");
-        props.add("greedy");
-        props.add("handleDuplicateAttachmentNames");
-        props.add("handleFailedMessage");
-        props.add("headerFilterStrategy");
-        props.add("host");
-        props.add("idempotentRepository");
-        props.add("idempotentRepositoryRemoveOnCommit");
-        props.add("ignoreUnsupportedCharset");
-        props.add("ignoreUriScheme");
-        props.add("initialDelay");
-        props.add("javaMailProperties");
-        props.add("javaMailSender");
-        props.add("lazyStartProducer");
-        props.add("mailUidGenerator");
-        props.add("mapMailMessage");
-        props.add("maxMessagesPerPoll");
-        props.add("mimeDecodeHeaders");
-        props.add("moveTo");
-        props.add("password");
-        props.add("peek");
-        props.add("pollStrategy");
-        props.add("port");
-        props.add("postProcessAction");
-        props.add("repeatCount");
-        props.add("replyTo");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("searchTerm");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("session");
-        props.add("skipFailedMessage");
-        props.add("sortTerm");
-        props.add("sslContextParameters");
-        props.add("startScheduler");
-        props.add("subject");
-        props.add("timeUnit");
-        props.add("to");
-        props.add("unseen");
-        props.add("useFixedDelay");
-        props.add("useInlineAttachments");
-        props.add("username");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
-        secretProps.add("password");
-        secretProps.add("username");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Set<String> prefixes = new HashSet<>(3);
-        prefixes.add("mail.");
-        prefixes.add("scheduler.");
-        prefixes.add("searchTerm.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "additionalJavaMailProperties", "alternativeBodyHeader", "attachmentsContentTransferEncodingResolver",
+            "authenticator", "backoffErrorThreshold", "backoffIdleThreshold", "backoffMultiplier", "bcc", "binding",
+            "bridgeErrorHandler", "cc", "closeFolder", "connectionTimeout", "contentType", "contentTypeResolver", "copyTo",
+            "debugMode", "decodeFilename", "delay", "delete", "disconnect", "exceptionHandler", "exchangePattern",
+            "failOnDuplicateFileAttachment", "fetchSize", "folderName", "from", "generateMissingAttachmentNames", "greedy",
+            "handleDuplicateAttachmentNames", "handleFailedMessage", "headerFilterStrategy", "host",
+            "idempotentRepository", "idempotentRepositoryRemoveOnCommit", "ignoreUnsupportedCharset", "ignoreUriScheme",
+            "initialDelay", "javaMailProperties", "javaMailSender", "lazyStartProducer", "mailUidGenerator",
+            "mapMailMessage", "maxMessagesPerPoll", "mimeDecodeHeaders", "moveTo", "password", "peek", "pollStrategy",
+            "port", "postProcessAction", "repeatCount", "replyTo", "runLoggingLevel", "scheduledExecutorService",
+            "scheduler", "schedulerProperties", "searchTerm", "sendEmptyMessageWhenIdle", "session", "skipFailedMessage",
+            "sortTerm", "sslContextParameters", "startScheduler", "subject", "timeUnit", "to", "unseen", "useFixedDelay",
+            "useInlineAttachments", "username");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "password", "username");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "mail.", "scheduler.", "searchTerm.");
 
     @Override
     public boolean isEnabled(String scheme) {

@@ -17,42 +17,15 @@ public class Sns2EndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":topicNameOrArn";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(24);
-        props.add("accessKey");
-        props.add("amazonSNSClient");
-        props.add("autoCreateTopic");
-        props.add("headerFilterStrategy");
-        props.add("kmsMasterKeyId");
-        props.add("lazyStartProducer");
-        props.add("messageDeduplicationIdStrategy");
-        props.add("messageGroupIdStrategy");
-        props.add("messageStructure");
-        props.add("overrideEndpoint");
-        props.add("policy");
-        props.add("proxyHost");
-        props.add("proxyPort");
-        props.add("proxyProtocol");
-        props.add("queueUrl");
-        props.add("region");
-        props.add("secretKey");
-        props.add("serverSideEncryptionEnabled");
-        props.add("subject");
-        props.add("subscribeSNStoSQS");
-        props.add("topicNameOrArn");
-        props.add("trustAllCertificates");
-        props.add("uriEndpointOverride");
-        props.add("useDefaultCredentialsProvider");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
-        secretProps.add("accessKey");
-        secretProps.add("secretKey");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "accessKey", "amazonSNSClient", "autoCreateTopic", "headerFilterStrategy", "kmsMasterKeyId",
+            "lazyStartProducer", "messageDeduplicationIdStrategy", "messageGroupIdStrategy", "messageStructure",
+            "overrideEndpoint", "policy", "proxyHost", "proxyPort", "proxyProtocol", "queueUrl", "region", "secretKey",
+            "serverSideEncryptionEnabled", "subject", "subscribeSNStoSQS", "topicNameOrArn", "trustAllCertificates",
+            "uriEndpointOverride", "useDefaultCredentialsProvider");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "accessKey", "secretKey");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

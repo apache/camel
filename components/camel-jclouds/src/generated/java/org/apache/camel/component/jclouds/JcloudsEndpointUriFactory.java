@@ -17,32 +17,12 @@ public class JcloudsEndpointUriFactory extends org.apache.camel.support.componen
 
     private static final String BASE = ":command:providerId";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(17);
-        props.add("blobName");
-        props.add("bridgeErrorHandler");
-        props.add("command");
-        props.add("container");
-        props.add("directory");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("group");
-        props.add("hardwareId");
-        props.add("imageId");
-        props.add("lazyStartProducer");
-        props.add("locationId");
-        props.add("nodeId");
-        props.add("nodeState");
-        props.add("operation");
-        props.add("providerId");
-        props.add("user");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "blobName", "bridgeErrorHandler", "command", "container", "directory", "exceptionHandler", "exchangePattern",
+            "group", "hardwareId", "imageId", "lazyStartProducer", "locationId", "nodeId", "nodeState", "operation",
+            "providerId", "user");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

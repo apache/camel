@@ -17,36 +17,13 @@ public class GeoCoderEndpointUriFactory extends org.apache.camel.support.compone
 
     private static final String BASE = ":address:latlng";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(17);
-        props.add("address");
-        props.add("apiKey");
-        props.add("clientId");
-        props.add("clientKey");
-        props.add("headersOnly");
-        props.add("language");
-        props.add("latlng");
-        props.add("lazyStartProducer");
-        props.add("proxyAuthDomain");
-        props.add("proxyAuthHost");
-        props.add("proxyAuthMethod");
-        props.add("proxyAuthPassword");
-        props.add("proxyAuthUsername");
-        props.add("proxyHost");
-        props.add("proxyPort");
-        props.add("serverUrl");
-        props.add("type");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(3);
-        secretProps.add("apiKey");
-        secretProps.add("clientId");
-        secretProps.add("clientKey");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "address", "apiKey", "clientId", "clientKey", "headersOnly", "language", "latlng", "lazyStartProducer",
+            "proxyAuthDomain", "proxyAuthHost", "proxyAuthMethod", "proxyAuthPassword", "proxyAuthUsername", "proxyHost",
+            "proxyPort", "serverUrl", "type");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "apiKey", "clientId", "clientKey");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

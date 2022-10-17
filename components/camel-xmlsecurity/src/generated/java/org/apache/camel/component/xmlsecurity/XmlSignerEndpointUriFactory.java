@@ -17,43 +17,15 @@ public class XmlSignerEndpointUriFactory extends org.apache.camel.support.compon
 
     private static final String BASE = ":name";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(28);
-        props.add("addKeyInfoReference");
-        props.add("baseUri");
-        props.add("canonicalizationMethod");
-        props.add("clearHeaders");
-        props.add("contentObjectId");
-        props.add("contentReferenceType");
-        props.add("contentReferenceUri");
-        props.add("cryptoContextProperties");
-        props.add("digestAlgorithm");
-        props.add("disallowDoctypeDecl");
-        props.add("keyAccessor");
-        props.add("lazyStartProducer");
-        props.add("name");
-        props.add("omitXmlDeclaration");
-        props.add("outputXmlEncoding");
-        props.add("parentLocalName");
-        props.add("parentNamespace");
-        props.add("parentXpath");
-        props.add("plainText");
-        props.add("plainTextEncoding");
-        props.add("prefixForXmlSignatureNamespace");
-        props.add("properties");
-        props.add("schemaResourceUri");
-        props.add("signatureAlgorithm");
-        props.add("signatureId");
-        props.add("transformMethods");
-        props.add("uriDereferencer");
-        props.add("xpathsToIdAttributes");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "addKeyInfoReference", "baseUri", "canonicalizationMethod", "clearHeaders", "contentObjectId",
+            "contentReferenceType", "contentReferenceUri", "cryptoContextProperties", "digestAlgorithm",
+            "disallowDoctypeDecl", "keyAccessor", "lazyStartProducer", "name", "omitXmlDeclaration", "outputXmlEncoding",
+            "parentLocalName", "parentNamespace", "parentXpath", "plainText", "plainTextEncoding",
+            "prefixForXmlSignatureNamespace", "properties", "schemaResourceUri", "signatureAlgorithm", "signatureId",
+            "transformMethods", "uriDereferencer", "xpathsToIdAttributes");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

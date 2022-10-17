@@ -17,27 +17,11 @@ public class SplunkHECEndpointUriFactory extends org.apache.camel.support.compon
 
     private static final String BASE = ":splunkURL/token";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(12);
-        props.add("bodyOnly");
-        props.add("headersOnly");
-        props.add("host");
-        props.add("https");
-        props.add("index");
-        props.add("lazyStartProducer");
-        props.add("skipTlsVerify");
-        props.add("source");
-        props.add("sourceType");
-        props.add("splunkURL");
-        props.add("time");
-        props.add("token");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "bodyOnly", "headersOnly", "host", "https", "index", "lazyStartProducer", "skipTlsVerify", "source",
+            "sourceType", "splunkURL", "time", "token");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

@@ -17,50 +17,16 @@ public class JMXEndpointUriFactory extends org.apache.camel.support.component.En
 
     private static final String BASE = ":serverURL";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(30);
-        props.add("bridgeErrorHandler");
-        props.add("differenceMode");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("executorService");
-        props.add("format");
-        props.add("granularityPeriod");
-        props.add("handback");
-        props.add("initThreshold");
-        props.add("modulus");
-        props.add("monitorType");
-        props.add("notificationFilter");
-        props.add("notifyDiffer");
-        props.add("notifyHigh");
-        props.add("notifyLow");
-        props.add("notifyMatch");
-        props.add("objectDomain");
-        props.add("objectName");
-        props.add("objectProperties");
-        props.add("observedAttribute");
-        props.add("offset");
-        props.add("password");
-        props.add("reconnectDelay");
-        props.add("reconnectOnConnectionFailure");
-        props.add("serverURL");
-        props.add("stringToCompare");
-        props.add("testConnectionOnStartup");
-        props.add("thresholdHigh");
-        props.add("thresholdLow");
-        props.add("user");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
-        secretProps.add("password");
-        secretProps.add("user");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("key.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "bridgeErrorHandler", "differenceMode", "exceptionHandler", "exchangePattern", "executorService", "format",
+            "granularityPeriod", "handback", "initThreshold", "modulus", "monitorType", "notificationFilter",
+            "notifyDiffer", "notifyHigh", "notifyLow", "notifyMatch", "objectDomain", "objectName", "objectProperties",
+            "observedAttribute", "offset", "password", "reconnectDelay", "reconnectOnConnectionFailure", "serverURL",
+            "stringToCompare", "testConnectionOnStartup", "thresholdHigh", "thresholdLow", "user");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "password", "user");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "key.");
 
     @Override
     public boolean isEnabled(String scheme) {

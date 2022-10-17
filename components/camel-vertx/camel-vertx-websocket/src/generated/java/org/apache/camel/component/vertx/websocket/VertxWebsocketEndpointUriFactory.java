@@ -17,29 +17,12 @@ public class VertxWebsocketEndpointUriFactory extends org.apache.camel.support.c
 
     private static final String BASE = ":host:port/path";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(14);
-        props.add("allowedOriginPattern");
-        props.add("bridgeErrorHandler");
-        props.add("clientOptions");
-        props.add("clientSubProtocols");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("host");
-        props.add("lazyStartProducer");
-        props.add("path");
-        props.add("port");
-        props.add("router");
-        props.add("sendToAll");
-        props.add("serverOptions");
-        props.add("sslContextParameters");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "allowedOriginPattern", "bridgeErrorHandler", "clientOptions", "clientSubProtocols", "exceptionHandler",
+            "exchangePattern", "host", "lazyStartProducer", "path", "port", "router", "sendToAll", "serverOptions",
+            "sslContextParameters");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

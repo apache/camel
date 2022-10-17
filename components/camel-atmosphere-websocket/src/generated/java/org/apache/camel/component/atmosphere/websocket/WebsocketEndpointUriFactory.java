@@ -17,42 +17,15 @@ public class WebsocketEndpointUriFactory extends org.apache.camel.support.compon
 
     private static final String BASE = ":servicePath";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(27);
-        props.add("async");
-        props.add("attachmentMultipartBinding");
-        props.add("bridgeEndpoint");
-        props.add("bridgeErrorHandler");
-        props.add("chunked");
-        props.add("disableStreamCache");
-        props.add("eagerCheckContentAvailable");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("fileNameExtWhitelist");
-        props.add("headerFilterStrategy");
-        props.add("httpBinding");
-        props.add("httpMethodRestrict");
-        props.add("lazyStartProducer");
-        props.add("mapHttpMessageBody");
-        props.add("mapHttpMessageFormUrlEncodedBody");
-        props.add("mapHttpMessageHeaders");
-        props.add("matchOnUriPrefix");
-        props.add("muteException");
-        props.add("optionsEnabled");
-        props.add("responseBufferSize");
-        props.add("sendToAll");
-        props.add("servicePath");
-        props.add("servletName");
-        props.add("traceEnabled");
-        props.add("transferException");
-        props.add("useStreaming");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "async", "attachmentMultipartBinding", "bridgeEndpoint", "bridgeErrorHandler", "chunked", "disableStreamCache",
+            "eagerCheckContentAvailable", "exceptionHandler", "exchangePattern", "fileNameExtWhitelist",
+            "headerFilterStrategy", "httpBinding", "httpMethodRestrict", "lazyStartProducer", "mapHttpMessageBody",
+            "mapHttpMessageFormUrlEncodedBody", "mapHttpMessageHeaders", "matchOnUriPrefix", "muteException",
+            "optionsEnabled", "responseBufferSize", "sendToAll", "servicePath", "servletName", "traceEnabled",
+            "transferException", "useStreaming");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

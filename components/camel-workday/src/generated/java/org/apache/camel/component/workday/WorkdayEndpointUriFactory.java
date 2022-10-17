@@ -17,29 +17,12 @@ public class WorkdayEndpointUriFactory extends org.apache.camel.support.componen
 
     private static final String BASE = ":entity:path";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(10);
-        props.add("clientId");
-        props.add("clientSecret");
-        props.add("entity");
-        props.add("host");
-        props.add("httpConnectionManager");
-        props.add("lazyStartProducer");
-        props.add("path");
-        props.add("reportFormat");
-        props.add("tenant");
-        props.add("tokenRefresh");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(3);
-        secretProps.add("clientId");
-        secretProps.add("clientSecret");
-        secretProps.add("tokenRefresh");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "clientId", "clientSecret", "entity", "host", "httpConnectionManager", "lazyStartProducer", "path",
+            "reportFormat", "tenant", "tokenRefresh");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "clientId", "clientSecret", "tokenRefresh");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

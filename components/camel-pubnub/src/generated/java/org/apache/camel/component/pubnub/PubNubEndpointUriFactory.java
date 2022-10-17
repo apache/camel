@@ -17,36 +17,13 @@ public class PubNubEndpointUriFactory extends org.apache.camel.support.component
 
     private static final String BASE = ":channel";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(15);
-        props.add("authKey");
-        props.add("bridgeErrorHandler");
-        props.add("channel");
-        props.add("cipherKey");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("lazyStartProducer");
-        props.add("operation");
-        props.add("publishKey");
-        props.add("pubnub");
-        props.add("secretKey");
-        props.add("secure");
-        props.add("subscribeKey");
-        props.add("uuid");
-        props.add("withPresence");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(5);
-        secretProps.add("authKey");
-        secretProps.add("cipherKey");
-        secretProps.add("publishKey");
-        secretProps.add("secretKey");
-        secretProps.add("subscribeKey");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "authKey", "bridgeErrorHandler", "channel", "cipherKey", "exceptionHandler", "exchangePattern",
+            "lazyStartProducer", "operation", "publishKey", "pubnub", "secretKey", "secure", "subscribeKey", "uuid",
+            "withPresence");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "authKey", "cipherKey", "publishKey", "secretKey", "subscribeKey");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

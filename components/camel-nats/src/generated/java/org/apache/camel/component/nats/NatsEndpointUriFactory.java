@@ -17,45 +17,14 @@ public class NatsEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":topic";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(30);
-        props.add("bridgeErrorHandler");
-        props.add("connection");
-        props.add("connectionTimeout");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("flushConnection");
-        props.add("flushTimeout");
-        props.add("headerFilterStrategy");
-        props.add("lazyStartProducer");
-        props.add("maxMessages");
-        props.add("maxPingsOut");
-        props.add("maxReconnectAttempts");
-        props.add("noEcho");
-        props.add("noRandomizeServers");
-        props.add("pedantic");
-        props.add("pingInterval");
-        props.add("poolSize");
-        props.add("queueName");
-        props.add("reconnect");
-        props.add("reconnectTimeWait");
-        props.add("replySubject");
-        props.add("replyToDisabled");
-        props.add("requestCleanupInterval");
-        props.add("requestTimeout");
-        props.add("secure");
-        props.add("servers");
-        props.add("sslContextParameters");
-        props.add("topic");
-        props.add("traceConnection");
-        props.add("verbose");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "bridgeErrorHandler", "connection", "connectionTimeout", "exceptionHandler", "exchangePattern",
+            "flushConnection", "flushTimeout", "headerFilterStrategy", "lazyStartProducer", "maxMessages", "maxPingsOut",
+            "maxReconnectAttempts", "noEcho", "noRandomizeServers", "pedantic", "pingInterval", "poolSize", "queueName",
+            "reconnect", "reconnectTimeWait", "replySubject", "replyToDisabled", "requestCleanupInterval",
+            "requestTimeout", "secure", "servers", "sslContextParameters", "topic", "traceConnection", "verbose");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

@@ -17,58 +17,16 @@ public class WeatherEndpointUriFactory extends org.apache.camel.support.componen
 
     private static final String BASE = ":name";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(41);
-        props.add("appid");
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("bridgeErrorHandler");
-        props.add("cnt");
-        props.add("delay");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("geoLocationProvider");
-        props.add("geolocationAccessKey");
-        props.add("geolocationRequestHostIP");
-        props.add("greedy");
-        props.add("headerName");
-        props.add("httpClient");
-        props.add("ids");
-        props.add("initialDelay");
-        props.add("language");
-        props.add("lat");
-        props.add("lazyStartProducer");
-        props.add("location");
-        props.add("lon");
-        props.add("mode");
-        props.add("name");
-        props.add("period");
-        props.add("pollStrategy");
-        props.add("repeatCount");
-        props.add("rightLon");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("startScheduler");
-        props.add("timeUnit");
-        props.add("topLat");
-        props.add("units");
-        props.add("useFixedDelay");
-        props.add("weatherApi");
-        props.add("zip");
-        props.add("zoom");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "appid", "backoffErrorThreshold", "backoffIdleThreshold", "backoffMultiplier", "bridgeErrorHandler", "cnt",
+            "delay", "exceptionHandler", "exchangePattern", "geoLocationProvider", "geolocationAccessKey",
+            "geolocationRequestHostIP", "greedy", "headerName", "httpClient", "ids", "initialDelay", "language", "lat",
+            "lazyStartProducer", "location", "lon", "mode", "name", "period", "pollStrategy", "repeatCount", "rightLon",
+            "runLoggingLevel", "scheduledExecutorService", "scheduler", "schedulerProperties", "sendEmptyMessageWhenIdle",
+            "startScheduler", "timeUnit", "topLat", "units", "useFixedDelay", "weatherApi", "zip", "zoom");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "scheduler.");
 
     @Override
     public boolean isEnabled(String scheme) {

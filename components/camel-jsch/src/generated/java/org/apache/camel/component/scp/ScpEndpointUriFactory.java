@@ -17,48 +17,16 @@ public class ScpEndpointUriFactory extends org.apache.camel.support.component.En
 
     private static final String BASE = ":host:port/directoryName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(25);
-        props.add("allowNullBody");
-        props.add("chmod");
-        props.add("ciphers");
-        props.add("connectTimeout");
-        props.add("directoryName");
-        props.add("disconnect");
-        props.add("disconnectOnBatchComplete");
-        props.add("fileName");
-        props.add("flatten");
-        props.add("host");
-        props.add("jailStartingDirectory");
-        props.add("knownHostsFile");
-        props.add("lazyStartProducer");
-        props.add("moveExistingFileStrategy");
-        props.add("password");
-        props.add("port");
-        props.add("preferredAuthentications");
-        props.add("privateKeyBytes");
-        props.add("privateKeyFile");
-        props.add("privateKeyFilePassphrase");
-        props.add("soTimeout");
-        props.add("strictHostKeyChecking");
-        props.add("timeout");
-        props.add("useUserKnownHostsFile");
-        props.add("username");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(7);
-        secretProps.add("knownHostsFile");
-        secretProps.add("password");
-        secretProps.add("preferredAuthentications");
-        secretProps.add("privateKeyBytes");
-        secretProps.add("privateKeyFile");
-        secretProps.add("privateKeyFilePassphrase");
-        secretProps.add("username");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "allowNullBody", "chmod", "ciphers", "connectTimeout", "directoryName", "disconnect",
+            "disconnectOnBatchComplete", "fileName", "flatten", "host", "jailStartingDirectory", "knownHostsFile",
+            "lazyStartProducer", "moveExistingFileStrategy", "password", "port", "preferredAuthentications",
+            "privateKeyBytes", "privateKeyFile", "privateKeyFilePassphrase", "soTimeout", "strictHostKeyChecking",
+            "timeout", "useUserKnownHostsFile", "username");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "knownHostsFile", "password", "preferredAuthentications", "privateKeyBytes", "privateKeyFile",
+            "privateKeyFilePassphrase", "username");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

@@ -17,45 +17,14 @@ public class FaceRecognitionEndpointUriFactory extends org.apache.camel.support.
 
     private static final String BASE = ":operation";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(24);
-        props.add("accessKey");
-        props.add("actionTimes");
-        props.add("actions");
-        props.add("anotherImageBase64");
-        props.add("anotherImageFilePath");
-        props.add("anotherImageUrl");
-        props.add("endpoint");
-        props.add("ignoreSslVerification");
-        props.add("imageBase64");
-        props.add("imageFilePath");
-        props.add("imageUrl");
-        props.add("lazyStartProducer");
-        props.add("operation");
-        props.add("projectId");
-        props.add("proxyHost");
-        props.add("proxyPassword");
-        props.add("proxyPort");
-        props.add("proxyUser");
-        props.add("region");
-        props.add("secretKey");
-        props.add("serviceKeys");
-        props.add("videoBase64");
-        props.add("videoFilePath");
-        props.add("videoUrl");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(5);
-        secretProps.add("accessKey");
-        secretProps.add("proxyPassword");
-        secretProps.add("proxyUser");
-        secretProps.add("secretKey");
-        secretProps.add("serviceKeys");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "accessKey", "actionTimes", "actions", "anotherImageBase64", "anotherImageFilePath", "anotherImageUrl",
+            "endpoint", "ignoreSslVerification", "imageBase64", "imageFilePath", "imageUrl", "lazyStartProducer",
+            "operation", "projectId", "proxyHost", "proxyPassword", "proxyPort", "proxyUser", "region", "secretKey",
+            "serviceKeys", "videoBase64", "videoFilePath", "videoUrl");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "accessKey", "proxyPassword", "proxyUser", "secretKey", "serviceKeys");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

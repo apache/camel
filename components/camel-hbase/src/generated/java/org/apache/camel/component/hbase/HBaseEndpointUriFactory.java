@@ -17,34 +17,13 @@ public class HBaseEndpointUriFactory extends org.apache.camel.support.component.
 
     private static final String BASE = ":tableName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(17);
-        props.add("bridgeErrorHandler");
-        props.add("cellMappingStrategyFactory");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("filters");
-        props.add("lazyStartProducer");
-        props.add("mappingStrategyClassName");
-        props.add("mappingStrategyName");
-        props.add("maxMessagesPerPoll");
-        props.add("maxResults");
-        props.add("operation");
-        props.add("remove");
-        props.add("removeHandler");
-        props.add("rowMapping");
-        props.add("rowModel");
-        props.add("tableName");
-        props.add("userGroupInformation");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("row.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "bridgeErrorHandler", "cellMappingStrategyFactory", "exceptionHandler", "exchangePattern", "filters",
+            "lazyStartProducer", "mappingStrategyClassName", "mappingStrategyName", "maxMessagesPerPoll", "maxResults",
+            "operation", "remove", "removeHandler", "rowMapping", "rowModel", "tableName", "userGroupInformation");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "row.");
 
     @Override
     public boolean isEnabled(String scheme) {

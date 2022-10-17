@@ -17,29 +17,12 @@ public class PgEventEndpointUriFactory extends org.apache.camel.support.componen
 
     private static final String BASE = ":host:port/database/channel";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(11);
-        props.add("bridgeErrorHandler");
-        props.add("channel");
-        props.add("database");
-        props.add("datasource");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("host");
-        props.add("lazyStartProducer");
-        props.add("pass");
-        props.add("port");
-        props.add("user");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
-        secretProps.add("pass");
-        secretProps.add("user");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "bridgeErrorHandler", "channel", "database", "datasource", "exceptionHandler", "exchangePattern", "host",
+            "lazyStartProducer", "pass", "port", "user");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "pass", "user");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

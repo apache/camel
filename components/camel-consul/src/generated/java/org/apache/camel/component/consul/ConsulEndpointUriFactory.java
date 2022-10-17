@@ -17,45 +17,14 @@ public class ConsulEndpointUriFactory extends org.apache.camel.support.component
 
     private static final String BASE = ":apiEndpoint";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(26);
-        props.add("aclToken");
-        props.add("action");
-        props.add("apiEndpoint");
-        props.add("blockSeconds");
-        props.add("bridgeErrorHandler");
-        props.add("connectTimeout");
-        props.add("consistencyMode");
-        props.add("consulClient");
-        props.add("datacenter");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("firstIndex");
-        props.add("key");
-        props.add("lazyStartProducer");
-        props.add("nearNode");
-        props.add("nodeMeta");
-        props.add("password");
-        props.add("pingInstance");
-        props.add("readTimeout");
-        props.add("recursive");
-        props.add("sslContextParameters");
-        props.add("tags");
-        props.add("url");
-        props.add("userName");
-        props.add("valueAsString");
-        props.add("writeTimeout");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(3);
-        secretProps.add("aclToken");
-        secretProps.add("password");
-        secretProps.add("userName");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "aclToken", "action", "apiEndpoint", "blockSeconds", "bridgeErrorHandler", "connectTimeout", "consistencyMode",
+            "consulClient", "datacenter", "exceptionHandler", "exchangePattern", "firstIndex", "key", "lazyStartProducer",
+            "nearNode", "nodeMeta", "password", "pingInstance", "readTimeout", "recursive", "sslContextParameters", "tags",
+            "url", "userName", "valueAsString", "writeTimeout");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "aclToken", "password", "userName");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

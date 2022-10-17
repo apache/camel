@@ -17,60 +17,18 @@ public class SnmpEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":host:port";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(38);
-        props.add("authenticationPassphrase");
-        props.add("authenticationProtocol");
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("bridgeErrorHandler");
-        props.add("delay");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("greedy");
-        props.add("host");
-        props.add("initialDelay");
-        props.add("lazyStartProducer");
-        props.add("oids");
-        props.add("pollStrategy");
-        props.add("port");
-        props.add("privacyPassphrase");
-        props.add("privacyProtocol");
-        props.add("protocol");
-        props.add("repeatCount");
-        props.add("retries");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("securityLevel");
-        props.add("securityName");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("snmpCommunity");
-        props.add("snmpContextEngineId");
-        props.add("snmpContextName");
-        props.add("snmpVersion");
-        props.add("startScheduler");
-        props.add("timeUnit");
-        props.add("timeout");
-        props.add("treeList");
-        props.add("type");
-        props.add("useFixedDelay");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(4);
-        secretProps.add("authenticationPassphrase");
-        secretProps.add("privacyPassphrase");
-        secretProps.add("privacyProtocol");
-        secretProps.add("securityName");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "authenticationPassphrase", "authenticationProtocol", "backoffErrorThreshold", "backoffIdleThreshold",
+            "backoffMultiplier", "bridgeErrorHandler", "delay", "exceptionHandler", "exchangePattern", "greedy", "host",
+            "initialDelay", "lazyStartProducer", "oids", "pollStrategy", "port", "privacyPassphrase", "privacyProtocol",
+            "protocol", "repeatCount", "retries", "runLoggingLevel", "scheduledExecutorService", "scheduler",
+            "schedulerProperties", "securityLevel", "securityName", "sendEmptyMessageWhenIdle", "snmpCommunity",
+            "snmpContextEngineId", "snmpContextName", "snmpVersion", "startScheduler", "timeUnit", "timeout", "treeList",
+            "type", "useFixedDelay");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "authenticationPassphrase", "privacyPassphrase", "privacyProtocol", "securityName");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "scheduler.");
 
     @Override
     public boolean isEnabled(String scheme) {

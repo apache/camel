@@ -17,25 +17,11 @@ public class RestSwaggerEndpointUriFactory extends org.apache.camel.support.comp
 
     private static final String BASE = ":specificationUri#operationId";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(10);
-        props.add("basePath");
-        props.add("componentName");
-        props.add("consumes");
-        props.add("host");
-        props.add("lazyStartProducer");
-        props.add("operationId");
-        props.add("produces");
-        props.add("resolveReferences");
-        props.add("specificationUri");
-        props.add("sslContextParameters");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "basePath", "componentName", "consumes", "host", "lazyStartProducer", "operationId", "produces",
+            "resolveReferences", "specificationUri", "sslContextParameters");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

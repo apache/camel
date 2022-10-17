@@ -17,26 +17,12 @@ public class HashicorpVaultEndpointUriFactory extends org.apache.camel.support.c
 
     private static final String BASE = ":secretsEngine";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(9);
-        props.add("host");
-        props.add("lazyStartProducer");
-        props.add("operation");
-        props.add("port");
-        props.add("scheme");
-        props.add("secretPath");
-        props.add("secretsEngine");
-        props.add("token");
-        props.add("vaultTemplate");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(1);
-        secretProps.add("token");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "host", "lazyStartProducer", "operation", "port", "scheme", "secretPath", "secretsEngine", "token",
+            "vaultTemplate");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "token");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

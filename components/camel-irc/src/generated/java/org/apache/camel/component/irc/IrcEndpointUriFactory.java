@@ -17,48 +17,14 @@ public class IrcEndpointUriFactory extends org.apache.camel.support.component.En
 
     private static final String BASE = ":hostname:port";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(29);
-        props.add("autoRejoin");
-        props.add("bridgeErrorHandler");
-        props.add("channels");
-        props.add("colors");
-        props.add("commandTimeout");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("hostname");
-        props.add("keys");
-        props.add("lazyStartProducer");
-        props.add("namesOnJoin");
-        props.add("nickPassword");
-        props.add("nickname");
-        props.add("onJoin");
-        props.add("onKick");
-        props.add("onMode");
-        props.add("onNick");
-        props.add("onPart");
-        props.add("onPrivmsg");
-        props.add("onQuit");
-        props.add("onReply");
-        props.add("onTopic");
-        props.add("password");
-        props.add("persistent");
-        props.add("port");
-        props.add("realname");
-        props.add("sslContextParameters");
-        props.add("trustManager");
-        props.add("username");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(3);
-        secretProps.add("nickPassword");
-        secretProps.add("password");
-        secretProps.add("username");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "autoRejoin", "bridgeErrorHandler", "channels", "colors", "commandTimeout", "exceptionHandler",
+            "exchangePattern", "hostname", "keys", "lazyStartProducer", "namesOnJoin", "nickPassword", "nickname",
+            "onJoin", "onKick", "onMode", "onNick", "onPart", "onPrivmsg", "onQuit", "onReply", "onTopic", "password",
+            "persistent", "port", "realname", "sslContextParameters", "trustManager", "username");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "nickPassword", "password", "username");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

@@ -17,65 +17,18 @@ public class HdfsEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":hostName:port/path";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(48);
-        props.add("append");
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("blockSize");
-        props.add("bridgeErrorHandler");
-        props.add("bufferSize");
-        props.add("checkIdleInterval");
-        props.add("chunkSize");
-        props.add("compressionCodec");
-        props.add("compressionType");
-        props.add("connectOnStartup");
-        props.add("delay");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("fileSystemType");
-        props.add("fileType");
-        props.add("greedy");
-        props.add("hostName");
-        props.add("initialDelay");
-        props.add("kerberosConfigFileLocation");
-        props.add("kerberosKeytabLocation");
-        props.add("kerberosUsername");
-        props.add("keyType");
-        props.add("lazyStartProducer");
-        props.add("maxMessagesPerPoll");
-        props.add("namedNodes");
-        props.add("openedSuffix");
-        props.add("overwrite");
-        props.add("owner");
-        props.add("path");
-        props.add("pattern");
-        props.add("pollStrategy");
-        props.add("port");
-        props.add("readSuffix");
-        props.add("repeatCount");
-        props.add("replication");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("splitStrategy");
-        props.add("startScheduler");
-        props.add("streamDownload");
-        props.add("timeUnit");
-        props.add("useFixedDelay");
-        props.add("valueType");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "append", "backoffErrorThreshold", "backoffIdleThreshold", "backoffMultiplier", "blockSize",
+            "bridgeErrorHandler", "bufferSize", "checkIdleInterval", "chunkSize", "compressionCodec", "compressionType",
+            "connectOnStartup", "delay", "exceptionHandler", "exchangePattern", "fileSystemType", "fileType", "greedy",
+            "hostName", "initialDelay", "kerberosConfigFileLocation", "kerberosKeytabLocation", "kerberosUsername",
+            "keyType", "lazyStartProducer", "maxMessagesPerPoll", "namedNodes", "openedSuffix", "overwrite", "owner",
+            "path", "pattern", "pollStrategy", "port", "readSuffix", "repeatCount", "replication", "runLoggingLevel",
+            "scheduledExecutorService", "scheduler", "schedulerProperties", "sendEmptyMessageWhenIdle", "splitStrategy",
+            "startScheduler", "streamDownload", "timeUnit", "useFixedDelay", "valueType");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "scheduler.");
 
     @Override
     public boolean isEnabled(String scheme) {

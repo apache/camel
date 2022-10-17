@@ -17,48 +17,16 @@ public class CxfRsEndpointUriFactory extends org.apache.camel.support.component.
 
     private static final String BASE = ":beanId:address";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(33);
-        props.add("address");
-        props.add("beanId");
-        props.add("binding");
-        props.add("bindingStyle");
-        props.add("bridgeErrorHandler");
-        props.add("bus");
-        props.add("continuationTimeout");
-        props.add("cookieHandler");
-        props.add("cxfRsConfigurer");
-        props.add("defaultBus");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("features");
-        props.add("headerFilterStrategy");
-        props.add("hostnameVerifier");
-        props.add("httpClientAPI");
-        props.add("ignoreDeleteMethodMessageBody");
-        props.add("lazyStartProducer");
-        props.add("loggingFeatureEnabled");
-        props.add("loggingSizeLimit");
-        props.add("maxClientCacheSize");
-        props.add("modelRef");
-        props.add("performInvocation");
-        props.add("propagateContexts");
-        props.add("providers");
-        props.add("publishedEndpointUrl");
-        props.add("resourceClasses");
-        props.add("schemaLocations");
-        props.add("serviceBeans");
-        props.add("skipFaultLogging");
-        props.add("sslContextParameters");
-        props.add("synchronous");
-        props.add("throwExceptionOnFailure");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "address", "beanId", "binding", "bindingStyle", "bridgeErrorHandler", "bus", "continuationTimeout",
+            "cookieHandler", "cxfRsConfigurer", "defaultBus", "exceptionHandler", "exchangePattern", "features",
+            "headerFilterStrategy", "hostnameVerifier", "httpClientAPI", "ignoreDeleteMethodMessageBody",
+            "lazyStartProducer", "loggingFeatureEnabled", "loggingSizeLimit", "maxClientCacheSize", "modelRef",
+            "performInvocation", "propagateContexts", "providers", "publishedEndpointUrl", "resourceClasses",
+            "schemaLocations", "serviceBeans", "skipFaultLogging", "sslContextParameters", "synchronous",
+            "throwExceptionOnFailure");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

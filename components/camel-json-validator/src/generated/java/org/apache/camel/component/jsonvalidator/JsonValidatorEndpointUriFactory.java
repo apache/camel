@@ -17,24 +17,11 @@ public class JsonValidatorEndpointUriFactory extends org.apache.camel.support.co
 
     private static final String BASE = ":resourceUri";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(9);
-        props.add("allowContextMapAll");
-        props.add("contentCache");
-        props.add("errorHandler");
-        props.add("failOnNullBody");
-        props.add("failOnNullHeader");
-        props.add("headerName");
-        props.add("lazyStartProducer");
-        props.add("resourceUri");
-        props.add("uriSchemaLoader");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "allowContextMapAll", "contentCache", "errorHandler", "failOnNullBody", "failOnNullHeader", "headerName",
+            "lazyStartProducer", "resourceUri", "uriSchemaLoader");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

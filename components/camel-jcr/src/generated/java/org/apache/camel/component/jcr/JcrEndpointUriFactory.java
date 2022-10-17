@@ -17,31 +17,12 @@ public class JcrEndpointUriFactory extends org.apache.camel.support.component.En
 
     private static final String BASE = ":host/base";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(16);
-        props.add("base");
-        props.add("bridgeErrorHandler");
-        props.add("deep");
-        props.add("eventTypes");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("host");
-        props.add("lazyStartProducer");
-        props.add("noLocal");
-        props.add("nodeTypeNames");
-        props.add("password");
-        props.add("sessionLiveCheckInterval");
-        props.add("sessionLiveCheckIntervalOnStart");
-        props.add("username");
-        props.add("uuids");
-        props.add("workspaceName");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "base", "bridgeErrorHandler", "deep", "eventTypes", "exceptionHandler", "exchangePattern", "host",
+            "lazyStartProducer", "noLocal", "nodeTypeNames", "password", "sessionLiveCheckInterval",
+            "sessionLiveCheckIntervalOnStart", "username", "uuids", "workspaceName");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

@@ -17,47 +17,16 @@ public class UndertowEndpointUriFactory extends org.apache.camel.support.compone
 
     private static final String BASE = ":httpURI";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(30);
-        props.add("accessLog");
-        props.add("accessLogReceiver");
-        props.add("allowedRoles");
-        props.add("bridgeErrorHandler");
-        props.add("cookieHandler");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("fireWebSocketChannelEvents");
-        props.add("handlers");
-        props.add("headerFilterStrategy");
-        props.add("httpMethodRestrict");
-        props.add("httpURI");
-        props.add("keepAlive");
-        props.add("lazyStartProducer");
-        props.add("matchOnUriPrefix");
-        props.add("muteException");
-        props.add("options");
-        props.add("optionsEnabled");
-        props.add("preserveHostHeader");
-        props.add("reuseAddresses");
-        props.add("securityConfiguration");
-        props.add("securityProvider");
-        props.add("sendTimeout");
-        props.add("sendToAll");
-        props.add("sslContextParameters");
-        props.add("tcpNoDelay");
-        props.add("throwExceptionOnFailure");
-        props.add("transferException");
-        props.add("undertowHttpBinding");
-        props.add("useStreaming");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("option.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "accessLog", "accessLogReceiver", "allowedRoles", "bridgeErrorHandler", "cookieHandler", "exceptionHandler",
+            "exchangePattern", "fireWebSocketChannelEvents", "handlers", "headerFilterStrategy", "httpMethodRestrict",
+            "httpURI", "keepAlive", "lazyStartProducer", "matchOnUriPrefix", "muteException", "options", "optionsEnabled",
+            "preserveHostHeader", "reuseAddresses", "securityConfiguration", "securityProvider", "sendTimeout",
+            "sendToAll", "sslContextParameters", "tcpNoDelay", "throwExceptionOnFailure", "transferException",
+            "undertowHttpBinding", "useStreaming");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "option.");
 
     @Override
     public boolean isEnabled(String scheme) {

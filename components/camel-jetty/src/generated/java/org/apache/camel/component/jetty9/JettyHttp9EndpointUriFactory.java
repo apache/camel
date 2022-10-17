@@ -17,50 +17,17 @@ public class JettyHttp9EndpointUriFactory extends org.apache.camel.support.compo
 
     private static final String BASE = ":httpUri";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(33);
-        props.add("async");
-        props.add("bridgeErrorHandler");
-        props.add("chunked");
-        props.add("continuationTimeout");
-        props.add("disableStreamCache");
-        props.add("eagerCheckContentAvailable");
-        props.add("enableCORS");
-        props.add("enableJmx");
-        props.add("enableMultipartFilter");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("filterInitParameters");
-        props.add("filters");
-        props.add("handlers");
-        props.add("headerFilterStrategy");
-        props.add("httpBinding");
-        props.add("httpMethodRestrict");
-        props.add("httpUri");
-        props.add("mapHttpMessageBody");
-        props.add("mapHttpMessageFormUrlEncodedBody");
-        props.add("mapHttpMessageHeaders");
-        props.add("matchOnUriPrefix");
-        props.add("multipartFilter");
-        props.add("muteException");
-        props.add("optionsEnabled");
-        props.add("responseBufferSize");
-        props.add("sendDateHeader");
-        props.add("sendServerVersion");
-        props.add("sessionSupport");
-        props.add("sslContextParameters");
-        props.add("traceEnabled");
-        props.add("transferException");
-        props.add("useContinuation");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("filter.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "async", "bridgeErrorHandler", "chunked", "continuationTimeout", "disableStreamCache",
+            "eagerCheckContentAvailable", "enableCORS", "enableJmx", "enableMultipartFilter", "exceptionHandler",
+            "exchangePattern", "filterInitParameters", "filters", "handlers", "headerFilterStrategy", "httpBinding",
+            "httpMethodRestrict", "httpUri", "mapHttpMessageBody", "mapHttpMessageFormUrlEncodedBody",
+            "mapHttpMessageHeaders", "matchOnUriPrefix", "multipartFilter", "muteException", "optionsEnabled",
+            "responseBufferSize", "sendDateHeader", "sendServerVersion", "sessionSupport", "sslContextParameters",
+            "traceEnabled", "transferException", "useContinuation");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "filter.");
 
     @Override
     public boolean isEnabled(String scheme) {

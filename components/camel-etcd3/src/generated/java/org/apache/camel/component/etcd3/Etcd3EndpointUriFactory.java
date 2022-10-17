@@ -17,47 +17,15 @@ public class Etcd3EndpointUriFactory extends org.apache.camel.support.component.
 
     private static final String BASE = ":path";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(26);
-        props.add("authHeaders");
-        props.add("authority");
-        props.add("bridgeErrorHandler");
-        props.add("connectionTimeout");
-        props.add("endpoints");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("fromIndex");
-        props.add("headers");
-        props.add("keepAliveTime");
-        props.add("keepAliveTimeout");
-        props.add("keyCharset");
-        props.add("lazyStartProducer");
-        props.add("loadBalancerPolicy");
-        props.add("maxInboundMessageSize");
-        props.add("namespace");
-        props.add("password");
-        props.add("path");
-        props.add("prefix");
-        props.add("retryDelay");
-        props.add("retryMaxDelay");
-        props.add("retryMaxDuration");
-        props.add("servicePath");
-        props.add("sslContext");
-        props.add("userName");
-        props.add("valueCharset");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
-        secretProps.add("password");
-        secretProps.add("userName");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Set<String> prefixes = new HashSet<>(2);
-        prefixes.add("authHeaders.");
-        prefixes.add("headers.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "authHeaders", "authority", "bridgeErrorHandler", "connectionTimeout", "endpoints", "exceptionHandler",
+            "exchangePattern", "fromIndex", "headers", "keepAliveTime", "keepAliveTimeout", "keyCharset",
+            "lazyStartProducer", "loadBalancerPolicy", "maxInboundMessageSize", "namespace", "password", "path", "prefix",
+            "retryDelay", "retryMaxDelay", "retryMaxDuration", "servicePath", "sslContext", "userName", "valueCharset");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "password", "userName");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "authHeaders.", "headers.");
 
     @Override
     public boolean isEnabled(String scheme) {

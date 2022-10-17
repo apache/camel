@@ -17,54 +17,15 @@ public class Web3jEndpointUriFactory extends org.apache.camel.support.component.
 
     private static final String BASE = ":nodeAddress";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(39);
-        props.add("address");
-        props.add("addresses");
-        props.add("atBlock");
-        props.add("blockHash");
-        props.add("bridgeErrorHandler");
-        props.add("clientId");
-        props.add("data");
-        props.add("databaseName");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("filterId");
-        props.add("fromAddress");
-        props.add("fromBlock");
-        props.add("fullTransactionObjects");
-        props.add("gasLimit");
-        props.add("gasPrice");
-        props.add("hashrate");
-        props.add("headerPowHash");
-        props.add("index");
-        props.add("keyName");
-        props.add("lazyStartProducer");
-        props.add("mixDigest");
-        props.add("nodeAddress");
-        props.add("nonce");
-        props.add("operation");
-        props.add("position");
-        props.add("priority");
-        props.add("privateFor");
-        props.add("quorumAPI");
-        props.add("sha3HashOfDataToSign");
-        props.add("signedTransactionData");
-        props.add("sourceCode");
-        props.add("toAddress");
-        props.add("toBlock");
-        props.add("topics");
-        props.add("transactionHash");
-        props.add("ttl");
-        props.add("value");
-        props.add("web3j");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "address", "addresses", "atBlock", "blockHash", "bridgeErrorHandler", "clientId", "data", "databaseName",
+            "exceptionHandler", "exchangePattern", "filterId", "fromAddress", "fromBlock", "fullTransactionObjects",
+            "gasLimit", "gasPrice", "hashrate", "headerPowHash", "index", "keyName", "lazyStartProducer", "mixDigest",
+            "nodeAddress", "nonce", "operation", "position", "priority", "privateFor", "quorumAPI", "sha3HashOfDataToSign",
+            "signedTransactionData", "sourceCode", "toAddress", "toBlock", "topics", "transactionHash", "ttl", "value",
+            "web3j");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

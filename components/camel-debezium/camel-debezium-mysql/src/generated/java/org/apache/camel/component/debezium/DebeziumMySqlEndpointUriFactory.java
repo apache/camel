@@ -17,118 +17,37 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
 
     private static final String BASE = ":name";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(101);
-        props.add("additionalProperties");
-        props.add("bigintUnsignedHandlingMode");
-        props.add("binaryHandlingMode");
-        props.add("binlogBufferSize");
-        props.add("bridgeErrorHandler");
-        props.add("columnBlacklist");
-        props.add("columnExcludeList");
-        props.add("columnIncludeList");
-        props.add("columnPropagateSourceType");
-        props.add("columnWhitelist");
-        props.add("connectKeepAlive");
-        props.add("connectKeepAliveIntervalMs");
-        props.add("connectTimeoutMs");
-        props.add("converters");
-        props.add("databaseExcludeList");
-        props.add("databaseHistory");
-        props.add("databaseHistoryFileFilename");
-        props.add("databaseHistoryKafkaBootstrapServers");
-        props.add("databaseHistoryKafkaQueryTimeoutMs");
-        props.add("databaseHistoryKafkaRecoveryAttempts");
-        props.add("databaseHistoryKafkaRecoveryPollIntervalMs");
-        props.add("databaseHistoryKafkaTopic");
-        props.add("databaseHistorySkipUnparseableDdl");
-        props.add("databaseHistoryStoreOnlyCapturedTablesDdl");
-        props.add("databaseHistoryStoreOnlyMonitoredTablesDdl");
-        props.add("databaseHostname");
-        props.add("databaseIncludeList");
-        props.add("databaseInitialStatements");
-        props.add("databaseJdbcDriver");
-        props.add("databasePassword");
-        props.add("databasePort");
-        props.add("databaseServerId");
-        props.add("databaseServerIdOffset");
-        props.add("databaseServerName");
-        props.add("databaseSslKeystore");
-        props.add("databaseSslKeystorePassword");
-        props.add("databaseSslMode");
-        props.add("databaseSslTruststore");
-        props.add("databaseSslTruststorePassword");
-        props.add("databaseUser");
-        props.add("datatypePropagateSourceType");
-        props.add("decimalHandlingMode");
-        props.add("enableTimeAdjuster");
-        props.add("eventDeserializationFailureHandlingMode");
-        props.add("eventProcessingFailureHandlingMode");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("gtidSourceExcludes");
-        props.add("gtidSourceFilterDmlEvents");
-        props.add("gtidSourceIncludes");
-        props.add("heartbeatActionQuery");
-        props.add("heartbeatIntervalMs");
-        props.add("heartbeatTopicsPrefix");
-        props.add("includeQuery");
-        props.add("includeSchemaChanges");
-        props.add("includeSchemaComments");
-        props.add("inconsistentSchemaHandlingMode");
-        props.add("incrementalSnapshotAllowSchemaChanges");
-        props.add("incrementalSnapshotChunkSize");
-        props.add("internalKeyConverter");
-        props.add("internalValueConverter");
-        props.add("maxBatchSize");
-        props.add("maxQueueSize");
-        props.add("maxQueueSizeInBytes");
-        props.add("messageKeyColumns");
-        props.add("minRowCountToStreamResults");
-        props.add("name");
-        props.add("offsetCommitPolicy");
-        props.add("offsetCommitTimeoutMs");
-        props.add("offsetFlushIntervalMs");
-        props.add("offsetStorage");
-        props.add("offsetStorageFileName");
-        props.add("offsetStoragePartitions");
-        props.add("offsetStorageReplicationFactor");
-        props.add("offsetStorageTopic");
-        props.add("pollIntervalMs");
-        props.add("provideTransactionMetadata");
-        props.add("queryFetchSize");
-        props.add("retriableRestartConnectorWaitMs");
-        props.add("sanitizeFieldNames");
-        props.add("schemaNameAdjustmentMode");
-        props.add("signalDataCollection");
-        props.add("skippedOperations");
-        props.add("snapshotDelayMs");
-        props.add("snapshotFetchSize");
-        props.add("snapshotIncludeCollectionList");
-        props.add("snapshotLockTimeoutMs");
-        props.add("snapshotLockingMode");
-        props.add("snapshotMaxThreads");
-        props.add("snapshotMode");
-        props.add("snapshotNewTables");
-        props.add("snapshotSelectStatementOverrides");
-        props.add("sourceStructVersion");
-        props.add("tableBlacklist");
-        props.add("tableExcludeList");
-        props.add("tableIgnoreBuiltin");
-        props.add("tableIncludeList");
-        props.add("tableWhitelist");
-        props.add("timePrecisionMode");
-        props.add("tombstonesOnDelete");
-        props.add("transactionTopic");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("additionalProperties.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "additionalProperties", "bigintUnsignedHandlingMode", "binaryHandlingMode", "binlogBufferSize",
+            "bridgeErrorHandler", "columnBlacklist", "columnExcludeList", "columnIncludeList", "columnPropagateSourceType",
+            "columnWhitelist", "connectKeepAlive", "connectKeepAliveIntervalMs", "connectTimeoutMs", "converters",
+            "databaseExcludeList", "databaseHistory", "databaseHistoryFileFilename",
+            "databaseHistoryKafkaBootstrapServers", "databaseHistoryKafkaQueryTimeoutMs",
+            "databaseHistoryKafkaRecoveryAttempts", "databaseHistoryKafkaRecoveryPollIntervalMs",
+            "databaseHistoryKafkaTopic", "databaseHistorySkipUnparseableDdl", "databaseHistoryStoreOnlyCapturedTablesDdl",
+            "databaseHistoryStoreOnlyMonitoredTablesDdl", "databaseHostname", "databaseIncludeList",
+            "databaseInitialStatements", "databaseJdbcDriver", "databasePassword", "databasePort", "databaseServerId",
+            "databaseServerIdOffset", "databaseServerName", "databaseSslKeystore", "databaseSslKeystorePassword",
+            "databaseSslMode", "databaseSslTruststore", "databaseSslTruststorePassword", "databaseUser",
+            "datatypePropagateSourceType", "decimalHandlingMode", "enableTimeAdjuster",
+            "eventDeserializationFailureHandlingMode", "eventProcessingFailureHandlingMode", "exceptionHandler",
+            "exchangePattern", "gtidSourceExcludes", "gtidSourceFilterDmlEvents", "gtidSourceIncludes",
+            "heartbeatActionQuery", "heartbeatIntervalMs", "heartbeatTopicsPrefix", "includeQuery", "includeSchemaChanges",
+            "includeSchemaComments", "inconsistentSchemaHandlingMode", "incrementalSnapshotAllowSchemaChanges",
+            "incrementalSnapshotChunkSize", "internalKeyConverter", "internalValueConverter", "maxBatchSize",
+            "maxQueueSize", "maxQueueSizeInBytes", "messageKeyColumns", "minRowCountToStreamResults", "name",
+            "offsetCommitPolicy", "offsetCommitTimeoutMs", "offsetFlushIntervalMs", "offsetStorage",
+            "offsetStorageFileName", "offsetStoragePartitions", "offsetStorageReplicationFactor", "offsetStorageTopic",
+            "pollIntervalMs", "provideTransactionMetadata", "queryFetchSize", "retriableRestartConnectorWaitMs",
+            "sanitizeFieldNames", "schemaNameAdjustmentMode", "signalDataCollection", "skippedOperations",
+            "snapshotDelayMs", "snapshotFetchSize", "snapshotIncludeCollectionList", "snapshotLockTimeoutMs",
+            "snapshotLockingMode", "snapshotMaxThreads", "snapshotMode", "snapshotNewTables",
+            "snapshotSelectStatementOverrides", "sourceStructVersion", "tableBlacklist", "tableExcludeList",
+            "tableIgnoreBuiltin", "tableIncludeList", "tableWhitelist", "timePrecisionMode", "tombstonesOnDelete",
+            "transactionTopic");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "additionalProperties.");
 
     @Override
     public boolean isEnabled(String scheme) {

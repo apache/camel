@@ -17,84 +17,24 @@ public class Sqs2EndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":queueNameOrArn";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(63);
-        props.add("accessKey");
-        props.add("amazonAWSHost");
-        props.add("amazonSQSClient");
-        props.add("attributeNames");
-        props.add("autoCreateQueue");
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("batchSeparator");
-        props.add("bridgeErrorHandler");
-        props.add("concurrentConsumers");
-        props.add("defaultVisibilityTimeout");
-        props.add("delay");
-        props.add("delayQueue");
-        props.add("delaySeconds");
-        props.add("deleteAfterRead");
-        props.add("deleteIfFiltered");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("extendMessageVisibility");
-        props.add("greedy");
-        props.add("headerFilterStrategy");
-        props.add("initialDelay");
-        props.add("kmsDataKeyReusePeriodSeconds");
-        props.add("kmsMasterKeyId");
-        props.add("lazyStartProducer");
-        props.add("maxMessagesPerPoll");
-        props.add("maximumMessageSize");
-        props.add("messageAttributeNames");
-        props.add("messageDeduplicationIdStrategy");
-        props.add("messageGroupIdStrategy");
-        props.add("messageHeaderExceededLimit");
-        props.add("messageRetentionPeriod");
-        props.add("operation");
-        props.add("overrideEndpoint");
-        props.add("policy");
-        props.add("pollStrategy");
-        props.add("protocol");
-        props.add("proxyHost");
-        props.add("proxyPort");
-        props.add("proxyProtocol");
-        props.add("queueNameOrArn");
-        props.add("queueOwnerAWSAccountId");
-        props.add("queueUrl");
-        props.add("receiveMessageWaitTimeSeconds");
-        props.add("redrivePolicy");
-        props.add("region");
-        props.add("repeatCount");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("secretKey");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("serverSideEncryptionEnabled");
-        props.add("startScheduler");
-        props.add("timeUnit");
-        props.add("trustAllCertificates");
-        props.add("uriEndpointOverride");
-        props.add("useDefaultCredentialsProvider");
-        props.add("useFixedDelay");
-        props.add("visibilityTimeout");
-        props.add("waitTimeSeconds");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(3);
-        secretProps.add("accessKey");
-        secretProps.add("queueOwnerAWSAccountId");
-        secretProps.add("secretKey");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "accessKey", "amazonAWSHost", "amazonSQSClient", "attributeNames", "autoCreateQueue", "backoffErrorThreshold",
+            "backoffIdleThreshold", "backoffMultiplier", "batchSeparator", "bridgeErrorHandler", "concurrentConsumers",
+            "defaultVisibilityTimeout", "delay", "delayQueue", "delaySeconds", "deleteAfterRead", "deleteIfFiltered",
+            "exceptionHandler", "exchangePattern", "extendMessageVisibility", "greedy", "headerFilterStrategy",
+            "initialDelay", "kmsDataKeyReusePeriodSeconds", "kmsMasterKeyId", "lazyStartProducer", "maxMessagesPerPoll",
+            "maximumMessageSize", "messageAttributeNames", "messageDeduplicationIdStrategy", "messageGroupIdStrategy",
+            "messageHeaderExceededLimit", "messageRetentionPeriod", "operation", "overrideEndpoint", "policy",
+            "pollStrategy", "protocol", "proxyHost", "proxyPort", "proxyProtocol", "queueNameOrArn",
+            "queueOwnerAWSAccountId", "queueUrl", "receiveMessageWaitTimeSeconds", "redrivePolicy", "region",
+            "repeatCount", "runLoggingLevel", "scheduledExecutorService", "scheduler", "schedulerProperties", "secretKey",
+            "sendEmptyMessageWhenIdle", "serverSideEncryptionEnabled", "startScheduler", "timeUnit",
+            "trustAllCertificates", "uriEndpointOverride", "useDefaultCredentialsProvider", "useFixedDelay",
+            "visibilityTimeout", "waitTimeSeconds");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "accessKey", "queueOwnerAWSAccountId", "secretKey");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "scheduler.");
 
     @Override
     public boolean isEnabled(String scheme) {

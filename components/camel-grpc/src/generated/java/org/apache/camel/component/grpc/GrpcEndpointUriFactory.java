@@ -17,50 +17,16 @@ public class GrpcEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":host:port/service";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(32);
-        props.add("authenticationType");
-        props.add("autoDiscoverClientInterceptors");
-        props.add("autoDiscoverServerInterceptors");
-        props.add("bridgeErrorHandler");
-        props.add("consumerStrategy");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("flowControlWindow");
-        props.add("forwardOnCompleted");
-        props.add("forwardOnError");
-        props.add("host");
-        props.add("jwtAlgorithm");
-        props.add("jwtIssuer");
-        props.add("jwtSecret");
-        props.add("jwtSubject");
-        props.add("keyCertChainResource");
-        props.add("keyPassword");
-        props.add("keyResource");
-        props.add("lazyStartProducer");
-        props.add("maxConcurrentCallsPerConnection");
-        props.add("maxMessageSize");
-        props.add("method");
-        props.add("negotiationType");
-        props.add("port");
-        props.add("producerStrategy");
-        props.add("routeControlledStreamObserver");
-        props.add("service");
-        props.add("serviceAccountResource");
-        props.add("streamRepliesTo");
-        props.add("synchronous");
-        props.add("trustCertCollectionResource");
-        props.add("userAgent");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
-        secretProps.add("jwtSecret");
-        secretProps.add("keyPassword");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "authenticationType", "autoDiscoverClientInterceptors", "autoDiscoverServerInterceptors", "bridgeErrorHandler",
+            "consumerStrategy", "exceptionHandler", "exchangePattern", "flowControlWindow", "forwardOnCompleted",
+            "forwardOnError", "host", "jwtAlgorithm", "jwtIssuer", "jwtSecret", "jwtSubject", "keyCertChainResource",
+            "keyPassword", "keyResource", "lazyStartProducer", "maxConcurrentCallsPerConnection", "maxMessageSize",
+            "method", "negotiationType", "port", "producerStrategy", "routeControlledStreamObserver", "service",
+            "serviceAccountResource", "streamRepliesTo", "synchronous", "trustCertCollectionResource", "userAgent");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "jwtSecret", "keyPassword");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

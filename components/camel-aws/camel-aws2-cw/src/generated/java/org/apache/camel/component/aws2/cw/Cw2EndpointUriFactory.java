@@ -17,35 +17,13 @@ public class Cw2EndpointUriFactory extends org.apache.camel.support.component.En
 
     private static final String BASE = ":namespace";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(17);
-        props.add("accessKey");
-        props.add("amazonCwClient");
-        props.add("lazyStartProducer");
-        props.add("name");
-        props.add("namespace");
-        props.add("overrideEndpoint");
-        props.add("proxyHost");
-        props.add("proxyPort");
-        props.add("proxyProtocol");
-        props.add("region");
-        props.add("secretKey");
-        props.add("timestamp");
-        props.add("trustAllCertificates");
-        props.add("unit");
-        props.add("uriEndpointOverride");
-        props.add("useDefaultCredentialsProvider");
-        props.add("value");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
-        secretProps.add("accessKey");
-        secretProps.add("secretKey");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "accessKey", "amazonCwClient", "lazyStartProducer", "name", "namespace", "overrideEndpoint", "proxyHost",
+            "proxyPort", "proxyProtocol", "region", "secretKey", "timestamp", "trustAllCertificates", "unit",
+            "uriEndpointOverride", "useDefaultCredentialsProvider", "value");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "accessKey", "secretKey");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

@@ -17,21 +17,11 @@ public class JGroupsRaftEndpointUriFactory extends org.apache.camel.support.comp
 
     private static final String BASE = ":clusterName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(6);
-        props.add("bridgeErrorHandler");
-        props.add("clusterName");
-        props.add("enableRoleChangeEvents");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("lazyStartProducer");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "bridgeErrorHandler", "clusterName", "enableRoleChangeEvents", "exceptionHandler", "exchangePattern",
+            "lazyStartProducer");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

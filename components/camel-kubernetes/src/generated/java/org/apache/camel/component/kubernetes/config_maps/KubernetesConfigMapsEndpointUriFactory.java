@@ -17,62 +17,16 @@ public class KubernetesConfigMapsEndpointUriFactory extends org.apache.camel.sup
 
     private static final String BASE = ":masterUrl";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(34);
-        props.add("apiVersion");
-        props.add("bridgeErrorHandler");
-        props.add("caCertData");
-        props.add("caCertFile");
-        props.add("clientCertData");
-        props.add("clientCertFile");
-        props.add("clientKeyAlgo");
-        props.add("clientKeyData");
-        props.add("clientKeyFile");
-        props.add("clientKeyPassphrase");
-        props.add("connectionTimeout");
-        props.add("crdGroup");
-        props.add("crdName");
-        props.add("crdPlural");
-        props.add("crdScope");
-        props.add("crdVersion");
-        props.add("dnsDomain");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("kubernetesClient");
-        props.add("labelKey");
-        props.add("labelValue");
-        props.add("lazyStartProducer");
-        props.add("masterUrl");
-        props.add("namespace");
-        props.add("oauthToken");
-        props.add("operation");
-        props.add("password");
-        props.add("poolSize");
-        props.add("portName");
-        props.add("portProtocol");
-        props.add("resourceName");
-        props.add("trustCerts");
-        props.add("username");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(12);
-        secretProps.add("caCertData");
-        secretProps.add("caCertFile");
-        secretProps.add("clientCertData");
-        secretProps.add("clientCertFile");
-        secretProps.add("clientKeyAlgo");
-        secretProps.add("clientKeyData");
-        secretProps.add("clientKeyFile");
-        secretProps.add("clientKeyPassphrase");
-        secretProps.add("oauthToken");
-        secretProps.add("password");
-        secretProps.add("trustCerts");
-        secretProps.add("username");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "apiVersion", "bridgeErrorHandler", "caCertData", "caCertFile", "clientCertData", "clientCertFile",
+            "clientKeyAlgo", "clientKeyData", "clientKeyFile", "clientKeyPassphrase", "connectionTimeout", "crdGroup",
+            "crdName", "crdPlural", "crdScope", "crdVersion", "dnsDomain", "exceptionHandler", "exchangePattern",
+            "kubernetesClient", "labelKey", "labelValue", "lazyStartProducer", "masterUrl", "namespace", "oauthToken",
+            "operation", "password", "poolSize", "portName", "portProtocol", "resourceName", "trustCerts", "username");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "caCertData", "caCertFile", "clientCertData", "clientCertFile", "clientKeyAlgo", "clientKeyData",
+            "clientKeyFile", "clientKeyPassphrase", "oauthToken", "password", "trustCerts", "username");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

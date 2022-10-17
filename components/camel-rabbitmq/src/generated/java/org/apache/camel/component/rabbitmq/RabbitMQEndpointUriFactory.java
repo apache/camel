@@ -17,87 +17,24 @@ public class RabbitMQEndpointUriFactory extends org.apache.camel.support.compone
 
     private static final String BASE = ":exchangeName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(67);
-        props.add("additionalHeaders");
-        props.add("additionalProperties");
-        props.add("addresses");
-        props.add("allowCustomHeaders");
-        props.add("allowMessageBodySerialization");
-        props.add("allowNullHeaders");
-        props.add("args");
-        props.add("autoAck");
-        props.add("autoDelete");
-        props.add("automaticRecoveryEnabled");
-        props.add("bridgeEndpoint");
-        props.add("bridgeErrorHandler");
-        props.add("channelPoolMaxSize");
-        props.add("channelPoolMaxWait");
-        props.add("clientProperties");
-        props.add("concurrentConsumers");
-        props.add("connectionFactory");
-        props.add("connectionFactoryExceptionHandler");
-        props.add("connectionTimeout");
-        props.add("consumerTag");
-        props.add("deadLetterExchange");
-        props.add("deadLetterExchangeType");
-        props.add("deadLetterQueue");
-        props.add("deadLetterRoutingKey");
-        props.add("declare");
-        props.add("durable");
-        props.add("exceptionHandler");
-        props.add("exchangeName");
-        props.add("exchangePattern");
-        props.add("exchangeType");
-        props.add("exclusive");
-        props.add("exclusiveConsumer");
-        props.add("guaranteedDeliveries");
-        props.add("hostname");
-        props.add("immediate");
-        props.add("lazyStartProducer");
-        props.add("mandatory");
-        props.add("networkRecoveryInterval");
-        props.add("passive");
-        props.add("password");
-        props.add("portNumber");
-        props.add("prefetchCount");
-        props.add("prefetchEnabled");
-        props.add("prefetchGlobal");
-        props.add("prefetchSize");
-        props.add("publisherAcknowledgements");
-        props.add("publisherAcknowledgementsTimeout");
-        props.add("queue");
-        props.add("reQueue");
-        props.add("recoverFromDeclareException");
-        props.add("requestTimeout");
-        props.add("requestTimeoutCheckerInterval");
-        props.add("requestedChannelMax");
-        props.add("requestedFrameMax");
-        props.add("requestedHeartbeat");
-        props.add("routingKey");
-        props.add("skipDlqDeclare");
-        props.add("skipExchangeDeclare");
-        props.add("skipQueueBind");
-        props.add("skipQueueDeclare");
-        props.add("sslProtocol");
-        props.add("threadPoolSize");
-        props.add("topologyRecoveryEnabled");
-        props.add("transferException");
-        props.add("trustManager");
-        props.add("username");
-        props.add("vhost");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
-        secretProps.add("password");
-        secretProps.add("username");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("arg.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "additionalHeaders", "additionalProperties", "addresses", "allowCustomHeaders",
+            "allowMessageBodySerialization", "allowNullHeaders", "args", "autoAck", "autoDelete",
+            "automaticRecoveryEnabled", "bridgeEndpoint", "bridgeErrorHandler", "channelPoolMaxSize", "channelPoolMaxWait",
+            "clientProperties", "concurrentConsumers", "connectionFactory", "connectionFactoryExceptionHandler",
+            "connectionTimeout", "consumerTag", "deadLetterExchange", "deadLetterExchangeType", "deadLetterQueue",
+            "deadLetterRoutingKey", "declare", "durable", "exceptionHandler", "exchangeName", "exchangePattern",
+            "exchangeType", "exclusive", "exclusiveConsumer", "guaranteedDeliveries", "hostname", "immediate",
+            "lazyStartProducer", "mandatory", "networkRecoveryInterval", "passive", "password", "portNumber",
+            "prefetchCount", "prefetchEnabled", "prefetchGlobal", "prefetchSize", "publisherAcknowledgements",
+            "publisherAcknowledgementsTimeout", "queue", "reQueue", "recoverFromDeclareException", "requestTimeout",
+            "requestTimeoutCheckerInterval", "requestedChannelMax", "requestedFrameMax", "requestedHeartbeat",
+            "routingKey", "skipDlqDeclare", "skipExchangeDeclare", "skipQueueBind", "skipQueueDeclare", "sslProtocol",
+            "threadPoolSize", "topologyRecoveryEnabled", "transferException", "trustManager", "username", "vhost");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "password", "username");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "arg.");
 
     @Override
     public boolean isEnabled(String scheme) {

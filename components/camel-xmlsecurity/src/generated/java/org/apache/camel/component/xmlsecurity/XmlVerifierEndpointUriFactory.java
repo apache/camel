@@ -17,33 +17,13 @@ public class XmlVerifierEndpointUriFactory extends org.apache.camel.support.comp
 
     private static final String BASE = ":name";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(18);
-        props.add("baseUri");
-        props.add("clearHeaders");
-        props.add("cryptoContextProperties");
-        props.add("disallowDoctypeDecl");
-        props.add("keySelector");
-        props.add("lazyStartProducer");
-        props.add("name");
-        props.add("omitXmlDeclaration");
-        props.add("outputNodeSearch");
-        props.add("outputNodeSearchType");
-        props.add("outputXmlEncoding");
-        props.add("removeSignatureElements");
-        props.add("schemaResourceUri");
-        props.add("secureValidation");
-        props.add("uriDereferencer");
-        props.add("validationFailedHandler");
-        props.add("xmlSignature2Message");
-        props.add("xmlSignatureChecker");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "baseUri", "clearHeaders", "cryptoContextProperties", "disallowDoctypeDecl", "keySelector",
+            "lazyStartProducer", "name", "omitXmlDeclaration", "outputNodeSearch", "outputNodeSearchType",
+            "outputXmlEncoding", "removeSignatureElements", "schemaResourceUri", "secureValidation", "uriDereferencer",
+            "validationFailedHandler", "xmlSignature2Message", "xmlSignatureChecker");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

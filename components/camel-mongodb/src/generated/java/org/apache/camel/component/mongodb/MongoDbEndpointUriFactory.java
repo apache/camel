@@ -17,47 +17,15 @@ public class MongoDbEndpointUriFactory extends org.apache.camel.support.componen
 
     private static final String BASE = ":connectionBean";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(29);
-        props.add("authSource");
-        props.add("bridgeErrorHandler");
-        props.add("collection");
-        props.add("collectionIndex");
-        props.add("connectionBean");
-        props.add("consumerType");
-        props.add("createCollection");
-        props.add("cursorRegenerationDelay");
-        props.add("database");
-        props.add("dynamicity");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("hosts");
-        props.add("lazyStartProducer");
-        props.add("mongoConnection");
-        props.add("operation");
-        props.add("outputType");
-        props.add("password");
-        props.add("persistentId");
-        props.add("persistentTailTracking");
-        props.add("readPreference");
-        props.add("streamFilter");
-        props.add("tailTrackCollection");
-        props.add("tailTrackDb");
-        props.add("tailTrackField");
-        props.add("tailTrackIncreasingField");
-        props.add("username");
-        props.add("writeConcern");
-        props.add("writeResultAsHeader");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
-        secretProps.add("password");
-        secretProps.add("username");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "authSource", "bridgeErrorHandler", "collection", "collectionIndex", "connectionBean", "consumerType",
+            "createCollection", "cursorRegenerationDelay", "database", "dynamicity", "exceptionHandler", "exchangePattern",
+            "hosts", "lazyStartProducer", "mongoConnection", "operation", "outputType", "password", "persistentId",
+            "persistentTailTracking", "readPreference", "streamFilter", "tailTrackCollection", "tailTrackDb",
+            "tailTrackField", "tailTrackIncreasingField", "username", "writeConcern", "writeResultAsHeader");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "password", "username");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

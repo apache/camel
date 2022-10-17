@@ -17,64 +17,19 @@ public class SqlEndpointUriFactory extends org.apache.camel.support.component.En
 
     private static final String BASE = ":query";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(46);
-        props.add("allowNamedParameters");
-        props.add("alwaysPopulateStatement");
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("batch");
-        props.add("breakBatchOnConsumeFail");
-        props.add("bridgeErrorHandler");
-        props.add("dataSource");
-        props.add("delay");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("expectedUpdateCount");
-        props.add("greedy");
-        props.add("initialDelay");
-        props.add("lazyStartProducer");
-        props.add("maxMessagesPerPoll");
-        props.add("noop");
-        props.add("onConsume");
-        props.add("onConsumeBatchComplete");
-        props.add("onConsumeFailed");
-        props.add("outputClass");
-        props.add("outputHeader");
-        props.add("outputType");
-        props.add("parametersCount");
-        props.add("placeholder");
-        props.add("pollStrategy");
-        props.add("prepareStatementStrategy");
-        props.add("processingStrategy");
-        props.add("query");
-        props.add("repeatCount");
-        props.add("routeEmptyResultSet");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("separator");
-        props.add("startScheduler");
-        props.add("templateOptions");
-        props.add("timeUnit");
-        props.add("transacted");
-        props.add("useFixedDelay");
-        props.add("useIterator");
-        props.add("useMessageBodyForSql");
-        props.add("usePlaceholder");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        Set<String> prefixes = new HashSet<>(2);
-        prefixes.add("scheduler.");
-        prefixes.add("template.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "allowNamedParameters", "alwaysPopulateStatement", "backoffErrorThreshold", "backoffIdleThreshold",
+            "backoffMultiplier", "batch", "breakBatchOnConsumeFail", "bridgeErrorHandler", "dataSource", "delay",
+            "exceptionHandler", "exchangePattern", "expectedUpdateCount", "greedy", "initialDelay", "lazyStartProducer",
+            "maxMessagesPerPoll", "noop", "onConsume", "onConsumeBatchComplete", "onConsumeFailed", "outputClass",
+            "outputHeader", "outputType", "parametersCount", "placeholder", "pollStrategy", "prepareStatementStrategy",
+            "processingStrategy", "query", "repeatCount", "routeEmptyResultSet", "runLoggingLevel",
+            "scheduledExecutorService", "scheduler", "schedulerProperties", "sendEmptyMessageWhenIdle", "separator",
+            "startScheduler", "templateOptions", "timeUnit", "transacted", "useFixedDelay", "useIterator",
+            "useMessageBodyForSql", "usePlaceholder");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "scheduler.", "template.");
 
     @Override
     public boolean isEnabled(String scheme) {

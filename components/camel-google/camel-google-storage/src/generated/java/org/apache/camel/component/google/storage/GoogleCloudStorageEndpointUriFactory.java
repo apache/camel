@@ -17,52 +17,17 @@ public class GoogleCloudStorageEndpointUriFactory extends org.apache.camel.suppo
 
     private static final String BASE = ":bucketName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(35);
-        props.add("autoCreateBucket");
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("bridgeErrorHandler");
-        props.add("bucketName");
-        props.add("delay");
-        props.add("deleteAfterRead");
-        props.add("destinationBucket");
-        props.add("downloadFileName");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("filter");
-        props.add("greedy");
-        props.add("includeBody");
-        props.add("includeFolders");
-        props.add("initialDelay");
-        props.add("lazyStartProducer");
-        props.add("moveAfterRead");
-        props.add("objectName");
-        props.add("operation");
-        props.add("pollStrategy");
-        props.add("repeatCount");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("serviceAccountKey");
-        props.add("startScheduler");
-        props.add("storageClass");
-        props.add("storageClient");
-        props.add("storageLocation");
-        props.add("timeUnit");
-        props.add("useFixedDelay");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "autoCreateBucket", "backoffErrorThreshold", "backoffIdleThreshold", "backoffMultiplier", "bridgeErrorHandler",
+            "bucketName", "delay", "deleteAfterRead", "destinationBucket", "downloadFileName", "exceptionHandler",
+            "exchangePattern", "filter", "greedy", "includeBody", "includeFolders", "initialDelay", "lazyStartProducer",
+            "moveAfterRead", "objectName", "operation", "pollStrategy", "repeatCount", "runLoggingLevel",
+            "scheduledExecutorService", "scheduler", "schedulerProperties", "sendEmptyMessageWhenIdle",
+            "serviceAccountKey", "startScheduler", "storageClass", "storageClient", "storageLocation", "timeUnit",
+            "useFixedDelay");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "scheduler.");
 
     @Override
     public boolean isEnabled(String scheme) {

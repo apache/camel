@@ -17,84 +17,21 @@ public class TwilioEndpointUriFactory extends org.apache.camel.support.component
 
     private static final String BASE = ":apiName/methodName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(67);
-        props.add("apiName");
-        props.add("applicationSid");
-        props.add("areaCode");
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("body");
-        props.add("bridgeErrorHandler");
-        props.add("callbackUrl");
-        props.add("city");
-        props.add("credentialListSid");
-        props.add("customerName");
-        props.add("delay");
-        props.add("domainName");
-        props.add("endDate");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("friendlyName");
-        props.add("from");
-        props.add("greedy");
-        props.add("inBody");
-        props.add("initialDelay");
-        props.add("ipAccessControlListSid");
-        props.add("ipAddress");
-        props.add("isoCountry");
-        props.add("lazyStartProducer");
-        props.add("mediaUrl");
-        props.add("messagingServiceSid");
-        props.add("methodName");
-        props.add("password");
-        props.add("pathAccountSid");
-        props.add("pathAddOnResultSid");
-        props.add("pathAddressSid");
-        props.add("pathCallSid");
-        props.add("pathConferenceSid");
-        props.add("pathCountryCode");
-        props.add("pathCredentialListSid");
-        props.add("pathDomainSid");
-        props.add("pathIpAccessControlListSid");
-        props.add("pathMessageSid");
-        props.add("pathQueueSid");
-        props.add("pathRecordingSid");
-        props.add("pathReferenceSid");
-        props.add("pathSid");
-        props.add("phoneNumber");
-        props.add("pollStrategy");
-        props.add("postalCode");
-        props.add("qualityScore");
-        props.add("region");
-        props.add("repeatCount");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("startDate");
-        props.add("startScheduler");
-        props.add("status");
-        props.add("street");
-        props.add("timeUnit");
-        props.add("to");
-        props.add("triggerValue");
-        props.add("twiml");
-        props.add("url");
-        props.add("usageCategory");
-        props.add("useFixedDelay");
-        props.add("username");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "apiName", "applicationSid", "areaCode", "backoffErrorThreshold", "backoffIdleThreshold", "backoffMultiplier",
+            "body", "bridgeErrorHandler", "callbackUrl", "city", "credentialListSid", "customerName", "delay",
+            "domainName", "endDate", "exceptionHandler", "exchangePattern", "friendlyName", "from", "greedy", "inBody",
+            "initialDelay", "ipAccessControlListSid", "ipAddress", "isoCountry", "lazyStartProducer", "mediaUrl",
+            "messagingServiceSid", "methodName", "password", "pathAccountSid", "pathAddOnResultSid", "pathAddressSid",
+            "pathCallSid", "pathConferenceSid", "pathCountryCode", "pathCredentialListSid", "pathDomainSid",
+            "pathIpAccessControlListSid", "pathMessageSid", "pathQueueSid", "pathRecordingSid", "pathReferenceSid",
+            "pathSid", "phoneNumber", "pollStrategy", "postalCode", "qualityScore", "region", "repeatCount",
+            "runLoggingLevel", "scheduledExecutorService", "scheduler", "schedulerProperties", "sendEmptyMessageWhenIdle",
+            "startDate", "startScheduler", "status", "street", "timeUnit", "to", "triggerValue", "twiml", "url",
+            "usageCategory", "useFixedDelay", "username");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "scheduler.");
 
     @Override
     public boolean isEnabled(String scheme) {

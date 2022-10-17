@@ -17,41 +17,14 @@ public class XmppEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":host:port/participant";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(22);
-        props.add("bridgeErrorHandler");
-        props.add("connectionConfig");
-        props.add("connectionPollDelay");
-        props.add("createAccount");
-        props.add("doc");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("headerFilterStrategy");
-        props.add("host");
-        props.add("lazyStartProducer");
-        props.add("login");
-        props.add("nickname");
-        props.add("participant");
-        props.add("password");
-        props.add("port");
-        props.add("pubsub");
-        props.add("resource");
-        props.add("room");
-        props.add("roomPassword");
-        props.add("serviceName");
-        props.add("testConnectionOnStartup");
-        props.add("user");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(3);
-        secretProps.add("password");
-        secretProps.add("roomPassword");
-        secretProps.add("user");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "bridgeErrorHandler", "connectionConfig", "connectionPollDelay", "createAccount", "doc", "exceptionHandler",
+            "exchangePattern", "headerFilterStrategy", "host", "lazyStartProducer", "login", "nickname", "participant",
+            "password", "port", "pubsub", "resource", "room", "roomPassword", "serviceName", "testConnectionOnStartup",
+            "user");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "password", "roomPassword", "user");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

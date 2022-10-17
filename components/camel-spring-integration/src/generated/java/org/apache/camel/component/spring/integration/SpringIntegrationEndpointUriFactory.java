@@ -17,23 +17,11 @@ public class SpringIntegrationEndpointUriFactory extends org.apache.camel.suppor
 
     private static final String BASE = ":defaultChannel";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(8);
-        props.add("bridgeErrorHandler");
-        props.add("defaultChannel");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("inOut");
-        props.add("inputChannel");
-        props.add("lazyStartProducer");
-        props.add("outputChannel");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "bridgeErrorHandler", "defaultChannel", "exceptionHandler", "exchangePattern", "inOut", "inputChannel",
+            "lazyStartProducer", "outputChannel");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

@@ -17,23 +17,11 @@ public class IgniteEventsEndpointUriFactory extends org.apache.camel.support.com
 
     private static final String BASE = ":endpointId";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(8);
-        props.add("bridgeErrorHandler");
-        props.add("clusterGroupExpression");
-        props.add("endpointId");
-        props.add("events");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("propagateIncomingBodyIfNoReturnValue");
-        props.add("treatCollectionsAsCacheObjects");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "bridgeErrorHandler", "clusterGroupExpression", "endpointId", "events", "exceptionHandler", "exchangePattern",
+            "propagateIncomingBodyIfNoReturnValue", "treatCollectionsAsCacheObjects");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

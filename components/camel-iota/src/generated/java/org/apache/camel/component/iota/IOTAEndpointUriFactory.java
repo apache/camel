@@ -17,23 +17,10 @@ public class IOTAEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":name";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(8);
-        props.add("depth");
-        props.add("lazyStartProducer");
-        props.add("minWeightMagnitude");
-        props.add("name");
-        props.add("operation");
-        props.add("securityLevel");
-        props.add("tag");
-        props.add("url");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "depth", "lazyStartProducer", "minWeightMagnitude", "name", "operation", "securityLevel", "tag", "url");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

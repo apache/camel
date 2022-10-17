@@ -17,24 +17,11 @@ public class IgniteComputeEndpointUriFactory extends org.apache.camel.support.co
 
     private static final String BASE = ":endpointId";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(9);
-        props.add("clusterGroupExpression");
-        props.add("computeName");
-        props.add("endpointId");
-        props.add("executionType");
-        props.add("lazyStartProducer");
-        props.add("propagateIncomingBodyIfNoReturnValue");
-        props.add("taskName");
-        props.add("timeoutMillis");
-        props.add("treatCollectionsAsCacheObjects");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "clusterGroupExpression", "computeName", "endpointId", "executionType", "lazyStartProducer",
+            "propagateIncomingBodyIfNoReturnValue", "taskName", "timeoutMillis", "treatCollectionsAsCacheObjects");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

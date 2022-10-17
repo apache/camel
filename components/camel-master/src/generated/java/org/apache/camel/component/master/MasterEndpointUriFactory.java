@@ -17,20 +17,10 @@ public class MasterEndpointUriFactory extends org.apache.camel.support.component
 
     private static final String BASE = ":namespace:delegateUri";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(5);
-        props.add("bridgeErrorHandler");
-        props.add("delegateUri");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("namespace");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "bridgeErrorHandler", "delegateUri", "exceptionHandler", "exchangePattern", "namespace");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

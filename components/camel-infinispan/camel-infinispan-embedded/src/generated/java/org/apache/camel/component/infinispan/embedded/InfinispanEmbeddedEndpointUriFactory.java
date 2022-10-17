@@ -17,36 +17,13 @@ public class InfinispanEmbeddedEndpointUriFactory extends org.apache.camel.suppo
 
     private static final String BASE = ":cacheName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(21);
-        props.add("bridgeErrorHandler");
-        props.add("cacheContainer");
-        props.add("cacheContainerConfiguration");
-        props.add("cacheName");
-        props.add("clusteredListener");
-        props.add("configurationUri");
-        props.add("customListener");
-        props.add("defaultValue");
-        props.add("eventTypes");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("flags");
-        props.add("key");
-        props.add("lazyStartProducer");
-        props.add("oldValue");
-        props.add("operation");
-        props.add("queryBuilder");
-        props.add("remappingFunction");
-        props.add("resultHeader");
-        props.add("sync");
-        props.add("value");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "bridgeErrorHandler", "cacheContainer", "cacheContainerConfiguration", "cacheName", "clusteredListener",
+            "configurationUri", "customListener", "defaultValue", "eventTypes", "exceptionHandler", "exchangePattern",
+            "flags", "key", "lazyStartProducer", "oldValue", "operation", "queryBuilder", "remappingFunction",
+            "resultHeader", "sync", "value");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

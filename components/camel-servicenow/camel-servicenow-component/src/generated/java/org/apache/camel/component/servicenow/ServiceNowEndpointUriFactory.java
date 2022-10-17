@@ -17,70 +17,19 @@ public class ServiceNowEndpointUriFactory extends org.apache.camel.support.compo
 
     private static final String BASE = ":instanceName";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(45);
-        props.add("apiUrl");
-        props.add("apiVersion");
-        props.add("dateFormat");
-        props.add("dateTimeFormat");
-        props.add("display");
-        props.add("displayValue");
-        props.add("excludeReferenceLink");
-        props.add("favorites");
-        props.add("httpClientPolicy");
-        props.add("includeAggregates");
-        props.add("includeAvailableAggregates");
-        props.add("includeAvailableBreakdowns");
-        props.add("includeScoreNotes");
-        props.add("includeScores");
-        props.add("inputDisplayValue");
-        props.add("instanceName");
-        props.add("key");
-        props.add("lazyStartProducer");
-        props.add("mapper");
-        props.add("models");
-        props.add("oauthClientId");
-        props.add("oauthClientSecret");
-        props.add("oauthTokenUrl");
-        props.add("password");
-        props.add("perPage");
-        props.add("proxyAuthorizationPolicy");
-        props.add("proxyHost");
-        props.add("proxyPassword");
-        props.add("proxyPort");
-        props.add("proxyUserName");
-        props.add("release");
-        props.add("requestModels");
-        props.add("resource");
-        props.add("responseModels");
-        props.add("retrieveTargetRecordOnImport");
-        props.add("sortBy");
-        props.add("sortDir");
-        props.add("sslContextParameters");
-        props.add("suppressAutoSysField");
-        props.add("suppressPaginationHeader");
-        props.add("table");
-        props.add("target");
-        props.add("timeFormat");
-        props.add("topLevelOnly");
-        props.add("userName");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(5);
-        secretProps.add("oauthClientId");
-        secretProps.add("oauthClientSecret");
-        secretProps.add("oauthTokenUrl");
-        secretProps.add("password");
-        secretProps.add("userName");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        Set<String> prefixes = new HashSet<>(3);
-        prefixes.add("model.");
-        prefixes.add("request-model.");
-        prefixes.add("response-model.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "apiUrl", "apiVersion", "dateFormat", "dateTimeFormat", "display", "displayValue", "excludeReferenceLink",
+            "favorites", "httpClientPolicy", "includeAggregates", "includeAvailableAggregates",
+            "includeAvailableBreakdowns", "includeScoreNotes", "includeScores", "inputDisplayValue", "instanceName", "key",
+            "lazyStartProducer", "mapper", "models", "oauthClientId", "oauthClientSecret", "oauthTokenUrl", "password",
+            "perPage", "proxyAuthorizationPolicy", "proxyHost", "proxyPassword", "proxyPort", "proxyUserName", "release",
+            "requestModels", "resource", "responseModels", "retrieveTargetRecordOnImport", "sortBy", "sortDir",
+            "sslContextParameters", "suppressAutoSysField", "suppressPaginationHeader", "table", "target", "timeFormat",
+            "topLevelOnly", "userName");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "oauthClientId", "oauthClientSecret", "oauthTokenUrl", "password", "userName");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "model.", "request-model.", "response-model.");
 
     @Override
     public boolean isEnabled(String scheme) {

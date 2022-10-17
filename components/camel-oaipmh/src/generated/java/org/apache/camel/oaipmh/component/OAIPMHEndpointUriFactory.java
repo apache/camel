@@ -17,47 +17,15 @@ public class OAIPMHEndpointUriFactory extends org.apache.camel.support.component
 
     private static final String BASE = ":baseUrl";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(30);
-        props.add("backoffErrorThreshold");
-        props.add("backoffIdleThreshold");
-        props.add("backoffMultiplier");
-        props.add("baseUrl");
-        props.add("bridgeErrorHandler");
-        props.add("delay");
-        props.add("exceptionHandler");
-        props.add("exchangePattern");
-        props.add("from");
-        props.add("greedy");
-        props.add("identifier");
-        props.add("ignoreSSLWarnings");
-        props.add("initialDelay");
-        props.add("lazyStartProducer");
-        props.add("metadataPrefix");
-        props.add("onlyFirst");
-        props.add("pollStrategy");
-        props.add("repeatCount");
-        props.add("runLoggingLevel");
-        props.add("scheduledExecutorService");
-        props.add("scheduler");
-        props.add("schedulerProperties");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("set");
-        props.add("ssl");
-        props.add("startScheduler");
-        props.add("timeUnit");
-        props.add("until");
-        props.add("useFixedDelay");
-        props.add("verb");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        Set<String> prefixes = new HashSet<>(1);
-        prefixes.add("scheduler.");
-        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "backoffErrorThreshold", "backoffIdleThreshold", "backoffMultiplier", "baseUrl", "bridgeErrorHandler", "delay",
+            "exceptionHandler", "exchangePattern", "from", "greedy", "identifier", "ignoreSSLWarnings", "initialDelay",
+            "lazyStartProducer", "metadataPrefix", "onlyFirst", "pollStrategy", "repeatCount", "runLoggingLevel",
+            "scheduledExecutorService", "scheduler", "schedulerProperties", "sendEmptyMessageWhenIdle", "set", "ssl",
+            "startScheduler", "timeUnit", "until", "useFixedDelay", "verb");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of(
+            "scheduler.");
 
     @Override
     public boolean isEnabled(String scheme) {

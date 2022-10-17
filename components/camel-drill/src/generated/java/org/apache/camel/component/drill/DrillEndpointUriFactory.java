@@ -17,21 +17,10 @@ public class DrillEndpointUriFactory extends org.apache.camel.support.component.
 
     private static final String BASE = ":host";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(6);
-        props.add("clusterId");
-        props.add("directory");
-        props.add("host");
-        props.add("lazyStartProducer");
-        props.add("mode");
-        props.add("port");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "clusterId", "directory", "host", "lazyStartProducer", "mode", "port");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {

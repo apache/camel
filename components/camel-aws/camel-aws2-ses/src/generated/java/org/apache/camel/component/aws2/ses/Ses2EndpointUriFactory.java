@@ -17,38 +17,13 @@ public class Ses2EndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":from";
 
-    private static final Set<String> PROPERTY_NAMES;
-    private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
-    static {
-        Set<String> props = new HashSet<>(20);
-        props.add("accessKey");
-        props.add("amazonSESClient");
-        props.add("bcc");
-        props.add("cc");
-        props.add("configurationSet");
-        props.add("from");
-        props.add("lazyStartProducer");
-        props.add("overrideEndpoint");
-        props.add("proxyHost");
-        props.add("proxyPort");
-        props.add("proxyProtocol");
-        props.add("region");
-        props.add("replyToAddresses");
-        props.add("returnPath");
-        props.add("secretKey");
-        props.add("subject");
-        props.add("to");
-        props.add("trustAllCertificates");
-        props.add("uriEndpointOverride");
-        props.add("useDefaultCredentialsProvider");
-        PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(2);
-        secretProps.add("accessKey");
-        secretProps.add("secretKey");
-        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
-    }
+    private static final Set<String> PROPERTY_NAMES = Set.of(
+            "accessKey", "amazonSESClient", "bcc", "cc", "configurationSet", "from", "lazyStartProducer",
+            "overrideEndpoint", "proxyHost", "proxyPort", "proxyProtocol", "region", "replyToAddresses", "returnPath",
+            "secretKey", "subject", "to", "trustAllCertificates", "uriEndpointOverride", "useDefaultCredentialsProvider");
+    private static final Set<String> SECRET_PROPERTY_NAMES = Set.of(
+            "accessKey", "secretKey");
+    private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
     @Override
     public boolean isEnabled(String scheme) {
