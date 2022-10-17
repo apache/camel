@@ -839,6 +839,41 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
+         * Enable schema validation for request and response. Disabled by
+         * default for performance reason.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param schemaValidationEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCxfEndpointConsumerBuilder schemaValidationEnabled(
+                Boolean schemaValidationEnabled) {
+            doSetProperty("schemaValidationEnabled", schemaValidationEnabled);
+            return this;
+        }
+        /**
+         * Enable schema validation for request and response. Disabled by
+         * default for performance reason.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param schemaValidationEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCxfEndpointConsumerBuilder schemaValidationEnabled(
+                String schemaValidationEnabled) {
+            doSetProperty("schemaValidationEnabled", schemaValidationEnabled);
+            return this;
+        }
+        /**
          * Sets whether SOAP message validation should be disabled.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -1805,6 +1840,41 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
+         * Enable schema validation for request and response. Disabled by
+         * default for performance reason.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param schemaValidationEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCxfEndpointProducerBuilder schemaValidationEnabled(
+                Boolean schemaValidationEnabled) {
+            doSetProperty("schemaValidationEnabled", schemaValidationEnabled);
+            return this;
+        }
+        /**
+         * Enable schema validation for request and response. Disabled by
+         * default for performance reason.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param schemaValidationEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCxfEndpointProducerBuilder schemaValidationEnabled(
+                String schemaValidationEnabled) {
+            doSetProperty("schemaValidationEnabled", schemaValidationEnabled);
+            return this;
+        }
+        /**
          * Sets whether SOAP message validation should be disabled.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -2516,6 +2586,41 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointBuilder properties(Map values) {
             doSetMultiValueProperties("properties", "properties.", values);
+            return this;
+        }
+        /**
+         * Enable schema validation for request and response. Disabled by
+         * default for performance reason.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param schemaValidationEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCxfEndpointBuilder schemaValidationEnabled(
+                Boolean schemaValidationEnabled) {
+            doSetProperty("schemaValidationEnabled", schemaValidationEnabled);
+            return this;
+        }
+        /**
+         * Enable schema validation for request and response. Disabled by
+         * default for performance reason.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param schemaValidationEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCxfEndpointBuilder schemaValidationEnabled(
+                String schemaValidationEnabled) {
+            doSetProperty("schemaValidationEnabled", schemaValidationEnabled);
             return this;
         }
         /**
