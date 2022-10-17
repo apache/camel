@@ -24,18 +24,14 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class FtpPollEnrichConsumeWithDisconnectAndDeleteIT extends FtpServerTestSupport {
-
-    private static final Logger LOG = LoggerFactory.getLogger(FtpPollEnrichConsumeWithDisconnectAndDeleteIT.class);
+class FtpPollEnrichConsumeWithDisconnectAndDeleteIT extends FtpServerTestSupport {
 
     @Test
-    public void testFtpSimpleConsume() throws Exception {
+    void testFtpSimpleConsume() throws Exception {
         String expected = "Hello World";
 
         // create file using regular file
@@ -49,7 +45,8 @@ public class FtpPollEnrichConsumeWithDisconnectAndDeleteIT extends FtpServerTest
         ProducerTemplate triggerTemplate = context.createProducerTemplate();
         triggerTemplate.sendBody("vm:trigger", "");
 
-        MockEndpoint.assertIsSatisfied(context);
+        mock.setResultWaitTime(TimeUnit.MINUTES.toMillis(1));
+        mock.assertIsSatisfied();
 
         File file = service.ftpFile("poll/hello.txt").toFile();
         await().atMost(3, TimeUnit.SECONDS)

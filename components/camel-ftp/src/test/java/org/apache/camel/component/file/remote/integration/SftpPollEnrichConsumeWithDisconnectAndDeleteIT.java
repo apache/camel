@@ -32,10 +32,10 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
-public class SftpPollEnrichConsumeWithDisconnectAndDeleteIT extends SftpServerTestSupport {
-    @Timeout(value = 30)
+class SftpPollEnrichConsumeWithDisconnectAndDeleteIT extends SftpServerTestSupport {
+    @Timeout(value = 60)
     @Test
-    public void testSftpSimpleConsume() throws Exception {
+    void testSftpSimpleConsume() throws Exception {
         String expected = "Hello World";
 
         // create file using regular file
@@ -49,7 +49,8 @@ public class SftpPollEnrichConsumeWithDisconnectAndDeleteIT extends SftpServerTe
         ProducerTemplate triggerTemplate = context.createProducerTemplate();
         triggerTemplate.sendBody("vm:trigger", "");
 
-        MockEndpoint.assertIsSatisfied(context);
+        mock.setResultWaitTime(TimeUnit.MINUTES.toMillis(1));
+        mock.assertIsSatisfied();
 
         File file = ftpFile("hello.txt").toFile();
         await().atMost(3, TimeUnit.SECONDS)
