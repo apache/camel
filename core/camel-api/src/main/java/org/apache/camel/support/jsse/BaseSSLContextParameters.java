@@ -57,16 +57,16 @@ import org.slf4j.LoggerFactory;
 public abstract class BaseSSLContextParameters extends JsseParameters {
 
     protected static final List<String> DEFAULT_CIPHER_SUITES_FILTER_INCLUDE
-            = Collections.unmodifiableList(Arrays.asList(".*"));
+            = List.of(".*");
 
-    protected static final List<String> DEFAULT_CIPHER_SUITES_FILTER_EXCLUDE = Collections
-            .unmodifiableList(Arrays.asList(".*_NULL_.*", ".*_anon_.*", ".*_EXPORT_.*", ".*_DES_.*", ".*MD5", ".*RC4.*"));
+    protected static final List<String> DEFAULT_CIPHER_SUITES_FILTER_EXCLUDE
+            = List.of(".*_NULL_.*", ".*_anon_.*", ".*_EXPORT_.*", ".*_DES_.*", ".*MD5", ".*RC4.*");
 
     protected static final List<String> DEFAULT_SECURE_SOCKET_PROTOCOLS_FILTER_INCLUDE
-            = Collections.unmodifiableList(Arrays.asList(".*"));
+            = List.of(".*");
 
     protected static final List<String> DEFAULT_SECURE_SOCKET_PROTOCOLS_FILTER_EXCLUDE
-            = Collections.unmodifiableList(Arrays.asList("SSL.*"));
+            = List.of("SSL.*");
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseSSLContextParameters.class);
 

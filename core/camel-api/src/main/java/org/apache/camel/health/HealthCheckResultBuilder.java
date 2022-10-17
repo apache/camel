@@ -108,8 +108,8 @@ public final class HealthCheckResultBuilder implements Builder<HealthCheck.Resul
         final Optional<String> responseMessage = Optional.ofNullable(this.message);
         final Optional<Throwable> responseError = Optional.ofNullable(this.error);
         final Map<String, Object> responseDetails = ObjectHelper.isNotEmpty(this.details)
-                ? Collections.unmodifiableMap(new HashMap<>(this.details))
-                : Collections.emptyMap();
+                ? Map.copyOf(this.details)
+                : Map.of();
 
         return new HealthCheck.Result() {
             @Override

@@ -30,7 +30,7 @@ public class CombinedServiceFilter implements ServiceFilter {
     private final int delegatesSize;
 
     public CombinedServiceFilter(List<ServiceFilter> delegates) {
-        this.delegates = Collections.unmodifiableList(new ArrayList<>(delegates));
+        this.delegates = List.copyOf(delegates);
         this.delegatesSize = this.delegates.size();
     }
 

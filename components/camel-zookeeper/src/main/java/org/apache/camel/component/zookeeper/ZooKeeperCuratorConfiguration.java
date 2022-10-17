@@ -89,7 +89,7 @@ public class ZooKeeperCuratorConfiguration implements Cloneable {
     }
 
     public void setNodes(List<String> nodes) {
-        this.nodes = Collections.unmodifiableList(new ArrayList<>(nodes));
+        this.nodes = List.copyOf(nodes);
     }
 
     public String getNamespace() {
