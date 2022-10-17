@@ -18,6 +18,7 @@ package org.apache.camel.component.zookeeper.cloud.integration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.component.zookeeper.ZooKeeperCuratorConfiguration;
@@ -26,81 +27,79 @@ import org.apache.camel.component.zookeeper.cloud.ZooKeeperServiceDiscovery;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.infra.zookeeper.services.ZooKeeperService;
 import org.apache.camel.test.infra.zookeeper.services.ZooKeeperServiceFactory;
+import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
-import org.apache.curator.utils.CloseableUtils;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ZooKeeperServiceDiscoveryIT {
+class ZooKeeperServiceDiscoveryIT {
     @RegisterExtension
     static ZooKeeperService service = ZooKeeperServiceFactory.createService();
 
     @Test
-    public void testServiceDiscovery() throws Exception {
-        ZooKeeperCuratorConfiguration configuration = new ZooKeeperCuratorConfiguration();
-        ServiceDiscovery<ZooKeeperServiceDiscovery.MetaData> zkDiscovery = null;
+    void testServiceDiscovery() throws Exception {
+        try (CuratorFramework curatorFramework = CuratorFrameworkFactory.builder()
+                .connectString(service.getConnectionString())
+                .retryPolicy(new ExponentialBackoffRetry(1000, 3))
+                .build()) {
 
-        try {
-
+            ZooKeeperCuratorConfiguration configuration = new ZooKeeperCuratorConfiguration();
             configuration.setBasePath("/camel");
-            configuration.setCuratorFramework(CuratorFrameworkFactory.builder()
-                    .connectString(service.getConnectionString())
-                    .retryPolicy(new ExponentialBackoffRetry(1000, 3))
-                    .build());
+            configuration.setCuratorFramework(curatorFramework);
 
-            zkDiscovery = ZooKeeperCuratorHelper.createServiceDiscovery(
-                    configuration,
-                    configuration.getCuratorFramework(),
-                    ZooKeeperServiceDiscovery.MetaData.class);
+            try (ServiceDiscovery<ZooKeeperServiceDiscovery.MetaData> zkDiscovery
+                    = ZooKeeperCuratorHelper.createServiceDiscovery(
+                            configuration,
+                            curatorFramework,
+                            ZooKeeperServiceDiscovery.MetaData.class)) {
 
-            configuration.getCuratorFramework().start();
-            zkDiscovery.start();
+                curatorFramework.start();
+                zkDiscovery.start();
 
-            List<ServiceInstance<ZooKeeperServiceDiscovery.MetaData>> instances = new ArrayList<>();
-            for (int i = 0; i < 3; i++) {
-                ServiceInstance<ZooKeeperServiceDiscovery.MetaData> instance
-                        = ServiceInstance.<ZooKeeperServiceDiscovery.MetaData> builder()
-                                .address("127.0.0.1")
-                                .port(AvailablePortFinder.getNextAvailable())
-                                .name("my-service")
-                                .id("service-" + i)
-                                .build();
+                List<ServiceInstance<ZooKeeperServiceDiscovery.MetaData>> instances = new ArrayList<>();
+                for (int i = 0; i < 3; i++) {
+                    ServiceInstance<ZooKeeperServiceDiscovery.MetaData> instance
+                            = ServiceInstance.<ZooKeeperServiceDiscovery.MetaData> builder()
+                                    .address("127.0.0.1")
+                                    .port(AvailablePortFinder.getNextAvailable())
+                                    .name("my-service")
+                                    .id("service-" + i)
+                                    .build();
 
-                zkDiscovery.registerService(instance);
-                instances.add(instance);
+                    zkDiscovery.registerService(instance);
+                    instances.add(instance);
+                }
+
+                try (ZooKeeperServiceDiscovery discovery = new ZooKeeperServiceDiscovery(configuration)) {
+                    discovery.start();
+
+                    await().atMost(1, TimeUnit.MINUTES).untilAsserted(
+                            () -> assertEquals(3, discovery.getServices("my-service").size()));
+                    List<ServiceDefinition> services = discovery.getServices("my-service");
+                    assertNotNull(services);
+                    assertEquals(3, services.size());
+
+                    for (ServiceDefinition service : services) {
+                        assertEquals(
+                                1,
+                                instances.stream()
+                                        .filter(
+                                                i -> i.getPort() == service.getPort()
+                                                        && i.getAddress().equals(service.getHost())
+                                                        && i.getId().equals(
+                                                                service.getMetadata().get(ServiceDefinition.SERVICE_META_ID))
+                                                        && i.getName().equals(service.getName()))
+                                        .count());
+                    }
+                }
             }
-
-            ZooKeeperServiceDiscovery discovery = new ZooKeeperServiceDiscovery(configuration);
-            discovery.start();
-
-            List<ServiceDefinition> services = discovery.getServices("my-service");
-            assertNotNull(services);
-            assertEquals(3, services.size());
-
-            for (ServiceDefinition service : services) {
-                assertEquals(
-                        1,
-                        instances.stream()
-                                .filter(
-                                        i -> {
-                                            return i.getPort() == service.getPort()
-                                                    && i.getAddress().equals(service.getHost())
-                                                    && i.getId().equals(
-                                                            service.getMetadata().get(ServiceDefinition.SERVICE_META_ID))
-                                                    && i.getName().equals(service.getName());
-                                        })
-                                .count());
-            }
-
-        } finally {
-            CloseableUtils.closeQuietly(zkDiscovery);
-            CloseableUtils.closeQuietly(configuration.getCuratorFramework());
         }
     }
 }
