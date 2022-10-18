@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FtpPollEnrichConsumeWithDisconnectAndDeleteIT extends FtpServerTestSupport {
 
@@ -37,6 +38,10 @@ class FtpPollEnrichConsumeWithDisconnectAndDeleteIT extends FtpServerTestSupport
         // create file using regular file
         template.sendBodyAndHeader("file://{{ftp.root.dir}}/poll", expected, Exchange.FILE_NAME, "hello.txt");
 
+        File file = service.ftpFile("poll/hello.txt").toFile();
+        await().atMost(1, TimeUnit.MINUTES)
+                .untilAsserted(() -> assertTrue(file.exists(), "The file should have been created"));
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(Exchange.FILE_NAME, "hello.txt");
@@ -45,10 +50,9 @@ class FtpPollEnrichConsumeWithDisconnectAndDeleteIT extends FtpServerTestSupport
         ProducerTemplate triggerTemplate = context.createProducerTemplate();
         triggerTemplate.sendBody("vm:trigger", "");
 
-        mock.setResultWaitTime(TimeUnit.MINUTES.toMillis(1));
+        mock.setResultWaitTime(TimeUnit.MINUTES.toMillis(3));
         mock.assertIsSatisfied();
 
-        File file = service.ftpFile("poll/hello.txt").toFile();
         await().atMost(3, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertFalse(file.exists(), "The file should have been deleted"));
     }
