@@ -22,6 +22,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -52,20 +53,19 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ObjectHelperTest {
 
     @Test
-    public void testLoadResourceAsStream() {
-        InputStream res1 = org.apache.camel.util.ObjectHelper
+    void testLoadResourceAsStream() throws Exception {
+        try (InputStream res1 = org.apache.camel.util.ObjectHelper
                 .loadResourceAsStream("org/apache/camel/util/ObjectHelperResourceTestFile.properties");
-        InputStream res2 = org.apache.camel.util.ObjectHelper
-                .loadResourceAsStream("/org/apache/camel/util/ObjectHelperResourceTestFile.properties");
+             InputStream res2 = org.apache.camel.util.ObjectHelper
+                     .loadResourceAsStream("/org/apache/camel/util/ObjectHelperResourceTestFile.properties")) {
 
-        assertNotNull(res1, "Cannot load resource without leading \"/\"");
-        assertNotNull(res2, "Cannot load resource with leading \"/\"");
-
-        IOHelper.close(res1, res2);
+            assertNotNull(res1, "Cannot load resource without leading \"/\"");
+            assertNotNull(res2, "Cannot load resource with leading \"/\"");
+        }
     }
 
     @Test
-    public void testLoadResource() {
+    void testLoadResource() {
         URL url1 = org.apache.camel.util.ObjectHelper
                 .loadResourceAsURL("org/apache/camel/util/ObjectHelperResourceTestFile.properties");
         URL url2 = org.apache.camel.util.ObjectHelper
@@ -76,7 +76,7 @@ public class ObjectHelperTest {
     }
 
     @Test
-    public void testGetPropertyName() throws Exception {
+    void testGetPropertyName() throws Exception {
         Method method = getClass().getMethod("setCheese", String.class);
         assertNotNull(method, "should have found a method!");
 
@@ -89,74 +89,71 @@ public class ObjectHelperTest {
     }
 
     @Test
-    public void testContains() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        context.start();
-        TypeConverter tc = context.getTypeConverter();
+    void testContains() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.start();
+            TypeConverter tc = context.getTypeConverter();
 
-        String[] array = { "foo", "bar" };
-        Collection<String> collection = Arrays.asList(array);
+            String[] array = { "foo", "bar" };
+            Collection<String> collection = Arrays.asList(array);
 
-        assertTrue(ObjectHelper.typeCoerceContains(tc, array, "foo", true));
-        assertTrue(ObjectHelper.typeCoerceContains(tc, array, "FOO", true));
-        assertFalse(ObjectHelper.typeCoerceContains(tc, array, "FOO", false));
+            assertTrue(ObjectHelper.typeCoerceContains(tc, array, "foo", true));
+            assertTrue(ObjectHelper.typeCoerceContains(tc, array, "FOO", true));
+            assertFalse(ObjectHelper.typeCoerceContains(tc, array, "FOO", false));
 
-        assertTrue(ObjectHelper.typeCoerceContains(tc, collection, "foo", true));
-        assertTrue(ObjectHelper.typeCoerceContains(tc, collection, "FOO", true));
-        assertFalse(ObjectHelper.typeCoerceContains(tc, collection, "FOO", false));
+            assertTrue(ObjectHelper.typeCoerceContains(tc, collection, "foo", true));
+            assertTrue(ObjectHelper.typeCoerceContains(tc, collection, "FOO", true));
+            assertFalse(ObjectHelper.typeCoerceContains(tc, collection, "FOO", false));
 
-        assertTrue(ObjectHelper.typeCoerceContains(tc, "foo", "foo", true));
-        assertFalse(ObjectHelper.typeCoerceContains(tc, array, "xyz", true));
-        assertFalse(ObjectHelper.typeCoerceContains(tc, collection, "xyz", true));
-        assertFalse(ObjectHelper.typeCoerceContains(tc, "foo", "xyz", true));
-
-        context.stop();
+            assertTrue(ObjectHelper.typeCoerceContains(tc, "foo", "foo", true));
+            assertFalse(ObjectHelper.typeCoerceContains(tc, array, "xyz", true));
+            assertFalse(ObjectHelper.typeCoerceContains(tc, collection, "xyz", true));
+            assertFalse(ObjectHelper.typeCoerceContains(tc, "foo", "xyz", true));
+        }
     }
 
     @Test
-    public void testContainsStringBuilder() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        context.start();
-        TypeConverter tc = context.getTypeConverter();
+    void testContainsStringBuilder() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.start();
+            TypeConverter tc = context.getTypeConverter();
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("Hello World");
+            StringBuilder sb = new StringBuilder();
+            sb.append("Hello World");
 
-        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, "World", true));
-        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, "WORLD", true));
-        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, "WORLD", false));
-        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, new StringBuffer("World"), true));
-        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, new StringBuilder("World"), true));
+            assertTrue(ObjectHelper.typeCoerceContains(tc, sb, "World", true));
+            assertTrue(ObjectHelper.typeCoerceContains(tc, sb, "WORLD", true));
+            assertFalse(ObjectHelper.typeCoerceContains(tc, sb, "WORLD", false));
+            assertTrue(ObjectHelper.typeCoerceContains(tc, sb, new StringBuffer("World"), true));
+            assertTrue(ObjectHelper.typeCoerceContains(tc, sb, new StringBuilder("World"), true));
 
-        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, "Camel", true));
-        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, new StringBuffer("Camel"), true));
-        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, new StringBuilder("Camel"), true));
-
-        context.stop();
+            assertFalse(ObjectHelper.typeCoerceContains(tc, sb, "Camel", true));
+            assertFalse(ObjectHelper.typeCoerceContains(tc, sb, new StringBuffer("Camel"), true));
+            assertFalse(ObjectHelper.typeCoerceContains(tc, sb, new StringBuilder("Camel"), true));
+        }
     }
 
     @Test
-    public void testContainsStringBuffer() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        context.start();
-        TypeConverter tc = context.getTypeConverter();
+    void testContainsStringBuffer() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.start();
+            TypeConverter tc = context.getTypeConverter();
 
-        StringBuffer sb = new StringBuffer();
-        sb.append("Hello World");
+            StringBuffer sb = new StringBuffer();
+            sb.append("Hello World");
 
-        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, "World", true));
-        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, new StringBuffer("World"), true));
-        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, new StringBuilder("World"), true));
+            assertTrue(ObjectHelper.typeCoerceContains(tc, sb, "World", true));
+            assertTrue(ObjectHelper.typeCoerceContains(tc, sb, new StringBuffer("World"), true));
+            assertTrue(ObjectHelper.typeCoerceContains(tc, sb, new StringBuilder("World"), true));
 
-        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, "Camel", true));
-        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, new StringBuffer("Camel"), true));
-        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, new StringBuilder("Camel"), true));
-
-        context.stop();
+            assertFalse(ObjectHelper.typeCoerceContains(tc, sb, "Camel", true));
+            assertFalse(ObjectHelper.typeCoerceContains(tc, sb, new StringBuffer("Camel"), true));
+            assertFalse(ObjectHelper.typeCoerceContains(tc, sb, new StringBuilder("Camel"), true));
+        }
     }
 
     @Test
-    public void testEqual() {
+    void testEqual() {
         assertTrue(org.apache.camel.util.ObjectHelper.equal(null, null));
         assertTrue(org.apache.camel.util.ObjectHelper.equal("", ""));
         assertTrue(org.apache.camel.util.ObjectHelper.equal(" ", " "));
@@ -181,7 +178,7 @@ public class ObjectHelperTest {
     }
 
     @Test
-    public void testEqualByteArray() {
+    void testEqualByteArray() {
         assertTrue(org.apache.camel.util.ObjectHelper.equalByteArray("Hello".getBytes(), "Hello".getBytes()));
         assertFalse(org.apache.camel.util.ObjectHelper.equalByteArray("Hello".getBytes(), "World".getBytes()));
 
@@ -226,14 +223,13 @@ public class ObjectHelperTest {
     }
 
     @Test
-    public void testCreateIterator() {
-        List<String> list = new ArrayList<>();
-        Iterator<String> iterator = list.iterator();
+    void testCreateIterator() {
+        Iterator<String> iterator = Collections.emptyIterator();
         assertSame(iterator, ObjectHelper.createIterator(iterator), "Should return the same iterator");
     }
 
     @Test
-    public void testCreateIteratorAllowEmpty() {
+    void testCreateIteratorAllowEmpty() {
         String s = "a,b,,c";
         Iterator<?> it = ObjectHelper.createIterator(s, ",", true);
         assertEquals("a", it.next());
@@ -243,7 +239,7 @@ public class ObjectHelperTest {
     }
 
     @Test
-    public void testCreateIteratorPattern() {
+    void testCreateIteratorPattern() {
         String s = "a\nb\rc";
         Iterator<?> it = ObjectHelper.createIterator(s, "\n|\r", false, true);
         assertEquals("a", it.next());
@@ -252,7 +248,7 @@ public class ObjectHelperTest {
     }
 
     @Test
-    public void testCreateIteratorWithStringAndCommaSeparator() {
+    void testCreateIteratorWithStringAndCommaSeparator() {
         String s = "a,b,c";
         Iterator<?> it = ObjectHelper.createIterator(s, ",");
         assertEquals("a", it.next());
@@ -261,7 +257,7 @@ public class ObjectHelperTest {
     }
 
     @Test
-    public void testCreateIteratorWithStringAndCommaSeparatorEmptyString() {
+    void testCreateIteratorWithStringAndCommaSeparatorEmptyString() {
         String s = "";
         Iterator<?> it = ObjectHelper.createIterator(s, ",", true);
         assertEquals("", it.next());
@@ -276,7 +272,7 @@ public class ObjectHelperTest {
     }
 
     @Test
-    public void testCreateIteratorWithStringAndSemiColonSeparator() {
+    void testCreateIteratorWithStringAndSemiColonSeparator() {
         String s = "a;b;c";
         Iterator<?> it = ObjectHelper.createIterator(s, ";");
         assertEquals("a", it.next());
@@ -285,14 +281,14 @@ public class ObjectHelperTest {
     }
 
     @Test
-    public void testCreateIteratorWithStringAndCommaInParanthesesSeparator() {
+    void testCreateIteratorWithStringAndCommaInParanthesesSeparator() {
         String s = "bean:foo?method=bar('A','B','C')";
         Iterator<?> it = ObjectHelper.createIterator(s, ",");
         assertEquals("bean:foo?method=bar('A','B','C')", it.next());
     }
 
     @Test
-    public void testCreateIteratorWithStringAndCommaInParanthesesSeparatorTwo() {
+    void testCreateIteratorWithStringAndCommaInParanthesesSeparatorTwo() {
         String s = "bean:foo?method=bar('A','B','C'),bean:bar?method=cool('A','Hello,World')";
         Iterator<?> it = ObjectHelper.createIterator(s, ",");
         assertEquals("bean:foo?method=bar('A','B','C')", it.next());
@@ -301,14 +297,14 @@ public class ObjectHelperTest {
 
     // CHECKSTYLE:OFF
     @Test
-    public void testCreateIteratorWithPrimitiveArrayTypes() {
+    void testCreateIteratorWithPrimitiveArrayTypes() {
         Iterator<?> it = ObjectHelper.createIterator(new byte[] {13, Byte.MAX_VALUE, 7, Byte.MIN_VALUE}, null);
         assertTrue(it.hasNext());
-        assertEquals(Byte.valueOf((byte)13), it.next());
+        assertEquals((byte) 13, it.next());
         assertTrue(it.hasNext());
         assertEquals(Byte.MAX_VALUE, it.next());
         assertTrue(it.hasNext());
-        assertEquals(Byte.valueOf((byte)7), it.next());
+        assertEquals((byte) 7, it.next());
         assertTrue(it.hasNext());
         assertEquals(Byte.MIN_VALUE, it.next());
         assertFalse(it.hasNext());
@@ -334,11 +330,11 @@ public class ObjectHelperTest {
 
         it = ObjectHelper.createIterator(new short[] {13, Short.MAX_VALUE, 7, Short.MIN_VALUE}, null);
         assertTrue(it.hasNext());
-        assertEquals(Short.valueOf((short)13), it.next());
+        assertEquals((short) 13, it.next());
         assertTrue(it.hasNext());
         assertEquals(Short.MAX_VALUE, it.next());
         assertTrue(it.hasNext());
-        assertEquals(Short.valueOf((short)7), it.next());
+        assertEquals((short) 7, it.next());
         assertTrue(it.hasNext());
         assertEquals(Short.MIN_VALUE, it.next());
         assertFalse(it.hasNext());
@@ -364,11 +360,11 @@ public class ObjectHelperTest {
 
         it = ObjectHelper.createIterator(new int[] {13, Integer.MAX_VALUE, 7, Integer.MIN_VALUE}, null);
         assertTrue(it.hasNext());
-        assertEquals(Integer.valueOf(13), it.next());
+        assertEquals(13, it.next());
         assertTrue(it.hasNext());
         assertEquals(Integer.MAX_VALUE, it.next());
         assertTrue(it.hasNext());
-        assertEquals(Integer.valueOf(7), it.next());
+        assertEquals(7, it.next());
         assertTrue(it.hasNext());
         assertEquals(Integer.MIN_VALUE, it.next());
         assertFalse(it.hasNext());
@@ -394,11 +390,11 @@ public class ObjectHelperTest {
 
         it = ObjectHelper.createIterator(new long[] {13L, Long.MAX_VALUE, 7L, Long.MIN_VALUE}, null);
         assertTrue(it.hasNext());
-        assertEquals(Long.valueOf(13), it.next());
+        assertEquals(13L, it.next());
         assertTrue(it.hasNext());
         assertEquals(Long.MAX_VALUE, it.next());
         assertTrue(it.hasNext());
-        assertEquals(Long.valueOf(7), it.next());
+        assertEquals(7L, it.next());
         assertTrue(it.hasNext());
         assertEquals(Long.MIN_VALUE, it.next());
         assertFalse(it.hasNext());
@@ -424,11 +420,11 @@ public class ObjectHelperTest {
 
         it = ObjectHelper.createIterator(new float[] {13.7F, Float.MAX_VALUE, 7.13F, Float.MIN_VALUE}, null);
         assertTrue(it.hasNext());
-        assertEquals(Float.valueOf(13.7F), it.next());
+        assertEquals(13.7F, it.next());
         assertTrue(it.hasNext());
         assertEquals(Float.MAX_VALUE, it.next());
         assertTrue(it.hasNext());
-        assertEquals(Float.valueOf(7.13F), it.next());
+        assertEquals(7.13F, it.next());
         assertTrue(it.hasNext());
         assertEquals(Float.MIN_VALUE, it.next());
         assertFalse(it.hasNext());
@@ -454,11 +450,11 @@ public class ObjectHelperTest {
 
         it = ObjectHelper.createIterator(new double[] {13.7D, Double.MAX_VALUE, 7.13D, Double.MIN_VALUE}, null);
         assertTrue(it.hasNext());
-        assertEquals(Double.valueOf(13.7D), it.next());
+        assertEquals(13.7D, it.next());
         assertTrue(it.hasNext());
         assertEquals(Double.MAX_VALUE, it.next());
         assertTrue(it.hasNext());
-        assertEquals(Double.valueOf(7.13D), it.next());
+        assertEquals(7.13D, it.next());
         assertTrue(it.hasNext());
         assertEquals(Double.MIN_VALUE, it.next());
         assertFalse(it.hasNext());
@@ -484,15 +480,15 @@ public class ObjectHelperTest {
 
         it = ObjectHelper.createIterator(new char[] {'C', 'a', 'm', 'e', 'l'}, null);
         assertTrue(it.hasNext());
-        assertEquals(Character.valueOf('C'), it.next());
+        assertEquals('C', it.next());
         assertTrue(it.hasNext());
-        assertEquals(Character.valueOf('a'), it.next());
+        assertEquals('a', it.next());
         assertTrue(it.hasNext());
-        assertEquals(Character.valueOf('m'), it.next());
+        assertEquals('m', it.next());
         assertTrue(it.hasNext());
-        assertEquals(Character.valueOf('e'), it.next());
+        assertEquals('e', it.next());
         assertTrue(it.hasNext());
-        assertEquals(Character.valueOf('l'), it.next());
+        assertEquals('l', it.next());
         assertFalse(it.hasNext());
         try {
             it.next();
@@ -549,7 +545,7 @@ public class ObjectHelperTest {
     // CHECKSTYLE:ON
 
     @Test
-    public void testArrayAsIterator() throws Exception {
+    void testArrayAsIterator() {
         String[] data = { "a", "b" };
 
         Iterator<?> iter = ObjectHelper.createIterator(data);
@@ -563,7 +559,7 @@ public class ObjectHelperTest {
     }
 
     @Test
-    public void testIsEmpty() {
+    void testIsEmpty() {
         assertTrue(org.apache.camel.util.ObjectHelper.isEmpty((Object) null));
         assertTrue(org.apache.camel.util.ObjectHelper.isEmpty(""));
         assertTrue(org.apache.camel.util.ObjectHelper.isEmpty(" "));
@@ -574,7 +570,7 @@ public class ObjectHelperTest {
     }
 
     @Test
-    public void testIsNotEmpty() {
+    void testIsNotEmpty() {
         assertFalse(org.apache.camel.util.ObjectHelper.isNotEmpty((Object) null));
         assertFalse(org.apache.camel.util.ObjectHelper.isNotEmpty(""));
         assertFalse(org.apache.camel.util.ObjectHelper.isNotEmpty(" "));
@@ -585,25 +581,25 @@ public class ObjectHelperTest {
     }
 
     @Test
-    public void testIteratorWithComma() {
+    void testIteratorWithComma() {
         Iterator<?> it = ObjectHelper.createIterator("Claus,Jonathan");
         assertEquals("Claus", it.next());
         assertEquals("Jonathan", it.next());
-        assertEquals(false, it.hasNext());
+        assertFalse(it.hasNext());
     }
 
     @Test
-    public void testIteratorWithOtherDelimiter() {
+    void testIteratorWithOtherDelimiter() {
         Iterator<?> it = ObjectHelper.createIterator("Claus#Jonathan", "#");
         assertEquals("Claus", it.next());
         assertEquals("Jonathan", it.next());
-        assertEquals(false, it.hasNext());
+        assertFalse(it.hasNext());
     }
 
     @Test
-    public void testIteratorEmpty() {
+    void testIteratorEmpty() {
         Iterator<?> it = ObjectHelper.createIterator("");
-        assertEquals(false, it.hasNext());
+        assertFalse(it.hasNext());
         try {
             it.next();
             fail("Should have thrown exception");
@@ -613,7 +609,7 @@ public class ObjectHelperTest {
         }
 
         it = ObjectHelper.createIterator("    ");
-        assertEquals(false, it.hasNext());
+        assertFalse(it.hasNext());
         try {
             it.next();
             fail("Should have thrown exception");
@@ -623,7 +619,7 @@ public class ObjectHelperTest {
         }
 
         it = ObjectHelper.createIterator(null);
-        assertEquals(false, it.hasNext());
+        assertFalse(it.hasNext());
         try {
             it.next();
             fail("Should have thrown exception");
@@ -633,7 +629,7 @@ public class ObjectHelperTest {
     }
 
     @Test
-    public void testIteratorIdempotentNext() {
+    void testIteratorIdempotentNext() {
         Iterator<?> it = ObjectHelper.createIterator("a");
         assertTrue(it.hasNext());
         assertTrue(it.hasNext());
@@ -649,7 +645,7 @@ public class ObjectHelperTest {
     }
 
     @Test
-    public void testIteratorIdempotentNextWithNodeList() {
+    void testIteratorIdempotentNextWithNodeList() {
         NodeList nodeList = new NodeList() {
 
             public Node item(int index) {
@@ -678,7 +674,7 @@ public class ObjectHelperTest {
     }
 
     @Test
-    public void testGetCamelContextPropertiesWithPrefix() {
+    void testGetCamelContextPropertiesWithPrefix() {
         CamelContext context = new DefaultCamelContext();
         Map<String, String> properties = context.getGlobalOptions();
         properties.put("camel.object.helper.test1", "test1");
@@ -692,26 +688,26 @@ public class ObjectHelperTest {
     }
 
     @Test
-    public void testEvaluateAsPredicate() throws Exception {
-        assertEquals(false, org.apache.camel.util.ObjectHelper.evaluateValuePredicate(null));
-        assertEquals(true, org.apache.camel.util.ObjectHelper.evaluateValuePredicate(123));
+    void testEvaluateAsPredicate() {
+        assertFalse(org.apache.camel.util.ObjectHelper.evaluateValuePredicate(null));
+        assertTrue(org.apache.camel.util.ObjectHelper.evaluateValuePredicate(123));
 
-        assertEquals(true, org.apache.camel.util.ObjectHelper.evaluateValuePredicate("true"));
-        assertEquals(true, org.apache.camel.util.ObjectHelper.evaluateValuePredicate("TRUE"));
-        assertEquals(false, org.apache.camel.util.ObjectHelper.evaluateValuePredicate("false"));
-        assertEquals(false, org.apache.camel.util.ObjectHelper.evaluateValuePredicate("FALSE"));
-        assertEquals(true, org.apache.camel.util.ObjectHelper.evaluateValuePredicate("foobar"));
-        assertEquals(false, org.apache.camel.util.ObjectHelper.evaluateValuePredicate(""));
-        assertEquals(false, org.apache.camel.util.ObjectHelper.evaluateValuePredicate(" "));
+        assertTrue(org.apache.camel.util.ObjectHelper.evaluateValuePredicate("true"));
+        assertTrue(org.apache.camel.util.ObjectHelper.evaluateValuePredicate("TRUE"));
+        assertFalse(org.apache.camel.util.ObjectHelper.evaluateValuePredicate("false"));
+        assertFalse(org.apache.camel.util.ObjectHelper.evaluateValuePredicate("FALSE"));
+        assertTrue(org.apache.camel.util.ObjectHelper.evaluateValuePredicate("foobar"));
+        assertFalse(org.apache.camel.util.ObjectHelper.evaluateValuePredicate(""));
+        assertFalse(org.apache.camel.util.ObjectHelper.evaluateValuePredicate(" "));
 
         List<String> list = new ArrayList<>();
-        assertEquals(false, org.apache.camel.util.ObjectHelper.evaluateValuePredicate(list));
+        assertFalse(org.apache.camel.util.ObjectHelper.evaluateValuePredicate(list));
         list.add("foo");
-        assertEquals(true, org.apache.camel.util.ObjectHelper.evaluateValuePredicate(list));
+        assertTrue(org.apache.camel.util.ObjectHelper.evaluateValuePredicate(list));
     }
 
     @Test
-    public void testIsPrimitiveArrayType() {
+    void testIsPrimitiveArrayType() {
         assertTrue(org.apache.camel.util.ObjectHelper.isPrimitiveArrayType(byte[].class));
         assertTrue(org.apache.camel.util.ObjectHelper.isPrimitiveArrayType(short[].class));
         assertTrue(org.apache.camel.util.ObjectHelper.isPrimitiveArrayType(int[].class));
@@ -736,12 +732,12 @@ public class ObjectHelperTest {
     }
 
     @Test
-    public void testGetDefaultCharSet() {
+    void testGetDefaultCharSet() {
         assertNotNull(org.apache.camel.util.ObjectHelper.getDefaultCharacterSet());
     }
 
     @Test
-    public void testConvertPrimitiveTypeToWrapper() {
+    void testConvertPrimitiveTypeToWrapper() {
         assertEquals("java.lang.Integer",
                 org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(int.class).getName());
         assertEquals("java.lang.Long",
@@ -764,7 +760,7 @@ public class ObjectHelperTest {
     }
 
     @Test
-    public void testAsString() {
+    void testAsString() {
         String[] args = new String[] { "foo", "bar" };
         String out = org.apache.camel.util.ObjectHelper.asString(args);
         assertNotNull(out);
@@ -772,54 +768,54 @@ public class ObjectHelperTest {
     }
 
     @Test
-    public void testName() {
+    void testName() {
         assertEquals("java.lang.Integer", org.apache.camel.util.ObjectHelper.name(Integer.class));
-        assertEquals(null, org.apache.camel.util.ObjectHelper.name(null));
+        assertNull(org.apache.camel.util.ObjectHelper.name(null));
     }
 
     @Test
-    public void testClassName() {
+    void testClassName() {
         assertEquals("java.lang.Integer", org.apache.camel.util.ObjectHelper.className(Integer.valueOf("5")));
-        assertEquals(null, org.apache.camel.util.ObjectHelper.className(null));
+        assertNull(org.apache.camel.util.ObjectHelper.className(null));
     }
 
     @Test
-    public void testGetSystemPropertyDefault() {
+    void testGetSystemPropertyDefault() {
         assertEquals("foo", org.apache.camel.util.ObjectHelper.getSystemProperty("CamelFooDoesNotExist", "foo"));
     }
 
     @Test
-    public void testGetSystemPropertyBooleanDefault() {
-        assertEquals(true, org.apache.camel.util.ObjectHelper.getSystemProperty("CamelFooDoesNotExist", Boolean.TRUE));
+    void testGetSystemPropertyBooleanDefault() {
+        assertTrue(org.apache.camel.util.ObjectHelper.getSystemProperty("CamelFooDoesNotExist", Boolean.TRUE));
     }
 
     @Test
-    public void testMatches() {
+    void testMatches() {
         List<Object> data = new ArrayList<>();
         data.add("foo");
         data.add("bar");
-        assertEquals(true, org.apache.camel.util.ObjectHelper.matches(data));
+        assertTrue(org.apache.camel.util.ObjectHelper.matches(data));
 
         data.clear();
         data.add(Boolean.FALSE);
         data.add("bar");
-        assertEquals(false, org.apache.camel.util.ObjectHelper.matches(data));
+        assertFalse(org.apache.camel.util.ObjectHelper.matches(data));
 
         data.clear();
-        assertEquals(false, org.apache.camel.util.ObjectHelper.matches(data));
+        assertFalse(org.apache.camel.util.ObjectHelper.matches(data));
     }
 
     @Test
-    public void testToBoolean() {
+    void testToBoolean() {
         assertEquals(Boolean.TRUE, org.apache.camel.util.ObjectHelper.toBoolean(Boolean.TRUE));
         assertEquals(Boolean.TRUE, org.apache.camel.util.ObjectHelper.toBoolean("true"));
         assertEquals(Boolean.TRUE, org.apache.camel.util.ObjectHelper.toBoolean(Integer.valueOf("1")));
         assertEquals(Boolean.FALSE, org.apache.camel.util.ObjectHelper.toBoolean(Integer.valueOf("0")));
-        assertEquals(null, org.apache.camel.util.ObjectHelper.toBoolean(new Date()));
+        assertNull(org.apache.camel.util.ObjectHelper.toBoolean(new Date()));
     }
 
     @Test
-    public void testIteratorWithMessage() {
+    void testIteratorWithMessage() {
         Message msg = new DefaultMessage(new DefaultCamelContext());
         msg.setBody("a,b,c");
 
@@ -837,7 +833,7 @@ public class ObjectHelperTest {
     }
 
     @Test
-    public void testIteratorWithEmptyMessage() {
+    void testIteratorWithEmptyMessage() {
         Message msg = new DefaultMessage(new DefaultCamelContext());
         msg.setBody("");
 
@@ -853,7 +849,7 @@ public class ObjectHelperTest {
     }
 
     @Test
-    public void testIteratorWithNullMessage() {
+    void testIteratorWithNullMessage() {
         Message msg = new DefaultMessage(new DefaultCamelContext());
         msg.setBody(null);
 
@@ -868,12 +864,13 @@ public class ObjectHelperTest {
     }
 
     @Test
-    public void testIterable() {
+    void testIterable() {
         final List<String> data = new ArrayList<>();
         data.add("A");
         data.add("B");
         data.add("C");
         Iterable<String> itb = new Iterable<String>() {
+            @Override
             public Iterator<String> iterator() {
                 return data.iterator();
             }
@@ -892,20 +889,20 @@ public class ObjectHelperTest {
     }
 
     @Test
-    public void testLookupConstantFieldValue() {
+    void testLookupConstantFieldValue() {
         assertEquals("CamelFileName", org.apache.camel.util.ObjectHelper.lookupConstantFieldValue(Exchange.class, "FILE_NAME"));
-        assertEquals(null, org.apache.camel.util.ObjectHelper.lookupConstantFieldValue(Exchange.class, "XXX"));
-        assertEquals(null, org.apache.camel.util.ObjectHelper.lookupConstantFieldValue(null, "FILE_NAME"));
+        assertNull(org.apache.camel.util.ObjectHelper.lookupConstantFieldValue(Exchange.class, "XXX"));
+        assertNull(org.apache.camel.util.ObjectHelper.lookupConstantFieldValue(null, "FILE_NAME"));
     }
 
     @Test
-    public void testHasDefaultPublicNoArgConstructor() {
+    void testHasDefaultPublicNoArgConstructor() {
         assertTrue(org.apache.camel.util.ObjectHelper.hasDefaultPublicNoArgConstructor(ObjectHelperTest.class));
         assertFalse(org.apache.camel.util.ObjectHelper.hasDefaultPublicNoArgConstructor(MyStaticClass.class));
     }
 
     @Test
-    public void testIdentityHashCode() {
+    void testIdentityHashCode() {
         MyDummyObject dummy = new MyDummyObject("Camel");
 
         String code = org.apache.camel.util.ObjectHelper.getIdentityHashCode(dummy);
@@ -919,7 +916,7 @@ public class ObjectHelperTest {
     }
 
     @Test
-    public void testIsNaN() throws Exception {
+    void testIsNaN() {
         assertTrue(org.apache.camel.util.ObjectHelper.isNaN(Float.NaN));
         assertTrue(org.apache.camel.util.ObjectHelper.isNaN(Double.NaN));
 
@@ -934,7 +931,7 @@ public class ObjectHelperTest {
     }
 
     @Test
-    public void testNotNull() {
+    void testNotNull() {
         Long expected = 3L;
         Long actual = org.apache.camel.util.ObjectHelper.notNull(expected, "expected");
         assertSame(expected, actual, "Didn't get the same object back!");
@@ -959,65 +956,64 @@ public class ObjectHelperTest {
     }
 
     @Test
-    public void testSameMethodIsOverride() throws Exception {
+    void testSameMethodIsOverride() throws Exception {
         Method m = MyOtherFooBean.class.getMethod("toString", Object.class);
         assertTrue(org.apache.camel.util.ObjectHelper.isOverridingMethod(m, m, false));
     }
 
     @Test
-    public void testOverloadIsNotOverride() throws Exception {
+    void testOverloadIsNotOverride() throws Exception {
         Method m1 = MyOtherFooBean.class.getMethod("toString", Object.class);
         Method m2 = MyOtherFooBean.class.getMethod("toString", String.class);
         assertFalse(org.apache.camel.util.ObjectHelper.isOverridingMethod(m2, m1, false));
     }
 
     @Test
-    public void testOverrideEquivalentSignatureFromSiblingClassIsNotOverride() throws Exception {
+    void testOverrideEquivalentSignatureFromSiblingClassIsNotOverride() throws Exception {
         Method m1 = Double.class.getMethod("intValue");
         Method m2 = Float.class.getMethod("intValue");
         assertFalse(org.apache.camel.util.ObjectHelper.isOverridingMethod(m2, m1, false));
     }
 
     @Test
-    public void testOverrideEquivalentSignatureFromUpperClassIsOverride() throws Exception {
+    void testOverrideEquivalentSignatureFromUpperClassIsOverride() throws Exception {
         Method m1 = Double.class.getMethod("intValue");
         Method m2 = Number.class.getMethod("intValue");
         assertTrue(org.apache.camel.util.ObjectHelper.isOverridingMethod(m2, m1, false));
     }
 
     @Test
-    public void testInheritedMethodCanOverrideInterfaceMethod() throws Exception {
+    void testInheritedMethodCanOverrideInterfaceMethod() throws Exception {
         Method m1 = AbstractClassSize.class.getMethod("size");
         Method m2 = InterfaceSize.class.getMethod("size");
         assertTrue(org.apache.camel.util.ObjectHelper.isOverridingMethod(Clazz.class, m2, m1, false));
     }
 
     @Test
-    public void testNonInheritedMethodCantOverrideInterfaceMethod() throws Exception {
+    void testNonInheritedMethodCantOverrideInterfaceMethod() throws Exception {
         Method m1 = AbstractClassSize.class.getMethod("size");
         Method m2 = InterfaceSize.class.getMethod("size");
         assertFalse(org.apache.camel.util.ObjectHelper.isOverridingMethod(InterfaceSize.class, m2, m1, false));
     }
 
     @Test
-    public void testAsList() {
+    void testAsList() {
         List<Object> out0 = org.apache.camel.util.ObjectHelper.asList(null);
         assertNotNull(out0);
-        boolean b2 = out0 instanceof List && out0.size() == 0;
+        boolean b2 = out0.size() == 0;
         assertTrue(b2);
 
         List<Object> out1 = org.apache.camel.util.ObjectHelper.asList(new Object[0]);
         assertNotNull(out1);
-        boolean b1 = out1 instanceof List && out1.size() == 0;
+        boolean b1 = out1.size() == 0;
         assertTrue(b1);
 
         String[] args = new String[] { "foo", "bar" };
         List<Object> out2 = org.apache.camel.util.ObjectHelper.asList(args);
         assertNotNull(out2);
-        boolean b = out2 instanceof List && out2.size() == 2;
+        boolean b = out2.size() == 2;
         assertTrue(b);
         assertEquals("foo", out2.get(0));
         assertEquals("bar", out2.get(1));
     }
-
 }
