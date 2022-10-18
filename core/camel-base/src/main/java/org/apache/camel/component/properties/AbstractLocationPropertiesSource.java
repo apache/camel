@@ -93,6 +93,7 @@ public abstract class AbstractLocationPropertiesSource extends ServiceSupport
 
     @Override
     public String getProperty(String name) {
+        system.out.println("[CTEST][GET-PARAM] "+ name + getStackTrace()) // CTEST
         return properties.getProperty(name);
     }
 
@@ -103,6 +104,7 @@ public abstract class AbstractLocationPropertiesSource extends ServiceSupport
      * @param value the value
      */
     public void setProperty(String key, String value) {
+        system.out.println("[CTEST][SET-PARAM] "+ key + getStackTrace()) // CTEST
         properties.setProperty(key, value);
     }
 
