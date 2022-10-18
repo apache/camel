@@ -550,8 +550,10 @@ public final class ObjectHelper {
                     int count = StringHelper.countChar(value, DEFAULT_DELIMITER_CHAR) + 1;
                     return () -> StringHelper.splitOnCharacterAsIterator(value, DEFAULT_DELIMITER_CHAR, count);
                 }
+            } else if (pattern) {
+                return () -> new Scanner(value, delimiter);
             }
-            return () -> new Scanner(value, delimiter);
+            return () -> new StringIterator(value, delimiter);
         } else if (allowEmptyValues || org.apache.camel.util.ObjectHelper.isNotEmpty(value)) {
             return Collections.singletonList(value);
         } else {
@@ -770,9 +772,10 @@ public final class ObjectHelper {
                         return (Iterable<String>) () -> StringHelper.splitOnCharacterAsIterator(s, DEFAULT_DELIMITER_CHAR,
                                 count);
                     }
-                } else {
+                } else if (pattern) {
                     return (Iterable<String>) () -> new Scanner(s, delimiter);
                 }
+                return (Iterable<String>) () -> new StringIterator(s, delimiter);
             } else {
                 return (Iterable<Object>) () -> {
                     // use a plain iterator that returns the value as is as there are only a single value
@@ -886,4 +889,98 @@ public final class ObjectHelper {
         return false;
     }
 
+    /**
+     * An {@link Iterator} to split an input {@code String} content according to a specific {@code String} literal as
+     * separator.
+     */
+    private static class StringIterator implements Iterator<String> {
+
+        /**
+         * Flag indicating that the indexes have already been computed.
+         */
+        private boolean computed;
+        /**
+         * The current {@code from} index.
+         */
+        private int from;
+        /**
+         * The current {@code to} index.
+         */
+        private int to;
+        /**
+         * The content to split.
+         */
+        private final String content;
+        /**
+         * The separator to use when splitting the content.
+         */
+        private final String separator;
+        /**
+         * The length of the separator.
+         */
+        private final int separatorLength;
+        /**
+         * The length of the part of the content to split.
+         */
+        private final int contentLength;
+
+        /**
+         * Construct a {@code StringIterator} with the specified content and separator.
+         *
+         * @param content   the content to split.
+         * @param separator the separator to use when splitting the content.
+         */
+        StringIterator(String content, String separator) {
+            this.content = content;
+            this.separator = separator;
+            this.separatorLength = separator.length();
+            boolean skipStart = content.startsWith(separator);
+            boolean skipEnd = content.endsWith(separator);
+            if (skipStart && skipEnd) {
+                this.from = separatorLength;
+                this.contentLength = content.length() - separatorLength;
+            } else if (skipStart) {
+                this.from = separatorLength;
+                this.contentLength = content.length();
+            } else if (skipEnd) {
+                this.contentLength = content.length() - separatorLength;
+            } else {
+                this.contentLength = content.length();
+            }
+        }
+
+        @Override
+        public boolean hasNext() {
+            if (computed) {
+                return to != -1;
+            } else if (to == -1) {
+                return false;
+            }
+            int index = content.indexOf(separator, from);
+            if (index == -1 || index == contentLength) {
+                to = contentLength;
+            } else {
+                to = index;
+            }
+            computed = true;
+            return true;
+        }
+
+        @Override
+        public String next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            String answer;
+            if (to == contentLength) {
+                answer = content.substring(from, contentLength);
+                to = -1;
+            } else {
+                answer = content.substring(from, to);
+                from = to + separatorLength;
+            }
+            computed = false;
+            return answer;
+        }
+    }
 }

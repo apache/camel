@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -47,8 +49,17 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ObjectHelper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ObjectHelperTest {
 
@@ -1015,5 +1026,30 @@ public class ObjectHelperTest {
         assertTrue(b);
         assertEquals("foo", out2.get(0));
         assertEquals("bar", out2.get(1));
+    }
+
+    @Test
+    void testIterableWithNullContent() {
+        assertEquals("", StreamSupport.stream(ObjectHelper.createIterable(null, ";;").spliterator(), false)
+                .collect(Collectors.joining("-")));
+    }
+
+    @Test
+    void testIterableWithEmptyContent() {
+        assertEquals("", StreamSupport.stream(ObjectHelper.createIterable("", ";;").spliterator(), false)
+                .collect(Collectors.joining("-")));
+    }
+
+    @Test
+    void testIterableWithOneElement() {
+        assertEquals("foo", StreamSupport.stream(ObjectHelper.createIterable("foo", ";;").spliterator(), false)
+                .collect(Collectors.joining("-")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "foo;;bar", ";;foo;;bar", "foo;;bar;;", ";;foo;;bar;;" })
+    void testIterableWithTwoElements(String content) {
+        assertEquals("foo-bar", StreamSupport.stream(ObjectHelper.createIterable(content, ";;").spliterator(), false)
+                .collect(Collectors.joining("-")));
     }
 }
