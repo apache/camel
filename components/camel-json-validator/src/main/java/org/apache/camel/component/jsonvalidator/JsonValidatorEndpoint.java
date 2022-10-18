@@ -127,14 +127,11 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
                     }
                 }
             }
+        } catch (ValidationException e) {
+            throw e; // already as validation error
         } catch (Exception e) {
-            if (e instanceof ValidationException) {
-                // already as validation error
-                throw e;
-            } else {
-                // general error
-                this.errorHandler.handleErrors(exchange, schema, e);
-            }
+            // general error
+            this.errorHandler.handleErrors(exchange, schema, e);
         } finally {
             if (cache != null) {
                 cache.reset();
