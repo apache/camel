@@ -201,10 +201,9 @@ public class BeanExpression implements Expression, Predicate {
                 // regular non ognl invocation
                 return invokeBean(beanHolder, beanName, method, exchange);
             }
+        } catch (RuntimeBeanExpressionException e) {
+            throw e;
         } catch (Exception e) {
-            if (e instanceof RuntimeBeanExpressionException) {
-                throw (RuntimeBeanExpressionException) e;
-            }
             throw new RuntimeBeanExpressionException(exchange, getBeanName(exchange, beanName, beanHolder), method, e);
         }
     }
