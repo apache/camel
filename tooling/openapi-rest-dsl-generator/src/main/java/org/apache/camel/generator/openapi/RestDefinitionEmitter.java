@@ -16,6 +16,7 @@
  */
 package org.apache.camel.generator.openapi;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,11 +46,7 @@ class RestDefinitionEmitter implements CodeEmitter<RestsDefinition> {
             final Method declaredMethod = type.getMethod(method, parameterTypesOf(arguments));
 
             variable = declaredMethod.invoke(variable, arguments);
-        } catch (final Exception e) {
-            if (e instanceof RuntimeException) {
-                throw (RuntimeException) e;
-            }
-
+        } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
             throw new IllegalStateException(e);
         }
 
