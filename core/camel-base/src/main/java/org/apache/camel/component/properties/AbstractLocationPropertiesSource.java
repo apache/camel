@@ -43,6 +43,14 @@ public abstract class AbstractLocationPropertiesSource extends ServiceSupport
 
     public abstract Properties loadPropertiesFromLocation(PropertiesComponent propertiesComponent, PropertiesLocation location);
 
+    private String getStackTrace() {
+    String stacktrace = " ";
+    for (StackTraceElement element : Thread.currentThread().getStackTrace()) {
+      stacktrace = stacktrace.concat(element.getClassName() + "\t");
+    }
+    return stacktrace;
+    }
+
     @Override
     public PropertiesLocation getLocation() {
         return location;
