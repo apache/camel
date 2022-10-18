@@ -872,10 +872,9 @@ public abstract class AbstractCamelContext extends BaseService
         try {
             uri = EndpointHelper.resolveEndpointUriPropertyPlaceholders(this, uri);
             return NormalizedUri.newNormalizedUri(uri, false);
+        } catch (ResolveEndpointFailedException e) {
+            throw e;
         } catch (Exception e) {
-            if (e instanceof ResolveEndpointFailedException) {
-                throw e;
-            }
             throw new ResolveEndpointFailedException(uri, e);
         }
     }
