@@ -1082,18 +1082,16 @@ public class RestOpenApiReader {
             final List<?> values = allowableValues.stream().map(v -> {
                 try {
                     return valueOf.invoke(v);
+                } catch (RuntimeException e) {
+                    throw e;
                 } catch (Throwable e) {
-                    if (e instanceof RuntimeException) {
-                        throw (RuntimeException) e;
-                    }
                     throw new IllegalStateException(e);
                 }
             }).collect(Collectors.toList());
             setEnum.invoke(values);
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Throwable e) {
-            if (e instanceof RuntimeException) {
-                throw (RuntimeException) e;
-            }
             throw new IllegalStateException(e);
         }
     }
