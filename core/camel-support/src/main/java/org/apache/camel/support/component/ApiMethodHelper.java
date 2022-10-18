@@ -521,12 +521,15 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
 
         try {
             return method.getMethod().invoke(proxy, values);
+        } catch (InvocationTargetException e) {
+            final Throwable cause = e.getCause();
+
+            String message = cause != null ? cause.getMessage() : e.getMessage();
+
+            throw new RuntimeCamelException(
+                    String.format("Error invoking %s with %s: %s", method.getName(), properties, message),
+                    cause != null ? cause : e);
         } catch (Throwable e) {
-            if (e instanceof InvocationTargetException) {
-                // get API exception
-                final Throwable cause = e.getCause();
-                e = (cause != null) ? cause : e;
-            }
             throw new RuntimeCamelException(
                     String.format("Error invoking %s with %s: %s", method.getName(), properties, e.getMessage()), e);
         }
