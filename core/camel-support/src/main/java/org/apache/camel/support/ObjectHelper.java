@@ -27,6 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.Callable;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -551,7 +552,7 @@ public final class ObjectHelper {
                     return () -> StringHelper.splitOnCharacterAsIterator(value, DEFAULT_DELIMITER_CHAR, count);
                 }
             } else if (pattern) {
-                return () -> new Scanner(value, delimiter);
+                return () -> new StringIteratorForPattern(value, delimiter);
             }
             return () -> new StringIterator(value, delimiter);
         } else if (allowEmptyValues || org.apache.camel.util.ObjectHelper.isNotEmpty(value)) {
@@ -773,7 +774,7 @@ public final class ObjectHelper {
                                 count);
                     }
                 } else if (pattern) {
-                    return (Iterable<String>) () -> new Scanner(s, delimiter);
+                    return (Iterable<String>) () -> new StringIteratorForPattern(s, delimiter);
                 }
                 return (Iterable<String>) () -> new StringIterator(s, delimiter);
             } else {
@@ -978,6 +979,92 @@ public final class ObjectHelper {
             } else {
                 answer = content.substring(from, to);
                 from = to + separatorLength;
+            }
+            computed = false;
+            return answer;
+        }
+    }
+
+    /**
+     * An {@link Iterator} to split an input {@code String} content according to a specific pattern as separator.
+     */
+    private static class StringIteratorForPattern implements Iterator<String> {
+
+        /**
+         * Flag indicating that the indexes have already been computed.
+         */
+        private boolean computed;
+        /**
+         * The current {@code from} index.
+         */
+        private int from;
+        /**
+         * The current {@code to} index.
+         */
+        private int to;
+        /**
+         * The content to split.
+         */
+        private final String content;
+        /**
+         * The matcher that will match the content to split against the pattern used as separator.
+         */
+        private final Matcher matcher;
+        /**
+         * The length of the part of the content to split.
+         */
+        private int contentLength;
+
+        /**
+         * Construct a {@code StringIterator} with the specified content and separator.
+         *
+         * @param content the content to split.
+         * @param pattern the pattern to use when splitting the content.
+         */
+        StringIteratorForPattern(String content, String pattern) {
+            this.content = content;
+            this.matcher = Pattern.compile(pattern).matcher(content);
+            matcher.useTransparentBounds(true);
+            matcher.useAnchoringBounds(false);
+            this.contentLength = content.length();
+        }
+
+        @Override
+        public boolean hasNext() {
+            for (;;) {
+                if (computed) {
+                    return to != -1;
+                } else if (to == -1) {
+                    return false;
+                }
+                if (matcher.find(from)) {
+                    to = matcher.start();
+                    if (from == to) {
+                        from = matcher.end();
+                        continue;
+                    } else if (matcher.end() == contentLength) {
+                        contentLength = to;
+                    }
+                } else {
+                    to = contentLength;
+                }
+                computed = true;
+                return true;
+            }
+        }
+
+        @Override
+        public String next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            String answer;
+            if (to == contentLength) {
+                answer = content.substring(from, contentLength);
+                to = -1;
+            } else {
+                answer = content.substring(from, to);
+                from = matcher.end();
             }
             computed = false;
             return answer;

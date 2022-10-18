@@ -1052,4 +1052,30 @@ public class ObjectHelperTest {
         assertEquals("foo-bar", StreamSupport.stream(ObjectHelper.createIterable(content, ";;").spliterator(), false)
                 .collect(Collectors.joining("-")));
     }
+
+    @Test
+    void testIterableUsingPatternWithNullContent() {
+        assertEquals("", StreamSupport.stream(ObjectHelper.createIterable(null, ";+", false, true).spliterator(), false)
+                .collect(Collectors.joining("-")));
+    }
+
+    @Test
+    void testIterableUsingPatternWithEmptyContent() {
+        assertEquals("", StreamSupport.stream(ObjectHelper.createIterable("", ";+", false, true).spliterator(), false)
+                .collect(Collectors.joining("-")));
+    }
+
+    @Test
+    void testIterableUsingPatternWithOneElement() {
+        assertEquals("foo", StreamSupport.stream(ObjectHelper.createIterable("foo", ";+", false, true).spliterator(), false)
+                .collect(Collectors.joining("-")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "foo;;bar", ";;foo;;bar", "foo;;bar;;", ";;foo;;bar;;" })
+    void testIterableUsingPatternWithTwoElements(String content) {
+        assertEquals("foo-bar",
+                StreamSupport.stream(ObjectHelper.createIterable(content, ";+", false, true).spliterator(), false)
+                        .collect(Collectors.joining("-")));
+    }
 }
