@@ -170,11 +170,9 @@ public class CamelBeanPostProcessor
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         try {
             return delegate.postProcessBeforeInitialization(bean, beanName);
+        } catch (BeansException e) {
+            throw e; // do not wrap already beans exceptions
         } catch (Exception e) {
-            // do not wrap already beans exceptions
-            if (e instanceof BeansException) {
-                throw (BeansException) e;
-            }
             throw new BeanCreationException("Error post processing bean: " + beanName, e);
         }
     }
@@ -183,11 +181,9 @@ public class CamelBeanPostProcessor
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         try {
             return delegate.postProcessAfterInitialization(bean, beanName);
+        } catch (BeansException e) {
+            throw e; // do not wrap already beans exceptions
         } catch (Exception e) {
-            // do not wrap already beans exceptions
-            if (e instanceof BeansException) {
-                throw (BeansException) e;
-            }
             throw new BeanCreationException("Error post processing bean: " + beanName, e);
         }
     }
