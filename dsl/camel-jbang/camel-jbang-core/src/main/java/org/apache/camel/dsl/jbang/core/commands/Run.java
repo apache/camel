@@ -98,23 +98,23 @@ class Run extends CamelCommand {
     String profile;
 
     @Option(names = {
-            "--dep", "--deps" }, description = "Add additional dependencies (Use commas to separate multiple dependencies).")
+            "--dep", "--deps" }, description = "Add additional dependencies (Use commas to separate multiple dependencies)")
     String dependencies;
 
-    @Option(names = {"--repos"}, description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories).")
+    @Option(names = {"--repos"}, description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
     String repos;
 
     @Option(names = {"--settings"}, description = "Optional location of maven setting.xml file to configure servers, repositories, mirrors and proxies." +
             " If set to \"false\", not even the default ~/.m2/settings.xml will be used.")
     String mavenSettings;
 
-    @Option(names = {"--settings-security"}, description = "Optional location of maven settings-security.xml file to decrypt settings.xml.")
+    @Option(names = {"--settings-security"}, description = "Optional location of maven settings-security.xml file to decrypt settings.xml")
     String mavenSettingsSecurity;
 
     @Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
     boolean fresh;
 
-    @Option(names = {"--download"}, defaultValue = "true", description = "Whether to allow automatic downloaded JAR dependencies, over the internet, that Camel requires.")
+    @Option(names = {"--download"}, defaultValue = "true", description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
     boolean download = true;
 
     @Option(names = { "--name" }, defaultValue = "CamelJBang", description = "The name of the Camel application")
@@ -168,7 +168,7 @@ class Run extends CamelCommand {
     String jfrProfile;
 
     @Option(names = { "--local-kamelet-dir" },
-            description = "Local directory for loading Kamelets (takes precedence). Multiple directories can be specified separateed by comma.")
+            description = "Local directory for loading Kamelets (takes precedence). Multiple directories can be specified separated by comma.")
     String localKameletDir;
 
     @Option(names = { "--port" }, description = "Embeds a local HTTP server on this port")
@@ -183,7 +183,7 @@ class Run extends CamelCommand {
     @Option(names = { "--modeline" }, defaultValue = "true", description = "Enables Camel-K style modeline")
     boolean modeline = true;
 
-    @Option(names = { "--open-api" }, description = "Add an OpenAPI spec from the given file")
+    @Option(names = { "--open-api" }, description = "Adds an OpenAPI spec from the given file")
     String openapi;
 
     public Run(CamelJBangMain main) {
