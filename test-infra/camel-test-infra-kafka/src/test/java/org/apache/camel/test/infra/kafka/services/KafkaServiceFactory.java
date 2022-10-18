@@ -62,6 +62,7 @@ public final class KafkaServiceFactory {
                 .addRemoteMapping(RemoteKafkaService::new)
                 .addMapping("local-kafka3-container", ContainerLocalKafkaService::kafka3Container)
                 .addMapping("local-kafka2-container", ContainerLocalKafkaService::new)
+                .addMapping("local-redpanda-container", RedpandaService::new)
                 .build();
     }
 
@@ -78,7 +79,9 @@ public final class KafkaServiceFactory {
                         .addMapping("local-kafka2-container",
                                 () -> new SingletonKafkaService(new ContainerLocalKafkaService(), "kafka2"))
                         .addMapping("local-strimzi-container",
-                                () -> new SingletonKafkaService(new StrimziService(), "strimzi"));
+                                () -> new SingletonKafkaService(new StrimziService(), "strimzi"))
+                        .addMapping("local-redpanda-container",
+                                () -> new SingletonKafkaService(new RedpandaService(), "redpanda"));
 
             }
 
