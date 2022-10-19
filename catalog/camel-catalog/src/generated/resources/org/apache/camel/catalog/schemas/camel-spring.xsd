@@ -20337,6 +20337,17 @@ of a Map/POJO value. Default value: false
           </xs:annotation>
         </xs:attribute>
                 
+        <xs:attribute name="unpackArray" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+              <![CDATA[
+Whether to unpack a single element json-array into an object. Default value:
+false
+            ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
         <xs:attribute name="headerName" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">

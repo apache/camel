@@ -6339,6 +6339,9 @@
             "trim" : {
               "type" : "boolean"
             },
+            "unpackArray" : {
+              "type" : "boolean"
+            },
             "writeAsString" : {
               "type" : "boolean"
             }
