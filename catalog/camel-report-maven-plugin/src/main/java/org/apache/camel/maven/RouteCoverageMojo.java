@@ -162,7 +162,6 @@ public class RouteCoverageMojo extends AbstractExecMojo {
                 try {
                     // parse the java source code and find Camel RouteBuilder classes
                     String fqn = file.getPath();
-                    String baseDir = ".";
                     JavaType out = Roaster.parse(file);
                     // we should only parse java classes (not interfaces and enums etc)
                     if (out instanceof JavaClassSource) {

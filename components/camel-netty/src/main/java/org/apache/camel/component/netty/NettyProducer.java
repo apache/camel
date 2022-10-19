@@ -57,7 +57,6 @@ import org.apache.camel.util.IOHelper;
 import org.apache.commons.pool2.ObjectPool;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.PooledObjectFactory;
-import org.apache.commons.pool2.PooledObjectState;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
@@ -611,7 +610,6 @@ public class NettyProducer extends DefaultAsyncProducer {
             ChannelFuture channelFuture = p.getObject();
             LOG.trace("activateObject channel request: {}", channelFuture);
 
-            PooledObjectState state = p.getState();
             if (channelFuture.isSuccess() && producer.getConfiguration().getRequestTimeout() > 0) {
                 LOG.trace("Reset the request timeout as we activate the channel");
                 Channel channel = channelFuture.channel();

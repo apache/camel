@@ -389,8 +389,7 @@ public class AWS2S3Producer extends DefaultProducer {
             if (ObjectHelper.isEmpty(destinationKey)) {
                 throw new IllegalArgumentException("Destination Key must be specified for copyObject Operation");
             }
-            CopyObjectRequest.Builder copyObjectRequest = CopyObjectRequest.builder();
-            copyObjectRequest = CopyObjectRequest.builder().destinationBucket(bucketNameDestination)
+            CopyObjectRequest.Builder copyObjectRequest = CopyObjectRequest.builder().destinationBucket(bucketNameDestination)
                     .destinationKey(destinationKey).copySource(bucketName + "/" + sourceKey);
 
             if (getConfiguration().isUseAwsKMS()) {
