@@ -49,6 +49,9 @@ public class JsonPathExpression extends ExpressionDefinition {
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String writeAsString;
     @XmlAttribute
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    private String unpackArray;
+    @XmlAttribute
     @Metadata(label = "advanced")
     private String headerName;
     @XmlAttribute
@@ -127,6 +130,17 @@ public class JsonPathExpression extends ExpressionDefinition {
      */
     public void setWriteAsString(String writeAsString) {
         this.writeAsString = writeAsString;
+    }
+
+    public String getUnpackArray() {
+        return unpackArray;
+    }
+
+    /**
+     * Whether to unpack a single element json-array into an object.
+     */
+    public void setUnpackArray(String unpackArray) {
+        this.unpackArray = unpackArray;
     }
 
     public String getHeaderName() {

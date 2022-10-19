@@ -38,6 +38,7 @@ public class JsonPathLanguage extends LanguageSupport implements PropertyConfigu
     private boolean allowSimple = true;
     private boolean allowEasyPredicate = true;
     private boolean writeAsString;
+    private boolean unpackArray;
     private String headerName;
     private Option[] options;
 
@@ -81,6 +82,14 @@ public class JsonPathLanguage extends LanguageSupport implements PropertyConfigu
         this.writeAsString = writeAsString;
     }
 
+    public boolean isUnpackArray() {
+        return unpackArray;
+    }
+
+    public void setUnpackArray(boolean unpackArray) {
+        this.unpackArray = unpackArray;
+    }
+
     public String getHeaderName() {
         return headerName;
     }
@@ -113,6 +122,7 @@ public class JsonPathLanguage extends LanguageSupport implements PropertyConfigu
         answer.setAllowEasyPredicate(allowEasyPredicate);
         answer.setHeaderName(headerName);
         answer.setWriteAsString(writeAsString);
+        answer.setUnpackArray(unpackArray);
         answer.setHeaderName(headerName);
         answer.setOptions(options);
         answer.init(getCamelContext());
@@ -134,8 +144,9 @@ public class JsonPathLanguage extends LanguageSupport implements PropertyConfigu
         answer.setAllowSimple(property(boolean.class, properties, 2, allowSimple));
         answer.setAllowEasyPredicate(property(boolean.class, properties, 3, allowEasyPredicate));
         answer.setWriteAsString(property(boolean.class, properties, 4, writeAsString));
-        answer.setHeaderName(property(String.class, properties, 5, headerName));
-        String option = (String) properties[6];
+        answer.setUnpackArray(property(boolean.class, properties, 5, unpackArray));
+        answer.setHeaderName(property(String.class, properties, 6, headerName));
+        String option = (String) properties[7];
         if (option != null) {
             List<Option> list = new ArrayList<>();
             for (String s : option.split(",")) {
@@ -191,6 +202,10 @@ public class JsonPathLanguage extends LanguageSupport implements PropertyConfigu
             case "writeasstring":
             case "writeAsString":
                 setWriteAsString(PropertyConfigurerSupport.property(camelContext, boolean.class, value));
+                return true;
+            case "unpackarray":
+            case "unpackArray":
+                setUnpackArray(PropertyConfigurerSupport.property(camelContext, boolean.class, value));
                 return true;
             case "options":
                 setOptions(PropertyConfigurerSupport.property(camelContext, Option[].class, value));
