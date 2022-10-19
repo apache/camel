@@ -387,7 +387,8 @@ public interface PlatformHttpEndpointBuilderFactory {
          * Syntax: <code>platform-http:path</code>
          * 
          * Path parameter: path (required)
-         * The path under which this endpoint serves the HTTP requests
+         * The path under which this endpoint serves the HTTP requests, for
+         * proxy use 'proxy'
          * 
          * @param path path
          * @return the dsl builder
@@ -407,7 +408,8 @@ public interface PlatformHttpEndpointBuilderFactory {
          * Syntax: <code>platform-http:path</code>
          * 
          * Path parameter: path (required)
-         * The path under which this endpoint serves the HTTP requests
+         * The path under which this endpoint serves the HTTP requests, for
+         * proxy use 'proxy'
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

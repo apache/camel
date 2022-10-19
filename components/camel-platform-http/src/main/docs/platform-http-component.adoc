@@ -61,3 +61,9 @@ include::partial$component-endpoint-options.adoc[]
 // endpoint options: END
 
 include::spring-boot:partial$starter.adoc[]
+
+== Implementing a reverse proxy
+
+Platform HTTP component can act as a reverse proxy, in that case some headers are populated from the absolute URL received on the request line of the HTTP request. Those headers are specific to the underlining platform.
+
+At this moment, this feature is only supported for Vert.x in `camel-platform-http-vertx` component.
