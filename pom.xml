@@ -109,7 +109,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <site-repo-url>scpexe://people.apache.org/www/camel.apache.org/maven/</site-repo-url>
-        <jdk.version>11</jdk.version>
+        <jdk.version>17</jdk.version>
         <compiler.fork>false</compiler.fork>
         <!-- These two are here only to prevent the versions for the Apache parent pom from leaking-->
         <maven.compiler.source>${jdk.version}</maven.compiler.source>
