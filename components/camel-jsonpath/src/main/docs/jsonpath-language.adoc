@@ -272,6 +272,19 @@ from("direct:start")
 
 Then each book is logged as a String JSON value.
 
+== Unpack a single-element array into an object
+
+It is possible to unpack a single-element array into an object:
+
+[source,java]
+----
+from("direct:start")
+    .setBody().jsonpathUnpack("$.store.book", Book.class)
+    .to("log:book");
+----
+
+If book array contains only one book, it will be converted into a Book object.
+
 == Using header as input
 
 By default, JSONPath uses the message body as the input source. However, you can also use a header as input

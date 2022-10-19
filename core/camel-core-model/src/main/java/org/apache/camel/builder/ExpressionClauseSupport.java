@@ -680,6 +680,21 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     }
 
     /**
+     * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path expression</a> with unpacking a
+     * single-element array into an object enabled.
+     *
+     * @param  text               the expression to be evaluated
+     * @param  resultType         the return type expected by the expression
+     * @return                    the builder to continue processing the DSL
+     */
+    public T jsonpathUnpack(String text, Class<?> resultType) {
+        JsonPathExpression expression = new JsonPathExpression(text);
+        expression.setUnpackArray(Boolean.toString(true));
+        expression.setResultType(resultType);
+        return expression(expression);
+    }
+
+    /**
      * Evaluates an <a href="http://camel.apache.org/ognl.html">OGNL expression</a>
      *
      * @param  text the expression to be evaluated

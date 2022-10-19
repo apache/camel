@@ -137,4 +137,36 @@ public class JsonPathLanguageTest extends CamelTestSupport {
         assertNull(nofoo);
     }
 
+    @Test
+    public void testUnpackJsonArray() {
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(new File("src/test/resources/expensive.json"));
+
+        JsonPathLanguage language = (JsonPathLanguage) context.resolveLanguage("jsonpath");
+        language.setUnpackArray(true);
+        language.setResultType(String.class);
+
+        JsonPathExpression expression = (JsonPathExpression) language.createExpression("$.store.book");
+        String json = (String) expression.evaluate(exchange);
+
+        // check that a single json object is returned, not an array
+        assertTrue(json.startsWith("{") && json.endsWith("}"));
+    }
+
+    @Test
+    public void testDontUnpackJsonArray() {
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(new File("src/test/resources/expensive.json"));
+
+        JsonPathLanguage language = (JsonPathLanguage) context.resolveLanguage("jsonpath");
+        language.setUnpackArray(false);
+        language.setResultType(String.class);
+
+        JsonPathExpression expression = (JsonPathExpression) language.createExpression("$.store.book");
+        String json = (String) expression.evaluate(exchange);
+
+        // check that an array is returned, not a single object
+        assertTrue(json.startsWith("[") && json.endsWith("]"));
+    }
+
 }
