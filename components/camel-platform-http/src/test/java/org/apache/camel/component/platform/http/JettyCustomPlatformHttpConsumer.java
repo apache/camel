@@ -17,17 +17,23 @@
 package org.apache.camel.component.platform.http;
 
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.StringJoiner;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultMessage;
+import org.apache.camel.util.IOHelper;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.handler.ContextHandler;
@@ -43,7 +49,7 @@ public class JettyCustomPlatformHttpConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
         final PlatformHttpEndpoint endpoint = getEndpoint();
-        final String path = configureEndpointPath(endpoint);
+        final String path = endpoint.getPath();
 
         JettyServerTest jettyServerTest = CamelContextHelper.mandatoryLookup(
                 getEndpoint().getCamelContext(),
@@ -74,11 +80,26 @@ public class JettyCustomPlatformHttpConsumer extends DefaultConsumer {
                         bodyRequest += strCurrentLine;
                     }
                     final Exchange exchange = exchg = toExchange(request, bodyRequest);
+                    if (getEndpoint().isHttpProxy()) {
+                        exchange.getMessage().removeHeader("Proxy-Connection");
+                    }
+                    exchange.getMessage().setHeader(Exchange.HTTP_SCHEME, httpServletRequest.getScheme());
+                    exchange.getMessage().setHeader(Exchange.HTTP_HOST, httpServletRequest.getServerName());
+                    exchange.getMessage().setHeader(Exchange.HTTP_PORT, httpServletRequest.getServerPort());
+                    exchange.getMessage().setHeader(Exchange.HTTP_PATH, httpServletRequest.getPathInfo());
+                    if (getEndpoint().isHttpProxy()) {
+                        exchange.adapt(ExtendedExchange.class).setStreamCacheDisabled(true);
+                    }
                     createUoW(exchange);
-                    getProcessor().process(
-                            exchange);
+                    getProcessor().process(exchange);
                     httpServletResponse.setStatus(HttpServletResponse.SC_OK);
                     request.setHandled(true);
+                    if (getEndpoint().isHttpProxy()) {
+                        // extract response
+                        InputStream response = exchange.getMessage().getBody(InputStream.class);
+                        String body = JettyCustomPlatformHttpConsumer.toString(response);
+                        exchange.getMessage().setBody(body);
+                    }
                     httpServletResponse.getWriter().println(exchange.getMessage().getBody());
                 } catch (Exception e) {
                     getExceptionHandler().handleException("Failed handling platform-http endpoint " + endpoint.getPath(), exchg,
@@ -113,13 +134,16 @@ public class JettyCustomPlatformHttpConsumer extends DefaultConsumer {
         return (PlatformHttpEndpoint) super.getEndpoint();
     }
 
-    private String configureEndpointPath(PlatformHttpEndpoint endpoint) {
-        String path = endpoint.getPath();
-        if (endpoint.isMatchOnUriPrefix()) {
-            path += "*";
+    private static String toString(InputStream input) throws IOException {
+        BufferedReader reader = IOHelper.buffered(new InputStreamReader(input));
+        StringJoiner builder = new StringJoiner(" ");
+        while (true) {
+            String line = reader.readLine();
+            if (line == null) {
+                return builder.toString();
+            }
+            builder.add(line);
         }
-        // Transform from the Camel path param syntax /path/{key} to vert.x web's /path/:key
-        return PATH_PARAMETER_PATTERN.matcher(path).replaceAll(":$1");
     }
 
 }
