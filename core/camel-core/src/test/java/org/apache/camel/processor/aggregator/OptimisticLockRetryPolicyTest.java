@@ -19,29 +19,27 @@ package org.apache.camel.processor.aggregator;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class OptimisticLockRetryPolicyTest {
-
-    private static long precision = 150L; // give or take 150ms
+class OptimisticLockRetryPolicyTest {
 
     @Test
-    public void testRandomBackOff() throws Exception {
+    void testRandomBackOff() {
         OptimisticLockRetryPolicy policy = new OptimisticLockRetryPolicy();
         policy.setRandomBackOff(true);
         policy.setExponentialBackOff(false);
         policy.setMaximumRetryDelay(100L);
 
         for (int i = 0; i < 10; i++) {
-            long elapsed = doDelay(policy, i);
-
-            assertTrue(elapsed <= policy.getMaximumRetryDelay() + precision && elapsed >= 0);
+            long delay = getDelay(policy, i);
+            assertTrue(delay <= policy.getMaximumRetryDelay() && delay >= 0);
         }
     }
 
     @Test
-    public void testExponentialBackOff() throws Exception {
+    void testExponentialBackOff() {
         OptimisticLockRetryPolicy policy = new OptimisticLockRetryPolicy();
         policy.setRandomBackOff(false);
         policy.setExponentialBackOff(true);
@@ -49,14 +47,13 @@ public class OptimisticLockRetryPolicyTest {
         policy.setRetryDelay(10L);
 
         for (int i = 0; i < 6; i++) {
-            long elapsed = doDelay(policy, i);
-
-            assertDelay(10L << i, elapsed);
+            long delay = getDelay(policy, i);
+            assertDelay(10L << i, delay);
         }
     }
 
     @Test
-    public void testExponentialBackOffMaximumRetryDelay() throws Exception {
+    void testExponentialBackOffMaximumRetryDelay() throws Exception {
         OptimisticLockRetryPolicy policy = new OptimisticLockRetryPolicy();
         policy.setRandomBackOff(false);
         policy.setExponentialBackOff(true);
@@ -64,24 +61,17 @@ public class OptimisticLockRetryPolicyTest {
         policy.setRetryDelay(50L);
 
         for (int i = 0; i < 10; i++) {
-            long elapsed = doDelay(policy, i);
-
-            switch (i) {
-                case 0:
-                    assertDelay(50L, elapsed);
-                    break;
-                case 1:
-                    assertDelay(100L, elapsed);
-                    break;
-                default:
-                    assertDelay(100L, elapsed);
-                    break;
+            long delay = getDelay(policy, i);
+            if (i == 0) {
+                assertDelay(50L, delay);
+            } else {
+                assertDelay(100L, delay);
             }
         }
     }
 
     @Test
-    public void testRetryDelay() throws Exception {
+    void testRetryDelay() {
         OptimisticLockRetryPolicy policy = new OptimisticLockRetryPolicy();
         policy.setRandomBackOff(false);
         policy.setExponentialBackOff(false);
@@ -89,14 +79,13 @@ public class OptimisticLockRetryPolicyTest {
         policy.setRetryDelay(50L);
 
         for (int i = 0; i < 10; i++) {
-            long elapsed = doDelay(policy, i);
-
-            assertDelay(50L, elapsed);
+            long delay = getDelay(policy, i);
+            assertDelay(50L, delay);
         }
     }
 
     @Test
-    public void testMaximumRetries() throws Exception {
+    void testMaximumRetries() {
         OptimisticLockRetryPolicy policy = new OptimisticLockRetryPolicy();
         policy.setRandomBackOff(false);
         policy.setExponentialBackOff(false);
@@ -116,19 +105,11 @@ public class OptimisticLockRetryPolicyTest {
         }
     }
 
-    private long doDelay(OptimisticLockRetryPolicy policy, int i) throws InterruptedException {
-        long start = System.currentTimeMillis();
-        policy.doDelay(i);
-        long elapsed = System.currentTimeMillis() - start;
-        return elapsed;
+    private long getDelay(OptimisticLockRetryPolicy policy, int i) {
+        return policy.getDelay(i);
     }
 
     private void assertDelay(long expectedDelay, long actualDelay) {
-        String msg = String.format("%d <= %d", actualDelay, expectedDelay + precision);
-        assertTrue(actualDelay <= expectedDelay + precision, msg);
-
-        msg = String.format("%d >= %d", actualDelay, expectedDelay - precision);
-        assertTrue(actualDelay >= expectedDelay - precision, msg);
+        assertEquals(expectedDelay, actualDelay);
     }
-
 }
