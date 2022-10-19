@@ -4506,7 +4506,7 @@ public interface ComponentsBuilderFactory {
      * Send messages to WhatsApp.
      * 
      * Category: cloud,api,chat
-     * Since: 3.18
+     * Since: 3.19
      * Maven coordinates: org.apache.camel:camel-whatsapp
      * 
      * @return the dsl builder
