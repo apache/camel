@@ -40,7 +40,9 @@ import org.apache.camel.support.service.ServiceHelper;
              category = { Category.HTTP }, consumerOnly = true)
 public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
 
-    @UriPath(description = "The path under which this endpoint serves the HTTP requests")
+    private static final String PROXY_PATH = "proxy";
+
+    @UriPath(description = "The path under which this endpoint serves the HTTP requests, for proxy use 'proxy'")
     @Metadata(required = true)
     private final String path;
     @UriParam(label = "consumer", defaultValue = "false",
@@ -143,7 +145,7 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
     }
 
     public String getPath() {
-        return path;
+        return isHttpProxy() ? "/" : path;
     }
 
     public PlatformHttpEngine getPlatformHttpEngine() {
@@ -206,5 +208,9 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
         return platformHttpEngine != null
                 ? platformHttpEngine
                 : getComponent().getOrCreateEngine();
+    }
+
+    public boolean isHttpProxy() {
+        return this.path.startsWith(PROXY_PATH);
     }
 }
