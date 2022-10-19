@@ -93,7 +93,7 @@ public abstract class AbstractLocationPropertiesSource extends ServiceSupport
 
     @Override
     public String getProperty(String name) {
-        System.out.println("[CTEST][GET-PARAM] "+ name + getStackTrace()); // CTEST
+        System.out.println("[CTEST][GET-PARAM] "+ name); // CTEST
         return properties.getProperty(name);
     }
 
