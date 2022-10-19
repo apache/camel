@@ -588,8 +588,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/exchange-pattern.html">ExchangePattern:</a> set the {@link ExchangePattern}
-     * into the {@link Exchange}.
+     * <a href="http://camel.apache.org/exchange-pattern.html">ExchangePattern:</a> set the {@link ExchangePattern} into
+     * the {@link Exchange}.
      * <p/>
      * The pattern set on the {@link Exchange} will be changed from this point going foward.
      *
@@ -602,8 +602,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/exchange-pattern.html">ExchangePattern:</a> set the {@link ExchangePattern}
-     * into the {@link Exchange}.
+     * <a href="http://camel.apache.org/exchange-pattern.html">ExchangePattern:</a> set the {@link ExchangePattern} into
+     * the {@link Exchange}.
      * <p/>
      * The pattern set on the {@link Exchange} will be changed from this point going foward.
      *

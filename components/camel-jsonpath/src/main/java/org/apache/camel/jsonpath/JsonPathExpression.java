@@ -162,7 +162,8 @@ public class JsonPathExpression extends ExpressionAdapter {
                     boolean singleElement = result instanceof List && ((List) result).size() == 1;
                     if (singleElement && !resultIsCollection) {
                         result = ((List) result).get(0);
-                        LOG.trace("Unwrapping result: {} from single element List before converting to: {}", result, resultType);
+                        LOG.trace("Unwrapping result: {} from single element List before converting to: {}", result,
+                                resultType);
                     }
                 }
                 return exchange.getContext().getTypeConverter().convertTo(resultType, exchange, result);
