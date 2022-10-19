@@ -28,8 +28,8 @@ import org.w3c.dom.NodeList;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.dom.DOMNodeList;
 import net.sf.saxon.dom.NodeOverNodeInfo;
-import net.sf.saxon.om.DocumentInfo;
 import net.sf.saxon.om.NodeInfo;
+import net.sf.saxon.om.TreeInfo;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.Type;
 import org.apache.camel.Converter;
@@ -52,8 +52,8 @@ public final class SaxonConverter {
             case Type.ELEMENT:
                 // ELEMENT nodes need to build a new DocumentInfo before wrapping
                 Configuration config = node.getConfiguration();
-                DocumentInfo documentInfo = config.buildDocument(node);
-                return (Document) NodeOverNodeInfo.wrap(documentInfo);
+                TreeInfo documentInfo = config.buildDocumentTree(node);
+                return (Document) NodeOverNodeInfo.wrap(documentInfo.getRootNode());
             default:
                 return null;
         }
@@ -96,7 +96,7 @@ public final class SaxonConverter {
             tc = registry.lookup(type, NodeList.class);
             if (tc != null) {
                 List<NodeInfo> nil = new LinkedList<>();
-                nil.add((NodeInfo) value);
+                nil.add(ni);
                 return tc.convertTo(type, exchange, toDOMNodeList(nil));
             }
         } else if (List.class.isAssignableFrom(value.getClass())) {
