@@ -7316,6 +7316,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "result-type", type = "string"),
                     @YamlProperty(name = "suppress-exceptions", type = "boolean"),
                     @YamlProperty(name = "trim", type = "boolean"),
+                    @YamlProperty(name = "unpack-array", type = "boolean"),
                     @YamlProperty(name = "write-as-string", type = "boolean")
             }
     )
@@ -7381,6 +7382,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "trim": {
                     String val = asText(node);
                     target.setTrim(val);
+                    break;
+                }
+                case "unpack-array": {
+                    String val = asText(node);
+                    target.setUnpackArray(val);
                     break;
                 }
                 case "write-as-string": {

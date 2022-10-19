@@ -6228,6 +6228,9 @@
             "trim" : {
               "type" : "boolean"
             },
+            "unpack-array" : {
+              "type" : "boolean"
+            },
             "write-as-string" : {
               "type" : "boolean"
             }

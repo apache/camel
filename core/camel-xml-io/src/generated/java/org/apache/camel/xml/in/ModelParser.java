@@ -2671,6 +2671,7 @@ public class ModelParser extends BaseParser {
                 case "option": def.setOption(val); break;
                 case "resultType": def.setResultTypeName(val); break;
                 case "suppressExceptions": def.setSuppressExceptions(val); break;
+                case "unpackArray": def.setUnpackArray(val); break;
                 case "writeAsString": def.setWriteAsString(val); break;
                 default: return expressionDefinitionAttributeHandler().accept(def, key, val);
             }
