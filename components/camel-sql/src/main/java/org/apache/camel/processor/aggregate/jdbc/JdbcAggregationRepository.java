@@ -411,8 +411,8 @@ public class JdbcAggregationRepository extends ServiceSupport
                 final int mustBeOne = jdbcTemplate
                         .update("DELETE FROM " + getRepositoryNameCompleted() + " WHERE " + ID + " = ?", confirmKey);
                 if (mustBeOne != 1) {
-                    LOG.error("problem removing row " + confirmKey + " from " + getRepositoryNameCompleted()
-                              + " - DELETE statement did not return 1 but " + mustBeOne);
+                    LOG.error("problem removing row {} from {} - DELETE statement did not return 1 but {}",
+                            confirmKey, getRepositoryNameCompleted(), mustBeOne);
                     return false;
                 }
                 return true;
