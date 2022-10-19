@@ -580,7 +580,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href= "http://camel.apache.org/exchange-pattern.html">ExchangePattern:</a> set the {@link ExchangePattern}
+     * <a href="http://camel.apache.org/exchange-pattern.html">ExchangePattern:</a> set the {@link ExchangePattern}
      * into the {@link Exchange}.
      * <p/>
      * The pattern set on the {@link Exchange} will be changed from this point going foward.
@@ -589,6 +589,20 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return                 the builder
      */
     public Type setExchangePattern(ExchangePattern exchangePattern) {
+        addOutput(new SetExchangePatternDefinition(exchangePattern));
+        return asType();
+    }
+
+    /**
+     * <a href="http://camel.apache.org/exchange-pattern.html">ExchangePattern:</a> set the {@link ExchangePattern}
+     * into the {@link Exchange}.
+     * <p/>
+     * The pattern set on the {@link Exchange} will be changed from this point going foward.
+     *
+     * @param  exchangePattern the exchange pattern
+     * @return                 the builder
+     */
+    public Type setExchangePattern(String exchangePattern) {
         addOutput(new SetExchangePatternDefinition(exchangePattern));
         return asType();
     }
