@@ -15628,7 +15628,7 @@ public class StaticEndpointBuilders {
      * Send messages to WhatsApp.
      * 
      * Category: cloud,api,chat
-     * Since: 3.18
+     * Since: 3.19
      * Maven coordinates: org.apache.camel:camel-whatsapp
      * 
      * Syntax: <code>whatsapp:phoneNumberId</code>
@@ -15648,7 +15648,7 @@ public class StaticEndpointBuilders {
      * Send messages to WhatsApp.
      * 
      * Category: cloud,api,chat
-     * Since: 3.18
+     * Since: 3.19
      * Maven coordinates: org.apache.camel:camel-whatsapp
      * 
      * Syntax: <code>whatsapp:phoneNumberId</code>

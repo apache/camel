@@ -248,7 +248,7 @@ public interface WhatsAppEndpointBuilderFactory {
          * Send messages to WhatsApp.
          * 
          * Category: cloud,api,chat
-         * Since: 3.18
+         * Since: 3.19
          * Maven coordinates: org.apache.camel:camel-whatsapp
          * 
          * @return the dsl builder for the headers' name.
@@ -261,7 +261,7 @@ public interface WhatsAppEndpointBuilderFactory {
          * Send messages to WhatsApp.
          * 
          * Category: cloud,api,chat
-         * Since: 3.18
+         * Since: 3.19
          * Maven coordinates: org.apache.camel:camel-whatsapp
          * 
          * Syntax: <code>whatsapp:phoneNumberId</code>
@@ -280,7 +280,7 @@ public interface WhatsAppEndpointBuilderFactory {
          * Send messages to WhatsApp.
          * 
          * Category: cloud,api,chat
-         * Since: 3.18
+         * Since: 3.19
          * Maven coordinates: org.apache.camel:camel-whatsapp
          * 
          * Syntax: <code>whatsapp:phoneNumberId</code>
