@@ -164,7 +164,7 @@ public class SubscriptionHelper extends ServiceSupport {
                             connectException = getFailure(message);
 
                             if (connectError != null && connectError.equals(AUTHENTICATION_INVALID)) {
-                                LOG.debug("connectError: " + connectError);
+                                LOG.debug("connectError: {}", connectError);
                                 LOG.debug("Attempting login...");
                                 attemptLoginUntilSuccessful();
                             }

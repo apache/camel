@@ -349,8 +349,8 @@ public class KameletMain extends MainCommandLineSupport {
                         // but, we want status available during startup phase
                         ServiceHelper.startService(connector);
                     } catch (Exception e) {
-                        LOG.warn("Cannot start camel-cli-connector due: " + e.getMessage()
-                                 + ". This integration cannot be managed by Camel CLI.");
+                        LOG.warn("Cannot start camel-cli-connector due: {}. This integration cannot be managed by Camel CLI.",
+                                e.getMessage());
                     }
                 }
             }

@@ -251,7 +251,7 @@ public class ZooKeeperProducer extends DefaultProducer {
     private void logStoreComplete(String path, Stat statistics) {
         if (LOG.isDebugEnabled()) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Stored data to node '{}', and receive statistics %s", path, statistics);
+                LOG.trace("Stored data to node '{}', and receive statistics {}", path, statistics);
             } else {
                 LOG.debug("Stored data to node '{}'", path);
             }
