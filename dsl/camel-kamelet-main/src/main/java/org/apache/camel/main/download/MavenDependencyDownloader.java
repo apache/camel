@@ -1051,7 +1051,6 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
      */
     public List<RemoteRepository> configureRemoteRepositories(Settings settings, String repos, boolean fresh) {
         List<RemoteRepository> repositories = new ArrayList<>();
-        List<RemoteRepository> settingsRepositories = new ArrayList<>();
 
         Set<URL> repositoryURLs = new HashSet<>();
 

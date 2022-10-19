@@ -71,7 +71,6 @@ public final class GistHelper {
         if (parts.length < 2) {
             return;
         }
-        String user = parts[0];
         String gid = parts[1];
 
         url = "https://api.github.com/gists/" + gid;

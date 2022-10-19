@@ -56,11 +56,10 @@ public class GoogleBigQueryConfiguration implements Cloneable {
             throw new IllegalArgumentException("Google BigQuery Endpoint format \"projectId:datasetId[:tableName]\"");
         }
 
-        int c = 0;
-        projectId = parts[c++];
-        datasetId = parts[c++];
+        projectId = parts[0];
+        datasetId = parts[1];
         if (parts.length > 2) {
-            tableId = parts[c++];
+            tableId = parts[3];
         }
     }
 

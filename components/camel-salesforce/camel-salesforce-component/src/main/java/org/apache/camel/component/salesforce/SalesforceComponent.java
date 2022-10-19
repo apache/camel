@@ -33,7 +33,6 @@ import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.AbstractDTOBase;
 import org.apache.camel.component.salesforce.api.utils.SecurityUtils;
 import org.apache.camel.component.salesforce.internal.OperationName;
-import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.client.DefaultRawClient;
 import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
@@ -792,7 +791,6 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
 
     RestClient createRestClientFor(SalesforceEndpointConfig endpointConfig) throws SalesforceException {
         final String version = endpointConfig.getApiVersion();
-        final PayloadFormat format = endpointConfig.getFormat();
 
         return new DefaultRestClient(httpClient, version, session, loginConfig);
     }
