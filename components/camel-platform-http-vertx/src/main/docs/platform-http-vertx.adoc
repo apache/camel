@@ -68,9 +68,8 @@ Platform HTTP component can act as a reverse proxy, in that case `Exchange.HTTP_
 Here's an example of a HTTP proxy that simply redirects the Exchange to the origin server.
 
 [source,java]
-------------------------------------------------------------------------------------------
+----
 from("platform-http:proxy")
     .toD("http://"
         + "${headers." + Exchange.HTTP_HOST + "}");
-
--------------------------------------------------------------------------------------
+----
