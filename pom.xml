@@ -40,7 +40,7 @@
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-report-plugin</artifactId>
-            <version>3.0.0-M7</version>
+            <version>2.1</version>
             <configuration>
                 <outputDirectory>${basedir}/target/surefire-reports</outputDirectory>
             </configuration>
