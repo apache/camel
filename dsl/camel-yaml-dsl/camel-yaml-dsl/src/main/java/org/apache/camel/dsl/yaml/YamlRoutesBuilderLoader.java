@@ -108,6 +108,10 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         super(EXTENSION);
     }
 
+    YamlRoutesBuilderLoader(String extension) {
+        super(extension);
+    }
+
     protected RouteBuilder builder(final YamlDeserializationContext ctx, final Node root) {
 
         // we need to keep track of already configured items as the yaml-dsl returns a
