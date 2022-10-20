@@ -390,7 +390,7 @@ public class AWS2S3Producer extends DefaultProducer {
                 throw new IllegalArgumentException("Destination Key must be specified for copyObject Operation");
             }
             CopyObjectRequest.Builder copyObjectRequest = CopyObjectRequest.builder().destinationBucket(bucketNameDestination)
-                    .destinationKey(destinationKey).copySource(bucketName + "/" + sourceKey);
+                    .destinationKey(destinationKey).sourceBucket(bucketName).sourceKey(sourceKey);
 
             if (getConfiguration().isUseAwsKMS()) {
                 if (ObjectHelper.isNotEmpty(getConfiguration().getAwsKMSKeyId())) {
