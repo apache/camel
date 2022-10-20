@@ -42,7 +42,7 @@
             <artifactId>maven-surefire-report-plugin</artifactId>
             <version>3.0.0-M7</version>
             <configuration>
-            <outputDirectory>${basedir}/target/surefire-reports</outputDirectory>
+                <outputDirectory>${basedir}/target/surefire-reports</outputDirectory>
             </configuration>
         </plugin>
         </plugins>
