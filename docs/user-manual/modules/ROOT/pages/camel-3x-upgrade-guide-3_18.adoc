@@ -84,6 +84,11 @@ to Google Calendar component, you should update it to  `serviceAccountKey`.
 The `keyResource` option has been changed to `serviceAccountKey` to match to Google semantic. Then, if you use the `keyResource` 
 to Google Drive component, you should update it to  `serviceAccountKey`.
 
+=== camel-jsonpath
+
+There is a new option `unpackArray` in *Camel 3.18.3* that unpacks a single-element Json array, matched by a Jsonpath, into an object. This option is disabled by default (this behaviour was enabled by default in previous Camel versions).
+There is a new expression `jsonpathUnpack(String text, Class<?> resultType)` that makes use of this new option.
+
 === camel-yaml-dsl
 
 The YAML DSL schema files `camel-yaml-dsl.json` and `camelYamlDsl.json` has been moved from root to `schema` sub folder in the JAR.
