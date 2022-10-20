@@ -55,7 +55,6 @@
       <to uri="mock:result" id="m"/>
     </route>
 
-
     <!-- Lets pass the pattern as an argument in the to element -->
     <route>
       <from uri="direct:testToWithInOnlyParam" id="n"/>
@@ -64,6 +63,11 @@
     <route>
       <from uri="direct:testToWithInOutParam" id="p"/>
       <to uri="mock:result" pattern="InOut" id="q"/>
+    </route>
+    <route>
+      <from uri="direct:asString" id="r"/>
+      <setExchangePattern pattern="InOut" id="s"/>
+      <to uri="mock:result" id="t"/>
     </route>
    </camelContext>
 

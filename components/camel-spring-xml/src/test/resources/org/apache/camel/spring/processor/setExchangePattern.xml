@@ -55,7 +55,11 @@
       <setExchangePattern pattern="InOnly"/>
       <to uri="mock:result"/>
     </route>
-
+    <route>
+      <from uri="direct:asString"/>
+      <setExchangePattern pattern="InOut"/>
+      <to uri="mock:result"/>
+    </route>
 
     <!-- Lets pass the pattern as an argument in the to element -->
     <route>
