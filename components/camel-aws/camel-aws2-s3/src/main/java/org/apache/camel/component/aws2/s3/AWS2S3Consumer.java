@@ -33,6 +33,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.health.HealthCheckHelper;
+import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.support.SynchronizationAdapter;
@@ -70,7 +71,7 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
 
     private String marker;
     private transient String s3ConsumerToString;
-    private AWS2S3HealthCheckRepository healthCheckRepository;
+    private WritableHealthCheckRepository healthCheckRepository;
     private AWS2S3ConsumerHealthCheck consumerHealthCheck;
 
     public AWS2S3Consumer(AWS2S3Endpoint endpoint, Processor processor) {
@@ -81,8 +82,10 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(getEndpoint().getCamelContext(),
-                AWS2S3HealthCheckRepository.REPOSITORY_ID, AWS2S3HealthCheckRepository.class);
+        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
+                getEndpoint().getCamelContext(),
+                "components",
+                WritableHealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
             consumerHealthCheck = new AWS2S3ConsumerHealthCheck(this, getRouteId());
