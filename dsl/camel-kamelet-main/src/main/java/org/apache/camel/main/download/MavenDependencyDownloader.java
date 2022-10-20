@@ -220,6 +220,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     private ClassLoader classLoader;
     private CamelContext camelContext;
     private final Set<DownloadListener> downloadListeners = new LinkedHashSet<>();
+    private final Set<ArtifactDownloadListener> artifactDownloadListeners = new LinkedHashSet<>();
 
     // repository URLs set from "camel.jbang.repos" property or --repos option.
     private String repos;
@@ -256,6 +257,12 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     public void addDownloadListener(DownloadListener downloadListener) {
         CamelContextAware.trySetCamelContext(downloadListener, getCamelContext());
         downloadListeners.add(downloadListener);
+    }
+
+    @Override
+    public void addArtifactDownloadListener(ArtifactDownloadListener downloadListener) {
+        CamelContextAware.trySetCamelContext(downloadListener, getCamelContext());
+        artifactDownloadListeners.add(downloadListener);
     }
 
     @Override
@@ -366,6 +373,10 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                     if (classLoader instanceof DependencyDownloaderClassLoader) {
                         DependencyDownloaderClassLoader ddc = (DependencyDownloaderClassLoader) classLoader;
                         ddc.addFile(file);
+                    }
+                    // trigger listener after downloaded and added to classloader
+                    for (ArtifactDownloadListener listener : artifactDownloadListeners) {
+                        listener.onDownloadedFile(file);
                     }
                     LOG.trace("Added classpath: {}", a.getGav());
                 }

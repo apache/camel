@@ -39,6 +39,11 @@ public interface DependencyDownloader extends CamelContextAware, StaticService {
      */
     void addDownloadListener(DownloadListener downloadListener);
 
+    /**
+     * Adds a listener to capture download activity
+     */
+    void addArtifactDownloadListener(ArtifactDownloadListener downloadListener);
+
     String getRepos();
 
     /**
