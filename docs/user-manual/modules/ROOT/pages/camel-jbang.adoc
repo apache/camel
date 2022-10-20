@@ -1019,6 +1019,7 @@ based dependency injection in Java classes.
 You can use the following Camel annotations (they work on all runtimes):
 
 - `@org.apache.camel.BindToRegistry` on class level to create an instance of the class and register in the xref:registry.adoc[Registry].
+- `@org.apache.camel.Configuration` on class level to create an instance of the class and register in the xref:registry.adoc[Registry].
 - `@org.apache.camel.BeanInject` to dependency inject a bean on a class field.
 - `@org.apache.camel.PropertyInject` to inject a xref:using-propertyplaceholder.adoc[property placeholder]. Such as a property defined in `application.properties`.
 - `@org.apache.camel.BindToRegistry` on a method to create a bean by invoking the method.
