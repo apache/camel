@@ -2032,6 +2032,26 @@ Stream caching configuration.
     </xs:annotation>
   </xs:element>
     
+  <xs:element name="swiftMt" type="tns:swiftMtDataFormat">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        <![CDATA[
+Encode and decode SWIFT MT messages.
+      ]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+    
+  <xs:element name="swiftMx" type="tns:swiftMxDataFormat">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        <![CDATA[
+Encode and decode SWIFT MX messages.
+      ]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+    
   <xs:element name="syslog" type="tns:syslogDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -9159,6 +9179,10 @@ it reaches the end when Camel is shut down. Default value: false
                         
             <xs:element ref="tns:soap"/>
                         
+            <xs:element ref="tns:swiftMt"/>
+                        
+            <xs:element ref="tns:swiftMx"/>
+                        
             <xs:element ref="tns:syslog"/>
                         
             <xs:element ref="tns:tarFile"/>
@@ -11950,6 +11974,89 @@ Camel allows you to refer to a map which contains the desired mapping.
 To validate against an existing schema. Your can use the prefix classpath:,
 file: or http: to specify how the resource should be resolved. You can separate
 multiple schema files by using the ',' character.
+            ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+              
+      </xs:extension>
+          
+    </xs:complexContent>
+      
+  </xs:complexType>
+    
+  <xs:complexType name="swiftMtDataFormat">
+        
+    <xs:complexContent>
+            
+      <xs:extension base="tns:dataFormat">
+                
+        <xs:sequence/>
+                
+        <xs:attribute name="writeInJson" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+              <![CDATA[
+The flag indicating that messages must be marshalled in a JSON format. Default
+value: false
+            ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+              
+      </xs:extension>
+          
+    </xs:complexContent>
+      
+  </xs:complexType>
+    
+  <xs:complexType name="swiftMxDataFormat">
+        
+    <xs:complexContent>
+            
+      <xs:extension base="tns:dataFormat">
+                
+        <xs:sequence/>
+                
+        <xs:attribute name="writeConfigRef" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+              <![CDATA[
+Refers to a specific configuration to use when marshalling a message to lookup
+from the registry.
+            ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="writeInJson" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+              <![CDATA[
+The flag indicating that messages must be marshalled in a JSON format. Default
+value: false
+            ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="readMessageId" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+              <![CDATA[
+The type of MX message to produce when unmarshalling an input stream. If not
+set, it will be automatically detected from the namespace used.
+            ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="readConfigRef" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+              <![CDATA[
+Refers to a specific configuration to use when unmarshalling an input stream to
+lookup from the registry.
             ]]>
             </xs:documentation>
           </xs:annotation>
@@ -18616,6 +18723,10 @@ Sets a reference to use for lookup the policy in the registry.
                         
             <xs:element ref="tns:soap"/>
                         
+            <xs:element ref="tns:swiftMt"/>
+                        
+            <xs:element ref="tns:swiftMx"/>
+                        
             <xs:element ref="tns:syslog"/>
                         
             <xs:element ref="tns:tarFile"/>
@@ -20014,6 +20125,10 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:rss"/>
                 
         <xs:element ref="tns:soap"/>
+                
+        <xs:element ref="tns:swiftMt"/>
+                
+        <xs:element ref="tns:swiftMx"/>
                 
         <xs:element ref="tns:syslog"/>
                 
@@ -22419,6 +22534,10 @@ To configure a special tag for the operations within this rest definition.
             <xs:element ref="tns:rss"/>
                         
             <xs:element ref="tns:soap"/>
+                        
+            <xs:element ref="tns:swiftMt"/>
+                        
+            <xs:element ref="tns:swiftMx"/>
                         
             <xs:element ref="tns:syslog"/>
                         

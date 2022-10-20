@@ -32,6 +32,8 @@ ProtobufDataFormat
 ProtobufLibrary
 RssDataFormat
 SoapDataFormat
+SwiftMtDataFormat
+SwiftMxDataFormat
 SyslogDataFormat
 TarFileDataFormat
 ThriftDataFormat

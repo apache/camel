@@ -54,6 +54,8 @@ import org.apache.camel.model.dataformat.PGPDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
 import org.apache.camel.model.dataformat.SoapDataFormat;
+import org.apache.camel.model.dataformat.SwiftMtDataFormat;
+import org.apache.camel.model.dataformat.SwiftMxDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;
 import org.apache.camel.model.dataformat.TarFileDataFormat;
 import org.apache.camel.model.dataformat.ThriftDataFormat;
@@ -233,6 +235,10 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
             return new SoapDataFormatReifier(camelContext, definition);
         } else if (definition instanceof SyslogDataFormat) {
             return new SyslogDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof SwiftMtDataFormat) {
+            return new SwiftMtDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof SwiftMxDataFormat) {
+            return new SwiftMxDataFormatReifier(camelContext, definition);
         } else if (definition instanceof TarFileDataFormat) {
             return new TarFileDataFormatReifier(camelContext, definition);
         } else if (definition instanceof ThriftDataFormat) {

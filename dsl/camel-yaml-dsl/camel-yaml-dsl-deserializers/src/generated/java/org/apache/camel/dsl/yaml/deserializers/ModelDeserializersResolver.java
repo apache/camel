@@ -457,6 +457,12 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.StopDefinition": return new ModelDeserializers.StopDefinitionDeserializer();
             case "stream-config": return new ModelDeserializers.StreamResequencerConfigDeserializer();
             case "org.apache.camel.model.config.StreamResequencerConfig": return new ModelDeserializers.StreamResequencerConfigDeserializer();
+            case "swift-mt": return new ModelDeserializers.SwiftMtDataFormatDeserializer();
+            case "swiftMt": return new ModelDeserializers.SwiftMtDataFormatDeserializer();
+            case "org.apache.camel.model.dataformat.SwiftMtDataFormat": return new ModelDeserializers.SwiftMtDataFormatDeserializer();
+            case "swift-mx": return new ModelDeserializers.SwiftMxDataFormatDeserializer();
+            case "swiftMx": return new ModelDeserializers.SwiftMxDataFormatDeserializer();
+            case "org.apache.camel.model.dataformat.SwiftMxDataFormat": return new ModelDeserializers.SwiftMxDataFormatDeserializer();
             case "syslog": return new ModelDeserializers.SyslogDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.SyslogDataFormat": return new ModelDeserializers.SyslogDataFormatDeserializer();
             case "tar-file": return new ModelDeserializers.TarFileDataFormatDeserializer();

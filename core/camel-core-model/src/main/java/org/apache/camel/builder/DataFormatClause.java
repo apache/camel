@@ -54,6 +54,8 @@ import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.ProtobufLibrary;
 import org.apache.camel.model.dataformat.RssDataFormat;
 import org.apache.camel.model.dataformat.SoapDataFormat;
+import org.apache.camel.model.dataformat.SwiftMtDataFormat;
+import org.apache.camel.model.dataformat.SwiftMxDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;
 import org.apache.camel.model.dataformat.TarFileDataFormat;
 import org.apache.camel.model.dataformat.ThriftDataFormat;
@@ -815,6 +817,62 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         SoapDataFormat soap = new SoapDataFormat(contextPath, elementNameStrategy);
         soap.setVersion("1.2");
         return dataFormat(soap);
+    }
+
+    /**
+     * Uses the SWIFT MX data format
+     */
+    public T swiftMx() {
+        return dataFormat(new SwiftMxDataFormat());
+    }
+
+    /**
+     * Uses the SWIFT MX data format.
+     */
+    public T swiftMx(boolean writeInJson) {
+        return dataFormat(new SwiftMxDataFormat(writeInJson));
+    }
+
+    /**
+     * Uses the SWIFT MX data format.
+     */
+    public T swiftMx(boolean writeInJson, String readMessageId, Object readConfig) {
+        return dataFormat(new SwiftMxDataFormat(writeInJson, readMessageId, readConfig));
+    }
+
+    /**
+     * Uses the SWIFT MX data format.
+     */
+    public T swiftMx(boolean writeInJson, String readMessageId, String readConfigRef) {
+        return dataFormat(new SwiftMxDataFormat(writeInJson, readMessageId, readConfigRef));
+    }
+
+    /**
+     * Uses the SWIFT MX data format.
+     */
+    public T swiftMx(Object writeConfig, String readMessageId, Object readConfig) {
+        return dataFormat(new SwiftMxDataFormat(writeConfig, readMessageId, readConfig));
+    }
+
+    /**
+     * Uses the SWIFT MX data format.
+     */
+    public T swiftMx(String writeConfigRef, String readMessageId, String readConfigRef) {
+        return dataFormat(new SwiftMxDataFormat(writeConfigRef, readMessageId, readConfigRef));
+    }
+
+    /**
+     * Uses the SWIFT MT data format
+     */
+    public T swiftMt() {
+        return dataFormat(new SwiftMtDataFormat());
+    }
+
+    /**
+     * Uses the SWIFT MT data format.
+     */
+    public T swiftMt(boolean writeInJson) {
+        return dataFormat(new SwiftMtDataFormat(Boolean.toString(writeInJson)));
     }
 
     /**

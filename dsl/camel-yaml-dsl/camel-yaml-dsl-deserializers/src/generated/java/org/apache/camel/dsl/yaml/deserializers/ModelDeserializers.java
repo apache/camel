@@ -149,6 +149,8 @@ import org.apache.camel.model.dataformat.PGPDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
 import org.apache.camel.model.dataformat.SoapDataFormat;
+import org.apache.camel.model.dataformat.SwiftMtDataFormat;
+import org.apache.camel.model.dataformat.SwiftMxDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;
 import org.apache.camel.model.dataformat.TarFileDataFormat;
 import org.apache.camel.model.dataformat.ThriftDataFormat;
@@ -2955,6 +2957,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "rss", type = "object:org.apache.camel.model.dataformat.RssDataFormat"),
                     @YamlProperty(name = "scheme", type = "string"),
                     @YamlProperty(name = "soap", type = "object:org.apache.camel.model.dataformat.SoapDataFormat"),
+                    @YamlProperty(name = "swift-mt", type = "object:org.apache.camel.model.dataformat.SwiftMtDataFormat"),
+                    @YamlProperty(name = "swift-mx", type = "object:org.apache.camel.model.dataformat.SwiftMxDataFormat"),
                     @YamlProperty(name = "syslog", type = "object:org.apache.camel.model.dataformat.SyslogDataFormat"),
                     @YamlProperty(name = "tar-file", type = "object:org.apache.camel.model.dataformat.TarFileDataFormat"),
                     @YamlProperty(name = "thrift", type = "object:org.apache.camel.model.dataformat.ThriftDataFormat"),
@@ -3119,6 +3123,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
+                case "swift-mt": {
+                    org.apache.camel.model.dataformat.SwiftMtDataFormat val = asType(node, org.apache.camel.model.dataformat.SwiftMtDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "swift-mx": {
+                    org.apache.camel.model.dataformat.SwiftMxDataFormat val = asType(node, org.apache.camel.model.dataformat.SwiftMxDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
                 case "syslog": {
                     org.apache.camel.model.dataformat.SyslogDataFormat val = asType(node, org.apache.camel.model.dataformat.SyslogDataFormat.class);
                     target.setDataFormatType(val);
@@ -3242,6 +3256,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "protobuf", type = "object:org.apache.camel.model.dataformat.ProtobufDataFormat"),
                     @YamlProperty(name = "rss", type = "object:org.apache.camel.model.dataformat.RssDataFormat"),
                     @YamlProperty(name = "soap", type = "object:org.apache.camel.model.dataformat.SoapDataFormat"),
+                    @YamlProperty(name = "swift-mt", type = "object:org.apache.camel.model.dataformat.SwiftMtDataFormat"),
+                    @YamlProperty(name = "swift-mx", type = "object:org.apache.camel.model.dataformat.SwiftMxDataFormat"),
                     @YamlProperty(name = "syslog", type = "object:org.apache.camel.model.dataformat.SyslogDataFormat"),
                     @YamlProperty(name = "tar-file", type = "object:org.apache.camel.model.dataformat.TarFileDataFormat"),
                     @YamlProperty(name = "thrift", type = "object:org.apache.camel.model.dataformat.ThriftDataFormat"),
@@ -3527,6 +3543,26 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "soap": {
                     org.apache.camel.model.dataformat.SoapDataFormat val = asType(node, org.apache.camel.model.dataformat.SoapDataFormat.class);
+                    java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
+                    if (existing == null) {
+                        existing = new java.util.ArrayList<>();
+                    }
+                    existing.add(val);
+                    target.setDataFormats(existing);
+                    break;
+                }
+                case "swift-mt": {
+                    org.apache.camel.model.dataformat.SwiftMtDataFormat val = asType(node, org.apache.camel.model.dataformat.SwiftMtDataFormat.class);
+                    java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
+                    if (existing == null) {
+                        existing = new java.util.ArrayList<>();
+                    }
+                    existing.add(val);
+                    target.setDataFormats(existing);
+                    break;
+                }
+                case "swift-mx": {
+                    org.apache.camel.model.dataformat.SwiftMxDataFormat val = asType(node, org.apache.camel.model.dataformat.SwiftMxDataFormat.class);
                     java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
                     if (existing == null) {
                         existing = new java.util.ArrayList<>();
@@ -8246,6 +8282,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "protobuf", type = "object:org.apache.camel.model.dataformat.ProtobufDataFormat"),
                     @YamlProperty(name = "rss", type = "object:org.apache.camel.model.dataformat.RssDataFormat"),
                     @YamlProperty(name = "soap", type = "object:org.apache.camel.model.dataformat.SoapDataFormat"),
+                    @YamlProperty(name = "swift-mt", type = "object:org.apache.camel.model.dataformat.SwiftMtDataFormat"),
+                    @YamlProperty(name = "swift-mx", type = "object:org.apache.camel.model.dataformat.SwiftMxDataFormat"),
                     @YamlProperty(name = "syslog", type = "object:org.apache.camel.model.dataformat.SyslogDataFormat"),
                     @YamlProperty(name = "tar-file", type = "object:org.apache.camel.model.dataformat.TarFileDataFormat"),
                     @YamlProperty(name = "thrift", type = "object:org.apache.camel.model.dataformat.ThriftDataFormat"),
@@ -8406,6 +8444,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "soap": {
                     org.apache.camel.model.dataformat.SoapDataFormat val = asType(node, org.apache.camel.model.dataformat.SoapDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "swift-mt": {
+                    org.apache.camel.model.dataformat.SwiftMtDataFormat val = asType(node, org.apache.camel.model.dataformat.SwiftMtDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "swift-mx": {
+                    org.apache.camel.model.dataformat.SwiftMxDataFormat val = asType(node, org.apache.camel.model.dataformat.SwiftMxDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -15480,6 +15528,118 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
+            nodes = {
+                    "swift-mt",
+                    "swiftMt"
+            },
+            inline = true,
+            types = org.apache.camel.model.dataformat.SwiftMtDataFormat.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            properties = {
+                    @YamlProperty(name = "id", type = "string"),
+                    @YamlProperty(name = "write-in-json", type = "boolean")
+            }
+    )
+    public static class SwiftMtDataFormatDeserializer extends YamlDeserializerBase<SwiftMtDataFormat> {
+        public SwiftMtDataFormatDeserializer() {
+            super(SwiftMtDataFormat.class);
+        }
+
+        @Override
+        protected SwiftMtDataFormat newInstance() {
+            return new SwiftMtDataFormat();
+        }
+
+        @Override
+        protected SwiftMtDataFormat newInstance(String value) {
+            return new SwiftMtDataFormat(value);
+        }
+
+        @Override
+        protected boolean setProperty(SwiftMtDataFormat target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "write-in-json": {
+                    String val = asText(node);
+                    target.setWriteInJson(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = {
+                    "swift-mx",
+                    "swiftMx"
+            },
+            types = org.apache.camel.model.dataformat.SwiftMxDataFormat.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            properties = {
+                    @YamlProperty(name = "id", type = "string"),
+                    @YamlProperty(name = "read-config-ref", type = "string"),
+                    @YamlProperty(name = "read-message-id", type = "string"),
+                    @YamlProperty(name = "write-config-ref", type = "string"),
+                    @YamlProperty(name = "write-in-json", type = "boolean")
+            }
+    )
+    public static class SwiftMxDataFormatDeserializer extends YamlDeserializerBase<SwiftMxDataFormat> {
+        public SwiftMxDataFormatDeserializer() {
+            super(SwiftMxDataFormat.class);
+        }
+
+        @Override
+        protected SwiftMxDataFormat newInstance() {
+            return new SwiftMxDataFormat();
+        }
+
+        @Override
+        protected boolean setProperty(SwiftMxDataFormat target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "read-config-ref": {
+                    String val = asText(node);
+                    target.setReadConfigRef(val);
+                    break;
+                }
+                case "read-message-id": {
+                    String val = asText(node);
+                    target.setReadMessageId(val);
+                    break;
+                }
+                case "write-config-ref": {
+                    String val = asText(node);
+                    target.setWriteConfigRef(val);
+                    break;
+                }
+                case "write-in-json": {
+                    String val = asText(node);
+                    target.setWriteInJson(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
             nodes = "syslog",
             types = org.apache.camel.model.dataformat.SyslogDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -17211,6 +17371,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "protobuf", type = "object:org.apache.camel.model.dataformat.ProtobufDataFormat"),
                     @YamlProperty(name = "rss", type = "object:org.apache.camel.model.dataformat.RssDataFormat"),
                     @YamlProperty(name = "soap", type = "object:org.apache.camel.model.dataformat.SoapDataFormat"),
+                    @YamlProperty(name = "swift-mt", type = "object:org.apache.camel.model.dataformat.SwiftMtDataFormat"),
+                    @YamlProperty(name = "swift-mx", type = "object:org.apache.camel.model.dataformat.SwiftMxDataFormat"),
                     @YamlProperty(name = "syslog", type = "object:org.apache.camel.model.dataformat.SyslogDataFormat"),
                     @YamlProperty(name = "tar-file", type = "object:org.apache.camel.model.dataformat.TarFileDataFormat"),
                     @YamlProperty(name = "thrift", type = "object:org.apache.camel.model.dataformat.ThriftDataFormat"),
@@ -17376,6 +17538,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "soap": {
                     org.apache.camel.model.dataformat.SoapDataFormat val = asType(node, org.apache.camel.model.dataformat.SoapDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "swift-mt": {
+                    org.apache.camel.model.dataformat.SwiftMtDataFormat val = asType(node, org.apache.camel.model.dataformat.SwiftMtDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "swift-mx": {
+                    org.apache.camel.model.dataformat.SwiftMxDataFormat val = asType(node, org.apache.camel.model.dataformat.SwiftMxDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }

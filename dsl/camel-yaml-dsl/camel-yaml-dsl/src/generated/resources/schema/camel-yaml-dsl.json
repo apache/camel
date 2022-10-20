@@ -1546,6 +1546,12 @@
           "soap" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SoapDataFormat"
           },
+          "swift-mt" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SwiftMtDataFormat"
+          },
+          "swift-mx" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SwiftMxDataFormat"
+          },
           "syslog" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SyslogDataFormat"
           },
@@ -3518,6 +3524,12 @@
           "soap" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SoapDataFormat"
           },
+          "swift-mt" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SwiftMtDataFormat"
+          },
+          "swift-mx" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SwiftMxDataFormat"
+          },
           "syslog" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SyslogDataFormat"
           },
@@ -4807,6 +4819,12 @@
           "soap" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SoapDataFormat"
           },
+          "swift-mt" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SwiftMtDataFormat"
+          },
+          "swift-mx" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SwiftMxDataFormat"
+          },
           "syslog" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SyslogDataFormat"
           },
@@ -5454,6 +5472,41 @@
           }
         } ],
         "required" : [ "context-path" ]
+      },
+      "org.apache.camel.model.dataformat.SwiftMtDataFormat" : {
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "id" : {
+              "type" : "string"
+            },
+            "write-in-json" : {
+              "type" : "boolean"
+            }
+          }
+        } ]
+      },
+      "org.apache.camel.model.dataformat.SwiftMxDataFormat" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "read-config-ref" : {
+            "type" : "string"
+          },
+          "read-message-id" : {
+            "type" : "string"
+          },
+          "write-config-ref" : {
+            "type" : "string"
+          },
+          "write-in-json" : {
+            "type" : "boolean"
+          }
+        }
       },
       "org.apache.camel.model.dataformat.SyslogDataFormat" : {
         "type" : "object",
@@ -7900,6 +7953,12 @@
           },
           "soap" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SoapDataFormat"
+          },
+          "swift-mt" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SwiftMtDataFormat"
+          },
+          "swift-mx" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SwiftMxDataFormat"
           },
           "syslog" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.SyslogDataFormat"
