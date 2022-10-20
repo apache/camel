@@ -35,6 +35,8 @@ public class HealthConfigurationProperties implements BootstrapCloseable {
     @Metadata(defaultValue = "true")
     private Boolean consumersEnabled;
     @Metadata(defaultValue = "true")
+    private Boolean componentsEnabled;
+    @Metadata(defaultValue = "true")
     private Boolean registryEnabled;
     @Metadata
     private String excludePattern;
@@ -87,6 +89,17 @@ public class HealthConfigurationProperties implements BootstrapCloseable {
      */
     public void setConsumersEnabled(Boolean consumersEnabled) {
         this.consumersEnabled = consumersEnabled;
+    }
+
+    public Boolean getComponentsEnabled() {
+        return componentsEnabled;
+    }
+
+    /**
+     * Whether components health check is enabled
+     */
+    public void setComponentsEnabled(Boolean componentsEnabled) {
+        this.componentsEnabled = componentsEnabled;
     }
 
     public Boolean getRegistryEnabled() {

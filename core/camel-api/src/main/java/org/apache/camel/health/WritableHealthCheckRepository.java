@@ -16,34 +16,18 @@
  */
 package org.apache.camel.health;
 
-import java.util.Optional;
-
-import org.apache.camel.spi.HasId;
-import org.apache.camel.util.ObjectHelper;
-
 /**
- * A repository for health checks.
+ * An interface to represent an object which wishes to be injected with the {@link HealthCheck}
  */
-public interface HealthCheckRepository extends HasId, HasHealthChecks {
+public interface WritableHealthCheckRepository extends HealthCheckRepository {
 
     /**
-     * Set if the checks associated to this repository is enabled or not.
+     * Adds a {@link HealthCheck} to the repository.
      */
-    boolean isEnabled();
+    void addHealthCheck(HealthCheck healthCheck);
 
     /**
-     * Set if the checks associated to this repository is enabled or not.
+     * Removes a {@link HealthCheck} from the repository.
      */
-    void setEnabled(boolean enabled);
-
-    /**
-     * Returns the check identified by the given <code>id</code> if available.
-     */
-    default Optional<HealthCheck> getCheck(String id) {
-        return stream()
-                .filter(r -> ObjectHelper.equal(r.getId(), id)
-                        || ObjectHelper.equal(r.getId().replace("-health-check", ""), id)
-                        || ObjectHelper.equal(r.getId().replace("route:", ""), id))
-                .findFirst();
-    }
+    void removeHealthCheck(HealthCheck healthCheck);
 }

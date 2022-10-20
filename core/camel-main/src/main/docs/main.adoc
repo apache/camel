@@ -160,11 +160,12 @@ The camel.threadpool supports 8 options, which are listed below.
 |===
 
 === Camel Health Check configurations
-The camel.health supports 7 options, which are listed below.
+The camel.health supports 8 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.health.componentsEnabled* | Whether components health check is enabled | true | Boolean
 | *camel.health.consumersEnabled* | Whether consumers health check is enabled | true | Boolean
 | *camel.health.enabled* | Whether health check is enabled globally | true | Boolean
 | *camel.health.excludePattern* | Pattern to exclude health checks from being invoked by Camel when checking healths. Multiple patterns can be separated by comma. |  | String

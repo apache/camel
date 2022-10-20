@@ -1253,6 +1253,17 @@ public abstract class BaseMainSupport extends BaseService {
                 hcr.register(hc);
             }
         }
+        // components are enabled by default
+        if (hcr.isEnabled()) {
+            HealthCheckRepository hc
+                    = hcr.getRepository("components").orElse((HealthCheckRepository) hcr.resolveById("components"));
+            if (hc != null) {
+                if (health.getComponentsEnabled() != null) {
+                    hc.setEnabled(health.getComponentsEnabled());
+                }
+                hcr.register(hc);
+            }
+        }
         // consumers are enabled by default
         if (hcr.isEnabled()) {
             HealthCheckRepository hc
