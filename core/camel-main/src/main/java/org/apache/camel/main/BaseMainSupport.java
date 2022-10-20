@@ -941,7 +941,8 @@ public abstract class BaseMainSupport extends BaseService {
 
         // load properties from ENV (override existing)
         if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
-            Properties propENV = MainHelper.loadEnvironmentVariablesAsProperties(new String[] { "camel.component.properties." });
+            Properties propENV
+                    = MainHelper.loadEnvironmentVariablesAsProperties(new String[] { "camel.component.properties." });
             if (!propENV.isEmpty()) {
                 prop.putAll("ENV", propENV);
                 LOG.debug("Properties from OS environment variables:");
@@ -1439,7 +1440,8 @@ public abstract class BaseMainSupport extends BaseService {
 
         // load properties from ENV (override existing)
         if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
-            Properties propENV = MainHelper.loadEnvironmentVariablesAsProperties(new String[] { "camel.component.properties." });
+            Properties propENV
+                    = MainHelper.loadEnvironmentVariablesAsProperties(new String[] { "camel.component.properties." });
             if (!propENV.isEmpty()) {
                 prop.putAll("ENV", propENV);
             }
