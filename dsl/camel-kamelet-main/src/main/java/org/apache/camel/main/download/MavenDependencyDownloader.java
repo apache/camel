@@ -363,6 +363,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
             }
 
             List<MavenArtifact> artifacts = resolveDependenciesViaAether(deps, repositories, transitively);
+            List<File> files = new ArrayList<>();
             LOG.debug("Resolved {} -> [{}]", gav, artifacts);
 
             for (MavenArtifact a : artifacts) {
@@ -374,16 +375,18 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                         DependencyDownloaderClassLoader ddc = (DependencyDownloaderClassLoader) classLoader;
                         ddc.addFile(file);
                     }
-                    // trigger listener after downloaded and added to classloader
-                    for (ArtifactDownloadListener listener : artifactDownloadListeners) {
-                        listener.onDownloadedFile(file);
-                    }
+                    files.add(file);
                     LOG.trace("Added classpath: {}", a.getGav());
                 }
             }
 
+            // trigger listeners after downloaded and added to classloader
+            for (File file : files) {
+                for (ArtifactDownloadListener listener : artifactDownloadListeners) {
+                    listener.onDownloadedFile(file);
+                }
+            }
             if (!artifacts.isEmpty()) {
-                // trigger listener after downloaded and added to classloader
                 for (DownloadListener listener : downloadListeners) {
                     listener.onDownloadedDependency(groupId, artifactId, version);
                 }
