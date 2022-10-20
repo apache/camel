@@ -78,12 +78,16 @@ class YamlTestSupport extends Specification implements HasCamelContext {
     }
 
     def loadRoutes(String... resources) {
+        loadRoutesExt("yaml", resources)
+    }
+
+    def loadRoutesExt(String ext, String... resources) {
         int index = 0
 
         loadRoutes(
-            resources.collect {
-                it -> ResourceHelper.fromString("route-${index++}.yaml", it.stripIndent())
-            }
+                resources.collect {
+                    it -> ResourceHelper.fromString("route-${index++}." + ext, it.stripIndent())
+                }
         )
     }
 
