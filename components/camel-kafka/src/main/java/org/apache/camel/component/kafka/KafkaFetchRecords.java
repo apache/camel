@@ -384,10 +384,12 @@ public class KafkaFetchRecords implements Runnable {
                 LOG.info("Resuming the consumer as a response to a resume request");
                 if (consumer.committed(this.consumer.assignment()) != null) {
                     consumer.committed(this.consumer.assignment()).forEach((k, v) -> {
-                        final TopicPartition tp = (TopicPartition) k;
-                        LOG.info("Resuming from the offset {} for the topic {} with partition {}",
-                                ((OffsetAndMetadata) v).offset(), tp.topic(), tp.partition());
-                        consumer.seek(tp, ((OffsetAndMetadata) v).offset());
+                        if (v != null) {
+                            final TopicPartition tp = (TopicPartition) k;
+                            LOG.info("Resuming from the offset {} for the topic {} with partition {}",
+                                    ((OffsetAndMetadata) v).offset(), tp.topic(), tp.partition());
+                            consumer.seek(tp, ((OffsetAndMetadata) v).offset());
+                        }
                     });
                 }
                 consumer.resume(consumer.assignment());
