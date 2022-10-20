@@ -43,6 +43,7 @@ import org.apache.camel.main.download.DownloadListener;
 import org.apache.camel.main.download.KameletMainInjector;
 import org.apache.camel.main.download.KnownDependenciesResolver;
 import org.apache.camel.main.download.MavenDependencyDownloader;
+import org.apache.camel.main.download.TypeConverterLoaderDownloadListener;
 import org.apache.camel.main.http.VertxHttpServer;
 import org.apache.camel.main.injection.AnnotationDependencyInjection;
 import org.apache.camel.main.util.ExtraFilesClassLoader;
@@ -266,7 +267,10 @@ public class KameletMain extends MainCommandLineSupport {
         DefaultCamelContext answer = new DefaultCamelContext(false);
         answer.setLogJvmUptime(true);
         if (download) {
-            answer.setApplicationContextClassLoader(createApplicationContextClassLoader());
+            ClassLoader dynamicCL = createApplicationContextClassLoader();
+            answer.setApplicationContextClassLoader(dynamicCL);
+            answer.getPackageScanClassResolver().addClassLoader(dynamicCL);
+            answer.getPackageScanResourceResolver().addClassLoader(dynamicCL);
 
             MavenDependencyDownloader downloader = new MavenDependencyDownloader();
             downloader.setCamelContext(answer);
@@ -276,6 +280,7 @@ public class KameletMain extends MainCommandLineSupport {
                 downloader.addDownloadListener(downloadListener);
             }
             downloader.addDownloadListener(new AutoConfigureDownloadListener());
+            downloader.addArtifactDownloadListener(new TypeConverterLoaderDownloadListener());
 
             // register as extension
             try {

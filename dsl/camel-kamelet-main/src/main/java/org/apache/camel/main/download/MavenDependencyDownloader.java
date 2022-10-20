@@ -48,6 +48,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     private DownloadThreadPool threadPool;
     private CamelContext camelContext;
     private final Set<DownloadListener> downloadListeners = new LinkedHashSet<>();
+    private final Set<ArtifactDownloadListener> artifactDownloadListeners = new LinkedHashSet<>();
     private String repos;
     private boolean fresh;
 
@@ -65,6 +66,12 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     public void addDownloadListener(DownloadListener downloadListener) {
         CamelContextAware.trySetCamelContext(downloadListener, getCamelContext());
         downloadListeners.add(downloadListener);
+    }
+
+    @Override
+    public void addArtifactDownloadListener(ArtifactDownloadListener downloadListener) {
+        CamelContextAware.trySetCamelContext(downloadListener, getCamelContext());
+        artifactDownloadListeners.add(downloadListener);
     }
 
     @Override
@@ -163,6 +170,10 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                 if (!alreadyOnClasspath(a.getGav().getGroupId(), a.getGav().getArtifactId(),
                         a.getGav().getVersion(), false)) {
                     classLoader.addFile(file);
+                    // trigger listener after downloaded and added to classloader
+                    for (ArtifactDownloadListener listener : artifactDownloadListeners) {
+                        listener.onDownloadedFile(file);
+                    }
                     LOG.trace("Added classpath: {}", a.getGav());
                 }
             }
