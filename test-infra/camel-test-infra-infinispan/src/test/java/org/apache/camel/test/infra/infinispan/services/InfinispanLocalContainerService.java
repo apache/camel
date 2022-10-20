@@ -29,7 +29,7 @@ import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 public class InfinispanLocalContainerService implements InfinispanService, ContainerService<GenericContainer<?>> {
-    public static final String CONTAINER_IMAGE = "quay.io/infinispan/server:14.0.0.Final-2";
+    public static final String CONTAINER_IMAGE = "quay.io/infinispan/server:14.0.1.Final-1";
     public static final String CONTAINER_NAME = "infinispan";
     private static final String DEFAULT_USERNAME = "admin";
     private static final String DEFAULT_PASSWORD = "password";
