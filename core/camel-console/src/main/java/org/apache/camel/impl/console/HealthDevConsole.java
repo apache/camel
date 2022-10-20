@@ -50,8 +50,11 @@ public class HealthDevConsole extends AbstractDevConsole {
             if (ok) {
                 sb.append(String.format("\n    %s: %s", res.getCheck().getId(), res.getState()));
             } else {
-                String msg = res.getMessage().orElse("");
-                sb.append(String.format("\n    %s: %s (%s)", res.getCheck().getId(), res.getState(), msg));
+                if (res.getMessage().isPresent()) {
+                    sb.append(String.format("\n    %s: %s (%s)", res.getCheck().getId(), res.getState(), res.getMessage()));
+                } else {
+                    sb.append(String.format("\n    %s: %s", res.getCheck().getId(), res.getState()));
+                }
                 Throwable cause = res.getError().orElse(null);
                 if (cause != null) {
                     StringWriter sw = new StringWriter();
