@@ -478,7 +478,7 @@
     <robotframework-version>4.1.2</robotframework-version>
     <rome-version>1.18.0</rome-version>
     <rxjava2-version>2.2.21</rxjava2-version>
-    <saxon-version>9.9.1-8</saxon-version>
+    <saxon-version>11.4</saxon-version>
     <scala-datasonnet-version>2.13.9</scala-datasonnet-version>
     <scala-version>2.11.12</scala-version>
     <servicemix-specs-version>2.9.0</servicemix-specs-version>
