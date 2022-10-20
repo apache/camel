@@ -23,6 +23,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.athena.client.Athena2ClientFactory;
 import org.apache.camel.health.HealthCheckHelper;
+import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -38,7 +39,7 @@ public class Athena2Endpoint extends DefaultEndpoint {
 
     private AthenaClient athenaClient;
 
-    private Athena2HealthCheckRepository healthCheckRepository;
+    private WritableHealthCheckRepository healthCheckRepository;
     private Athena2ClientHealthCheck clientHealthCheck;
 
     @UriParam
@@ -67,8 +68,11 @@ public class Athena2Endpoint extends DefaultEndpoint {
                 ? configuration.getAmazonAthenaClient()
                 : Athena2ClientFactory.getAWSAthenaClient(configuration).getAthenaClient();
 
-        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(getCamelContext(),
-                Athena2HealthCheckRepository.REPOSITORY_ID, Athena2HealthCheckRepository.class);
+        // health-check is optional so discover and resolve
+        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
+                getCamelContext(),
+                "components",
+                WritableHealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
             clientHealthCheck = new Athena2ClientHealthCheck(this, getId());
