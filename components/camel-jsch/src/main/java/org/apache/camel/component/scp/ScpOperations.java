@@ -451,7 +451,7 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
     }
 
     private static boolean isRecursiveScp(String name) {
-        return name.indexOf('/') > 0;
+        return name.contains("/");
     }
 
     private static String getScpCommand(ScpConfiguration config, String name) {
