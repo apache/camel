@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kafka;
+package org.apache.camel.impl.health;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Stream;
 
 import org.apache.camel.CamelContext;
@@ -26,22 +26,26 @@ import org.apache.camel.DeferredContextBinding;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.StaticService;
 import org.apache.camel.health.HealthCheck;
-import org.apache.camel.health.HealthCheckRepository;
+import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
- * Repository for camel-kafka {@link HealthCheck}s.
+ * Repository for components {@link HealthCheck}s.
  */
-@org.apache.camel.spi.annotations.HealthCheck("camel-kafka-repository")
+@org.apache.camel.spi.annotations.HealthCheck(ComponentsHealthCheckRepository.REPOSITORY_NAME)
 @DeferredContextBinding
-public class KafkaHealthCheckRepository extends ServiceSupport
-        implements CamelContextAware, HealthCheckRepository, StaticService, NonManagedService {
+public class ComponentsHealthCheckRepository extends ServiceSupport
+        implements CamelContextAware, WritableHealthCheckRepository, StaticService, NonManagedService {
 
-    private final List<HealthCheck> checks = new ArrayList<>();
+    public static final String REPOSITORY_ID = "components";
+    public static final String REPOSITORY_NAME = "components-repository";
+
+    private final List<HealthCheck> checks;
     private volatile CamelContext context;
     private boolean enabled = true;
 
-    public KafkaHealthCheckRepository() {
+    public ComponentsHealthCheckRepository() {
+        this.checks = new CopyOnWriteArrayList<>();
     }
 
     @Override
@@ -51,7 +55,7 @@ public class KafkaHealthCheckRepository extends ServiceSupport
 
     @Override
     public String getId() {
-        return "camel-kafka";
+        return REPOSITORY_ID;
     }
 
     @Override
@@ -76,13 +80,14 @@ public class KafkaHealthCheckRepository extends ServiceSupport
                 : Stream.empty();
     }
 
+    @Override
     public void addHealthCheck(HealthCheck healthCheck) {
         CamelContextAware.trySetCamelContext(healthCheck, getCamelContext());
         this.checks.add(healthCheck);
     }
 
+    @Override
     public void removeHealthCheck(HealthCheck healthCheck) {
         this.checks.remove(healthCheck);
     }
-
 }

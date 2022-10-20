@@ -37,18 +37,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class CamelMicroProfileHealthSupervisedRoutesMainTest {
-    private SmallRyeHealthReporter reporter = new SmallRyeHealthReporter();
+    private final SmallRyeHealthReporter reporter = new SmallRyeHealthReporter();
 
     @Test
     public void testSupervisedRouteHealthChecks() throws Exception {
         CamelContext context = new DefaultCamelContext();
         CamelMicroProfileHealthCheckRegistry registry = new CamelMicroProfileHealthCheckRegistry(context);
+        context.addComponent("my", new CamelMicroProfileHealthTestHelper.MyComponent());
         context.setExtension(HealthCheckRegistry.class, registry);
         context.getRouteController().supervising();
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("healthyRoute")
+                from("my:start").routeId("healthyRoute")
                         .setBody(constant("Hello Camel MicroProfile Health"));
             }
         });
@@ -56,7 +57,9 @@ public class CamelMicroProfileHealthSupervisedRoutesMainTest {
         SimpleMain main = new SimpleMain(context);
         main.addInitialProperty("camel.health.routes-enabled", "true");
         main.addInitialProperty("camel.health.consumers-enabled", "true");
+        main.addInitialProperty("camel.health.components-enabled", "true");
         main.start();
+
         try {
             SmallRyeHealth health = reporter.getHealth();
 
@@ -64,7 +67,7 @@ public class CamelMicroProfileHealthSupervisedRoutesMainTest {
             assertEquals(Status.UP.name(), healthObject.getString("status"));
 
             JsonArray checks = healthObject.getJsonArray("checks");
-            assertEquals(3, checks.size());
+            assertEquals(4, checks.size());
 
             Optional<JsonObject> camelRoutesCheck = findHealthCheck("camel-routes", checks);
             camelRoutesCheck.ifPresentOrElse(check -> {
@@ -75,6 +78,11 @@ public class CamelMicroProfileHealthSupervisedRoutesMainTest {
             camelConsumersCheck.ifPresentOrElse(check -> {
                 assertEquals(Status.UP.toString(), check.getString("status"));
             }, () -> fail("Expected camel-consumers check not found in health output"));
+
+            Optional<JsonObject> camelComponentsCheck = findHealthCheck("camel-components", checks);
+            camelComponentsCheck.ifPresentOrElse(check -> {
+                assertEquals(Status.UP.toString(), check.getString("status"));
+            }, () -> fail("Expected camel-components check not found in health output"));
         } finally {
             main.stop();
         }
@@ -86,5 +94,4 @@ public class CamelMicroProfileHealthSupervisedRoutesMainTest {
                 .filter(jsonObject -> jsonObject.getString("name").equals(name))
                 .findFirst();
     }
-
 }

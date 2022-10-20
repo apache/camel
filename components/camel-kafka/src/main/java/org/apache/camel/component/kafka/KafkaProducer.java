@@ -38,6 +38,7 @@ import org.apache.camel.component.kafka.producer.support.ProducerUtil;
 import org.apache.camel.component.kafka.producer.support.PropagatedHeadersProvider;
 import org.apache.camel.component.kafka.serde.KafkaHeaderSerializer;
 import org.apache.camel.health.HealthCheckHelper;
+import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.SynchronizationAdapter;
@@ -66,7 +67,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
     @SuppressWarnings("rawtypes")
     private org.apache.kafka.clients.producer.Producer kafkaProducer;
     private KafkaProducerHealthCheck producerHealthCheck;
-    private KafkaHealthCheckRepository healthCheckRepository;
+    private WritableHealthCheckRepository healthCheckRepository;
     private String clientId;
     private String transactionId;
     private final KafkaEndpoint endpoint;
@@ -188,8 +189,11 @@ public class KafkaProducer extends DefaultAsyncProducer {
         }
 
         // health-check is optional so discover and resolve
-        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(endpoint.getCamelContext(), "camel-kafka",
-                KafkaHealthCheckRepository.class);
+        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
+                endpoint.getCamelContext(),
+                "components",
+                WritableHealthCheckRepository.class);
+
         if (healthCheckRepository != null) {
             producerHealthCheck = new KafkaProducerHealthCheck(this, clientId);
             healthCheckRepository.addHealthCheck(producerHealthCheck);

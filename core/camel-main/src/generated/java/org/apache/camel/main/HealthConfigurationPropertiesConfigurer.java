@@ -21,6 +21,8 @@ public class HealthConfigurationPropertiesConfigurer extends org.apache.camel.su
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.HealthConfigurationProperties target = (org.apache.camel.main.HealthConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "componentsenabled":
+        case "ComponentsEnabled": target.setComponentsEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "consumersenabled":
         case "ConsumersEnabled": target.setConsumersEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "enabled":
@@ -42,6 +44,8 @@ public class HealthConfigurationPropertiesConfigurer extends org.apache.camel.su
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "componentsenabled":
+        case "ComponentsEnabled": return java.lang.Boolean.class;
         case "consumersenabled":
         case "ConsumersEnabled": return java.lang.Boolean.class;
         case "enabled":
@@ -64,6 +68,8 @@ public class HealthConfigurationPropertiesConfigurer extends org.apache.camel.su
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.HealthConfigurationProperties target = (org.apache.camel.main.HealthConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "componentsenabled":
+        case "ComponentsEnabled": return target.getComponentsEnabled();
         case "consumersenabled":
         case "ConsumersEnabled": return target.getConsumersEnabled();
         case "enabled":

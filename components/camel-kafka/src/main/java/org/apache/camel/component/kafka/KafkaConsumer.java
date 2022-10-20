@@ -30,6 +30,7 @@ import org.apache.camel.Suspendable;
 import org.apache.camel.component.kafka.consumer.errorhandler.KafkaConsumerListener;
 import org.apache.camel.health.HealthCheckAware;
 import org.apache.camel.health.HealthCheckHelper;
+import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.resume.ConsumerListenerAware;
 import org.apache.camel.resume.ResumeAware;
 import org.apache.camel.resume.ResumeStrategy;
@@ -52,7 +53,7 @@ public class KafkaConsumer extends DefaultConsumer
     protected ExecutorService executor;
     private final KafkaEndpoint endpoint;
     private KafkaConsumerHealthCheck consumerHealthCheck;
-    private KafkaHealthCheckRepository healthCheckRepository;
+    private WritableHealthCheckRepository healthCheckRepository;
     // This list helps to work around the infinite loop of KAFKA-1894
     private final List<KafkaFetchRecords> tasks = new ArrayList<>();
     private volatile boolean stopOffsetRepo;
@@ -123,8 +124,11 @@ public class KafkaConsumer extends DefaultConsumer
         super.doStart();
 
         // health-check is optional so discover and resolve
-        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(endpoint.getCamelContext(), "camel-kafka",
-                KafkaHealthCheckRepository.class);
+        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
+                endpoint.getCamelContext(),
+                "components",
+                WritableHealthCheckRepository.class);
+
         if (healthCheckRepository != null) {
             consumerHealthCheck = new KafkaConsumerHealthCheck(this, getRouteId());
             healthCheckRepository.addHealthCheck(consumerHealthCheck);
