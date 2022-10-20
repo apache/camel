@@ -27,7 +27,7 @@ public interface ArtifactDownloadListener {
     /**
      * After the artifact has been downloaded
      *
-     * @param file  the downloaded artifact as a file
+     * @param file the downloaded artifact as a file
      */
     void onDownloadedFile(File file);
 
