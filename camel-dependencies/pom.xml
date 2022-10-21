@@ -185,7 +185,7 @@
     <dropbox-version>3.2.0</dropbox-version>
     <eddsa-version>0.3.0</eddsa-version>
     <egit-github-core-version>2.1.5</egit-github-core-version>
-    <ehcache3-version>3.9.9</ehcache3-version>
+    <ehcache3-version>3.9.10</ehcache3-version>
     <elasticsearch-rest-sniffer-version>7.10.2</elasticsearch-rest-sniffer-version>
     <elasticsearch-rest-version>7.10.2</elasticsearch-rest-version>
     <elsql-version>1.3</elsql-version>
@@ -258,7 +258,7 @@
     <hbase-version>2.3.1</hbase-version>
     <hdrhistrogram-version>2.1.11</hdrhistrogram-version>
     <hibernate-validator-version>6.2.5.Final</hibernate-validator-version>
-    <hibernate-version>5.6.11.Final</hibernate-version>
+    <hibernate-version>5.6.12.Final</hibernate-version>
     <hk2-version>2.6.1</hk2-version>
     <hsqldb-version>2.5.1</hsqldb-version>
     <htrace-version>3.1.0-incubating</htrace-version>
@@ -407,7 +407,7 @@
     <maven-surefire-report-plugin-version>3.0.0-M4</maven-surefire-report-plugin-version>
     <maven-war-plugin-version>3.3.1</maven-war-plugin-version>
     <metrics-version>4.2.3</metrics-version>
-    <micrometer-version>1.8.10</micrometer-version>
+    <micrometer-version>1.8.11</micrometer-version>
     <microprofile-config-version>2.0</microprofile-config-version>
     <microprofile-fault-tolerance-version>3.0</microprofile-fault-tolerance-version>
     <microprofile-health-version>3.1</microprofile-health-version>
@@ -432,7 +432,7 @@
     <nessus-ipfs-version>1.0.0.Beta4</nessus-ipfs-version>
     <nessus-weka-version>1.0.1</nessus-weka-version>
     <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
-    <netty-version>4.1.82.Final</netty-version>
+    <netty-version>4.1.84.Final</netty-version>
     <networknt-json-schema-validator-version>1.0.64</networknt-json-schema-validator-version>
     <nimbus-jose-jwt>8.9</nimbus-jose-jwt>
     <nitrite-version>3.4.3</nitrite-version>
@@ -520,7 +520,7 @@
     <spring-integration-version>5.5.14</spring-integration-version>
     <spring-ldap-version>2.3.8.RELEASE</spring-ldap-version>
     <spring-rabbitmq-version>2.4.2</spring-rabbitmq-version>
-    <spring-security-version>5.6.7</spring-security-version>
+    <spring-security-version>5.6.8</spring-security-version>
     <spring-version>${spring5-version}</spring-version>
     <spring-version-range>[5,6)</spring-version-range>
     <spring-ws-version>3.1.3</spring-ws-version>
