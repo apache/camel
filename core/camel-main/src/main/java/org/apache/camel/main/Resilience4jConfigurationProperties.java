@@ -136,8 +136,8 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Whether to throw io.github.resilience4j.circuitbreaker.CallNotPermittedException when the call
-     * is rejected due circuit breaker is half open or open.
+     * Whether to throw io.github.resilience4j.circuitbreaker.CallNotPermittedException when the call is rejected due
+     * circuit breaker is half open or open.
      */
     public void setThrowExceptionWhenHalfOpenOrOpenState(Boolean throwExceptionWhenHalfOpenOrOpenState) {
         this.throwExceptionWhenHalfOpenOrOpenState = throwExceptionWhenHalfOpenOrOpenState;
@@ -389,8 +389,8 @@ public class Resilience4jConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Whether to throw io.github.resilience4j.circuitbreaker.CallNotPermittedException when the call
-     * is rejected due circuit breaker is half open or open.
+     * Whether to throw io.github.resilience4j.circuitbreaker.CallNotPermittedException when the call is rejected due
+     * circuit breaker is half open or open.
      */
     public Resilience4jConfigurationProperties withThrowExceptionWhenHalfOpenOrOpenState(
             Boolean throwExceptionWhenHalfOpenOrOpenState) {
