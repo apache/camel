@@ -158,7 +158,7 @@
         <debezium-mysql-connector-version>8.0.28</debezium-mysql-connector-version>
         <eddsa-version>0.3.0</eddsa-version>
         <egit-github-core-version>2.1.5</egit-github-core-version>
-        <ehcache3-version>3.10.1</ehcache3-version>
+        <ehcache3-version>3.10.2</ehcache3-version>
         <elasticsearch-java-client-version>8.4.1</elasticsearch-java-client-version>
         <elasticsearch-java-client-sniffer-version>8.4.1</elasticsearch-java-client-sniffer-version>
         <elasticsearch-rest-sniffer-version>7.10.2</elasticsearch-rest-sniffer-version>
@@ -229,7 +229,7 @@
         <hapi-fhir-version>4.2.0</hapi-fhir-version>
         <hawtbuf-version>1.11</hawtbuf-version>
         <hawtdispatch-version>1.22</hawtdispatch-version>
-        <hazelcast-version>5.1.3</hazelcast-version>
+        <hazelcast-version>5.1.4</hazelcast-version>
         <hbase-version>2.5.0</hbase-version>
         <hdrhistrogram-version>2.1.11</hdrhistrogram-version>
         <hibernate-validator-version>6.2.5.Final</hibernate-validator-version>
@@ -391,7 +391,7 @@
         <maven-wagon-version>3.5.2</maven-wagon-version>
         <maven-war-plugin-version>3.3.1</maven-war-plugin-version>
         <metrics-version>4.2.9</metrics-version>
-        <micrometer-version>1.9.3</micrometer-version>
+        <micrometer-version>1.9.5</micrometer-version>
         <microprofile-config-version>2.0.1</microprofile-config-version>
         <microprofile-metrics-version>3.0.1</microprofile-metrics-version>
         <microprofile-fault-tolerance-version>3.0</microprofile-fault-tolerance-version>
