@@ -23,7 +23,7 @@ import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.core.exception.SdkClientException;
+import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.KinesisClientBuilder;
@@ -69,9 +69,15 @@ public class Kinesis2ConsumerHealthCheck extends AbstractHealthCheck {
                 client = clientBuilder.region(Region.of(configuration.getRegion())).build();
             }
             client.listStreams();
-        } catch (SdkClientException e) {
+        } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
+            if (ObjectHelper.isNotEmpty(e.statusCode())) {
+                builder.detail(SERVICE_STATUS_CODE, e.statusCode());
+            }
+            if (ObjectHelper.isNotEmpty(e.awsErrorDetails().errorCode())) {
+                builder.detail(SERVICE_ERROR_CODE, e.awsErrorDetails().errorCode());
+            }
             builder.down();
             return;
 

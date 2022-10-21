@@ -47,6 +47,10 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
     private final String id;
     private final ConcurrentMap<String, Object> meta;
 
+    public static final String SERVICE_STATUS_CODE = "service.status.code";
+
+    public static final String SERVICE_ERROR_CODE = "service.error.code";
+
     protected AbstractHealthCheck(String id) {
         this(null, id, null);
     }
