@@ -2312,6 +2312,27 @@ public class ModelParser extends BaseParser {
             return true;
         }, noElementHandler(), noValueHandler());
     }
+    protected SwiftMtDataFormat doParseSwiftMtDataFormat() throws IOException, XmlPullParserException {
+        return doParse(new SwiftMtDataFormat(), (def, key, val) -> {
+            if ("writeInJson".equals(key)) {
+                def.setWriteInJson(val);
+                return true;
+            }
+            return identifiedTypeAttributeHandler().accept(def, key, val);
+        }, noElementHandler(), noValueHandler());
+    }
+    protected SwiftMxDataFormat doParseSwiftMxDataFormat() throws IOException, XmlPullParserException {
+        return doParse(new SwiftMxDataFormat(), (def, key, val) -> {
+            switch (key) {
+                case "readConfigRef": def.setReadConfigRef(val); break;
+                case "readMessageId": def.setReadMessageId(val); break;
+                case "writeConfigRef": def.setWriteConfigRef(val); break;
+                case "writeInJson": def.setWriteInJson(val); break;
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
+            }
+            return true;
+        }, noElementHandler(), noValueHandler());
+    }
     protected SyslogDataFormat doParseSyslogDataFormat() throws IOException, XmlPullParserException {
         return doParse(new SyslogDataFormat(),
             identifiedTypeAttributeHandler(), noElementHandler(), noValueHandler());
@@ -3381,6 +3402,8 @@ public class ModelParser extends BaseParser {
             case "protobuf": return doParseProtobufDataFormat();
             case "rss": return doParseRssDataFormat();
             case "soap": return doParseSoapDataFormat();
+            case "swiftMt": return doParseSwiftMtDataFormat();
+            case "swiftMx": return doParseSwiftMxDataFormat();
             case "syslog": return doParseSyslogDataFormat();
             case "tarFile": return doParseTarFileDataFormat();
             case "thrift": return doParseThriftDataFormat();

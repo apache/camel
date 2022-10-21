@@ -443,6 +443,7 @@
         <protobuf-maven-plugin-version>0.6.1</protobuf-maven-plugin-version>
         <protonpack-version>1.8</protonpack-version>
         <protostream-version>4.5.0.Final</protostream-version>
+        <prowide-version>SRU2022-9.3.2</prowide-version>
         <pubnub-version>4.25.0</pubnub-version>
         <pulsar-version>2.10.1</pulsar-version>
         <qpid-broker-version>8.0.6</qpid-broker-version>
@@ -2541,6 +2542,11 @@
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-swagger-java</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-swift</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

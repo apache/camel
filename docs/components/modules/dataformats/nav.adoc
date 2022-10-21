@@ -35,6 +35,8 @@
 ** xref:protobufJackson-dataformat.adoc[Protobuf Jackson]
 ** xref:rss-dataformat.adoc[RSS]
 ** xref:soap-dataformat.adoc[SOAP]
+** xref:swiftMt-dataformat.adoc[SWIFT MT]
+** xref:swiftMx-dataformat.adoc[SWIFT MX]
 ** xref:syslog-dataformat.adoc[Syslog]
 ** xref:tarFile-dataformat.adoc[Tar File]
 ** xref:thrift-dataformat.adoc[Thrift]
