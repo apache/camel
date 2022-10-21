@@ -176,7 +176,7 @@ public final class SensitiveUtils {
                                                     + "|\\Quserpassword\\E"
                                                     + "|\\Qverificationcode\\E"
                                                     + "|\\Qzookeeperpassword\\E"
-                                                    // SENSITIVE-PATTERN: END
+    // SENSITIVE-PATTERN: END
     ;
 
     private SensitiveUtils() {
