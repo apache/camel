@@ -23,25 +23,20 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.TestSupport;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIf;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class ResequencerEngineTest extends TestSupport {
+class ResequencerEngineTest extends TestSupport {
 
     private static final boolean IGNORE_LOAD_TESTS = Boolean.parseBoolean(System.getProperty("ignore.load.tests", "true"));
 
     private ResequencerEngineSync<Integer> resequencer;
     private ResequencerRunner<Integer> runner;
     private SequenceBuffer<Integer> buffer;
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-    }
 
     @Override
     @AfterEach
@@ -55,51 +50,50 @@ public class ResequencerEngineTest extends TestSupport {
     }
 
     @Test
-    public void testTimeout1() throws Exception {
-        initResequencer(500, 10);
+    void testTimeout1() throws Exception {
+        initResequencer(500);
         resequencer.insert(4);
         assertNull(buffer.poll(250));
-        assertEquals((Object) (Integer) 4, (Object) buffer.take());
-        assertEquals((Object) (Integer) 4, (Object) resequencer.getLastDelivered());
+        assertEquals(4, buffer.take());
+        assertEquals(4, resequencer.getLastDelivered());
     }
 
     @Test
-    public void testTimeout2() throws Exception {
-        initResequencer(500, 10);
+    void testTimeout2() throws Exception {
+        initResequencer(500);
         resequencer.setLastDelivered(2);
         resequencer.insert(4);
         assertNull(buffer.poll(250));
-        assertEquals((Object) (Integer) 4, (Object) buffer.take());
-        assertEquals((Object) (Integer) 4, (Object) resequencer.getLastDelivered());
+        assertEquals(4, buffer.take());
+        assertEquals(4, resequencer.getLastDelivered());
     }
 
     @Test
-    public void testTimeout3() throws Exception {
-        initResequencer(500, 10);
+    void testTimeout3() throws Exception {
+        initResequencer(500);
         resequencer.setLastDelivered(3);
         resequencer.insert(4);
-        assertEquals((Object) (Integer) 4, (Object) buffer.poll(250));
-        assertEquals((Object) (Integer) 4, (Object) resequencer.getLastDelivered());
+        assertEquals(4, buffer.poll(500));
+        assertEquals(4, resequencer.getLastDelivered());
     }
 
     @Test
-    public void testTimeout4() throws Exception {
-        initResequencer(500, 10);
+    void testTimeout4() throws Exception {
+        initResequencer(500);
         resequencer.setLastDelivered(2);
         resequencer.insert(4);
         resequencer.insert(3);
-        assertEquals((Object) (Integer) 3, (Object) buffer.poll(250));
-        assertEquals((Object) (Integer) 4, (Object) buffer.poll(250));
-        assertEquals((Object) (Integer) 4, (Object) resequencer.getLastDelivered());
+        assertEquals(3, buffer.poll(500));
+        assertEquals(4, buffer.poll(500));
+        assertEquals(4, resequencer.getLastDelivered());
     }
 
+    @DisabledIf(value = "isIgnoreLoadTests",
+                disabledReason = "Enabled only when the System property 'ignore.load.tests' is not set to 'true'")
     @Test
-    public void testRandom() throws Exception {
-        if (IGNORE_LOAD_TESTS) {
-            return;
-        }
+    void testRandom() throws Exception {
         int input = 1000;
-        initResequencer(1000, 1000);
+        initResequencer(1000);
         List<Integer> list = new LinkedList<>();
         for (int i = 0; i < input; i++) {
             list.add(i);
@@ -128,24 +122,11 @@ public class ResequencerEngineTest extends TestSupport {
         log.info("Duration = " + millis + " ms");
     }
 
+    @DisabledIf(value = "isIgnoreLoadTests",
+                disabledReason = "Enabled only when the System property 'ignore.load.tests' is not set to 'true'")
     @Test
-    public void testReverse1() throws Exception {
-        if (IGNORE_LOAD_TESTS) {
-            return;
-        }
-        testReverse(10);
-    }
-
-    @Test
-    public void testReverse2() throws Exception {
-        if (IGNORE_LOAD_TESTS) {
-            return;
-        }
-        testReverse(100);
-    }
-
-    private void testReverse(int capacity) throws Exception {
-        initResequencer(1, capacity);
+    void testReverse() throws Exception {
+        initResequencer(1);
         for (int i = 99; i >= 0; i--) {
             resequencer.insert(i);
         }
@@ -157,7 +138,7 @@ public class ResequencerEngineTest extends TestSupport {
         log.info(sb.toString());
     }
 
-    private void initResequencer(long timeout, int capacity) {
+    private void initResequencer(long timeout) {
         ResequencerEngine<Integer> engine;
         buffer = new SequenceBuffer<>();
         engine = new ResequencerEngine<>(new IntegerComparator());
@@ -172,4 +153,7 @@ public class ResequencerEngineTest extends TestSupport {
         await().atMost(3, TimeUnit.SECONDS).until(runner::isRunning);
     }
 
+    boolean isIgnoreLoadTests() {
+        return IGNORE_LOAD_TESTS;
+    }
 }
