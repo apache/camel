@@ -153,7 +153,7 @@
         <djl-tensorflow-native-version>2.4.1</djl-tensorflow-native-version>
         <docker-java-version>3.2.13</docker-java-version>
         <dozer-version>6.5.2</dozer-version>
-        <dropbox-version>5.4.3</dropbox-version>
+        <dropbox-version>5.4.4</dropbox-version>
         <debezium-version>1.9.6.Final</debezium-version>
         <debezium-mysql-connector-version>8.0.28</debezium-mysql-connector-version>
         <eddsa-version>0.3.0</eddsa-version>
