@@ -117,19 +117,23 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
             String[] part = components.split("\\s");
             for (String scheme : part) {
                 if (!camelCatalog.findComponentNames().contains(scheme)) {
-                    // find the class name
-                    String javaType = extractComponentJavaType(log, classLoader, scheme);
-                    if (javaType != null) {
-                        String json = loadComponentJSonSchema(log, classLoader, scheme);
-                        if (json != null) {
-                            if (log) {
-                                LOGGER.info("Adding component: {}", scheme);
-                            }
-                            camelCatalog.addComponent(scheme, javaType, json);
-                            names.add(scheme);
-                        }
-                    }
+                    findClassName(camelCatalog, classLoader, names, scheme);
                 }
+            }
+        }
+    }
+
+    private void findClassName(CamelCatalog camelCatalog, ClassLoader classLoader, Set<String> names, String scheme) {
+        // find the class name
+        String javaType = extractComponentJavaType(log, classLoader, scheme);
+        if (javaType != null) {
+            String json = loadComponentJSonSchema(log, classLoader, scheme);
+            if (json != null) {
+                if (log) {
+                    LOGGER.info("Adding component: {}", scheme);
+                }
+                camelCatalog.addComponent(scheme, javaType, json);
+                names.add(scheme);
             }
         }
     }
