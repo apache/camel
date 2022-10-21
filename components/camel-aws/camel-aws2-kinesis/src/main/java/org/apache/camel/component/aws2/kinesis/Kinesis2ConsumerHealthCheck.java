@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.kinesis;
 
+import java.util.Map;
+
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.util.ObjectHelper;
@@ -25,8 +27,6 @@ import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.KinesisClientBuilder;
-
-import java.util.Map;
 
 public class Kinesis2ConsumerHealthCheck extends AbstractHealthCheck {
 
@@ -84,6 +84,5 @@ public class Kinesis2ConsumerHealthCheck extends AbstractHealthCheck {
         builder.up();
 
     }
-
 
 }
