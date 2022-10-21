@@ -7,7 +7,7 @@
     "deprecated": false,
     "firstVersion": "3.20.0",
     "label": "dataformat,transformation,swift",
-    "javaType": "org.apache.camel.dataformat.swift.SwiftMxDataFormat",
+    "javaType": "org.apache.camel.dataformat.swift.mx.SwiftMxDataFormat",
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-swift",
