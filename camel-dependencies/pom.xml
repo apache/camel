@@ -253,7 +253,7 @@
     <hapi-version>2.3</hapi-version>
     <hawtbuf-version>1.11</hawtbuf-version>
     <hawtdispatch-version>1.22</hawtdispatch-version>
-    <hazelcast-version>5.1.2</hazelcast-version>
+    <hazelcast-version>5.1.4</hazelcast-version>
     <hbase-version>2.5.0</hbase-version>
     <hdrhistrogram-version>2.1.11</hdrhistrogram-version>
     <hibernate-validator-version>6.2.5.Final</hibernate-validator-version>
@@ -404,7 +404,7 @@
     <maven-surefire-report-plugin-version>3.0.0-M4</maven-surefire-report-plugin-version>
     <maven-war-plugin-version>3.3.1</maven-war-plugin-version>
     <metrics-version>4.2.9</metrics-version>
-    <micrometer-version>1.9.3</micrometer-version>
+    <micrometer-version>1.9.5</micrometer-version>
     <microprofile-config-version>2.0.1</microprofile-config-version>
     <microprofile-fault-tolerance-version>3.0</microprofile-fault-tolerance-version>
     <microprofile-metrics-version>3.0.1</microprofile-metrics-version>
@@ -508,7 +508,7 @@
     <spring-integration-version>5.5.15</spring-integration-version>
     <spring-ldap-version>2.4.1</spring-ldap-version>
     <spring-rabbitmq-version>2.4.7</spring-rabbitmq-version>
-    <spring-security-version>5.7.3</spring-security-version>
+    <spring-security-version>5.7.4</spring-security-version>
     <spring-vault-core-version>2.3.2</spring-vault-core-version>
     <spring-version>${spring5-version}</spring-version>
     <spring-version-range>[5,6)</spring-version-range>
