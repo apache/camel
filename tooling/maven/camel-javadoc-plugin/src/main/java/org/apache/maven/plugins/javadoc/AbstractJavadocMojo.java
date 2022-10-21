@@ -2030,15 +2030,10 @@ public abstract class AbstractJavadocMojo
         // ----------------------------------------------------------------------
         List<String> standardDocletArguments = new ArrayList<>();
 
-        Set<OfflineLink> offlineLinkSet;
         if ( StringUtils.isEmpty( doclet ) || useStandardDocletOptions )
         {
-            offlineLinkSet = getLinkofflines();
+            Set<OfflineLink> offlineLinkSet = getLinkofflines();
             addStandardDocletOptions( javadocOutputDirectory, standardDocletArguments, offlineLinkSet );
-        }
-        else
-        {
-            offlineLinkSet = Collections.emptySet();
         }
 
         // ----------------------------------------------------------------------

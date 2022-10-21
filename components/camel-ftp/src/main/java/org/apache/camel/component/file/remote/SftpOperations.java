@@ -1200,7 +1200,6 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                 message = ee[0].toString();
             }
             tmp.interrupt();
-            tmp = null;
             throw new RuntimeCamelException(message, ee[0]);
         }
         return socket;
