@@ -22,6 +22,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.eks.client.EKS2ClientFactory;
+import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -37,6 +38,8 @@ import software.amazon.awssdk.services.eks.EksClient;
 public class EKS2Endpoint extends ScheduledPollEndpoint {
 
     private EksClient eksClient;
+    private EKS2HealthCheckRepository healthCheckRepository;
+    private EKS2ClientHealthCheck clientHealthCheck;
 
     @UriParam
     private EKS2Configuration configuration;
@@ -62,10 +65,24 @@ public class EKS2Endpoint extends ScheduledPollEndpoint {
 
         eksClient = configuration.getEksClient() != null
                 ? configuration.getEksClient() : EKS2ClientFactory.getEksClient(configuration).getEksClient();
+
+        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(getCamelContext(),
+                EKS2HealthCheckRepository.REPOSITORY_ID, EKS2HealthCheckRepository.class);
+
+        if (healthCheckRepository != null) {
+            clientHealthCheck = new EKS2ClientHealthCheck(this, getId());
+            healthCheckRepository.addHealthCheck(clientHealthCheck);
+        }
     }
 
     @Override
     public void doStop() throws Exception {
+
+        if (healthCheckRepository != null && clientHealthCheck != null) {
+            healthCheckRepository.removeHealthCheck(clientHealthCheck);
+            clientHealthCheck = null;
+        }
+
         if (ObjectHelper.isEmpty(configuration.getEksClient())) {
             if (eksClient != null) {
                 eksClient.close();
