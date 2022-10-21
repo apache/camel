@@ -76,7 +76,7 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
 
             // build static url with the known parameters
             String url;
-            if (auth != null && auth.indexOf('@') != -1) {
+            if (auth != null && auth.contains("@")) {
                 // only use auth if there is a username:password@host
                 url = getScheme() + ":" + auth;
             } else {
@@ -141,7 +141,7 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
         }
 
         // remove query parameters
-        if (u.indexOf('?') > 0) {
+        if (u.contains("?")) {
             u = StringHelper.before(u, "?");
         }
 

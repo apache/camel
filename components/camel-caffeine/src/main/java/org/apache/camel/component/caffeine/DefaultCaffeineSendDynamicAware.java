@@ -54,7 +54,7 @@ abstract class DefaultCaffeineSendDynamicAware extends SendDynamicAwareSupport {
             // build static uri
             String u = entry.getUri();
             // remove query parameters
-            if (u.indexOf('?') > 0) {
+            if (u.contains("?")) {
                 u = StringHelper.before(u, "?");
             }
             String query = URISupport.createQueryString(copy);
