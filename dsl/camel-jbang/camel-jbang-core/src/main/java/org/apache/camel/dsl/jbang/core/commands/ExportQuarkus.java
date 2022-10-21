@@ -19,6 +19,8 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
@@ -186,31 +188,38 @@ class ExportQuarkus extends Export {
             context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", sb.toString());
         }
 
-        StringBuilder sb = new StringBuilder();
+        List<MavenGav> gavs = new ArrayList<>();
         for (String dep : deps) {
             MavenGav gav = MavenGav.parseGav(dep);
             String gid = gav.getGroupId();
             String aid = gav.getArtifactId();
-            String v = gav.getVersion();
             // transform to camel-quarkus extension GAV
             if ("org.apache.camel".equals(gid)) {
                 String qaid = aid.replace("camel-", "camel-quarkus-");
                 ArtifactModel<?> am = catalog.modelFromMavenGAV("org.apache.camel.quarkus", qaid, null);
                 if (am != null) {
                     // use quarkus extension
-                    gid = am.getGroupId();
-                    aid = am.getArtifactId();
-                    v = null; // uses BOM so version should not be included
+                    gav.setGroupId(am.getGroupId());
+                    gav.setArtifactId(am.getArtifactId());
+                    gav.setVersion(null); // uses BOM so version should not be included
                 } else {
                     // there is no quarkus extension so use plain camel
-                    v = camelVersion;
+                    gav.setVersion(camelVersion);
                 }
             }
+            gavs.add(gav);
+        }
+
+        // sort artifacts
+        gavs.sort(mavenGavComparator());
+
+        StringBuilder sb = new StringBuilder();
+        for (MavenGav gav : gavs) {
             sb.append("        <dependency>\n");
-            sb.append("            <groupId>").append(gid).append("</groupId>\n");
-            sb.append("            <artifactId>").append(aid).append("</artifactId>\n");
-            if (v != null) {
-                sb.append("            <version>").append(v).append("</version>\n");
+            sb.append("            <groupId>").append(gav.getGroupId()).append("</groupId>\n");
+            sb.append("            <artifactId>").append(gav.getArtifactId()).append("</artifactId>\n");
+            if (gav.getVersion() != null) {
+                sb.append("            <version>").append(gav.getVersion()).append("</version>\n");
             }
             sb.append("        </dependency>\n");
         }
