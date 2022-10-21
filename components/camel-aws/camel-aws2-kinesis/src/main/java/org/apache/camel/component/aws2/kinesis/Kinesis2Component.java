@@ -36,8 +36,6 @@ public class Kinesis2Component extends DefaultComponent {
 
     public Kinesis2Component(CamelContext context) {
         super(context);
-
-        registerExtension(new Kinesis2ComponentVerifierExtension());
     }
 
     @Override
