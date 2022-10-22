@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.18.3-SNAPSHOT</version>
+        <version>3.18.3</version>
     </parent>
 
     <artifactId>camel-ahc-ws</artifactId>
