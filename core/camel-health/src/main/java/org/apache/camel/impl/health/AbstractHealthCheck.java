@@ -152,7 +152,9 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
         // Extract relevant information from meta data.
         int invocationCount = (Integer) meta.getOrDefault(INVOCATION_COUNT, 0);
         int failureCount = (Integer) meta.getOrDefault(FAILURE_COUNT, 0);
+        String failureTime = (String) meta.get(FAILURE_TIME);
         int successCount = (Integer) meta.getOrDefault(SUCCESS_COUNT, 0);
+        String successTime = (String) meta.get(SUCCESS_TIME);
 
         String invocationTime = ZonedDateTime.now().format(DateTimeFormatter.ISO_ZONED_DATE_TIME);
 
@@ -178,23 +180,37 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
             // reset success since it failed
             successCount = 0;
             failureCount++;
+            failureTime = invocationTime;
         } else if (builder.state() == State.UP) {
             // reset failure since it ok
             failureCount = 0;
             successCount++;
+            successTime = invocationTime;
         }
 
         meta.put(INVOCATION_TIME, invocationTime);
         meta.put(INVOCATION_COUNT, ++invocationCount);
         meta.put(FAILURE_COUNT, failureCount);
+        if (failureTime != null) {
+            meta.put(FAILURE_TIME, failureTime);
+        }
         meta.put(SUCCESS_COUNT, successCount);
+        if (successTime != null) {
+            meta.put(SUCCESS_TIME, successTime);
+        }
 
         // Copy some meta-data bits to the response attributes so the
         // response caches the health-check state at the time of the invocation.
         builder.detail(INVOCATION_TIME, meta.get(INVOCATION_TIME));
         builder.detail(INVOCATION_COUNT, meta.get(INVOCATION_COUNT));
         builder.detail(FAILURE_COUNT, meta.get(FAILURE_COUNT));
+        if (meta.containsKey(FAILURE_TIME)) {
+            builder.detail(FAILURE_TIME, meta.get(FAILURE_TIME));
+        }
         builder.detail(SUCCESS_COUNT, meta.get(SUCCESS_COUNT));
+        if (meta.containsKey(SUCCESS_TIME)) {
+            builder.detail(SUCCESS_TIME, meta.get(SUCCESS_TIME));
+        }
 
         return builder;
     }
