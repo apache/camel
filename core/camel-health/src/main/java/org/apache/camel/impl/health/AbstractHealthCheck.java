@@ -185,6 +185,11 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
             // reset failure since it ok
             failureCount = 0;
             successCount++;
+            if (successTime == null) {
+                // first time we are OK, then reset failure as we only want to capture
+                // failures that is happening after we have been ok (such as during bootstrap)
+                failureTime = null;
+            }
             successTime = invocationTime;
         }
 
@@ -193,10 +198,14 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
         meta.put(FAILURE_COUNT, failureCount);
         if (failureTime != null) {
             meta.put(FAILURE_TIME, failureTime);
+        } else {
+            meta.remove(FAILURE_TIME);
         }
         meta.put(SUCCESS_COUNT, successCount);
         if (successTime != null) {
             meta.put(SUCCESS_TIME, successTime);
+        } else {
+            meta.remove(SUCCESS_TIME);
         }
 
         // Copy some meta-data bits to the response attributes so the
