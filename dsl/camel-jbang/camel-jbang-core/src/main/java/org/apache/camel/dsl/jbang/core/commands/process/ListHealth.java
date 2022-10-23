@@ -148,13 +148,13 @@ public class ListHealth extends ProcessBaseCommand {
                     new Column().header("ID").dataAlign(HorizontalAlign.LEFT)
                             .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(this::getId),
-                    new Column().header("SINCE").headerAlign(HorizontalAlign.RIGHT)
-                            .dataAlign(HorizontalAlign.RIGHT)
-                            .with(r -> r.since),
+                    new Column().header("RL").minWidth(4).maxWidth(4).with(this::getLR),
                     new Column().header("STATE").headerAlign(HorizontalAlign.CENTER)
                             .dataAlign(HorizontalAlign.CENTER)
                             .with(r -> r.state),
-                    new Column().header("RL").minWidth(4).maxWidth(4).with(this::getLR),
+                    new Column().header("SINCE").headerAlign(HorizontalAlign.RIGHT)
+                            .dataAlign(HorizontalAlign.RIGHT)
+                            .with(r -> r.since),
                     new Column().header("TOTAL").headerAlign(HorizontalAlign.RIGHT).with(r -> r.total),
                     new Column().header("OK/KO").headerAlign(HorizontalAlign.RIGHT).with(this::getRate),
                     new Column().header("MESSAGE").dataAlign(HorizontalAlign.LEFT)
