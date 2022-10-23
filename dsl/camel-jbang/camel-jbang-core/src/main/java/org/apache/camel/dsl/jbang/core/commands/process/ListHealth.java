@@ -113,7 +113,23 @@ public class ListHealth extends ProcessBaseCommand {
                                     ZonedDateTime zdt = ZonedDateTime.parse(time);
                                     if (zdt != null) {
                                         long delta = Math.abs(ZonedDateTime.now().until(zdt, ChronoUnit.MILLIS));
-                                        row.since = TimeUtils.printAge(delta);
+                                        row.sinceLast = TimeUtils.printAge(delta);
+                                    }
+                                }
+                                time = d.getString("success.time");
+                                if (time != null) {
+                                    ZonedDateTime zdt = ZonedDateTime.parse(time);
+                                    if (zdt != null) {
+                                        long delta = Math.abs(ZonedDateTime.now().until(zdt, ChronoUnit.MILLIS));
+                                        row.sinceSuccess = TimeUtils.printAge(delta);
+                                    }
+                                }
+                                time = d.getString("failure.time");
+                                if (time != null) {
+                                    ZonedDateTime zdt = ZonedDateTime.parse(time);
+                                    if (zdt != null) {
+                                        long delta = Math.abs(ZonedDateTime.now().until(zdt, ChronoUnit.MILLIS));
+                                        row.sinceFailure = TimeUtils.printAge(delta);
                                     }
                                 }
                             }
@@ -152,11 +168,12 @@ public class ListHealth extends ProcessBaseCommand {
                     new Column().header("STATE").headerAlign(HorizontalAlign.CENTER)
                             .dataAlign(HorizontalAlign.CENTER)
                             .with(r -> r.state),
-                    new Column().header("SINCE").headerAlign(HorizontalAlign.RIGHT)
+                    new Column().header("RATE").headerAlign(HorizontalAlign.CENTER)
                             .dataAlign(HorizontalAlign.RIGHT)
-                            .with(r -> r.since),
-                    new Column().header("TOTAL").headerAlign(HorizontalAlign.RIGHT).with(r -> r.total),
-                    new Column().header("OK/KO").headerAlign(HorizontalAlign.RIGHT).with(this::getRate),
+                            .with(this::getRate),
+                    new Column().header("SINCE").headerAlign(HorizontalAlign.CENTER)
+                            .dataAlign(HorizontalAlign.RIGHT)
+                            .with(this::getSince),
                     new Column().header("MESSAGE").dataAlign(HorizontalAlign.LEFT)
                             .maxWidth(80, OverflowBehaviour.NEWLINE)
                             .with(r -> r.message))));
@@ -204,9 +221,17 @@ public class ListHealth extends ProcessBaseCommand {
     }
 
     protected String getRate(Row r) {
-        String s1 = r.success != null && !"0".equals(r.success) ? r.success : "-";
-        String s2 = r.failure != null && !"0".equals(r.failure) ? r.failure : "-";
-        return s1 + "/" + s2;
+        String s1 = r.total != null && !"0".equals(r.total) ? r.total : "-";
+        String s2 = r.success != null && !"0".equals(r.success) ? r.success : "-";
+        String s3 = r.failure != null && !"0".equals(r.failure) ? r.failure : "-";
+        return s1 + "/" + s2 + "/" + s3;
+    }
+
+    protected String getSince(Row r) {
+        String s1 = r.sinceLast != null ? r.sinceLast : "-";
+        String s2 = r.sinceSuccess != null ? r.sinceSuccess : "-";
+        String s3 = r.sinceFailure != null ? r.sinceFailure : "-";
+        return s1 + "/" + s2 + "/" + s3;
     }
 
     private static class Row {
@@ -222,7 +247,9 @@ public class ListHealth extends ProcessBaseCommand {
         String total;
         String success;
         String failure;
-        String since;
+        String sinceLast;
+        String sinceSuccess;
+        String sinceFailure;
         String message;
     }
 
