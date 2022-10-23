@@ -145,6 +145,10 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
             kind = isLiveness() ? Kind.LIVENESS : Kind.READINESS;
         }
         builder.detail(CHECK_KIND, kind);
+        builder.detail(CHECK_ID, meta.get(CHECK_ID));
+        if (meta.containsKey(CHECK_GROUP)) {
+            builder.detail(CHECK_GROUP, meta.get(CHECK_GROUP));
+        }
         // Extract relevant information from meta data.
         int invocationCount = (Integer) meta.getOrDefault(INVOCATION_COUNT, 0);
         int failureCount = (Integer) meta.getOrDefault(FAILURE_COUNT, 0);

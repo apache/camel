@@ -51,6 +51,7 @@ import org.apache.camel.dsl.jbang.core.commands.process.Hawtio;
 import org.apache.camel.dsl.jbang.core.commands.process.Jolokia;
 import org.apache.camel.dsl.jbang.core.commands.process.ListBlocked;
 import org.apache.camel.dsl.jbang.core.commands.process.ListEvent;
+import org.apache.camel.dsl.jbang.core.commands.process.ListHealth;
 import org.apache.camel.dsl.jbang.core.commands.process.ListInflight;
 import org.apache.camel.dsl.jbang.core.commands.process.ListProcess;
 import org.apache.camel.dsl.jbang.core.commands.process.ListService;
@@ -74,6 +75,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("context", new CommandLine(new CamelContextStatus(main)))
                         .addSubcommand("route", new CommandLine(new CamelRouteStatus(main)))
                         .addSubcommand("processor", new CommandLine(new CamelProcessorStatus(main)))
+                        .addSubcommand("health", new CommandLine(new ListHealth(main)))
                         .addSubcommand("endpoint", new CommandLine(new CamelEndpointStatus(main)))
                         .addSubcommand("event", new CommandLine(new ListEvent(main)))
                         .addSubcommand("inflight", new CommandLine(new ListInflight(main)))
