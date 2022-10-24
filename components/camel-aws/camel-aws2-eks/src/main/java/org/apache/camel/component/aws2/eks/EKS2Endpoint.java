@@ -23,6 +23,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.eks.client.EKS2ClientFactory;
 import org.apache.camel.health.HealthCheckHelper;
+import org.apache.camel.impl.health.ComponentsHealthCheckRepository;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -38,7 +39,7 @@ import software.amazon.awssdk.services.eks.EksClient;
 public class EKS2Endpoint extends ScheduledPollEndpoint {
 
     private EksClient eksClient;
-    private EKS2HealthCheckRepository healthCheckRepository;
+    private ComponentsHealthCheckRepository healthCheckRepository;
     private EKS2ClientHealthCheck clientHealthCheck;
 
     @UriParam
@@ -67,7 +68,7 @@ public class EKS2Endpoint extends ScheduledPollEndpoint {
                 ? configuration.getEksClient() : EKS2ClientFactory.getEksClient(configuration).getEksClient();
 
         healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(getCamelContext(),
-                EKS2HealthCheckRepository.REPOSITORY_ID, EKS2HealthCheckRepository.class);
+                ComponentsHealthCheckRepository.REPOSITORY_ID, ComponentsHealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
             clientHealthCheck = new EKS2ClientHealthCheck(this, getId());
