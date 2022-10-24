@@ -37,6 +37,9 @@ import org.slf4j.LoggerFactory;
  * Base implementation for {@link HealthCheck}.
  */
 public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAware {
+    public static final String SERVICE_STATUS_CODE = "service.status.code";
+
+    public static final String SERVICE_ERROR_CODE = "service.error.code";
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractHealthCheck.class);
 
@@ -46,10 +49,6 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
     private final String group;
     private final String id;
     private final ConcurrentMap<String, Object> meta;
-
-    public static final String SERVICE_STATUS_CODE = "service.status.code";
-
-    public static final String SERVICE_ERROR_CODE = "service.error.code";
 
     protected AbstractHealthCheck(String id) {
         this(null, id, null);
