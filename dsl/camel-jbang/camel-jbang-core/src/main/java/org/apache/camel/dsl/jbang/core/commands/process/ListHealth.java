@@ -21,6 +21,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
@@ -28,6 +30,7 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
@@ -148,6 +151,15 @@ public class ListHealth extends ProcessBaseCommand {
                                         row.sinceStartFailure = TimeUtils.printAge(delta);
                                     }
                                 }
+                                for (String k : d.keySet()) {
+                                    // gather custom details
+                                    if (!HealthCheckHelper.isReservedKey(k)) {
+                                        if (row.customMeta == null) {
+                                            row.customMeta = new TreeMap<>();
+                                        }
+                                        row.customMeta.put(k, d.get(k));
+                                    }
+                                }
                             }
 
                             boolean add = true;
@@ -212,10 +224,19 @@ public class ListHealth extends ProcessBaseCommand {
                     System.out.println(StringHelper.padString(1, 55) + "STACK-TRACE");
                     System.out.println(StringHelper.fillChars('-', 120));
                     StringBuilder sb = new StringBuilder();
-                    sb.append(String.format("\tID: %s%n", getId(row)));
+                    sb.append(String.format("\tPID: %s%n", row.pid));
+                    sb.append(String.format("\tNAME: %s%n", row.name));
+                    sb.append(String.format("\tAGE: %s%n", row.ago));
+                    sb.append(String.format("\tCHECK-ID: %s%n", getId(row)));
                     sb.append(String.format("\tSTATE: %s%n", row.state));
                     sb.append(String.format("\tRATE: %s%n", row.failure));
                     sb.append(String.format("\tSINCE: %s%n", row.sinceStartFailure));
+                    if (row.customMeta != null) {
+                        sb.append(String.format("\tMETADATA:%n"));
+                        row.customMeta.forEach((k, v) -> {
+                            sb.append(String.format("\t\t%s = %s%n", k, v));
+                        });
+                    }
                     sb.append(String.format("\tMESSAGE: %s%n", row.message));
                     for (int i = 0; i < depth && i < row.stackTrace.size(); i++) {
                         sb.append(String.format("\t%s%n", row.stackTrace.get(i)));
@@ -298,6 +319,7 @@ public class ListHealth extends ProcessBaseCommand {
         String sinceStartFailure;
         String message;
         List<String> stackTrace;
+        Map<String, Object> customMeta;
     }
 
 }

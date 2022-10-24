@@ -331,4 +331,46 @@ public final class HealthCheckHelper {
     private static String getGroup(HealthCheck check) {
         return ObjectHelper.supplyIfEmpty(check.getGroup(), () -> "");
     }
+
+    /**
+     * Is the given key a reserved key used by Camel to store metadata in health check response details.
+     *
+     * @param  key the key
+     * @return     true if reserved, false otherwise
+     */
+    public static boolean isReservedKey(String key) {
+        if (key == null) {
+            return false;
+        }
+
+        if (HealthCheck.CHECK_ID.equals(key)) {
+            return true;
+        } else if (HealthCheck.CHECK_GROUP.equals(key)) {
+            return true;
+        } else if (HealthCheck.CHECK_KIND.equals(key)) {
+            return true;
+        } else if (HealthCheck.CHECK_ENABLED.equals(key)) {
+            return true;
+        } else if (HealthCheck.INVOCATION_COUNT.equals(key)) {
+            return true;
+        } else if (HealthCheck.INVOCATION_TIME.equals(key)) {
+            return true;
+        } else if (HealthCheck.FAILURE_COUNT.equals(key)) {
+            return true;
+        } else if (HealthCheck.FAILURE_START_TIME.equals(key)) {
+            return true;
+        } else if (HealthCheck.FAILURE_TIME.equals(key)) {
+            return true;
+        } else if (HealthCheck.FAILURE_ERROR_COUNT.equals(key)) {
+            return true;
+        } else if (HealthCheck.SUCCESS_COUNT.equals(key)) {
+            return true;
+        } else if (HealthCheck.SUCCESS_START_TIME.equals(key)) {
+            return true;
+        } else if (HealthCheck.SUCCESS_TIME.equals(key)) {
+            return true;
+        }
+
+        return false;
+    }
 }

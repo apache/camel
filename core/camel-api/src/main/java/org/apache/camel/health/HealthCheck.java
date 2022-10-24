@@ -40,8 +40,8 @@ public interface HealthCheck extends HasGroup, HasId, Ordered {
     String FAILURE_COUNT = "failure.count";
     String FAILURE_START_TIME = "failure.start.time";
     String FAILURE_TIME = "failure.time";
-    String ENDPOINT_URI = "endpoint.uri";
     String FAILURE_ERROR_COUNT = "failure.error.count";
+    String ENDPOINT_URI = "endpoint.uri";
     String SUCCESS_COUNT = "success.count";
     String SUCCESS_START_TIME = "success.start.time";
     String SUCCESS_TIME = "success.time";
