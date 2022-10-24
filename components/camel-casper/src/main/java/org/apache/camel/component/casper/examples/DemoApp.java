@@ -23,7 +23,6 @@ import com.syntifi.casper.sdk.model.stateroothash.StateRootHashData;
  *
  */
 
-@SuppressWarnings("deprecation")
 public class DemoApp {
 	public static final Logger LOG = LoggerFactory.getLogger(DemoApp.class);
 
@@ -37,7 +36,7 @@ public class DemoApp {
 		cntxt.addRoutes(new RouteBuilder() {
 			public void configure() throws Exception {
 				fromF("direct:%s" , CasperConstants.STATE_ROOT_HASH).routeId("STATE_ROOT_HASH")
-						.to("casper:http://65.21.227.180:7777/?operation=" + CasperConstants.STATE_ROOT_HASH)
+						.toF("casper:http://65.21.227.180:7777/?operation=%s", CasperConstants.STATE_ROOT_HASH)
 						.process(new Processor() {
 
 							@Override
@@ -67,10 +66,8 @@ public class DemoApp {
 			public void configure() throws Exception {
 				from("file:src/main/resources/datas/?fileName=get_block.txt&charset=utf-8&noop=true")
 						.convertBodyTo(String.class).routeId(CasperConstants.BLOCK).setHeader("BLOCK_HASH", body())
-						.to("casper:http://65.21.227.180:7777/?operation=" + CasperConstants.BLOCK)
-
+						.toF("casper:http://65.21.227.180:7777/?operation=%s" , CasperConstants.BLOCK)
 						.process(new Processor() {
-
 							@Override
 							public void process(Exchange exchange) throws Exception {
 								JsonBlock block = (JsonBlock) exchange.getIn().getBody();
@@ -106,7 +103,7 @@ public class DemoApp {
 				
 				from("file:src/main/resources/datas/?fileName=get_auction_info.txt&charset=utf-8&noop=true")
 						.convertBodyTo(String.class).routeId(CasperConstants.AUCTION_INFO).setHeader("BLOCK_HEIGHT", body())
-						.to("casper:http://65.21.227.180:7777/?operation=" + CasperConstants.AUCTION_INFO)
+						.toF("casper:http://65.21.227.180:7777/?operation=%s" , CasperConstants.AUCTION_INFO)
 						.process(new Processor() {
 							
 							@Override
@@ -114,7 +111,7 @@ public class DemoApp {
 								AuctionState auctionState = (AuctionState) exchange.getIn().getBody();
 								String blockHeight = (String) exchange.getIn().getHeader("BLOCK_HEIGHT");
 								LOG.info("getAuctionUnfo was called with parameter block height : {}", blockHeight);
-								exchange.getOut().setBody(auctionState.getEraValidators());
+								exchange.getMessage().setBody(auctionState.getEraValidators());
 								LOG.info("Save validators of this Auction into a json file under path src/main/resources/datas/");
 								
 							}
@@ -141,7 +138,8 @@ public class DemoApp {
 		cntxt.addRoutes(new RouteBuilder() {
 			public void configure() throws Exception {
 				fromF("direct:%s" , CasperConstants.STATE_ROOT_HASH+"_01").routeId("STATE_ROOT_HASH")
-						.to("casper:http://65.21.227.180:7777/?operation=" + CasperConstants.STATE_ROOT_HASH)
+						
+						.toF("casper:http://65.21.227.180:7777/?operation=%s" , CasperConstants.STATE_ROOT_HASH)
 						.process(new Processor() {
 						
 							@Override
@@ -149,8 +147,8 @@ public class DemoApp {
 								StateRootHashData state = (StateRootHashData) exchange.getIn().getBody();
 								LOG.info("Current STATE_ROOT_HASH is : {}", state.getStateRootHash());
 								LOG.info("Using this  STATE_ROOT_HASH : {} to Query \"+CasperConstants.ACCOUNT_BALANCE + \" for this Account : 017d9aa0b86413d7ff9a9169182c53f0bacaa80d34c211adab007ed4876af17077\"); ", state.getStateRootHash());
-							   	exchange.getOut().setHeader(CasperConstants.STATE_ROOT_HASH, state.getStateRootHash());
-								exchange.getOut().setHeader(CasperConstants.PURSE_UREF, "uref-e18e33382032c835e9ccf367baa20e043229c6d45d135b60aa7301ff1eeb317b-007");
+							   	exchange.getMessage().setHeader(CasperConstants.STATE_ROOT_HASH, state.getStateRootHash());
+								exchange.getMessage().setHeader(CasperConstants.PURSE_UREF, "uref-e18e33382032c835e9ccf367baa20e043229c6d45d135b60aa7301ff1eeb317b-007");
 							}
 						})
 						

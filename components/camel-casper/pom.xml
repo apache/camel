@@ -62,18 +62,6 @@
 	</properties>
 
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-bom</artifactId>
-				<version>${camel.version}</version>
-				<scope>import</scope>
-				<type>pom</type>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
 	<dependencies>
 
 
@@ -88,8 +76,7 @@
 			<version>${commons-cli.version}</version>
 		</dependency>
 
-		<!--//////////////////////////////////// Camel dependencies //////////////////////////////////// -->
-
+	
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jackson</artifactId>
@@ -130,7 +117,6 @@
 			<version>${launchdarkly.version}</version>
 		</dependency>
 
-		<!--//////////////////////////////////// Casper DSKs //////////////////////////////////// -->
 
 		<dependency>
 			<groupId>com.syntifi.casper</groupId>
@@ -139,16 +125,12 @@
 		</dependency>
 
 
-		<!--//////////////////////////////////// logging //////////////////////////////////// -->
-
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-slf4j-impl</artifactId>
 			<scope>runtime</scope>
 			<version>${log4j2.version}</version>
 		</dependency>
-
-		<!--//////////////////////////////////// testing //////////////////////////////////// -->
 
 
 		<dependency>
@@ -192,9 +174,6 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!--//////////////////////////////////// SSE tests  //////////////////////////////////// -->
-
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -234,38 +213,31 @@
 			<artifactId>jackson-databind</artifactId>
 			<version>${fasterxml.jackson.version}</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
+		
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
 			<version>${fasterxml.jackson.version}</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
 			<version>${fasterxml.jackson.version}</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-log4j2 -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-log4j2</artifactId>
 			<version>${springframework.version}</version>
 		</dependency>
 
-		<!--//////////////////////////////////// SSE tests  //////////////////////////////////// -->
-
 
 	</dependencies>
-
 
 	<build>
 		<plugins>
 
-			
-			<!-- generate camel meta-data -->
 			<plugin>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-package-maven-plugin</artifactId>
@@ -305,8 +277,6 @@
 				</executions>
 			</plugin>
 		
-		 <!-- SSE Test-->
-
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
