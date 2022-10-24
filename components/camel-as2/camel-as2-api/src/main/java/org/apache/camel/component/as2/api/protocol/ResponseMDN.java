@@ -243,7 +243,9 @@ public class ResponseMDN implements HttpResponseInterceptor {
             }
         }
 
-        LOG.debug(AS2Utils.printMessage(response));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(AS2Utils.printMessage(response));
+        }
     }
 
     private String createMdnDescription(
