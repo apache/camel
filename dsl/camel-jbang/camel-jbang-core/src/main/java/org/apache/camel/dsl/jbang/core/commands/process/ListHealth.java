@@ -41,7 +41,7 @@ public class ListHealth extends ProcessBaseCommand {
     String sort;
 
     @CommandLine.Option(names = { "--level" },
-                        description = "Level of details: full, oneline, or default", defaultValue = "default")
+                        description = "Level of details: full, or default", defaultValue = "default")
     String level;
 
     @CommandLine.Option(names = { "--down" },
@@ -143,6 +143,14 @@ public class ListHealth extends ProcessBaseCommand {
                             }
                             if (down && !row.state.equals("DOWN")) {
                                 add = false;
+                            }
+                            if (level == null || "default".equals(level)) {
+                                if (row.state.equals("UP") && "camel".equals(row.group)
+                                        && (row.id.startsWith("route:") || row.id.startsWith("consumer:"))) {
+                                    // skip camel/route: camel/consumer: checks when they are UP
+                                    // as they are less relevant and is verbose
+                                    add = false;
+                                }
                             }
                             if (add) {
                                 rows.add(row);
