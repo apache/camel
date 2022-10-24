@@ -23,7 +23,7 @@ import com.launchdarkly.eventsource.EventSource;
  */
 
 public class CasperConsumer extends DefaultConsumer implements ShutdownAware, Suspendable {
-	public static final Logger logger = LoggerFactory.getLogger(CasperConsumer.class);
+	public static final Logger LOG = LoggerFactory.getLogger(CasperConsumer.class);
 	private final CasperEndPoint endpoint;
 	private final CasperConfiguration configuration;
 	private volatile boolean shutdownPending=false;
@@ -61,7 +61,7 @@ public class CasperConsumer extends DefaultConsumer implements ShutdownAware, Su
 		// route the exchange
 		// this logic is only when we stop or shutdown the consumer
 		if (suspendOnly) {
-			logger.debug("Skip preparing to shutdown as consumer is being suspended");
+			LOG.debug("Skip preparing to shutdown as consumer is being suspended");
 			return;
 		}
 		// signal we want to shutdown

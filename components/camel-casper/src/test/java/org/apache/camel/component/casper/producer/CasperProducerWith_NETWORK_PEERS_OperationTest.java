@@ -32,10 +32,6 @@ class CasperProducerWith_NETWORK_PEERS_OperationTest extends CasperTestSupport {
 		assertTrue(body instanceof List);
 		List<PeerEntry> peers = (List<PeerEntry>) (body);
 		assertTrue(!peers.isEmpty());
-		// assert our List contains our node
-		//URI ourTestNode = new URI(CasperConstants.TESTNET_NODE_URL);
-		// assertTrue(peers.stream().anyMatch(s ->
-		// s.getAddress().substring(s.getAddress().indexOf(":")).equals(ourTestnode.getHost())));
 	}
 
 	@Override

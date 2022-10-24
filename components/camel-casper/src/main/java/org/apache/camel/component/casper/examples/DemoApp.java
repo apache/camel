@@ -8,6 +8,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.casper.CasperConstants;
 import org.apache.camel.component.jackson.JacksonDataFormat;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.syntifi.casper.sdk.model.auction.AuctionState;
 import com.syntifi.casper.sdk.model.balance.BalanceData;
@@ -23,6 +25,7 @@ import com.syntifi.casper.sdk.model.stateroothash.StateRootHashData;
 
 @SuppressWarnings("deprecation")
 public class DemoApp {
+	public static final Logger LOG = LoggerFactory.getLogger(DemoApp.class);
 
 	/**
 	 * loads route 1
@@ -40,7 +43,7 @@ public class DemoApp {
 							@Override
 							public void process(Exchange exchange) throws Exception {
 								StateRootHashData state = (StateRootHashData) exchange.getIn().getBody();
-								System.err.println("* Current STATE_ROOT_HASH is : " + state.getStateRootHash());
+								LOG.info("* Current STATE_ROOT_HASH is : " + state.getStateRootHash());
 							}
 						});
 			}
@@ -71,8 +74,8 @@ public class DemoApp {
 							public void process(Exchange exchange) throws Exception {
 								JsonBlock block = (JsonBlock) exchange.getIn().getBody();
 								String blockHash = (String) exchange.getIn().getHeader("BLOCK_HASH");
-								System.err.println("* getBlock was called with parameter block Hash = " + blockHash);
-								System.err.println("* getBlock retrieved a block that was minted at era ="
+								LOG.info("* getBlock was called with parameter block Hash = " + blockHash);
+								LOG.info("* getBlock retrieved a block that was minted at era ="
 										+ block.getHeader().getEraId() + " and has as parent hash = "
 										+ block.getHeader().getParentHash());
 
@@ -111,9 +114,9 @@ public class DemoApp {
 							public void process(Exchange exchange) throws Exception {
 								AuctionState auctionState = (AuctionState) exchange.getIn().getBody();
 								String blockHeight = (String) exchange.getIn().getHeader("BLOCK_HEIGHT");
-								System.err.println("* getAuctionUnfo was called with parameter block height = " + blockHeight);
+								LOG.info("* getAuctionUnfo was called with parameter block height = " + blockHeight);
 								exchange.getOut().setBody(auctionState.getEraValidators());
-								System.err.println("* Save validators of this Auction into a json file under path src/main/resources/datas/");
+								LOG.info("* Save validators of this Auction into a json file under path src/main/resources/datas/");
 							}
 						}).marshal(jsonDataFormat).to("file:src/main/resources/datas/?fileName=era_validators.txt")
 						;
@@ -145,8 +148,8 @@ public class DemoApp {
 							@Override
 							public void process(Exchange exchange) throws Exception {
 								StateRootHashData state = (StateRootHashData) exchange.getIn().getBody();
-								System.err.println("* Current STATE_ROOT_HASH is : " + state.getStateRootHash());
-								System.err.println("* Using this  STATE_ROOT_HASH  " + state.getStateRootHash() + " to Query "+CasperConstants.ACCOUNT_BALANCE + " for this Account : 017d9aa0b86413d7ff9a9169182c53f0bacaa80d34c211adab007ed4876af17077");
+								LOG.info("* Current STATE_ROOT_HASH is : " + state.getStateRootHash());
+								LOG.info("* Using this  STATE_ROOT_HASH  " + state.getStateRootHash() + " to Query "+CasperConstants.ACCOUNT_BALANCE + " for this Account : 017d9aa0b86413d7ff9a9169182c53f0bacaa80d34c211adab007ed4876af17077");
 								exchange.getOut().setHeader(CasperConstants.STATE_ROOT_HASH, state.getStateRootHash());
 								exchange.getOut().setHeader(CasperConstants.PURSE_UREF, "uref-e18e33382032c835e9ccf367baa20e043229c6d45d135b60aa7301ff1eeb317b-007");
 							}
@@ -158,7 +161,7 @@ public class DemoApp {
 							@Override
 							public void process(Exchange exchange) throws Exception {
 								BalanceData balance = (BalanceData) exchange.getIn().getBody();
-								System.err.println("* balance of account 017d9aa0b86413d7ff9a9169182c53f0bacaa80d34c211adab007ed4876af17077 : " + balance.getValue());
+								LOG.info("* balance of account 017d9aa0b86413d7ff9a9169182c53f0bacaa80d34c211adab007ed4876af17077 : " + balance.getValue());
 							}})
 						
 						;
@@ -180,21 +183,21 @@ public class DemoApp {
 
 		CamelContext context = new DefaultCamelContext();
 		ProducerTemplate template = context.createProducerTemplate();
-		System.err.println(
+		LOG.info(
 				"------------------------------- this route performs a call to getStaterouteHash and print the current STATE_ROOT_HASH to console ---------------------------------");
 		loadroute1(context, template);
-		System.err.println(
+		LOG.info(
 				"------------------------------- This route reads a block hash from a file, performs a call to getBlock with the block hash-------------------------------------------");
 		loadroute2(context, template);
-		System.err.println(
+		LOG.info(
 				"------------------------------- This route reads a block heigh from a file, performs a call to getAuctionInfo with the block height-------------------------------------------");
-		System.err.println(
+		LOG.info(
 				"------------------------------- Then saves the validator slot of the auction to a json file------------------------------------------------------------------------------------");
 		
 		loadroute3(context, template);
-		System.err.println(
+		LOG.info(
 				"------------------------------- this route performs a call to getStaterouteHash and uses the StaterouteHash to query accout balance for-------------------------------------------");
-		System.err.println(
+		LOG.info(
 				"------------------------------- account : 017d9aa0b86413d7ff9a9169182c53f0bacaa80d34c211adab007ed4876af17077 and print the balance to console ------------------------------------------------------------------------------------");
 		loadroute4(context, template);
 	}

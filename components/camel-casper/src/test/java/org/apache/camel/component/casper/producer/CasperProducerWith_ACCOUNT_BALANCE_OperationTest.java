@@ -81,7 +81,6 @@ class CasperProducerWith_ACCOUNT_BALANCE_OperationTest extends CasperTestSupport
 		String actualMessage = exception.getMessage();
 
 		// assert Exception message
-		System.err.println(actualMessage+  "  "+expectedMessage.toLowerCase());
 		assertTrue(actualMessage.contains(expectedMessage));
 		// Cause
 		Object cause = exchange.getMessage().getHeader(CasperConstants.ERROR_CAUSE);
