@@ -19,6 +19,7 @@ package org.apache.camel.impl.console;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -109,11 +110,13 @@ public class HealthDevConsole extends AbstractDevConsole {
 
                 Throwable cause = res.getError().orElse(null);
                 if (cause != null) {
+                    JsonArray arr2 = new JsonArray();
                     StringWriter writer = new StringWriter();
                     cause.printStackTrace(new PrintWriter(writer));
                     writer.flush();
-                    String stacktrace = writer.toString();
-                    jo.put("stacktrace", stacktrace);
+                    String trace = writer.toString();
+                    jo.put("stackTrace", arr2);
+                    Collections.addAll(arr2, trace.split("\n"));
                 }
             }
 
