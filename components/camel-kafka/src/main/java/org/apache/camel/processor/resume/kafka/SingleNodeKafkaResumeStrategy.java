@@ -105,7 +105,9 @@ public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements Kafka
         ProducerRecord<byte[], byte[]> record = new ProducerRecord<>(resumeStrategyConfiguration.getTopic(), key, message);
 
         producer.send(record, (recordMetadata, e) -> {
-            LOG.error("Failed to send message {}", e.getMessage(), e);
+            if (e != null) {
+                LOG.error("Failed to send message {}", e.getMessage(), e);
+            }
 
             if (updateCallBack != null) {
                 updateCallBack.onUpdate(e);
