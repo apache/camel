@@ -73,7 +73,7 @@ class ResequencerEngineTest extends TestSupport {
         initResequencer(500);
         resequencer.setLastDelivered(3);
         resequencer.insert(4);
-        assertEquals(4, buffer.poll(500));
+        assertEquals(4, buffer.poll(5_000));
         assertEquals(4, resequencer.getLastDelivered());
     }
 
@@ -83,8 +83,8 @@ class ResequencerEngineTest extends TestSupport {
         resequencer.setLastDelivered(2);
         resequencer.insert(4);
         resequencer.insert(3);
-        assertEquals(3, buffer.poll(500));
-        assertEquals(4, buffer.poll(500));
+        assertEquals(3, buffer.poll(5_000));
+        assertEquals(4, buffer.poll(5_000));
         assertEquals(4, resequencer.getLastDelivered());
     }
 
