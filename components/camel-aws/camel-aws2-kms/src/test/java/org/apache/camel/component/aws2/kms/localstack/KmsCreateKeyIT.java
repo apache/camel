@@ -24,11 +24,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.kms.KMS2Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import software.amazon.awssdk.services.kms.model.CreateKeyResponse;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Apache CI")
 public class KmsCreateKeyIT extends Aws2KmsBase {
 
     @EndpointInject
