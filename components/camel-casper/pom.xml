@@ -3,12 +3,6 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<!-- <parent> -->
-	<!-- <groupId>org.apache.camel</groupId> -->
-	<!-- <artifactId>components</artifactId> -->
-	<!-- <version>3.14.1</version> -->
-	<!-- </parent> -->
-
    <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
@@ -260,12 +254,7 @@
 		</dependency>
 
 		<!--//////////////////////////////////// SSE tests  //////////////////////////////////// -->
-
-
 	</dependencies>
-
-
-
 	<build>
 		<plugins>
 
