@@ -1715,8 +1715,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         }
 
         // the static part of the pattern, is that a prefix or suffix?
-        // its a prefix if ${ start token is not at the start of the pattern
-        boolean prefix = pattern.contains("${");
+        // it is a prefix if ${ start token is not at the start of the pattern
+        boolean prefix = pattern.indexOf("${") > 0; // NOSONAR
 
         // remove dynamic parts of the pattern so we only got the static part
         // left
