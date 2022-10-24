@@ -21,12 +21,14 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -56,13 +58,26 @@ public class ListHealth extends ProcessBaseCommand {
                         description = "Show only liveness checks")
     boolean live;
 
+    @CommandLine.Option(names = { "--trace" },
+                        description = "Include stack-traces in error messages", defaultValue = "false")
+    boolean trace;
+
+    @CommandLine.Option(names = { "--depth" },
+                        description = "Max depth of stack-trace", defaultValue = "1")
+    int depth;
+
     public ListHealth(CamelJBangMain main) {
         super(main);
     }
 
     @Override
     public Integer call() throws Exception {
-        List<Row> rows = new ArrayList<>();
+        final List<Row> rows = new ArrayList<>();
+
+        // include stack-traces
+        if (trace && depth <= 1) {
+            depth = Integer.MAX_VALUE;
+        }
 
         List<Long> pids = findPids("*");
         ProcessHandle.allProcesses()
@@ -95,6 +110,7 @@ public class ListHealth extends ProcessBaseCommand {
                             row.readiness = o.getBoolean("readiness");
                             row.liveness = o.getBoolean("liveness");
                             row.message = o.getString("message");
+                            row.stackTrace = o.getCollection("stackTrace");
 
                             JsonObject d = (JsonObject) o.get("details");
                             if (d != null) {
@@ -116,28 +132,12 @@ public class ListHealth extends ProcessBaseCommand {
                                         row.sinceLast = TimeUtils.printAge(delta);
                                     }
                                 }
-                                time = d.getString("success.time");
-                                if (time != null) {
-                                    ZonedDateTime zdt = ZonedDateTime.parse(time);
-                                    if (zdt != null) {
-                                        long delta = Math.abs(ZonedDateTime.now().until(zdt, ChronoUnit.MILLIS));
-                                        row.sinceSuccess = TimeUtils.printAge(delta);
-                                    }
-                                }
                                 time = d.getString("success.start.time");
                                 if (time != null) {
                                     ZonedDateTime zdt = ZonedDateTime.parse(time);
                                     if (zdt != null) {
                                         long delta = Math.abs(ZonedDateTime.now().until(zdt, ChronoUnit.MILLIS));
                                         row.sinceStartSuccess = TimeUtils.printAge(delta);
-                                    }
-                                }
-                                time = d.getString("failure.time");
-                                if (time != null) {
-                                    ZonedDateTime zdt = ZonedDateTime.parse(time);
-                                    if (zdt != null) {
-                                        long delta = Math.abs(ZonedDateTime.now().until(zdt, ChronoUnit.MILLIS));
-                                        row.sinceFailure = TimeUtils.printAge(delta);
                                     }
                                 }
                                 time = d.getString("failure.start.time");
@@ -201,6 +201,28 @@ public class ListHealth extends ProcessBaseCommand {
                     new Column().header("MESSAGE").dataAlign(HorizontalAlign.LEFT)
                             .maxWidth(80, OverflowBehaviour.NEWLINE)
                             .with(r -> r.message))));
+        }
+        if (trace) {
+            var traces
+                    = rows.stream().filter(r -> r.stackTrace != null && !r.stackTrace.isEmpty()).collect(Collectors.toList());
+            if (!traces.isEmpty()) {
+                for (Row row : traces) {
+                    System.out.println("\n");
+                    System.out.println(StringHelper.fillChars('-', 120));
+                    System.out.println(StringHelper.padString(1, 55) + "STACK-TRACE");
+                    System.out.println(StringHelper.fillChars('-', 120));
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(String.format("\tID: %s%n", getId(row)));
+                    sb.append(String.format("\tSTATE: %s%n", row.state));
+                    sb.append(String.format("\tRATE: %s%n", row.failure));
+                    sb.append(String.format("\tSINCE: %s%n", row.sinceStartFailure));
+                    sb.append(String.format("\tMESSAGE: %s%n", row.message));
+                    for (int i = 0; i < depth && i < row.stackTrace.size(); i++) {
+                        sb.append(String.format("\t%s%n", row.stackTrace.get(i)));
+                    }
+                    System.out.println(sb);
+                }
+            }
         }
 
         return 0;
@@ -272,11 +294,10 @@ public class ListHealth extends ProcessBaseCommand {
         String success;
         String failure;
         String sinceLast;
-        String sinceSuccess;
         String sinceStartSuccess;
-        String sinceFailure;
         String sinceStartFailure;
         String message;
+        List<String> stackTrace;
     }
 
 }
