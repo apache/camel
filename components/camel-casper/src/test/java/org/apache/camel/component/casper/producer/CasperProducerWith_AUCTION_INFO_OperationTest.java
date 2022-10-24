@@ -2,6 +2,7 @@ package org.apache.camel.component.casper.producer;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URI;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.syntifi.casper.sdk.model.auction.AuctionState;
+import com.syntifi.casper.sdk.model.block.JsonBlock;
 import com.syntifi.casper.sdk.service.CasperService;
 
 class CasperProducerWith_AUCTION_INFO_OperationTest extends CasperTestSupport {
@@ -36,7 +38,7 @@ class CasperProducerWith_AUCTION_INFO_OperationTest extends CasperTestSupport {
 		template.send(exchange);
 		Object body = exchange.getIn().getBody();
 		// assert Object is an AuctionState
-		assertTrue(body instanceof AuctionState);
+		assertInstanceOf(AuctionState.class, body);
 		AuctionState auctionState = (AuctionState) body;
 		assertNotNull(auctionState);
 		assertEquals(535075L, auctionState.getHeight());
@@ -50,7 +52,7 @@ class CasperProducerWith_AUCTION_INFO_OperationTest extends CasperTestSupport {
 		template.send(exchange);
 		Object body = exchange.getIn().getBody();
 		// assert Object is an AuctionState
-		assertTrue(body instanceof AuctionState);
+		assertInstanceOf(AuctionState.class, body);
 		AuctionState auctionState = (AuctionState) body;
 		assertNotNull(auctionState);
 		assertEquals(534868L, auctionState.getHeight());
@@ -63,7 +65,7 @@ class CasperProducerWith_AUCTION_INFO_OperationTest extends CasperTestSupport {
 		template.send(exchange);
 		Object body = exchange.getIn().getBody();
 		// assert Object is an AuctionState
-		assertTrue(body instanceof AuctionState);
+		assertInstanceOf(AuctionState.class, body);
 		AuctionState auctionState = (AuctionState) body;
 		assertNotNull(auctionState);
 		// this is the lastest one

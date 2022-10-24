@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -42,7 +43,7 @@ class CasperProducerWith_BLOCK_TRANSFERS_OperationTest extends CasperTestSupport
 		template.send(exchange);
 		Object body = exchange.getIn().getBody();
 		// assert Object is a List
-		assertTrue(body instanceof List);
+		assertInstanceOf(List.class, body);
 		List<Transfer> transferts = (List<Transfer>) (body);
 		assertTrue(transferts.isEmpty());
 	}
@@ -54,7 +55,7 @@ class CasperProducerWith_BLOCK_TRANSFERS_OperationTest extends CasperTestSupport
 		template.send(exchange);
 		Object body = exchange.getIn().getBody();
 		// assert Object is a List
-		assertTrue(body instanceof List);
+		assertInstanceOf(List.class, body);
 		List<Transfer> transferts = (List<Transfer>) (body);
 		assertTrue(!transferts.isEmpty());
 	}

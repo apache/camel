@@ -16,8 +16,8 @@
 The Casper blockchain component uses the Casper Java SDK :
 https://github.com/syntifi/casper-sdk  and allows you to interact with Casper nodes.
 
-add the folllowing dependency maven  `pom.xml` file.
-for this component:
+Add the following dependency maven  `pom.xml` file.
+For this component:
 
 [source,xml]
 ------------------------------------------------------------

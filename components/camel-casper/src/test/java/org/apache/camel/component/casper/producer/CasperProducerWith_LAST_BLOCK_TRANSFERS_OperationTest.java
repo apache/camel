@@ -1,5 +1,6 @@
 package org.apache.camel.component.casper.producer;
 
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -10,6 +11,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.casper.CasperConstants;
 import org.apache.camel.component.casper.CasperTestSupport;
+import org.apache.commons.cli.MissingArgumentException;
 import org.junit.jupiter.api.Test;
 
 class CasperProducerWith_LAST_BLOCK_TRANSFERS_OperationTest extends CasperTestSupport {
@@ -27,7 +29,7 @@ class CasperProducerWith_LAST_BLOCK_TRANSFERS_OperationTest extends CasperTestSu
 		template.send(exchange);
 		Object body = exchange.getIn().getBody();
 		// assert Object is a List
-		assertTrue(body instanceof List);
+		assertInstanceOf(List.class, body) ;
 	}
 
 	@Override

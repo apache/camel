@@ -2,6 +2,7 @@ package org.apache.camel.component.casper.producer;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigInteger;
@@ -39,7 +40,7 @@ class CasperProducerWith_ACCOUNT_BALANCE_OperationTest extends CasperTestSupport
 		template.send(exchange);
 		Object body = exchange.getIn().getBody();
 		// assert Object is a BalanceData
-		assertTrue(body instanceof BalanceData);
+		assertInstanceOf(BalanceData.class, body);
 		BalanceData balance = (BalanceData) body;
 		assertNotNull(balance);
 		//assert balance value
@@ -55,7 +56,7 @@ class CasperProducerWith_ACCOUNT_BALANCE_OperationTest extends CasperTestSupport
 				"30cE5146268305AeeFdCC05a5f7bE7aa6dAF187937Eed9BB55Af90e1D49B7956");
 		template.send(exchange);
 		Exception exception = exchange.getException();
-		assertTrue(exception instanceof CamelExchangeException);
+		assertInstanceOf(CamelExchangeException.class, exception);
 		String expectedMessage = "purseUref parameter is required   with endpoint operation " + CasperConstants.ACCOUNT_BALANCE;
 		String actualMessage = exception.getMessage();
 
@@ -63,7 +64,7 @@ class CasperProducerWith_ACCOUNT_BALANCE_OperationTest extends CasperTestSupport
 		assertTrue(actualMessage.contains(expectedMessage));
 		// Cause
 		Object cause = exchange.getMessage().getHeader(CasperConstants.ERROR_CAUSE);
-		assertTrue(cause instanceof MissingArgumentException);
+		assertInstanceOf(MissingArgumentException.class, cause);
 	}
 
 
@@ -76,7 +77,7 @@ class CasperProducerWith_ACCOUNT_BALANCE_OperationTest extends CasperTestSupport
 
 		template.send(exchange);
 		Exception exception = exchange.getException();
-		assertTrue(exception instanceof CamelExchangeException);
+		assertInstanceOf(CamelExchangeException.class, exception);
 		String expectedMessage = "stateRootHash parameter is required   with endpoint operation " + CasperConstants.ACCOUNT_BALANCE;
 		String actualMessage = exception.getMessage();
 
@@ -84,7 +85,7 @@ class CasperProducerWith_ACCOUNT_BALANCE_OperationTest extends CasperTestSupport
 		assertTrue(actualMessage.contains(expectedMessage));
 		// Cause
 		Object cause = exchange.getMessage().getHeader(CasperConstants.ERROR_CAUSE);
-		assertTrue(cause instanceof MissingArgumentException);
+		assertInstanceOf(MissingArgumentException.class, cause);
 	}
 
 	@Override

@@ -2,10 +2,12 @@ package org.apache.camel.component.casper.producer;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URI;
 
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -35,7 +37,7 @@ class CasperProducerWith_STATE_ROOT_HASH_OperationTest extends CasperTestSupport
 		template.send(exchange);
 		Object body = exchange.getIn().getBody();
 		// assert Object is a StateRootHashData
-		assertTrue(body instanceof StateRootHashData);
+		assertInstanceOf(StateRootHashData.class, body) ;
 		StateRootHashData stateRootHashData = (StateRootHashData) body;
 		assertNotNull(stateRootHashData);
 		assertEquals("6ed7d4fb578dbb0f7eedbeff3476b8232c58bf20b7186b3a96623f15488af012", stateRootHashData.getStateRootHash().toLowerCase());
@@ -48,7 +50,7 @@ class CasperProducerWith_STATE_ROOT_HASH_OperationTest extends CasperTestSupport
 		template.send(exchange);
 		Object body = exchange.getIn().getBody();
 		// assert Object is a StateRootHashData
-		assertTrue(body instanceof StateRootHashData);
+		assertInstanceOf(StateRootHashData.class, body) ;
 		StateRootHashData stateRootHashData = (StateRootHashData) body;
 		assertNotNull(stateRootHashData);
 		assertEquals("35774f03e8d0f1ff591c5ce41ab5bfaabba196728419d0a009273751d6f9637e", stateRootHashData.getStateRootHash().toLowerCase());
@@ -60,7 +62,7 @@ class CasperProducerWith_STATE_ROOT_HASH_OperationTest extends CasperTestSupport
 		template.send(exchange);
 		Object body = exchange.getIn().getBody();
 		// assert Object is a StateRootHashData
-		assertTrue(body instanceof StateRootHashData);
+		assertInstanceOf(StateRootHashData.class, body) ;
 		// Assert the call returns the last StateRootHash
 		assertEquals(casperService.getStateRootHash().getStateRootHash().toLowerCase(), ((StateRootHashData) body).getStateRootHash().toLowerCase());
 	}

@@ -2,6 +2,7 @@ package org.apache.camel.component.casper.producer;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Exchange;
@@ -29,7 +30,7 @@ class CasperProducerWith_LAST_BLOCK_OperationTest extends CasperTestSupport {
 		template.send(exchange);
 		Object body = exchange.getIn().getBody();
 		// assert Object is a JsonBlock
-		assertTrue(body instanceof JsonBlock);
+		assertInstanceOf(JsonBlock.class, body);
 		JsonBlock block = (JsonBlock) body;
 		assertNotNull(block);
 		assertEquals(64, block.getHash().length());

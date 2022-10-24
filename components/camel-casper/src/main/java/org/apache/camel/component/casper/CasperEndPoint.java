@@ -4,7 +4,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.InvalidPathException;
 import java.util.Arrays;
-
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -25,7 +24,7 @@ import com.syntifi.casper.sdk.service.CasperService;
  *
  */
 
-@UriEndpoint(firstVersion = "3.14.2", scheme = "casper", title = "Casper Camel Connector", syntax = "casper:nodeUrl", label = "casper", category = { Category.BITCOIN, Category.BLOCKCHAIN,
+@UriEndpoint(firstVersion = "3.20.0", scheme = "casper", title = "Casper Camel Connector", syntax = "casper:nodeUrl", label = "casper", category = { Category.BITCOIN, Category.BLOCKCHAIN,
 		Category.API })
 public class CasperEndPoint extends DefaultEndpoint {
 	/**
@@ -71,9 +70,11 @@ public class CasperEndPoint extends DefaultEndpoint {
 		URI uri = new URI(nodeUrl);
 		String event = configuration.getEvent();
 		if (!Arrays.asList(CasperConstants.CONSUMER_PATHS.split(",")).stream().anyMatch(s -> s.equals(uri.getPath())))
+		{
 			throw new InvalidPathException(uri.getPath(),
 					String.format("Invalid path '%s' for Casper Stream event server: expected '/events/main', '/events/deploys' or '/events/sigs ", uri.getPath()));
-		if (ConsumerEvent.findByName(event) != null) {
+		}
+			if (ConsumerEvent.findByName(event) != null) {
 			CasperConsumer consumer = new CasperConsumer(this, processor, configuration);
 			configureConsumer(consumer);
 			return consumer;

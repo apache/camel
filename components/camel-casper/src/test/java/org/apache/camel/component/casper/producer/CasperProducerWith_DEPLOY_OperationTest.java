@@ -1,5 +1,6 @@
 package org.apache.camel.component.casper.producer;
 
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.CamelExchangeException;
@@ -41,14 +42,14 @@ class CasperProducerWith_DEPLOY_OperationTest extends CasperTestSupport {
 		Exchange exchange = createExchangeWithBodyAndHeader(null, CasperConstants.OPERATION, CasperConstants.DEPLOY);
 		template.send(exchange);
 		Exception exception = exchange.getException();
-		assertTrue(exception instanceof CamelExchangeException);
+		assertInstanceOf(CamelExchangeException.class, exception);
 		String expectedMessage = "deployHash parameter is required with endpoint operation DEPLOY.";
 		String actualMessage = exception.getMessage();
 		// assert Exception message
 		assertTrue(actualMessage.contains(expectedMessage));
 		// Cause
 		Object cause = exchange.getMessage().getHeader(CasperConstants.ERROR_CAUSE);
-		assertTrue(cause instanceof MissingArgumentException);
+		assertInstanceOf(MissingArgumentException.class, cause);
 	}
 
 	@Override

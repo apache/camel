@@ -36,7 +36,7 @@ public class DemoApp {
 	private static void loadroute1(CamelContext cntxt, ProducerTemplate temp) throws Exception {
 		cntxt.addRoutes(new RouteBuilder() {
 			public void configure() throws Exception {
-				from("direct:" + CasperConstants.STATE_ROOT_HASH).routeId("STATE_ROOT_HASH")
+				fromF("direct:%s" , CasperConstants.STATE_ROOT_HASH).routeId("STATE_ROOT_HASH")
 						.to("casper:http://65.21.227.180:7777/?operation=" + CasperConstants.STATE_ROOT_HASH)
 						.process(new Processor() {
 
@@ -140,7 +140,7 @@ public class DemoApp {
 	private static void loadroute4(CamelContext cntxt, ProducerTemplate temp) throws Exception {
 		cntxt.addRoutes(new RouteBuilder() {
 			public void configure() throws Exception {
-				from("direct:" + CasperConstants.STATE_ROOT_HASH+"_01").routeId("STATE_ROOT_HASH")
+				fromF("direct:%s" , CasperConstants.STATE_ROOT_HASH+"_01").routeId("STATE_ROOT_HASH")
 						.to("casper:http://65.21.227.180:7777/?operation=" + CasperConstants.STATE_ROOT_HASH)
 						.process(new Processor() {
 

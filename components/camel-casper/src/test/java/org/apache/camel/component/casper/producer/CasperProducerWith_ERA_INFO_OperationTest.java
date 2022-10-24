@@ -3,6 +3,7 @@ package org.apache.camel.component.casper.producer;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.CamelExchangeException;
@@ -15,6 +16,7 @@ import org.apache.camel.component.casper.CasperTestSupport;
 import org.apache.commons.cli.MissingArgumentException;
 import org.junit.jupiter.api.Test;
 
+import com.syntifi.casper.sdk.model.block.JsonBlock;
 import com.syntifi.casper.sdk.model.era.EraSummary;
 
 class CasperProducerWith_ERA_INFO_OperationTest extends CasperTestSupport {
@@ -34,7 +36,7 @@ class CasperProducerWith_ERA_INFO_OperationTest extends CasperTestSupport {
 		template.send(exchange);
 		Object body = exchange.getIn().getBody();
 		// assert Object is an EraSummary
-		assertTrue(body instanceof EraSummary);
+		assertInstanceOf(EraSummary.class, body);
 		EraSummary eraSummary = (EraSummary) body;
 		assertNotNull(eraSummary);
 		assertEquals(2974, eraSummary.getEraId());
@@ -48,7 +50,7 @@ class CasperProducerWith_ERA_INFO_OperationTest extends CasperTestSupport {
 		template.send(exchange);
 		Object body = exchange.getIn().getBody();
 		// assert Object is an EraSummary
-		assertTrue(body instanceof EraSummary);
+		assertInstanceOf(EraSummary.class, body);
 		EraSummary eraSummary = (EraSummary) body;
 		assertNotNull(eraSummary);
 		assertEquals(2974, eraSummary.getEraId());
@@ -70,14 +72,14 @@ class CasperProducerWith_ERA_INFO_OperationTest extends CasperTestSupport {
 		Exchange exchange = createExchangeWithBodyAndHeader(null, CasperConstants.OPERATION, CasperConstants.ERA_INFO);
 		template.send(exchange);
 		Exception exception = exchange.getException();
-		assertTrue(exception instanceof CamelExchangeException);
+		assertInstanceOf(CamelExchangeException.class, exception);
 		String expectedMessage = "Either blockHeight or BlockHash parameter is required  with endpoint operation " + CasperConstants.ACCOUNT_INFO;
 		String actualMessage = exception.getMessage();
 		// assert Exception message
 		assertTrue(actualMessage.contains(expectedMessage));
 		// Cause
 		Object cause = exchange.getMessage().getHeader(CasperConstants.ERROR_CAUSE);
-		assertTrue(cause instanceof MissingArgumentException);
+		assertInstanceOf(MissingArgumentException.class, cause);
 	}
 
 	@Override

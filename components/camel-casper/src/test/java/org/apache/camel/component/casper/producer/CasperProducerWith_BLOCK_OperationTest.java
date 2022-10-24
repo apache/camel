@@ -2,9 +2,11 @@ package org.apache.camel.component.casper.producer;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URI;
+import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
@@ -35,7 +37,7 @@ class CasperProducerWith_BLOCK_OperationTest extends CasperTestSupport {
 		template.send(exchange);
 		Object body = exchange.getIn().getBody();
 		// assert Object is a JsonBlock
-		assertTrue(body instanceof JsonBlock);
+		assertInstanceOf(JsonBlock.class, body);
 		JsonBlock block = (JsonBlock) body;
 		assertNotNull(block);
 		assertEquals("30c1263cbcc95066f5c20e96cb8ba11356295515f414961b646e831c17992d26", block.getHash().toLowerCase());
@@ -48,7 +50,7 @@ class CasperProducerWith_BLOCK_OperationTest extends CasperTestSupport {
 		template.send(exchange);
 		Object body = exchange.getIn().getBody();
 		// assert Object is a JsonBlock
-		assertTrue(body instanceof JsonBlock);
+		assertInstanceOf(JsonBlock.class, body);
 		JsonBlock block = (JsonBlock) body;
 		assertNotNull(block);
 		assertEquals("f990a7079e3ebb1972d1388c0efd97cd7d7e2be9e442bd80f0ddb8134625a8f2", block.getHash().toLowerCase());
@@ -60,7 +62,7 @@ class CasperProducerWith_BLOCK_OperationTest extends CasperTestSupport {
 		template.send(exchange);
 		Object body = exchange.getIn().getBody();
 		// assert Object is a JsonBlock
-		assertTrue(body instanceof JsonBlock);
+		assertInstanceOf(JsonBlock.class, body);
 		// Assert the call returns the last block
 		assertEquals(((JsonBlock) body).getHash(), casperService.getBlock().getBlock().getHash().toLowerCase());
 	}

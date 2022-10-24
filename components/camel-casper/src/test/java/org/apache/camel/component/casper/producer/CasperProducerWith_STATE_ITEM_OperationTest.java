@@ -2,6 +2,7 @@ package org.apache.camel.component.casper.producer;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.CamelExchangeException;
@@ -14,9 +15,9 @@ import org.apache.camel.component.casper.CasperTestSupport;
 import org.apache.commons.cli.MissingArgumentException;
 import org.junit.jupiter.api.Test;
 
+import com.syntifi.casper.sdk.model.contract.Contract;
 import com.syntifi.casper.sdk.model.storedvalue.StoredValue;
 
-@SuppressWarnings("rawtypes")
 class CasperProducerWith_STATE_ITEM_OperationTest extends CasperTestSupport {
 	@Produce("direct:start")
 	protected ProducerTemplate template;
@@ -35,8 +36,8 @@ class CasperProducerWith_STATE_ITEM_OperationTest extends CasperTestSupport {
 		template.send(exchange);
 		Object body = exchange.getIn().getBody();
 		// assert Object is a StoredValue
-		assertTrue(body instanceof StoredValue);
-		StoredValue value = (StoredValue) body;
+		assertInstanceOf(StoredValue.class, body) ;
+		StoredValue<Contract> value = (StoredValue<Contract>) body;
 		assertNotNull(value);
 		// it s a contract
 		assertEquals("com.syntifi.casper.sdk.model.contract.Contract", value.getValue().getClass().getName());
@@ -49,7 +50,7 @@ class CasperProducerWith_STATE_ITEM_OperationTest extends CasperTestSupport {
 		exchange.getIn().setHeader(CasperConstants.PATH, "");
 		template.send(exchange);
 		Exception exception = exchange.getException();
-		assertTrue(exception instanceof CamelExchangeException);
+		assertInstanceOf(CamelExchangeException.class, exception) ;
 		String expectedMessage = "key parameter is required   with endpoint operation " + CasperConstants.STATE_ITEM;
 		String actualMessage = exception.getMessage();
 		// assert Exception message
@@ -66,7 +67,7 @@ class CasperProducerWith_STATE_ITEM_OperationTest extends CasperTestSupport {
 		exchange.getIn().setHeader(CasperConstants.PATH, "item1,item2");
 		template.send(exchange);
 		Exception exception = exchange.getException();
-		assertTrue(exception instanceof CamelExchangeException);
+		assertInstanceOf(CamelExchangeException.class, exception) ;
 		String expectedMessage = "stateRootHash parameter is required  with endpoint operation " + CasperConstants.STATE_ITEM;
 		String actualMessage = exception.getMessage();
 		// assert Exception message
