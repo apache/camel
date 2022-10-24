@@ -23,7 +23,7 @@ import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.core.exception.SdkClientException;
+import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3ClientBuilder;
@@ -70,9 +70,15 @@ public class AWS2S3ConsumerHealthCheck extends AbstractHealthCheck {
                 client = clientBuilder.region(Region.of(configuration.getRegion())).build();
             }
             client.headBucket(HeadBucketRequest.builder().bucket(configuration.getBucketName()).build());
-        } catch (SdkClientException e) {
+        } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
+            if (ObjectHelper.isNotEmpty(e.statusCode())) {
+                builder.detail(SERVICE_STATUS_CODE, e.statusCode());
+            }
+            if (ObjectHelper.isNotEmpty(e.awsErrorDetails().errorCode())) {
+                builder.detail(SERVICE_ERROR_CODE, e.awsErrorDetails().errorCode());
+            }
             builder.down();
             return;
 
