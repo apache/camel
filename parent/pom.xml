@@ -555,7 +555,7 @@
         <zipkin-reporter-version>2.16.3</zipkin-reporter-version>
         <zipkin-version>2.23.4</zipkin-version>
         <zookeeper-version>3.5.9</zookeeper-version>
-        <zxing-version>3.5.0</zxing-version>
+         <zxing-version>3.5.0</zxing-version>
 
         <!-- OSGi bundles properties -->
         <camel.osgi.import.camel.version>
