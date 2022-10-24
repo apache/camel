@@ -38,10 +38,12 @@ public interface HealthCheck extends HasGroup, HasId, Ordered {
     @Deprecated
     String INVOCATION_ATTEMPT_TIME = "invocation.attempt.time";
     String FAILURE_COUNT = "failure.count";
+    String FAILURE_START_TIME = "failure.start.time";
     String FAILURE_TIME = "failure.time";
     String ENDPOINT_URI = "endpoint.uri";
     String FAILURE_ERROR_COUNT = "failure.error.count";
     String SUCCESS_COUNT = "success.count";
+    String SUCCESS_START_TIME = "success.start.time";
     String SUCCESS_TIME = "success.time";
     String HTTP_RESPONSE_CODE = "http.response.code";
     /**

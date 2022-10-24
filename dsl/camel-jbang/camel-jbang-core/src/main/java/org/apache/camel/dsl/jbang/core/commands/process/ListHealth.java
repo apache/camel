@@ -124,12 +124,28 @@ public class ListHealth extends ProcessBaseCommand {
                                         row.sinceSuccess = TimeUtils.printAge(delta);
                                     }
                                 }
+                                time = d.getString("success.start.time");
+                                if (time != null) {
+                                    ZonedDateTime zdt = ZonedDateTime.parse(time);
+                                    if (zdt != null) {
+                                        long delta = Math.abs(ZonedDateTime.now().until(zdt, ChronoUnit.MILLIS));
+                                        row.sinceStartSuccess = TimeUtils.printAge(delta);
+                                    }
+                                }
                                 time = d.getString("failure.time");
                                 if (time != null) {
                                     ZonedDateTime zdt = ZonedDateTime.parse(time);
                                     if (zdt != null) {
                                         long delta = Math.abs(ZonedDateTime.now().until(zdt, ChronoUnit.MILLIS));
                                         row.sinceFailure = TimeUtils.printAge(delta);
+                                    }
+                                }
+                                time = d.getString("failure.start.time");
+                                if (time != null) {
+                                    ZonedDateTime zdt = ZonedDateTime.parse(time);
+                                    if (zdt != null) {
+                                        long delta = Math.abs(ZonedDateTime.now().until(zdt, ChronoUnit.MILLIS));
+                                        row.sinceStartFailure = TimeUtils.printAge(delta);
                                     }
                                 }
                             }
@@ -237,8 +253,8 @@ public class ListHealth extends ProcessBaseCommand {
 
     protected String getSince(Row r) {
         String s1 = r.sinceLast != null ? r.sinceLast : "-";
-        String s2 = r.sinceSuccess != null ? r.sinceSuccess : "-";
-        String s3 = r.sinceFailure != null ? r.sinceFailure : "-";
+        String s2 = r.sinceStartSuccess != null ? r.sinceStartSuccess : "-";
+        String s3 = r.sinceStartFailure != null ? r.sinceStartFailure : "-";
         return s1 + "/" + s2 + "/" + s3;
     }
 
@@ -257,7 +273,9 @@ public class ListHealth extends ProcessBaseCommand {
         String failure;
         String sinceLast;
         String sinceSuccess;
+        String sinceStartSuccess;
         String sinceFailure;
+        String sinceStartFailure;
         String message;
     }
 

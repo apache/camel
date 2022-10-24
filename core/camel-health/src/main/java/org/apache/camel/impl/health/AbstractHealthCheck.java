@@ -157,8 +157,10 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
         int invocationCount = (Integer) meta.getOrDefault(INVOCATION_COUNT, 0);
         int failureCount = (Integer) meta.getOrDefault(FAILURE_COUNT, 0);
         String failureTime = (String) meta.get(FAILURE_TIME);
+        String failureStartTime = (String) meta.get(FAILURE_START_TIME);
         int successCount = (Integer) meta.getOrDefault(SUCCESS_COUNT, 0);
         String successTime = (String) meta.get(SUCCESS_TIME);
+        String successStartTime = (String) meta.get(SUCCESS_START_TIME);
 
         String invocationTime = ZonedDateTime.now().format(DateTimeFormatter.ISO_ZONED_DATE_TIME);
 
@@ -183,11 +185,16 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
         if (builder.state() == State.DOWN) {
             // reset success since it failed
             successCount = 0;
+            successStartTime = null;
             failureCount++;
             failureTime = invocationTime;
+            if (failureStartTime == null) {
+                failureStartTime = invocationTime;
+            }
         } else if (builder.state() == State.UP) {
             // reset failure since it ok
             failureCount = 0;
+            failureStartTime = null;
             successCount++;
             if (successTime == null) {
                 // first time we are OK, then reset failure as we only want to capture
@@ -195,6 +202,9 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
                 failureTime = null;
             }
             successTime = invocationTime;
+            if (successStartTime == null) {
+                successStartTime = invocationTime;
+            }
         }
 
         meta.put(INVOCATION_TIME, invocationTime);
@@ -205,11 +215,21 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
         } else {
             meta.remove(FAILURE_TIME);
         }
+        if (failureStartTime != null) {
+            meta.put(FAILURE_START_TIME, failureStartTime);
+        } else {
+            meta.remove(FAILURE_START_TIME);
+        }
         meta.put(SUCCESS_COUNT, successCount);
         if (successTime != null) {
             meta.put(SUCCESS_TIME, successTime);
         } else {
             meta.remove(SUCCESS_TIME);
+        }
+        if (successStartTime != null) {
+            meta.put(SUCCESS_START_TIME, successStartTime);
+        } else {
+            meta.remove(SUCCESS_START_TIME);
         }
 
         // Copy some meta-data bits to the response attributes so the
@@ -220,9 +240,15 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
         if (meta.containsKey(FAILURE_TIME)) {
             builder.detail(FAILURE_TIME, meta.get(FAILURE_TIME));
         }
+        if (meta.containsKey(FAILURE_START_TIME)) {
+            builder.detail(FAILURE_START_TIME, meta.get(FAILURE_START_TIME));
+        }
         builder.detail(SUCCESS_COUNT, meta.get(SUCCESS_COUNT));
         if (meta.containsKey(SUCCESS_TIME)) {
             builder.detail(SUCCESS_TIME, meta.get(SUCCESS_TIME));
+        }
+        if (meta.containsKey(SUCCESS_START_TIME)) {
+            builder.detail(SUCCESS_START_TIME, meta.get(SUCCESS_START_TIME));
         }
 
         return builder;
