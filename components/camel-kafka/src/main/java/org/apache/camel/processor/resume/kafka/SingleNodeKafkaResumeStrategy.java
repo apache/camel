@@ -111,8 +111,6 @@ public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements Kafka
 
             if (updateCallBack != null) {
                 updateCallBack.onUpdate(e);
-            } else {
-                LOG.warn("The is no callback installed for handling errors when producing records to Kafka");
             }
         });
     }
