@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -34,7 +35,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class PooledExchangeTest extends ContextTestSupport {
+class PooledExchangeTest extends ContextTestSupport {
 
     private final AtomicInteger counter = new AtomicInteger();
     private final AtomicReference<Exchange> ref = new AtomicReference<>();
@@ -51,7 +52,7 @@ public class PooledExchangeTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSameExchange() throws Exception {
+    void testSameExchange() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(3);
         mock.expectedPropertyValuesReceivedInAnyOrder("myprop", 1, 3, 5);
@@ -62,7 +63,8 @@ public class PooledExchangeTest extends ContextTestSupport {
 
         context.getRouteController().startAllRoutes();
 
-        assertMockEndpointsSatisfied();
+        mock.setResultWaitTime(TimeUnit.MINUTES.toMillis(1));
+        mock.assertIsSatisfied();
 
         PooledObjectFactory.Statistics stat
                 = context.adapt(ExtendedCamelContext.class).getExchangeFactoryManager().getStatistics();
