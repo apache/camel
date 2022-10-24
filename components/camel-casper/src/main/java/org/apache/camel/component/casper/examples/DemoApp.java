@@ -43,7 +43,8 @@ public class DemoApp {
 							@Override
 							public void process(Exchange exchange) throws Exception {
 								StateRootHashData state = (StateRootHashData) exchange.getIn().getBody();
-								LOG.info("* Current STATE_ROOT_HASH is : " + state.getStateRootHash());
+								LOG.info("Current STATE_ROOT_HASH is : {}", state.getStateRootHash());
+								
 							}
 						});
 			}
@@ -74,11 +75,9 @@ public class DemoApp {
 							public void process(Exchange exchange) throws Exception {
 								JsonBlock block = (JsonBlock) exchange.getIn().getBody();
 								String blockHash = (String) exchange.getIn().getHeader("BLOCK_HASH");
-								LOG.info("* getBlock was called with parameter block Hash = " + blockHash);
-								LOG.info("* getBlock retrieved a block that was minted at era ="
-										+ block.getHeader().getEraId() + " and has as parent hash = "
-										+ block.getHeader().getParentHash());
-
+								LOG.info("getBlock was called with parameter block Hash is : {}", blockHash);
+								LOG.info(" getBlock retrieved a block that was minted at era : {}", block.getHeader().getEraId());
+						
 							}
 						});
 
@@ -114,9 +113,10 @@ public class DemoApp {
 							public void process(Exchange exchange) throws Exception {
 								AuctionState auctionState = (AuctionState) exchange.getIn().getBody();
 								String blockHeight = (String) exchange.getIn().getHeader("BLOCK_HEIGHT");
-								LOG.info("* getAuctionUnfo was called with parameter block height = " + blockHeight);
+								LOG.info("getAuctionUnfo was called with parameter block height : {}", blockHeight);
 								exchange.getOut().setBody(auctionState.getEraValidators());
-								LOG.info("* Save validators of this Auction into a json file under path src/main/resources/datas/");
+								LOG.info("Save validators of this Auction into a json file under path src/main/resources/datas/");
+								
 							}
 						}).marshal(jsonDataFormat).to("file:src/main/resources/datas/?fileName=era_validators.txt")
 						;
@@ -143,14 +143,13 @@ public class DemoApp {
 				fromF("direct:%s" , CasperConstants.STATE_ROOT_HASH+"_01").routeId("STATE_ROOT_HASH")
 						.to("casper:http://65.21.227.180:7777/?operation=" + CasperConstants.STATE_ROOT_HASH)
 						.process(new Processor() {
-
 						
 							@Override
 							public void process(Exchange exchange) throws Exception {
 								StateRootHashData state = (StateRootHashData) exchange.getIn().getBody();
-								LOG.info("* Current STATE_ROOT_HASH is : " + state.getStateRootHash());
-								LOG.info("* Using this  STATE_ROOT_HASH  " + state.getStateRootHash() + " to Query "+CasperConstants.ACCOUNT_BALANCE + " for this Account : 017d9aa0b86413d7ff9a9169182c53f0bacaa80d34c211adab007ed4876af17077");
-								exchange.getOut().setHeader(CasperConstants.STATE_ROOT_HASH, state.getStateRootHash());
+								LOG.info("Current STATE_ROOT_HASH is : {}", state.getStateRootHash());
+								LOG.info("Using this  STATE_ROOT_HASH : {} to Query \"+CasperConstants.ACCOUNT_BALANCE + \" for this Account : 017d9aa0b86413d7ff9a9169182c53f0bacaa80d34c211adab007ed4876af17077\"); ", state.getStateRootHash());
+							   	exchange.getOut().setHeader(CasperConstants.STATE_ROOT_HASH, state.getStateRootHash());
 								exchange.getOut().setHeader(CasperConstants.PURSE_UREF, "uref-e18e33382032c835e9ccf367baa20e043229c6d45d135b60aa7301ff1eeb317b-007");
 							}
 						})
@@ -161,7 +160,7 @@ public class DemoApp {
 							@Override
 							public void process(Exchange exchange) throws Exception {
 								BalanceData balance = (BalanceData) exchange.getIn().getBody();
-								LOG.info("* balance of account 017d9aa0b86413d7ff9a9169182c53f0bacaa80d34c211adab007ed4876af17077 : " + balance.getValue());
+								LOG.info("balance of account 017d9aa0b86413d7ff9a9169182c53f0bacaa80d34c211adab007ed4876af17077 : : {}", balance.getValue());
 							}})
 						
 						;
@@ -184,21 +183,21 @@ public class DemoApp {
 		CamelContext context = new DefaultCamelContext();
 		ProducerTemplate template = context.createProducerTemplate();
 		LOG.info(
-				"------------------------------- this route performs a call to getStaterouteHash and print the current STATE_ROOT_HASH to console ---------------------------------");
+				"This route performs a call to getStaterouteHash and print the current STATE_ROOT_HASH to console");
 		loadroute1(context, template);
 		LOG.info(
-				"------------------------------- This route reads a block hash from a file, performs a call to getBlock with the block hash-------------------------------------------");
+				"This route reads a block hash from a file, performs a call to getBlock with the block hash");
 		loadroute2(context, template);
 		LOG.info(
-				"------------------------------- This route reads a block heigh from a file, performs a call to getAuctionInfo with the block height-------------------------------------------");
+				"This route reads a block heigh from a file, performs a call to getAuctionInfo with the block height");
 		LOG.info(
-				"------------------------------- Then saves the validator slot of the auction to a json file------------------------------------------------------------------------------------");
+				"Then saves the validator slot of the auction to a json file");
 		
 		loadroute3(context, template);
 		LOG.info(
-				"------------------------------- this route performs a call to getStaterouteHash and uses the StaterouteHash to query accout balance for-------------------------------------------");
+				"This route performs a call to getStaterouteHash and uses the StaterouteHash to query accout balance for");
 		LOG.info(
-				"------------------------------- account : 017d9aa0b86413d7ff9a9169182c53f0bacaa80d34c211adab007ed4876af17077 and print the balance to console ------------------------------------------------------------------------------------");
+				"Account : 017d9aa0b86413d7ff9a9169182c53f0bacaa80d34c211adab007ed4876af17077 and print the balance to console");
 		loadroute4(context, template);
 	}
 }
