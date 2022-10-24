@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.remote.integration;
 
 import java.io.FileOutputStream;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
@@ -25,13 +26,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ThreadPoolProfileBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.ThreadPoolProfile;
-import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-public class FromFileToFtpSplitParallelIT extends FtpServerTestSupport {
+class FromFileToFtpSplitParallelIT extends FtpServerTestSupport {
 
-    private static final int SIZE = 5000;
+    private static final int SIZE = 5_000;
 
     @TempDir
     Path testDirectory;
@@ -41,24 +41,22 @@ public class FromFileToFtpSplitParallelIT extends FtpServerTestSupport {
     }
 
     @Test
-    public void testSplit() throws Exception {
+    void testSplit() throws Exception {
         // create big file
-        FileOutputStream fos = new FileOutputStream(testDirectory.toString() + "/bigdata.txt");
-        for (int i = 0; i < SIZE; i++) {
-            String line = "ABCDEFGHIJKLMNOPQRSTUVWXYZ-" + i + "\n";
-            fos.write(line.getBytes(StandardCharsets.UTF_8));
+        try (PrintWriter writer = new PrintWriter(
+                new FileOutputStream(testDirectory.toString() + "/bigdata.txt"), true, StandardCharsets.UTF_8)) {
+            for (int i = 0; i < SIZE; i++) {
+                writer.printf("ABCDEFGHIJKLMNOPQRSTUVWXYZ%d%n", i);
+            }
         }
-        IOHelper.close(fos);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
         context.getRouteController().startAllRoutes();
 
-        MockEndpoint.assertIsSatisfied(context, 1, TimeUnit.MINUTES);
-
-        // use memory profiler
-        // Thread.sleep(99999999);
+        mock.setResultWaitTime(TimeUnit.MINUTES.toMillis(5));
+        mock.assertIsSatisfied();
     }
 
     @Override
@@ -66,12 +64,12 @@ public class FromFileToFtpSplitParallelIT extends FtpServerTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 ThreadPoolProfile tpp
-                        = new ThreadPoolProfileBuilder("ftp-pool").poolSize(5).maxPoolSize(10).maxQueueSize(1000).build();
+                        = new ThreadPoolProfileBuilder("ftp-pool").poolSize(5).maxPoolSize(10).maxQueueSize(1_000).build();
                 context.getExecutorServiceManager().registerThreadPoolProfile(tpp);
 
-                onException().maximumRedeliveries(5).redeliveryDelay(1000);
+                onException().maximumRedeliveries(5).redeliveryDelay(1_000);
 
-                from(fileUri(testDirectory)).noAutoStartup().routeId("foo")
+                from(String.format("file:%s", testDirectory)).noAutoStartup().routeId("foo")
                     .split(body().tokenize("\n")).executorService("ftp-pool")
                         .to(getFtpUrl())
                         .to("log:line?groupSize=100")
