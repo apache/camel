@@ -179,7 +179,7 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy {
             }
             LOG.trace("Kafka resume strategy initialization complete");
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            Thread.currentThread().interrupt();
         }
     }
 
