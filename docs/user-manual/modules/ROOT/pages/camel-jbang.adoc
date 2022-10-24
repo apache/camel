@@ -1068,6 +1068,99 @@ You can then use the Integrated Development Environment (IDE) of your choice. Fo
 
 A specific how-to is available for VS Code, see this https://youtu.be/owNhWxf42qk[video] or this /blog/2022/05/start-camel-quarkus-application-with-camel-textual-debug-in-vscode/[blogpost].
 
+==== Health Checks
+
+The status of health checks can be accessed via Camel JBang from the CLI as follows:
+
+
+[source,bash]
+----
+camel get health
+  PID   NAME    AGE  ID             RL  STATE  RATE    SINCE   MESSAGE
+ 61005  mybind   8s  camel/context   R   UP    2/2/-  1s/3s/-
+----
+
+Here we can see the Camel is _UP_. The application has just been running for 8 seconds, and the
+has been 2 health checks invoked.
+
+The output is showing the _default_ level of checks as:
+
+- `CamelContext` health check
+- Component specific health checks (such as from `camel-kafka` or `camel-aws`, ...)
+- Custom health checks
+- Any check which are not UP
+
+The _RATE_ column shows 3 numbers separated by `/`. So `2/2/-` means 2 checks in total, 2 success, - no failures.
+The two last columns will reset when a health check changes state as this number is the number of consecutive
+checks that was successful or failure. So if the health check starts to fail then the numbers could be:
+
+[source,bash]
+----
+camel get health
+  PID   NAME     AGE   ID             RL  STATE   RATE    SINCE    MESSAGE
+ 61005  mybind   3m2s  camel/context   R   UP    77/-/3  1s/-/17s  some kind of error
+----
+
+Here we can see the numbers is changed to `77/-/3`. This means the total is 77. There is no success, but
+the check has been failing 3 times in a row. The _SINCE_ column corresponds to the _RATE_. So in this
+case we can see the last check was 1 second ago, and that the check has been failing for 17 second in a row.
+
+You can use `--level=full` to output every health checks; which will include consumer and route level checks
+as well.
+
+A health check may often be failed due to an exception was thrown which can be shown via `--trace` flag:
+
+[source,bash]
+----
+camel get health --trace
+  PID   NAME      AGE   ID                                      RL  STATE    RATE       SINCE     MESSAGE
+ 61038  mykafka  6m19s  camel/context                            R   UP    187/187/-  1s/6m16s/-
+ 61038  mykafka  6m19s  camel/kafka-consumer-kafka-not-secure…   R  DOWN   187/-/187  1s/-/6m16s  KafkaConsumer is not ready - Error: Invalid url in bootstrap.servers: value
+
+
+------------------------------------------------------------------------------------------------------------------------
+                                                       STACK-TRACE
+------------------------------------------------------------------------------------------------------------------------
+	PID: 61038
+	NAME: mykafka
+	AGE: 6m19s
+	CHECK-ID: camel/kafka-consumer-kafka-not-secured-source-1
+	STATE: DOWN
+	RATE: 187
+	SINCE: 6m16s
+	METADATA:
+		bootstrap.servers = value
+		group.id = 7d8117be-41b4-4c81-b4df-cf26b928d38a
+		route.id = kafka-not-secured-source-1
+		topic = value
+	MESSAGE: KafkaConsumer is not ready - Error: Invalid url in bootstrap.servers: value
+	org.apache.kafka.common.KafkaException: Failed to construct kafka consumer
+		at org.apache.kafka.clients.consumer.KafkaConsumer.<init>(KafkaConsumer.java:823)
+		at org.apache.kafka.clients.consumer.KafkaConsumer.<init>(KafkaConsumer.java:664)
+		at org.apache.kafka.clients.consumer.KafkaConsumer.<init>(KafkaConsumer.java:645)
+		at org.apache.kafka.clients.consumer.KafkaConsumer.<init>(KafkaConsumer.java:625)
+		at org.apache.camel.component.kafka.DefaultKafkaClientFactory.getConsumer(DefaultKafkaClientFactory.java:34)
+		at org.apache.camel.component.kafka.KafkaFetchRecords.createConsumer(KafkaFetchRecords.java:241)
+		at org.apache.camel.component.kafka.KafkaFetchRecords.createConsumerTask(KafkaFetchRecords.java:201)
+		at org.apache.camel.support.task.ForegroundTask.run(ForegroundTask.java:123)
+		at org.apache.camel.component.kafka.KafkaFetchRecords.run(KafkaFetchRecords.java:125)
+		at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:515)
+		at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+		at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+		at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+		at java.base/java.lang.Thread.run(Thread.java:829)
+	Caused by: org.apache.kafka.common.config.ConfigException: Invalid url in bootstrap.servers: value
+		at org.apache.kafka.clients.ClientUtils.parseAndValidateAddresses(ClientUtils.java:59)
+		at org.apache.kafka.clients.ClientUtils.parseAndValidateAddresses(ClientUtils.java:48)
+		at org.apache.kafka.clients.consumer.KafkaConsumer.<init>(KafkaConsumer.java:730)
+		... 13 more
+----
+
+Here we can easily see that the health check is failing because of the `org.apache.kafka.common.config.ConfigException`
+which is due to invalid configuration: `Invalid url in bootstrap.servers: value`.
+
+TIP: Use `camel get health --help` to see all the various options.
+
 == Listing what Camel components is available
 
 Camel comes with a lot of artifacts out of the box which comes as:
