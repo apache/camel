@@ -1,20 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+         http://www.apache.org/licenses/LICENSE-2.0
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
-   <parent>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>components</artifactId>
-        <version>3.20.0-SNAPSHOT</version>
-    </parent>
+	<parent>
+		<groupId>org.apache.camel</groupId>
+		<artifactId>components</artifactId>
+		<version>3.20.0-SNAPSHOT</version>
+	</parent>
 
 
-<artifactId>camel-casper</artifactId>
-    <packaging>jar</packaging>
+	<artifactId>camel-casper</artifactId>
+	<packaging>jar</packaging>
 
-    <name>Camel :: Casper</name>
-    <description>Camel Casper blockchaine component</description>
+	<name>Camel :: Casper</name>
+	<description>Camel Casper blockchaine component</description>
 	<url>https://casperlabs.io/</url>
 
 
@@ -30,7 +47,18 @@
 		<casper-java-sdk.version>0.3.0</casper-java-sdk.version>
 		<junit.version>4.13.2</junit.version>
 		<launchdarkly.version>2.3.2</launchdarkly.version>
-		<!-- SSE tests-->
+		<commons-lang3.version>3.11</commons-lang3.version>
+		<casper-sdk.version>0.1.0</casper-sdk.version>
+		<commons-cli.version>1.4</commons-cli.version>
+		<commons-validator.version>1.7</commons-validator.version>
+		<junit-jupiter.version>5.8.0</junit-jupiter.version>
+		<mockito-core.version>3.12.2</mockito-core.version>
+		<mockito-junit-jupiter.version>3.12.2</mockito-junit-jupiter.version>
+		<springframework.version>2.1.2.RELEASE</springframework.version>
+		<fasterxml.jackson.version>2.13.0</fasterxml.jackson.version>
+		<byte-buddy.version>1.9.3</byte-buddy.version>
+		<objenesis.version>2.6</objenesis.version>
+
 		<tomcat.version>9.0.54</tomcat.version>
 	</properties>
 
@@ -40,20 +68,6 @@
 			<url>http://www.opensource.org/licenses/mit-license.php</url>
 		</license>
 	</licenses>
-
-	<developers>
-		<developer>
-			<id>mabahma</id>
-			<name>mabahma</name>
-			<email>elmabahma@gmail.com</email>
-		</developer>
-		
-	</developers>
-	<scm>
-		<connection>scm:git:git@github.com:abahmanem/camel-casper.git</connection>
-		<developerConnection>scm:git:git@github.com:abahmanem/camel-casper.git</developerConnection>
-		<url>https://github.com/abahmanem/camel-casper</url>
-	</scm>
 
 
 	<dependencyManagement>
@@ -70,17 +84,16 @@
 
 	<dependencies>
 
-		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>3.11</version>
+			<version>${commons-lang3.version}</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/commons-cli/commons-cli -->
 		<dependency>
 			<groupId>commons-cli</groupId>
 			<artifactId>commons-cli</artifactId>
-			<version>1.4</version>
+			<version>${commons-cli.version}</version>
 		</dependency>
 
 		<!--//////////////////////////////////// Camel dependencies //////////////////////////////////// -->
@@ -88,24 +101,21 @@
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jackson</artifactId>
-			<version>${camel.version}</version>
+		
 
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-core</artifactId>
-			<version>${camel.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-main</artifactId>
-			<version>${camel.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jsonpath</artifactId>
-			<version>${camel.version}</version>
 		</dependency>
 
 
@@ -118,7 +128,7 @@
 		<dependency>
 			<groupId>commons-validator</groupId>
 			<artifactId>commons-validator</artifactId>
-			<version>1.7</version>
+			<version>${commons-validator.version}</version>
 		</dependency>
 
 
@@ -133,7 +143,7 @@
 		<dependency>
 			<groupId>com.syntifi.casper</groupId>
 			<artifactId>casper-sdk</artifactId>
-			<version>0.1.0</version>
+			<version>${casper-sdk.version}</version>
 		</dependency>
 
 
@@ -170,7 +180,7 @@
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
-			<version>3.12.2</version>
+			<version>${mockito-core.version}</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -178,7 +188,7 @@
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-junit-jupiter</artifactId>
-			<version>3.12.2</version>
+			<version>${mockito-junit-jupiter.version}</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -186,7 +196,7 @@
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter</artifactId>
-			<version>5.8.0</version>
+			<version>${junit-jupiter.version}</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -202,27 +212,27 @@
 					<artifactId>spring-boot-starter-logging</artifactId>
 				</exclusion>
 			</exclusions>
-			<version>2.1.2.RELEASE</version>
+			<version>${springframework.version}</version>
 		</dependency>
 
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
-			<version>2.1.2.RELEASE</version>
+			<version>${springframework.version}</version>
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>net.bytebuddy</groupId>
 			<artifactId>byte-buddy</artifactId>
-			<version>1.9.3</version>
+			<version>${byte-buddy.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.objenesis</groupId>
 			<artifactId>objenesis</artifactId>
-			<version>2.6</version>
+			<version>${objenesis.version}</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -230,31 +240,35 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.13.0</version>
+			<version>${fasterxml.jackson.version}</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
-			<version>2.13.0</version>
+			<version>${fasterxml.jackson.version}</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
-			<version>2.13.0</version>
+			<version>${fasterxml.jackson.version}</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-log4j2 -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-log4j2</artifactId>
-			<version>2.1.2.RELEASE</version>
+			<version>${springframework.version}</version>
 		</dependency>
 
 		<!--//////////////////////////////////// SSE tests  //////////////////////////////////// -->
+
+
 	</dependencies>
+
+
 	<build>
 		<plugins>
 
@@ -309,8 +323,6 @@
 			</plugin>
 
 
-
-
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.9.0</version>
@@ -359,7 +371,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-			     <version>0.8.7</version>
+				<version>0.8.7</version>
 				<executions>
 					<execution>
 						<goals>
