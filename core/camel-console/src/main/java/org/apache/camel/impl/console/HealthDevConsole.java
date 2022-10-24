@@ -109,10 +109,11 @@ public class HealthDevConsole extends AbstractDevConsole {
 
                 Throwable cause = res.getError().orElse(null);
                 if (cause != null) {
-                    StringWriter sw = new StringWriter();
-                    PrintWriter pw = new PrintWriter(sw);
-                    cause.printStackTrace(pw);
-                    jo.put("stacktrace", pw.toString());
+                    StringWriter writer = new StringWriter();
+                    cause.printStackTrace(new PrintWriter(writer));
+                    writer.flush();
+                    String stacktrace = writer.toString();
+                    jo.put("stacktrace", stacktrace);
                 }
             }
 

@@ -197,7 +197,7 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
                 if (showAll || showStackTrace) {
                     StringWriter sw = new StringWriter();
                     exception.printStackTrace(new PrintWriter(sw));
-                    style(sb, "StackTrace").append(sw.toString());
+                    style(sb, "StackTrace").append(sw);
                 }
             }
         }
