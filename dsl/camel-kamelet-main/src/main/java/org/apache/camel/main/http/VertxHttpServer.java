@@ -394,8 +394,6 @@ public final class VertxHttpServer {
                 }
             }
             sb.append("    ]\n");
-        } else {
-            sb.append("\n");
         }
     }
 
