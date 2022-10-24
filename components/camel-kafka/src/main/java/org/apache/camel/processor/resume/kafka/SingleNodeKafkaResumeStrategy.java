@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -95,13 +94,10 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy {
      * Sends data to a topic. The records will always be sent asynchronously. If there's an error, a producer error
      * counter will be increased.
      *
-     * @param  message              the message to send
-     * @throws ExecutionException
-     * @throws InterruptedException
+     * @param message the message to send
      *
      */
-    protected void produce(byte[] key, byte[] message, UpdateCallBack updateCallBack)
-            throws ExecutionException, InterruptedException {
+    protected void produce(byte[] key, byte[] message, UpdateCallBack updateCallBack) {
         ProducerRecord<byte[], byte[]> record = new ProducerRecord<>(resumeStrategyConfiguration.getTopic(), key, message);
 
         producer.send(record, (recordMetadata, e) -> {
