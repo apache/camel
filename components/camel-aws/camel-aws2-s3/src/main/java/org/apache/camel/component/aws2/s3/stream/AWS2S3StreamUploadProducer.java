@@ -207,8 +207,12 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                         .build();
 
         uploadResult = getEndpoint().getS3Client().completeMultipartUpload(compRequest);
-        LOG.info("Completed upload for the part {} with etag {} at index {}", part, uploadResult.eTag(),
-                index);
+
+        // Converting the index to String can cause extra overhead
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Completed upload for the part {} with etag {} at index {}", part, uploadResult.eTag(),
+                    index);
+        }
 
         index.getAndSet(0);
         initResponse = null;
