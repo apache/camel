@@ -3,7 +3,7 @@
 :shortname: casper
 :artifactid: camel-casper
 :description: Camel casper endpoint : to interract with Casper nodes
-:since: 3.14.2
+:since:3.20.0
 :supportlevel: Preview
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
