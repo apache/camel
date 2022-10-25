@@ -17,10 +17,8 @@
 
 package org.apache.camel.component.file.consumer;
 
-import org.apache.camel.component.file.consumer.adapters.DirectoryEntries;
+import java.io.File;
 
 public interface DirectoryEntriesResumeAdapter {
-    default void setResumePayload(DirectoryEntries fileSet) {
-
-    }
+    boolean resume(File file);
 }

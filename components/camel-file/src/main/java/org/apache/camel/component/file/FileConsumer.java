@@ -33,7 +33,6 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.consumer.DirectoryEntriesResumeAdapter;
 import org.apache.camel.component.file.consumer.FileOffsetResumeAdapter;
-import org.apache.camel.component.file.consumer.adapters.DirectoryEntries;
 import org.apache.camel.resume.ResumeAdapter;
 import org.apache.camel.resume.ResumeAware;
 import org.apache.camel.resume.ResumeStrategy;
@@ -107,9 +106,19 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
 
             if (resumeStrategy != null) {
                 ResumeAdapter adapter = resumeStrategy.getAdapter();
+                LOG.trace("Checking the resume adapter: {}", adapter);
                 if (adapter instanceof FileOffsetResumeAdapter) {
+                    LOG.trace("The resume adapter is for offsets: {}", adapter);
                     ((FileOffsetResumeAdapter) adapter).setResumePayload(gf);
                     adapter.resume();
+                }
+
+                if (adapter instanceof DirectoryEntriesResumeAdapter) {
+                    LOG.trace("Running the resume process for file {}", file);
+                    if (((DirectoryEntriesResumeAdapter) adapter).resume(file)) {
+                        LOG.trace("Skipping file {} because it has been marked previously consumed", file);
+                        continue;
+                    }
                 }
             }
 
@@ -174,18 +183,6 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
             // we found some files
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Found {} in directory: {}", dirFiles.length, directory.getPath());
-            }
-        }
-
-        if (resumeStrategy != null) {
-            ResumeAdapter adapter = resumeStrategy.getAdapter();
-            if (adapter instanceof DirectoryEntriesResumeAdapter) {
-                DirectoryEntries resumeSet = new DirectoryEntries(directory, dirFiles);
-
-                ((DirectoryEntriesResumeAdapter) adapter).setResumePayload(resumeSet);
-                adapter.resume();
-
-                return resumeSet.resumed();
             }
         }
 

@@ -29,7 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.consumer.DirectoryEntriesResumeAdapter;
 import org.apache.camel.component.file.consumer.FileOffsetResumeAdapter;
 import org.apache.camel.component.file.consumer.FileResumeAdapter;
-import org.apache.camel.component.file.consumer.adapters.DirectoryEntries;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.resume.TransientResumeStrategy;
 import org.apache.camel.support.resume.Resumables;
@@ -44,7 +43,6 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
 
     private static class TestFileResumeAdapter implements FileResumeAdapter, FileOffsetResumeAdapter {
         private GenericFile<File> resumable;
-        private DirectoryEntries fileSet;
 
         @Override
         public void setResumePayload(GenericFile<File> resumable) {
@@ -61,14 +59,6 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
                 resumable.updateLastOffsetValue(3L);
                 resumable = null;
             }
-
-            if (fileSet != null) {
-                DirectoryEntries.doResume(fileSet, f -> !f.getName().equals("resume-from-offset"));
-                LOG.debug("Fileset: {}", fileSet);
-                LOG.debug("Fileset: {}", fileSet.resumed());
-
-                fileSet = null;
-            }
         }
     }
 
@@ -81,8 +71,8 @@ public class FileConsumerResumeFromOffsetStrategyTest extends ContextTestSupport
         }
 
         @Override
-        public void setResumePayload(DirectoryEntries fileSet) {
-            DirectoryEntries.doResume(fileSet, f -> true);
+        public boolean resume(File file) {
+            return false;
         }
 
     }

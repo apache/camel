@@ -21,29 +21,16 @@ import java.io.File;
 
 import org.apache.camel.component.file.consumer.DirectoryEntriesResumeAdapter;
 import org.apache.camel.component.file.consumer.FileResumeAdapter;
+import org.apache.camel.resume.cache.ResumeCache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An implementation of the {@link FileResumeAdapter} that can be used for resume operations for the file component.
  * This one can be used to manage the resume operations for files within a directory.
  */
 class DefaultDirectoryEntriesResumeAdapter extends AbstractFileResumeAdapter implements DirectoryEntriesResumeAdapter {
-    private DirectoryEntries fileSet;
-
-    private boolean notProcessed(File directory, File file) {
-        FileSet cached = cache.get(directory, FileSet.class);
-        if (cached == null) {
-            return true;
-        }
-
-        return !cached.contains(file);
-    }
-
-    @Override
-    public void setResumePayload(DirectoryEntries fileSet) {
-        assert fileSet != null;
-
-        this.fileSet = fileSet;
-    }
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultDirectoryEntriesResumeAdapter.class);
 
     protected boolean add(Object key, Object offset) {
         if (offset instanceof File) {
@@ -58,16 +45,31 @@ class DefaultDirectoryEntriesResumeAdapter extends AbstractFileResumeAdapter imp
         return true;
     }
 
-    private void resumeDirectoryEntries() {
-        DirectoryEntries.doResume(fileSet, f -> notProcessed(fileSet.getDirectory(), f));
-    }
-
     @Override
     public void resume() {
-        resumeDirectoryEntries();
+        // NO-OP
+    }
+
+    private boolean processed(ResumeCache<File> cache, File directory, File file) {
+        LOG.trace("Checking if file {} with key {} is cached: {}, {}", file, directory);
+        FileSet cached = cache.get(directory, FileSet.class);
+        if (cached == null) {
+            LOG.trace("FileSet is not cached, therefore has not been processed yet");
+            return false;
+        }
+
+        final boolean isCached = cached.contains(file);
+        LOG.trace("FileSet is cached. Checking if it contains {}: {}", file, isCached);
+
+        return isCached;
+    }
+
+    public boolean resume(File file) {
+        return processed(cache, file.getParentFile(), file);
     }
 
     public void deserializeFileEntry(File keyObj, File valueObj) {
+        LOG.trace("Deserializing file key {} with value {}", keyObj, valueObj);
         FileSet fileSet = (FileSet) cache.computeIfAbsent(keyObj, obj -> new FileSet());
 
         fileSet.update(valueObj);
