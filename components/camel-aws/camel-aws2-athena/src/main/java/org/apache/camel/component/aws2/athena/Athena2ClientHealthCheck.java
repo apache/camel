@@ -72,6 +72,12 @@ public class Athena2ClientHealthCheck extends AbstractHealthCheck {
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
+            if (ObjectHelper.isNotEmpty(e.statusCode())) {
+                builder.detail(SERVICE_STATUS_CODE, e.statusCode());
+            }
+            if (ObjectHelper.isNotEmpty(e.awsErrorDetails().errorCode())) {
+                builder.detail(SERVICE_ERROR_CODE, e.awsErrorDetails().errorCode());
+            }
             builder.down();
             return;
 
