@@ -16,12 +16,20 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class DelayerAsyncDelayedTest extends ContextTestSupport {
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        context.getPropertiesComponent().addInitialProperty("myAsync", "true");
+        return context;
+    }
 
     @Test
     public void testSendingMessageGetsDelayed() throws Exception {
@@ -51,6 +59,16 @@ public class DelayerAsyncDelayedTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Test
+    public void testDelayConstantPlaceholder() throws Exception {
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(1);
+        // should at least take 1 sec to complete
+        resultEndpoint.setResultMinimumWaitTime(900);
+        template.sendBody("seda:c", "<hello>world!</hello>");
+        resultEndpoint.assertIsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -62,6 +80,8 @@ public class DelayerAsyncDelayedTest extends ContextTestSupport {
                 // START SNIPPET: ex2
                 from("seda:b").delay(1000).asyncDelayed().to("mock:result");
                 // END SNIPPET: ex2
+
+                from("seda:c").delay(1000).asyncDelayed("{{myAsync}}").to("mock:result");
             }
         };
     }
