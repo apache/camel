@@ -149,7 +149,7 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy {
     @Override
     public void updateLastOffset(OffsetKey<?> offsetKey, Offset<?> offset, UpdateCallBack updateCallBack) throws Exception {
         ByteBuffer keyBuffer = offsetKey.serialize();
-        ByteBuffer valueBuffer = offsetKey.serialize();
+        ByteBuffer valueBuffer = offset.serialize();
 
         try {
             writeLock.lock();
