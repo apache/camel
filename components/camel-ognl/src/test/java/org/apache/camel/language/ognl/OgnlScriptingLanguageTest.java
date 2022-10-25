@@ -45,4 +45,20 @@ public class OgnlScriptingLanguageTest extends CamelTestSupport {
         Assertions.assertEquals("Hello Scott you are 33 years old", out);
     }
 
+    @Test
+    public void testScriptingWithRecord() {
+        Language lan = context.resolveLanguage("ognl");
+        Assertions.assertTrue(lan instanceof ScriptingLanguage);
+
+        ScriptingLanguage slan = (ScriptingLanguage) lan;
+        int num = slan.evaluate("2 * 3", null, int.class);
+        Assertions.assertEquals(6, num);
+
+        MyUserRecord user = new MyUserRecord("Scott", 33);
+        Map<String, Object> bindings = new LinkedHashMap<>();
+        bindings.put("user", user);
+        String out = slan.evaluate("resource:classpath:myuser.txt", bindings, String.class);
+        Assertions.assertEquals("Hello Scott you are 33 years old", out);
+    }
+
 }

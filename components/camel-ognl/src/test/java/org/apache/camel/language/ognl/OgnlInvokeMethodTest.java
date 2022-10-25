@@ -39,6 +39,20 @@ public class OgnlInvokeMethodTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
     }
 
+    @Test
+    public void testInvokeMethodOnRecord() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived("name", "Tony the Tiger");
+        mock.expectedHeaderReceived("dangerous", true);
+
+        AnimalRecord animal = new AnimalRecord("Tony the Tiger", 12);
+        template.sendBody("direct:start", animal);
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {

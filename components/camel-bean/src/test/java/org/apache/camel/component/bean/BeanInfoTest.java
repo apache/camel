@@ -108,6 +108,21 @@ public class BeanInfoTest {
         assertTrue(info.hasAnyMethodHandlerAnnotation());
     }
 
+    @Test
+    public void testHandlerIOnRecord() {
+        Object mhi = new MyRecord("foo", 3);
+
+        BeanInfo info = new BeanInfo(context, mhi.getClass());
+        assertTrue(info.hasAnyMethodHandlerAnnotation());
+    }
+
+    record MyRecord(String name, int age) {
+        @Handler
+        public String myMethod() {
+            return name;
+        }
+    }
+
     private Object buildProxyObject() {
         try {
             return new ByteBuddy()
