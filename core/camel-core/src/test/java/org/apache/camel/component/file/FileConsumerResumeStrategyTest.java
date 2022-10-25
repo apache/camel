@@ -16,25 +16,22 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.consumer.DirectoryEntriesResumeAdapter;
 import org.apache.camel.component.file.consumer.FileResumeAdapter;
-import org.apache.camel.component.file.consumer.adapters.DirectoryEntries;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.resume.TransientResumeStrategy;
 import org.apache.camel.support.resume.Resumables;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("Tests whether file consumer works with the resume strategy")
@@ -42,16 +39,17 @@ public class FileConsumerResumeStrategyTest extends ContextTestSupport {
 
     private static class TestFileSetResumeAdapter implements FileResumeAdapter, DirectoryEntriesResumeAdapter {
         private final List<String> processedFiles = Arrays.asList("0.txt", "1.txt", "2.txt");
-        private DirectoryEntries resumeSet;
-
-        @Override
-        public void setResumePayload(DirectoryEntries resumeSet) {
-            this.resumeSet = Objects.requireNonNull(resumeSet);
-        }
+        private boolean resumedCalled;
 
         @Override
         public void resume() {
-            DirectoryEntries.doResume(resumeSet, f -> !processedFiles.contains(f.getName()));
+
+        }
+
+        @Override
+        public boolean resume(File file) {
+            resumedCalled = true;
+            return processedFiles.contains(file);
         }
     }
 
@@ -80,9 +78,7 @@ public class FileConsumerResumeStrategyTest extends ContextTestSupport {
         // only expect 4 of the 6 sent
         assertMockEndpointsSatisfied();
 
-        assertTrue(adapter.resumeSet.hasResumables(), "The resume set should have resumables in this scenario");
-        assertNotNull(adapter.resumeSet.resumed(), "The list of resumables should not be null");
-        assertEquals(4, adapter.resumeSet.resumed().length, "There should be exactly 4 resumables");
+        assertTrue(adapter.resumedCalled, "The resume set should have resumables in this scenario");
     }
 
     private void setOffset(Exchange exchange) {

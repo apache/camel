@@ -46,11 +46,6 @@ public class FileResumeAdapterDelegate
     }
 
     @Override
-    public void setResumePayload(DirectoryEntries fileSet) {
-        directoryEntriesResumeAdapter.setResumePayload(fileSet);
-    }
-
-    @Override
     public boolean add(OffsetKey<?> key, Offset<?> offset) {
         Object offsetObj = offset.getValue();
 
@@ -92,5 +87,10 @@ public class FileResumeAdapterDelegate
     public void resume() {
         fileOffsetResumeAdapter.resume();
         directoryEntriesResumeAdapter.resume();
+    }
+
+    @Override
+    public boolean resume(File file) {
+        return directoryEntriesResumeAdapter.resume(file);
     }
 }
