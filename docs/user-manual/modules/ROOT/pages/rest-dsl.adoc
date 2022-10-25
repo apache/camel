@@ -624,12 +624,14 @@ restConfiguration().component("netty-http").host("localhost").port(portNum).bind
 // use the rest DSL to define the rest services
 rest("/users/")
     .post("lives").type(UserPojo.class).outType(CountryPojo.class)
-        .route()
-            .choice()
-                .when().simple("${body.id} < 100")
-                    .bean(new UserErrorService(), "idToLowError")
-                .otherwise()
-                    .bean(new UserService(), "livesWhere");
+    .to("direct:users-lives");
+
+from("direct:users-lives")
+    .choice()
+        .when().simple("${body.id} < 100")
+            .bean(new UserErrorService(), "idToLowError")
+        .otherwise()
+            .bean(new UserService(), "livesWhere");
 ----
 
 In this example if the input id is a number that is below 100, we want
