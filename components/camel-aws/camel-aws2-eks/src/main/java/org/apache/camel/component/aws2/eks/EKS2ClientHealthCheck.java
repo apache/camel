@@ -23,7 +23,8 @@ import org.apache.camel.component.aws2.eks.client.EKS2ClientFactory;
 import org.apache.camel.component.aws2.eks.client.EKS2InternalClient;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
-import software.amazon.awssdk.core.exception.SdkClientException;
+import org.apache.camel.util.ObjectHelper;
+import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.eks.EksClient;
 import software.amazon.awssdk.services.eks.model.ListClustersRequest;
@@ -56,9 +57,15 @@ public class EKS2ClientHealthCheck extends AbstractHealthCheck {
         try {
             EKS2InternalClient eks2Client = EKS2ClientFactory.getEksClient(configuration);
             eks2Client.getEksClient().listClusters(ListClustersRequest.builder().build());
-        } catch (SdkClientException e) {
+        } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
+            if (ObjectHelper.isNotEmpty(e.statusCode())) {
+                builder.detail(SERVICE_STATUS_CODE, e.statusCode());
+            }
+            if (ObjectHelper.isNotEmpty(e.awsErrorDetails().errorCode())) {
+                builder.detail(SERVICE_ERROR_CODE, e.awsErrorDetails().errorCode());
+            }
             builder.down();
             return;
         } catch (Exception e) {
