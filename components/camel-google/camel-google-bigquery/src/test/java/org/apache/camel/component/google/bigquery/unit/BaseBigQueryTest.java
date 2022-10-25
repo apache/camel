@@ -47,10 +47,7 @@ public abstract class BaseBigQueryTest extends CamelTestSupport {
     }
 
     protected GoogleBigQueryProducer createProducer() {
-        configuration.setProjectId(projectId);
-        configuration.setTableId(tableId);
-        configuration.setDatasetId(datasetId);
-        configuration.setTableId("testTableId");
+        configuration.parseRemaining(projectId + ":" + datasetId + ":" + tableId);
 
         return new GoogleBigQueryProducer(bigquery, endpoint, configuration);
     }
