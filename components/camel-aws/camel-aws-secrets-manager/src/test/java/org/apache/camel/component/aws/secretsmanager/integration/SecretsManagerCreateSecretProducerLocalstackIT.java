@@ -23,10 +23,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws.secretsmanager.SecretsManagerConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import software.amazon.awssdk.services.secretsmanager.model.CreateSecretResponse;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Apache CI")
 public class SecretsManagerCreateSecretProducerLocalstackIT extends AwsSecretsManagerBaseTest {
 
     @EndpointInject("mock:result")
