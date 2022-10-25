@@ -59,7 +59,7 @@ public class GoogleBigQueryConfiguration implements Cloneable {
         projectId = parts[0];
         datasetId = parts[1];
         if (parts.length > 2) {
-            tableId = parts[3];
+            tableId = parts[2];
         }
     }
 
