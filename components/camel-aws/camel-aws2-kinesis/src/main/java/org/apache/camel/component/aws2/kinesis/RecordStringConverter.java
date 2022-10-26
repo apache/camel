@@ -31,12 +31,12 @@ public final class RecordStringConverter {
     }
 
     @Converter
-    public static String toString(Record record) {
+    public static String toString(Record dataRecord) {
         Charset charset = StandardCharsets.UTF_8;
 
-        ByteBuffer buffer = record.data().asByteBuffer();
+        ByteBuffer buffer = dataRecord.data().asByteBuffer();
         if (buffer.hasArray()) {
-            byte[] bytes = record.data().asByteArray();
+            byte[] bytes = dataRecord.data().asByteArray();
             return new String(bytes, charset);
         } else {
             byte[] bytes = new byte[buffer.remaining()];
