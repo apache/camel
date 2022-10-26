@@ -87,6 +87,21 @@ public interface MicrometerEndpointBuilderFactory {
             return this;
         }
         /**
+         * Description of metrics.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param metricsDescription the value to set
+         * @return the dsl builder
+         */
+        default MicrometerEndpointBuilder metricsDescription(
+                String metricsDescription) {
+            doSetProperty("metricsDescription", metricsDescription);
+            return this;
+        }
+        /**
          * Value expression when using histogram type.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -313,6 +328,19 @@ public interface MicrometerEndpointBuilderFactory {
          */
         public String metricsName() {
             return "MetricsName";
+        }
+
+        /**
+         * Override description value in URI.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code MetricsDescription}.
+         */
+        public String metricsDescription() {
+            return "MetricsDescription";
         }
 
         /**
