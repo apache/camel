@@ -49,7 +49,7 @@ public class MicrometerEndpoint extends DefaultEndpoint {
     protected final String metricsName;
     @UriPath(description = "Tags of metrics")
     protected final Iterable<Tag> tags;
-    @UriParam(description = "Action expression when using timer type")
+    @UriParam(description = "Action expression when using timer type", enums = "start,stop")
     private String action;
     @UriParam(description = "Value expression when using histogram type")
     private String value;

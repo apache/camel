@@ -27,6 +27,7 @@ import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.LongTaskTimer;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import org.apache.camel.impl.console.AbstractDevConsole;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.util.json.JsonObject;
@@ -52,7 +53,11 @@ public class MicrometerConsole extends AbstractDevConsole {
                 }
                 i++;
                 String name = c.getId().getName();
-                double cnt = c.count();
+                String cnt = String.valueOf(c.count());
+                // strip decimal if counter is integer based
+                if (cnt.endsWith(".0") || cnt.endsWith(",0")) {
+                    cnt = cnt.substring(0, cnt.length() - 2);
+                }
                 sb.append(String.format("    %s: %s\n", name, cnt));
             }
         }
@@ -71,6 +76,22 @@ public class MicrometerConsole extends AbstractDevConsole {
         }
         i = 0;
         for (Meter m : mr.getMeters()) {
+            if (m instanceof Timer) {
+                Timer t = (Timer) m;
+                if (i == 0) {
+                    sb.append("\nTimer:\n");
+                }
+                i++;
+                String name = t.getId().getName();
+                long count = t.count();
+                long mean = Math.round(t.mean(TimeUnit.MILLISECONDS));
+                long max = Math.round(t.max(TimeUnit.MILLISECONDS));
+                long total = Math.round(t.totalTime(TimeUnit.MILLISECONDS));
+                sb.append(String.format("    %s: %d (total: %dms mean: %dms max: %dms)\n", name, count, total, mean, max));
+            }
+        }
+        i = 0;
+        for (Meter m : mr.getMeters()) {
             if (m instanceof LongTaskTimer) {
                 LongTaskTimer t = (LongTaskTimer) m;
                 if (i == 0) {
@@ -79,10 +100,10 @@ public class MicrometerConsole extends AbstractDevConsole {
                 i++;
                 String name = t.getId().getName();
                 int tasks = t.activeTasks();
-                double mean = t.mean(TimeUnit.MILLISECONDS);
-                double max = t.max(TimeUnit.MILLISECONDS);
-                double duration = t.duration(TimeUnit.MILLISECONDS);
-                sb.append(String.format("    %s: %d (duration: %f mean: %f max: %f)\n", name, tasks, duration, mean, max));
+                long mean = Math.round(t.mean(TimeUnit.MILLISECONDS));
+                long max = Math.round(t.max(TimeUnit.MILLISECONDS));
+                long duration = Math.round(t.duration(TimeUnit.MILLISECONDS));
+                sb.append(String.format("    %s: %d (duration: %dms mean: %dms max: %dms)\n", name, tasks, duration, mean, max));
             }
         }
         i = 0;
@@ -121,7 +142,15 @@ public class MicrometerConsole extends AbstractDevConsole {
                 i++;
                 JsonObject jo = new JsonObject();
                 jo.put("name", c.getId().getName());
-                jo.put("count", c.count());
+                // strip decimal if counter is integer based
+                String cnt = String.valueOf(c.count());
+                if (cnt.endsWith(".0") || cnt.endsWith(",0")) {
+                    cnt = cnt.substring(0, cnt.length() - 2);
+                    jo.put("count", Long.valueOf(cnt));
+                } else {
+                    // it has decimals so store as-is
+                    jo.put("count", c.count());
+                }
                 list.add(jo);
             }
         }
@@ -142,19 +171,37 @@ public class MicrometerConsole extends AbstractDevConsole {
         }
         i = 0;
         for (Meter m : mr.getMeters()) {
-            if (m instanceof LongTaskTimer) {
+            if (m instanceof Timer) {
                 final List<JsonObject> list = new ArrayList<>();
-                LongTaskTimer t = (LongTaskTimer) m;
+                Timer t = (Timer) m;
                 if (i == 0) {
                     root.put("timers", list);
                 }
                 i++;
                 JsonObject jo = new JsonObject();
                 jo.put("name", t.getId().getName());
+                jo.put("count", t.count());
+                jo.put("mean", Math.round(t.mean(TimeUnit.MILLISECONDS)));
+                jo.put("max", Math.round(t.max(TimeUnit.MILLISECONDS)));
+                jo.put("total", Math.round(t.totalTime(TimeUnit.MILLISECONDS)));
+                list.add(jo);
+            }
+        }
+        i = 0;
+        for (Meter m : mr.getMeters()) {
+            if (m instanceof LongTaskTimer) {
+                final List<JsonObject> list = new ArrayList<>();
+                LongTaskTimer t = (LongTaskTimer) m;
+                if (i == 0) {
+                    root.put("longTaskTimers", list);
+                }
+                i++;
+                JsonObject jo = new JsonObject();
+                jo.put("name", t.getId().getName());
                 jo.put("activeTasks", t.activeTasks());
-                jo.put("mean", t.mean(TimeUnit.MILLISECONDS));
-                jo.put("max", t.max(TimeUnit.MILLISECONDS));
-                jo.put("duration", t.duration(TimeUnit.MILLISECONDS));
+                jo.put("mean", Math.round(t.mean(TimeUnit.MILLISECONDS)));
+                jo.put("max", Math.round(t.max(TimeUnit.MILLISECONDS)));
+                jo.put("duration", Math.round(t.duration(TimeUnit.MILLISECONDS)));
                 list.add(jo);
             }
         }
