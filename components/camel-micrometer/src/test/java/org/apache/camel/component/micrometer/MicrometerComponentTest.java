@@ -39,7 +39,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
@@ -151,18 +150,6 @@ public class MicrometerComponentTest {
         when(camelRegistry.findByType(MeterRegistry.class)).thenReturn(Collections.singleton(metricRegistry));
         MeterRegistry result = MicrometerUtils.getOrCreateMeterRegistry(camelRegistry, "name");
         assertThat(result, is(metricRegistry));
-        inOrder.verify(camelRegistry, times(1)).lookupByNameAndType("name", MeterRegistry.class);
-        inOrder.verify(camelRegistry, times(1)).findByType(MeterRegistry.class);
-        inOrder.verifyNoMoreInteractions();
-    }
-
-    @Test
-    public void testGetOrCreateMetricRegistryNotFoundInCamelRegistry() {
-        when(camelRegistry.lookupByNameAndType("name", MeterRegistry.class)).thenReturn(null);
-        when(camelRegistry.findByType(MeterRegistry.class)).thenReturn(Collections.emptySet());
-        MeterRegistry result = MicrometerUtils.getOrCreateMeterRegistry(camelRegistry, "name");
-        assertThat(result, is(notNullValue()));
-        assertThat(result, is(not(metricRegistry)));
         inOrder.verify(camelRegistry, times(1)).lookupByNameAndType("name", MeterRegistry.class);
         inOrder.verify(camelRegistry, times(1)).findByType(MeterRegistry.class);
         inOrder.verifyNoMoreInteractions();

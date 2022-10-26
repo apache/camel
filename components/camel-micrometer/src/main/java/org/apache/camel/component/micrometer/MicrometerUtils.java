@@ -56,13 +56,15 @@ public abstract class MicrometerUtils {
         }
     }
 
-    public static MeterRegistry getOrCreateMeterRegistry(Registry camelRegistry, String registryName) {
-        LOG.debug("Looking up MeterRegistry from Camel Registry for name \"{}\"", registryName);
-        MeterRegistry result = getMeterRegistryFromCamelRegistry(camelRegistry, registryName);
+    public static MeterRegistry getOrCreateMeterRegistry(Registry camelRegistry, String name) {
+        MeterRegistry result = getMeterRegistryFromCamelRegistry(camelRegistry, name);
         if (result == null) {
-            LOG.debug("MeterRegistry not found from Camel Registry for name \"{}\"", registryName);
-            LOG.info("Creating new default MeterRegistry");
+            LOG.debug("Creating new MeterRegistry: {}", name);
             result = createMeterRegistry();
+            // enlist in registry so it can be reused
+            camelRegistry.bind(name, result);
+        } else {
+            LOG.debug("Using existing MeterRegistry: {}", name);
         }
         return result;
     }
