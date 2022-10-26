@@ -399,9 +399,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                 LOG.trace("Extending visibility window by {} seconds for exchange {}", this.repeatSeconds, this.exchange);
                 getEndpoint().getClient().changeMessageVisibility(request.build());
                 LOG.debug("Extended visibility window by {} seconds for exchange {}", this.repeatSeconds, this.exchange);
-            } catch (ReceiptHandleIsInvalidException e) {
-                // Ignore.
-            } catch (MessageNotInflightException e) {
+            } catch (MessageNotInflightException | ReceiptHandleIsInvalidException e) {
                 // Ignore.
             } catch (SqsException e) {
                 if (e.getMessage().contains("Message does not exist or is not available for visibility timeout change")) {
