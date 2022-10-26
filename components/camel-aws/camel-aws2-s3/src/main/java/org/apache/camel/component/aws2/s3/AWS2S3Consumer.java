@@ -100,7 +100,7 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
                 return;
             } catch (AwsServiceException ase) {
                 /* 404 means the bucket doesn't exist */
-                if (!(ase.awsErrorDetails().sdkHttpResponse().statusCode() == 404)) {
+                if (ase.awsErrorDetails().sdkHttpResponse().statusCode() != 404) {
                     throw ase;
                 }
             }
