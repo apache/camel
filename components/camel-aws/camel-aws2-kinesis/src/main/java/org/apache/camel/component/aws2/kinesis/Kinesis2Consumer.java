@@ -202,20 +202,20 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
 
     private Queue<Exchange> createExchanges(List<Record> records) {
         Queue<Exchange> exchanges = new ArrayDeque<>();
-        for (Record record : records) {
-            exchanges.add(createExchange(record));
+        for (Record dataRecord : records) {
+            exchanges.add(createExchange(dataRecord));
         }
         return exchanges;
     }
 
-    protected Exchange createExchange(Record record) {
+    protected Exchange createExchange(Record dataRecord) {
         Exchange exchange = createExchange(true);
-        exchange.getIn().setBody(record.data().asInputStream());
-        exchange.getIn().setHeader(Kinesis2Constants.APPROX_ARRIVAL_TIME, record.approximateArrivalTimestamp());
-        exchange.getIn().setHeader(Kinesis2Constants.PARTITION_KEY, record.partitionKey());
-        exchange.getIn().setHeader(Kinesis2Constants.SEQUENCE_NUMBER, record.sequenceNumber());
-        if (record.approximateArrivalTimestamp() != null) {
-            long ts = record.approximateArrivalTimestamp().getEpochSecond() * 1000;
+        exchange.getIn().setBody(dataRecord.data().asInputStream());
+        exchange.getIn().setHeader(Kinesis2Constants.APPROX_ARRIVAL_TIME, dataRecord.approximateArrivalTimestamp());
+        exchange.getIn().setHeader(Kinesis2Constants.PARTITION_KEY, dataRecord.partitionKey());
+        exchange.getIn().setHeader(Kinesis2Constants.SEQUENCE_NUMBER, dataRecord.sequenceNumber());
+        if (dataRecord.approximateArrivalTimestamp() != null) {
+            long ts = dataRecord.approximateArrivalTimestamp().getEpochSecond() * 1000;
             exchange.getIn().setHeader(Kinesis2Constants.MESSAGE_TIMESTAMP, ts);
         }
         return exchange;
