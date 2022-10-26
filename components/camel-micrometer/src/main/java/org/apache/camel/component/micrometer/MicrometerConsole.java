@@ -103,7 +103,8 @@ public class MicrometerConsole extends AbstractDevConsole {
                 long mean = Math.round(t.mean(TimeUnit.MILLISECONDS));
                 long max = Math.round(t.max(TimeUnit.MILLISECONDS));
                 long duration = Math.round(t.duration(TimeUnit.MILLISECONDS));
-                sb.append(String.format("    %s: %d (duration: %dms mean: %dms max: %dms)\n", name, tasks, duration, mean, max));
+                sb.append(
+                        String.format("    %s: %d (duration: %dms mean: %dms max: %dms)\n", name, tasks, duration, mean, max));
             }
         }
         i = 0;
