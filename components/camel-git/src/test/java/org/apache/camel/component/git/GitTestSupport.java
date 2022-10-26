@@ -22,9 +22,11 @@ import java.io.IOException;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.errors.ConfigInvalidException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.util.SystemReader;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -69,8 +71,9 @@ public class GitTestSupport extends CamelTestSupport {
         deleteDirectory(path);
     }
 
-    protected Repository getTestRepository() throws IOException, IllegalStateException, GitAPIException {
+    protected Repository getTestRepository() throws IOException, IllegalStateException, GitAPIException, ConfigInvalidException {
         File gitRepo = new File(gitLocalRepo, ".git");
+        SystemReader.getInstance().getUserConfig().clear(); //clears user config in JGit context, that way there are no environmental contamination that may affect the tests
         Git.init().setDirectory(new File(gitLocalRepo, "")).setBare(false).call();
         // now open the resulting repository with a FileRepositoryBuilder
         FileRepositoryBuilder builder = new FileRepositoryBuilder();
@@ -83,7 +86,7 @@ public class GitTestSupport extends CamelTestSupport {
         return repo;
     }
 
-    protected Git getGitTestRepository() throws IOException, IllegalStateException, GitAPIException {
+    protected Git getGitTestRepository() throws IOException, IllegalStateException, GitAPIException, ConfigInvalidException {
         return new Git(getTestRepository());
     }
 
