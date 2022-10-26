@@ -22,14 +22,10 @@ import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import org.apache.camel.Exchange;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_HISTOGRAM_VALUE;
 
 public class DistributionSummaryProducer extends AbstractMicrometerProducer<DistributionSummary> {
-
-    private static final Logger LOG = LoggerFactory.getLogger(DistributionSummaryProducer.class);
 
     public DistributionSummaryProducer(MicrometerEndpoint endpoint) {
         super(endpoint);
@@ -46,8 +42,6 @@ public class DistributionSummaryProducer extends AbstractMicrometerProducer<Dist
         Double finalValue = getDoubleHeader(exchange.getIn(), HEADER_HISTOGRAM_VALUE, value);
         if (finalValue != null) {
             summary.record(finalValue);
-        } else {
-            LOG.warn("Cannot update histogram \"{}\" with null value", summary.getId().getName());
         }
     }
 }
