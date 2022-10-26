@@ -172,7 +172,7 @@ public enum FacebookMethodsType {
     // DomainMethods
     GETDOMAIN(Domain.class, "getDomain", String.class, "domainId"),
     GETDOMAINBYNAME(Domain.class, "getDomainByName", String.class, "domainName"),
-    GETDOMAINSBYNAME_WITH_DOMAINS(List.class, "getDomainsByName", new String[0].getClass(), "domainNames"),
+    GETDOMAINSBYNAME_WITH_DOMAINS(List.class, "getDomainsByName", String[].class, "domainNames"),
 
     // EventMethods
     CREATEEVENT(String.class, "createEvent", EventUpdate.class, "eventUpdate"),
@@ -210,7 +210,7 @@ public enum FacebookMethodsType {
     GETRSVPSTATUSINMAYBE(ResponseList.class, "getRSVPStatusInMaybe", String.class, "eventId"),
     GETRSVPSTATUSINMAYBE_WITH_ID(ResponseList.class, "getRSVPStatusInMaybe", String.class, "eventId", String.class, "userId"),
     INVITETOEVENT(Boolean.class, "inviteToEvent", String.class, "eventId", String.class, "userId"),
-    INVITETOEVENT_WITH_IDS(Boolean.class, "inviteToEvent", String.class, "eventId", new String[0].getClass(), "userIds"),
+    INVITETOEVENT_WITH_IDS(Boolean.class, "inviteToEvent", String.class, "eventId", String[].class, "userIds"),
     POSTEVENTLINK_WITH_LINK(String.class, "postEventLink", String.class, "eventId", URL.class, "link"),
     POSTEVENTLINK_WITH_LINK_MSG(String.class, "postEventLink", String.class, "eventId", URL.class, "link", String.class,
                                 "message"),
@@ -616,7 +616,7 @@ public enum FacebookMethodsType {
     GETSSLPICTUREURL_WITH_ID_SIZE(URL.class, "getSSLPictureURL", String.class, "userId", PictureSize.class, "size"),
     GETUSER(User.class, "getUser", String.class, "userId"),
     GETUSER_WITH_OPTIONS(User.class, "getUser", String.class, "userId", Reading.class, FacebookConstants.READING_PROPERTY),
-    GETUSERS(List.class, "getUsers", new String[0].getClass(), "ids"),
+    GETUSERS(List.class, "getUsers", String[].class, "ids"),
 
     // VideoMethods
     COMMENTVIDEO(String.class, "commentVideo", String.class, "videoId", String.class, "message"),
