@@ -47,6 +47,8 @@ public class MicrometerEndpoint extends DefaultEndpoint {
     @UriPath(description = "Name of metrics")
     @Metadata(required = true)
     protected final String metricsName;
+    @UriParam(description = "Description of metrics")
+    protected String metricsDescription;
     @UriPath(description = "Tags of metrics")
     protected final Iterable<Tag> tags;
     @UriParam(description = "Action expression when using timer type", enums = "start,stop")
@@ -99,6 +101,14 @@ public class MicrometerEndpoint extends DefaultEndpoint {
 
     public Meter.Type getMetricsType() {
         return metricsType;
+    }
+
+    public String getMetricsDescription() {
+        return metricsDescription;
+    }
+
+    public void setMetricsDescription(String metricsDescription) {
+        this.metricsDescription = metricsDescription;
     }
 
     public String getAction() {

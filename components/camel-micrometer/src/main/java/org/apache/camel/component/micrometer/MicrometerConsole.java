@@ -27,6 +27,7 @@ import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.LongTaskTimer;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Timer;
 import org.apache.camel.impl.console.AbstractDevConsole;
 import org.apache.camel.spi.annotations.DevConsole;
@@ -103,7 +104,8 @@ public class MicrometerConsole extends AbstractDevConsole {
                 long mean = Math.round(t.mean(TimeUnit.MILLISECONDS));
                 long max = Math.round(t.max(TimeUnit.MILLISECONDS));
                 long duration = Math.round(t.duration(TimeUnit.MILLISECONDS));
-                sb.append(String.format("    %s: %d (duration: %dms mean: %dms max: %dms)\n", name, tasks, duration, mean, max));
+                sb.append(
+                        String.format("    %s: %d (duration: %dms mean: %dms max: %dms)\n", name, tasks, duration, mean, max));
             }
         }
         i = 0;
@@ -142,6 +144,10 @@ public class MicrometerConsole extends AbstractDevConsole {
                 i++;
                 JsonObject jo = new JsonObject();
                 jo.put("name", c.getId().getName());
+                if (c.getId().getDescription() != null) {
+                    jo.put("description", c.getId().getDescription());
+                }
+                addTags(m, jo);
                 // strip decimal if counter is integer based
                 String cnt = String.valueOf(c.count());
                 if (cnt.endsWith(".0") || cnt.endsWith(",0")) {
@@ -165,6 +171,10 @@ public class MicrometerConsole extends AbstractDevConsole {
                 i++;
                 JsonObject jo = new JsonObject();
                 jo.put("name", g.getId().getName());
+                if (g.getId().getDescription() != null) {
+                    jo.put("description", g.getId().getDescription());
+                }
+                addTags(m, jo);
                 jo.put("value", g.value());
                 list.add(jo);
             }
@@ -180,6 +190,10 @@ public class MicrometerConsole extends AbstractDevConsole {
                 i++;
                 JsonObject jo = new JsonObject();
                 jo.put("name", t.getId().getName());
+                if (t.getId().getDescription() != null) {
+                    jo.put("description", t.getId().getDescription());
+                }
+                addTags(m, jo);
                 jo.put("count", t.count());
                 jo.put("mean", Math.round(t.mean(TimeUnit.MILLISECONDS)));
                 jo.put("max", Math.round(t.max(TimeUnit.MILLISECONDS)));
@@ -198,6 +212,10 @@ public class MicrometerConsole extends AbstractDevConsole {
                 i++;
                 JsonObject jo = new JsonObject();
                 jo.put("name", t.getId().getName());
+                if (t.getId().getDescription() != null) {
+                    jo.put("description", t.getId().getDescription());
+                }
+                addTags(m, jo);
                 jo.put("activeTasks", t.activeTasks());
                 jo.put("mean", Math.round(t.mean(TimeUnit.MILLISECONDS)));
                 jo.put("max", Math.round(t.max(TimeUnit.MILLISECONDS)));
@@ -216,6 +234,10 @@ public class MicrometerConsole extends AbstractDevConsole {
                 i++;
                 JsonObject jo = new JsonObject();
                 jo.put("name", d.getId().getName());
+                if (d.getId().getDescription() != null) {
+                    jo.put("description", d.getId().getDescription());
+                }
+                addTags(m, jo);
                 jo.put("count", d.count());
                 jo.put("mean", d.mean());
                 jo.put("max", d.max());
@@ -225,6 +247,19 @@ public class MicrometerConsole extends AbstractDevConsole {
         }
 
         return root;
+    }
+
+    private void addTags(Meter m, JsonObject root) {
+        List<JsonObject> list = new ArrayList<>();
+        for (Tag t : m.getId().getTags()) {
+            JsonObject jo = new JsonObject();
+            jo.put("key", t.getKey());
+            jo.put("value", t.getValue());
+            list.add(jo);
+        }
+        if (!list.isEmpty()) {
+            root.put("tags", list);
+        }
     }
 
     private MeterRegistry lookupMeterRegistry() {

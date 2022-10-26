@@ -32,8 +32,8 @@ public class DistributionSummaryProducer extends AbstractMicrometerProducer<Dist
     }
 
     @Override
-    protected Function<MeterRegistry, DistributionSummary> registrar(String name, Iterable<Tag> tags) {
-        return meterRegistry -> meterRegistry.summary(name, tags);
+    protected Function<MeterRegistry, DistributionSummary> registrar(String name, String description, Iterable<Tag> tags) {
+        return meterRegistry -> DistributionSummary.builder(name).description(description).tags(tags).register(meterRegistry);
     }
 
     @Override

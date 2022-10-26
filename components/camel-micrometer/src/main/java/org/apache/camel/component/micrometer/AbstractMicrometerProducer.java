@@ -30,6 +30,7 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_CONTEXT_TAG;
+import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_METRIC_DESCRIPTION;
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_METRIC_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_METRIC_TAGS;
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_PREFIX;
@@ -52,6 +53,8 @@ public abstract class AbstractMicrometerProducer<T extends Meter> extends Defaul
         Message in = exchange.getIn();
         String defaultMetricsName = simple(exchange, getEndpoint().getMetricsName(), String.class);
         String finalMetricsName = getStringHeader(in, HEADER_METRIC_NAME, defaultMetricsName);
+        String defaultMetricsDescription = simple(exchange, getEndpoint().getMetricsDescription(), String.class);
+        String finalMetricsDescription = getStringHeader(in, HEADER_METRIC_DESCRIPTION, defaultMetricsDescription);
         Iterable<Tag> defaultTags = getEndpoint().getTags();
         Iterable<Tag> headerTags = getTagHeader(in, HEADER_METRIC_TAGS, Tags.empty());
         Iterable<Tag> finalTags = Tags.concat(defaultTags, headerTags).stream()
@@ -62,7 +65,7 @@ public abstract class AbstractMicrometerProducer<T extends Meter> extends Defaul
                 .and(Tags.of(
                         CAMEL_CONTEXT_TAG, getEndpoint().getCamelContext().getName()));
         try {
-            doProcess(exchange, finalMetricsName, finalTags);
+            doProcess(exchange, finalMetricsName, finalMetricsDescription, finalTags);
         } catch (Exception e) {
             exchange.setException(e);
         } finally {
@@ -70,15 +73,15 @@ public abstract class AbstractMicrometerProducer<T extends Meter> extends Defaul
         }
     }
 
-    protected abstract Function<MeterRegistry, T> registrar(String name, Iterable<Tag> tags);
+    protected abstract Function<MeterRegistry, T> registrar(String name, String description, Iterable<Tag> tags);
 
-    protected void doProcess(Exchange exchange, String name, Iterable<Tag> tags) {
-        doProcess(exchange, getEndpoint(), getOrRegisterMeter(name, tags));
+    protected void doProcess(Exchange exchange, String name, String description, Iterable<Tag> tags) {
+        doProcess(exchange, getEndpoint(), getOrRegisterMeter(name, description, tags));
     }
 
-    protected T getOrRegisterMeter(String name, Iterable<Tag> tags) {
+    protected T getOrRegisterMeter(String name, String description, Iterable<Tag> tags) {
         MeterRegistry registry = getEndpoint().getRegistry();
-        return registrar(name, tags).apply(registry);
+        return registrar(name, description, tags).apply(registry);
     }
 
     protected abstract void doProcess(Exchange exchange, MicrometerEndpoint endpoint, T meter);

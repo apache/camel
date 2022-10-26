@@ -21,11 +21,12 @@ public class MicrometerEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(8);
+        Set<String> props = new HashSet<>(9);
         props.add("action");
         props.add("decrement");
         props.add("increment");
         props.add("lazyStartProducer");
+        props.add("metricsDescription");
         props.add("metricsName");
         props.add("metricsType");
         props.add("tags");

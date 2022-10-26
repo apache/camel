@@ -26,6 +26,8 @@ public class MicrometerEndpointConfigurer extends PropertyConfigurerSupport impl
         case "increment": target.setIncrement(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "metricsdescription":
+        case "metricsDescription": target.setMetricsDescription(property(camelContext, java.lang.String.class, value)); return true;
         case "value": target.setValue(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -39,6 +41,8 @@ public class MicrometerEndpointConfigurer extends PropertyConfigurerSupport impl
         case "increment": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "metricsdescription":
+        case "metricsDescription": return java.lang.String.class;
         case "value": return java.lang.String.class;
         default: return null;
         }
@@ -53,6 +57,8 @@ public class MicrometerEndpointConfigurer extends PropertyConfigurerSupport impl
         case "increment": return target.getIncrement();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "metricsdescription":
+        case "metricsDescription": return target.getMetricsDescription();
         case "value": return target.getValue();
         default: return null;
         }

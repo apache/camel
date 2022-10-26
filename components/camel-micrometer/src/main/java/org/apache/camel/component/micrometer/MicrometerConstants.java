@@ -35,6 +35,8 @@ public final class MicrometerConstants {
     public static final String HEADER_COUNTER_INCREMENT = HEADER_PREFIX + "CounterIncrement";
     @Metadata(description = "Override name value in URI", javaType = "String")
     public static final String HEADER_METRIC_NAME = HEADER_PREFIX + "Name";
+    @Metadata(description = "Override description value in URI", javaType = "String")
+    public static final String HEADER_METRIC_DESCRIPTION = HEADER_PREFIX + "Description";
     @Metadata(description = "To augment meter tags defined as URI parameters", javaType = "java.lang.Iterable<Tag>")
     public static final String HEADER_METRIC_TAGS = HEADER_PREFIX + "Tags";
 

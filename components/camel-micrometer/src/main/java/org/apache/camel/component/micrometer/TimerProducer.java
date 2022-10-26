@@ -33,8 +33,8 @@ public class TimerProducer extends AbstractMicrometerProducer<Timer> {
     }
 
     @Override
-    protected Function<MeterRegistry, Timer> registrar(String name, Iterable<Tag> tags) {
-        return meterRegistry -> meterRegistry.timer(name, tags);
+    protected Function<MeterRegistry, Timer> registrar(String name, String description, Iterable<Tag> tags) {
+        return meterRegistry -> Timer.builder(name).description(description).tags(tags).register(meterRegistry);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class TimerProducer extends AbstractMicrometerProducer<Timer> {
     }
 
     @Override
-    protected void doProcess(Exchange exchange, String metricsName, Iterable<Tag> tags) {
+    protected void doProcess(Exchange exchange, String metricsName, String metricsDescription, Iterable<Tag> tags) {
         MeterRegistry registry = getEndpoint().getRegistry();
         Message in = exchange.getIn();
         MicrometerTimerAction action = simple(exchange, getEndpoint().getAction(), MicrometerTimerAction.class);
@@ -54,13 +54,13 @@ public class TimerProducer extends AbstractMicrometerProducer<Timer> {
         if (finalAction == MicrometerTimerAction.start) {
             handleStart(exchange, registry, metricsName);
         } else if (finalAction == MicrometerTimerAction.stop) {
-            handleStop(exchange, metricsName, tags);
+            handleStop(exchange, metricsName, metricsDescription, tags);
         }
     }
 
-    private void handleStop(Exchange exchange, String metricsName, Iterable<Tag> tags) {
+    private void handleStop(Exchange exchange, String metricsName, String metricsDescription, Iterable<Tag> tags) {
         if (getTimerSampleFromExchange(exchange, getPropertyName(metricsName)) != null) {
-            doProcess(exchange, getEndpoint(), getOrRegisterMeter(metricsName, tags));
+            doProcess(exchange, getEndpoint(), getOrRegisterMeter(metricsName, metricsDescription, tags));
         }
     }
 
