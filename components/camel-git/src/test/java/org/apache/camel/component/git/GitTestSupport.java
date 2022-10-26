@@ -71,10 +71,11 @@ public class GitTestSupport extends CamelTestSupport {
         deleteDirectory(path);
     }
 
-    protected Repository getTestRepository() throws IOException, IllegalStateException, GitAPIException, ConfigInvalidException {
+    protected Repository getTestRepository()
+            throws IOException, IllegalStateException, GitAPIException, ConfigInvalidException {
         File gitRepo = new File(gitLocalRepo, ".git");
         SystemReader.getInstance().getUserConfig().clear(); //clears user config in JGit context, that way there are no environmental contamination that may affect the tests
-        Git.init().setDirectory(new File(gitLocalRepo, "")).setBare(false).call();
+        Git.init().setDirectory(new File(gitLocalRepo, "")).setInitialBranch("master").setBare(false).call();
         // now open the resulting repository with a FileRepositoryBuilder
         FileRepositoryBuilder builder = new FileRepositoryBuilder();
         Repository repo = builder.setGitDir(gitRepo).readEnvironment() // scan
