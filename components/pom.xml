@@ -251,6 +251,7 @@
         <module>camel-pgevent</module>
         <module>camel-platform-http</module>
         <module>camel-platform-http-vertx</module>
+        <module>camel-plc4x</module>
         <module>camel-printer</module>
         <module>camel-protobuf</module>
         <module>camel-pubnub</module>

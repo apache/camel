@@ -78,6 +78,12 @@
             <groupId>org.apache.plc4x</groupId>
             <artifactId>plc4j-scraper</artifactId>
             <version>${plc4x.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Include all drivers -->
@@ -86,6 +92,16 @@
             <artifactId>plc4j-driver-ab-eth</artifactId>
             <version>${plc4x.version}</version>
             <scope>runtime</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.woodstox</groupId>
+                    <artifactId>woodstox-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.plc4x</groupId>
@@ -149,12 +165,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.plc4x</groupId>
-            <artifactId>plc4j-spi</artifactId>
-            <version>${plc4x.version}</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <!-- avoids java.lang.NoClassDefFoundError: javax/activation/DataHandler in Plc4XProducerTest on Java 11-->
             <groupId>javax.activation</groupId>
