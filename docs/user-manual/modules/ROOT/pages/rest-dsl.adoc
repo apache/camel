@@ -163,31 +163,6 @@ For example:
      .to("direct:item")
 ----
 
-== Using Dynamic To in Rest DSL
-
-The Rest DSL supports xref:components:eips:toD-eip.adoc[Dynamic To] EIP (`toD`)
-to in the rest-dsl. For example to do a xref:components:eips:requestReply-eip.adoc[Request Reply]
-over xref:components::jms-component.adoc[JMS] where the queue name is dynamic defined
-
-[source,java]
-----
-public void configure() throws Exception {
-   rest("/say")
-     .get("/hello/{language}").toD("jms:queue:hello-${header.language}");
-}
-----
-
-And in XML DSL
-
-[source,xml]
-----
-<rest uri="/say">
-  <get uri="/hello//{language}">
-    <toD uri="jms:queue:hello-${header.language}"/>
-  </get>
-</rest>
-----
-
 
 == Managing Rest services
 
