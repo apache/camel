@@ -19,6 +19,7 @@ package org.apache.camel.component.micrometer.json;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
@@ -128,8 +129,8 @@ public class MicrometerModule extends Module {
             json.writeNumberField("total", snapshot.total(timeUnit));
             ValueAtPercentile[] percentiles = snapshot.percentileValues();
             for (ValueAtPercentile percentile : percentiles) {
-                // TODO format "p%0.3d" is incorrect
-                json.writeNumberField(String.format("p%0.3d", percentile.percentile()), percentile.value(timeUnit));
+                int p = (int) percentile.percentile() * 100;
+                json.writeNumberField("p" + p, percentile.value(timeUnit));
             }
         }
     }
@@ -278,12 +279,12 @@ public class MicrometerModule extends Module {
                 return ((CompositeMeterRegistry) meterRegistry).getRegistries().stream()
                         .flatMap(reg -> meters(reg, clazz, matchingNames, matchingTags).stream())
                         .sorted(Comparator.comparing(o -> o.getId().getName()))
-                        .collect(Collectors.toSet());
+                        .collect(Collectors.toCollection(LinkedHashSet::new));
             }
             return Search.in(meterRegistry).name(matchingNames).tags(matchingTags).meters().stream()
                     .filter(clazz::isInstance)
                     .sorted(Comparator.comparing(o -> o.getId().getName()))
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
         }
 
     }
