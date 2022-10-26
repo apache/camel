@@ -20,7 +20,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -40,6 +42,11 @@ public class LZFDataFormat extends DataFormatDefinition {
         super("lzf");
     }
 
+    private LZFDataFormat(Builder builder) {
+        this();
+        this.usingParallelCompression = builder.usingParallelCompression;
+    }
+
     public String getUsingParallelCompression() {
         return usingParallelCompression;
     }
@@ -49,5 +56,27 @@ public class LZFDataFormat extends DataFormatDefinition {
      */
     public void setUsingParallelCompression(String usingParallelCompression) {
         this.usingParallelCompression = usingParallelCompression;
+    }
+
+    /**
+     * {@code Builder} is a specific builder for {@link LZFDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<LZFDataFormat> {
+
+        private String usingParallelCompression;
+
+        /**
+         * Enable encoding (compress) using multiple processing cores.
+         */
+        public Builder usingParallelCompression(String usingParallelCompression) {
+            this.usingParallelCompression = usingParallelCompression;
+            return this;
+        }
+
+        @Override
+        public LZFDataFormat end() {
+            return new LZFDataFormat(this);
+        }
     }
 }

@@ -20,7 +20,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -60,6 +62,19 @@ public class CryptoDataFormat extends DataFormatDefinition {
 
     public CryptoDataFormat() {
         super("crypto");
+    }
+
+    private CryptoDataFormat(Builder builder) {
+        this();
+        this.algorithm = builder.algorithm;
+        this.keyRef = builder.keyRef;
+        this.cryptoProvider = builder.cryptoProvider;
+        this.initVectorRef = builder.initVectorRef;
+        this.algorithmParameterRef = builder.algorithmParameterRef;
+        this.bufferSize = builder.bufferSize;
+        this.macAlgorithm = builder.macAlgorithm;
+        this.shouldAppendHMAC = builder.shouldAppendHMAC;
+        this.inline = builder.inline;
     }
 
     public String getAlgorithm() {
@@ -163,5 +178,103 @@ public class CryptoDataFormat extends DataFormatDefinition {
      */
     public void setInline(String inline) {
         this.inline = inline;
+    }
+
+    /**
+     * {@code Builder} is a specific builder for {@link CryptoDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<CryptoDataFormat> {
+
+        private String algorithm;
+        private String keyRef;
+        private String cryptoProvider;
+        private String initVectorRef;
+        private String algorithmParameterRef;
+        private String bufferSize = "4096";
+        private String macAlgorithm = "HmacSHA1";
+        private String shouldAppendHMAC = "true";
+        private String inline = "false";
+
+        /**
+         * The JCE algorithm name indicating the cryptographic algorithm that will be used.
+         */
+        public Builder algorithm(String algorithm) {
+            this.algorithm = algorithm;
+            return this;
+        }
+
+        /**
+         * The name of the JCE Security Provider that should be used.
+         */
+        public Builder cryptoProvider(String cryptoProvider) {
+            this.cryptoProvider = cryptoProvider;
+            return this;
+        }
+
+        /**
+         * Refers to the secret key to lookup from the register to use.
+         */
+        public Builder keyRef(String keyRef) {
+            this.keyRef = keyRef;
+            return this;
+        }
+
+        /**
+         * Refers to a byte array containing the Initialization Vector that will be used to initialize the Cipher.
+         */
+        public Builder initVectorRef(String initVectorRef) {
+            this.initVectorRef = initVectorRef;
+            return this;
+        }
+
+        /**
+         * A JCE AlgorithmParameterSpec used to initialize the Cipher.
+         * <p/>
+         * Will lookup the type using the given name as a {@link java.security.spec.AlgorithmParameterSpec} type.
+         */
+        public Builder algorithmParameterRef(String algorithmParameterRef) {
+            this.algorithmParameterRef = algorithmParameterRef;
+            return this;
+        }
+
+        /**
+         * The size of the buffer used in the signature process.
+         */
+        public Builder bufferSize(String bufferSize) {
+            this.bufferSize = bufferSize;
+            return this;
+        }
+
+        /**
+         * The JCE algorithm name indicating the Message Authentication algorithm.
+         */
+        public Builder macAlgorithm(String macAlgorithm) {
+            this.macAlgorithm = macAlgorithm;
+            return this;
+        }
+
+        /**
+         * Flag indicating that a Message Authentication Code should be calculated and appended to the encrypted data.
+         */
+        public Builder shouldAppendHMAC(String shouldAppendHMAC) {
+            this.shouldAppendHMAC = shouldAppendHMAC;
+            return this;
+        }
+
+        /**
+         * Flag indicating that the configured IV should be inlined into the encrypted data stream.
+         * <p/>
+         * Is by default false.
+         */
+        public Builder inline(String inline) {
+            this.inline = inline;
+            return this;
+        }
+
+        @Override
+        public CryptoDataFormat end() {
+            return new CryptoDataFormat(this);
+        }
     }
 }

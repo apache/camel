@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -116,7 +117,38 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
     }
 
     public JsonDataFormat(JsonLibrary library) {
+        this();
         this.library = library;
+    }
+
+    private JsonDataFormat(Builder builder) {
+        this();
+        this.objectMapper = builder.objectMapper;
+        this.useDefaultObjectMapper = builder.useDefaultObjectMapper;
+        this.autoDiscoverObjectMapper = builder.autoDiscoverObjectMapper;
+        this.prettyPrint = builder.prettyPrint;
+        this.library = builder.library;
+        this.unmarshalTypeName = builder.unmarshalTypeName;
+        this.unmarshalType = builder.unmarshalType;
+        this.jsonViewTypeName = builder.jsonViewTypeName;
+        this.jsonView = builder.jsonView;
+        this.include = builder.include;
+        this.allowJmsType = builder.allowJmsType;
+        this.collectionTypeName = builder.collectionTypeName;
+        this.collectionType = builder.collectionType;
+        this.useList = builder.useList;
+        this.moduleClassNames = builder.moduleClassNames;
+        this.moduleRefs = builder.moduleRefs;
+        this.enableFeatures = builder.enableFeatures;
+        this.disableFeatures = builder.disableFeatures;
+        this.permissions = builder.permissions;
+        this.allowUnmarshallType = builder.allowUnmarshallType;
+        this.timezone = builder.timezone;
+        this.dropRootNode = builder.dropRootNode;
+        this.schemaResolver = builder.schemaResolver;
+        this.autoDiscoverSchemaResolver = builder.autoDiscoverSchemaResolver;
+        this.namingStrategy = builder.namingStrategy;
+        this.contentTypeHeader = builder.contentTypeHeader;
     }
 
     @Override
@@ -366,12 +398,16 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
      * @see        #setPermissions(String)
      */
     public void setPermissions(Class<?>... type) {
+        setPermissions(toString(type));
+    }
+
+    private static String toString(Class<?>[] type) {
         StringJoiner permissionsBuilder = new StringJoiner(",");
         for (Class<?> clazz : type) {
             permissionsBuilder.add("+");
             permissionsBuilder.add(clazz.getName());
         }
-        setPermissions(permissionsBuilder.toString());
+        return permissionsBuilder.toString();
     }
 
     public String getAllowUnmarshallType() {
@@ -600,4 +636,294 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         return this;
     }
 
+    /**
+     * {@code Builder} is a specific builder for {@link JsonDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<JsonDataFormat> {
+
+        private String objectMapper;
+        private String useDefaultObjectMapper = "true";
+        private String autoDiscoverObjectMapper = "false";
+        private String prettyPrint;
+        private JsonLibrary library = JsonLibrary.Jackson;
+        private String unmarshalTypeName;
+        private Class<?> unmarshalType;
+        private String jsonViewTypeName;
+        private Class<?> jsonView;
+        private String include;
+        private String allowJmsType;
+        private String collectionTypeName;
+        private Class<?> collectionType;
+        private String useList;
+        private String moduleClassNames;
+        private String moduleRefs;
+        private String enableFeatures;
+        private String disableFeatures;
+        private String permissions;
+        private String allowUnmarshallType;
+        private String timezone;
+        private String dropRootNode = "false";
+        private String schemaResolver;
+        private String autoDiscoverSchemaResolver = "true";
+        private String namingStrategy;
+        private String contentTypeHeader = "true";
+
+        public Builder contentTypeHeader(String contentTypeHeader) {
+            this.contentTypeHeader = contentTypeHeader;
+            return this;
+        }
+
+        /**
+         * Lookup and use the existing ObjectMapper with the given id when using Jackson.
+         */
+        public Builder objectMapper(String objectMapper) {
+            this.objectMapper = objectMapper;
+            return this;
+        }
+
+        /**
+         * Whether to lookup and use default Jackson ObjectMapper from the registry.
+         */
+        public Builder useDefaultObjectMapper(String useDefaultObjectMapper) {
+            this.useDefaultObjectMapper = useDefaultObjectMapper;
+            return this;
+        }
+
+        /**
+         * To enable pretty printing output nicely formatted.
+         * <p/>
+         * Is by default false.
+         */
+        public Builder prettyPrint(String prettyPrint) {
+            this.prettyPrint = prettyPrint;
+            return this;
+        }
+
+        /**
+         * Class name of the java type to use when unmarshalling
+         */
+        public Builder unmarshalTypeName(String unmarshalTypeName) {
+            this.unmarshalTypeName = unmarshalTypeName;
+            return this;
+        }
+
+        /**
+         * Class of the java type to use when unmarshalling
+         */
+        public Builder unmarshalType(Class<?> unmarshalType) {
+            this.unmarshalType = unmarshalType;
+            return this;
+        }
+
+        /**
+         * Which json library to use.
+         */
+        public Builder library(JsonLibrary library) {
+            this.library = library;
+            return this;
+        }
+
+        /**
+         * When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson
+         * you can use JSON views to accomplish this. This option is to refer to the class which has @JsonView
+         * annotations
+         */
+        public Builder jsonViewTypeName(String jsonViewTypeName) {
+            this.jsonViewTypeName = jsonViewTypeName;
+            return this;
+        }
+
+        /**
+         * When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson
+         * you can use JSON views to accomplish this. This option is to refer to the class which has @JsonView
+         * annotations
+         */
+        public Builder jsonView(Class<?> jsonView) {
+            this.jsonView = jsonView;
+            return this;
+        }
+
+        /**
+         * If you want to marshal a pojo to JSON, and the pojo has some fields with null values. And you want to skip
+         * these null values, you can set this option to <tt>NON_NULL</tt>
+         */
+        public Builder include(String include) {
+            this.include = include;
+            return this;
+        }
+
+        /**
+         * Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to
+         * unmarshal to.
+         */
+        public Builder allowJmsType(String allowJmsType) {
+            this.allowJmsType = allowJmsType;
+            return this;
+        }
+
+        /**
+         * Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but
+         * allows using different collection types than java.util.Collection based as default.
+         */
+        public Builder collectionTypeName(String collectionTypeName) {
+            this.collectionTypeName = collectionTypeName;
+            return this;
+        }
+
+        public Builder collectionType(Class<?> collectionType) {
+            this.collectionType = collectionType;
+            return this;
+        }
+
+        /**
+         * To unmarshal to a List of Map or a List of Pojo.
+         */
+        public Builder useList(String useList) {
+            this.useList = useList;
+            return this;
+        }
+
+        /**
+         * To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class
+         * names. Multiple classes can be separated by comma.
+         */
+        public Builder moduleClassNames(String moduleClassNames) {
+            this.moduleClassNames = moduleClassNames;
+            return this;
+        }
+
+        /**
+         * To use custom Jackson modules referred from the Camel registry. Multiple modules can be separated by comma.
+         */
+        public Builder moduleRefs(String moduleRefs) {
+            this.moduleRefs = moduleRefs;
+            return this;
+        }
+
+        /**
+         * Set of features to enable on the Jackson <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
+         * <p/>
+         * The features should be a name that matches a enum from
+         * <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
+         * <tt>com.fasterxml.jackson.databind.DeserializationFeature</tt>, or
+         * <tt>com.fasterxml.jackson.databind.MapperFeature</tt>
+         * <p/>
+         * Multiple features can be separated by comma
+         */
+        public Builder enableFeatures(String enableFeatures) {
+            this.enableFeatures = enableFeatures;
+            return this;
+        }
+
+        /**
+         * Set of features to disable on the Jackson <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
+         * <p/>
+         * The features should be a name that matches a enum from
+         * <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
+         * <tt>com.fasterxml.jackson.databind.DeserializationFeature</tt>, or
+         * <tt>com.fasterxml.jackson.databind.MapperFeature</tt>
+         * <p/>
+         * Multiple features can be separated by comma
+         */
+        public Builder disableFeatures(String disableFeatures) {
+            this.disableFeatures = disableFeatures;
+            return this;
+        }
+
+        /**
+         * Adds permissions that controls which Java packages and classes XStream is allowed to use during unmarshal
+         * from xml/json to Java beans.
+         * <p/>
+         * A permission must be configured either here or globally using a JVM system property. The permission can be
+         * specified in a syntax where a plus sign is allow, and minus sign is deny. <br/>
+         * Wildcards is supported by using <tt>.*</tt> as prefix. For example to allow <tt>com.foo</tt> and all
+         * subpackages then specfy <tt>+com.foo.*</tt>. Multiple permissions can be configured separated by comma, such
+         * as <tt>+com.foo.*,-com.foo.bar.MySecretBean</tt>. <br/>
+         * The following default permission is always included: <tt>"-*,java.lang.*,java.util.*"</tt> unless its
+         * overridden by specifying a JVM system property with they key <tt>org.apache.camel.xstream.permissions</tt>.
+         */
+        public Builder permissions(String permissions) {
+            this.permissions = permissions;
+            return this;
+        }
+
+        /**
+         * To add permission for the given pojo classes.
+         *
+         * @param type the pojo class(es) xstream should use as allowed permission
+         * @see        #setPermissions(String)
+         */
+        public Builder permissions(Class<?>... type) {
+            return permissions(JsonDataFormat.toString(type));
+        }
+
+        /**
+         * If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the
+         * unmarshalling.
+         * <p/>
+         * This should only be enabled when desired to be used.
+         */
+        public Builder allowUnmarshallType(String allowUnmarshallType) {
+            this.allowUnmarshallType = allowUnmarshallType;
+            return this;
+        }
+
+        /**
+         * If set then Jackson will use the Timezone when marshalling/unmarshalling. This option will have no effect on
+         * the others Json DataFormat, like gson, fastjson and xstream.
+         */
+        public Builder timezone(String timezone) {
+            this.timezone = timezone;
+            return this;
+        }
+
+        /**
+         * If set to true then Jackson will look for an objectMapper to use from the registry
+         */
+        public Builder autoDiscoverObjectMapper(String autoDiscoverObjectMapper) {
+            this.autoDiscoverObjectMapper = autoDiscoverObjectMapper;
+            return this;
+        }
+
+        /**
+         * Whether XStream will drop the root node in the generated JSon. You may want to enable this when using POJOs;
+         * as then the written object will include the class name as root node, which is often not intended to be
+         * written in the JSON output.
+         */
+        public Builder dropRootNode(String dropRootNode) {
+            this.dropRootNode = dropRootNode;
+            return this;
+        }
+
+        /**
+         * Optional schema resolver used to lookup schemas for the data in transit.
+         */
+        public Builder schemaResolver(String schemaResolver) {
+            this.schemaResolver = schemaResolver;
+            return this;
+        }
+
+        /**
+         * When not disabled, the SchemaResolver will be looked up into the registry
+         */
+        public Builder autoDiscoverSchemaResolver(String autoDiscoverSchemaResolver) {
+            this.autoDiscoverSchemaResolver = autoDiscoverSchemaResolver;
+            return this;
+        }
+
+        /**
+         * If set then Jackson will use the the defined Property Naming Strategy. Possible values are: LOWER_CAMEL_CASE,
+         * LOWER_DOT_CASE, LOWER_CASE, KEBAB_CASE, SNAKE_CASE and UPPER_CAMEL_CASE
+         */
+        public Builder namingStrategy(String namingStrategy) {
+            this.namingStrategy = namingStrategy;
+            return this;
+        }
+
+        @Override
+        public JsonDataFormat end() {
+            return new JsonDataFormat(this);
+        }
+    }
 }

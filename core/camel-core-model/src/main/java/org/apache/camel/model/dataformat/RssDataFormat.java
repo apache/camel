@@ -19,7 +19,9 @@ package org.apache.camel.model.dataformat;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -35,4 +37,14 @@ public class RssDataFormat extends DataFormatDefinition {
         super("rss");
     }
 
+    /**
+     * {@code Builder} is a specific builder for {@link RssDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<RssDataFormat> {
+        @Override
+        public RssDataFormat end() {
+            return new RssDataFormat();
+        }
+    }
 }

@@ -22,7 +22,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -83,6 +85,24 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         super(dataFormatName);
     }
 
+    protected UniVocityAbstractDataFormat(String dataFormatName, AbstractBuilder<?, ?> builder) {
+        this(dataFormatName);
+        this.nullValue = builder.nullValue;
+        this.skipEmptyLines = builder.skipEmptyLines;
+        this.ignoreTrailingWhitespaces = builder.ignoreTrailingWhitespaces;
+        this.ignoreLeadingWhitespaces = builder.ignoreLeadingWhitespaces;
+        this.headersDisabled = builder.headersDisabled;
+        this.headers = builder.headers;
+        this.headerExtractionEnabled = builder.headerExtractionEnabled;
+        this.numberOfRecordsToRead = builder.numberOfRecordsToRead;
+        this.emptyValue = builder.emptyValue;
+        this.lineSeparator = builder.lineSeparator;
+        this.normalizedLineSeparator = builder.normalizedLineSeparator;
+        this.comment = builder.comment;
+        this.lazyLoad = builder.lazyLoad;
+        this.asMap = builder.asMap;
+    }
+
     public String getNullValue() {
         return nullValue;
     }
@@ -114,7 +134,7 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Whether or not the trailing white spaces must ignored.
+     * Whether or not the trailing white spaces must be ignored.
      * <p/>
      * The default value is true
      */
@@ -262,4 +282,164 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         this.asMap = asMap;
     }
 
+    /**
+     * {@code Builder} is a specific builder for {@link UniVocityAbstractDataFormat}.
+     */
+    @XmlTransient
+    @SuppressWarnings("unchecked")
+    abstract static class AbstractBuilder<T extends AbstractBuilder<T, F>, F extends UniVocityAbstractDataFormat>
+            implements DataFormatBuilder<F> {
+
+        private String nullValue;
+        private String skipEmptyLines = "true";
+        private String ignoreTrailingWhitespaces = "true";
+        private String ignoreLeadingWhitespaces = "true";
+        private String headersDisabled;
+        private List<UniVocityHeader> headers;
+        private String headerExtractionEnabled;
+        private String numberOfRecordsToRead;
+        private String emptyValue;
+        private String lineSeparator;
+        private String normalizedLineSeparator = "\\n";
+        private String comment = "#";
+        private String lazyLoad;
+        private String asMap;
+
+        /**
+         * The string representation of a null value.
+         * <p/>
+         * The default value is null
+         */
+        public T nullValue(String nullValue) {
+            this.nullValue = nullValue;
+            return (T) this;
+        }
+
+        /**
+         * Whether or not the empty lines must be ignored.
+         * <p/>
+         * The default value is true
+         */
+        public T skipEmptyLines(String skipEmptyLines) {
+            this.skipEmptyLines = skipEmptyLines;
+            return (T) this;
+        }
+
+        /**
+         * Whether or not the trailing white spaces must be ignored.
+         * <p/>
+         * The default value is true
+         */
+        public T ignoreTrailingWhitespaces(String ignoreTrailingWhitespaces) {
+            this.ignoreTrailingWhitespaces = ignoreTrailingWhitespaces;
+            return (T) this;
+        }
+
+        /**
+         * Whether or not the leading white spaces must be ignored.
+         * <p/>
+         * The default value is true
+         */
+        public T ignoreLeadingWhitespaces(String ignoreLeadingWhitespaces) {
+            this.ignoreLeadingWhitespaces = ignoreLeadingWhitespaces;
+            return (T) this;
+        }
+
+        /**
+         * Whether or not the headers are disabled. When defined, this option explicitly sets the headers as null which
+         * indicates that there is no header.
+         * <p/>
+         * The default value is false
+         */
+        public T headersDisabled(String headersDisabled) {
+            this.headersDisabled = headersDisabled;
+            return (T) this;
+        }
+
+        /**
+         * The headers to use.
+         */
+        public T headers(List<UniVocityHeader> headers) {
+            this.headers = headers;
+            return (T) this;
+        }
+
+        /**
+         * Whether or not the header must be read in the first line of the test document
+         * <p/>
+         * The default value is false
+         */
+        public T headerExtractionEnabled(String headerExtractionEnabled) {
+            this.headerExtractionEnabled = headerExtractionEnabled;
+            return (T) this;
+        }
+
+        /**
+         * The maximum number of record to read.
+         */
+        public T numberOfRecordsToRead(String numberOfRecordsToRead) {
+            this.numberOfRecordsToRead = numberOfRecordsToRead;
+            return (T) this;
+        }
+
+        /**
+         * The String representation of an empty value
+         */
+        public T emptyValue(String emptyValue) {
+            this.emptyValue = emptyValue;
+            return (T) this;
+        }
+
+        /**
+         * The line separator of the files
+         * <p/>
+         * The default value is to use the JVM platform line separator
+         */
+        public T lineSeparator(String lineSeparator) {
+            this.lineSeparator = lineSeparator;
+            return (T) this;
+        }
+
+        /**
+         * The normalized line separator of the files
+         * <p/>
+         * The default value is a new line character.
+         */
+        public T normalizedLineSeparator(String normalizedLineSeparator) {
+            this.normalizedLineSeparator = normalizedLineSeparator;
+            return (T) this;
+        }
+
+        /**
+         * The comment symbol.
+         * <p/>
+         * The default value is #
+         */
+        public T comment(String comment) {
+            this.comment = comment;
+            return (T) this;
+        }
+
+        /**
+         * Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must
+         * be read at one.
+         * <p/>
+         * The default value is false
+         */
+        public T lazyLoad(String lazyLoad) {
+            this.lazyLoad = lazyLoad;
+            return (T) this;
+        }
+
+        /**
+         * Whether the unmarshalling should produce maps for the lines values instead of lists. It requires to have
+         * header (either defined or collected).
+         * <p/>
+         * The default value is false
+         */
+        public T asMap(String asMap) {
+            this.asMap = asMap;
+            return (T) this;
+        }
+    }
 }

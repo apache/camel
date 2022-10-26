@@ -20,7 +20,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -44,6 +46,13 @@ public class Base64DataFormat extends DataFormatDefinition {
 
     public Base64DataFormat() {
         super("base64");
+    }
+
+    private Base64DataFormat(Builder builder) {
+        this();
+        this.lineLength = builder.lineLength;
+        this.lineSeparator = builder.lineSeparator;
+        this.urlSafe = builder.urlSafe;
     }
 
     public String getLineLength() {
@@ -82,5 +91,50 @@ public class Base64DataFormat extends DataFormatDefinition {
      */
     public void setUrlSafe(String urlSafe) {
         this.urlSafe = urlSafe;
+    }
+
+    /**
+     * {@code Builder} is a specific builder for {@link Base64DataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<Base64DataFormat> {
+
+        private String lineLength = "76";
+        private String lineSeparator;
+        private String urlSafe;
+
+        /**
+         * To specific a maximum line length for the encoded data.
+         * <p/>
+         * By default 76 is used.
+         */
+        public Builder lineLength(String lineLength) {
+            this.lineLength = lineLength;
+            return this;
+        }
+
+        /**
+         * The line separators to use.
+         * <p/>
+         * Uses new line characters (CRLF) by default.
+         */
+        public Builder lineSeparator(String lineSeparator) {
+            this.lineSeparator = lineSeparator;
+            return this;
+        }
+
+        /**
+         * Instead of emitting '+' and '/' we emit '-' and '_' respectively. urlSafe is only applied to encode
+         * operations. Decoding seamlessly handles both modes. Is by default false.
+         */
+        public Builder urlSafe(String urlSafe) {
+            this.urlSafe = urlSafe;
+            return this;
+        }
+
+        @Override
+        public Base64DataFormat end() {
+            return new Base64DataFormat(this);
+        }
     }
 }

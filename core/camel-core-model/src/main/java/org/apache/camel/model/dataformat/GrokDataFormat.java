@@ -20,7 +20,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -47,6 +49,14 @@ public class GrokDataFormat extends DataFormatDefinition {
 
     public GrokDataFormat() {
         super("grok");
+    }
+
+    private GrokDataFormat(Builder builder) {
+        this();
+        this.pattern = builder.pattern;
+        this.flattened = builder.flattened;
+        this.allowMultipleMatchesPerLine = builder.allowMultipleMatchesPerLine;
+        this.namedOnly = builder.namedOnly;
     }
 
     public String getPattern() {
@@ -98,5 +108,56 @@ public class GrokDataFormat extends DataFormatDefinition {
     @Override
     public String toString() {
         return "GrokDataFormat[" + pattern + ']';
+    }
+
+    /**
+     * {@code Builder} is a specific builder for {@link GrokDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<GrokDataFormat> {
+
+        private String pattern;
+        private String flattened;
+        private String allowMultipleMatchesPerLine = "true";
+        private String namedOnly;
+
+        /**
+         * The grok pattern to match lines of input
+         */
+        public Builder pattern(String pattern) {
+            this.pattern = pattern;
+            return this;
+        }
+
+        /**
+         * Turns on flattened mode. In flattened mode the exception is thrown when there are multiple pattern matches
+         * with same key.
+         */
+        public Builder flattened(String flattened) {
+            this.flattened = flattened;
+            return this;
+        }
+
+        /**
+         * If false, every line of input is matched for pattern only once. Otherwise the line can be scanned multiple
+         * times when non-terminal pattern is used.
+         */
+        public Builder allowMultipleMatchesPerLine(String allowMultipleMatchesPerLine) {
+            this.allowMultipleMatchesPerLine = allowMultipleMatchesPerLine;
+            return this;
+        }
+
+        /**
+         * Whether to capture named expressions only or not (i.e. %{IP:ip} but not ${IP})
+         */
+        public Builder namedOnly(String namedOnly) {
+            this.namedOnly = namedOnly;
+            return this;
+        }
+
+        @Override
+        public GrokDataFormat end() {
+            return new GrokDataFormat(this);
+        }
     }
 }

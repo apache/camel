@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -43,6 +44,12 @@ public class HL7DataFormat extends DataFormatDefinition {
 
     public HL7DataFormat() {
         super("hl7");
+    }
+
+    private HL7DataFormat(Builder builder) {
+        this();
+        this.parser = builder.parser;
+        this.validate = builder.validate;
     }
 
     public String getValidate() {
@@ -69,4 +76,36 @@ public class HL7DataFormat extends DataFormatDefinition {
         this.parser = parser;
     }
 
+    /**
+     * {@code Builder} is a specific builder for {@link HL7DataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<HL7DataFormat> {
+
+        private Object parser;
+        private String validate = "true";
+
+        /**
+         * Whether to validate the HL7 message
+         * <p/>
+         * Is by default true.
+         */
+        public Builder validate(String validate) {
+            this.validate = validate;
+            return this;
+        }
+
+        /**
+         * To use a custom HL7 parser
+         */
+        public Builder parser(Object parser) {
+            this.parser = parser;
+            return this;
+        }
+
+        @Override
+        public HL7DataFormat end() {
+            return new HL7DataFormat(this);
+        }
+    }
 }

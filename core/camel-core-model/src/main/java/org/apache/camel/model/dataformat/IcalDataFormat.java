@@ -20,7 +20,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -40,6 +42,11 @@ public class IcalDataFormat extends DataFormatDefinition {
         super("ical");
     }
 
+    private IcalDataFormat(Builder builder) {
+        this();
+        this.validating = builder.validating;
+    }
+
     public String getValidating() {
         return validating;
     }
@@ -51,4 +58,25 @@ public class IcalDataFormat extends DataFormatDefinition {
         this.validating = validating;
     }
 
+    /**
+     * {@code Builder} is a specific builder for {@link IcalDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<IcalDataFormat> {
+
+        private String validating;
+
+        /**
+         * Whether to validate.
+         */
+        public Builder validating(String validating) {
+            this.validating = validating;
+            return this;
+        }
+
+        @Override
+        public IcalDataFormat end() {
+            return new IcalDataFormat(this);
+        }
+    }
 }

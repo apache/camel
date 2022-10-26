@@ -23,7 +23,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -134,6 +136,39 @@ public class CsvDataFormat extends DataFormatDefinition {
     public CsvDataFormat(boolean lazyLoad) {
         this();
         setLazyLoad(Boolean.toString(lazyLoad));
+    }
+
+    private CsvDataFormat(Builder builder) {
+        this();
+        this.formatRef = builder.formatRef;
+        this.formatName = builder.formatName;
+        this.commentMarkerDisabled = builder.commentMarkerDisabled;
+        this.commentMarker = builder.commentMarker;
+        this.delimiter = builder.delimiter;
+        this.escapeDisabled = builder.escapeDisabled;
+        this.escape = builder.escape;
+        this.headerDisabled = builder.headerDisabled;
+        this.header = builder.header;
+        this.allowMissingColumnNames = builder.allowMissingColumnNames;
+        this.ignoreEmptyLines = builder.ignoreEmptyLines;
+        this.ignoreSurroundingSpaces = builder.ignoreSurroundingSpaces;
+        this.nullStringDisabled = builder.nullStringDisabled;
+        this.nullString = builder.nullString;
+        this.quoteDisabled = builder.quoteDisabled;
+        this.quote = builder.quote;
+        this.recordSeparatorDisabled = builder.recordSeparatorDisabled;
+        this.recordSeparator = builder.recordSeparator;
+        this.skipHeaderRecord = builder.skipHeaderRecord;
+        this.quoteMode = builder.quoteMode;
+        this.ignoreHeaderCase = builder.ignoreHeaderCase;
+        this.trim = builder.trim;
+        this.trailingDelimiter = builder.trailingDelimiter;
+        this.marshallerFactoryRef = builder.marshallerFactoryRef;
+        this.lazyLoad = builder.lazyLoad;
+        this.useMaps = builder.useMaps;
+        this.useOrderedMaps = builder.useOrderedMaps;
+        this.recordConverterRef = builder.recordConverterRef;
+        this.captureHeaderRecord = builder.captureHeaderRecord;
     }
 
     /**
@@ -467,5 +502,284 @@ public class CsvDataFormat extends DataFormatDefinition {
      */
     public void setCaptureHeaderRecord(String captureHeaderRecord) {
         this.captureHeaderRecord = captureHeaderRecord;
+    }
+
+    /**
+     * {@code Builder} is a specific builder for {@link CsvDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<CsvDataFormat> {
+        private String formatRef;
+        private String formatName = "DEFAULT";
+        private String commentMarkerDisabled;
+        private String commentMarker;
+        private String delimiter;
+        private String escapeDisabled;
+        private String escape;
+        private String headerDisabled;
+        private List<String> header;
+        private String allowMissingColumnNames;
+        private String ignoreEmptyLines;
+        private String ignoreSurroundingSpaces;
+        private String nullStringDisabled;
+        private String nullString;
+        private String quoteDisabled;
+        private String quote;
+        private String recordSeparatorDisabled;
+        private String recordSeparator;
+        private String skipHeaderRecord;
+        private String quoteMode;
+        private String ignoreHeaderCase;
+        private String trim;
+        private String trailingDelimiter;
+        private String marshallerFactoryRef;
+        private String lazyLoad;
+        private String useMaps;
+        private String useOrderedMaps;
+        private String recordConverterRef;
+        private String captureHeaderRecord;
+
+        /**
+         * Sets the implementation of the CsvMarshallerFactory interface which is able to customize
+         * marshalling/unmarshalling behavior by extending CsvMarshaller or creating it from scratch.
+         *
+         * @param marshallerFactoryRef the <code>CsvMarshallerFactory</code> reference.
+         */
+        public Builder marshallerFactoryRef(String marshallerFactoryRef) {
+            this.marshallerFactoryRef = marshallerFactoryRef;
+            return this;
+        }
+
+        /**
+         * The reference format to use, it will be updated with the other format options, the default value is
+         * CSVFormat.DEFAULT
+         */
+        public Builder formatRef(String formatRef) {
+            this.formatRef = formatRef;
+            return this;
+        }
+
+        /**
+         * The name of the format to use, the default value is CSVFormat.DEFAULT
+         */
+        public Builder formatName(String formatName) {
+            this.formatName = formatName;
+            return this;
+        }
+
+        /**
+         * Disables the comment marker of the reference format.
+         */
+        public Builder commentMarkerDisabled(String commentMarkerDisabled) {
+            this.commentMarkerDisabled = commentMarkerDisabled;
+            return this;
+        }
+
+        /**
+         * Sets the comment marker of the reference format.
+         */
+        public Builder commentMarker(String commentMarker) {
+            this.commentMarker = commentMarker;
+            return this;
+        }
+
+        /**
+         * Sets the delimiter to use.
+         * <p/>
+         * The default value is , (comma)
+         */
+        public Builder delimiter(String delimiter) {
+            this.delimiter = delimiter;
+            return this;
+        }
+
+        /**
+         * Use for disabling using escape character
+         */
+        public Builder escapeDisabled(String escapeDisabled) {
+            this.escapeDisabled = escapeDisabled;
+            return this;
+        }
+
+        /**
+         * Sets the escape character to use
+         */
+        public Builder escape(String escape) {
+            this.escape = escape;
+            return this;
+        }
+
+        public Builder headerDisabled(String headerDisabled) {
+            this.headerDisabled = headerDisabled;
+            return this;
+        }
+
+        /**
+         * To configure the CSV headers
+         */
+        public Builder header(List<String> header) {
+            this.header = header;
+            return this;
+        }
+
+        /**
+         * Whether to allow missing column names.
+         */
+        public Builder allowMissingColumnNames(String allowMissingColumnNames) {
+            this.allowMissingColumnNames = allowMissingColumnNames;
+            return this;
+        }
+
+        /**
+         * Whether to ignore empty lines.
+         */
+        public Builder ignoreEmptyLines(String ignoreEmptyLines) {
+            this.ignoreEmptyLines = ignoreEmptyLines;
+            return this;
+        }
+
+        /**
+         * Whether to ignore surrounding spaces
+         */
+        public Builder ignoreSurroundingSpaces(String ignoreSurroundingSpaces) {
+            this.ignoreSurroundingSpaces = ignoreSurroundingSpaces;
+            return this;
+        }
+
+        /**
+         * Used to disable null strings
+         */
+        public Builder nullStringDisabled(String nullStringDisabled) {
+            this.nullStringDisabled = nullStringDisabled;
+            return this;
+        }
+
+        /**
+         * Sets the null string
+         */
+        public Builder nullString(String nullString) {
+            this.nullString = nullString;
+            return this;
+        }
+
+        /**
+         * Used to disable quotes
+         */
+        public Builder quoteDisabled(String quoteDisabled) {
+            this.quoteDisabled = quoteDisabled;
+            return this;
+        }
+
+        /**
+         * Sets the quote which by default is "
+         */
+        public Builder quote(String quote) {
+            this.quote = quote;
+            return this;
+        }
+
+        /**
+         * Used for disabling record separator
+         */
+        public Builder recordSeparatorDisabled(String recordSeparatorDisabled) {
+            this.recordSeparatorDisabled = recordSeparatorDisabled;
+            return this;
+        }
+
+        /**
+         * Sets the record separator (aka new line) which by default is new line characters (CRLF)
+         */
+        public Builder recordSeparator(String recordSeparator) {
+            this.recordSeparator = recordSeparator;
+            return this;
+        }
+
+        /**
+         * Whether to skip the header record in the output
+         */
+        public Builder skipHeaderRecord(String skipHeaderRecord) {
+            this.skipHeaderRecord = skipHeaderRecord;
+            return this;
+        }
+
+        /**
+         * Sets the quote mode
+         */
+        public Builder quoteMode(String quoteMode) {
+            this.quoteMode = quoteMode;
+            return this;
+        }
+
+        /**
+         * Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must
+         * be read at one.
+         */
+        public Builder lazyLoad(String lazyLoad) {
+            this.lazyLoad = lazyLoad;
+            return this;
+        }
+
+        /**
+         * Whether the unmarshalling should produce maps (HashMap)for the lines values instead of lists. It requires to
+         * have header (either defined or collected).
+         */
+        public Builder useMaps(String useMaps) {
+            this.useMaps = useMaps;
+            return this;
+        }
+
+        /**
+         * Whether the unmarshalling should produce ordered maps (LinkedHashMap) for the lines values instead of lists.
+         * It requires to have header (either defined or collected).
+         */
+        public Builder useOrderedMaps(String useOrderedMaps) {
+            this.useOrderedMaps = useOrderedMaps;
+            return this;
+        }
+
+        /**
+         * Refers to a custom <tt>CsvRecordConverter</tt> to lookup from the registry to use.
+         */
+        public Builder recordConverterRef(String recordConverterRef) {
+            this.recordConverterRef = recordConverterRef;
+            return this;
+        }
+
+        /**
+         * Sets whether or not to trim leading and trailing blanks.
+         */
+        public Builder trim(String trim) {
+            this.trim = trim;
+            return this;
+        }
+
+        /**
+         * Sets whether or not to ignore case when accessing header names.
+         */
+        public Builder ignoreHeaderCase(String ignoreHeaderCase) {
+            this.ignoreHeaderCase = ignoreHeaderCase;
+            return this;
+        }
+
+        /**
+         * Sets whether or not to add a trailing delimiter.
+         */
+        public Builder trailingDelimiter(String trailingDelimiter) {
+            this.trailingDelimiter = trailingDelimiter;
+            return this;
+        }
+
+        /**
+         * Whether the unmarshalling should capture the header record and store it in the message header
+         */
+        public Builder captureHeaderRecord(String captureHeaderRecord) {
+            this.captureHeaderRecord = captureHeaderRecord;
+            return this;
+        }
+
+        @Override
+        public CsvDataFormat end() {
+            return new CsvDataFormat(this);
+        }
     }
 }

@@ -19,7 +19,9 @@ package org.apache.camel.model.dataformat;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -33,5 +35,16 @@ public class SyslogDataFormat extends DataFormatDefinition {
 
     public SyslogDataFormat() {
         super("syslog");
+    }
+
+    /**
+     * {@code Builder} is a specific builder for {@link SyslogDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<SyslogDataFormat> {
+        @Override
+        public SyslogDataFormat end() {
+            return new SyslogDataFormat();
+        }
     }
 }

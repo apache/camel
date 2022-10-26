@@ -20,7 +20,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -45,6 +47,11 @@ public class SwiftMtDataFormat extends DataFormatDefinition {
         this.writeInJson = writeInJson;
     }
 
+    private SwiftMtDataFormat(Builder builder) {
+        this();
+        this.writeInJson = builder.writeInJson;
+    }
+
     public String getWriteInJson() {
         return writeInJson;
     }
@@ -58,4 +65,37 @@ public class SwiftMtDataFormat extends DataFormatDefinition {
         this.writeInJson = writeInJson;
     }
 
+    /**
+     * {@code Builder} is a specific builder for {@link SwiftMtDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<SwiftMtDataFormat> {
+
+        private String writeInJson;
+
+        /**
+         * The flag indicating that messages must be marshalled in a JSON format.
+         *
+         * @param writeInJson {@code true} if messages must be marshalled in a JSON format, {@code false} otherwise.
+         */
+        public Builder writeInJson(String writeInJson) {
+            this.writeInJson = writeInJson;
+            return this;
+        }
+
+        /**
+         * The flag indicating that messages must be marshalled in a JSON format.
+         *
+         * @param writeInJson {@code true} if messages must be marshalled in a JSON format, {@code false} otherwise.
+         */
+        public Builder writeInJson(boolean writeInJson) {
+            this.writeInJson = Boolean.toString(writeInJson);
+            return this;
+        }
+
+        @Override
+        public SwiftMtDataFormat end() {
+            return new SwiftMtDataFormat(this);
+        }
+    }
 }

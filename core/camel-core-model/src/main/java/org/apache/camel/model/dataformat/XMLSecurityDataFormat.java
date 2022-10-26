@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.NamespaceAware;
@@ -77,6 +78,24 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
 
     public XMLSecurityDataFormat() {
         super("xmlSecurity");
+    }
+
+    private XMLSecurityDataFormat(Builder builder) {
+        this();
+        this.xmlCipherAlgorithm = builder.xmlCipherAlgorithm;
+        this.passPhrase = builder.passPhrase;
+        this.passPhraseByte = builder.passPhraseByte;
+        this.secureTag = builder.secureTag;
+        this.secureTagContents = builder.secureTagContents;
+        this.keyCipherAlgorithm = builder.keyCipherAlgorithm;
+        this.recipientKeyAlias = builder.recipientKeyAlias;
+        this.keyOrTrustStoreParametersRef = builder.keyOrTrustStoreParametersRef;
+        this.keyPassword = builder.keyPassword;
+        this.digestAlgorithm = builder.digestAlgorithm;
+        this.mgfAlgorithm = builder.mgfAlgorithm;
+        this.addKeyValueForEncryptedKey = builder.addKeyValueForEncryptedKey;
+        this.keyOrTrustStoreParameters = builder.keyOrTrustStoreParameters;
+        this.namespaces = builder.namespaces;
     }
 
     public String getXmlCipherAlgorithm() {
@@ -275,5 +294,190 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     @Override
     public Map<String, String> getNamespaces() {
         return namespaces;
+    }
+
+    /**
+     * {@code Builder} is a specific builder for {@link XMLSecurityDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<XMLSecurityDataFormat> {
+
+        private String xmlCipherAlgorithm = "AES-256-GCM";
+        private String passPhrase;
+        private byte[] passPhraseByte;
+        private String secureTag;
+        private String secureTagContents;
+        private String keyCipherAlgorithm = "RSA_OAEP";
+        private String recipientKeyAlias;
+        private String keyOrTrustStoreParametersRef;
+        private String keyPassword;
+        private String digestAlgorithm = "SHA1";
+        private String mgfAlgorithm = "MGF1_SHA1";
+        private String addKeyValueForEncryptedKey = "true";
+        private KeyStoreParameters keyOrTrustStoreParameters;
+        private Map<String, String> namespaces;
+
+        /**
+         * The cipher algorithm to be used for encryption/decryption of the XML message content. The available choices
+         * are:
+         * <ul>
+         * <li>XMLCipher.TRIPLEDES</li>
+         * <li>XMLCipher.AES_128</li>
+         * <li>XMLCipher.AES_128_GCM</li>
+         * <li>XMLCipher.AES_192</li>
+         * <li>XMLCipher.AES_192_GCM</li>
+         * <li>XMLCipher.AES_256</li>
+         * <li>XMLCipher.AES_256_GCM</li>
+         * <li>XMLCipher.SEED_128</li>
+         * <li>XMLCipher.CAMELLIA_128</li>
+         * <li>XMLCipher.CAMELLIA_192</li>
+         * <li>XMLCipher.CAMELLIA_256</li>
+         * </ul>
+         * The default value is XMLCipher.AES_256_GCM
+         */
+        public Builder xmlCipherAlgorithm(String xmlCipherAlgorithm) {
+            this.xmlCipherAlgorithm = xmlCipherAlgorithm;
+            return this;
+        }
+
+        /**
+         * A String used as passPhrase to encrypt/decrypt content. The passPhrase has to be provided. The passPhrase
+         * needs to be put together in conjunction with the appropriate encryption algorithm. For example using
+         * TRIPLEDES the passPhase can be a "Only another 24 Byte key"
+         */
+        public Builder passPhrase(String passPhrase) {
+            this.passPhrase = passPhrase;
+            return this;
+        }
+
+        /**
+         * A byte[] used as passPhrase to encrypt/decrypt content. The passPhrase has to be provided. The passPhrase
+         * needs to be put together in conjunction with the appropriate encryption algorithm. For example using
+         * TRIPLEDES the passPhase can be a "Only another 24 Byte key"
+         */
+        public Builder passPhraseByte(byte[] passPhraseByte) {
+            this.passPhraseByte = passPhraseByte;
+            return this;
+        }
+
+        /**
+         * The XPath reference to the XML Element selected for encryption/decryption. If no tag is specified, the entire
+         * payload is encrypted/decrypted.
+         */
+        public Builder secureTag(String secureTag) {
+            this.secureTag = secureTag;
+            return this;
+        }
+
+        /**
+         * A boolean value to specify whether the XML Element is to be encrypted or the contents of the XML Element.
+         * false = Element Level. true = Element Content Level.
+         */
+        public Builder secureTagContents(String secureTagContents) {
+            this.secureTagContents = secureTagContents;
+            return this;
+        }
+
+        /**
+         * The cipher algorithm to be used for encryption/decryption of the asymmetric key. The available choices are:
+         * <ul>
+         * <li>XMLCipher.RSA_v1dot5</li>
+         * <li>XMLCipher.RSA_OAEP</li>
+         * <li>XMLCipher.RSA_OAEP_11</li>
+         * </ul>
+         * The default value is XMLCipher.RSA_OAEP
+         */
+        public Builder keyCipherAlgorithm(String keyCipherAlgorithm) {
+            this.keyCipherAlgorithm = keyCipherAlgorithm;
+            return this;
+        }
+
+        /**
+         * The key alias to be used when retrieving the recipient's public or private key from a KeyStore when
+         * performing asymmetric key encryption or decryption.
+         */
+        public Builder recipientKeyAlias(String recipientKeyAlias) {
+            this.recipientKeyAlias = recipientKeyAlias;
+            return this;
+        }
+
+        /**
+         * Refers to a KeyStore instance to lookup in the registry, which is used for configuration options for creating
+         * and loading a KeyStore instance that represents the sender's trustStore or recipient's keyStore.
+         */
+        public Builder keyOrTrustStoreParametersRef(String keyOrTrustStoreParametersRef) {
+            this.keyOrTrustStoreParametersRef = keyOrTrustStoreParametersRef;
+            return this;
+        }
+
+        /**
+         * Configuration options for creating and loading a KeyStore instance that represents the sender's trustStore or
+         * recipient's keyStore.
+         */
+        public Builder keyOrTrustStoreParameters(KeyStoreParameters keyOrTrustStoreParameters) {
+            this.keyOrTrustStoreParameters = keyOrTrustStoreParameters;
+            return this;
+        }
+
+        /**
+         * The password to be used for retrieving the private key from the KeyStore. This key is used for asymmetric
+         * decryption.
+         */
+        public Builder keyPassword(String keyPassword) {
+            this.keyPassword = keyPassword;
+            return this;
+        }
+
+        /**
+         * The digest algorithm to use with the RSA OAEP algorithm. The available choices are:
+         * <ul>
+         * <li>XMLCipher.SHA1</li>
+         * <li>XMLCipher.SHA256</li>
+         * <li>XMLCipher.SHA512</li>
+         * </ul>
+         * The default value is XMLCipher.SHA1
+         */
+        public Builder digestAlgorithm(String digestAlgorithm) {
+            this.digestAlgorithm = digestAlgorithm;
+            return this;
+        }
+
+        /**
+         * The MGF Algorithm to use with the RSA OAEP algorithm. The available choices are:
+         * <ul>
+         * <li>EncryptionConstants.MGF1_SHA1</li>
+         * <li>EncryptionConstants.MGF1_SHA256</li>
+         * <li>EncryptionConstants.MGF1_SHA512</li>
+         * </ul>
+         * The default value is EncryptionConstants.MGF1_SHA1
+         */
+        public Builder mgfAlgorithm(String mgfAlgorithm) {
+            this.mgfAlgorithm = mgfAlgorithm;
+            return this;
+        }
+
+        /**
+         * Whether to add the public key used to encrypt the session key as a KeyValue in the EncryptedKey structure or
+         * not.
+         */
+        public Builder addKeyValueForEncryptedKey(String addKeyValueForEncryptedKey) {
+            this.addKeyValueForEncryptedKey = addKeyValueForEncryptedKey;
+            return this;
+        }
+
+        /**
+         * Injects the XML Namespaces of prefix -> uri mappings
+         *
+         * @param namespaces the XML namespaces with the key of prefixes and the value the URIs
+         */
+        public Builder namespaces(Map<String, String> namespaces) {
+            this.namespaces = namespaces;
+            return this;
+        }
+
+        @Override
+        public XMLSecurityDataFormat end() {
+            return new XMLSecurityDataFormat(this);
+        }
     }
 }

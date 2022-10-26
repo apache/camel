@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.spi.Metadata;
@@ -79,6 +80,14 @@ public class Any23DataFormat extends DataFormatDefinition {
         this.outputFormat = outputFormat.name();
         this.configurations = configurations;
         this.extractors = extractors;
+    }
+
+    private Any23DataFormat(Builder builder) {
+        this(builder.baseUri);
+        this.outputFormat = builder.outputFormat;
+        this.configuration = builder.configuration;
+        this.configurations = builder.configurations;
+        this.extractors = builder.extractors;
     }
 
     public String getOutputFormat() {
@@ -154,4 +163,70 @@ public class Any23DataFormat extends DataFormatDefinition {
         this.baseUri = baseUri;
     }
 
+    /**
+     * {@code Builder} is a specific builder for {@link Any23DataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<Any23DataFormat> {
+
+        private String outputFormat = "RDF4JMODEL";
+        private String baseUri;
+        private List<PropertyDefinition> configuration;
+        private Map<String, String> configurations;
+        private List<String> extractors;
+
+        /**
+         * What RDF syntax to unmarshal as, can be: NTRIPLES, TURTLE, NQUADS, RDFXML, JSONLD, RDFJSON, RDF4JMODEL. It is
+         * by default: RDF4JMODEL.
+         */
+        public Builder outputFormat(String outputFormat) {
+            this.outputFormat = outputFormat;
+            return this;
+        }
+
+        /**
+         * Configurations for Apache Any23 as key-value pairs in order to customize the extraction process. The list of
+         * supported parameters can be found <a href=
+         * "https://github.com/apache/any23/blob/master/api/src/main/resources/default-configuration.properties">here</a>.
+         * If not provided, a default configuration is used.
+         */
+        public Builder configuration(List<PropertyDefinition> configuration) {
+            this.configuration = configuration;
+            return this;
+        }
+
+        /**
+         * Configurations for Apache Any23 as key-value pairs in order to customize the extraction process. The list of
+         * supported parameters can be found <a href=
+         * "https://github.com/apache/any23/blob/master/api/src/main/resources/default-configuration.properties">here</a>.
+         * If not provided, a default configuration is used.
+         */
+        public Builder configuration(Map<String, String> configurations) {
+            this.configurations = configurations;
+            return this;
+        }
+
+        /**
+         * The URI to use as base for building RDF entities if only relative paths are provided.
+         */
+        public Builder baseUri(String baseUri) {
+            this.baseUri = baseUri;
+            return this;
+        }
+
+        /**
+         * List of Any23 extractors to be used in the unmarshal operation. A list of the available extractors can be
+         * found here <a href="https://any23.apache.org/getting-started.html">here</a>. If not provided, all the
+         * available extractors are used.
+         */
+        public Builder extractors(List<String> extractors) {
+            this.extractors = extractors;
+            return this;
+        }
+
+        @Override
+        public Any23DataFormat end() {
+            return new Any23DataFormat(this);
+        }
+    }
 }

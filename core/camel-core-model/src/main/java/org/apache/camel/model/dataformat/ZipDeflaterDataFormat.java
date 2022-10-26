@@ -20,7 +20,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -40,6 +42,11 @@ public class ZipDeflaterDataFormat extends DataFormatDefinition {
         super("zipDeflater");
     }
 
+    private ZipDeflaterDataFormat(Builder builder) {
+        this();
+        this.compressionLevel = builder.compressionLevel;
+    }
+
     public String getCompressionLevel() {
         return compressionLevel;
     }
@@ -50,5 +57,28 @@ public class ZipDeflaterDataFormat extends DataFormatDefinition {
      */
     public void setCompressionLevel(String compressionLevel) {
         this.compressionLevel = compressionLevel;
+    }
+
+    /**
+     * {@code Builder} is a specific builder for {@link ZipDeflaterDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<ZipDeflaterDataFormat> {
+
+        private String compressionLevel = "-1";
+
+        /**
+         * To specify a specific compression between 0-9. -1 is default compression, 0 is no compression, and 9 is the
+         * best compression.
+         */
+        public Builder compressionLevel(String compressionLevel) {
+            this.compressionLevel = compressionLevel;
+            return this;
+        }
+
+        @Override
+        public ZipDeflaterDataFormat end() {
+            return new ZipDeflaterDataFormat(this);
+        }
     }
 }

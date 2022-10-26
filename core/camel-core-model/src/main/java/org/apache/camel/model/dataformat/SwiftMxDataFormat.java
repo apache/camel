@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -83,6 +84,16 @@ public class SwiftMxDataFormat extends DataFormatDefinition {
         this.writeConfigRef = writeConfigRef;
         this.readMessageId = readMessageId;
         this.readConfigRef = readConfigRef;
+    }
+
+    private SwiftMxDataFormat(Builder builder) {
+        this();
+        this.writeConfigRef = builder.writeConfigRef;
+        this.writeConfig = builder.writeConfig;
+        this.writeInJson = builder.writeInJson;
+        this.readMessageId = builder.readMessageId;
+        this.readConfigRef = builder.readConfigRef;
+        this.readConfig = builder.readConfig;
     }
 
     public Object getWriteConfig() {
@@ -152,5 +163,85 @@ public class SwiftMxDataFormat extends DataFormatDefinition {
      */
     public void setReadConfigRef(String readConfigRef) {
         this.readConfigRef = readConfigRef;
+    }
+
+    /**
+     * {@code Builder} is a specific builder for {@link SwiftMxDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<SwiftMxDataFormat> {
+
+        private String writeConfigRef;
+        private Object writeConfig;
+        private String writeInJson;
+        private String readMessageId;
+        private String readConfigRef;
+        private Object readConfig;
+
+        /**
+         * The specific configuration to use when marshalling a message.
+         */
+        public Builder writeConfig(Object writeConfig) {
+            this.writeConfig = writeConfig;
+            return this;
+        }
+
+        /**
+         * The flag indicating that messages must be marshalled in a JSON format.
+         *
+         * @param writeInJson {@code true} if messages must be marshalled in a JSON format, {@code false} otherwise.
+         */
+        public Builder writeInJson(String writeInJson) {
+            this.writeInJson = writeInJson;
+            return this;
+        }
+
+        /**
+         * The flag indicating that messages must be marshalled in a JSON format.
+         *
+         * @param writeInJson {@code true} if messages must be marshalled in a JSON format, {@code false} otherwise.
+         */
+        public Builder writeInJson(boolean writeInJson) {
+            this.writeInJson = Boolean.toString(writeInJson);
+            return this;
+        }
+
+        /**
+         * The type of MX message to produce when unmarshalling an input stream. If not set, it will be automatically
+         * detected from the namespace used.
+         */
+        public Builder readMessageId(String readMessageId) {
+            this.readMessageId = readMessageId;
+            return this;
+        }
+
+        /**
+         * The specific configuration to use when unmarshalling an input stream.
+         */
+        public Builder readConfig(Object readConfig) {
+            this.readConfig = readConfig;
+            return this;
+        }
+
+        /**
+         * Refers to a specific configuration to use when marshalling a message to lookup from the registry.
+         */
+        public Builder writeConfigRef(String writeConfigRef) {
+            this.writeConfigRef = writeConfigRef;
+            return this;
+        }
+
+        /**
+         * Refers to a specific configuration to use when unmarshalling an input stream to lookup from the registry.
+         */
+        public Builder readConfigRef(String readConfigRef) {
+            this.readConfigRef = readConfigRef;
+            return this;
+        }
+
+        @Override
+        public SwiftMxDataFormat end() {
+            return new SwiftMxDataFormat(this);
+        }
     }
 }

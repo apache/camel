@@ -220,6 +220,27 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      */
     public void bindToRegistry(String id, Class<?> type, Object bean) {
         getContext().getRegistry().bind(id, type, bean);
+
+    }
+
+    /**
+     * A utility method allowing to build any data format using a fluent syntax as shown in the next example:
+     *
+     * <pre>
+     * {@code
+     * from("jms:queue:orders")
+     *     .marshal(
+     *         dataFormat()
+     *             .swiftMt()
+     *                 .writeInJson(true)
+     *             .end()
+     *     )
+     *     .to("file:data");
+     *
+     * @return an entry point to the builder of all supported data formats.
+     */
+    public DataFormatBuilderFactory dataFormat() {
+        return new DataFormatBuilderFactory();
     }
 
     /**
