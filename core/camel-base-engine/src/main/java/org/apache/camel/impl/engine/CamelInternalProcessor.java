@@ -129,8 +129,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         camelContext = null;
         reactiveExecutor = null;
         shutdownStrategy = null;
-        AsyncAfterTask task = new AsyncAfterTask(null);
-        log.trace("Loaded {}", task.getClass().getSimpleName());
+        log.trace("Loaded {}", AsyncAfterTask.class.getSimpleName());
     }
 
     @Override
