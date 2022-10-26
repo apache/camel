@@ -121,7 +121,11 @@ function main() {
   local components=$(git diff "${startCommit}..${endCommit}" --name-only --pretty=format:"" | grep -e '^components' | grep -v "camel-aws" | grep -v -e '^$' | cut -d / -f 1-2 | uniq | sort)
   local componentsAws=$(git diff "${startCommit}..${endCommit}" --name-only --pretty=format:"" | grep -e '^components' | grep "camel-aws" | grep -v -e '^$' | cut -d / -f 1-3 | uniq | sort)
 
-  components+="\n$componentsAws"
+  if [[ -z "${components}" ]] ; then
+    components="${componentsAws}"
+  else
+    components=$(printf '%s\n%s' "${components}" "${componentsAws}")
+  fi
 
   local total=$(echo "${components}" | grep -v -e '^$' | wc -l)
 
