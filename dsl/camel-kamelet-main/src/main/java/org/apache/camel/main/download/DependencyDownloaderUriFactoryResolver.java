@@ -17,26 +17,33 @@
 package org.apache.camel.main.download;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.impl.engine.DefaultUriFactoryResolver;
 import org.apache.camel.spi.EndpointUriFactory;
+import org.apache.camel.tooling.model.ComponentModel;
 
 /**
  * Auto downloaded needed JARs when resolving uri factory.
  */
 public class DependencyDownloaderUriFactoryResolver extends DefaultUriFactoryResolver {
 
-    public DependencyDownloaderUriFactoryResolver(CamelContext context) {
-        setCamelContext(context);
+    private final CamelCatalog catalog = new DefaultCamelCatalog();
+    private final CamelContext camelContext;
+    private final DependencyDownloader downloader;
+
+    public DependencyDownloaderUriFactoryResolver(CamelContext camelContext) {
+        this.camelContext = camelContext;
+        this.downloader = camelContext.hasService(DependencyDownloader.class);
     }
 
     @Override
     public EndpointUriFactory resolveFactory(String name, CamelContext context) {
-        // need to trigger component resolver that is capable of downloading if needed
-        try {
-            context.adapt(ExtendedCamelContext.class).getComponentResolver().resolveComponent(name, context);
-        } catch (Exception e) {
-            // ignore
+        ComponentModel model = catalog.componentModel(name);
+        if (model != null && !downloader.alreadyOnClasspath(model.getGroupId(), model.getArtifactId(),
+                model.getVersion())) {
+            downloader.downloadDependency(model.getGroupId(), model.getArtifactId(),
+                    model.getVersion());
         }
 
         return super.resolveFactory(name, context);
