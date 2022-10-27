@@ -5,10 +5,12 @@
 :description: Encode and decode SWIFT MX messages.
 :since: 3.20
 :supportlevel: Preview
+//Manually maintained attributes
+:camel-spring-boot-name: swift
 
 *Since Camel {since}*
 
-The SWIFT MX data format is used to encode and decode SWIFT MX messages.
+The SWIFT MX data format is used to encode and decode SWIFT MX messages. The data format leverages the library https://github.com/prowide/prowide-iso20022[Prowide ISO 20022] to encode and decode SWIFT MX messages.
 
 == Options
 
@@ -77,6 +79,8 @@ In Spring DSL:
 ----
 
 == Unmarshal
+
+The unmarshaller converts the input data into the concrete class of type `com.prowidesoftware.swift.model.mx.AbstractMX` that best matches with the content of the message.
 
 In this example, we unmarshal the content of a file to get SWIFT MX
 objects before processing them with the `newOrder` processor.
