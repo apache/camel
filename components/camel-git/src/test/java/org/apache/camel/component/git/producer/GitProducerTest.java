@@ -17,6 +17,7 @@
 package org.apache.camel.component.git.producer;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -885,6 +886,37 @@ public class GitProducerTest extends GitTestSupport {
         git.close();
     }
 
+    @Test
+    public void mergeTargetBranchTest() throws Exception {
+        // Init
+        Git git = getGitTestRepository();
+        File gitDir = new File(gitLocalRepo, ".git");
+        assertEquals(true, gitDir.exists());
+        File fileToAdd = new File(gitLocalRepo, filenameToAdd);
+        fileToAdd.createNewFile();
+        git.add().addFilepattern(filenameToAdd).call();
+        Status status = git.status().call();
+        assertTrue(status.getAdded().contains(filenameToAdd));
+        git.commit().setMessage(commitMessage).call();
+
+        template.sendBody("direct:create-targetBranch", ""); //create target branch
+        template.sendBody("direct:checkout", ""); //checkout test branch
+
+        //add file to test branch and commit
+        fileToAdd = new File(gitLocalRepo, filenameBranchToAdd);
+        fileToAdd.createNewFile();
+        git.add().addFilepattern(filenameBranchToAdd).call();
+        status = git.status().call();
+        assertTrue(status.getAdded().contains(filenameBranchToAdd));
+        git.commit().setMessage(commitMessageMergeBranch).call();
+
+        //merge test branch into target branch
+        MergeResult result = template.requestBody("direct:merge-targetBranch", "", MergeResult.class);
+        assertEquals("Fast-forward", result.getMergeStatus().toString());
+        assertTrue(Files.exists(fileToAdd.toPath())); //file exists in target branch, so merge was successful
+        git.close();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -934,6 +966,10 @@ public class GitProducerTest extends GitTestSupport {
                 from("direct:remoteList").to("git://" + gitLocalRepo + "?operation=remoteList");
                 from("direct:merge").to("git://" + gitLocalRepo + "?operation=merge&branchName=" + branchTest);
                 from("direct:show-tags").to("git://" + gitLocalRepo + "?operation=showTags");
+                from("direct:create-targetBranch")
+                        .to("git://" + gitLocalRepo + "?operation=createBranch&branchName=" + targetBranchTest);
+                from("direct:merge-targetBranch").to("git://" + gitLocalRepo + "?operation=merge&targetBranchName="
+                                                     + targetBranchTest + "&branchName=" + branchTest);
             }
         };
     }

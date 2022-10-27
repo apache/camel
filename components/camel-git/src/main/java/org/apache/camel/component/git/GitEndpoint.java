@@ -45,6 +45,11 @@ public class GitEndpoint extends DefaultEndpoint {
     @UriParam
     private String branchName;
 
+    @UriParam(label = "producer",
+              description = "Name of target branch in merge operation. If not supplied will try to use init.defaultBranch git configs. If not configured will use default value",
+              defaultValue = "master")
+    private String targetBranchName;
+
     @UriParam(label = "producer")
     private String tagName;
 
@@ -202,5 +207,16 @@ public class GitEndpoint extends DefaultEndpoint {
 
     public void setAllowEmpty(boolean allowEmpty) {
         this.allowEmpty = allowEmpty;
+    }
+
+    /**
+     * The branch name to merge
+     */
+    public String getTargetBranchName() {
+        return this.targetBranchName;
+    }
+
+    public void setTargetBranchName(String targetBranchName) {
+        this.targetBranchName = targetBranchName;
     }
 }
