@@ -14,17 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.plc4x.camel;
+package org.apache.camel.component.plc4x;
 
-public final class Constants {
+import java.lang.reflect.Constructor;
 
-    public static final String FIELD_NAME_HEADER = "fieldName";
-    public static final String FIELD_QUERY_HEADER = "fieldQuery";
-    public static final String TRIGGER = "TRIGGER_VAR";
-    public static final String PLC_NAME = "PLC";
+import org.junit.jupiter.api.Test;
 
-    private Constants() {
-        throw new IllegalStateException("Utility class!");
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+public class ConstantsTest {
+
+    @Test
+    public void testConstantsNotInstanceable() {
+        assertThrows(IllegalStateException.class, () -> {
+            try {
+                Constructor<Constants> constructor = Constants.class.getDeclaredConstructor();
+                constructor.setAccessible(true);
+                constructor.newInstance();
+            } catch (Exception e) {
+                throw e.getCause();
+            }
+        });
     }
 
 }
