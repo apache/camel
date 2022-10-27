@@ -50,10 +50,12 @@ public class Kinesis2ConsumerHealthCheck extends AbstractHealthCheck {
 
         try {
             Kinesis2Configuration configuration = kinesis2Consumer.getConfiguration();
-            if (!KinesisClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
-                builder.message("The service is not supported in this region");
-                builder.down();
-                return;
+            if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+                if (!KinesisClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
+                    builder.message("The service is not supported in this region");
+                    builder.down();
+                    return;
+                }
             }
             KinesisClient client;
             if (!configuration.isUseDefaultCredentialsProvider()) {
