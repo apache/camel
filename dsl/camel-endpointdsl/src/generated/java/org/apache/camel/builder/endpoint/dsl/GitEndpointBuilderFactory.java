@@ -341,6 +341,24 @@ public interface GitEndpointBuilderFactory {
             return this;
         }
         /**
+         * Name of target branch in merge operation. If not supplied will try to
+         * use init.defaultBranch git configs. If not configured will use
+         * default value.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: master
+         * Group: producer
+         * 
+         * @param targetBranchName the value to set
+         * @return the dsl builder
+         */
+        default GitEndpointProducerBuilder targetBranchName(
+                String targetBranchName) {
+            doSetProperty("targetBranchName", targetBranchName);
+            return this;
+        }
+        /**
          * Remote repository username.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
