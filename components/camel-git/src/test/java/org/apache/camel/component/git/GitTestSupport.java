@@ -45,7 +45,11 @@ public class GitTestSupport extends CamelTestSupport {
 
     public final String commitMessageBranch = "Test commit on a branch";
 
+    public final String commitMessageMergeBranch = "Test merge on a target branch";
+
     public final String branchTest = "testBranch";
+
+    public final String targetBranchTest = "targetTestBranch";
 
     public final String tagTest = "testTag";
 
