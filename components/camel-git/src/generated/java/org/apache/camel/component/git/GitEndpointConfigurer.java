@@ -41,6 +41,8 @@ public class GitEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "remotePath": target.setRemotePath(property(camelContext, java.lang.String.class, value)); return true;
         case "tagname":
         case "tagName": target.setTagName(property(camelContext, java.lang.String.class, value)); return true;
+        case "targetbranchname":
+        case "targetBranchName": target.setTargetBranchName(property(camelContext, java.lang.String.class, value)); return true;
         case "type": target.setType(property(camelContext, org.apache.camel.component.git.consumer.GitType.class, value)); return true;
         case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -70,6 +72,8 @@ public class GitEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "remotePath": return java.lang.String.class;
         case "tagname":
         case "tagName": return java.lang.String.class;
+        case "targetbranchname":
+        case "targetBranchName": return java.lang.String.class;
         case "type": return org.apache.camel.component.git.consumer.GitType.class;
         case "username": return java.lang.String.class;
         default: return null;
@@ -100,6 +104,8 @@ public class GitEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "remotePath": return target.getRemotePath();
         case "tagname":
         case "tagName": return target.getTagName();
+        case "targetbranchname":
+        case "targetBranchName": return target.getTargetBranchName();
         case "type": return target.getType();
         case "username": return target.getUsername();
         default: return null;
