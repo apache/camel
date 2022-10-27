@@ -51,10 +51,12 @@ public class AWS2S3ConsumerHealthCheck extends AbstractHealthCheck {
 
         try {
             AWS2S3Configuration configuration = aws2S3Consumer.getConfiguration();
-            if (!S3Client.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
-                builder.message("The service is not supported in this region");
-                builder.down();
-                return;
+            if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+                if (!S3Client.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
+                    builder.message("The service is not supported in this region");
+                    builder.down();
+                    return;
+                }
             }
             S3Client client;
             if (!configuration.isUseDefaultCredentialsProvider()) {
