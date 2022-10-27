@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 
@@ -42,6 +43,13 @@ public class UniVocityFixedDataFormat extends UniVocityAbstractDataFormat {
 
     public UniVocityFixedDataFormat() {
         super("univocityFixed");
+    }
+
+    private UniVocityFixedDataFormat(Builder builder) {
+        super("univocityFixed", builder);
+        this.padding = builder.padding;
+        this.skipTrailingCharsUntilNewline = builder.skipTrailingCharsUntilNewline;
+        this.recordEndsOnNewline = builder.recordEndsOnNewline;
     }
 
     public String getSkipTrailingCharsUntilNewline() {
@@ -83,4 +91,49 @@ public class UniVocityFixedDataFormat extends UniVocityAbstractDataFormat {
         this.padding = padding;
     }
 
+    /**
+     * {@code Builder} is a specific builder for {@link UniVocityFixedDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder extends AbstractBuilder<Builder, UniVocityFixedDataFormat> {
+
+        private String padding;
+        private String skipTrailingCharsUntilNewline;
+        private String recordEndsOnNewline;
+
+        /**
+         * Whether or not the trailing characters until new line must be ignored.
+         * <p/>
+         * The default value is false
+         */
+        public Builder skipTrailingCharsUntilNewline(String skipTrailingCharsUntilNewline) {
+            this.skipTrailingCharsUntilNewline = skipTrailingCharsUntilNewline;
+            return this;
+        }
+
+        /**
+         * Whether or not the record ends on new line.
+         * <p/>
+         * The default value is false
+         */
+        public Builder recordEndsOnNewline(String recordEndsOnNewline) {
+            this.recordEndsOnNewline = recordEndsOnNewline;
+            return this;
+        }
+
+        /**
+         * The padding character.
+         * <p/>
+         * The default value is a space
+         */
+        public Builder padding(String padding) {
+            this.padding = padding;
+            return this;
+        }
+
+        @Override
+        public UniVocityFixedDataFormat end() {
+            return new UniVocityFixedDataFormat(this);
+        }
+    }
 }

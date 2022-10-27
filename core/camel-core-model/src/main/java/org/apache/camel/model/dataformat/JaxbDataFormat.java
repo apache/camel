@@ -20,7 +20,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -96,6 +98,29 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
     public JaxbDataFormat(boolean prettyPrint) {
         this();
         setPrettyPrint(Boolean.toString(prettyPrint));
+    }
+
+    private JaxbDataFormat(Builder builder) {
+        this();
+        this.contextPath = builder.contextPath;
+        this.contextPathIsClassName = builder.contextPathIsClassName;
+        this.schema = builder.schema;
+        this.schemaSeverityLevel = builder.schemaSeverityLevel;
+        this.prettyPrint = builder.prettyPrint;
+        this.objectFactory = builder.objectFactory;
+        this.ignoreJAXBElement = builder.ignoreJAXBElement;
+        this.mustBeJAXBElement = builder.mustBeJAXBElement;
+        this.filterNonXmlChars = builder.filterNonXmlChars;
+        this.encoding = builder.encoding;
+        this.fragment = builder.fragment;
+        this.partClass = builder.partClass;
+        this.partNamespace = builder.partNamespace;
+        this.namespacePrefixRef = builder.namespacePrefixRef;
+        this.xmlStreamWriterWrapper = builder.xmlStreamWriterWrapper;
+        this.schemaLocation = builder.schemaLocation;
+        this.noNamespaceSchemaLocation = builder.noNamespaceSchemaLocation;
+        this.jaxbProviderProperties = builder.jaxbProviderProperties;
+        this.contentTypeHeader = builder.contentTypeHeader;
     }
 
     public String getContextPath() {
@@ -322,4 +347,203 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         this.contentTypeHeader = contentTypeHeader;
     }
 
+    /**
+     * {@code Builder} is a specific builder for {@link JaxbDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<JaxbDataFormat> {
+
+        private String contextPath;
+        private String contextPathIsClassName;
+        private String schema;
+        private String schemaSeverityLevel = "0";
+        private String prettyPrint;
+        private String objectFactory;
+        private String ignoreJAXBElement;
+        private String mustBeJAXBElement;
+        private String filterNonXmlChars;
+        private String encoding;
+        private String fragment;
+        private String partClass;
+        private String partNamespace;
+        private String namespacePrefixRef;
+        private String xmlStreamWriterWrapper;
+        private String schemaLocation;
+        private String noNamespaceSchemaLocation;
+        private String jaxbProviderProperties;
+        private String contentTypeHeader = "true";
+
+        /**
+         * Package name where your JAXB classes are located.
+         */
+        public Builder contextPath(String contextPath) {
+            this.contextPath = contextPath;
+            return this;
+        }
+
+        /**
+         * This can be set to true to mark that the contextPath is referring to a classname and not a package name.
+         */
+        public Builder contextPathIsClassName(String contextPathIsClassName) {
+            this.contextPathIsClassName = contextPathIsClassName;
+            return this;
+        }
+
+        /**
+         * To validate against an existing schema. Your can use the prefix classpath:, file:* or *http: to specify how
+         * the resource should be resolved. You can separate multiple schema files by using the ',' character.
+         */
+        public Builder schema(String schema) {
+            this.schema = schema;
+            return this;
+        }
+
+        /**
+         * Sets the schema severity level to use when validating against a schema. This level determines the minimum
+         * severity error that triggers JAXB to stop continue parsing. The default value of 0 (warning) means that any
+         * error (warning, error or fatal error) will trigger JAXB to stop. There are the following three levels:
+         * 0=warning, 1=error, 2=fatal error.
+         */
+        public Builder schemaSeverityLevel(String schemaSeverityLevel) {
+            this.schemaSeverityLevel = schemaSeverityLevel;
+            return this;
+        }
+
+        /**
+         * To enable pretty printing output nicely formatted.
+         * <p/>
+         * Is by default false.
+         */
+        public Builder prettyPrint(String prettyPrint) {
+            this.prettyPrint = prettyPrint;
+            return this;
+        }
+
+        /**
+         * Whether to allow using ObjectFactory classes to create the POJO classes during marshalling. This only applies
+         * to POJO classes that has not been annotated with JAXB and providing jaxb.index descriptor files.
+         */
+        public Builder objectFactory(String objectFactory) {
+            this.objectFactory = objectFactory;
+            return this;
+        }
+
+        /**
+         * Whether to ignore JAXBElement elements - only needed to be set to false in very special use-cases.
+         */
+        public Builder ignoreJAXBElement(String ignoreJAXBElement) {
+            this.ignoreJAXBElement = ignoreJAXBElement;
+            return this;
+        }
+
+        /**
+         * Whether marhsalling must be java objects with JAXB annotations. And if not then it fails. This option can be
+         * set to false to relax that, such as when the data is already in XML format.
+         */
+        public Builder mustBeJAXBElement(String mustBeJAXBElement) {
+            this.mustBeJAXBElement = mustBeJAXBElement;
+            return this;
+        }
+
+        /**
+         * To turn on marshalling XML fragment trees. By default JAXB looks for @XmlRootElement annotation on given
+         * class to operate on whole XML tree. This is useful but not always - sometimes generated code does not
+         * have @XmlRootElement annotation, sometimes you need unmarshall only part of tree. In that case you can use
+         * partial unmarshalling. To enable this behaviours you need set property partClass. Camel will pass this class
+         * to JAXB's unmarshaler.
+         */
+        public Builder fragment(String fragment) {
+            this.fragment = fragment;
+            return this;
+        }
+
+        /**
+         * To ignore non xml characters and replace them with an empty space.
+         */
+        public Builder filterNonXmlChars(String filterNonXmlChars) {
+            this.filterNonXmlChars = filterNonXmlChars;
+            return this;
+        }
+
+        /**
+         * To overrule and use a specific encoding
+         */
+        public Builder encoding(String encoding) {
+            this.encoding = encoding;
+            return this;
+        }
+
+        /**
+         * Name of class used for fragment parsing.
+         * <p/>
+         * See more details at the fragment option.
+         */
+        public Builder partClass(String partClass) {
+            this.partClass = partClass;
+            return this;
+        }
+
+        /**
+         * XML namespace to use for fragment parsing.
+         * <p/>
+         * See more details at the fragment option.
+         */
+        public Builder partNamespace(String partNamespace) {
+            this.partNamespace = partNamespace;
+            return this;
+        }
+
+        /**
+         * When marshalling using JAXB or SOAP then the JAXB implementation will automatically assign namespace
+         * prefixes, such as ns2, ns3, ns4 etc. To control this mapping, Camel allows you to refer to a map which
+         * contains the desired mapping.
+         */
+        public Builder namespacePrefixRef(String namespacePrefixRef) {
+            this.namespacePrefixRef = namespacePrefixRef;
+            return this;
+        }
+
+        /**
+         * To use a custom xml stream writer.
+         */
+        public Builder xmlStreamWriterWrapper(String xmlStreamWriterWrapperRef) {
+            this.xmlStreamWriterWrapper = xmlStreamWriterWrapperRef;
+            return this;
+        }
+
+        /**
+         * To define the location of the schema
+         */
+        public Builder schemaLocation(String schemaLocation) {
+            this.schemaLocation = schemaLocation;
+            return this;
+        }
+
+        /**
+         * To define the location of the namespaceless schema
+         */
+        public Builder noNamespaceSchemaLocation(String schemaLocation) {
+            this.noNamespaceSchemaLocation = schemaLocation;
+            return this;
+        }
+
+        /**
+         * Refers to a custom java.util.Map to lookup in the registry containing custom JAXB provider properties to be
+         * used with the JAXB marshaller.
+         */
+        public Builder jaxbProviderProperties(String jaxbProviderProperties) {
+            this.jaxbProviderProperties = jaxbProviderProperties;
+            return this;
+        }
+
+        public Builder contentTypeHeader(String contentTypeHeader) {
+            this.contentTypeHeader = contentTypeHeader;
+            return this;
+        }
+
+        @Override
+        public JaxbDataFormat end() {
+            return new JaxbDataFormat(this);
+        }
+    }
 }

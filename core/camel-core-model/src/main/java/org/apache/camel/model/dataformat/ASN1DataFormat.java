@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -58,8 +59,16 @@ public class ASN1DataFormat extends DataFormatDefinition {
     }
 
     public ASN1DataFormat(Class<?> unmarshalType) {
+        this();
         setUsingIterator(Boolean.toString(true));
         this.unmarshalType = unmarshalType;
+    }
+
+    private ASN1DataFormat(Builder builder) {
+        this();
+        this.usingIterator = builder.usingIterator;
+        this.unmarshalTypeName = builder.unmarshalTypeName;
+        this.unmarshalType = builder.unmarshalType;
     }
 
     public String getUsingIterator() {
@@ -94,5 +103,46 @@ public class ASN1DataFormat extends DataFormatDefinition {
      */
     public void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
+    }
+
+    /**
+     * {@code Builder} is a specific builder for {@link ASN1DataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<ASN1DataFormat> {
+
+        private Class<?> unmarshalType;
+        private String unmarshalTypeName;
+        private String usingIterator;
+
+        /**
+         * If the asn1 file has more than one entry, the setting this option to true, allows working with the splitter
+         * EIP, to split the data using an iterator in a streaming mode.
+         */
+        public Builder usingIterator(String usingIterator) {
+            this.usingIterator = usingIterator;
+            return this;
+        }
+
+        /**
+         * Class to use when unmarshalling.
+         */
+        public Builder unmarshalTypeName(String unmarshalTypeName) {
+            this.unmarshalTypeName = unmarshalTypeName;
+            return this;
+        }
+
+        /**
+         * Class to use when unmarshalling.
+         */
+        public Builder unmarshalType(Class<?> unmarshalType) {
+            this.unmarshalType = unmarshalType;
+            return this;
+        }
+
+        @Override
+        public ASN1DataFormat end() {
+            return new ASN1DataFormat(this);
+        }
     }
 }

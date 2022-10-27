@@ -20,7 +20,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -45,6 +47,14 @@ public class BarcodeDataFormat extends DataFormatDefinition {
 
     public BarcodeDataFormat() {
         super("barcode");
+    }
+
+    private BarcodeDataFormat(Builder builder) {
+        this();
+        this.barcodeFormat = builder.barcodeFormat;
+        this.imageType = builder.imageType;
+        this.width = builder.width;
+        this.height = builder.height;
     }
 
     public String getWidth() {
@@ -91,4 +101,52 @@ public class BarcodeDataFormat extends DataFormatDefinition {
         this.barcodeFormat = barcodeFormat;
     }
 
+    /**
+     * {@code Builder} is a specific builder for {@link BarcodeDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<BarcodeDataFormat> {
+
+        private String barcodeFormat;
+        private String imageType;
+        private String width;
+        private String height;
+
+        /**
+         * Width of the barcode
+         */
+        public Builder width(String width) {
+            this.width = width;
+            return this;
+        }
+
+        /**
+         * Height of the barcode
+         */
+        public Builder height(String height) {
+            this.height = height;
+            return this;
+        }
+
+        /**
+         * Image type of the barcode such as png
+         */
+        public Builder imageType(String imageType) {
+            this.imageType = imageType;
+            return this;
+        }
+
+        /**
+         * Barcode format such as QR-Code
+         */
+        public Builder barcodeFormat(String barcodeFormat) {
+            this.barcodeFormat = barcodeFormat;
+            return this;
+        }
+
+        @Override
+        public BarcodeDataFormat end() {
+            return new BarcodeDataFormat(this);
+        }
+    }
 }

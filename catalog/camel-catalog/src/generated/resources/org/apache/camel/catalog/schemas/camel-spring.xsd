@@ -12321,7 +12321,7 @@ Default value: true
           <xs:annotation>
             <xs:documentation xml:lang="en">
               <![CDATA[
-Whether or not the trailing white spaces must ignored. The default value is
+Whether or not the trailing white spaces must be ignored. The default value is
 true. Default value: true
             ]]>
             </xs:documentation>

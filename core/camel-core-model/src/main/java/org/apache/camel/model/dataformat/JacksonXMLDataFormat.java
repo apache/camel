@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -88,6 +89,29 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
 
     public JacksonXMLDataFormat() {
         super("jacksonXml");
+    }
+
+    private JacksonXMLDataFormat(Builder builder) {
+        this();
+        this.unmarshalType = builder.unmarshalType;
+        this.jsonView = builder.jsonView;
+        this.collectionType = builder.collectionType;
+        this.xmlMapper = builder.xmlMapper;
+        this.prettyPrint = builder.prettyPrint;
+        this.unmarshalTypeName = builder.unmarshalTypeName;
+        this.allowUnmarshallType = builder.allowUnmarshallType;
+        this.jsonViewTypeName = builder.jsonViewTypeName;
+        this.include = builder.include;
+        this.allowJmsType = builder.allowJmsType;
+        this.collectionTypeName = builder.collectionTypeName;
+        this.useList = builder.useList;
+        this.timezone = builder.timezone;
+        this.enableJaxbAnnotationModule = builder.enableJaxbAnnotationModule;
+        this.moduleClassNames = builder.moduleClassNames;
+        this.moduleRefs = builder.moduleRefs;
+        this.enableFeatures = builder.enableFeatures;
+        this.disableFeatures = builder.disableFeatures;
+        this.contentTypeHeader = builder.contentTypeHeader;
     }
 
     public String getXmlMapper() {
@@ -319,4 +343,209 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         this.timezone = timezone;
     }
 
+    /**
+     * {@code Builder} is a specific builder for {@link JacksonXMLDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<JacksonXMLDataFormat> {
+
+        private Class<?> unmarshalType;
+        private Class<?> jsonView;
+        private Class<?> collectionType;
+        private String xmlMapper;
+        private String prettyPrint;
+        private String unmarshalTypeName;
+        private String allowUnmarshallType;
+        private String jsonViewTypeName;
+        private String include;
+        private String allowJmsType;
+        private String collectionTypeName;
+        private String useList;
+        private String timezone;
+        private String enableJaxbAnnotationModule;
+        private String moduleClassNames;
+        private String moduleRefs;
+        private String enableFeatures;
+        private String disableFeatures;
+        private String contentTypeHeader = "true";
+
+        /**
+         * Lookup and use the existing XmlMapper with the given id.
+         */
+        public Builder xmlMapper(String xmlMapper) {
+            this.xmlMapper = xmlMapper;
+            return this;
+        }
+
+        /**
+         * To enable pretty printing output nicely formatted.
+         * <p/>
+         * Is by default false.
+         */
+        public Builder prettyPrint(String prettyPrint) {
+            this.prettyPrint = prettyPrint;
+            return this;
+        }
+
+        /**
+         * Class name of the java type to use when unmarshalling
+         */
+        public Builder unmarshalTypeName(String unmarshalTypeName) {
+            this.unmarshalTypeName = unmarshalTypeName;
+            return this;
+        }
+
+        /**
+         * Class of the java type to use when unmarshalling
+         */
+        public Builder unmarshalType(Class<?> unmarshalType) {
+            this.unmarshalType = unmarshalType;
+            return this;
+        }
+
+        /**
+         * When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson
+         * you can use JSON views to accomplish this. This option is to refer to the class which has @JsonView
+         * annotations
+         */
+        public Builder jsonViewTypeName(String jsonViewTypeName) {
+            this.jsonViewTypeName = jsonViewTypeName;
+            return this;
+        }
+
+        /**
+         * When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson
+         * you can use JSON views to accomplish this. This option is to refer to the class which has @JsonView
+         * annotations
+         */
+        public Builder jsonView(Class<?> jsonView) {
+            this.jsonView = jsonView;
+            return this;
+        }
+
+        /**
+         * If you want to marshal a pojo to JSON, and the pojo has some fields with null values. And you want to skip
+         * these null values, you can set this option to <tt>NON_NULL</tt>
+         */
+        public Builder include(String include) {
+            this.include = include;
+            return this;
+        }
+
+        /**
+         * Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to
+         * unmarshal to.
+         */
+        public Builder allowJmsType(String allowJmsType) {
+            this.allowJmsType = allowJmsType;
+            return this;
+        }
+
+        /**
+         * Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but
+         * allows to use different collection types than java.util.Collection based as default.
+         */
+        public Builder collectionTypeName(String collectionTypeName) {
+            this.collectionTypeName = collectionTypeName;
+            return this;
+        }
+
+        public Builder collectionType(Class<?> collectionType) {
+            this.collectionType = collectionType;
+            return this;
+        }
+
+        /**
+         * To unmarshal to a List of Map or a List of Pojo.
+         */
+        public Builder useList(String useList) {
+            this.useList = useList;
+            return this;
+        }
+
+        /**
+         * Whether to enable the JAXB annotations module when using jackson. When enabled then JAXB annotations can be
+         * used by Jackson.
+         */
+        public Builder enableJaxbAnnotationModule(String enableJaxbAnnotationModule) {
+            this.enableJaxbAnnotationModule = enableJaxbAnnotationModule;
+            return this;
+        }
+
+        /**
+         * To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class
+         * names. Multiple classes can be separated by comma.
+         */
+        public Builder moduleClassNames(String moduleClassNames) {
+            this.moduleClassNames = moduleClassNames;
+            return this;
+        }
+
+        /**
+         * To use custom Jackson modules referred from the Camel registry. Multiple modules can be separated by comma.
+         */
+        public Builder moduleRefs(String moduleRefs) {
+            this.moduleRefs = moduleRefs;
+            return this;
+        }
+
+        /**
+         * Set of features to enable on the Jackson <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
+         * <p/>
+         * The features should be a name that matches a enum from
+         * <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
+         * <tt>com.fasterxml.jackson.databind.DeserializationFeature</tt>, or
+         * <tt>com.fasterxml.jackson.databind.MapperFeature</tt>
+         * <p/>
+         * Multiple features can be separated by comma
+         */
+        public Builder enableFeatures(String enableFeatures) {
+            this.enableFeatures = enableFeatures;
+            return this;
+        }
+
+        /**
+         * Set of features to disable on the Jackson <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
+         * <p/>
+         * The features should be a name that matches a enum from
+         * <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
+         * <tt>com.fasterxml.jackson.databind.DeserializationFeature</tt>, or
+         * <tt>com.fasterxml.jackson.databind.MapperFeature</tt>
+         * <p/>
+         * Multiple features can be separated by comma
+         */
+        public Builder disableFeatures(String disableFeatures) {
+            this.disableFeatures = disableFeatures;
+            return this;
+        }
+
+        /**
+         * If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the
+         * unmarshalling.
+         * <p/>
+         * This should only be enabled when desired to be used.
+         */
+        public Builder allowUnmarshallType(String allowUnmarshallType) {
+            this.allowUnmarshallType = allowUnmarshallType;
+            return this;
+        }
+
+        public Builder contentTypeHeader(String contentTypeHeader) {
+            this.contentTypeHeader = contentTypeHeader;
+            return this;
+        }
+
+        /**
+         * If set then Jackson will use the Timezone when marshalling/unmarshalling.
+         */
+        public Builder timezone(String timezone) {
+            this.timezone = timezone;
+            return this;
+        }
+
+        @Override
+        public JacksonXMLDataFormat end() {
+            return new JacksonXMLDataFormat(this);
+        }
+    }
 }

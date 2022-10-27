@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -56,6 +57,16 @@ public class BindyDataFormat extends DataFormatDefinition {
 
     public BindyDataFormat() {
         super("bindy");
+    }
+
+    private BindyDataFormat(Builder builder) {
+        this();
+        this.clazz = builder.clazz;
+        this.type = builder.type;
+        this.classType = builder.classType;
+        this.allowEmptyStream = builder.allowEmptyStream;
+        this.unwrapSingleInstance = builder.unwrapSingleInstance;
+        this.locale = builder.locale;
     }
 
     public String getType() {
@@ -209,4 +220,78 @@ public class BindyDataFormat extends DataFormatDefinition {
         return this;
     }
 
+    /**
+     * {@code Builder} is a specific builder for {@link BindyDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<BindyDataFormat> {
+
+        private Class<?> clazz;
+        private String type;
+        private String classType;
+        private String allowEmptyStream = "false";
+        private String unwrapSingleInstance = "true";
+        private String locale;
+
+        /**
+         * Whether to use Csv, Fixed, or KeyValue.
+         */
+        public Builder type(String type) {
+            this.type = type;
+            return this;
+        }
+
+        public Builder type(BindyType type) {
+            return type(type.name());
+        }
+
+        /**
+         * Name of model class to use.
+         */
+        public Builder classType(String classType) {
+            this.classType = classType;
+            return this;
+        }
+
+        /**
+         * Name of model class to use.
+         */
+        public Builder classType(Class<?> classType) {
+            this.clazz = classType;
+            return this;
+        }
+
+        /**
+         * To configure a default locale to use, such as <tt>us</tt> for united states.
+         * <p/>
+         * To use the JVM platform default locale then use the name <tt>default</tt>
+         */
+        public Builder locale(String locale) {
+            this.locale = locale;
+            return this;
+        }
+
+        /**
+         * When unmarshalling should a single instance be unwrapped and returned instead of wrapped in a
+         * <tt>java.util.List</tt>.
+         */
+        public Builder unwrapSingleInstance(String unwrapSingleInstance) {
+            this.unwrapSingleInstance = unwrapSingleInstance;
+            return this;
+        }
+
+        /**
+         * Whether to allow empty streams in the unmarshal process. If true, no exception will be thrown when a body
+         * without records is provided.
+         */
+        public Builder allowEmptyStream(String allowEmptyStream) {
+            this.allowEmptyStream = allowEmptyStream;
+            return this;
+        }
+
+        @Override
+        public BindyDataFormat end() {
+            return new BindyDataFormat(this);
+        }
+    }
 }

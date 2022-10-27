@@ -22,6 +22,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -89,6 +90,28 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
 
     protected FhirDataformat() {
         // This constructor is needed by jaxb for schema generation
+    }
+
+    protected FhirDataformat(String dataFormatName, AbstractBuilder<?, ?> builder) {
+        this(dataFormatName);
+        this.fhirContext = builder.fhirContext;
+        this.fhirVersion = builder.fhirVersion;
+        this.prettyPrint = builder.prettyPrint;
+        this.parserErrorHandler = builder.parserErrorHandler;
+        this.parserOptions = builder.parserOptions;
+        this.preferTypes = builder.preferTypes;
+        this.forceResourceId = builder.forceResourceId;
+        this.serverBaseUrl = builder.serverBaseUrl;
+        this.omitResourceId = builder.omitResourceId;
+        this.encodeElementsAppliesToChildResourcesOnly = builder.encodeElementsAppliesToChildResourcesOnly;
+        this.encodeElements = builder.encodeElements;
+        this.dontEncodeElements = builder.dontEncodeElements;
+        this.stripVersionsFromReferences = builder.stripVersionsFromReferences;
+        this.overrideResourceIdWithBundleEntryFullUrl = builder.overrideResourceIdWithBundleEntryFullUrl;
+        this.summaryMode = builder.summaryMode;
+        this.suppressNarratives = builder.suppressNarratives;
+        this.dontStripVersionsFromReferencesAtPaths = builder.dontStripVersionsFromReferencesAtPaths;
+        this.contentTypeHeader = builder.contentTypeHeader;
     }
 
     public Object getFhirContext() {
@@ -371,4 +394,260 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
         this.contentTypeHeader = contentTypeHeader;
     }
 
+    /**
+     * {@code Builder} is a specific builder for {@link FhirDataformat}.
+     */
+    @XmlTransient
+    @SuppressWarnings("unchecked")
+    abstract static class AbstractBuilder<T extends AbstractBuilder<T, F>, F extends FhirDataformat>
+            implements DataFormatBuilder<F> {
+
+        private Object fhirContext;
+        private String fhirVersion = "R4";
+        private String prettyPrint;
+        private Object parserErrorHandler;
+        private Object parserOptions;
+        private Object preferTypes;
+        private Object forceResourceId;
+        private String serverBaseUrl;
+        private String omitResourceId;
+        private String encodeElementsAppliesToChildResourcesOnly;
+        private Set<String> encodeElements;
+        private Set<String> dontEncodeElements;
+        private String stripVersionsFromReferences;
+        private String overrideResourceIdWithBundleEntryFullUrl;
+        private String summaryMode;
+        private String suppressNarratives;
+        private List<String> dontStripVersionsFromReferencesAtPaths;
+        private String contentTypeHeader = "true";
+
+        public T fhirContext(Object fhirContext) {
+            this.fhirContext = fhirContext;
+            return (T) this;
+        }
+
+        /**
+         * The version of FHIR to use. Possible values are: DSTU2,DSTU2_HL7ORG,DSTU2_1,DSTU3,R4,R5
+         */
+        public T fhirVersion(String fhirVersion) {
+            this.fhirVersion = fhirVersion;
+            return (T) this;
+        }
+
+        /**
+         * Sets the "pretty print" flag, meaning that the parser will encode resources with human-readable spacing and
+         * newlines between elements instead of condensing output as much as possible.
+         *
+         * @param prettyPrint The flag
+         */
+        public T prettyPrint(String prettyPrint) {
+            this.prettyPrint = prettyPrint;
+            return (T) this;
+        }
+
+        /**
+         * Registers an error handler which will be invoked when any parse errors are found
+         *
+         * @param parserErrorHandler The error handler to set. Must not be null.
+         */
+        public T parserErrorHandler(Object parserErrorHandler) {
+            this.parserErrorHandler = parserErrorHandler;
+            return (T) this;
+        }
+
+        /**
+         * Sets the parser options object which will be used to supply default options to newly created parsers.
+         *
+         * @param parserOptions The parser options object
+         */
+        public T parserOptions(Object parserOptions) {
+            this.parserOptions = parserOptions;
+            return (T) this;
+        }
+
+        /**
+         * If set, when parsing resources the parser will try to use the given types when possible, in the order that
+         * they are provided (from highest to lowest priority). For example, if a custom type which declares to
+         * implement the Patient resource is passed in here, and the parser is parsing a Bundle containing a Patient
+         * resource, the parser will use the given custom type.
+         *
+         * @param preferTypes The preferred types, or <code>null</code>
+         */
+        public T preferTypes(Object preferTypes) {
+            this.preferTypes = preferTypes;
+            return (T) this;
+        }
+
+        /**
+         * When encoding, force this resource ID to be encoded as the resource ID
+         */
+        public T forceResourceId(Object forceResourceId) {
+            this.forceResourceId = forceResourceId;
+            return (T) this;
+        }
+
+        /**
+         * Sets the server's base URL used by this parser. If a value is set, resource references will be turned into
+         * relative references if they are provided as absolute URLs but have a base matching the given base.
+         *
+         * @param serverBaseUrl The base URL, e.g. "http://example.com/base"
+         */
+        public T serverBaseUrl(String serverBaseUrl) {
+            this.serverBaseUrl = serverBaseUrl;
+            return (T) this;
+        }
+
+        /**
+         * If set to <code>true</code> (default is <code>false</code>) the ID of any resources being encoded will not be
+         * included in the output. Note that this does not apply to contained resources, only to root resources. In
+         * other words, if this is set to <code>true</code>, contained resources will still have local IDs but the
+         * outer/containing ID will not have an ID.
+         *
+         * @param omitResourceId Should resource IDs be omitted
+         */
+        public T omitResourceId(String omitResourceId) {
+            this.omitResourceId = omitResourceId;
+            return (T) this;
+        }
+
+        /**
+         * If set to <code>true</code> (default is false), the values supplied to {@link #setEncodeElements(Set)} will
+         * not be applied to the root resource (typically a Bundle), but will be applied to any sub-resources contained
+         * within it (i.e. search result resources in that bundle)
+         */
+        public T encodeElementsAppliesToChildResourcesOnly(String encodeElementsAppliesToChildResourcesOnly) {
+            this.encodeElementsAppliesToChildResourcesOnly = encodeElementsAppliesToChildResourcesOnly;
+            return (T) this;
+        }
+
+        /**
+         * If provided, specifies the elements which should be encoded, to the exclusion of all others. Valid values for
+         * this field would include:
+         * <ul>
+         * <li><b>Patient</b> - Encode patient and all its children</li>
+         * <li><b>Patient.name</b> - Encode only the patient's name</li>
+         * <li><b>Patient.name.family</b> - Encode only the patient's family name</li>
+         * <li><b>*.text</b> - Encode the text element on any resource (only the very first position may contain a
+         * wildcard)</li>
+         * <li><b>*.(mandatory)</b> - This is a special case which causes any mandatory fields (min > 0) to be
+         * encoded</li>
+         * </ul>
+         *
+         * @param encodeElements The elements to encode
+         * @see                  #setDontEncodeElements(Set)
+         */
+        public T encodeElements(Set<String> encodeElements) {
+            this.encodeElements = encodeElements;
+            return (T) this;
+        }
+
+        /**
+         * If provided, specifies the elements which should NOT be encoded. Valid values for this field would include:
+         * <ul>
+         * <li><b>Patient</b> - Don't encode patient and all its children</li>
+         * <li><b>Patient.name</b> - Don't encode the patient's name</li>
+         * <li><b>Patient.name.family</b> - Don't encode the patient's family name</li>
+         * <li><b>*.text</b> - Don't encode the text element on any resource (only the very first position may contain a
+         * wildcard)</li>
+         * </ul>
+         * <p>
+         * DSTU2 note: Note that values including meta, such as <code>Patient.meta</code> will work for DSTU2 parsers,
+         * but values with subelements on meta such as <code>Patient.meta.lastUpdated</code> will only work in DSTU3+
+         * mode.
+         * </p>
+         *
+         * @param dontEncodeElements The elements to encode
+         * @see                      #setEncodeElements(Set)
+         */
+        public T dontEncodeElements(Set<String> dontEncodeElements) {
+            this.dontEncodeElements = dontEncodeElements;
+            return (T) this;
+        }
+
+        /**
+         * If set to <code>true<code> (which is the default), resource references containing a version
+         * will have the version removed when the resource is encoded. This is generally good behaviour because
+         * in most situations, references from one resource to another should be to the resource by ID, not
+         * by ID and version. In some cases though, it may be desirable to preserve the version in resource
+         * links. In that case, this value should be set to <code>false</code>.
+         * <p>
+         * This method provides the ability to globally disable reference encoding. If finer-grained control is needed,
+         * use {@link #setDontStripVersionsFromReferencesAtPaths(List)}
+         * </p>
+         *
+         * @param stripVersionsFromReferences Set this to
+         *                                    <code>false<code> to prevent the parser from removing resource versions
+         *                                    from references (or <code>null</code> to apply the default setting from
+         *                                    the {@link #setParserOptions(Object)}
+         * @see                               #setDontStripVersionsFromReferencesAtPaths(List)
+         */
+        public T stripVersionsFromReferences(String stripVersionsFromReferences) {
+            this.stripVersionsFromReferences = stripVersionsFromReferences;
+            return (T) this;
+        }
+
+        /**
+         * If set to <code>true</code> (which is the default), the Bundle.entry.fullUrl will override the
+         * Bundle.entry.resource's resource id if the fullUrl is defined. This behavior happens when parsing the source
+         * data into a Bundle object. Set this to <code>false</code> if this is not the desired behavior (e.g. the
+         * client code wishes to perform additional validation checks between the fullUrl and the resource id).
+         *
+         * @param overrideResourceIdWithBundleEntryFullUrl Set this to <code>false</code> to prevent the parser from
+         *                                                 overriding resource ids with the Bundle.entry.fullUrl (or
+         *                                                 <code>null</code> to apply the default setting from the
+         *                                                 {@link #setParserOptions(Object)})
+         */
+        public T overrideResourceIdWithBundleEntryFullUrl(String overrideResourceIdWithBundleEntryFullUrl) {
+            this.overrideResourceIdWithBundleEntryFullUrl = overrideResourceIdWithBundleEntryFullUrl;
+            return (T) this;
+        }
+
+        /**
+         * If set to <code>true</code> (default is <code>false</code>) only elements marked by the FHIR specification as
+         * being "summary elements" will be included.
+         */
+        public T summaryMode(String summaryMode) {
+            this.summaryMode = summaryMode;
+            return (T) this;
+        }
+
+        /**
+         * If set to <code>true</code> (default is <code>false</code>), narratives will not be included in the encoded
+         * values.
+         */
+        public T suppressNarratives(String suppressNarratives) {
+            this.suppressNarratives = suppressNarratives;
+            return (T) this;
+        }
+
+        /**
+         * If supplied value(s), any resource references at the specified paths will have their resource versions
+         * encoded instead of being automatically stripped during the encoding process. This setting has no effect on
+         * the parsing process.
+         * <p>
+         * This method provides a finer-grained level of control than {@link #setStripVersionsFromReferences(String)}
+         * and any paths specified by this method will be encoded even if
+         * {@link #setStripVersionsFromReferences(String)} has been set to <code>true</code> (which is the default)
+         * </p>
+         *
+         * @param dontStripVersionsFromReferencesAtPaths A collection of paths for which the resource versions will not
+         *                                               be removed automatically when serializing, e.g.
+         *                                               "Patient.managingOrganization" or
+         *                                               "AuditEvent.object.reference". Note that only resource name and
+         *                                               field names with dots separating is allowed here (no repetition
+         *                                               indicators, FluentPath expressions, etc.). Set to
+         *                                               <code>null</code> to use the value set in the
+         *                                               {@link #setParserOptions(Object)}
+         * @see                                          #setStripVersionsFromReferences(String)
+         */
+        public T dontStripVersionsFromReferencesAtPaths(List<String> dontStripVersionsFromReferencesAtPaths) {
+            this.dontStripVersionsFromReferencesAtPaths = dontStripVersionsFromReferencesAtPaths;
+            return (T) this;
+        }
+
+        public T contentTypeHeader(String contentTypeHeader) {
+            this.contentTypeHeader = contentTypeHeader;
+            return (T) this;
+        }
+    }
 }

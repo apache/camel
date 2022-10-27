@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.w3c.dom.Node;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -57,6 +58,13 @@ public class TidyMarkupDataFormat extends DataFormatDefinition {
                     "TidyMarkupDataFormat only supports returning a String or a org.w3c.dom.Node object");
         }
         this.setDataObjectType(dataObjectType);
+    }
+
+    private TidyMarkupDataFormat(Builder builder) {
+        this();
+        this.dataObjectType = builder.dataObjectType;
+        this.dataObjectTypeName = builder.dataObjectTypeName;
+        this.omitXmlDeclaration = builder.omitXmlDeclaration;
     }
 
     /**
@@ -96,4 +104,47 @@ public class TidyMarkupDataFormat extends DataFormatDefinition {
         this.omitXmlDeclaration = omitXmlDeclaration;
     }
 
+    /**
+     * {@code Builder} is a specific builder for {@link TidyMarkupDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<TidyMarkupDataFormat> {
+
+        private Class<?> dataObjectType;
+        private String dataObjectTypeName = "org.w3c.dom.Node";
+        private String omitXmlDeclaration;
+
+        /**
+         * What data type to unmarshal as, can either be org.w3c.dom.Node or java.lang.String.
+         * <p/>
+         * Is by default org.w3c.dom.Node
+         */
+        public Builder dataObjectType(Class<?> dataObjectType) {
+            this.dataObjectType = dataObjectType;
+            return this;
+        }
+
+        /**
+         * What data type to unmarshal as, can either be org.w3c.dom.Node or java.lang.String.
+         * <p/>
+         * Is by default org.w3c.dom.Node
+         */
+        public Builder dataObjectTypeName(String dataObjectTypeName) {
+            this.dataObjectTypeName = dataObjectTypeName;
+            return this;
+        }
+
+        /**
+         * When returning a String, do we omit the XML declaration in the top.
+         */
+        public Builder omitXmlDeclaration(String omitXmlDeclaration) {
+            this.omitXmlDeclaration = omitXmlDeclaration;
+            return this;
+        }
+
+        @Override
+        public TidyMarkupDataFormat end() {
+            return new TidyMarkupDataFormat(this);
+        }
+    }
 }

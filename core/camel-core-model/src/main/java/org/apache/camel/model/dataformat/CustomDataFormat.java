@@ -20,7 +20,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.builder.DataFormatBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -42,6 +44,11 @@ public class CustomDataFormat extends DataFormatDefinition {
         this.ref = ref;
     }
 
+    private CustomDataFormat(Builder builder) {
+        this();
+        this.ref = builder.ref;
+    }
+
     /**
      * Reference to the custom {@link org.apache.camel.spi.DataFormat} to lookup from the Camel registry.
      */
@@ -59,5 +66,27 @@ public class CustomDataFormat extends DataFormatDefinition {
     @Override
     public String toString() {
         return "CustomDataFormat[" + ref + "]";
+    }
+
+    /**
+     * {@code Builder} is a specific builder for {@link CustomDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder implements DataFormatBuilder<CustomDataFormat> {
+
+        private String ref;
+
+        /**
+         * Reference to the custom {@link org.apache.camel.spi.DataFormat} to lookup from the Camel registry.
+         */
+        public Builder ref(String ref) {
+            this.ref = ref;
+            return this;
+        }
+
+        @Override
+        public CustomDataFormat end() {
+            return new CustomDataFormat(this);
+        }
     }
 }

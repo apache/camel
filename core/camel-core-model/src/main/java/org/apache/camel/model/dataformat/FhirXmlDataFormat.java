@@ -19,6 +19,7 @@ package org.apache.camel.model.dataformat;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 
@@ -34,4 +35,19 @@ public class FhirXmlDataFormat extends FhirDataformat {
         super("fhirXml");
     }
 
+    private FhirXmlDataFormat(Builder builder) {
+        super("fhirXml", builder);
+    }
+
+    /**
+     * {@code Builder} is a specific builder for {@link FhirXmlDataFormat}.
+     */
+    @XmlTransient
+    public static class Builder extends AbstractBuilder<Builder, FhirXmlDataFormat> {
+
+        @Override
+        public FhirXmlDataFormat end() {
+            return new FhirXmlDataFormat(this);
+        }
+    }
 }

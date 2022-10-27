@@ -4,6 +4,8 @@ Component-DSL is a builder API that allows using type safe construction of
 Camel xref:component.adoc[Components] and inject them directly to xref:camelcontext.adoc[CamelContext]
 instead of initializing through a constructor.
 
+The Component DSL is exclusively available as part of the Java DSL.
+
 == Using Component DSL
 
 The following is an example of Kafka component that is constructed using the typical constructor initialization:
