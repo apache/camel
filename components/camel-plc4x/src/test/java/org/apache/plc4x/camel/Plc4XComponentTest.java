@@ -16,15 +16,13 @@
  */
 package org.apache.plc4x.camel;
 
-import org.apache.camel.Expression;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.apache.plc4x.java.api.model.PlcField;
 import org.junit.jupiter.api.Test;
-
-import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 public class Plc4XComponentTest extends CamelTestSupport {
 
@@ -37,27 +35,27 @@ public class Plc4XComponentTest extends CamelTestSupport {
         template.asyncSendBody("direct:plc4x", Collections.singletonList("irrelevant"));
         template.asyncSendBody("direct:plc4x2", Collections.singletonList("irrelevant"));
 
-        assertMockEndpointsSatisfied(2, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 2, TimeUnit.SECONDS);
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-               Map<String,Object> tags = new HashMap<>();
-               tags.put("Test1","%TestQuery");
+                Map<String, Object> tags = new HashMap<>();
+                tags.put("Test1", "%TestQuery");
                 Plc4XEndpoint producer = getContext().getEndpoint("plc4x:mock:10.10.10.1/1/1", Plc4XEndpoint.class);
                 producer.setTags(tags);
                 from("direct:plc4x")
-                    .setBody(constant(Collections.singletonMap("test",Collections.singletonMap("testAddress",false))))
-                    .to("plc4x:mock:10.10.10.1/1/1")
-                    .to("mock:result");
+                        .setBody(constant(Collections.singletonMap("test", Collections.singletonMap("testAddress", false))))
+                        .to("plc4x:mock:10.10.10.1/1/1")
+                        .to("mock:result");
                 from("direct:plc4x2")
-                    .setBody(constant(Collections.singletonMap("test2",Collections.singletonMap("testAddress2",0x05))))
-                    .to("plc4x:mock:10.10.10.1/1/1")
-                    .to("mock:result");
+                        .setBody(constant(Collections.singletonMap("test2", Collections.singletonMap("testAddress2", 0x05))))
+                        .to("plc4x:mock:10.10.10.1/1/1")
+                        .to("mock:result");
                 from(producer)
-                    .log("Got ${body}");
+                        .log("Got ${body}");
             }
         };
     }

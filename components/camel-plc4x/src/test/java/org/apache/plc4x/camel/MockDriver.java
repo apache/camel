@@ -16,7 +16,13 @@
  */
 package org.apache.plc4x.camel;
 
+import java.util.HashMap;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import org.apache.plc4x.java.api.PlcConnection;
+import org.apache.plc4x.java.api.PlcDriver;
 import org.apache.plc4x.java.api.authentication.PlcAuthentication;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.messages.PlcReadRequest;
@@ -26,14 +32,8 @@ import org.apache.plc4x.java.api.messages.PlcUnsubscriptionRequest;
 import org.apache.plc4x.java.api.messages.PlcWriteRequest;
 import org.apache.plc4x.java.spi.messages.DefaultPlcSubscriptionResponse;
 import org.apache.plc4x.java.spi.messages.PlcSubscriber;
-import org.apache.plc4x.java.api.PlcDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static org.mockito.Mockito.*;
 
@@ -61,8 +61,10 @@ public class MockDriver implements PlcDriver {
         when(plcConnectionMock.getMetadata().canWrite()).thenReturn(true);
         when(plcConnectionMock.readRequestBuilder()).thenReturn(mock(PlcReadRequest.Builder.class, RETURNS_DEEP_STUBS));
         when(plcConnectionMock.writeRequestBuilder()).thenReturn(mock(PlcWriteRequest.Builder.class, RETURNS_DEEP_STUBS));
-        when(plcConnectionMock.subscriptionRequestBuilder()).thenReturn(mock(PlcSubscriptionRequest.Builder.class, RETURNS_DEEP_STUBS));
-        when(plcConnectionMock.unsubscriptionRequestBuilder()).thenReturn(mock(PlcUnsubscriptionRequest.Builder.class, RETURNS_DEEP_STUBS));
+        when(plcConnectionMock.subscriptionRequestBuilder())
+                .thenReturn(mock(PlcSubscriptionRequest.Builder.class, RETURNS_DEEP_STUBS));
+        when(plcConnectionMock.unsubscriptionRequestBuilder())
+                .thenReturn(mock(PlcUnsubscriptionRequest.Builder.class, RETURNS_DEEP_STUBS));
 
         // Mock a typical subscriber.
         PlcSubscriber plcSubscriber = mock(PlcSubscriber.class, RETURNS_DEEP_STUBS);
@@ -89,7 +91,8 @@ public class MockDriver implements PlcDriver {
                         mock(PlcSubscriptionHandle.class, RETURNS_DEEP_STUBS), PlcResponseCode.OK);
                 }).collect(Collectors.toList());
             PlcSubscriptionResponse response = new PlcSubscriptionResponse(subscriptionRequest, responseItems);*/
-            PlcSubscriptionResponse response = new DefaultPlcSubscriptionResponse(mock(PlcSubscriptionRequest.class), new HashMap<>());
+            PlcSubscriptionResponse response
+                    = new DefaultPlcSubscriptionResponse(mock(PlcSubscriptionRequest.class), new HashMap<>());
             return CompletableFuture.completedFuture(response);
         });
         return plcConnectionMock;

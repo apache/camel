@@ -16,13 +16,13 @@
  */
 package org.apache.plc4x.camel;
 
-import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
+
+import org.slf4j.LoggerFactory;
 
 public class TagData {
     private String tagName;
@@ -65,22 +65,21 @@ public class TagData {
         this.value = value;
     }
 
-
-    private void setType(){
-        if(value!=null && value instanceof String){
-            String val = (String)value;
-            if(canParse.get(Boolean.TYPE).test(val)){
+    private void setType() {
+        if (value != null && value instanceof String) {
+            String val = (String) value;
+            if (canParse.get(Boolean.TYPE).test(val)) {
                 value = Boolean.parseBoolean(val);
             }
-            if(canParse.get(Short.TYPE).test(val)){
+            if (canParse.get(Short.TYPE).test(val)) {
                 value = Short.parseShort(val);
-            } else if(canParse.get(Integer.TYPE).test(val)){
+            } else if (canParse.get(Integer.TYPE).test(val)) {
                 value = Integer.parseInt(val);
-            } else if(canParse.get(Long.TYPE).test(val)){
+            } else if (canParse.get(Long.TYPE).test(val)) {
                 value = Long.parseLong(val);
-            } else if(canParse.get(Double.TYPE).test(val)){
+            } else if (canParse.get(Double.TYPE).test(val)) {
                 value = Double.parseDouble(val);
-            } else if(canParse.get(Float.TYPE).test(val)){
+            } else if (canParse.get(Float.TYPE).test(val)) {
                 value = Float.parseFloat(val);
             }
 
@@ -93,7 +92,7 @@ public class TagData {
             try {
                 Integer.parseInt(s);
                 return true;
-            } catch(Exception e) {
+            } catch (Exception e) {
                 return false;
             }
         });
@@ -101,7 +100,7 @@ public class TagData {
             try {
                 Long.parseLong(s);
                 return true;
-            } catch(Exception e) {
+            } catch (Exception e) {
                 return false;
             }
         });
@@ -109,7 +108,7 @@ public class TagData {
             try {
                 Short.parseShort(s);
                 return true;
-            } catch(Exception e) {
+            } catch (Exception e) {
                 return false;
             }
         });
@@ -117,7 +116,7 @@ public class TagData {
             try {
                 Boolean.parseBoolean(s);
                 return true;
-            } catch(Exception e) {
+            } catch (Exception e) {
                 return false;
             }
         });
@@ -125,7 +124,7 @@ public class TagData {
             try {
                 Double.parseDouble(s);
                 return true;
-            } catch(Exception e) {
+            } catch (Exception e) {
                 return false;
             }
         });
@@ -133,24 +132,25 @@ public class TagData {
             try {
                 Float.parseFloat(s);
                 return true;
-            } catch(Exception e) {
+            } catch (Exception e) {
                 return false;
             }
         });
     };
 
     @Override
-    public  String toString(){
-        return "("+tagName+") : "+value;
+    public String toString() {
+        return "(" + tagName + ") : " + value;
     }
 
     @Override
-    public boolean equals(Object tag){
-        return value!= null?((TagData)tag).getValue().equals(value)
-            && ((TagData)tag).getTagName().equals(tagName)
-            && ((TagData)tag).getQuery().equals(query) :
-             ((TagData)tag).getTagName().equals(tagName)
-            && ((TagData)tag).getQuery().equals(query);
+    public boolean equals(Object tag) {
+        return value != null
+                ? ((TagData) tag).getValue().equals(value)
+                        && ((TagData) tag).getTagName().equals(tagName)
+                        && ((TagData) tag).getQuery().equals(query)
+                : ((TagData) tag).getTagName().equals(tagName)
+                        && ((TagData) tag).getQuery().equals(query);
     }
 
     @Override
@@ -158,11 +158,11 @@ public class TagData {
         return Objects.hash(tagName, query, value, canParse);
     }
 
-    public static Map<String,String> toMap(List<TagData> tags){
-        Map<String,String> map = new HashMap<>();
+    public static Map<String, String> toMap(List<TagData> tags) {
+        Map<String, String> map = new HashMap<>();
         LoggerFactory.getLogger(TagData.class).info("Classloader {} ", Thread.currentThread().getContextClassLoader());
-        for(TagData tag : tags){
-            map.put(tag.getTagName(),tag.getQuery());
+        for (TagData tag : tags) {
+            map.put(tag.getTagName(), tag.getQuery());
         }
         return map;
     }

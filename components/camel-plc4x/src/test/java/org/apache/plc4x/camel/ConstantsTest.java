@@ -16,9 +16,9 @@
  */
 package org.apache.plc4x.camel;
 
-import org.junit.jupiter.api.Test;
-
 import java.lang.reflect.Constructor;
+
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
