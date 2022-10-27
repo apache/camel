@@ -40,10 +40,10 @@ import org.apache.plc4x.java.utils.connectionpool.PooledPlcDriverManager;
 public class Plc4XEndpoint extends DefaultEndpoint {
 
     @UriPath
-    @Metadata(required = true, description = "TODO: Add a short description here")
+    @Metadata(required = true, description = "PLC4X connection string for the connection to the target")
     private String driver;
     @UriParam
-    @Metadata(description = "TODO: Add a short description here")
+    @Metadata(description = "PLC4X field addresses for the tags being read (Format is dependent on the used driver)")
     private Map<String, Object> tags;
     @UriParam
     @Metadata(description = "TODO: Add a short description here")
