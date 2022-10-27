@@ -50,10 +50,12 @@ public class Athena2ClientHealthCheck extends AbstractHealthCheck {
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
 
         try {
-            if (!AthenaClient.serviceMetadata().regions().contains(Region.of(athena2Endpoint.getConfiguration().getRegion()))) {
-                builder.message("The service is not supported in this region");
-                builder.down();
-                return;
+            if (ObjectHelper.isNotEmpty(athena2Endpoint.getConfiguration().getRegion())) {
+                if (!AthenaClient.serviceMetadata().regions().contains(Region.of(athena2Endpoint.getConfiguration().getRegion()))) {
+                    builder.message("The service is not supported in this region");
+                    builder.down();
+                    return;
+                }
             }
             AthenaClient client;
             if (!athena2Endpoint.getConfiguration().isUseDefaultCredentialsProvider()) {
