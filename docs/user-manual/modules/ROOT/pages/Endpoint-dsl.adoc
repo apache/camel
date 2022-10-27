@@ -2,6 +2,8 @@
 
 Endpoint-DSL is a builder API that allows using type-safe endpoint xref:uris.adoc[URL] configurations.
 
+The Endpoint DSL is exclusively available as part of the Java DSL.
+
 The DSL can be accessed in several ways, but the main one is to switch to using an `EndpointRouteBuilder` instead of the usual
 `RouteBuilder`. This builder provides access to all of Camel endpoint builders which are defined through inheritance on the `org.apache.camel.builder.endpoint.EndpointRouteBuilder`.
 

@@ -3,6 +3,8 @@
 The Data Format DSL is a builder API that allows using type safe construction of
 Camel xref:data-format.adoc[Data Format].
 
+The Data Format DSL is exclusively available as part of the Java DSL.
+
 The DSL can be accessed directly from the `RouteBuilder` thanks to the method `dataFormat()`.
 
 == Using Data Format DSL
