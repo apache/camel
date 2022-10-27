@@ -49,10 +49,12 @@ public class EKS2ClientHealthCheck extends AbstractHealthCheck {
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
         EKS2Configuration configuration = eks2Endpoint.getConfiguration();
-        if (!EksClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
-            builder.message("The service is not supported in this region");
-            builder.down();
-            return;
+        if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+            if (!EksClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
+                builder.message("The service is not supported in this region");
+                builder.down();
+                return;
+            }
         }
         try {
             EKS2InternalClient eks2Client = EKS2ClientFactory.getEksClient(configuration);
