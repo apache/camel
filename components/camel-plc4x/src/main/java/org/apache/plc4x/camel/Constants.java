@@ -22,8 +22,9 @@ public final class Constants {
     public static final String FIELD_QUERY_HEADER = "fieldQuery";
     public static final String TRIGGER = "TRIGGER_VAR";
     public static final String PLC_NAME = "PLC";
+
     private Constants() {
-      throw new IllegalStateException("Utility class!");
+        throw new IllegalStateException("Utility class!");
     }
 
 }

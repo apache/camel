@@ -16,6 +16,10 @@
  */
 package org.apache.plc4x.camel;
 
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -27,10 +31,6 @@ import org.apache.plc4x.java.api.messages.PlcWriteRequest;
 import org.apache.plc4x.java.api.messages.PlcWriteResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Plc4XProducer extends DefaultAsyncProducer {
     private final Logger log = LoggerFactory.getLogger(Plc4XProducer.class);
@@ -59,7 +59,7 @@ public class Plc4XProducer extends DefaultAsyncProducer {
                 String name = entry.getKey();
                 String query = entry.getValue().keySet().iterator().next();
                 Object value = entry.getValue().get(query);
-                builder.addItem(name,query,value);
+                builder.addItem(name, query, value);
             }
         } else {
             throw new PlcInvalidFieldException("The body must contain a Map<String,Map<String,Object>");

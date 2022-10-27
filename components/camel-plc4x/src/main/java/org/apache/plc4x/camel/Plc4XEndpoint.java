@@ -16,38 +16,40 @@
  */
 package org.apache.plc4x.camel;
 
+import java.util.Map;
+import java.util.Objects;
+
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.plc4x.java.PlcDriverManager;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.exceptions.PlcRuntimeException;
 import org.apache.plc4x.java.utils.connectionpool.PooledPlcDriverManager;
 
-import java.util.Map;
-import java.util.Objects;
-
-@UriEndpoint(scheme = "plc4x", title = "PLC4X", syntax = "plc4x:driver", label = "plc4x")
+@UriEndpoint(scheme = "plc4x", firstVersion = "3.20.0", title = "PLC4X",
+             syntax = "plc4x:driver", category = Category.IOT)
 public class Plc4XEndpoint extends DefaultEndpoint {
 
     @UriPath
-    @Metadata(required = true)
+    @Metadata(required = true, description = "TODO: Add a short description here")
     private String driver;
-
     @UriParam
+    @Metadata(description = "TODO: Add a short description here")
     private Map<String, Object> tags;
-
     @UriParam
+    @Metadata(description = "TODO: Add a short description here")
     private String trigger;
-
     @UriParam
+    @Metadata(description = "TODO: Add a short description here")
     private int period;
 
     public int getPeriod() {
@@ -157,8 +159,8 @@ public class Plc4XEndpoint extends DefaultEndpoint {
         }
         Plc4XEndpoint that = (Plc4XEndpoint) o;
         return Objects.equals(getDriver(), that.getDriver()) &&
-            Objects.equals(getTags(), that.getTags()) &&
-            Objects.equals(getPlcDriverManager(), that.getPlcDriverManager());
+                Objects.equals(getTags(), that.getTags()) &&
+                Objects.equals(getPlcDriverManager(), that.getPlcDriverManager());
     }
 
     @Override

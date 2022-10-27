@@ -16,6 +16,15 @@
  */
 package org.apache.plc4x.camel;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -32,15 +41,6 @@ import org.apache.plc4x.java.scraper.triggeredscraper.triggerhandler.collector.T
 import org.apache.plc4x.java.scraper.triggeredscraper.triggerhandler.collector.TriggerCollectorImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 public class Plc4XConsumer extends DefaultConsumer {
     private static final Logger LOGGER = LoggerFactory.getLogger(Plc4XConsumer.class);
@@ -86,25 +86,24 @@ public class Plc4XConsumer extends DefaultConsumer {
             try {
                 builder.addItem(tag.getKey(), (String) tag.getValue());
             } catch (PlcIncompatibleDatatypeException e) {
-                LOGGER.error("For consumer, please use Map<String,String>, currently using {}", tags.getClass().getSimpleName());
+                LOGGER.error("For consumer, please use Map<String,String>, currently using {}",
+                        tags.getClass().getSimpleName());
             }
         }
         PlcReadRequest request = builder.build();
-        future = executorService.schedule(() ->
-                request.execute().thenAccept(response -> {
-                    try {
-                        Exchange exchange = plc4XEndpoint.createExchange();
-                        Map<String, Object> rsp = new HashMap<>();
-                        for (String field : response.getFieldNames()) {
-                            rsp.put(field, response.getObject(field));
-                        }
-                        exchange.getIn().setBody(rsp);
-                        getProcessor().process(exchange);
-                    } catch (Exception e) {
-                        getExceptionHandler().handleException(e);
-                    }
-                })
-            , 500, TimeUnit.MILLISECONDS);
+        future = executorService.schedule(() -> request.execute().thenAccept(response -> {
+            try {
+                Exchange exchange = plc4XEndpoint.createExchange();
+                Map<String, Object> rsp = new HashMap<>();
+                for (String field : response.getFieldNames()) {
+                    rsp.put(field, response.getObject(field));
+                }
+                exchange.getIn().setBody(rsp);
+                getProcessor().process(exchange);
+            } catch (Exception e) {
+                getExceptionHandler().handleException(e);
+            }
+        }), 500, TimeUnit.MILLISECONDS);
     }
 
     private void startTriggered() throws ScraperException {
@@ -141,7 +140,8 @@ public class Plc4XConsumer extends DefaultConsumer {
 
     private ScraperConfigurationTriggeredImpl getScraperConfig(Map<String, String> tagList) {
         String config = "(TRIGGER_VAR," + plc4XEndpoint.getPeriod() + ",(" + plc4XEndpoint.getTrigger() + ")==(true))";
-        List<JobConfigurationImpl> job = Collections.singletonList(new JobConfigurationImpl("PLC4X-Camel", config, 0, Collections.singletonList(Constants.PLC_NAME), tagList));
+        List<JobConfigurationImpl> job = Collections.singletonList(
+                new JobConfigurationImpl("PLC4X-Camel", config, 0, Collections.singletonList(Constants.PLC_NAME), tagList));
         Map<String, String> source = Collections.singletonMap(Constants.PLC_NAME, plc4XEndpoint.getUri());
         return new ScraperConfigurationTriggeredImpl(source, job);
     }

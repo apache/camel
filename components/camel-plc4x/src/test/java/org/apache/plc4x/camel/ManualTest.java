@@ -16,11 +16,11 @@
  */
 package org.apache.plc4x.camel;
 
+import java.util.Date;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.main.Main;
 import org.apache.camel.main.MainListenerSupport;
-
-import java.util.Date;
 
 public class ManualTest {
 
@@ -51,9 +51,9 @@ public class ManualTest {
         @Override
         public void configure() {
             from("plc4x:ads:tcp://10.10.64.40/10.10.64.40.1.1:851/192.168.113.3.1.1:30000?dataType=java.lang.Integer&address=Allgemein_S2.Station")
-                .process(exchange -> System.out.println("Invoked timer at " + new Date()))
-                .bean("foo")
-                .log("Received ${body}");
+                    .process(exchange -> System.out.println("Invoked timer at " + new Date()))
+                    .bean("foo")
+                    .log("Received ${body}");
         }
     }
 
@@ -64,8 +64,6 @@ public class ManualTest {
     }
 
     public static class Events extends MainListenerSupport {
-
-
 
     }
 }

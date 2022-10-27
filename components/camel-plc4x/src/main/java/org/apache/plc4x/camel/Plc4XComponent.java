@@ -16,15 +16,18 @@
  */
 package org.apache.plc4x.camel;
 
+import java.util.Map;
+
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.PropertiesHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
-
+@Component("plc4x")
 public class Plc4XComponent extends DefaultComponent {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(Plc4XComponent.class);
 
     @Override

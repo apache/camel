@@ -16,18 +16,18 @@
  */
 package org.apache.plc4x.camel;
 
+import java.lang.reflect.Field;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.messages.PlcWriteRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.lang.reflect.Field;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.mockito.Mockito.*;
 
@@ -46,17 +46,17 @@ public class Plc4XProducerTest {
         when(mockConnection.getMetadata().canRead()).thenReturn(true);
         when(mockConnection.getMetadata().canWrite()).thenReturn(true);
         when(mockConnection.writeRequestBuilder())
-            .thenReturn(mock(PlcWriteRequest.Builder.class, RETURNS_DEEP_STUBS));
+                .thenReturn(mock(PlcWriteRequest.Builder.class, RETURNS_DEEP_STUBS));
 
         when(endpointMock.getConnection()).thenReturn(mockConnection);
         sut = new Plc4XProducer(endpointMock);
         testExchange = mock(Exchange.class, RETURNS_DEEP_STUBS);
-        Map<String, Map<String,Object>> tags = new HashMap();
-        tags.put("test1", Collections.singletonMap("testAddress1",0));
-        tags.put("test1", Collections.singletonMap("testAddress2",true));
-        tags.put("test1", Collections.singletonMap("testAddress3","TestString"));
+        Map<String, Map<String, Object>> tags = new HashMap();
+        tags.put("test1", Collections.singletonMap("testAddress1", 0));
+        tags.put("test1", Collections.singletonMap("testAddress2", true));
+        tags.put("test1", Collections.singletonMap("testAddress3", "TestString"));
         when(testExchange.getIn().getBody())
-            .thenReturn(tags);
+                .thenReturn(tags);
     }
 
     @Test
