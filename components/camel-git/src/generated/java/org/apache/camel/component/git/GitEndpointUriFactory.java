@@ -21,7 +21,7 @@ public class GitEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(14);
+        Set<String> props = new HashSet<>(15);
         props.add("allowEmpty");
         props.add("branchName");
         props.add("bridgeErrorHandler");
@@ -34,6 +34,7 @@ public class GitEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("remoteName");
         props.add("remotePath");
         props.add("tagName");
+        props.add("targetBranchName");
         props.add("type");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
