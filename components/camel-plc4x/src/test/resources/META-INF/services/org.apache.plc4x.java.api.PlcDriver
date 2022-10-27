@@ -14,4 +14,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-org.apache.plc4x.camel.MockDriver
+org.apache.camel.component.plc4x.MockDriver
