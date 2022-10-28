@@ -328,6 +328,22 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     @Override
+    public RouteConfigurationDefinition getRouteConfigurationDefinition(String id) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
+        return model.getRouteConfigurationDefinition(id);
+    }
+
+    @Override
+    public void removeRouteConfiguration(RouteConfigurationDefinition routeConfigurationDefinition) throws Exception {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
+        model.removeRouteConfiguration(routeConfigurationDefinition);
+    }
+
+    @Override
     public List<RouteDefinition> getRouteDefinitions() {
         if (model == null && isLightweight()) {
             throw new IllegalStateException("Access to model not supported in lightweight mode");

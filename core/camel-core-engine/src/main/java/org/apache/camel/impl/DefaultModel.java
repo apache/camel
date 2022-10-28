@@ -159,6 +159,23 @@ public class DefaultModel implements Model {
     }
 
     @Override
+    public synchronized RouteConfigurationDefinition getRouteConfigurationDefinition(String id) {
+        for (RouteConfigurationDefinition def : routesConfigurations) {
+            if (def.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory()).equals(id)) {
+                return def;
+            }
+        }
+        // you can have a global route configuration that has no ID assigned
+        return routesConfigurations.stream().filter(c -> c.getId() == null).findFirst().orElse(null);
+    }
+
+    @Override
+    public void removeRouteConfiguration(RouteConfigurationDefinition routeConfigurationDefinition) throws Exception {
+        RouteConfigurationDefinition toBeRemoved = getRouteConfigurationDefinition(routeConfigurationDefinition.getId());
+        this.routesConfigurations.remove(toBeRemoved);
+    }
+
+    @Override
     public synchronized void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
         if (routeDefinitions == null || routeDefinitions.isEmpty()) {
             return;

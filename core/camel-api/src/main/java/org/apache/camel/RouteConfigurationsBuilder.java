@@ -29,4 +29,12 @@ public interface RouteConfigurationsBuilder {
      */
     void addRouteConfigurationsToCamelContext(CamelContext context) throws Exception;
 
+    /**
+     * Adds or updates the route configurations from this builder to the CamelContext.
+     *
+     * @param  context   the Camel context
+     * @throws Exception is thrown if initialization of route configurations failed
+     */
+    void updateRouteConfigurationsToCamelContext(CamelContext context) throws Exception;
+
 }
