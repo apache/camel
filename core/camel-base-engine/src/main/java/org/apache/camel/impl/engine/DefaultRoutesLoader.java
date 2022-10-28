@@ -28,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.RouteConfigurationsBuilder;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.ExtendedRoutesBuilderLoader;
@@ -177,6 +178,14 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
     public Set<String> updateRoutes(Collection<Resource> resources) throws Exception {
         Set<String> answer = new LinkedHashSet<>();
         Collection<RoutesBuilder> builders = findRoutesBuilders(resources);
+
+        for (RoutesBuilder builder : builders) {
+            // update any existing route configurations first
+            if (builder instanceof RouteConfigurationsBuilder) {
+                RouteConfigurationsBuilder rcb = (RouteConfigurationsBuilder) builder;
+                rcb.updateRouteConfigurationsToCamelContext(getCamelContext());
+            }
+        }
 
         for (RoutesBuilder builder : builders) {
             // update any existing routes

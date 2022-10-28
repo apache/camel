@@ -72,6 +72,22 @@ public interface Model {
     List<RouteConfigurationDefinition> getRouteConfigurationDefinitions();
 
     /**
+     * Removes a route configuration from the context
+     *
+     * @param  routeConfigurationDefinition route configuration to remove
+     * @throws Exception                    if the route configuration could not be removed for whatever reason
+     */
+    void removeRouteConfiguration(RouteConfigurationDefinition routeConfigurationDefinition) throws Exception;
+
+    /**
+     * Gets the route configuration definition with the given id
+     *
+     * @param  id id of the route configuration
+     * @return    the route configuration definition or <tt>null</tt> if not found
+     */
+    RouteConfigurationDefinition getRouteConfigurationDefinition(String id);
+
+    /**
      * Returns a list of the current route definitions
      *
      * @return list of the current route definitions

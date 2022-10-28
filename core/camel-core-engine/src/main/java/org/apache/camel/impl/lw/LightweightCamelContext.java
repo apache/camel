@@ -1876,6 +1876,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public void removeRouteConfiguration(RouteConfigurationDefinition routeConfigurationDefinition) throws Exception {
+        getModelCamelContext().removeRouteConfiguration(routeConfigurationDefinition);
+    }
+
+    @Override
+    public RouteConfigurationDefinition getRouteConfigurationDefinition(String id) {
+        return getModelCamelContext().getRouteConfigurationDefinition(id);
+    }
+
+    @Override
     public List<RouteDefinition> getRouteDefinitions() {
         return getModelCamelContext().getRouteDefinitions();
     }
