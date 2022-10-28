@@ -22,11 +22,11 @@ import java.util.Map;
  * {@link ClassLoader} that loads byte code from a byte array.
  */
 final class ByteArrayClassLoader extends ClassLoader {
+
     private final Map<String, byte[]> classes;
 
     public ByteArrayClassLoader(Map<String, byte[]> classes) {
         super(ByteArrayClassLoader.class.getClassLoader());
-
         this.classes = classes;
     }
 
