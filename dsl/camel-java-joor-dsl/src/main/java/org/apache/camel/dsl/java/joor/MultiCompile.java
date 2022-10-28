@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringJoiner;
-import java.util.stream.Collectors;
 
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
@@ -69,8 +68,8 @@ public final class MultiCompile {
     /**
      * Compiles multiple files as one unit
      *
-     * @param unit the files to compile in the same unit
-     * @return the compilation result
+     * @param  unit the files to compile in the same unit
+     * @return      the compilation result
      */
     public static CompilationUnit.Result compileUnit(CompilationUnit unit) {
         CompilationUnit.Result result = CompilationUnit.result();
@@ -137,7 +136,8 @@ public final class MultiCompile {
                 } else {
                     // grab detailed error so we can see compilation errors
                     StringJoiner sj = new StringJoiner("\n");
-                    dc.getDiagnostics().stream().filter(d -> Diagnostic.Kind.ERROR.equals(d.getKind())).forEach(d -> sj.add(d.toString()));
+                    dc.getDiagnostics().stream().filter(d -> Diagnostic.Kind.ERROR.equals(d.getKind()))
+                            .forEach(d -> sj.add(d.toString()));
                     throw new ReflectException("Compilation error:\n" + sj + "\n" + out);
                 }
             }
@@ -146,6 +146,7 @@ public final class MultiCompile {
             // We need a private-access lookup from the class in that stack frame in order to get
             // private-access to any local interfaces at that location.
             int index = 2;
+            ByteArrayClassLoader c = new ByteArrayClassLoader(fileManager.classes());
             for (CharSequenceJavaFileObject f : files) {
                 String className = f.getClassName();
 
@@ -177,7 +178,6 @@ public final class MultiCompile {
                 } else {
                     // Otherwise, use an arbitrary class loader. This approach doesn't allow for
                     // loading private-access interfaces in the compiled class's type hierarchy
-                    ByteArrayClassLoader c = new ByteArrayClassLoader(fileManager.classes());
                     final Map<String, byte[]> byteCodes = new HashMap<>();
                     Class<?> clazz = fileManager.loadAndReturnMainClass(className,
                             (name, bytes) -> {
