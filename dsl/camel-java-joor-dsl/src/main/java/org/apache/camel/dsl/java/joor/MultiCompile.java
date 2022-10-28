@@ -35,11 +35,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
+import javax.tools.Diagnostic;
+import javax.tools.DiagnosticCollector;
 import javax.tools.FileObject;
 import javax.tools.ForwardingJavaFileManager;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaCompiler.CompilationTask;
+import javax.tools.JavaFileObject;
 import javax.tools.SimpleJavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
@@ -64,8 +69,8 @@ public final class MultiCompile {
     /**
      * Compiles multiple files as one unit
      *
-     * @param  unit the files to compile in the same unit
-     * @return      the compilation result
+     * @param unit the files to compile in the same unit
+     * @return the compilation result
      */
     public static CompilationUnit.Result compileUnit(CompilationUnit unit) {
         CompilationUnit.Result result = CompilationUnit.result();
@@ -122,12 +127,19 @@ public final class MultiCompile {
                 options.addAll(Arrays.asList("-classpath", classpath.toString()));
             }
 
-            CompilationTask task = compiler.getTask(out, fileManager, null, options, null, files);
+            DiagnosticCollector<javax.tools.JavaFileObject> dc = new DiagnosticCollector<>();
+            CompilationTask task = compiler.getTask(out, fileManager, dc, options, null, files);
 
-            task.call();
-
-            if (fileManager.isEmpty()) {
-                throw new ReflectException("Compilation error: " + out);
+            boolean success = task.call();
+            if (!success || fileManager.isEmpty()) {
+                if (dc.getDiagnostics().isEmpty()) {
+                    throw new ReflectException("Compilation error:\n" + out);
+                } else {
+                    // grab detailed error so we can see compilation errors
+                    StringJoiner sj = new StringJoiner("\n");
+                    dc.getDiagnostics().stream().filter(d -> Diagnostic.Kind.ERROR.equals(d.getKind())).forEach(d -> sj.add(d.toString()));
+                    throw new ReflectException("Compilation error:\n" + sj + "\n" + out);
+                }
             }
 
             // This method is called by client code from two levels up the current stack frame
