@@ -24,6 +24,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.RepositoryFactory;
 import org.apache.camel.component.git.GitConstants;
 import org.apache.camel.component.git.GitEndpoint;
 import org.apache.camel.support.DefaultProducer;
@@ -46,7 +47,6 @@ import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.RemoteConfig;
 import org.eclipse.jgit.transport.URIish;
@@ -658,17 +658,8 @@ public class GitProducer extends DefaultProducer {
         updateExchange(exchange, result);
     }
 
-    private Repository getLocalRepository() throws IOException {
-        FileRepositoryBuilder builder = new FileRepositoryBuilder();
-        try {
-            // scan environment GIT_* variables
-            return builder.setGitDir(new File(endpoint.getLocalPath(), ".git")).readEnvironment()
-                    .findGitDir() // scan up the file system tree
-                    .build();
-        } catch (IOException e) {
-            LOG.error("There was an error, cannot open {} repository", endpoint.getLocalPath());
-            throw e;
-        }
+    private Repository getLocalRepository() {
+        return RepositoryFactory.of(endpoint);
     }
 
     private void updateExchange(Exchange exchange, Object body) {

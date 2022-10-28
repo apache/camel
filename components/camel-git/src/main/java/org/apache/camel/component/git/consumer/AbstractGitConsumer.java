@@ -16,15 +16,12 @@
  */
 package org.apache.camel.component.git.consumer;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.apache.camel.Processor;
+import org.apache.camel.component.RepositoryFactory;
 import org.apache.camel.component.git.GitEndpoint;
 import org.apache.camel.support.ScheduledPollConsumer;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,20 +54,11 @@ public abstract class AbstractGitConsumer extends ScheduledPollConsumer {
         git.close();
     }
 
-    private Repository getLocalRepository() throws IOException {
-        FileRepositoryBuilder builder = new FileRepositoryBuilder();
-        try {
-            // scan environment GIT_* variables
-            return builder.setGitDir(new File(endpoint.getLocalPath(), ".git")).readEnvironment()
-                    .findGitDir() // scan up the file system tree
-                    .build();
-        } catch (IOException e) {
-            LOG.error("There was an error, cannot open {} repository", endpoint.getLocalPath());
-            throw e;
-        }
+    private Repository getLocalRepository() {
+        return RepositoryFactory.of(endpoint);
     }
 
-    protected Repository getRepository() {
+    public Repository getRepository() {
         return repo;
     }
 
