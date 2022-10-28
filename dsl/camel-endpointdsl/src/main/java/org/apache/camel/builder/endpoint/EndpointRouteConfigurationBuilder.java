@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder.endpoint;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
@@ -77,6 +78,23 @@ public abstract class EndpointRouteConfigurationBuilder extends EndpointRouteBui
             configuration();
         }
         populateRoutesConfiguration();
+    }
+
+    @Override
+    public void updateRouteConfigurationsToCamelContext(CamelContext context) throws Exception {
+        setCamelContext(context);
+        routeConfigurationCollection.setCamelContext(context);
+        if (initializedConfiguration.compareAndSet(false, true)) {
+            configuration();
+        }
+        List<RouteConfigurationDefinition> list = getRouteConfigurationCollection().getRouteConfigurations();
+        if (!list.isEmpty()) {
+            // remove existing before updating
+            for (RouteConfigurationDefinition def : list) {
+                context.getExtension(Model.class).removeRouteConfiguration(def);
+            }
+            populateRoutesConfiguration();
+        }
     }
 
     protected void populateRoutesConfiguration() throws Exception {
