@@ -205,6 +205,21 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
         return config.getBulkheadWaitingTaskQueue();
     }
 
+    @ManagedAttribute(description = "Returns the current state of the circuit breaker")
+    public String getCircuitBreakerState() {
+        if (circuitBreaker != null) {
+            int state = circuitBreaker.currentState();
+            if (state == 2) {
+                return "HALF_OPEN";
+            } else if (state == 1) {
+                return "OPEN";
+            } else {
+                return "CLOSED";
+            }
+        }
+        return null;
+    }
+
     @Override
     public List<Processor> next() {
         if (!hasNext()) {

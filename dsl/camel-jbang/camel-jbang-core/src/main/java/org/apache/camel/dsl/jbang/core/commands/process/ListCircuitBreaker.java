@@ -91,6 +91,21 @@ public class ListCircuitBreaker extends ProcessBaseCommand {
                                 }
                             }
                         }
+                        mo = (JsonObject) root.get("fault-tolerance");
+                        if (mo != null) {
+                            JsonArray arr = (JsonArray) mo.get("circuitBreakers");
+                            if (arr != null) {
+                                for (int i = 0; i < arr.size(); i++) {
+                                    row = baseRow.copy();
+                                    JsonObject jo = (JsonObject) arr.get(i);
+                                    row.component = "camel-microprofile-fault-tolerance";
+                                    row.id = jo.getString("id");
+                                    row.routeId = jo.getString("routeId");
+                                    row.state = jo.getString("state");
+                                    rows.add(row);
+                                }
+                            }
+                        }
                     }
                 });
 
@@ -107,13 +122,13 @@ public class ListCircuitBreaker extends ProcessBaseCommand {
                     new Column().header("ID").dataAlign(HorizontalAlign.LEFT).with(r -> r.id),
                     new Column().header("STATE").dataAlign(HorizontalAlign.LEFT).with(r -> r.state),
                     new Column().header("PENDING").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
-                            .with(r -> "" + r.bufferedCalls),
+                            .with(this::getPending),
                     new Column().header("SUCCESS").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
-                            .with(r -> "" + r.successfulCalls),
+                            .with(this::getSuccess),
                     new Column().header("FAIL").headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT)
                             .with(this::getFailure),
                     new Column().header("REJECT").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
-                            .with(r -> "" + r.notPermittedCalls))));
+                            .with(this::getReject))));
         }
 
         return 0;
@@ -146,6 +161,27 @@ public class ListCircuitBreaker extends ProcessBaseCommand {
         } else {
             return "" + r.failedCalls;
         }
+    }
+
+    private String getPending(Row r) {
+        if ("camel-resilience4j".equals(r.component)) {
+            return "" + r.bufferedCalls;
+        }
+        return "";
+    }
+
+    private String getSuccess(Row r) {
+        if ("camel-resilience4j".equals(r.component)) {
+            return "" + r.successfulCalls;
+        }
+        return "";
+    }
+
+    private String getReject(Row r) {
+        if ("camel-resilience4j".equals(r.component)) {
+            return "" + r.notPermittedCalls;
+        }
+        return "";
     }
 
     private static class Row implements Cloneable {

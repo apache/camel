@@ -412,6 +412,13 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                         root.put("resilience4j", json);
                     }
                 }
+                DevConsole dc11 = dcr.resolveById("fault-tolerance");
+                if (dc11 != null) {
+                    JsonObject json = (JsonObject) dc11.call(DevConsole.MediaType.JSON);
+                    if (json != null && !json.isEmpty()) {
+                        root.put("fault-tolerance", json);
+                    }
+                }
             }
             // various details
             JsonObject services = collectServices();
