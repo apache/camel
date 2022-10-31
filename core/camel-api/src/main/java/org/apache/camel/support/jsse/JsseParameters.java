@@ -16,11 +16,8 @@
  */
 package org.apache.camel.support.jsse;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,15 +28,12 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceLoader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Base class that provides optional integration with core Camel capabilities.
  */
 public class JsseParameters implements CamelContextAware {
-
-    private static final Logger LOG = LoggerFactory.getLogger(JsseParameters.class);
 
     private CamelContext context;
 
@@ -119,6 +113,8 @@ public class JsseParameters implements CamelContextAware {
      * @throws IOException if the resource cannot be resolved using any of the above methods
      */
     protected InputStream resolveResource(String resource) throws IOException {
+        ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
+
         Resource res = getCamelContext().adapt(ExtendedCamelContext.class).getResourceLoader().resolveResource(resource);
         if (res == null) {
             throw new IOException("Could not open " + resource + " as a file, class path resource, or URL.");
