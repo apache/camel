@@ -43,13 +43,13 @@ public class Plc4XEndpoint extends DefaultEndpoint {
     @Metadata(required = true, description = "PLC4X connection string for the connection to the target")
     private String driver;
     @UriParam
-    @Metadata(description = "PLC4X field addresses for the tags being read (Format is dependent on the used driver)")
+    @Metadata(description = "The tags to read as Map<String,String> containing the tag name associated to its query")
     private Map<String, Object> tags;
     @UriParam
-    @Metadata(description = "TODO: Add a short description here")
+    @Metadata(description = "(Consumer) Query to a trigger. On a rising edge of the trigger, the tags will be read once")
     private String trigger;
     @UriParam
-    @Metadata(description = "TODO: Add a short description here")
+    @Metadata(description = "(Consumer) Interval on which the Trigger should be checked")
     private int period;
 
     public int getPeriod() {
