@@ -211,10 +211,14 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     }
 
     /**
-     * Controls the behaviour of the CamelDataSetIndex header. For Consumers: - off => the header will not be set -
-     * strict/lenient => the header will be set For Producers: - off => the header value will not be verified, and will
-     * not be set if it is not present = strict => the header value must be present and will be verified = lenient =>
-     * the header value will be verified if it is present, and will be set if it is not present
+     * Controls the behaviour of the CamelDataSetIndex header.
+     *
+     * off (consumer) the header will not be set.
+     * strict (consumer) the header will be set.
+     * lenient (consumer) the header will be set.
+     * off (producer) the header value will not be verified, and will not be set if it is not present.
+     * strict (producer) the header value must be present and will be verified.
+     * lenient (producer) the header value will be verified if it is present, and will be set if it is not present.
      */
     public void setDataSetIndex(String dataSetIndex) {
         switch (dataSetIndex) {
