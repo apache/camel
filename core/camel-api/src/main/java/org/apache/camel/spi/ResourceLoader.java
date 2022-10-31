@@ -22,6 +22,7 @@ import org.apache.camel.CamelContextAware;
  * SPI for loading resources.
  */
 public interface ResourceLoader extends CamelContextAware {
+
     /**
      * Service factory key.
      */
