@@ -24,7 +24,8 @@ configure what you need the endpoint to do. The options are also categorized int
 or as a producer (to), or used for both.
 
 Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
-the xref:manual::Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
+the xref:manual::Endpoint-dsl.adoc[Endpoint DSL] and xref:manual::dataformat-dsl.adoc[DataFormat DSL]
+as a _type safe_ way of configuring endpoints and data formats in Java.
 
 A good practice when configuring options is to use xref:manual::using-propertyplaceholder.adoc[Property Placeholders],
 which allows to not hardcode urls, port numbers, sensitive information, and other settings.

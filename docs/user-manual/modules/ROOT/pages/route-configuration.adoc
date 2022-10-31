@@ -258,18 +258,19 @@ And in the YAML routes you can assign which configurations to use:
 - route:
     # refer to the route configuration by the id to use for this route
     route-configuration-id: "yamlError"
-    from: "timer:yaml?period=3s"
-    steps:
-      - set-body:
-          simple: "Timer fired ${header.CamelTimerCounter} times"
-      - to:
-          uri: "log:yaml"
-          parameters:
-            show-body-type: false
-            show-exchange-pattern: false
-      - throw-exception:
-          exception-type: "java.lang.IllegalArgumentException"
-          message: "Error from yaml"
+    from:
+      uri: "timer:yaml?period=3s"
+      steps:
+        - set-body:
+            simple: "Timer fired ${header.CamelTimerCounter} times"
+        - to:
+            uri: "log:yaml"
+            parameters:
+              show-body-type: false
+              show-exchange-pattern: false
+        - throw-exception:
+            exception-type: "java.lang.IllegalArgumentException"
+            message: "Error from yaml"
 ----
 
 In this example the route is assigned the _yamlError_ route configuration by the exact ID.

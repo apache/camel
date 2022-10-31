@@ -50,10 +50,12 @@ public class Sqs2ConsumerHealthCheck extends AbstractHealthCheck {
 
         try {
             Sqs2Configuration configuration = sqs2Consumer.getConfiguration();
-            if (!SqsClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
-                builder.message("The service is not supported in this region");
-                builder.down();
-                return;
+            if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+                if (!SqsClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
+                    builder.message("The service is not supported in this region");
+                    builder.down();
+                    return;
+                }
             }
             SqsClient client;
             if (!configuration.isUseDefaultCredentialsProvider()) {

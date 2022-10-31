@@ -24,4 +24,4 @@ to learn more about configuring endpoints. For
 example how to refer to beans in the xref:registry.adoc[registry] or how
 to use raw values for password options, and using
 xref:using-propertyplaceholder.adoc[property placeholders], or how to use
-the type safe xref:Endpoint-dsl.adoc[Endpoint DSL].
+the type safe xref:Endpoint-dsl.adoc[Endpoint DSL] and xref:dataformat-dsl.adoc[DataFormat DSL].
