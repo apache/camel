@@ -27,6 +27,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.main.download.AutoConfigureDownloadListener;
+import org.apache.camel.main.download.CircuitBreakerDownloader;
 import org.apache.camel.main.download.CommandLineDependencyDownloader;
 import org.apache.camel.main.download.DependencyDownloaderClassLoader;
 import org.apache.camel.main.download.DependencyDownloaderClassResolver;
@@ -289,6 +290,9 @@ public class KameletMain extends MainCommandLineSupport {
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeException(e);
             }
+
+            // in case we use circuit breakers
+            CircuitBreakerDownloader.registerDownloadReifiers();
         }
         if (stub) {
             // turn off auto-wiring when running in stub mode
