@@ -15,8 +15,9 @@
 *{component-header}*
 
 Testing of distributed and asynchronous processing is
-notoriously difficult. The xref:mock-component.adoc[Mock], xref:mock-component.adoc[Test]
-and xref:dataset-component.adoc[DataSet] endpoints work great with the
+notoriously difficult. The xref:mock-component.adoc[Mock],
+xref:dataset-component.adoc[DataSet], and xref:dataset-test-component.adoc[DataSet Test]
+endpoints work great with the
 Camel Testing Framework to simplify your unit and
 integration testing using
 xref:eips:enterprise-integration-patterns.adoc[Enterprise Integration
@@ -147,8 +148,6 @@ configure the `SimpleDataSet` to use it by setting the
 
 == ListDataSet
 
-*Available since Camel 2.17*
-
 The List`DataSet` extends `DataSetSupport`, and adds a list of default
 bodies.
 
@@ -174,8 +173,6 @@ the payload for the exchange will be selected using the modulus of the
 |===
 
 == FileDataSet
-
-*Available since Camel 2.17*
 
 The `FileDataSet` extends `ListDataSet`, and adds support for loading
 the bodies from a file.
