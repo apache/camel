@@ -398,6 +398,13 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                         root.put("blocked", json);
                     }
                 }
+                DevConsole dc9 = dcr.resolveById("micrometer");
+                if (dc9 != null) {
+                    JsonObject json = (JsonObject) dc9.call(DevConsole.MediaType.JSON);
+                    if (json != null && !json.isEmpty()) {
+                        root.put("micrometer", json);
+                    }
+                }
             }
             // various details
             JsonObject services = collectServices();
