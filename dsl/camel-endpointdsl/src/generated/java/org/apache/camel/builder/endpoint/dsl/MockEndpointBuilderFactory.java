@@ -45,8 +45,8 @@ public interface MockEndpointBuilderFactory {
          * Sets a grace period after which the mock endpoint will re-assert to
          * ensure the preliminary assertion is still valid. This is used for
          * example to assert that exactly a number of messages arrives. For
-         * example if expectedMessageCount(int) was set to 5, then the assertion
-         * is satisfied when 5 or more message arrives. To ensure that exactly 5
+         * example if expected count was set to 5, then the assertion is
+         * satisfied when 5 or more message arrives. To ensure that exactly 5
          * messages arrives, then you would need to wait a little period to
          * ensure no further message arrives. This is what you can use this
          * method for. By default this period is disabled.
@@ -66,8 +66,8 @@ public interface MockEndpointBuilderFactory {
          * Sets a grace period after which the mock endpoint will re-assert to
          * ensure the preliminary assertion is still valid. This is used for
          * example to assert that exactly a number of messages arrives. For
-         * example if expectedMessageCount(int) was set to 5, then the assertion
-         * is satisfied when 5 or more message arrives. To ensure that exactly 5
+         * example if expected count was set to 5, then the assertion is
+         * satisfied when 5 or more message arrives. To ensure that exactly 5
          * messages arrives, then you would need to wait a little period to
          * ensure no further message arrives. This is what you can use this
          * method for. By default this period is disabled.
