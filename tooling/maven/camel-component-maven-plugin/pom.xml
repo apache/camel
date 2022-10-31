@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>maven-plugins</artifactId>
-        <version>3.14.6-SNAPSHOT</version>
+        <version>3.14.6</version>
     </parent>
 
     <artifactId>camel-component-maven-plugin</artifactId>
