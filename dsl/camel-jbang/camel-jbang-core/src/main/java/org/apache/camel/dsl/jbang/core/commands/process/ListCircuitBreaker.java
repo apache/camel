@@ -106,7 +106,7 @@ public class ListCircuitBreaker extends ProcessBaseCommand {
                     new Column().header("ROUTE").dataAlign(HorizontalAlign.LEFT).with(r -> r.routeId),
                     new Column().header("ID").dataAlign(HorizontalAlign.LEFT).with(r -> r.id),
                     new Column().header("STATE").dataAlign(HorizontalAlign.LEFT).with(r -> r.state),
-                    new Column().header("BUFFER").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
+                    new Column().header("PENDING").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
                             .with(r -> "" + r.bufferedCalls),
                     new Column().header("SUCCESS").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
                             .with(r -> "" + r.successfulCalls),
