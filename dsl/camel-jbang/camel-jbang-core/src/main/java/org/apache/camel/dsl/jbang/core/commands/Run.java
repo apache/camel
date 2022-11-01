@@ -132,9 +132,6 @@ class Run extends CamelCommand {
     @Option(names = { "--logging-json" }, description = "Use JSON logging (ECS Layout)")
     boolean loggingJson;
 
-    @Option(names = { "--stop" }, description = "Stop all running instances of Camel JBang")
-    boolean stopRequested;
-
     @Option(names = { "--max-messages" }, defaultValue = "0", description = "Max number of messages to process before stopping")
     int maxMessages;
 
@@ -198,12 +195,7 @@ class Run extends CamelCommand {
 
     @Override
     public Integer call() throws Exception {
-        if (stopRequested) {
-            stop();
-            return 0;
-        } else {
-            return run();
-        }
+        return run();
     }
 
     protected Integer runSilent() throws Exception {
