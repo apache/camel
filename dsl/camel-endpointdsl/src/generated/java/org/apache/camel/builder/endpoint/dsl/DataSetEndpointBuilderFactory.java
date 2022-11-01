@@ -44,13 +44,14 @@ public interface DataSetEndpointBuilderFactory {
             return (AdvancedDataSetEndpointConsumerBuilder) this;
         }
         /**
-         * Controls the behaviour of the CamelDataSetIndex header. For
-         * Consumers: - off = the header will not be set - strict/lenient = the
-         * header will be set For Producers: - off = the header value will not
-         * be verified, and will not be set if it is not present = strict = the
-         * header value must be present and will be verified = lenient = the
-         * header value will be verified if it is present, and will be set if it
-         * is not present.
+         * Controls the behaviour of the CamelDataSetIndex header. off
+         * (consumer) the header will not be set. strict (consumer) the header
+         * will be set. lenient (consumer) the header will be set. off
+         * (producer) the header value will not be verified, and will not be set
+         * if it is not present. strict (producer) the header value must be
+         * present and will be verified. lenient (producer) the header value
+         * will be verified if it is present, and will be set if it is not
+         * present.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -326,13 +327,14 @@ public interface DataSetEndpointBuilderFactory {
             return (AdvancedDataSetEndpointProducerBuilder) this;
         }
         /**
-         * Controls the behaviour of the CamelDataSetIndex header. For
-         * Consumers: - off = the header will not be set - strict/lenient = the
-         * header will be set For Producers: - off = the header value will not
-         * be verified, and will not be set if it is not present = strict = the
-         * header value must be present and will be verified = lenient = the
-         * header value will be verified if it is present, and will be set if it
-         * is not present.
+         * Controls the behaviour of the CamelDataSetIndex header. off
+         * (consumer) the header will not be set. strict (consumer) the header
+         * will be set. lenient (consumer) the header will be set. off
+         * (producer) the header value will not be verified, and will not be set
+         * if it is not present. strict (producer) the header value must be
+         * present and will be verified. lenient (producer) the header value
+         * will be verified if it is present, and will be set if it is not
+         * present.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -350,8 +352,8 @@ public interface DataSetEndpointBuilderFactory {
          * Sets a grace period after which the mock endpoint will re-assert to
          * ensure the preliminary assertion is still valid. This is used for
          * example to assert that exactly a number of messages arrives. For
-         * example if expectedMessageCount(int) was set to 5, then the assertion
-         * is satisfied when 5 or more message arrives. To ensure that exactly 5
+         * example if expected count was set to 5, then the assertion is
+         * satisfied when 5 or more message arrives. To ensure that exactly 5
          * messages arrives, then you would need to wait a little period to
          * ensure no further message arrives. This is what you can use this
          * method for. By default this period is disabled.
@@ -371,8 +373,8 @@ public interface DataSetEndpointBuilderFactory {
          * Sets a grace period after which the mock endpoint will re-assert to
          * ensure the preliminary assertion is still valid. This is used for
          * example to assert that exactly a number of messages arrives. For
-         * example if expectedMessageCount(int) was set to 5, then the assertion
-         * is satisfied when 5 or more message arrives. To ensure that exactly 5
+         * example if expected count was set to 5, then the assertion is
+         * satisfied when 5 or more message arrives. To ensure that exactly 5
          * messages arrives, then you would need to wait a little period to
          * ensure no further message arrives. This is what you can use this
          * method for. By default this period is disabled.
@@ -895,13 +897,14 @@ public interface DataSetEndpointBuilderFactory {
             return (AdvancedDataSetEndpointBuilder) this;
         }
         /**
-         * Controls the behaviour of the CamelDataSetIndex header. For
-         * Consumers: - off = the header will not be set - strict/lenient = the
-         * header will be set For Producers: - off = the header value will not
-         * be verified, and will not be set if it is not present = strict = the
-         * header value must be present and will be verified = lenient = the
-         * header value will be verified if it is present, and will be set if it
-         * is not present.
+         * Controls the behaviour of the CamelDataSetIndex header. off
+         * (consumer) the header will not be set. strict (consumer) the header
+         * will be set. lenient (consumer) the header will be set. off
+         * (producer) the header value will not be verified, and will not be set
+         * if it is not present. strict (producer) the header value must be
+         * present and will be verified. lenient (producer) the header value
+         * will be verified if it is present, and will be set if it is not
+         * present.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
