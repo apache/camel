@@ -820,6 +820,22 @@ And finally the integration comes with embedded web console (started with the `-
 
 NOTE: For a service to be listed then Camel components must be able to advertise the services using xref:camel-console.adoc[].
 
+==== Listing state of Circuit Breakers
+
+If your Camel integration uses xref:components:eips:circuitBreaker-eip.adoc[Circuit Breaker] then
+you can output the status of the breakers with Camel JBang as follows:
+
+[source,bash]
+----
+camel get circuit-breaker
+  PID   NAME  COMPONENT     ROUTE   ID               STATE      PENDING  SUCCESS  FAIL  REJECT
+ 56033  mycb  resilience4j  route1  circuitBreaker1  HALF_OPEN        5        2     3       0
+----
+
+Here we can see the circuit breaker is in _half open_ state, i.e. a state where the breaker is attempting
+to transition back to closed, if the failures start to drop.
+
+TIP: You can run the command with watch to keep showing the latest state `watch camel get circuit-breaker`.
 
 === Using Jolokia and Hawtio
 

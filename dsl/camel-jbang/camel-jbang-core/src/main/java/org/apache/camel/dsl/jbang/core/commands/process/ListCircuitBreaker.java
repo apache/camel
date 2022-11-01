@@ -78,7 +78,7 @@ public class ListCircuitBreaker extends ProcessBaseCommand {
                                 for (int i = 0; i < arr.size(); i++) {
                                     row = baseRow.copy();
                                     JsonObject jo = (JsonObject) arr.get(i);
-                                    row.component = "camel-resilience4j";
+                                    row.component = "resilience4j";
                                     row.id = jo.getString("id");
                                     row.routeId = jo.getString("routeId");
                                     row.state = jo.getString("state");
@@ -98,7 +98,7 @@ public class ListCircuitBreaker extends ProcessBaseCommand {
                                 for (int i = 0; i < arr.size(); i++) {
                                     row = baseRow.copy();
                                     JsonObject jo = (JsonObject) arr.get(i);
-                                    row.component = "camel-microprofile-fault-tolerance";
+                                    row.component = "fault-tolerance";
                                     row.id = jo.getString("id");
                                     row.routeId = jo.getString("routeId");
                                     row.state = jo.getString("state");
@@ -164,21 +164,21 @@ public class ListCircuitBreaker extends ProcessBaseCommand {
     }
 
     private String getPending(Row r) {
-        if ("camel-resilience4j".equals(r.component)) {
+        if ("resilience4j".equals(r.component)) {
             return "" + r.bufferedCalls;
         }
         return "";
     }
 
     private String getSuccess(Row r) {
-        if ("camel-resilience4j".equals(r.component)) {
+        if ("resilience4j".equals(r.component)) {
             return "" + r.successfulCalls;
         }
         return "";
     }
 
     private String getReject(Row r) {
-        if ("camel-resilience4j".equals(r.component)) {
+        if ("resilience4j".equals(r.component)) {
             return "" + r.notPermittedCalls;
         }
         return "";
