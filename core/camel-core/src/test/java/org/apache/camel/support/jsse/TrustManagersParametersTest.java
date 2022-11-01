@@ -25,6 +25,7 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,6 +34,7 @@ public class TrustManagersParametersTest extends AbstractJsseParametersTest {
 
     protected KeyStoreParameters createMinimalKeyStoreParameters() {
         KeyStoreParameters ksp = new KeyStoreParameters();
+        ksp.setCamelContext(new DefaultCamelContext());
 
         ksp.setResource("org/apache/camel/support/jsse/localhost.p12");
         ksp.setPassword("changeit");
@@ -42,8 +44,8 @@ public class TrustManagersParametersTest extends AbstractJsseParametersTest {
 
     protected TrustManagersParameters createMinimalTrustManagersParameters() {
         TrustManagersParameters tmp = new TrustManagersParameters();
+        tmp.setCamelContext(new DefaultCamelContext());
         tmp.setKeyStore(this.createMinimalKeyStoreParameters());
-
         return tmp;
     }
 
