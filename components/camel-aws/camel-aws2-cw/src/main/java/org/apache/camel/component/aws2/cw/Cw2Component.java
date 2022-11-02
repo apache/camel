@@ -39,7 +39,6 @@ public class Cw2Component extends DefaultComponent {
 
     public Cw2Component(CamelContext context) {
         super(context);
-        registerExtension(new Cw2ComponentVerifierExtension());
     }
 
     @Override
