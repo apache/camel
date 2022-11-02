@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.aws2.cw;
 
+import java.util.Map;
+
 import org.apache.camel.component.aws2.cw.client.Cw2ClientFactory;
 import org.apache.camel.component.aws2.cw.client.Cw2InternalClient;
 import org.apache.camel.health.HealthCheckResultBuilder;
@@ -26,8 +28,6 @@ import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 import software.amazon.awssdk.services.cloudwatch.model.ListDashboardsRequest;
-
-import java.util.Map;
 
 public class Cw2ClientHealthCheck extends AbstractHealthCheck {
 
