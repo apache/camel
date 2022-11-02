@@ -21,12 +21,15 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.resume.Deserializable;
 import org.apache.camel.resume.Offset;
 import org.apache.camel.resume.OffsetKey;
 import org.apache.camel.resume.Resumable;
 import org.apache.camel.resume.ResumeAdapter;
 import org.apache.camel.resume.ResumeStrategy;
+import org.apache.camel.resume.ResumeStrategyConfiguration;
+import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.resume.OffsetKeys;
 import org.apache.camel.support.resume.Offsets;
 import org.slf4j.Logger;
@@ -41,6 +44,7 @@ import org.slf4j.LoggerFactory;
  * Among other things, it implements data recovery on startup, so that records cached locally, are automatically
  * recovered
  */
+@JdkService("write-ahead-resume-strategy")
 public class WriteAheadResumeStrategy implements ResumeStrategy {
 
     /**
@@ -64,22 +68,25 @@ public class WriteAheadResumeStrategy implements ResumeStrategy {
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(WriteAheadResumeStrategy.class);
-    private final File logFile;
-    private final LogWriter logWriter;
-    private final ResumeStrategy resumeStrategy;
+    private File logFile;
+    private LogWriter logWriter;
+    private ResumeStrategy resumeStrategy;
+    private WriteAheadResumeStrategyConfiguration resumeStrategyConfiguration;
+
+    /**
+     * Creates a new write-ahead resume strategy
+     */
+    public WriteAheadResumeStrategy() {
+
+    }
 
     /**
      * Creates a new write-ahead resume strategy
      * 
-     * @param  resumeStrategyConfiguration the configuration to use for this strategy instance
-     * @throws IOException
+     * @param resumeStrategyConfiguration the configuration to use for this strategy instance
      */
-    public WriteAheadResumeStrategy(WriteAheadResumeStrategyConfiguration resumeStrategyConfiguration) throws IOException {
-        this.logFile = resumeStrategyConfiguration.getLogFile();
-        this.resumeStrategy = resumeStrategyConfiguration.getDelegateResumeStrategy();
-
-        DefaultLogSupervisor flushPolicy = new DefaultLogSupervisor(resumeStrategyConfiguration.getSupervisorInterval());
-        logWriter = new LogWriter(logFile, flushPolicy);
+    public WriteAheadResumeStrategy(WriteAheadResumeStrategyConfiguration resumeStrategyConfiguration) {
+        this.resumeStrategyConfiguration = resumeStrategyConfiguration;
     }
 
     @Override
@@ -294,6 +301,16 @@ public class WriteAheadResumeStrategy implements ResumeStrategy {
 
     @Override
     public void start() {
+        try {
+            this.logFile = resumeStrategyConfiguration.getLogFile();
+            this.resumeStrategy = resumeStrategyConfiguration.getDelegateResumeStrategy();
+
+            DefaultLogSupervisor flushPolicy = new DefaultLogSupervisor(resumeStrategyConfiguration.getSupervisorInterval());
+            logWriter = new LogWriter(logFile, flushPolicy);
+        } catch (Exception e) {
+            throw new RuntimeCamelException(e);
+        }
+
         resumeStrategy.start();
     }
 
@@ -306,5 +323,15 @@ public class WriteAheadResumeStrategy implements ResumeStrategy {
         LOG.trace("Closing the writer");
         logWriter.close();
         LOG.trace("Writer is closed");
+    }
+
+    @Override
+    public void setResumeStrategyConfiguration(ResumeStrategyConfiguration resumeStrategyConfiguration) {
+        this.resumeStrategyConfiguration = (WriteAheadResumeStrategyConfiguration) resumeStrategyConfiguration;
+    }
+
+    @Override
+    public ResumeStrategyConfiguration getResumeStrategyConfiguration() {
+        return resumeStrategyConfiguration;
     }
 }

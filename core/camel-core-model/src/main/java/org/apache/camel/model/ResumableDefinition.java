@@ -23,6 +23,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.resume.ResumeStrategy;
+import org.apache.camel.resume.ResumeStrategyConfiguration;
+import org.apache.camel.resume.ResumeStrategyConfigurationBuilder;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -47,6 +49,9 @@ public class ResumableDefinition extends NoOutputDefinition<ResumableDefinition>
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String intermittent;
+
+    @XmlTransient
+    private ResumeStrategyConfiguration resumeStrategyConfiguration;
 
     @Override
     public String getShortName() {
@@ -90,6 +95,14 @@ public class ResumableDefinition extends NoOutputDefinition<ResumableDefinition>
         this.intermittent = intermitent;
     }
 
+    public ResumeStrategyConfiguration getResumeStrategyConfiguration() {
+        return resumeStrategyConfiguration;
+    }
+
+    public void setResumeStrategyConfiguration(ResumeStrategyConfiguration resumeStrategyConfiguration) {
+        this.resumeStrategyConfiguration = resumeStrategyConfiguration;
+    }
+
     // Fluent API
     // -------------------------------------------------------------------------
 
@@ -124,6 +137,15 @@ public class ResumableDefinition extends NoOutputDefinition<ResumableDefinition>
     public ResumableDefinition resumeStrategy(ResumeStrategy resumeStrategy, String loggingLevelRef) {
         setResumeStrategy(resumeStrategy);
         setLoggingLevel(loggingLevelRef);
+        return this;
+    }
+
+    /***
+     * Uses a configuration builder to auto-instantiate the resume strategy
+     */
+    public ResumableDefinition configuration(
+            ResumeStrategyConfigurationBuilder<? extends ResumeStrategyConfigurationBuilder, ? extends ResumeStrategyConfiguration> builder) {
+        setResumeStrategyConfiguration(builder.build());
         return this;
     }
 

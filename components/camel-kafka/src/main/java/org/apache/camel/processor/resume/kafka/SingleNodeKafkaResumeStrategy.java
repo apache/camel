@@ -37,7 +37,9 @@ import org.apache.camel.resume.Offset;
 import org.apache.camel.resume.OffsetKey;
 import org.apache.camel.resume.Resumable;
 import org.apache.camel.resume.ResumeAdapter;
+import org.apache.camel.resume.ResumeStrategyConfiguration;
 import org.apache.camel.resume.cache.ResumeCache;
+import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.util.IOHelper;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
@@ -56,6 +58,7 @@ import org.slf4j.LoggerFactory;
  * A resume strategy that publishes offsets to a Kafka topic. This resume strategy is suitable for single node
  * integrations.
  */
+@JdkService("kafka-resume-strategy")
 public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(SingleNodeKafkaResumeStrategy.class);
 
@@ -65,10 +68,14 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy {
 
     private boolean subscribed;
     private ResumeAdapter adapter;
-    private final KafkaResumeStrategyConfiguration resumeStrategyConfiguration;
+    private KafkaResumeStrategyConfiguration resumeStrategyConfiguration;
     private final ExecutorService executorService;
     private final ReentrantLock writeLock = new ReentrantLock();
-    private final CountDownLatch initLatch;
+    private CountDownLatch initLatch;
+
+    public SingleNodeKafkaResumeStrategy() {
+        executorService = Executors.newSingleThreadExecutor();
+    }
 
     /**
      * Builds an instance of this class
@@ -78,8 +85,6 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy {
     public SingleNodeKafkaResumeStrategy(KafkaResumeStrategyConfiguration resumeStrategyConfiguration) {
         this.resumeStrategyConfiguration = resumeStrategyConfiguration;
         executorService = Executors.newSingleThreadExecutor();
-
-        initLatch = new CountDownLatch(resumeStrategyConfiguration.getMaxInitializationRetries());
     }
 
     /**
@@ -91,8 +96,6 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy {
                                          ExecutorService executorService) {
         this.resumeStrategyConfiguration = resumeStrategyConfiguration;
         this.executorService = executorService;
-
-        initLatch = new CountDownLatch(resumeStrategyConfiguration.getMaxInitializationRetries());
     }
 
     /**
@@ -170,6 +173,7 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy {
             throw new RuntimeCamelException("Cannot load data for an adapter that is not deserializable");
         }
 
+        initLatch = new CountDownLatch(resumeStrategyConfiguration.getMaxInitializationRetries());
         executorService.submit(() -> refresh(initLatch));
     }
 
@@ -198,7 +202,7 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy {
             subscribe(consumer);
 
             LOG.debug("Loading records from topic {}", resumeStrategyConfiguration.getTopic());
-            consumer.subscribe(Collections.singletonList(getResumeStrategyConfiguration().getTopic()));
+            consumer.subscribe(Collections.singletonList(resumeStrategyConfiguration.getTopic()));
 
             poll(consumer, latch);
         } catch (WakeupException e) {
@@ -424,8 +428,20 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy {
         return producer;
     }
 
-    protected KafkaResumeStrategyConfiguration getResumeStrategyConfiguration() {
-        return resumeStrategyConfiguration;
+    @Override
+    public void setResumeStrategyConfiguration(ResumeStrategyConfiguration resumeStrategyConfiguration) {
+        if (resumeStrategyConfiguration instanceof KafkaResumeStrategyConfiguration) {
+            this.resumeStrategyConfiguration = (KafkaResumeStrategyConfiguration) resumeStrategyConfiguration;
+        } else {
+            throw new RuntimeCamelException(
+                    "Invalid resume strategy configuration of type " +
+                                            resumeStrategyConfiguration == null
+                                                    ? "null" : resumeStrategyConfiguration.getClass().getName());
+        }
     }
 
+    @Override
+    public ResumeStrategyConfiguration getResumeStrategyConfiguration() {
+        return resumeStrategyConfiguration;
+    }
 }

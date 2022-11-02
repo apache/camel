@@ -28,7 +28,29 @@ The resume strategies comes in 3 parts:
 
 == The DSL method
 
-The route needs to use the `resumable()` method followed by a `resumableStrategy` to point to an instance of the resume strategy in use.
+The route needs to use the `resumable()` method followed by passing a strategy configuration using `configuration`.
+It is also possible to use the `resumableStrategy` to point to an instance of the resume strategy in use, although
+this is much more complex. The vast majority of the cases should use a `configuration`, in which case Camel will do
+the heavy-lifting for you.
+
+Using the resume API with the configuration should look like this:
+
+[source,java]
+----
+KafkaResumeStrategyConfigurationBuilder kafkaConfigurationBuilder = KafkaResumeStrategyConfigurationBuilder.newBuilder()
+    .withBootstrapServers("kafka-address:9092")
+    .withTopic("offset")
+    .withProducerProperty("max.block.ms", "10000")
+    .withMaxInitializationDuration(Duration.ofSeconds(5));
+
+getCamelContext().getRegistry().bind("resumeCache", new MyChoiceOfResumeCache<>(100));
+
+from("some:component")
+    .resumable().configuration(kafkaConfigurationBuilder)
+    .process(this::process);
+----
+
+=== Configuring via beans
 
 This instance can be bound in the Context registry as follows:
 

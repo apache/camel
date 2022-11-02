@@ -17,16 +17,21 @@
 
 package org.apache.camel.processor.resume;
 
+import org.apache.camel.resume.Cacheable;
 import org.apache.camel.resume.Offset;
 import org.apache.camel.resume.OffsetKey;
 import org.apache.camel.resume.Resumable;
 import org.apache.camel.resume.ResumeAdapter;
 import org.apache.camel.resume.ResumeStrategy;
+import org.apache.camel.resume.ResumeStrategyConfiguration;
+import org.apache.camel.resume.ResumeStrategyConfigurationBuilder;
+import org.apache.camel.spi.annotations.JdkService;
 
 /**
  * A resume strategy that keeps all the resume strategy information in memory. This is hardly useful for production
  * level implementations, but can be useful for testing the resume strategies
  */
+@JdkService("transient-resume-strategy")
 public class TransientResumeStrategy implements ResumeStrategy {
     private final ResumeAdapter resumeAdapter;
 
@@ -65,6 +70,16 @@ public class TransientResumeStrategy implements ResumeStrategy {
     }
 
     @Override
+    public void setResumeStrategyConfiguration(ResumeStrategyConfiguration resumeStrategyConfiguration) {
+        // This is NO-OP
+    }
+
+    @Override
+    public ResumeStrategyConfiguration getResumeStrategyConfiguration() {
+        return null;
+    }
+
+    @Override
     public void updateLastOffset(OffsetKey<?> offsetKey, Offset<?> offset) {
         // this is NO-OP
     }
@@ -77,5 +92,24 @@ public class TransientResumeStrategy implements ResumeStrategy {
     @Override
     public void stop() {
         // this is NO-OP
+    }
+
+    public static ResumeStrategyConfigurationBuilder<ResumeStrategyConfigurationBuilder, ResumeStrategyConfiguration> configurationBuilder() {
+        return new ResumeStrategyConfigurationBuilder<>() {
+            @Override
+            public ResumeStrategyConfigurationBuilder withCacheFillPolicy(Cacheable.FillPolicy cacheFillPolicy) {
+                return this;
+            }
+
+            @Override
+            public ResumeStrategyConfiguration build() {
+                return new ResumeStrategyConfiguration() {
+                    @Override
+                    public String resumeStrategyService() {
+                        return "transient-resume-strategy";
+                    }
+                };
+            }
+        };
     }
 }
