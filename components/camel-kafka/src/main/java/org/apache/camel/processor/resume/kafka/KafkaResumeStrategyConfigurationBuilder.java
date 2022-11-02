@@ -33,8 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A configuration builder appropriate for building configurations for the {@link SingleNodeKafkaResumeStrategy},
- * {@link MultiNodeKafkaResumeStrategy} and any of their subclasses
+ * A configuration builder appropriate for building configurations for the {@link SingleNodeKafkaResumeStrategy}
  */
 public class KafkaResumeStrategyConfigurationBuilder
         extends

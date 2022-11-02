@@ -16,13 +16,19 @@
  */
 package org.apache.camel.reifier;
 
+import java.util.Optional;
+
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ResumableDefinition;
 import org.apache.camel.processor.resume.ResumableProcessor;
 import org.apache.camel.resume.ResumeStrategy;
+import org.apache.camel.resume.ResumeStrategyConfiguration;
+import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.util.ObjectHelper;
 
 public class ResumableReifier extends ProcessorReifier<ResumableDefinition> {
@@ -49,7 +55,27 @@ public class ResumableReifier extends ProcessorReifier<ResumableDefinition> {
         ResumeStrategy strategy = definition.getResumeStrategyBean();
         if (strategy == null) {
             String ref = parseString(definition.getResumeStrategy());
-            strategy = mandatoryLookup(ref, ResumeStrategy.class);
+
+            if (ref != null) {
+                strategy = mandatoryLookup(ref, ResumeStrategy.class);
+            } else {
+                final FactoryFinder factoryFinder
+                        = camelContext.adapt(ExtendedCamelContext.class).getFactoryFinder(FactoryFinder.DEFAULT_PATH);
+
+                final ResumeStrategyConfiguration resumeStrategyConfiguration = definition.getResumeStrategyConfiguration();
+                Optional<ResumeStrategy> resumeStrategyOptional = factoryFinder.newInstance(
+                        resumeStrategyConfiguration.resumeStrategyService(), ResumeStrategy.class);
+
+                if (!resumeStrategyOptional.isPresent()) {
+                    throw new RuntimeCamelException("Cannot find a resume strategy class in the classpath or the registry");
+                }
+
+                final ResumeStrategy resumeStrategy = resumeStrategyOptional.get();
+
+                resumeStrategy.setResumeStrategyConfiguration(resumeStrategyConfiguration);
+
+                return resumeStrategy;
+            }
         }
 
         return strategy;

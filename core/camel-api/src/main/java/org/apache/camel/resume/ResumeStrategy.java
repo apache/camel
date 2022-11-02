@@ -106,4 +106,8 @@ public interface ResumeStrategy extends Service {
      * @throws Exception      if unable to update the offset
      */
     void updateLastOffset(OffsetKey<?> offsetKey, Offset<?> offset, UpdateCallBack updateCallBack) throws Exception;
+
+    void setResumeStrategyConfiguration(ResumeStrategyConfiguration resumeStrategyConfiguration);
+
+    ResumeStrategyConfiguration getResumeStrategyConfiguration();
 }

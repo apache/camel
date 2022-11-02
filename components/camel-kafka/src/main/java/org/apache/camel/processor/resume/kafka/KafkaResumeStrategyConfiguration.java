@@ -81,4 +81,9 @@ public class KafkaResumeStrategyConfiguration extends ResumeStrategyConfiguratio
 
         this.maxInitializationRetries = maxInitializationRetries;
     }
+
+    @Override
+    public String resumeStrategyService() {
+        return "kafka-resume-strategy";
+    }
 }

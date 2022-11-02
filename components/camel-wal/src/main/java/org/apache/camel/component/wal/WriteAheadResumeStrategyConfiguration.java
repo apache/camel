@@ -52,4 +52,9 @@ public class WriteAheadResumeStrategyConfiguration extends ResumeStrategyConfigu
     void setSupervisorInterval(long supervisorInterval) {
         this.supervisorInterval = supervisorInterval;
     }
+
+    @Override
+    public String resumeStrategyService() {
+        return "write-ahead-resume-strategy";
+    }
 }
