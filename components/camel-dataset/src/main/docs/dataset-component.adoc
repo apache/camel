@@ -149,7 +149,7 @@ configure the `SimpleDataSet` to use it by setting the
 
 *Available since Camel 2.17*
 
-The List`DataSet` extends `DataSetSupport`, and adds a list of default
+The `ListDataSet` extends `DataSetSupport`, and adds a list of default
 bodies.
 
 === Additional Properties on ListDataSet
