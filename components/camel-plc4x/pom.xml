@@ -31,10 +31,6 @@
     <name>Camel :: PLC4X</name>
     <description>Camel PLC4X support</description>
 
-    <properties>
-        <plc4x.version>0.10.0</plc4x.version>
-    </properties>
-
     <dependencies>
 
         <dependency>
