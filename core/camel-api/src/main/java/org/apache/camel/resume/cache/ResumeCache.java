@@ -28,8 +28,6 @@ import org.apache.camel.resume.ResumeStrategy;
  * @param <K> the type of the key
  */
 public interface ResumeCache<K> {
-    String DEFAULT_NAME = "resumeCache";
-
     /**
      * If the specified key is not present, compute its value from the mapping function (like Java's standard Map one)
      * 

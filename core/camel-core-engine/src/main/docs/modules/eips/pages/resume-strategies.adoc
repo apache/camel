@@ -41,9 +41,8 @@ KafkaResumeStrategyConfigurationBuilder kafkaConfigurationBuilder = KafkaResumeS
     .withBootstrapServers("kafka-address:9092")
     .withTopic("offset")
     .withProducerProperty("max.block.ms", "10000")
-    .withMaxInitializationDuration(Duration.ofSeconds(5));
-
-getCamelContext().getRegistry().bind("resumeCache", new MyChoiceOfResumeCache<>(100));
+    .withMaxInitializationDuration(Duration.ofSeconds(5))
+    .withResumeCache(new MyChoiceOfResumeCache<>(100));
 
 from("some:component")
     .resumable().configuration(kafkaConfigurationBuilder)

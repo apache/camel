@@ -17,6 +17,12 @@
 
 package org.apache.camel.processor.resume;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
 import org.apache.camel.resume.Cacheable;
 import org.apache.camel.resume.Offset;
 import org.apache.camel.resume.OffsetKey;
@@ -25,6 +31,7 @@ import org.apache.camel.resume.ResumeAdapter;
 import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.resume.ResumeStrategyConfiguration;
 import org.apache.camel.resume.ResumeStrategyConfigurationBuilder;
+import org.apache.camel.resume.cache.ResumeCache;
 import org.apache.camel.spi.annotations.JdkService;
 
 /**
@@ -76,7 +83,7 @@ public class TransientResumeStrategy implements ResumeStrategy {
 
     @Override
     public ResumeStrategyConfiguration getResumeStrategyConfiguration() {
-        return null;
+        return configurationBuilder().build();
     }
 
     @Override
@@ -102,8 +109,72 @@ public class TransientResumeStrategy implements ResumeStrategy {
             }
 
             @Override
+            public ResumeStrategyConfigurationBuilder withResumeCache(ResumeCache<?> resumeCache) {
+                return this;
+            }
+
+            @Override
             public ResumeStrategyConfiguration build() {
                 return new ResumeStrategyConfiguration() {
+
+                    @Override
+                    public ResumeCache<?> getResumeCache() {
+                        return new ResumeCache<>() {
+                            private Map<Object, Object> cache = new HashMap<>();
+
+                            @Override
+                            public Object computeIfAbsent(Object key, Function<? super Object, ? super Object> mapping) {
+                                return cache.computeIfAbsent(key, mapping);
+                            }
+
+                            @Override
+                            public Object computeIfPresent(Object key, BiFunction<? super Object, ? super Object, ? super Object> remapping) {
+                                return cache.computeIfPresent(key, remapping);
+                            }
+
+                            @Override
+                            public boolean contains(Object key, Object entry) {
+                                return Objects.equals(cache.get(key), entry);
+                            }
+
+                            @Override
+                            public void add(Object key, Object offsetValue) {
+                                cache.put(key, offsetValue);
+                            }
+
+                            @Override
+                            public boolean isFull() {
+                                return false;
+                            }
+
+                            @Override
+                            public long capacity() {
+                                return Integer.MAX_VALUE;
+                            }
+
+                            @Override
+                            public <T> T get(Object key, Class<T> clazz) {
+                                final Object o = cache.get(key);
+
+                                return clazz.cast(o);
+                            }
+
+                            @Override
+                            public Object get(Object key) {
+                                return cache.get(key);
+                            }
+
+                            @Override
+                            public void forEach(BiFunction<? super Object, ? super Object, Boolean> action) {
+                                for (Map.Entry e : cache.entrySet()) {
+                                    if (!action.apply(e.getKey(), e.getValue())) {
+                                        cache.remove(e.getKey());
+                                    }
+                                }
+                            }
+                        };
+                    }
+
                     @Override
                     public String resumeStrategyService() {
                         return "transient-resume-strategy";

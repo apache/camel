@@ -143,7 +143,8 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware {
         if (delegatedConsumer instanceof ResumeAware && resumeStrategy != null) {
             final ResumeAware resumeAwareConsumer = (ResumeAware) delegatedConsumer;
             LOG.info("Setting up the resume adapter for the resume strategy in the delegated consumer");
-            ResumeAdapter resumeAdapter = AdapterHelper.eval(clusterService.getCamelContext(), resumeAwareConsumer);
+            ResumeAdapter resumeAdapter
+                    = AdapterHelper.eval(clusterService.getCamelContext(), resumeAwareConsumer, resumeStrategy);
             resumeStrategy.setAdapter(resumeAdapter);
 
             LOG.info("Setting up the resume strategy for the delegated consumer");
