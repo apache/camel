@@ -259,6 +259,7 @@
 ** xref:paho-mqtt5-component.adoc[Paho MQTT 5]
 ** xref:pdf-component.adoc[PDF]
 ** xref:platform-http-component.adoc[Platform HTTP]
+** xref:plc4x-component.adoc[PLC4X]
 ** xref:pgevent-component.adoc[PostgresSQL Event]
 ** xref:pg-replication-slot-component.adoc[PostgresSQL Replication Slot]
 ** xref:lpr-component.adoc[Printer]
