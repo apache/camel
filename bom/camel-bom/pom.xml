@@ -1621,6 +1621,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-plc4x</artifactId>
+        <version>${project.version}</version>
+      </dependency>      
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-pg-replication-slot</artifactId>
         <version>${project.version}</version>
       </dependency>
