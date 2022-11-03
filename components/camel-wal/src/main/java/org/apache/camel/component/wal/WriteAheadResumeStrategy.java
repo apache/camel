@@ -71,15 +71,14 @@ public class WriteAheadResumeStrategy implements ResumeStrategy {
     /**
      * Creates a new write-ahead resume strategy
      * 
-     * @param  logFile        the transaction log file
-     * @param  resumeStrategy a
+     * @param  resumeStrategyConfiguration the configuration to use for this strategy instance
      * @throws IOException
      */
-    public WriteAheadResumeStrategy(File logFile, ResumeStrategy resumeStrategy) throws IOException {
-        this.logFile = logFile;
-        this.resumeStrategy = resumeStrategy;
+    public WriteAheadResumeStrategy(WriteAheadResumeStrategyConfiguration resumeStrategyConfiguration) throws IOException {
+        this.logFile = resumeStrategyConfiguration.getLogFile();
+        this.resumeStrategy = resumeStrategyConfiguration.getDelegateResumeStrategy();
 
-        DefaultLogSupervisor flushPolicy = new DefaultLogSupervisor(100);
+        DefaultLogSupervisor flushPolicy = new DefaultLogSupervisor(resumeStrategyConfiguration.getSupervisorInterval());
         logWriter = new LogWriter(logFile, flushPolicy);
     }
 
