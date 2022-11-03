@@ -17,11 +17,14 @@
 
 package org.apache.camel.resume;
 
+import org.apache.camel.resume.cache.ResumeCache;
+
 /**
  * Basic configuration holder for resume strategies
  */
 public abstract class ResumeStrategyConfiguration {
     private Cacheable.FillPolicy cacheFillPolicy;
+    private ResumeCache<?> resumeCache;
 
     /**
      * Gets the {@link org.apache.camel.resume.Cacheable.FillPolicy} for the cache used in the strategy
@@ -49,4 +52,12 @@ public abstract class ResumeStrategyConfiguration {
      * @return
      */
     public abstract String resumeStrategyService();
+
+    public ResumeCache<?> getResumeCache() {
+        return resumeCache;
+    }
+
+    public void setResumeCache(ResumeCache<?> resumeCache) {
+        this.resumeCache = resumeCache;
+    }
 }

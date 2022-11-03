@@ -58,6 +58,8 @@ public class WriteAheadResumeStrategyConfigurationBuilder
         final WriteAheadResumeStrategyConfiguration writeAheadResumeStrategyConfiguration
                 = new WriteAheadResumeStrategyConfiguration();
 
+        buildCommonConfiguration(writeAheadResumeStrategyConfiguration);
+
         writeAheadResumeStrategyConfiguration.setLogFile(logFile);
         writeAheadResumeStrategyConfiguration.setDelegateResumeStrategy(delegateResumeStrategy);
         writeAheadResumeStrategyConfiguration.setSupervisorInterval(supervisorInterval);

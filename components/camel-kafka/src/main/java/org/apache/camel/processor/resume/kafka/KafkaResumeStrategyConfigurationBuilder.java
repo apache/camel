@@ -148,7 +148,8 @@ public class KafkaResumeStrategyConfigurationBuilder
     public KafkaResumeStrategyConfiguration build() {
         KafkaResumeStrategyConfiguration resumeStrategyConfiguration = new KafkaResumeStrategyConfiguration();
 
-        resumeStrategyConfiguration.setCacheFillPolicy(super.cacheFillPolicy);
+        buildCommonConfiguration(resumeStrategyConfiguration);
+
         resumeStrategyConfiguration.setConsumerProperties(consumerProperties);
         resumeStrategyConfiguration.setProducerProperties(producerProperties);
         resumeStrategyConfiguration.setTopic(topic);

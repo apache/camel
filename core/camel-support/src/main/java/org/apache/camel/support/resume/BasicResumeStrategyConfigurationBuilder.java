@@ -20,6 +20,7 @@ package org.apache.camel.support.resume;
 import org.apache.camel.resume.Cacheable;
 import org.apache.camel.resume.ResumeStrategyConfiguration;
 import org.apache.camel.resume.ResumeStrategyConfigurationBuilder;
+import org.apache.camel.resume.cache.ResumeCache;
 
 /**
  * This class implements the most basic configuration set used by all resume strategy builders
@@ -31,11 +32,24 @@ public abstract class BasicResumeStrategyConfigurationBuilder<
         T extends BasicResumeStrategyConfigurationBuilder, Y extends ResumeStrategyConfiguration>
         implements ResumeStrategyConfigurationBuilder<T, Y> {
     protected Cacheable.FillPolicy cacheFillPolicy = Cacheable.FillPolicy.MAXIMIZING;
+    protected ResumeCache<?> resumeCache;
 
     @Override
     public T withCacheFillPolicy(Cacheable.FillPolicy fillPolicy) {
         this.cacheFillPolicy = fillPolicy;
 
         return (T) this;
+    }
+
+    @Override
+    public T withResumeCache(ResumeCache<?> resumeCache) {
+        this.resumeCache = resumeCache;
+
+        return (T) this;
+    }
+
+    protected void buildCommonConfiguration(ResumeStrategyConfiguration resumeStrategyConfiguration) {
+        resumeStrategyConfiguration.setResumeCache(resumeCache);
+        resumeStrategyConfiguration.setCacheFillPolicy(cacheFillPolicy);
     }
 }

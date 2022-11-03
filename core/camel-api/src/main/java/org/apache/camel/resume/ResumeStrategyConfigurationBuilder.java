@@ -17,6 +17,8 @@
 
 package org.apache.camel.resume;
 
+import org.apache.camel.resume.cache.ResumeCache;
+
 /**
  * Provides a basic interface for implementing component-specific configuration builder
  *
@@ -29,9 +31,18 @@ public interface ResumeStrategyConfigurationBuilder<
     /**
      * Sets the {@link org.apache.camel.resume.Cacheable.FillPolicy} for the cache used in the strategy
      *
-     * @param cacheFillPolicy the fill policy to use
+     * @param  cacheFillPolicy the fill policy to use
+     * @return                 this instance
      */
     T withCacheFillPolicy(Cacheable.FillPolicy cacheFillPolicy);
+
+    /**
+     * Sets the local resume cache instance to use in the strategy
+     * 
+     * @param  resumeCache the local resume cache instance to use in the strategy
+     * @return             this instance
+     */
+    T withResumeCache(ResumeCache<?> resumeCache);
 
     /**
      * Builds the resume strategy configuration
