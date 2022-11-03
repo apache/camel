@@ -44,34 +44,6 @@ public interface Plc4XEndpointBuilderFactory {
             return (AdvancedPlc4XEndpointConsumerBuilder) this;
         }
         /**
-         * (Consumer) Interval on which the Trigger should be checked.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param period the value to set
-         * @return the dsl builder
-         */
-        default Plc4XEndpointConsumerBuilder period(int period) {
-            doSetProperty("period", period);
-            return this;
-        }
-        /**
-         * (Consumer) Interval on which the Trigger should be checked.
-         * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param period the value to set
-         * @return the dsl builder
-         */
-        default Plc4XEndpointConsumerBuilder period(String period) {
-            doSetProperty("period", period);
-            return this;
-        }
-        /**
          * The tags to read as Map containing the tag name associated to its
          * query.
          * 
@@ -106,12 +78,40 @@ public interface Plc4XEndpointBuilderFactory {
             return this;
         }
         /**
-         * (Consumer) Query to a trigger. On a rising edge of the trigger, the
-         * tags will be read once.
+         * Interval on which the Trigger should be checked.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param period the value to set
+         * @return the dsl builder
+         */
+        default Plc4XEndpointConsumerBuilder period(int period) {
+            doSetProperty("period", period);
+            return this;
+        }
+        /**
+         * Interval on which the Trigger should be checked.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param period the value to set
+         * @return the dsl builder
+         */
+        default Plc4XEndpointConsumerBuilder period(String period) {
+            doSetProperty("period", period);
+            return this;
+        }
+        /**
+         * Query to a trigger. On a rising edge of the trigger, the tags will be
+         * read once.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: common
+         * Group: consumer
          * 
          * @param trigger the value to set
          * @return the dsl builder
@@ -258,34 +258,6 @@ public interface Plc4XEndpointBuilderFactory {
             return (AdvancedPlc4XEndpointProducerBuilder) this;
         }
         /**
-         * (Consumer) Interval on which the Trigger should be checked.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param period the value to set
-         * @return the dsl builder
-         */
-        default Plc4XEndpointProducerBuilder period(int period) {
-            doSetProperty("period", period);
-            return this;
-        }
-        /**
-         * (Consumer) Interval on which the Trigger should be checked.
-         * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param period the value to set
-         * @return the dsl builder
-         */
-        default Plc4XEndpointProducerBuilder period(String period) {
-            doSetProperty("period", period);
-            return this;
-        }
-        /**
          * The tags to read as Map containing the tag name associated to its
          * query.
          * 
@@ -317,21 +289,6 @@ public interface Plc4XEndpointBuilderFactory {
          */
         default Plc4XEndpointProducerBuilder tags(String tags) {
             doSetProperty("tags", tags);
-            return this;
-        }
-        /**
-         * (Consumer) Query to a trigger. On a rising edge of the trigger, the
-         * tags will be read once.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param trigger the value to set
-         * @return the dsl builder
-         */
-        default Plc4XEndpointProducerBuilder trigger(String trigger) {
-            doSetProperty("trigger", trigger);
             return this;
         }
     }
@@ -407,34 +364,6 @@ public interface Plc4XEndpointBuilderFactory {
             return (AdvancedPlc4XEndpointBuilder) this;
         }
         /**
-         * (Consumer) Interval on which the Trigger should be checked.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param period the value to set
-         * @return the dsl builder
-         */
-        default Plc4XEndpointBuilder period(int period) {
-            doSetProperty("period", period);
-            return this;
-        }
-        /**
-         * (Consumer) Interval on which the Trigger should be checked.
-         * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param period the value to set
-         * @return the dsl builder
-         */
-        default Plc4XEndpointBuilder period(String period) {
-            doSetProperty("period", period);
-            return this;
-        }
-        /**
          * The tags to read as Map containing the tag name associated to its
          * query.
          * 
@@ -466,21 +395,6 @@ public interface Plc4XEndpointBuilderFactory {
          */
         default Plc4XEndpointBuilder tags(String tags) {
             doSetProperty("tags", tags);
-            return this;
-        }
-        /**
-         * (Consumer) Query to a trigger. On a rising edge of the trigger, the
-         * tags will be read once.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param trigger the value to set
-         * @return the dsl builder
-         */
-        default Plc4XEndpointBuilder trigger(String trigger) {
-            doSetProperty("trigger", trigger);
             return this;
         }
     }
