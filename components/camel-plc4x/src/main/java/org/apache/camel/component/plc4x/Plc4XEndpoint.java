@@ -46,10 +46,10 @@ public class Plc4XEndpoint extends DefaultEndpoint {
     @Metadata(description = "The tags to read as Map<String,String> containing the tag name associated to its query")
     private Map<String, Object> tags;
     @UriParam
-    @Metadata(description = "(Consumer) Query to a trigger. On a rising edge of the trigger, the tags will be read once")
+    @Metadata(label = "consumer", description = "Query to a trigger. On a rising edge of the trigger, the tags will be read once")
     private String trigger;
     @UriParam
-    @Metadata(description = "(Consumer) Interval on which the Trigger should be checked")
+    @Metadata(label = "consumer", description = "Interval on which the Trigger should be checked")
     private int period;
 
     public int getPeriod() {
