@@ -1,0 +1,64 @@
+= PLC4X Component
+:doctitle: PLC4X
+:shortname: plc4x
+:artifactid: camel-plc4x
+:description: Camel PLC4X support
+:since: 3.20
+:supportlevel: Preview
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Camel Component for PLC4X allows you to create routes using the PLC4X API to read from a PLC device or write to it.
+
+== URI Format
+
+------------------------------
+plc4x://driver[?options]
+------------------------------
+
+The bucket will be created if it don't already exists. +
+ You can append query options to the URI in the following format,
+?options=value&option2=value&...
+
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+
+== Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-plc4x</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `$\{camel-version}` must be replaced by the actual version of Camel.
+
+
+
+include::spring-boot:partial$starter.adoc[]
