@@ -406,6 +406,7 @@
         <mockito-version>3.12.4</mockito-version>
         <mongo-java-driver-version>4.7.2</mongo-java-driver-version>
         <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
+        <msal4j-version>1.13.3</msal4j-version>
         <mustache-java-version>0.9.10</mustache-java-version>
         <mvel-version>2.4.14.Final</mvel-version>
         <mybatis-version>3.5.11</mybatis-version>
@@ -3602,6 +3603,13 @@
                 <groupId>org.apache.mina</groupId>
                 <artifactId>mina-core</artifactId>
                 <version>${mina-version}</version>
+            </dependency>
+
+            <!-- Optional Microsoft Authentication Library for Java  -->
+            <dependency>
+                <groupId>com.microsoft.azure</groupId>
+                <artifactId>msal4j</artifactId>
+                <version>${msal4j-version}</version>
             </dependency>
 
             <dependency>
