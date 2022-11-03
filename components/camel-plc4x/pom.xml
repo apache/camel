@@ -163,7 +163,7 @@
             <!-- avoids java.lang.NoClassDefFoundError: javax/activation/DataHandler in Plc4XProducerTest on Java 11-->
             <groupId>javax.activation</groupId>
             <artifactId>javax.activation-api</artifactId>
-            <version>1.2.0</version>
+            <version>${javax-activation-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
