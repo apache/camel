@@ -5,6 +5,7 @@
 ** xref:attachments.adoc[Attachments]
 ** xref:aws-xray.adoc[AWS XRay]
 ** xref:caffeine-lrucache.adoc[Caffeine Lrucache]
+** xref:PLC4X.adoc[Camel-PLC4X Component]
 ** xref:cdi.adoc[CDI]
 ** xref:cdi-jta.adoc[CDI JTA]
 ** xref:cdi-main.adoc[CDI Main]

@@ -11925,6 +11925,49 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.PlatformHttpEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * PLC4X (camel-plc4x)
+     * Camel PLC4X support
+     * 
+     * Category: iot
+     * Since: 3.20
+     * Maven coordinates: org.apache.camel:camel-plc4x
+     * 
+     * Syntax: <code>plc4x:driver</code>
+     * 
+     * Path parameter: driver (required)
+     * PLC4X connection string for the connection to the target
+     * 
+     * @param path driver
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.Plc4XEndpointBuilderFactory.Plc4XEndpointBuilder plc4x(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.Plc4XEndpointBuilderFactory.endpointBuilder("plc4x", path);
+    }
+    /**
+     * PLC4X (camel-plc4x)
+     * Camel PLC4X support
+     * 
+     * Category: iot
+     * Since: 3.20
+     * Maven coordinates: org.apache.camel:camel-plc4x
+     * 
+     * Syntax: <code>plc4x:driver</code>
+     * 
+     * Path parameter: driver (required)
+     * PLC4X connection string for the connection to the target
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path driver
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.Plc4XEndpointBuilderFactory.Plc4XEndpointBuilder plc4x(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.Plc4XEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * PubNub (camel-pubnub)
      * Send and receive messages to/from PubNub data stream network for
      * connected devices.

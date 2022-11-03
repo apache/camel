@@ -267,6 +267,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.PgEventEndpointBuilderFactory.PgEventBuilders,
             org.apache.camel.builder.endpoint.dsl.PgReplicationSlotEndpointBuilderFactory.PgReplicationSlotBuilders,
             org.apache.camel.builder.endpoint.dsl.PlatformHttpEndpointBuilderFactory.PlatformHttpBuilders,
+            org.apache.camel.builder.endpoint.dsl.Plc4XEndpointBuilderFactory.Plc4XBuilders,
             org.apache.camel.builder.endpoint.dsl.PrinterEndpointBuilderFactory.PrinterBuilders,
             org.apache.camel.builder.endpoint.dsl.PubNubEndpointBuilderFactory.PubNubBuilders,
             org.apache.camel.builder.endpoint.dsl.PulsarEndpointBuilderFactory.PulsarBuilders,

@@ -3436,6 +3436,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.PlatformHttpComponentBuilderFactory.platformHttp();
     }
     /**
+     * PLC4X (camel-plc4x)
+     * Camel PLC4X support
+     * 
+     * Category: iot
+     * Since: 3.20
+     * Maven coordinates: org.apache.camel:camel-plc4x
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.Plc4xComponentBuilderFactory.Plc4xComponentBuilder plc4x() {
+        return org.apache.camel.builder.component.dsl.Plc4xComponentBuilderFactory.plc4x();
+    }
+    /**
      * POP3 (camel-mail)
      * Send and receive emails using imap, pop3 and smtp protocols.
      * 
