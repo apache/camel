@@ -73,6 +73,10 @@ public final class VertxHelper {
         if (keyManagers == null) {
             return null;
         }
+        keyManagers.setCamelContext(camelContext);
+        if (keyManagers.getKeyStore() != null) {
+            keyManagers.getKeyStore().setCamelContext(camelContext);
+        }
 
         String kmfAlgorithm = camelContext.resolvePropertyPlaceholders(keyManagers.getAlgorithm());
         if (kmfAlgorithm == null) {
@@ -104,6 +108,10 @@ public final class VertxHelper {
         final TrustManagersParameters trustManagers = sslContextParameters.getTrustManagers();
         if (trustManagers == null) {
             return null;
+        }
+        trustManagers.setCamelContext(camelContext);
+        if (trustManagers.getKeyStore() != null) {
+            trustManagers.getKeyStore().setCamelContext(camelContext);
         }
 
         TrustManagerFactory tmf = null;
