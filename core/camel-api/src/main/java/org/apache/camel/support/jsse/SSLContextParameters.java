@@ -239,9 +239,15 @@ public class SSLContextParameters extends BaseSSLContextParameters {
             setCamelContext(camelContext);
             if (keyManagers != null) {
                 keyManagers.setCamelContext(camelContext);
+                if (keyManagers.getKeyStore() != null) {
+                    keyManagers.getKeyStore().setCamelContext(camelContext);
+                }
             }
             if (trustManagers != null) {
                 trustManagers.setCamelContext(camelContext);
+                if (trustManagers.getKeyStore() != null) {
+                    trustManagers.getKeyStore().setCamelContext(camelContext);
+                }
             }
             if (secureRandom != null) {
                 secureRandom.setCamelContext(camelContext);
