@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kafka.consumer.support;
+package org.apache.camel.component.kafka.consumer.support.classic;
 
 import org.apache.camel.component.kafka.SeekPolicy;
 import org.apache.kafka.clients.consumer.Consumer;
@@ -24,14 +24,14 @@ import org.slf4j.LoggerFactory;
 /**
  * A resume strategy that uses Camel's seekTo configuration for resuming
  */
-public class SeekPolicyKafkaConsumerResumeAdapter implements KafkaConsumerResumeAdapter {
+public class SeekPolicyPartitionAssignmentAdapter implements PartitionAssignmentAdapter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SeekPolicyKafkaConsumerResumeAdapter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SeekPolicyPartitionAssignmentAdapter.class);
 
     private final SeekPolicy seekPolicy;
     private Consumer<?, ?> consumer;
 
-    public SeekPolicyKafkaConsumerResumeAdapter(SeekPolicy seekPolicy) {
+    public SeekPolicyPartitionAssignmentAdapter(SeekPolicy seekPolicy) {
         this.seekPolicy = seekPolicy;
     }
 
@@ -41,12 +41,7 @@ public class SeekPolicyKafkaConsumerResumeAdapter implements KafkaConsumerResume
     }
 
     @Override
-    public void setKafkaResumable(KafkaResumable kafkaResumable) {
-        // NO-OP
-    }
-
-    @Override
-    public void resume() {
+    public void handlePartitionAssignment() {
         if (seekPolicy == SeekPolicy.BEGINNING) {
             LOG.debug("Seeking from the beginning of topic");
             consumer.seekToBeginning(consumer.assignment());

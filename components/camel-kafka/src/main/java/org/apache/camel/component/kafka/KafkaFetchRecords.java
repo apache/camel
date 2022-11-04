@@ -27,11 +27,10 @@ import org.apache.camel.component.kafka.consumer.CommitManager;
 import org.apache.camel.component.kafka.consumer.CommitManagers;
 import org.apache.camel.component.kafka.consumer.errorhandler.KafkaConsumerListener;
 import org.apache.camel.component.kafka.consumer.errorhandler.KafkaErrorStrategies;
-import org.apache.camel.component.kafka.consumer.support.KafkaConsumerResumeAdapter;
 import org.apache.camel.component.kafka.consumer.support.KafkaRecordProcessorFacade;
-import org.apache.camel.component.kafka.consumer.support.PartitionAssignmentListener;
 import org.apache.camel.component.kafka.consumer.support.ProcessingResult;
-import org.apache.camel.component.kafka.consumer.support.ResumeStrategyFactory;
+import org.apache.camel.component.kafka.consumer.support.classic.ClassicRebalanceListener;
+import org.apache.camel.component.kafka.consumer.support.resume.ResumeRebalanceListener;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.support.task.ForegroundTask;
 import org.apache.camel.support.task.Tasks;
@@ -40,6 +39,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.kafka.clients.CommonClientConfigs;
+import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.consumer.internals.ConsumerNetworkClient;
@@ -272,11 +272,16 @@ public class KafkaFetchRecords implements Runnable {
     }
 
     private void subscribe() {
-        KafkaConsumerResumeAdapter resumeStrategy = ResumeStrategyFactory.resolveResumeAdapter(kafkaConsumer);
-        resumeStrategy.setConsumer(consumer);
+        ConsumerRebalanceListener listener;
 
-        PartitionAssignmentListener listener = new PartitionAssignmentListener(
-                threadId, kafkaConsumer.getEndpoint().getConfiguration(), commitManager, resumeStrategy);
+        if (kafkaConsumer.getResumeStrategy() == null) {
+            listener = new ClassicRebalanceListener(
+                    threadId, kafkaConsumer.getEndpoint().getConfiguration(), commitManager, consumer);
+        } else {
+            listener = new ResumeRebalanceListener(
+                    threadId, kafkaConsumer.getEndpoint().getConfiguration(),
+                    commitManager, consumer, kafkaConsumer.getResumeStrategy());
+        }
 
         if (LOG.isInfoEnabled()) {
             LOG.info("Subscribing {} to {}", threadId, getPrintableTopic());

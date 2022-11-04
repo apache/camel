@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kafka.consumer.support;
+package org.apache.camel.component.kafka.consumer.support.classic;
 
 import java.util.Set;
 
@@ -30,25 +30,20 @@ import static org.apache.camel.component.kafka.consumer.support.KafkaRecordProce
 /**
  * A resume strategy that uses Kafka's offset for resuming
  */
-public class OffsetKafkaConsumerResumeAdapter implements KafkaConsumerResumeAdapter {
+public class OffsetPartitionAssignmentAdapter implements PartitionAssignmentAdapter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(OffsetKafkaConsumerResumeAdapter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OffsetPartitionAssignmentAdapter.class);
 
     private final StateRepository<String, String> offsetRepository;
     private Consumer<?, ?> consumer;
 
-    public OffsetKafkaConsumerResumeAdapter(StateRepository<String, String> offsetRepository) {
+    public OffsetPartitionAssignmentAdapter(StateRepository<String, String> offsetRepository) {
         this.offsetRepository = offsetRepository;
     }
 
     @Override
     public void setConsumer(Consumer<?, ?> consumer) {
         this.consumer = consumer;
-    }
-
-    @Override
-    public void setKafkaResumable(KafkaResumable kafkaResumable) {
-        // NO-OP
     }
 
     private void resumeFromOffset(final Consumer<?, ?> consumer, TopicPartition topicPartition, String offsetState) {
@@ -58,8 +53,7 @@ public class OffsetKafkaConsumerResumeAdapter implements KafkaConsumerResumeAdap
         consumer.seek(topicPartition, offset);
     }
 
-    @Override
-    public void resume() {
+    public void handlePartitionAssignment() {
         Set<TopicPartition> assignments = consumer.assignment();
         for (TopicPartition topicPartition : assignments) {
             String offsetState = offsetRepository.getState(serializeOffsetKey(topicPartition));

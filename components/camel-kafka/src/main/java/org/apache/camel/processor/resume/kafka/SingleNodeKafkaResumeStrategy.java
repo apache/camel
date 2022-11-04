@@ -346,7 +346,10 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy {
 
     @Override
     public ResumeAdapter getAdapter() {
-        waitForInitialization();
+        if (adapter == null) {
+            waitForInitialization();
+        }
+
         return adapter;
     }
 
