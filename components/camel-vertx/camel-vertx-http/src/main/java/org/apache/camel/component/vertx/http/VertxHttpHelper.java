@@ -27,7 +27,6 @@ import java.net.URISyntaxException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
-import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -139,7 +138,7 @@ public final class VertxHttpHelper {
         String charset = null;
         if (exchange != null) {
             String contentType = exchange.getMessage().getHeader(VertxHttpConstants.CONTENT_TYPE, String.class);
-            charset = HttpHelper.getCharsetFromContentType(contentType);
+            charset = IOHelper.getCharsetNameFromContentType(contentType);
             if (ObjectHelper.isEmpty(charset)) {
                 charset = exchange.getProperty(ExchangePropertyKey.CHARSET_NAME, String.class);
             }
