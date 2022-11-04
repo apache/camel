@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.aws2.cw;
+package org.apache.camel.component.aws2.ddb;
 
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
@@ -34,9 +34,9 @@ import org.slf4j.LoggerFactory;
 
 import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
-public class Cw2ClientHealthCheckStaticCredsTest extends CamelTestSupport {
+public class Ddb2ClientHealthCheckStaticCredsTest extends CamelTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Cw2ClientHealthCheckStaticCredsTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Ddb2ClientHealthCheckStaticCredsTest.class);
 
     CamelContext context;
 
@@ -66,7 +66,7 @@ public class Cw2ClientHealthCheckStaticCredsTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:listClusters")
-                        .to("aws2-cw://test?region=l&secretKey=l&accessKey=k");
+                        .to("aws2-ddb://test?region=l&secretKey=l&accessKey=k&enabledInitialDescribeTable=false");
             }
         };
     }
@@ -82,15 +82,15 @@ public class Cw2ClientHealthCheckStaticCredsTest extends CamelTestSupport {
         await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> {
             Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
             boolean down = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
-            boolean containsAws2AthenaHealthCheck = res2.stream()
-                    .filter(result -> result.getCheck().getId().startsWith("aws2-cw-client"))
+            boolean containsAws2DdbHealthCheck = res2.stream()
+                    .filter(result -> result.getCheck().getId().startsWith("aws2-ddb-client"))
                     .findAny()
                     .isPresent();
             boolean hasRegionMessage = res2.stream()
                     .anyMatch(r -> r.getMessage().stream().anyMatch(msg -> msg.contains("region")));
             Assertions.assertTrue(down, "liveness check");
-            Assertions.assertTrue(containsAws2AthenaHealthCheck, "aws2-cw check");
-            Assertions.assertTrue(hasRegionMessage, "aws2-eks check error message");
+            Assertions.assertTrue(containsAws2DdbHealthCheck, "aws2-ddb check");
+            Assertions.assertTrue(hasRegionMessage, "aws2-ddb check error message");
         });
 
     }

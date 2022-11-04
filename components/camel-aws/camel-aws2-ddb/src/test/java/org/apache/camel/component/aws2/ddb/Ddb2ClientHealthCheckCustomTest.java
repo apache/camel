@@ -15,10 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.aws2.cw;
-
-import java.util.Collection;
-import java.util.concurrent.TimeUnit;
+package org.apache.camel.component.aws2.ddb;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,12 +28,17 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+
+import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
 import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
-public class Cw2ClientHealthCheckProfileCredsTest extends CamelTestSupport {
+public class Ddb2ClientHealthCheckCustomTest extends CamelTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Cw2ClientHealthCheckProfileCredsTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Ddb2ClientHealthCheckCustomTest.class);
 
     CamelContext context;
 
@@ -44,6 +46,10 @@ public class Cw2ClientHealthCheckProfileCredsTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         context = super.createCamelContext();
         context.getPropertiesComponent().setLocation("ref:prop");
+        Ddb2Component component = new Ddb2Component(context);
+        component.getConfiguration().setAmazonDDBClient(DynamoDbClient.builder().region(Region.of("Ciao")).build());
+        component.init();
+        context.addComponent("aws2-ddb", component);
 
         // install health check manually (yes a bit cumbersome)
         HealthCheckRegistry registry = new DefaultHealthCheckRegistry();
@@ -65,8 +71,8 @@ public class Cw2ClientHealthCheckProfileCredsTest extends CamelTestSupport {
 
             @Override
             public void configure() {
-                from("direct:listClusters")
-                        .to("aws2-cw://test?region=l&useDefaultCredentialsProvider=true");
+                from("direct:listTables")
+                        .to("aws2-ddb://test?enabledInitialDescribeTable=false");
             }
         };
     }
@@ -82,15 +88,12 @@ public class Cw2ClientHealthCheckProfileCredsTest extends CamelTestSupport {
         await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> {
             Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
             boolean down = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
-            boolean containsAws2AthenaHealthCheck = res2.stream()
-                    .filter(result -> result.getCheck().getId().startsWith("aws2-cw-client"))
+            boolean containsAws2DdbHealthCheck = res2.stream()
+                    .filter(result -> result.getCheck().getId().startsWith("aws2-ddb-client"))
                     .findAny()
                     .isPresent();
-            boolean hasRegionMessage = res2.stream()
-                    .anyMatch(r -> r.getMessage().stream().anyMatch(msg -> msg.contains("region")));
             Assertions.assertTrue(down, "liveness check");
-            Assertions.assertTrue(containsAws2AthenaHealthCheck, "aws2-cw check");
-            Assertions.assertTrue(hasRegionMessage, "aws2-eks check error message");
+            Assertions.assertTrue(containsAws2DdbHealthCheck, "aws2-ddb   check");
         });
 
     }
