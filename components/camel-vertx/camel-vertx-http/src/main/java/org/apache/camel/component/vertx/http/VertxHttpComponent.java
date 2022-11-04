@@ -24,6 +24,7 @@ import java.util.Set;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.net.ProxyType;
+import io.vertx.ext.web.client.WebClientOptions;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
@@ -79,6 +80,8 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent
     private boolean allowJavaSerializedObject;
     @Metadata(label = "producer", defaultValue = "true")
     private boolean responsePayloadAsByteArray = true;
+    @Metadata(label = "advanced")
+    private WebClientOptions webClientOptions;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -125,6 +128,9 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent
         }
         if (configuration.getHeaderFilterStrategy() == null) {
             configuration.setHeaderFilterStrategy(getHeaderFilterStrategy());
+        }
+        if (configuration.getWebClientOptions() == null) {
+            configuration.setWebClientOptions(getWebClientOptions());
         }
 
         // Recreate the http uri with the remaining parameters which the endpoint did not use
@@ -406,5 +412,16 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent
 
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    public WebClientOptions getWebClientOptions() {
+        return webClientOptions;
+    }
+
+    /**
+     * To provide a custom set of options for configuring vertx web client
+     */
+    public void setWebClientOptions(WebClientOptions webClientOptions) {
+        this.webClientOptions = webClientOptions;
     }
 }

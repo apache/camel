@@ -180,6 +180,23 @@ public interface VertxHttpComponentBuilderFactory {
             return this;
         }
         /**
+         * To provide a custom set of options for configuring vertx web client.
+         * 
+         * The option is a:
+         * &lt;code&gt;io.vertx.ext.web.client.WebClientOptions&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param webClientOptions the value to set
+         * @return the dsl builder
+         */
+        default VertxHttpComponentBuilder webClientOptions(
+                io.vertx.ext.web.client.WebClientOptions webClientOptions) {
+            doSetProperty("webClientOptions", webClientOptions);
+            return this;
+        }
+        /**
          * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
          * header to and from Camel message.
          * 
@@ -372,6 +389,7 @@ public interface VertxHttpComponentBuilderFactory {
             case "vertx": ((VertxHttpComponent) component).setVertx((io.vertx.core.Vertx) value); return true;
             case "vertxHttpBinding": ((VertxHttpComponent) component).setVertxHttpBinding((org.apache.camel.component.vertx.http.VertxHttpBinding) value); return true;
             case "vertxOptions": ((VertxHttpComponent) component).setVertxOptions((io.vertx.core.VertxOptions) value); return true;
+            case "webClientOptions": ((VertxHttpComponent) component).setWebClientOptions((io.vertx.ext.web.client.WebClientOptions) value); return true;
             case "headerFilterStrategy": ((VertxHttpComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "proxyHost": ((VertxHttpComponent) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPassword": ((VertxHttpComponent) component).setProxyPassword((java.lang.String) value); return true;
