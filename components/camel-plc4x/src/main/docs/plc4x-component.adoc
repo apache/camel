@@ -58,3 +58,18 @@ Maven users will need to add the following dependency to their pom.xml.
 ---------------------------------------
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
+
+
+== Consumer
+The consumer supports one-time reading or Triggered Reading. (_Schedulded Reading using Period only soon_).To read from
+the PLC, use a  `Map<String,String>` containing the Alias and Queries for the Data you want.
+
+The Body create by the Consumer will be a `Map<String,Object>` containing the Aliases and there associated value
+read from the PLC.
+
+== Producer
+To write data to the PLC, we also use a `Map`. The difference with the Producer is that the `Value` of the Map has also to
+be a Map. Also, this `Map` has to be set into the `Body` of the `Message`
+
+The used `Map` would be a `Map<String,Map<String,Object>` where the `Map<String,Object>` represent the Query and the
+data we want to write to it.
