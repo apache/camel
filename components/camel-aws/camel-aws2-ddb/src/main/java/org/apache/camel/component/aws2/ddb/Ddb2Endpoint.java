@@ -25,6 +25,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.aws2.ddb.client.Ddb2ClientFactory;
+import org.apache.camel.health.HealthCheckHelper;
+import org.apache.camel.impl.health.ComponentsHealthCheckRepository;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -56,6 +58,9 @@ public class Ddb2Endpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(Ddb2Endpoint.class);
 
+    private ComponentsHealthCheckRepository healthCheckRepository;
+    private Ddb2ClientHealthCheck clientHealthCheck;
+
     @UriParam
     private Ddb2Configuration configuration;
 
@@ -79,6 +84,14 @@ public class Ddb2Endpoint extends ScheduledPollEndpoint {
     @Override
     public void doStart() throws Exception {
         super.doStart();
+
+        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(getCamelContext(),
+                ComponentsHealthCheckRepository.REPOSITORY_ID, ComponentsHealthCheckRepository.class);
+
+        if (healthCheckRepository != null) {
+            clientHealthCheck = new Ddb2ClientHealthCheck(this, getId());
+            healthCheckRepository.addHealthCheck(clientHealthCheck);
+        }
 
         ddbClient = configuration.getAmazonDDBClient() != null
                 ? configuration.getAmazonDDBClient() : Ddb2ClientFactory.getDynamoDBClient(configuration).getDynamoDBClient();

@@ -40,8 +40,6 @@ public class Ddb2Component extends DefaultComponent {
 
     public Ddb2Component(CamelContext context) {
         super(context);
-
-        registerExtension(new Ddb2ComponentVerifierExtension());
     }
 
     @Override
