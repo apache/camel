@@ -238,4 +238,9 @@ public class KafkaConsumer extends DefaultConsumer
     public List<TaskHealthState> healthStates() {
         return tasks.stream().map(t -> t.healthState()).collect(Collectors.toList());
     }
+
+    @Override
+    public String adapterFactoryService() {
+        return "kafka-adapter-factory";
+    }
 }

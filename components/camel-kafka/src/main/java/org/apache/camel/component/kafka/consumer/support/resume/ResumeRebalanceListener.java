@@ -15,34 +15,36 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.kafka.consumer.support;
+package org.apache.camel.component.kafka.consumer.support.resume;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.camel.component.kafka.KafkaConfiguration;
 import org.apache.camel.component.kafka.consumer.CommitManager;
+import org.apache.camel.component.kafka.consumer.support.classic.ClassicRebalanceListener;
+import org.apache.camel.resume.ResumeStrategy;
+import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
 import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PartitionAssignmentListener implements ConsumerRebalanceListener {
-    private static final Logger LOG = LoggerFactory.getLogger(PartitionAssignmentListener.class);
+public class ResumeRebalanceListener implements ConsumerRebalanceListener {
+    private static final Logger LOG = LoggerFactory.getLogger(ClassicRebalanceListener.class);
 
     private final String threadId;
     private final KafkaConfiguration configuration;
-    private final KafkaConsumerResumeAdapter resumeStrategy;
     private final CommitManager commitManager;
+    private final KafkaResumeAdapter resumeAdapter;
 
-    public PartitionAssignmentListener(String threadId, KafkaConfiguration configuration,
-                                       CommitManager commitManager,
-                                       KafkaConsumerResumeAdapter resumeStrategy) {
+    public ResumeRebalanceListener(String threadId, KafkaConfiguration configuration,
+                                   CommitManager commitManager, Consumer<?, ?> consumer, ResumeStrategy resumeStrategy) {
         this.threadId = threadId;
         this.configuration = configuration;
         this.commitManager = commitManager;
-        this.resumeStrategy = resumeStrategy;
+
+        resumeAdapter = resumeStrategy.getAdapter(KafkaResumeAdapter.class);
+        resumeAdapter.setConsumer(consumer);
     }
 
     @Override
@@ -59,19 +61,11 @@ public class PartitionAssignmentListener implements ConsumerRebalanceListener {
 
     @Override
     public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
-
         if (LOG.isDebugEnabled()) {
             partitions.forEach(p -> LOG.debug("onPartitionsAssigned: {} from {}", threadId, p.topic()));
-
         }
-        List<KafkaResumable> resumables = partitions.stream()
-                .map(p -> new KafkaResumable(String.valueOf(p.partition()), p.topic())).collect(Collectors.toList());
 
-        resumables.forEach(this::doResume);
+        resumeAdapter.resume();
     }
 
-    private void doResume(KafkaResumable r) {
-        resumeStrategy.setKafkaResumable(r);
-        resumeStrategy.resume();
-    }
 }

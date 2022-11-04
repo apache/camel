@@ -14,9 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kafka.consumer.support;
+package org.apache.camel.component.kafka.consumer.support.classic;
 
-import org.apache.camel.resume.ResumeAdapter;
 import org.apache.kafka.clients.consumer.Consumer;
 
 /**
@@ -27,7 +26,7 @@ import org.apache.kafka.clients.consumer.Consumer;
  * the component is set up to use more than one of them. As such, implementations are responsible for ensuring the
  * thread-safety of the operations within the resume method.
  */
-public interface KafkaConsumerResumeAdapter extends ResumeAdapter {
+public interface PartitionAssignmentAdapter {
 
     /**
      * Sets the Kafka consumer instance for the adapter. Please note that the Kafka consumer is not safe for concurrent
@@ -37,11 +36,5 @@ public interface KafkaConsumerResumeAdapter extends ResumeAdapter {
      */
     void setConsumer(Consumer<?, ?> consumer);
 
-    /**
-     * Sets an optional resumable instance for the adapter. This is usually set during partition assignment. Garanteed
-     * not to be null and safe to ignore if partition and topic information are not used.
-     * 
-     * @param kafkaResumable the resumable instance
-     */
-    void setKafkaResumable(KafkaResumable kafkaResumable);
+    void handlePartitionAssignment();
 }

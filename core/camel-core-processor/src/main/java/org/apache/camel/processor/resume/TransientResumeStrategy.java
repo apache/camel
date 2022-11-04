@@ -119,61 +119,7 @@ public class TransientResumeStrategy implements ResumeStrategy {
 
                     @Override
                     public ResumeCache<?> getResumeCache() {
-                        return new ResumeCache<>() {
-                            private Map<Object, Object> cache = new HashMap<>();
-
-                            @Override
-                            public Object computeIfAbsent(Object key, Function<? super Object, ? super Object> mapping) {
-                                return cache.computeIfAbsent(key, mapping);
-                            }
-
-                            @Override
-                            public Object computeIfPresent(
-                                    Object key, BiFunction<? super Object, ? super Object, ? super Object> remapping) {
-                                return cache.computeIfPresent(key, remapping);
-                            }
-
-                            @Override
-                            public boolean contains(Object key, Object entry) {
-                                return Objects.equals(cache.get(key), entry);
-                            }
-
-                            @Override
-                            public void add(Object key, Object offsetValue) {
-                                cache.put(key, offsetValue);
-                            }
-
-                            @Override
-                            public boolean isFull() {
-                                return false;
-                            }
-
-                            @Override
-                            public long capacity() {
-                                return Integer.MAX_VALUE;
-                            }
-
-                            @Override
-                            public <T> T get(Object key, Class<T> clazz) {
-                                final Object o = cache.get(key);
-
-                                return clazz.cast(o);
-                            }
-
-                            @Override
-                            public Object get(Object key) {
-                                return cache.get(key);
-                            }
-
-                            @Override
-                            public void forEach(BiFunction<? super Object, ? super Object, Boolean> action) {
-                                for (Map.Entry e : cache.entrySet()) {
-                                    if (!action.apply(e.getKey(), e.getValue())) {
-                                        cache.remove(e.getKey());
-                                    }
-                                }
-                            }
-                        };
+                        return createSimpleCache();
                     }
 
                     @Override
@@ -181,6 +127,63 @@ public class TransientResumeStrategy implements ResumeStrategy {
                         return "transient-resume-strategy";
                     }
                 };
+            }
+        };
+    }
+
+    public static ResumeCache<Object> createSimpleCache() {
+        return new ResumeCache<>() {
+            private Map<Object, Object> cache = new HashMap<>();
+
+            @Override
+            public Object computeIfAbsent(Object key, Function<? super Object, ? super Object> mapping) {
+                return cache.computeIfAbsent(key, mapping);
+            }
+
+            @Override
+            public Object computeIfPresent(Object key, BiFunction<? super Object, ? super Object, ? super Object> remapping) {
+                return cache.computeIfPresent(key, remapping);
+            }
+
+            @Override
+            public boolean contains(Object key, Object entry) {
+                return Objects.equals(cache.get(key), entry);
+            }
+
+            @Override
+            public void add(Object key, Object offsetValue) {
+                cache.put(key, offsetValue);
+            }
+
+            @Override
+            public boolean isFull() {
+                return false;
+            }
+
+            @Override
+            public long capacity() {
+                return Integer.MAX_VALUE;
+            }
+
+            @Override
+            public <T> T get(Object key, Class<T> clazz) {
+                final Object o = cache.get(key);
+
+                return clazz.cast(o);
+            }
+
+            @Override
+            public Object get(Object key) {
+                return cache.get(key);
+            }
+
+            @Override
+            public void forEach(BiFunction<? super Object, ? super Object, Boolean> action) {
+                for (Map.Entry e : cache.entrySet()) {
+                    if (!action.apply(e.getKey(), e.getValue())) {
+                        cache.remove(e.getKey());
+                    }
+                }
             }
         };
     }
