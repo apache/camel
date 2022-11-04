@@ -416,7 +416,7 @@
         <neoscada-version>0.4.0</neoscada-version>
         <netty-version>4.1.84.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
-        <networknt-json-schema-validator-version>1.0.72</networknt-json-schema-validator-version>
+        <networknt-json-schema-validator-version>1.0.73</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>9.22</nimbus-jose-jwt>
         <nitrite-version>3.4.4</nitrite-version>
         <okclient-version>3.14.9</okclient-version>
