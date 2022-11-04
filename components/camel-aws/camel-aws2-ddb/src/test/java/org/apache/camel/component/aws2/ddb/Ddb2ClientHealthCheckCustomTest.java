@@ -17,6 +17,9 @@
 
 package org.apache.camel.component.aws2.ddb;
 
+import java.util.Collection;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.health.HealthCheck;
@@ -30,9 +33,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-
-import java.util.Collection;
-import java.util.concurrent.TimeUnit;
 
 import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 

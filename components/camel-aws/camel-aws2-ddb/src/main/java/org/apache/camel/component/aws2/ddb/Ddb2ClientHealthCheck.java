@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.aws2.ddb;
 
+import java.util.Map;
+
 import org.apache.camel.component.aws2.ddb.client.Ddb2ClientFactory;
 import org.apache.camel.component.aws2.ddb.client.Ddb2InternalClient;
 import org.apache.camel.health.HealthCheckResultBuilder;
@@ -25,8 +27,6 @@ import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-
-import java.util.Map;
 
 public class Ddb2ClientHealthCheck extends AbstractHealthCheck {
 
