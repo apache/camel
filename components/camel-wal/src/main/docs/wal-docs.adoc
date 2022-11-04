@@ -3,9 +3,8 @@
 :shortname: wal
 :artifactid: camel-wal
 :description: A write-ahead resume strategy
-:since: 1.1
-:supportlevel: Stable
-:core:
+:since: 3.20.0
+:supportlevel: Preview
 //Manually maintained attributes
 
 *Since Camel {since}*
