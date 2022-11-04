@@ -10,8 +10,6 @@
 
 *Since Camel {since}*
 
-*{component-header}*
-
 The WAL component provides a resume strategy that uses a write-ahead log to
 
 A resume strategy that uses a write-ahead strategy to keep a transaction log of the in-processing and processed records. This strategy works by wrapping another strategy. This increases the reliability of the resume API by ensuring that records are saved locally before being sent to the remote data storage used by the resume strategy, thus guaranteeing that records can re recovered in case of crash of that system.
