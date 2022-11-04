@@ -26,13 +26,12 @@ import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
+import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
@@ -47,7 +46,7 @@ public class Ddb2ClientHealthCheckCustomTest extends CamelTestSupport {
         context = super.createCamelContext();
         context.getPropertiesComponent().setLocation("ref:prop");
         Ddb2Component component = new Ddb2Component(context);
-        component.getConfiguration().setAmazonDDBClient(DynamoDbClient.builder().region(Region.of("Ciao")).build());
+        component.getConfiguration().setAmazonDDBClient(AWSSDKClientUtils.newDynamoDBClient());
         component.init();
         context.addComponent("aws2-ddb", component);
 
@@ -92,8 +91,8 @@ public class Ddb2ClientHealthCheckCustomTest extends CamelTestSupport {
                     .filter(result -> result.getCheck().getId().startsWith("aws2-ddb-client"))
                     .findAny()
                     .isPresent();
-            Assertions.assertTrue(down, "liveness check");
-            Assertions.assertTrue(containsAws2DdbHealthCheck, "aws2-ddb   check");
+            Assertions.assertFalse(down, "liveness check");
+            Assertions.assertFalse(containsAws2DdbHealthCheck, "aws2-ddb check");
         });
 
     }
