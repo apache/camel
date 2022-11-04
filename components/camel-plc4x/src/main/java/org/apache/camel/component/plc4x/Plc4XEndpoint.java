@@ -53,6 +53,19 @@ public class Plc4XEndpoint extends DefaultEndpoint {
     @Metadata(label = "consumer", description = "Interval on which the Trigger should be checked")
     private int period;
 
+    private PlcDriverManager plcDriverManager;
+    private PlcConnection connection;
+    private String uri;
+
+    public Plc4XEndpoint(String endpointUri, Component component) throws PlcConnectionException {
+        super(endpointUri, component);
+        this.plcDriverManager = new PlcDriverManager();
+        //Here we establish the connection in the endpoint, as it is created once during the context
+        // to avoid disconnecting and reconnecting for every request
+        this.uri = endpointUri.replaceFirst("plc4x:/?/?", "");
+        this.connection = plcDriverManager.getConnection(this.uri);
+    }
+
     public int getPeriod() {
         return period;
     }
@@ -60,10 +73,6 @@ public class Plc4XEndpoint extends DefaultEndpoint {
     public void setPeriod(int period) {
         this.period = period;
     }
-
-    private PlcDriverManager plcDriverManager;
-    private PlcConnection connection;
-    private String uri;
 
     public String getUri() {
         return uri;
@@ -84,15 +93,6 @@ public class Plc4XEndpoint extends DefaultEndpoint {
         } catch (PlcConnectionException e) {
             throw new PlcRuntimeException(e);
         }
-    }
-
-    public Plc4XEndpoint(String endpointUri, Component component) throws PlcConnectionException {
-        super(endpointUri, component);
-        this.plcDriverManager = new PlcDriverManager();
-        //Here we establish the connection in the endpoint, as it is created once during the context
-        // to avoid disconnecting and reconnecting for every request
-        this.uri = endpointUri.replaceFirst("plc4x:/?/?", "");
-        this.connection = plcDriverManager.getConnection(this.uri);
     }
 
     public PlcConnection getConnection() {

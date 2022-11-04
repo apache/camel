@@ -29,6 +29,58 @@ public class TagData {
     private String query;
     private Object value;
 
+    private Map<Class<?>, Predicate<String>> canParse = new HashMap<>();
+    {
+        canParse.put(Integer.TYPE, s -> {
+            try {
+                Integer.parseInt(s);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        });
+        canParse.put(Long.TYPE, s -> {
+            try {
+                Long.parseLong(s);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        });
+        canParse.put(Short.TYPE, s -> {
+            try {
+                Short.parseShort(s);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        });
+        canParse.put(Boolean.TYPE, s -> {
+            try {
+                Boolean.parseBoolean(s);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        });
+        canParse.put(Double.TYPE, s -> {
+            try {
+                Double.parseDouble(s);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        });
+        canParse.put(Float.TYPE, s -> {
+            try {
+                Float.parseFloat(s);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        });
+    };
+
     public TagData(String alias, String query, Object value) {
         this.tagName = alias;
         this.query = query;
@@ -85,58 +137,6 @@ public class TagData {
 
         }
     }
-
-    private Map<Class<?>, Predicate<String>> canParse = new HashMap<>();
-    {
-        canParse.put(Integer.TYPE, s -> {
-            try {
-                Integer.parseInt(s);
-                return true;
-            } catch (Exception e) {
-                return false;
-            }
-        });
-        canParse.put(Long.TYPE, s -> {
-            try {
-                Long.parseLong(s);
-                return true;
-            } catch (Exception e) {
-                return false;
-            }
-        });
-        canParse.put(Short.TYPE, s -> {
-            try {
-                Short.parseShort(s);
-                return true;
-            } catch (Exception e) {
-                return false;
-            }
-        });
-        canParse.put(Boolean.TYPE, s -> {
-            try {
-                Boolean.parseBoolean(s);
-                return true;
-            } catch (Exception e) {
-                return false;
-            }
-        });
-        canParse.put(Double.TYPE, s -> {
-            try {
-                Double.parseDouble(s);
-                return true;
-            } catch (Exception e) {
-                return false;
-            }
-        });
-        canParse.put(Float.TYPE, s -> {
-            try {
-                Float.parseFloat(s);
-                return true;
-            } catch (Exception e) {
-                return false;
-            }
-        });
-    };
 
     @Override
     public String toString() {
