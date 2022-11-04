@@ -128,7 +128,8 @@ public class TransientResumeStrategy implements ResumeStrategy {
                             }
 
                             @Override
-                            public Object computeIfPresent(Object key, BiFunction<? super Object, ? super Object, ? super Object> remapping) {
+                            public Object computeIfPresent(
+                                    Object key, BiFunction<? super Object, ? super Object, ? super Object> remapping) {
                                 return cache.computeIfPresent(key, remapping);
                             }
 
