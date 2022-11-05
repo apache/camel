@@ -92,7 +92,7 @@ public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterS
         JavaMailSender sender = configuration.getJavaMailSender();
         if (sender == null) {
             // use default mail sender
-            sender = configuration.createJavaMailSender();
+            sender = configuration.createJavaMailSender(getCamelContext());
         }
         return createProducer(sender);
     }
@@ -113,7 +113,7 @@ public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterS
         }
 
         // must use java mail sender impl as we need to get hold of a mail session
-        JavaMailSender sender = configuration.createJavaMailSender();
+        JavaMailSender sender = configuration.createJavaMailSender(getCamelContext());
         return createConsumer(processor, sender);
     }
 

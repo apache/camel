@@ -203,14 +203,14 @@ public class MailConfiguration implements Cloneable {
         }
     }
 
-    protected JavaMailSender createJavaMailSender() {
+    protected JavaMailSender createJavaMailSender(CamelContext context) {
         JavaMailSender answer = new DefaultJavaMailSender();
 
         if (javaMailProperties != null) {
             answer.setJavaMailProperties(javaMailProperties);
         } else {
             // set default properties if none provided
-            answer.setJavaMailProperties(createJavaMailProperties());
+            answer.setJavaMailProperties(createJavaMailProperties(context));
             // add additional properties if provided
             if (additionalJavaMailProperties != null) {
                 answer.getJavaMailProperties().putAll(additionalJavaMailProperties);
@@ -265,7 +265,7 @@ public class MailConfiguration implements Cloneable {
         return answer;
     }
 
-    private Properties createJavaMailProperties() {
+    private Properties createJavaMailProperties(CamelContext context) {
         // clone the system properties and set the java mail properties
         Properties properties = (Properties) System.getProperties().clone();
         properties.put("mail." + protocol + ".connectiontimeout", connectionTimeout);
@@ -290,12 +290,12 @@ public class MailConfiguration implements Cloneable {
         }
 
         if (sslContextParameters != null && isSecureProtocol()) {
-            properties.put("mail." + protocol + ".socketFactory", createSSLContext().getSocketFactory());
+            properties.put("mail." + protocol + ".socketFactory", createSSLContext(context).getSocketFactory());
             properties.put("mail." + protocol + ".socketFactory.fallback", "false");
             properties.put("mail." + protocol + ".socketFactory.port", "" + port);
         }
         if (sslContextParameters != null && isStartTlsEnabled()) {
-            properties.put("mail." + protocol + ".ssl.socketFactory", createSSLContext().getSocketFactory());
+            properties.put("mail." + protocol + ".ssl.socketFactory", createSSLContext(context).getSocketFactory());
             properties.put("mail." + protocol + ".ssl.socketFactory.port", "" + port);
         }
 
@@ -311,9 +311,9 @@ public class MailConfiguration implements Cloneable {
                 ? new PasswordAuthentication(username, password) : authenticator.getPasswordAuthentication();
     }
 
-    private SSLContext createSSLContext() {
+    private SSLContext createSSLContext(CamelContext context) {
         try {
-            return sslContextParameters.createSSLContext(null);
+            return sslContextParameters.createSSLContext(context);
         } catch (Exception e) {
             throw new RuntimeCamelException("Error initializing SSLContext.", e);
         }
