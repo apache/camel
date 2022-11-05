@@ -18,6 +18,7 @@ package org.apache.camel.component.vertx.http;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.support.NormalizedUri;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,13 +34,14 @@ public class VertxHttpSendDynamicAwareTest extends VertxHttpTestSupport {
         out = fluentTemplate.to("direct:joes").withHeader("drink", "wine").request(String.class);
         assertEquals("Drinking wine", out);
 
+        NormalizedUri uri = NormalizedUri
+                .newNormalizedUri("vertx-http://http://localhost:" + getPort() + "?throwExceptionOnFailure=false", false);
+
         // and there should only be one http endpoint as they are both on same host
-        boolean found = context.getEndpointMap()
-                .containsKey("vertx-http://http://localhost:" + getPort() + "?throwExceptionOnFailure=false");
-        assertTrue(found, "Should find static uri");
+        assertTrue(context.getEndpointRegistry().containsKey(uri), "Should find static uri");
 
         // we only have 2xdirect and 2xVERTX-http
-        assertEquals(4, context.getEndpointMap().size());
+        assertEquals(4, context.getEndpointRegistry().size());
     }
 
     @Override
