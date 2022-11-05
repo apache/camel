@@ -100,11 +100,6 @@ public class Plc4XEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public void setProperties(Object bean, Map<String, Object> parameters) {
-
-    }
-
-    @Override
     public Producer createProducer() throws Exception {
         //Checking if connection is still up and reconnecting if not
         if (!connection.isConnected()) {
@@ -119,12 +114,9 @@ public class Plc4XEndpoint extends DefaultEndpoint {
         if (!connection.isConnected()) {
             connection = plcDriverManager.getConnection(uri.replaceFirst("plc4x:/?/?", ""));
         }
-        return new Plc4XConsumer(this, processor);
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
+        Plc4XConsumer consumer = new Plc4XConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     public PlcDriverManager getPlcDriverManager() {
