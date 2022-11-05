@@ -48,6 +48,7 @@ public class CoAPRestComponentTLSTest extends CoAPRestComponentTestBase {
         builder.setClientOnly();
 
         KeyStoreParameters truststoreParameters = new KeyStoreParameters();
+        truststoreParameters.setCamelContext(context);
         truststoreParameters.setResource("truststore.jks");
         truststoreParameters.setPassword("storepass");
 
@@ -64,21 +65,27 @@ public class CoAPRestComponentTLSTest extends CoAPRestComponentTestBase {
     @Override
     protected void decorateRestConfiguration(RestConfigurationDefinition restConfig) {
         KeyStoreParameters keystoreParameters = new KeyStoreParameters();
+        keystoreParameters.setCamelContext(context);
         keystoreParameters.setResource("service.jks");
         keystoreParameters.setPassword("security");
 
         SSLContextParameters serviceSSLContextParameters = new SSLContextParameters();
+        serviceSSLContextParameters.setCamelContext(context);
         KeyManagersParameters serviceSSLKeyManagers = new KeyManagersParameters();
+        serviceSSLKeyManagers.setCamelContext(context);
         serviceSSLKeyManagers.setKeyPassword("security");
         serviceSSLKeyManagers.setKeyStore(keystoreParameters);
         serviceSSLContextParameters.setKeyManagers(serviceSSLKeyManagers);
 
         KeyStoreParameters truststoreParameters = new KeyStoreParameters();
+        truststoreParameters.setCamelContext(context);
         truststoreParameters.setResource("truststore.jks");
         truststoreParameters.setPassword("storepass");
 
         SSLContextParameters clientSSLContextParameters = new SSLContextParameters();
+        clientSSLContextParameters.setCamelContext(context);
         TrustManagersParameters clientSSLTrustManagers = new TrustManagersParameters();
+        clientSSLTrustManagers.setCamelContext(context);
         clientSSLTrustManagers.setKeyStore(truststoreParameters);
         clientSSLContextParameters.setTrustManagers(clientSSLTrustManagers);
 

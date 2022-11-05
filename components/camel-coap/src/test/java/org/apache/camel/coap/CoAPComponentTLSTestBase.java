@@ -24,6 +24,7 @@ import java.security.PublicKey;
 
 import javax.crypto.KeyGenerator;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -225,7 +226,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
 
-        registerTLSConfiguration();
+        registerTLSConfiguration(context);
 
         return new RouteBuilder() {
             @Override
@@ -336,40 +337,48 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
         };
     }
 
-    private void registerTLSConfiguration() throws GeneralSecurityException, IOException {
+    private void registerTLSConfiguration(CamelContext context) throws GeneralSecurityException, IOException {
         KeyStoreParameters serviceKeystoreParameters = new KeyStoreParameters();
+        serviceKeystoreParameters.setCamelContext(context);
         serviceKeystoreParameters.setResource("service.jks");
         serviceKeystoreParameters.setPassword("security");
 
         KeyStoreParameters selfSignedKeyStoreParameters = new KeyStoreParameters();
+        selfSignedKeyStoreParameters.setCamelContext(context);
         selfSignedKeyStoreParameters.setResource("selfsigned.jks");
         selfSignedKeyStoreParameters.setPassword("security");
 
         KeyStoreParameters clientKeystoreParameters = new KeyStoreParameters();
+        clientKeystoreParameters.setCamelContext(context);
         clientKeystoreParameters.setResource("client.jks");
         clientKeystoreParameters.setPassword("security");
 
         KeyStoreParameters truststoreParameters = new KeyStoreParameters();
+        truststoreParameters.setCamelContext(context);
         truststoreParameters.setResource("truststore.jks");
         truststoreParameters.setPassword("storepass");
 
         KeyStoreParameters truststoreParameters2 = new KeyStoreParameters();
+        truststoreParameters2.setCamelContext(context);
         truststoreParameters2.setResource("truststore2.jks");
         truststoreParameters2.setPassword("storepass");
 
         SSLContextParameters serviceSSLContextParameters = new SSLContextParameters();
+        serviceSSLContextParameters.setCamelContext(context);
         KeyManagersParameters serviceSSLKeyManagers = new KeyManagersParameters();
         serviceSSLKeyManagers.setKeyPassword("security");
         serviceSSLKeyManagers.setKeyStore(serviceKeystoreParameters);
         serviceSSLContextParameters.setKeyManagers(serviceSSLKeyManagers);
 
         SSLContextParameters selfSignedServiceSSLContextParameters = new SSLContextParameters();
+        selfSignedServiceSSLContextParameters.setCamelContext(context);
         KeyManagersParameters selfSignedServiceSSLKeyManagers = new KeyManagersParameters();
         selfSignedServiceSSLKeyManagers.setKeyPassword("security");
         selfSignedServiceSSLKeyManagers.setKeyStore(selfSignedKeyStoreParameters);
         selfSignedServiceSSLContextParameters.setKeyManagers(selfSignedServiceSSLKeyManagers);
 
         SSLContextParameters clientAuthServiceSSLContextParameters = new SSLContextParameters();
+        clientAuthServiceSSLContextParameters.setCamelContext(context);
         KeyManagersParameters clientAuthServiceSSLKeyManagers = new KeyManagersParameters();
         clientAuthServiceSSLKeyManagers.setKeyPassword("security");
         clientAuthServiceSSLKeyManagers.setKeyStore(serviceKeystoreParameters);
@@ -382,16 +391,19 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
         clientAuthServiceSSLContextParameters.setServerParameters(clientAuthSSLContextServerParameters);
 
         SSLContextParameters clientSSLContextParameters = new SSLContextParameters();
+        clientSSLContextParameters.setCamelContext(context);
         TrustManagersParameters clientSSLTrustManagers = new TrustManagersParameters();
         clientSSLTrustManagers.setKeyStore(truststoreParameters);
         clientSSLContextParameters.setTrustManagers(clientSSLTrustManagers);
 
         SSLContextParameters clientSSLContextParameters2 = new SSLContextParameters();
+        clientSSLContextParameters2.setCamelContext(context);
         TrustManagersParameters clientSSLTrustManagers2 = new TrustManagersParameters();
         clientSSLTrustManagers2.setKeyStore(truststoreParameters2);
         clientSSLContextParameters2.setTrustManagers(clientSSLTrustManagers2);
 
         SSLContextParameters clientAuthClientSSLContextParameters = new SSLContextParameters();
+        clientAuthClientSSLContextParameters.setCamelContext(context);
         TrustManagersParameters clientAuthClientSSLTrustManagers = new TrustManagersParameters();
         clientAuthClientSSLTrustManagers.setKeyStore(truststoreParameters);
         clientAuthClientSSLContextParameters.setTrustManagers(clientAuthClientSSLTrustManagers);
@@ -401,6 +413,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
         clientAuthClientSSLContextParameters.setKeyManagers(clientAuthClientSSLKeyManagers);
 
         SSLContextParameters clientAuthClientSSLContextParameters2 = new SSLContextParameters();
+        clientAuthClientSSLContextParameters2.setCamelContext(context);
         TrustManagersParameters clientAuthClientSSLTrustManagers2 = new TrustManagersParameters();
         clientAuthClientSSLTrustManagers2.setKeyStore(truststoreParameters2);
         clientAuthClientSSLContextParameters2.setTrustManagers(clientAuthClientSSLTrustManagers2);
@@ -410,6 +423,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
         clientAuthClientSSLContextParameters2.setKeyManagers(clientAuthClientSSLKeyManagers2);
 
         SSLContextParameters selfSignedClientSSLContextParameters = new SSLContextParameters();
+        selfSignedClientSSLContextParameters.setCamelContext(context);
         TrustManagersParameters selfSignedClientSSLTrustManagers = new TrustManagersParameters();
         selfSignedClientSSLTrustManagers.setKeyStore(selfSignedKeyStoreParameters);
         selfSignedClientSSLContextParameters.setTrustManagers(selfSignedClientSSLTrustManagers);
