@@ -1314,6 +1314,20 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.DropboxComponentBuilderFactory.dropbox();
     }
     /**
+     * Dynamic Router (camel-dynamic-router)
+     * The Dynamic Router component routes exchanges to recipients, and the
+     * recipients (and their rules) may change at runtime.
+     * 
+     * Category: endpoint,java
+     * Since: 3.15
+     * Maven coordinates: org.apache.camel:camel-dynamic-router
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.DynamicRouterComponentBuilderFactory.DynamicRouterComponentBuilder dynamicRouter() {
+        return org.apache.camel.builder.component.dsl.DynamicRouterComponentBuilderFactory.dynamicRouter();
+    }
+    /**
      * Ehcache (camel-ehcache)
      * Perform caching operations using Ehcache.
      * 
