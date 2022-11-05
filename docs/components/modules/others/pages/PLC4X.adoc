@@ -1,1 +1,0 @@
-../../../../../components/camel-plc4x/src/main/docs/PLC4X.adoc
