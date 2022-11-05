@@ -96,7 +96,8 @@ public class MailProducer extends DefaultAsyncProducer {
         } else {
             // create new mail sender specially for this
             LOG.debug("Creating new JavaMailSender to include additional {} java mail properties", additional.size());
-            JavaMailSender customSender = getEndpoint().getConfiguration().createJavaMailSender(getEndpoint().getCamelContext());
+            JavaMailSender customSender
+                    = getEndpoint().getConfiguration().createJavaMailSender(getEndpoint().getCamelContext());
             additional.forEach((k, v) -> {
                 if (v != null) {
                     // add with prefix so we dont loose that
