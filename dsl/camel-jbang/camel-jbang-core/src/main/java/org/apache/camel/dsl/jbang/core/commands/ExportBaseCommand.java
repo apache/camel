@@ -325,6 +325,19 @@ abstract class ExportBaseCommand extends CamelCommand {
         // noop
     }
 
+    protected String exportPackageName(String groupId, String artifactId) {
+        // for package name it must be in lower-case and alpha/numeric
+        String s = groupId + "." + artifactId;
+        StringBuilder sb = new StringBuilder();
+        for (char ch : s.toCharArray()) {
+            if (ch == '.' || Character.isAlphabetic(ch) || Character.isDigit(ch)) {
+                ch = Character.toLowerCase(ch);
+                sb.append(ch);
+            }
+        }
+        return sb.toString();
+    }
+
     protected void copySettingsAndProfile(
             File settings, File profile, File targetDir,
             Function<Properties, Object> customize)

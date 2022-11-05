@@ -90,7 +90,7 @@ class ExportQuarkus extends Export {
         buildDir.mkdirs();
 
         // copy source files
-        String packageName = ids[0] + "." + ids[1];
+        String packageName = exportPackageName(ids[0], ids[1]);
         File srcJavaDir = new File(BUILD_DIR, "src/main/java/" + packageName.replace('.', '/'));
         srcJavaDir.mkdirs();
         File srcResourcesDir = new File(BUILD_DIR, "src/main/resources");
