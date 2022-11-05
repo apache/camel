@@ -20,6 +20,8 @@ import javax.net.ssl.SSLContext;
 
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.SslContext;
+import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.support.jsse.KeyManagersParameters;
@@ -147,18 +149,25 @@ public abstract class StompBaseTest extends CamelTestSupport {
     }
 
     private SSLContextParameters getSSLContextParameters(String path, String password) {
+        // need an early camel context dummy due to ActiveMQEmbeddedService is eager initialized
+        CamelContext dummy = new DefaultCamelContext();
+
         KeyStoreParameters ksp = new KeyStoreParameters();
+        ksp.setCamelContext(dummy);
         ksp.setResource(path);
         ksp.setPassword(password);
 
         KeyManagersParameters kmp = new KeyManagersParameters();
+        kmp.setCamelContext(dummy);
         kmp.setKeyPassword(password);
         kmp.setKeyStore(ksp);
 
         TrustManagersParameters tmp = new TrustManagersParameters();
+        tmp.setCamelContext(dummy);
         tmp.setKeyStore(ksp);
 
         SSLContextParameters sslContextParameters = new SSLContextParameters();
+        sslContextParameters.setCamelContext(dummy);
         sslContextParameters.setKeyManagers(kmp);
         sslContextParameters.setTrustManagers(tmp);
 
