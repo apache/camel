@@ -16,6 +16,8 @@
  */
 package org.apache.camel.main.download;
 
+import java.io.InputStream;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.util.ObjectHelper;
@@ -30,6 +32,35 @@ public final class DependencyDownloaderClassResolver extends DefaultClassResolve
         super(camelContext);
         this.downloader = camelContext.hasService(DependencyDownloader.class);
         this.knownDependenciesResolver = knownDependenciesResolver;
+    }
+
+    @Override
+    public InputStream loadResourceAsStream(String uri) {
+        InputStream answer = null;
+        try {
+            answer = super.loadResourceAsStream(uri);
+        } catch (Exception e) {
+            // uri cannot be loaded, likely need maven GAV
+        }
+
+        if (answer == null) {
+            // okay maybe the class is from a known GAV that we can download first and then load the class
+            MavenGav gav = knownDependenciesResolver.mavenGavForClass(uri);
+            if (gav != null) {
+                if (!downloader.alreadyOnClasspath(gav.getGroupId(), gav.getArtifactId(),
+                        gav.getVersion())) {
+                    downloader.downloadDependency(gav.getGroupId(), gav.getArtifactId(),
+                            gav.getVersion());
+                }
+                try {
+                    answer = super.loadResourceAsStream(uri);
+                } catch (Exception e) {
+                    // ignore
+                }
+            }
+        }
+
+        return answer;
     }
 
     @Override
@@ -53,7 +84,7 @@ public final class DependencyDownloaderClassResolver extends DefaultClassResolve
                 try {
                     answer = ObjectHelper.loadClass(name, loader);
                 } catch (Exception e) {
-                    // class cannot be loaded, likely need maven GAV
+                    // ignore
                 }
             }
         }
