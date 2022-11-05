@@ -58,7 +58,8 @@ final class LumberjackUtil {
                 protected void initChannel(Channel ch) throws Exception {
                     ChannelPipeline pipeline = ch.pipeline();
                     if (sslContextParameters != null) {
-                        SSLEngine sslEngine = sslContextParameters.createSSLContext(null).createSSLEngine();
+                        SSLEngine sslEngine = sslContextParameters.createSSLContext(sslContextParameters.getCamelContext())
+                                .createSSLEngine();
                         sslEngine.setUseClientMode(true);
                         pipeline.addLast(new SslHandler(sslEngine));
                     }

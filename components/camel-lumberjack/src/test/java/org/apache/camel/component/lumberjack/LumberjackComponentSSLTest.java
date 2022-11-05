@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.jsse.KeyManagersParameters;
@@ -44,7 +45,7 @@ public class LumberjackComponentSSLTest extends CamelTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() {
 
-        context.getRegistry().bind("ssl", createServerSSLContextParameters());
+        context.getRegistry().bind("ssl", createServerSSLContextParameters(context));
 
         return new RouteBuilder() {
             public void configure() {
@@ -77,7 +78,7 @@ public class LumberjackComponentSSLTest extends CamelTestSupport {
      *
      * @return The {@link SSLContextParameters} Camel object for the Lumberjack component
      */
-    private SSLContextParameters createServerSSLContextParameters() {
+    private SSLContextParameters createServerSSLContextParameters(CamelContext context) {
         SSLContextParameters sslContextParameters = new SSLContextParameters();
 
         KeyManagersParameters keyManagersParameters = new KeyManagersParameters();
@@ -87,6 +88,7 @@ public class LumberjackComponentSSLTest extends CamelTestSupport {
         keyManagersParameters.setKeyPassword("changeit");
         keyManagersParameters.setKeyStore(keyStore);
         sslContextParameters.setKeyManagers(keyManagersParameters);
+        sslContextParameters.setCamelContext(context);
 
         return sslContextParameters;
     }
@@ -100,6 +102,7 @@ public class LumberjackComponentSSLTest extends CamelTestSupport {
         trustStore.setResource("org/apache/camel/component/lumberjack/keystore.jks");
         trustManagersParameters.setKeyStore(trustStore);
         sslContextParameters.setTrustManagers(trustManagersParameters);
+        sslContextParameters.setCamelContext(context);
 
         return sslContextParameters;
     }
