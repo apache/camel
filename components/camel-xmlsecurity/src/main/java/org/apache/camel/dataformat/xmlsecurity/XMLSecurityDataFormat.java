@@ -272,7 +272,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
 
     @Override
     protected void doStart() throws Exception {
-        // noop
+        CamelContextAware.trySetCamelContext(keyOrTrustStoreParameters, getCamelContext());
     }
 
     @Override

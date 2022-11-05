@@ -116,13 +116,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class XmlSignatureTest extends CamelTestSupport {
 
     protected static String payload;
-    private static boolean includeNewLine = true;
+    private static boolean includeNewLine;
     private KeyPair keyPair;
 
     static {
-        if (!TestSupport.isJavaVendor("Azul")) {
-            includeNewLine = false;
-        }
         payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
                   + (includeNewLine ? "\n" : "")
                   + "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
