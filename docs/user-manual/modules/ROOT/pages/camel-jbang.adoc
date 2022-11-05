@@ -1309,8 +1309,7 @@ The dependency output by default is _vanilla_ Apache Camel with the camel-main a
 
 [source,bash]
 ----
-camel dependency-tree                                                                                                                         ✘ INT
-org.apache.camel:camel-main:3.20.0
+camel dependency-tree
 org.apache.camel:camel-dsl-modeline:3.20.0
 org.apache.camel:camel-health:3.20.0
 org.apache.camel:camel-kamelet:3.20.0
