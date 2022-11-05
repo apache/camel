@@ -1294,6 +1294,118 @@ This make it quick to implement a Camel route for a given operation.
 
 See the https://github.com/apache/camel-kamelets-examples/tree/main/jbang/open-api[open-api example] for more details.
 
+== Gathering list of dependencies
+
+When working with Camel JBang then dependencies are automatically resolved. This means that
+you do not have to use a build system like Maven or Gradle to add every Camel components
+as a dependency.
+
+However, you may want to know what dependencies are required to run the Camel integration.
+To see this, you can use the `dependency-tree` command. The command output does not output a detailed
+tree, such as `mvn dependencies:tree`, as the output is intended to list which Camel components,
+and other JARs needed (when using Kamelets).
+
+The dependency output by default is _vanilla_ Apache Camel with the camel-main as runtime, as shown below:
+
+[source,bash]
+----
+camel dependency-tree                                                                                                                         ✘ INT
+org.apache.camel:camel-main:3.20.0
+org.apache.camel:camel-dsl-modeline:3.20.0
+org.apache.camel:camel-health:3.20.0
+org.apache.camel:camel-kamelet:3.20.0
+org.apache.camel:camel-log:3.20.0
+org.apache.camel:camel-rest:3.20.0
+org.apache.camel:camel-stream:3.20.0
+org.apache.camel:camel-timer:3.20.0
+org.apache.camel:camel-yaml-dsl:3.20.0
+org.apache.camel.kamelets:camel-kamelets-utils:0.9.3
+org.apache.camel.kamelets:camel-kamelets:0.9.3
+----
+
+The output is by default a line per maven dependency in GAV format (_groupId:artifactId:version_).
+
+You can also specify the output should be in _Maven format_ as shown:
+
+[source,bash]
+----
+camel dependency-tree --output=maven
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-main</artifactId>
+    <version>3.20.0</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-dsl-modeline</artifactId>
+    <version>3.20.0</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-health</artifactId>
+    <version>3.20.0</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-kamelet</artifactId>
+    <version>3.20.0</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-log</artifactId>
+    <version>3.20.0</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-rest</artifactId>
+    <version>3.20.0</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-stream</artifactId>
+    <version>3.20.0</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-timer</artifactId>
+    <version>3.20.0</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-yaml-dsl</artifactId>
+    <version>3.20.0</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.camel.kamelets</groupId>
+    <artifactId>camel-kamelets-utils</artifactId>
+    <version>0.9.3</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.camel.kamelets</groupId>
+    <artifactId>camel-kamelets</artifactId>
+    <version>0.9.3</version>
+</dependency>
+----
+
+You can also choose the target runtime as either _quarkus_ or _spring-boot_ as shown:
+
+[source,bash]
+----
+camel dependency-tree --runtime=spring-boot
+org.springframework.boot:spring-boot-starter-actuator:2.7.5
+org.springframework.boot:spring-boot-starter-web:2.7.5
+org.apache.camel.springboot:camel-spring-boot-engine-starter:3.20.0
+org.apache.camel.springboot:camel-dsl-modeline-starter:3.20.0
+org.apache.camel.springboot:camel-kamelet-starter:3.20.0
+org.apache.camel.springboot:camel-log-starter:3.20.0
+org.apache.camel.springboot:camel-rest-starter:3.20.0
+org.apache.camel.springboot:camel-stream-starter:3.20.0
+org.apache.camel.springboot:camel-timer-starter:3.20.0
+org.apache.camel.springboot:camel-yaml-dsl-starter:3.20
+org.apache.camel.kamelets:camel-kamelets-utils:0.9.3
+org.apache.camel.kamelets:camel-kamelets:0.9.3
+----
+
 == Creating Projects
 
 You can _export_ your Camel JBang integration to a traditional Java based project such as Spring Boot or Quarkus.

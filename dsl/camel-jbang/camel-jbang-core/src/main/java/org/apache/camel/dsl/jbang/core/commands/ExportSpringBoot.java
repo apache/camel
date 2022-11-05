@@ -51,7 +51,7 @@ class ExportSpringBoot extends Export {
     public Integer export() throws Exception {
         String[] ids = gav.split(":");
         if (ids.length != 3) {
-            System.out.println("--gav must be in syntax: groupId:artifactId:version");
+            System.err.println("--gav must be in syntax: groupId:artifactId:version");
             return 1;
         }
 
@@ -61,16 +61,22 @@ class ExportSpringBoot extends Export {
         File settings = new File(Run.WORK_DIR + "/" + Run.RUN_SETTINGS_FILE);
         if (fresh || !settings.exists()) {
             // allow to automatic build
-            System.out.println("Generating fresh run data");
+            if (!quiet) {
+                System.out.println("Generating fresh run data");
+            }
             int silent = runSilently();
             if (silent != 0) {
                 return silent;
             }
         } else {
-            System.out.println("Reusing existing run data");
+            if (!quiet) {
+                System.out.println("Reusing existing run data");
+            }
         }
 
-        System.out.println("Exporting as Spring Boot project to: " + exportDir);
+        if (!quiet) {
+            System.out.println("Exporting as Spring Boot project to: " + exportDir);
+        }
 
         // use a temporary work dir
         File buildDir = new File(BUILD_DIR);

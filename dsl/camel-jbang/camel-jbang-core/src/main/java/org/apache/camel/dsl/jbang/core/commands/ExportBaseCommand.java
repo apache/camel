@@ -120,6 +120,10 @@ abstract class ExportBaseCommand extends CamelCommand {
                         description = "Can be used to turn on logging (logs to file in <user home>/.camel directory)")
     boolean logging;
 
+    @CommandLine.Option(names = { "--quiet" }, defaultValue = "false",
+                        description = "Will be quiet, only print when error occurs")
+    boolean quiet;
+
     public ExportBaseCommand(CamelJBangMain main) {
         super(main);
     }

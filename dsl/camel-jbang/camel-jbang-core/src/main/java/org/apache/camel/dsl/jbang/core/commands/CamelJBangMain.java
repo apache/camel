@@ -114,6 +114,7 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("hawtio", new CommandLine(new Hawtio(main)))
                 .addSubcommand("bind", new CommandLine(new Bind(main)))
                 .addSubcommand("pipe", new CommandLine(new Pipe(main)))
+                .addSubcommand("dependency-tree", new CommandLine(new DependencyTree(main)))
                 .addSubcommand("export", new CommandLine(new Export(main)));
 
         commandLine.getCommandSpec().versionProvider(() -> {
