@@ -56,6 +56,8 @@ public class VertxHttpComponentConfigurer extends PropertyConfigurerSupport impl
         case "vertxHttpBinding": target.setVertxHttpBinding(property(camelContext, org.apache.camel.component.vertx.http.VertxHttpBinding.class, value)); return true;
         case "vertxoptions":
         case "vertxOptions": target.setVertxOptions(property(camelContext, io.vertx.core.VertxOptions.class, value)); return true;
+        case "webclientoptions":
+        case "webClientOptions": target.setWebClientOptions(property(camelContext, io.vertx.ext.web.client.WebClientOptions.class, value)); return true;
         default: return false;
         }
     }
@@ -98,6 +100,8 @@ public class VertxHttpComponentConfigurer extends PropertyConfigurerSupport impl
         case "vertxHttpBinding": return org.apache.camel.component.vertx.http.VertxHttpBinding.class;
         case "vertxoptions":
         case "vertxOptions": return io.vertx.core.VertxOptions.class;
+        case "webclientoptions":
+        case "webClientOptions": return io.vertx.ext.web.client.WebClientOptions.class;
         default: return null;
         }
     }
@@ -141,6 +145,8 @@ public class VertxHttpComponentConfigurer extends PropertyConfigurerSupport impl
         case "vertxHttpBinding": return target.getVertxHttpBinding();
         case "vertxoptions":
         case "vertxOptions": return target.getVertxOptions();
+        case "webclientoptions":
+        case "webClientOptions": return target.getWebClientOptions();
         default: return null;
         }
     }
