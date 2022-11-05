@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-univocity-parsers",
-    "version": "3.14.6-SNAPSHOT",
+    "version": "3.14.7-SNAPSHOT",
     "modelName": "univocity-csv",
     "modelJavaType": "org.apache.camel.model.dataformat.UniVocityCsvDataFormat"
   },
