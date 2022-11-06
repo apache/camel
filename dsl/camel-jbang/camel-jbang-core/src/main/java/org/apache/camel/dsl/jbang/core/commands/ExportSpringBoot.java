@@ -54,8 +54,8 @@ class ExportSpringBoot extends Export {
             System.err.println("--gav must be in syntax: groupId:artifactId:version");
             return 1;
         }
-        if (!project.equals("maven") && !project.equals("gradle")) {
-            System.err.println("--project must either be maven or gradle, was: " + project);
+        if (!buildTool.equals("maven") && !buildTool.equals("gradle")) {
+            System.err.println("--build-tool must either be maven or gradle, was: " + buildTool);
             return 1;
         }
 
@@ -102,13 +102,12 @@ class ExportSpringBoot extends Export {
         createMainClassSource(srcJavaDir, packageName, mainClassname);
         // gather dependencies
         Set<String> deps = resolveDependencies(settings, profile);
-        // maven project
-        if ("maven".equals(project)) {
+        if ("maven".equals(buildTool)) {
             createMavenPom(settings, new File(BUILD_DIR, "pom.xml"), deps);
             if (mavenWrapper) {
                 copyMavenWrapper();
             }
-        } else if ("gradle".equals(project)) {
+        } else if ("gradle".equals(buildTool)) {
             createSettingsGradle(new File(BUILD_DIR, "settings.gradle"));
             createBuildGradle(settings, new File(BUILD_DIR, "build.gradle"), deps);
             if (gradleWrapper) {

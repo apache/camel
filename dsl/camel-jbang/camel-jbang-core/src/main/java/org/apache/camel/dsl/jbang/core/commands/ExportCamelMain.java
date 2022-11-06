@@ -46,9 +46,12 @@ class ExportCamelMain extends Export {
             System.err.println("--gav must be in syntax: groupId:artifactId:version");
             return 1;
         }
-        if (!project.equals("maven") && !project.equals("gradle")) {
-            System.err.println("--project must either be maven or gradle, was: " + project);
+        if (!buildTool.equals("maven") && !buildTool.equals("gradle")) {
+            System.err.println("--build-tool must either be maven or gradle, was: " + buildTool);
             return 1;
+        }
+        if (buildTool.equals("gradle")) {
+            System.err.println("--build-tool=gradle is not support yet for camel-main runtime.");
         }
 
         File profile = new File(getProfile() + ".properties");
@@ -99,15 +102,10 @@ class ExportCamelMain extends Export {
         createMainClassSource(srcJavaDir, packageName, mainClassname);
         // gather dependencies
         Set<String> deps = resolveDependencies(settings, profile);
-        // maven project
-        if ("maven".equals(project)) {
+        if ("maven".equals(buildTool)) {
             createPom(settings, new File(BUILD_DIR, "pom.xml"), deps, packageName);
             if (mavenWrapper) {
                 copyMavenWrapper();
-            } else if ("gradle".equals(project)) {
-                if (gradleWrapper) {
-                    copyGradleWrapper();
-                }
             }
         }
 

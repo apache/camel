@@ -1488,11 +1488,11 @@ TIP: See the possible options by running: `camel export --help` for more details
 === Exporting as Gradle Project
 
 Camel JBang exports by default as a Maven based project. To use Gradle instead, you can
-specify the `--project=gradle` when exporting, such as:
+specify the `--build-tool=gradle` when exporting, such as:
 
 [source,bash]
 ----
-camel export --project=gradle --runtime=spring-boot --gav=com.foo:acme:1.0-SNAPSHOT --dir=../myproject
+camel export --build-tool=gradle --runtime=spring-boot --gav=com.foo:acme:1.0-SNAPSHOT --dir=../myproject
 ----
 
 === Exporting with JMX management included

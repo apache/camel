@@ -109,9 +109,9 @@ abstract class ExportBaseCommand extends CamelCommand {
                         description = "Include Gradle Wrapper files in exported project")
     protected boolean gradleWrapper;
 
-    @CommandLine.Option(names = { "--project" }, defaultValue = "maven",
-                        description = "Project (maven or gradle)")
-    protected String project;
+    @CommandLine.Option(names = { "--build-tool" }, defaultValue = "maven",
+                        description = "Build tool to use (maven or gradle)")
+    protected String buildTool;
 
     @CommandLine.Option(names = {
             "-dir",

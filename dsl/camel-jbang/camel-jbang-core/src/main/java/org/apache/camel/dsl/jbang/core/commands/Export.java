@@ -59,7 +59,7 @@ class Export extends ExportBaseCommand {
             this.gradleWrapper
                     = "true".equals(prop.getProperty("camel.jbang.gradleWrapper", this.gradleWrapper ? "true" : "false"));
             this.exportDir = prop.getProperty("camel.jbang.exportDir", this.exportDir);
-            this.project = prop.getProperty("camel.jbang.project", this.project);
+            this.buildTool = prop.getProperty("camel.jbang.buildTool", this.buildTool);
         }
 
         if (runtime == null) {
@@ -103,7 +103,7 @@ class Export extends ExportBaseCommand {
         cmd.springBootVersion = this.springBootVersion;
         cmd.mavenWrapper = this.mavenWrapper;
         cmd.gradleWrapper = this.gradleWrapper;
-        cmd.project = this.project;
+        cmd.buildTool = this.buildTool;
         cmd.quiet = this.quiet;
         // run export
         return cmd.export();
