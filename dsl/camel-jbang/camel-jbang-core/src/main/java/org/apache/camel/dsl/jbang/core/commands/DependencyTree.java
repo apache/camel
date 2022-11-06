@@ -39,7 +39,7 @@ public class DependencyTree extends Export {
 
     protected static final String EXPORT_DIR = ".camel-jbang/export";
 
-    @CommandLine.Option(names = { "--output" }, description = "Output format (gav or maven", defaultValue = "gav")
+    @CommandLine.Option(names = { "--output" }, description = "Output format (gav or maven)", defaultValue = "gav")
     protected String output;
 
     public DependencyTree(CamelJBangMain main) {
@@ -48,7 +48,12 @@ public class DependencyTree extends Export {
 
     @Override
     protected Integer export() throws Exception {
-        this.quiet = true; // lets be quiet and generate from fresh data to ensure the output is up to date
+        this.quiet = true; // be quiet and generate from fresh data to ensure the output is up-to-date
+
+        if (!"gav".equals(output) && !"maven".equals(output)) {
+            System.err.println("--output must be either gav or maven, was: " + output);
+            return 1;
+        }
 
         Integer answer = doExport();
         if (answer == 0) {
