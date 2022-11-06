@@ -1,0 +1,39 @@
+plugins {
+    id 'java'
+    id 'io.quarkus'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+{{ .MavenRepositories }}
+}
+
+dependencies {
+    implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+    implementation enforcedPlatform("${quarkusPlatformGroupId}:quarkus-camel-bom:${quarkusPlatformVersion}")
+    implementation 'io.quarkus:quarkus-arc'
+{{ .CamelDependencies }}
+    testImplementation 'io.quarkus:quarkus-junit5'
+    testImplementation 'org.apache.camel.quarkus:camel-quarkus-junit5:${quarkusPlatformVersion}'
+}
+
+group = '{{ .GroupId }}'
+version = '{{ .Version }}'
+
+java {
+    sourceCompatibility = '{{ .JavaVersion }}'
+    targetCompatibility = '{{ .JavaVersion }}'
+}
+
+test {
+    systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
+}
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-parameters'
+}
+
+compileTestJava {
+    options.encoding = 'UTF-8'
+}

@@ -123,10 +123,13 @@ class ExportQuarkus extends Export {
             createPom(settings, new File(BUILD_DIR, "pom.xml"), deps);
             if (mavenWrapper) {
                 copyMavenWrapper();
-            } else if ("gradle".equals(project)) {
-                if (gradleWrapper) {
-                    copyGradleWrapper();
-                }
+            }
+        } else if ("gradle".equals(project)) {
+            createGradleProperties(new File(BUILD_DIR, "gradle.properties"));
+            createSettingsGradle(new File(BUILD_DIR, "settings.gradle"));
+            createBuildGradle(settings, new File(BUILD_DIR, "build.gradle"), deps);
+            if (gradleWrapper) {
+                copyGradleWrapper();
             }
         }
 
@@ -138,6 +141,103 @@ class ExportQuarkus extends Export {
         FileUtil.removeDir(new File(BUILD_DIR));
 
         return 0;
+    }
+
+    private void createGradleProperties(File output) throws Exception {
+        InputStream is = ExportQuarkus.class.getClassLoader().getResourceAsStream("templates/quarkus-gradle-properties.tmpl");
+        String context = IOHelper.loadText(is);
+        IOHelper.close(is);
+
+        context = context.replaceFirst("\\{\\{ \\.QuarkusGroupId }}", quarkusGroupId);
+        context = context.replaceFirst("\\{\\{ \\.QuarkusArtifactId }}", quarkusArtifactId);
+        context = context.replaceAll("\\{\\{ \\.QuarkusVersion }}", quarkusVersion);
+
+        IOHelper.writeText(context, new FileOutputStream(output, false));
+    }
+
+    private void createSettingsGradle(File output) throws Exception {
+        String[] ids = gav.split(":");
+
+        InputStream is = ExportQuarkus.class.getClassLoader().getResourceAsStream("templates/quarkus-settings-gradle.tmpl");
+        String context = IOHelper.loadText(is);
+        IOHelper.close(is);
+
+        context = context.replaceFirst("\\{\\{ \\.GroupId }}", ids[0]);
+        context = context.replaceFirst("\\{\\{ \\.ArtifactId }}", ids[1]);
+        context = context.replaceFirst("\\{\\{ \\.Version }}", ids[2]);
+
+        IOHelper.writeText(context, new FileOutputStream(output, false));
+    }
+
+    private void createBuildGradle(File settings, File gradleBuild, Set<String> deps) throws Exception {
+        String[] ids = gav.split(":");
+
+        InputStream is = ExportSpringBoot.class.getClassLoader().getResourceAsStream("templates/quarkus-build-gradle.tmpl");
+        String context = IOHelper.loadText(is);
+        IOHelper.close(is);
+
+        CamelCatalog catalog = loadQuarkusCatalog();
+        if (camelVersion == null) {
+            camelVersion = catalog.getCatalogVersion();
+        }
+        String camelVersion = catalog.getCatalogVersion();
+
+        context = context.replaceFirst("\\{\\{ \\.GroupId }}", ids[0]);
+        context = context.replaceFirst("\\{\\{ \\.ArtifactId }}", ids[1]);
+        context = context.replaceFirst("\\{\\{ \\.Version }}", ids[2]);
+        context = context.replaceFirst("\\{\\{ \\.QuarkusGroupId }}", quarkusGroupId);
+        context = context.replaceFirst("\\{\\{ \\.QuarkusArtifactId }}", quarkusArtifactId);
+        context = context.replaceAll("\\{\\{ \\.QuarkusVersion }}", quarkusVersion);
+        context = context.replaceAll("\\{\\{ \\.JavaVersion }}", javaVersion);
+        context = context.replaceAll("\\{\\{ \\.CamelVersion }}", camelVersion);
+
+        Properties prop = new CamelCaseOrderedProperties();
+        RuntimeUtil.loadProperties(prop, settings);
+        String repos = prop.getProperty("camel.jbang.repos");
+        if (repos == null) {
+            context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", "");
+        } else {
+            StringBuilder sb = new StringBuilder();
+            for (String repo : repos.split(",")) {
+                sb.append("    maven {\n");
+                sb.append("        url: '").append(repo).append("'\n");
+                sb.append("    }\n");
+            }
+            context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", sb.toString());
+        }
+
+        List<MavenGav> gavs = new ArrayList<>();
+        for (String dep : deps) {
+            MavenGav gav = MavenGav.parseGav(dep);
+            String gid = gav.getGroupId();
+            String aid = gav.getArtifactId();
+            // transform to camel-quarkus extension GAV
+            if ("org.apache.camel".equals(gid)) {
+                String qaid = aid.replace("camel-", "camel-quarkus-");
+                ArtifactModel<?> am = catalog.modelFromMavenGAV("org.apache.camel.quarkus", qaid, null);
+                if (am != null) {
+                    // use quarkus extension
+                    gav.setGroupId(am.getGroupId());
+                    gav.setArtifactId(am.getArtifactId());
+                    gav.setVersion(quarkusVersion);
+                } else {
+                    // there is no quarkus extension so use plain camel
+                    gav.setVersion(camelVersion);
+                }
+            }
+            gavs.add(gav);
+        }
+
+        // sort artifacts
+        gavs.sort(mavenGavComparator());
+
+        StringBuilder sb = new StringBuilder();
+        for (MavenGav gav : gavs) {
+            sb.append("    implementation '").append(gav.toString()).append("'\n");
+        }
+        context = context.replaceFirst("\\{\\{ \\.CamelDependencies }}", sb.toString());
+
+        IOHelper.writeText(context, new FileOutputStream(gradleBuild, false));
     }
 
     @Override

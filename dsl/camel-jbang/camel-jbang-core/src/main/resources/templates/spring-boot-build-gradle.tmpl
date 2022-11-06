@@ -9,8 +9,8 @@ version = '{{ .Version }}'
 sourceCompatibility = '{{ .JavaVersion }}'
 
 repositories {
-    mavenLocal()
     mavenCentral()
+    mavenLocal()
 {{ .MavenRepositories }}
 }
 
