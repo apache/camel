@@ -100,22 +100,22 @@ public class ListVault extends ProcessBaseCommand {
                                     rows.add(row);
                                 }
                             }
-                        }
-                        JsonObject azure = (JsonObject) vaults.get("azure-secrets");
-                        if (azure != null) {
-                            row.vault = "Azure";
-                            row.lastCheck = azure.getLongOrDefault("lastCheckTimestamp", 0);
-                            row.lastReload = azure.getLongOrDefault("lastReloadTimestamp", 0);
-                            JsonArray arr = (JsonArray) azure.get("secrets");
-                            for (int i = 0; i < arr.size(); i++) {
-                                if (i > 0) {
-                                    // create a copy for 2+ secrets
-                                    row = row.copy();
+                            JsonObject azure = (JsonObject) vaults.get("azure-secrets");
+                            if (azure != null) {
+                                row.vault = "Azure";
+                                row.lastCheck = azure.getLongOrDefault("lastCheckTimestamp", 0);
+                                row.lastReload = azure.getLongOrDefault("lastReloadTimestamp", 0);
+                                JsonArray arr = (JsonArray) azure.get("secrets");
+                                for (int i = 0; i < arr.size(); i++) {
+                                    if (i > 0) {
+                                        // create a copy for 2+ secrets
+                                        row = row.copy();
+                                    }
+                                    JsonObject jo = (JsonObject) arr.get(i);
+                                    row.secret = jo.getString("name");
+                                    row.timestamp = jo.getLongOrDefault("timestamp", 0);
+                                    rows.add(row);
                                 }
-                                JsonObject jo = (JsonObject) arr.get(i);
-                                row.secret = jo.getString("name");
-                                row.timestamp = jo.getLongOrDefault("timestamp", 0);
-                                rows.add(row);
                             }
                         }
                     }
