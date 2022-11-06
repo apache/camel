@@ -46,6 +46,10 @@ class ExportCamelMain extends Export {
             System.err.println("--gav must be in syntax: groupId:artifactId:version");
             return 1;
         }
+        if (!project.equals("maven") && !project.equals("gradle")) {
+            System.err.println("--project must either be maven or gradle, was: " + project);
+            return 1;
+        }
 
         File profile = new File(getProfile() + ".properties");
 
@@ -95,23 +99,20 @@ class ExportCamelMain extends Export {
         createMainClassSource(srcJavaDir, packageName, mainClassname);
         // gather dependencies
         Set<String> deps = resolveDependencies(settings, profile);
-        // create pom
-        createPom(settings, new File(BUILD_DIR, "pom.xml"), deps, packageName);
-        // maven wrapper
-        if (mavenWrapper) {
-            copyMavenWrapper();
-        }
-
-        if (exportDir.equals(".")) {
-            // we export to current dir so prepare for this by cleaning up existing files
-            File target = new File(exportDir);
-            for (File f : target.listFiles()) {
-                if (!f.isHidden() && f.isDirectory()) {
-                    FileUtil.removeDir(f);
-                } else if (!f.isHidden() && f.isFile()) {
-                    f.delete();
+        // maven project
+        if ("maven".equals(project)) {
+            createPom(settings, new File(BUILD_DIR, "pom.xml"), deps, packageName);
+            if (mavenWrapper) {
+                copyMavenWrapper();
+            } else if ("gradle".equals(project)) {
+                if (gradleWrapper) {
+                    copyGradleWrapper();
                 }
             }
+        }
+
+        if (!exportDir.equals(".")) {
+            CommandHelper.cleanExportDir(exportDir);
         }
         // copy to export dir and remove work dir
         FileUtils.copyDirectory(new File(BUILD_DIR), new File(exportDir));

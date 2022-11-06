@@ -66,6 +66,10 @@ class ExportQuarkus extends Export {
             System.err.println("--gav must be in syntax: groupId:artifactId:version");
             return 1;
         }
+        if (!project.equals("maven") && !project.equals("gradle")) {
+            System.err.println("--project must either be maven or gradle, was: " + project);
+            return 1;
+        }
 
         File profile = new File(getProfile() + ".properties");
 
@@ -114,11 +118,16 @@ class ExportQuarkus extends Export {
         copyDockerFiles();
         // gather dependencies
         Set<String> deps = resolveDependencies(settings, profile);
-        // create pom
-        createPom(settings, new File(BUILD_DIR, "pom.xml"), deps);
-        // maven wrapper
-        if (mavenWrapper) {
-            copyMavenWrapper();
+        // maven project
+        if ("maven".equals(project)) {
+            createPom(settings, new File(BUILD_DIR, "pom.xml"), deps);
+            if (mavenWrapper) {
+                copyMavenWrapper();
+            } else if ("gradle".equals(project)) {
+                if (gradleWrapper) {
+                    copyGradleWrapper();
+                }
+            }
         }
 
         if (!exportDir.equals(".")) {

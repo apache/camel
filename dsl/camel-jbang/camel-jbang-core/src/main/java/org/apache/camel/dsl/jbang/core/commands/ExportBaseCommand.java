@@ -105,6 +105,14 @@ abstract class ExportBaseCommand extends CamelCommand {
                         description = "Include Maven Wrapper files in exported project")
     protected boolean mavenWrapper;
 
+    @CommandLine.Option(names = { "--gradle-wrapper" }, defaultValue = "true",
+                        description = "Include Gradle Wrapper files in exported project")
+    protected boolean gradleWrapper;
+
+    @CommandLine.Option(names = { "--project" }, defaultValue = "maven",
+                        description = "Project (maven or gradle)")
+    protected String project;
+
     @CommandLine.Option(names = {
             "-dir",
             "--directory" }, description = "Directory where the project will be exported", defaultValue = ".")
@@ -413,6 +421,25 @@ abstract class ExportBaseCommand extends CamelCommand {
         File file = new File(BUILD_DIR, "mvnw");
         file.setExecutable(true);
         file = new File(BUILD_DIR, "mvnw.cmd");
+        file.setExecutable(true);
+    }
+
+    protected void copyGradleWrapper() throws Exception {
+        File wrapper = new File(BUILD_DIR, "gradle/wrapper");
+        wrapper.mkdirs();
+        // copy files
+        InputStream is = ExportBaseCommand.class.getClassLoader().getResourceAsStream("gradle-wrapper/gradlew");
+        IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(BUILD_DIR, "gradlew")));
+        is = ExportBaseCommand.class.getClassLoader().getResourceAsStream("gradle-wrapper/gradlew.bat");
+        IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(BUILD_DIR, "gradlew.bat")));
+        is = ExportBaseCommand.class.getClassLoader().getResourceAsStream("gradle-wrapper/gradle-wrapper.jar");
+        IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(wrapper, "gradle-wrapper.jar")));
+        is = ExportBaseCommand.class.getClassLoader().getResourceAsStream("gradle-wrapper/gradle-wrapper.properties");
+        IOHelper.copyAndCloseInput(is, new FileOutputStream(new File(wrapper, "gradle-wrapper.properties")));
+        // set execute file permission on gradlew/gradlew.cmd files
+        File file = new File(BUILD_DIR, "gradlew");
+        file.setExecutable(true);
+        file = new File(BUILD_DIR, "gradlew.bat");
         file.setExecutable(true);
     }
 

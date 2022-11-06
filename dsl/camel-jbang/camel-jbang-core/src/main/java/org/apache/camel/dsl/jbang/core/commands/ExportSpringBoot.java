@@ -54,6 +54,10 @@ class ExportSpringBoot extends Export {
             System.err.println("--gav must be in syntax: groupId:artifactId:version");
             return 1;
         }
+        if (!project.equals("maven") && !project.equals("gradle")) {
+            System.err.println("--project must either be maven or gradle, was: " + project);
+            return 1;
+        }
 
         File profile = new File(getProfile() + ".properties");
 
@@ -98,23 +102,22 @@ class ExportSpringBoot extends Export {
         createMainClassSource(srcJavaDir, packageName, mainClassname);
         // gather dependencies
         Set<String> deps = resolveDependencies(settings, profile);
-        // create pom
-        createPom(settings, new File(BUILD_DIR, "pom.xml"), deps);
-        // maven wrapper
-        if (mavenWrapper) {
-            copyMavenWrapper();
+        // maven project
+        if ("maven".equals(project)) {
+            createMavenPom(settings, new File(BUILD_DIR, "pom.xml"), deps);
+            if (mavenWrapper) {
+                copyMavenWrapper();
+            }
+        } else if ("gradle".equals(project)) {
+            createSettingsGradle(new File(BUILD_DIR, "settings.gradle"));
+            createBuildGradle(settings, new File(BUILD_DIR, "build.gradle"), deps);
+            if (gradleWrapper) {
+                copyGradleWrapper();
+            }
         }
 
-        if (exportDir.equals(".")) {
-            // we export to current dir so prepare for this by cleaning up existing files
-            File target = new File(exportDir);
-            for (File f : target.listFiles()) {
-                if (!f.isHidden() && f.isDirectory()) {
-                    FileUtil.removeDir(f);
-                } else if (!f.isHidden() && f.isFile()) {
-                    f.delete();
-                }
-            }
+        if (!exportDir.equals(".")) {
+            CommandHelper.cleanExportDir(exportDir);
         }
         // copy to export dir and remove work dir
         FileUtils.copyDirectory(new File(BUILD_DIR), new File(exportDir));
@@ -123,7 +126,14 @@ class ExportSpringBoot extends Export {
         return 0;
     }
 
-    private void createPom(File settings, File pom, Set<String> deps) throws Exception {
+    private void createSettingsGradle(File file) throws Exception {
+        String[] ids = gav.split(":");
+
+        String text = String.format("rootProject.name = '%s'", ids[1]);
+        IOHelper.writeText(text, new FileOutputStream(file, false));
+    }
+
+    private void createMavenPom(File settings, File pom, Set<String> deps) throws Exception {
         String[] ids = gav.split(":");
 
         InputStream is = ExportSpringBoot.class.getClassLoader().getResourceAsStream("templates/spring-boot-pom.tmpl");
@@ -198,6 +208,73 @@ class ExportSpringBoot extends Export {
         context = context.replaceFirst("\\{\\{ \\.CamelDependencies }}", sb.toString());
 
         IOHelper.writeText(context, new FileOutputStream(pom, false));
+    }
+
+    private void createBuildGradle(File settings, File gradleBuild, Set<String> deps) throws Exception {
+        String[] ids = gav.split(":");
+
+        InputStream is = ExportSpringBoot.class.getClassLoader().getResourceAsStream("templates/spring-boot-build-gradle.tmpl");
+        String context = IOHelper.loadText(is);
+        IOHelper.close(is);
+
+        CamelCatalog catalog = loadSpringBootCatalog();
+        String camelVersion = catalog.getCatalogVersion();
+
+        context = context.replaceFirst("\\{\\{ \\.GroupId }}", ids[0]);
+        context = context.replaceFirst("\\{\\{ \\.ArtifactId }}", ids[1]);
+        context = context.replaceFirst("\\{\\{ \\.Version }}", ids[2]);
+        context = context.replaceAll("\\{\\{ \\.SpringBootVersion }}", springBootVersion);
+        context = context.replaceFirst("\\{\\{ \\.JavaVersion }}", javaVersion);
+        context = context.replaceAll("\\{\\{ \\.CamelVersion }}", camelVersion);
+
+        Properties prop = new CamelCaseOrderedProperties();
+        RuntimeUtil.loadProperties(prop, settings);
+        String repos = prop.getProperty("camel.jbang.repos");
+        if (repos == null) {
+            context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", "");
+        } else {
+            StringBuilder sb = new StringBuilder();
+            for (String repo : repos.split(",")) {
+                sb.append("    maven {\n");
+                sb.append("        url: '").append(repo).append("'\n");
+                sb.append("    }\n");
+            }
+            context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", sb.toString());
+        }
+
+        List<MavenGav> gavs = new ArrayList<>();
+        for (String dep : deps) {
+            MavenGav gav = MavenGav.parseGav(dep);
+            String gid = gav.getGroupId();
+            String aid = gav.getArtifactId();
+            String v = gav.getVersion();
+
+            // transform to camel-spring-boot starter GAV
+            if ("org.apache.camel".equals(gid)) {
+                ArtifactModel<?> am = catalog.modelFromMavenGAV("org.apache.camel.springboot", aid + "-starter", null);
+                if (am != null) {
+                    // use spring-boot starter
+                    gav.setGroupId(am.getGroupId());
+                    gav.setArtifactId(am.getArtifactId());
+                    gav.setVersion(am.getVersion());
+                } else {
+                    // there is no spring boot starter so use plain camel
+                    gav.setVersion(camelVersion);
+                }
+            }
+            gavs.add(gav);
+        }
+
+        // sort artifacts
+        gavs.sort(mavenGavComparator());
+
+        StringBuilder sb = new StringBuilder();
+        for (MavenGav gav : gavs) {
+            sb.append("    implementation '").append(gav.toString()).append("'\n");
+        }
+        context = context.replaceFirst("\\{\\{ \\.CamelDependencies }}", sb.toString());
+
+        IOHelper.writeText(context, new FileOutputStream(gradleBuild, false));
     }
 
     @Override

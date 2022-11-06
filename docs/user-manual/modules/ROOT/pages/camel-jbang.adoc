@@ -1485,6 +1485,16 @@ camel export --runtime=camel-main --gav=com.foo:acme:1.0-SNAPSHOT --dir=../mypro
 
 TIP: See the possible options by running: `camel export --help` for more details.
 
+=== Exporting as Gradle Project
+
+Camel JBang exports by default as a Maven based project. To use Gradle instead, you can
+specify the `--project=gradle` when exporting, such as:
+
+[source,bash]
+----
+camel export --project=gradle --runtime=spring-boot --gav=com.foo:acme:1.0-SNAPSHOT --dir=../myproject
+----
+
 === Exporting with JMX management included
 
 Usually when exporting to Spring Boot, Quarkus or Camel Main, then JMX management is not included out of the box.
@@ -1493,6 +1503,16 @@ To include JMX, you need to add `camel:management` in the `--deps` option, as sh
 [source,bash]
 ----
 camel export --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT --deps=camel:management --dir=../myproject
+----
+
+=== Exporting with Camel CLI included
+
+Usually when exporting to Spring Boot, Quarkus or Camel Main, then Camel JBang CLI is not included out of the box.
+To be able to continue to use Camel CLI (i.e. `camel`), you need to add `camel:cli-connector` in the `--deps` option, as shown below:
+
+[source,bash]
+----
+camel export --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT --deps=camel:cli-connector --dir=../myproject
 ----
 
 === Configuring exporting
@@ -1537,6 +1557,12 @@ The follow options related to _exporting_, can be configured in `application.pro
 
 |`camel.jbang.mavenWrapper`
 |Include Maven Wrapper files in exported project
+
+|`camel.jbang.gradleWrapper`
+|Include Gradle Wrapper files in exported project
+
+|`camel.jbang.project`
+|Project (either maven or gradle)
 
 |`camel.jbang.exportDir`
 |Directory where the project will be exported
