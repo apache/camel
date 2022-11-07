@@ -345,13 +345,22 @@ class Run extends CamelCommand {
         if (modeline) {
             writeSetting(main, profileProperties, "camel.main.modeline", "true");
         }
-        // allow java-dsl to compile to .class which we need in uber-jar mode
-        writeSetting(main, profileProperties, "camel.main.routesCompileDirectory", WORK_DIR);
-        writeSetting(main, profileProperties, "camel.jbang.dependencies", dependencies);
         writeSetting(main, profileProperties, "camel.jbang.openApi", openapi);
         writeSetting(main, profileProperties, "camel.jbang.repos", repos);
         writeSetting(main, profileProperties, "camel.jbang.health", health ? "true" : "false");
         writeSetting(main, profileProperties, "camel.jbang.console", console ? "true" : "false");
+        writeSetting(main, profileProperties, "camel.main.routesCompileDirectory", WORK_DIR);
+        // merge existing dependencies with --deps
+        String dep = profileProperties != null ? profileProperties.getProperty("camel.jbang.dependencies") : null;
+        if (dep == null) {
+            dep = dependencies;
+        } else {
+            dep += "," + dependencies;
+        }
+        if (dep != null) {
+            main.addInitialProperty("camel.jbang.dependencies", dep);
+            writeSettings("camel.jbang.dependencies", dep);
+        }
 
         // command line arguments
         if (property != null) {
