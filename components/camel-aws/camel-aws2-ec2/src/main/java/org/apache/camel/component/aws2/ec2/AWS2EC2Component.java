@@ -44,7 +44,6 @@ public class AWS2EC2Component extends DefaultComponent {
     public AWS2EC2Component(CamelContext context) {
         super(context);
 
-        registerExtension(new AWS2EC2ComponentVerifierExtension());
     }
 
     @Override
