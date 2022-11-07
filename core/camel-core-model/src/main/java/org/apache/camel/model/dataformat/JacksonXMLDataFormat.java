@@ -367,7 +367,7 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         private String moduleRefs;
         private String enableFeatures;
         private String disableFeatures;
-        private String contentTypeHeader = "true";
+        private String contentTypeHeader;
 
         /**
          * Lookup and use the existing XmlMapper with the given id.

@@ -356,7 +356,7 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         private String contextPath;
         private String contextPathIsClassName;
         private String schema;
-        private String schemaSeverityLevel = "0";
+        private String schemaSeverityLevel;
         private String prettyPrint;
         private String objectFactory;
         private String ignoreJAXBElement;
@@ -371,7 +371,7 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         private String schemaLocation;
         private String noNamespaceSchemaLocation;
         private String jaxbProviderProperties;
-        private String contentTypeHeader = "true";
+        private String contentTypeHeader;
 
         /**
          * Package name where your JAXB classes are located.

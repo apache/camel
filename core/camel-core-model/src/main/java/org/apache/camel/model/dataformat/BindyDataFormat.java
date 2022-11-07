@@ -229,8 +229,8 @@ public class BindyDataFormat extends DataFormatDefinition {
         private Class<?> clazz;
         private String type;
         private String classType;
-        private String allowEmptyStream = "false";
-        private String unwrapSingleInstance = "true";
+        private String allowEmptyStream;
+        private String unwrapSingleInstance;
         private String locale;
 
         /**

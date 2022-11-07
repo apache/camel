@@ -111,7 +111,7 @@ public class TidyMarkupDataFormat extends DataFormatDefinition {
     public static class Builder implements DataFormatBuilder<TidyMarkupDataFormat> {
 
         private Class<?> dataObjectType;
-        private String dataObjectTypeName = "org.w3c.dom.Node";
+        private String dataObjectTypeName;
         private String omitXmlDeclaration;
 
         /**

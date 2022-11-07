@@ -291,17 +291,17 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
             implements DataFormatBuilder<F> {
 
         private String nullValue;
-        private String skipEmptyLines = "true";
-        private String ignoreTrailingWhitespaces = "true";
-        private String ignoreLeadingWhitespaces = "true";
+        private String skipEmptyLines;
+        private String ignoreTrailingWhitespaces;
+        private String ignoreLeadingWhitespaces;
         private String headersDisabled;
         private List<UniVocityHeader> headers;
         private String headerExtractionEnabled;
         private String numberOfRecordsToRead;
         private String emptyValue;
         private String lineSeparator;
-        private String normalizedLineSeparator = "\\n";
-        private String comment = "#";
+        private String normalizedLineSeparator;
+        private String comment;
         private String lazyLoad;
         private String asMap;
 

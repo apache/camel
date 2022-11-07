@@ -99,7 +99,7 @@ public class Base64DataFormat extends DataFormatDefinition {
     @XmlTransient
     public static class Builder implements DataFormatBuilder<Base64DataFormat> {
 
-        private String lineLength = "76";
+        private String lineLength;
         private String lineSeparator;
         private String urlSafe;
 

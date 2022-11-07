@@ -175,8 +175,8 @@ public class FlatpackDataFormat extends DataFormatDefinition {
 
         private String definition;
         private String fixed;
-        private String delimiter = ",";
-        private String ignoreFirstRecord = "true";
+        private String delimiter;
+        private String ignoreFirstRecord;
         private String allowShortLines;
         private String ignoreExtraColumns;
         private String textQualifier;

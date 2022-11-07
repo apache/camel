@@ -44,7 +44,7 @@ public class YAMLDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
     @Metadata(defaultValue = "SnakeYAML")
-    private YAMLLibrary library = YAMLLibrary.SnakeYAML;
+    private YAMLLibrary library;
     @XmlAttribute(name = "unmarshalType")
     private String unmarshalTypeName;
     @XmlAttribute
@@ -288,11 +288,11 @@ public class YAMLDataFormat extends DataFormatDefinition {
         private String representer;
         private String dumperOptions;
         private String resolver;
-        private String useApplicationContextClassLoader = "true";
+        private String useApplicationContextClassLoader;
         private String prettyFlow;
         private String allowAnyType;
         private List<YAMLTypeFilterDefinition> typeFilters;
-        private String maxAliasesForCollections = "50";
+        private String maxAliasesForCollections;
         private String allowRecursiveKeys;
 
         /**

@@ -280,8 +280,8 @@ public class PGPDataFormat extends DataFormatDefinition {
         private String keyFileName;
         private String signatureKeyFileName;
         private String signatureKeyRing;
-        private String armored = "false";
-        private String integrity = "true";
+        private String armored;
+        private String integrity;
         private String provider;
         private String algorithm;
         private String compressionAlgorithm;

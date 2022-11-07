@@ -643,8 +643,8 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
     public static class Builder implements DataFormatBuilder<JsonDataFormat> {
 
         private String objectMapper;
-        private String useDefaultObjectMapper = "true";
-        private String autoDiscoverObjectMapper = "false";
+        private String useDefaultObjectMapper;
+        private String autoDiscoverObjectMapper;
         private String prettyPrint;
         private JsonLibrary library = JsonLibrary.Jackson;
         private String unmarshalTypeName;
@@ -663,11 +663,11 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         private String permissions;
         private String allowUnmarshallType;
         private String timezone;
-        private String dropRootNode = "false";
+        private String dropRootNode;
         private String schemaResolver;
-        private String autoDiscoverSchemaResolver = "true";
+        private String autoDiscoverSchemaResolver;
         private String namingStrategy;
-        private String contentTypeHeader = "true";
+        private String contentTypeHeader;
 
         public Builder contentTypeHeader(String contentTypeHeader) {
             this.contentTypeHeader = contentTypeHeader;

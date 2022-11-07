@@ -510,7 +510,7 @@ public class CsvDataFormat extends DataFormatDefinition {
     @XmlTransient
     public static class Builder implements DataFormatBuilder<CsvDataFormat> {
         private String formatRef;
-        private String formatName = "DEFAULT";
+        private String formatName;
         private String commentMarkerDisabled;
         private String commentMarker;
         private String delimiter;

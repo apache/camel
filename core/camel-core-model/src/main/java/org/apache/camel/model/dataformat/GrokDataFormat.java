@@ -118,7 +118,7 @@ public class GrokDataFormat extends DataFormatDefinition {
 
         private String pattern;
         private String flattened;
-        private String allowMultipleMatchesPerLine = "true";
+        private String allowMultipleMatchesPerLine;
         private String namedOnly;
 
         /**

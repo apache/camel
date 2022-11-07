@@ -191,10 +191,10 @@ public class CryptoDataFormat extends DataFormatDefinition {
         private String cryptoProvider;
         private String initVectorRef;
         private String algorithmParameterRef;
-        private String bufferSize = "4096";
+        private String bufferSize;
         private String macAlgorithm = "HmacSHA1";
-        private String shouldAppendHMAC = "true";
-        private String inline = "false";
+        private String shouldAppendHMAC;
+        private String inline;
 
         /**
          * The JCE algorithm name indicating the cryptographic algorithm that will be used.

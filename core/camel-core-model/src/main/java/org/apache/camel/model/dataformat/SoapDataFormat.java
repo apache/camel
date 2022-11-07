@@ -208,7 +208,7 @@ public class SoapDataFormat extends DataFormatDefinition {
         private String encoding;
         private String elementNameStrategyRef;
         private Object elementNameStrategy;
-        private String version = "1.1";
+        private String version;
         private String namespacePrefixRef;
         private String schema;
 

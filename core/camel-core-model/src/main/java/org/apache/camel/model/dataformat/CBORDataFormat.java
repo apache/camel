@@ -246,13 +246,13 @@ public class CBORDataFormat extends DataFormatDefinition {
         private Class<?> collectionType;
         private Class<?> unmarshalType;
         private String objectMapper;
-        private String useDefaultObjectMapper = "true";
+        private String useDefaultObjectMapper;
         private String unmarshalTypeName;
         private String collectionTypeName;
-        private String useList = "false";
-        private String allowUnmarshallType = "false";
-        private String prettyPrint = "false";
-        private String allowJmsType = "false";
+        private String useList;
+        private String allowUnmarshallType;
+        private String prettyPrint;
+        private String allowJmsType;
         private String enableFeatures;
         private String disableFeatures;
 

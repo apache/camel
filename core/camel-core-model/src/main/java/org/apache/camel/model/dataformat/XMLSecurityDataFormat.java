@@ -302,18 +302,18 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     @XmlTransient
     public static class Builder implements DataFormatBuilder<XMLSecurityDataFormat> {
 
-        private String xmlCipherAlgorithm = "AES-256-GCM";
+        private String xmlCipherAlgorithm;
         private String passPhrase;
         private byte[] passPhraseByte;
         private String secureTag;
         private String secureTagContents;
-        private String keyCipherAlgorithm = "RSA_OAEP";
+        private String keyCipherAlgorithm;
         private String recipientKeyAlias;
         private String keyOrTrustStoreParametersRef;
         private String keyPassword;
-        private String digestAlgorithm = "SHA1";
-        private String mgfAlgorithm = "MGF1_SHA1";
-        private String addKeyValueForEncryptedKey = "true";
+        private String digestAlgorithm;
+        private String mgfAlgorithm;
+        private String addKeyValueForEncryptedKey;
         private KeyStoreParameters keyOrTrustStoreParameters;
         private Map<String, String> namespaces;
 

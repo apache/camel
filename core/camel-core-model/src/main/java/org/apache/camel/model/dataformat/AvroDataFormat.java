@@ -534,7 +534,7 @@ public class AvroDataFormat extends DataFormatDefinition {
         private String instanceClassName;
         private AvroLibrary library = AvroLibrary.ApacheAvro;
         private String objectMapper;
-        private String useDefaultObjectMapper = "true";
+        private String useDefaultObjectMapper;
         private String unmarshalTypeName;
         private String jsonViewTypeName;
         private String include;
@@ -548,9 +548,9 @@ public class AvroDataFormat extends DataFormatDefinition {
         private String allowUnmarshallType;
         private String timezone;
         private String autoDiscoverObjectMapper;
-        private String contentTypeHeader = "true";
+        private String contentTypeHeader;
         private String schemaResolver;
-        private String autoDiscoverSchemaResolver = "true";
+        private String autoDiscoverSchemaResolver;
 
         /**
          * Class name to use for marshal and unmarshalling

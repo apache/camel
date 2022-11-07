@@ -551,8 +551,8 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         private Object defaultInstance;
         private String instanceClass;
         private String objectMapper;
-        private String useDefaultObjectMapper = "true";
-        private String autoDiscoverObjectMapper = "false";
+        private String useDefaultObjectMapper;
+        private String autoDiscoverObjectMapper;
         private ProtobufLibrary library = ProtobufLibrary.GoogleProtobuf;
         private String unmarshalTypeName;
         private Class<?> unmarshalType;
@@ -570,9 +570,9 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         private String allowUnmarshallType;
         private String timezone;
         private String schemaResolver;
-        private String autoDiscoverSchemaResolver = "true";
-        private String contentTypeFormat = "native";
-        private String contentTypeHeader = "true";
+        private String autoDiscoverSchemaResolver;
+        private String contentTypeFormat;
+        private String contentTypeHeader;
 
         /**
          * Name of class to use when unmarshalling

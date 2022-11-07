@@ -62,7 +62,7 @@ public class UniVocityTsvDataFormat extends UniVocityAbstractDataFormat {
     @XmlTransient
     public static class Builder extends AbstractBuilder<Builder, UniVocityTsvDataFormat> {
 
-        private String escapeChar = "\\";
+        private String escapeChar;
 
         /**
          * The escape character.

@@ -322,7 +322,7 @@ public class XStreamDataFormat extends DataFormatDefinition implements ContentTy
         private String driver;
         private String driverRef;
         private String mode;
-        private String contentTypeHeader = "true";
+        private String contentTypeHeader;
         private List<PropertyDefinition> converters;
         private List<PropertyDefinition> aliases;
         private List<PropertyDefinition> omitFields;
@@ -381,6 +381,18 @@ public class XStreamDataFormat extends DataFormatDefinition implements ContentTy
 
         public Builder converters(Map<String, String> converters) {
             return converters(XStreamDataFormat.toList(converters));
+        }
+
+        /**
+         * Alias a Class to a shorter name to be used in XML elements.
+         */
+        public Builder aliases(List<PropertyDefinition> aliases) {
+            this.aliases = aliases;
+            return this;
+        }
+
+        public Builder aliases(Map<String, String> aliases) {
+            return aliases(toList(aliases));
         }
 
         /**

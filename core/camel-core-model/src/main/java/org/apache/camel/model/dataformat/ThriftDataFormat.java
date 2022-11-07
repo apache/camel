@@ -119,8 +119,8 @@ public class ThriftDataFormat extends DataFormatDefinition implements ContentTyp
 
         private Object defaultInstance;
         private String instanceClass;
-        private String contentTypeFormat = "binary";
-        private String contentTypeHeader = "true";
+        private String contentTypeFormat;
+        private String contentTypeHeader;
 
         /**
          * Name of class to use when unmarshalling

@@ -403,7 +403,7 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
             implements DataFormatBuilder<F> {
 
         private Object fhirContext;
-        private String fhirVersion = "R4";
+        private String fhirVersion;
         private String prettyPrint;
         private Object parserErrorHandler;
         private Object parserOptions;
@@ -419,7 +419,7 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
         private String summaryMode;
         private String suppressNarratives;
         private List<String> dontStripVersionsFromReferencesAtPaths;
-        private String contentTypeHeader = "true";
+        private String contentTypeHeader;
 
         public T fhirContext(Object fhirContext) {
             this.fhirContext = fhirContext;

@@ -119,7 +119,7 @@ public class ZipFileDataFormat extends DataFormatDefinition {
         private String usingIterator;
         private String allowEmptyDirectory;
         private String preservePathElements;
-        private String maxDecompressedSize = "1073741824";
+        private String maxDecompressedSize;
 
         /**
          * If the zip file has more than one entry, the setting this option to true, allows working with the splitter

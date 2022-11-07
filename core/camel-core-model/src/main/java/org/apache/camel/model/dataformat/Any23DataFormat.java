@@ -169,7 +169,7 @@ public class Any23DataFormat extends DataFormatDefinition {
     @XmlTransient
     public static class Builder implements DataFormatBuilder<Any23DataFormat> {
 
-        private String outputFormat = "RDF4JMODEL";
+        private String outputFormat;
         private String baseUri;
         private List<PropertyDefinition> configuration;
         private Map<String, String> configurations;
