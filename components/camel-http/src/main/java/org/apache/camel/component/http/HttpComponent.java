@@ -123,6 +123,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     protected int socketTimeout = -1;
 
     // proxy
+    @Metadata(label = "producer,proxy", enums = "http,https", description = "Proxy authentication protocol scheme")
     protected String proxyAuthScheme;
     @Metadata(label = "producer,proxy", enums = "Basic,Digest,NTLM", description = "Proxy authentication method to use")
     protected String proxyAuthMethod;
