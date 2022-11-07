@@ -112,12 +112,32 @@ public class UniVocityFixedDataFormat extends UniVocityAbstractDataFormat {
         }
 
         /**
+         * Whether or not the trailing characters until new line must be ignored.
+         * <p/>
+         * The default value is false
+         */
+        public Builder skipTrailingCharsUntilNewline(boolean skipTrailingCharsUntilNewline) {
+            this.skipTrailingCharsUntilNewline = Boolean.toString(skipTrailingCharsUntilNewline);
+            return this;
+        }
+
+        /**
          * Whether or not the record ends on new line.
          * <p/>
          * The default value is false
          */
         public Builder recordEndsOnNewline(String recordEndsOnNewline) {
             this.recordEndsOnNewline = recordEndsOnNewline;
+            return this;
+        }
+
+        /**
+         * Whether or not the record ends on new line.
+         * <p/>
+         * The default value is false
+         */
+        public Builder recordEndsOnNewline(boolean recordEndsOnNewline) {
+            this.recordEndsOnNewline = Boolean.toString(recordEndsOnNewline);
             return this;
         }
 

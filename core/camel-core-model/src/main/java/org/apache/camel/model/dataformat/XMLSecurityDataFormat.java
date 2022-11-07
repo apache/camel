@@ -302,18 +302,18 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     @XmlTransient
     public static class Builder implements DataFormatBuilder<XMLSecurityDataFormat> {
 
-        private String xmlCipherAlgorithm = "AES-256-GCM";
+        private String xmlCipherAlgorithm;
         private String passPhrase;
         private byte[] passPhraseByte;
         private String secureTag;
         private String secureTagContents;
-        private String keyCipherAlgorithm = "RSA_OAEP";
+        private String keyCipherAlgorithm;
         private String recipientKeyAlias;
         private String keyOrTrustStoreParametersRef;
         private String keyPassword;
-        private String digestAlgorithm = "SHA1";
-        private String mgfAlgorithm = "MGF1_SHA1";
-        private String addKeyValueForEncryptedKey = "true";
+        private String digestAlgorithm;
+        private String mgfAlgorithm;
+        private String addKeyValueForEncryptedKey;
         private KeyStoreParameters keyOrTrustStoreParameters;
         private Map<String, String> namespaces;
 
@@ -375,6 +375,15 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
          */
         public Builder secureTagContents(String secureTagContents) {
             this.secureTagContents = secureTagContents;
+            return this;
+        }
+
+        /**
+         * A boolean value to specify whether the XML Element is to be encrypted or the contents of the XML Element.
+         * false = Element Level. true = Element Content Level.
+         */
+        public Builder secureTagContents(boolean secureTagContents) {
+            this.secureTagContents = Boolean.toString(secureTagContents);
             return this;
         }
 
@@ -462,6 +471,15 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
          */
         public Builder addKeyValueForEncryptedKey(String addKeyValueForEncryptedKey) {
             this.addKeyValueForEncryptedKey = addKeyValueForEncryptedKey;
+            return this;
+        }
+
+        /**
+         * Whether to add the public key used to encrypt the session key as a KeyValue in the EncryptedKey structure or
+         * not.
+         */
+        public Builder addKeyValueForEncryptedKey(boolean addKeyValueForEncryptedKey) {
+            this.addKeyValueForEncryptedKey = Boolean.toString(addKeyValueForEncryptedKey);
             return this;
         }
 

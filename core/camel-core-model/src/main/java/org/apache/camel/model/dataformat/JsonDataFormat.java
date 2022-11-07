@@ -643,8 +643,8 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
     public static class Builder implements DataFormatBuilder<JsonDataFormat> {
 
         private String objectMapper;
-        private String useDefaultObjectMapper = "true";
-        private String autoDiscoverObjectMapper = "false";
+        private String useDefaultObjectMapper;
+        private String autoDiscoverObjectMapper;
         private String prettyPrint;
         private JsonLibrary library = JsonLibrary.Jackson;
         private String unmarshalTypeName;
@@ -663,14 +663,19 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         private String permissions;
         private String allowUnmarshallType;
         private String timezone;
-        private String dropRootNode = "false";
+        private String dropRootNode;
         private String schemaResolver;
-        private String autoDiscoverSchemaResolver = "true";
+        private String autoDiscoverSchemaResolver;
         private String namingStrategy;
-        private String contentTypeHeader = "true";
+        private String contentTypeHeader;
 
         public Builder contentTypeHeader(String contentTypeHeader) {
             this.contentTypeHeader = contentTypeHeader;
+            return this;
+        }
+
+        public Builder contentTypeHeader(boolean contentTypeHeader) {
+            this.contentTypeHeader = Boolean.toString(contentTypeHeader);
             return this;
         }
 
@@ -691,12 +696,30 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         }
 
         /**
+         * Whether to lookup and use default Jackson ObjectMapper from the registry.
+         */
+        public Builder useDefaultObjectMapper(boolean useDefaultObjectMapper) {
+            this.useDefaultObjectMapper = Boolean.toString(useDefaultObjectMapper);
+            return this;
+        }
+
+        /**
          * To enable pretty printing output nicely formatted.
          * <p/>
          * Is by default false.
          */
         public Builder prettyPrint(String prettyPrint) {
             this.prettyPrint = prettyPrint;
+            return this;
+        }
+
+        /**
+         * To enable pretty printing output nicely formatted.
+         * <p/>
+         * Is by default false.
+         */
+        public Builder prettyPrint(boolean prettyPrint) {
+            this.prettyPrint = Boolean.toString(prettyPrint);
             return this;
         }
 
@@ -763,6 +786,15 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         }
 
         /**
+         * Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to
+         * unmarshal to.
+         */
+        public Builder allowJmsType(boolean allowJmsType) {
+            this.allowJmsType = Boolean.toString(allowJmsType);
+            return this;
+        }
+
+        /**
          * Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but
          * allows using different collection types than java.util.Collection based as default.
          */
@@ -781,6 +813,14 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
          */
         public Builder useList(String useList) {
             this.useList = useList;
+            return this;
+        }
+
+        /**
+         * To unmarshal to a List of Map or a List of Pojo.
+         */
+        public Builder useList(boolean useList) {
+            this.useList = Boolean.toString(useList);
             return this;
         }
 
@@ -870,6 +910,17 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         }
 
         /**
+         * If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the
+         * unmarshalling.
+         * <p/>
+         * This should only be enabled when desired to be used.
+         */
+        public Builder allowUnmarshallType(boolean allowUnmarshallType) {
+            this.allowUnmarshallType = Boolean.toString(allowUnmarshallType);
+            return this;
+        }
+
+        /**
          * If set then Jackson will use the Timezone when marshalling/unmarshalling. This option will have no effect on
          * the others Json DataFormat, like gson, fastjson and xstream.
          */
@@ -887,12 +938,30 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         }
 
         /**
+         * If set to true then Jackson will look for an objectMapper to use from the registry
+         */
+        public Builder autoDiscoverObjectMapper(boolean autoDiscoverObjectMapper) {
+            this.autoDiscoverObjectMapper = Boolean.toString(autoDiscoverObjectMapper);
+            return this;
+        }
+
+        /**
          * Whether XStream will drop the root node in the generated JSon. You may want to enable this when using POJOs;
          * as then the written object will include the class name as root node, which is often not intended to be
          * written in the JSON output.
          */
         public Builder dropRootNode(String dropRootNode) {
             this.dropRootNode = dropRootNode;
+            return this;
+        }
+
+        /**
+         * Whether XStream will drop the root node in the generated JSon. You may want to enable this when using POJOs;
+         * as then the written object will include the class name as root node, which is often not intended to be
+         * written in the JSON output.
+         */
+        public Builder dropRootNode(boolean dropRootNode) {
+            this.dropRootNode = Boolean.toString(dropRootNode);
             return this;
         }
 
@@ -909,6 +978,14 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
          */
         public Builder autoDiscoverSchemaResolver(String autoDiscoverSchemaResolver) {
             this.autoDiscoverSchemaResolver = autoDiscoverSchemaResolver;
+            return this;
+        }
+
+        /**
+         * When not disabled, the SchemaResolver will be looked up into the registry
+         */
+        public Builder autoDiscoverSchemaResolver(boolean autoDiscoverSchemaResolver) {
+            this.autoDiscoverSchemaResolver = Boolean.toString(autoDiscoverSchemaResolver);
             return this;
         }
 

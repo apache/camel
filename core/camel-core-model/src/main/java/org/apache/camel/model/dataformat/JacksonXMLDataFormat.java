@@ -367,7 +367,7 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         private String moduleRefs;
         private String enableFeatures;
         private String disableFeatures;
-        private String contentTypeHeader = "true";
+        private String contentTypeHeader;
 
         /**
          * Lookup and use the existing XmlMapper with the given id.
@@ -384,6 +384,16 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
          */
         public Builder prettyPrint(String prettyPrint) {
             this.prettyPrint = prettyPrint;
+            return this;
+        }
+
+        /**
+         * To enable pretty printing output nicely formatted.
+         * <p/>
+         * Is by default false.
+         */
+        public Builder prettyPrint(boolean prettyPrint) {
+            this.prettyPrint = Boolean.toString(prettyPrint);
             return this;
         }
 
@@ -442,6 +452,15 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         }
 
         /**
+         * Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to
+         * unmarshal to.
+         */
+        public Builder allowJmsType(boolean allowJmsType) {
+            this.allowJmsType = Boolean.toString(allowJmsType);
+            return this;
+        }
+
+        /**
          * Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but
          * allows to use different collection types than java.util.Collection based as default.
          */
@@ -464,11 +483,28 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         }
 
         /**
+         * To unmarshal to a List of Map or a List of Pojo.
+         */
+        public Builder useList(boolean useList) {
+            this.useList = Boolean.toString(useList);
+            return this;
+        }
+
+        /**
          * Whether to enable the JAXB annotations module when using jackson. When enabled then JAXB annotations can be
          * used by Jackson.
          */
         public Builder enableJaxbAnnotationModule(String enableJaxbAnnotationModule) {
             this.enableJaxbAnnotationModule = enableJaxbAnnotationModule;
+            return this;
+        }
+
+        /**
+         * Whether to enable the JAXB annotations module when using jackson. When enabled then JAXB annotations can be
+         * used by Jackson.
+         */
+        public Builder enableJaxbAnnotationModule(boolean enableJaxbAnnotationModule) {
+            this.enableJaxbAnnotationModule = Boolean.toString(enableJaxbAnnotationModule);
             return this;
         }
 
@@ -530,8 +566,24 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
             return this;
         }
 
+        /**
+         * If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the
+         * unmarshalling.
+         * <p/>
+         * This should only be enabled when desired to be used.
+         */
+        public Builder allowUnmarshallType(boolean allowUnmarshallType) {
+            this.allowUnmarshallType = Boolean.toString(allowUnmarshallType);
+            return this;
+        }
+
         public Builder contentTypeHeader(String contentTypeHeader) {
             this.contentTypeHeader = contentTypeHeader;
+            return this;
+        }
+
+        public Builder contentTypeHeader(boolean contentTypeHeader) {
+            this.contentTypeHeader = Boolean.toString(contentTypeHeader);
             return this;
         }
 

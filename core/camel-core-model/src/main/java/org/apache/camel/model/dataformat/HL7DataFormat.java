@@ -83,7 +83,7 @@ public class HL7DataFormat extends DataFormatDefinition {
     public static class Builder implements DataFormatBuilder<HL7DataFormat> {
 
         private Object parser;
-        private String validate = "true";
+        private String validate;
 
         /**
          * Whether to validate the HL7 message
@@ -92,6 +92,16 @@ public class HL7DataFormat extends DataFormatDefinition {
          */
         public Builder validate(String validate) {
             this.validate = validate;
+            return this;
+        }
+
+        /**
+         * Whether to validate the HL7 message
+         * <p/>
+         * Is by default true.
+         */
+        public Builder validate(boolean validate) {
+            this.validate = Boolean.toString(validate);
             return this;
         }
 

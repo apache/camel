@@ -403,7 +403,7 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
             implements DataFormatBuilder<F> {
 
         private Object fhirContext;
-        private String fhirVersion = "R4";
+        private String fhirVersion;
         private String prettyPrint;
         private Object parserErrorHandler;
         private Object parserOptions;
@@ -419,7 +419,7 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
         private String summaryMode;
         private String suppressNarratives;
         private List<String> dontStripVersionsFromReferencesAtPaths;
-        private String contentTypeHeader = "true";
+        private String contentTypeHeader;
 
         public T fhirContext(Object fhirContext) {
             this.fhirContext = fhirContext;
@@ -442,6 +442,17 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
          */
         public T prettyPrint(String prettyPrint) {
             this.prettyPrint = prettyPrint;
+            return (T) this;
+        }
+
+        /**
+         * Sets the "pretty print" flag, meaning that the parser will encode resources with human-readable spacing and
+         * newlines between elements instead of condensing output as much as possible.
+         *
+         * @param prettyPrint The flag
+         */
+        public T prettyPrint(boolean prettyPrint) {
+            this.prettyPrint = Boolean.toString(prettyPrint);
             return (T) this;
         }
 
@@ -511,12 +522,35 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
         }
 
         /**
+         * If set to <code>true</code> (default is <code>false</code>) the ID of any resources being encoded will not be
+         * included in the output. Note that this does not apply to contained resources, only to root resources. In
+         * other words, if this is set to <code>true</code>, contained resources will still have local IDs but the
+         * outer/containing ID will not have an ID.
+         *
+         * @param omitResourceId Should resource IDs be omitted
+         */
+        public T omitResourceId(boolean omitResourceId) {
+            this.omitResourceId = Boolean.toString(omitResourceId);
+            return (T) this;
+        }
+
+        /**
          * If set to <code>true</code> (default is false), the values supplied to {@link #setEncodeElements(Set)} will
          * not be applied to the root resource (typically a Bundle), but will be applied to any sub-resources contained
          * within it (i.e. search result resources in that bundle)
          */
         public T encodeElementsAppliesToChildResourcesOnly(String encodeElementsAppliesToChildResourcesOnly) {
             this.encodeElementsAppliesToChildResourcesOnly = encodeElementsAppliesToChildResourcesOnly;
+            return (T) this;
+        }
+
+        /**
+         * If set to <code>true</code> (default is false), the values supplied to {@link #setEncodeElements(Set)} will
+         * not be applied to the root resource (typically a Bundle), but will be applied to any sub-resources contained
+         * within it (i.e. search result resources in that bundle)
+         */
+        public T encodeElementsAppliesToChildResourcesOnly(boolean encodeElementsAppliesToChildResourcesOnly) {
+            this.encodeElementsAppliesToChildResourcesOnly = Boolean.toString(encodeElementsAppliesToChildResourcesOnly);
             return (T) this;
         }
 
@@ -587,6 +621,28 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
         }
 
         /**
+         * If set to <code>true<code> (which is the default), resource references containing a version
+         * will have the version removed when the resource is encoded. This is generally good behaviour because
+         * in most situations, references from one resource to another should be to the resource by ID, not
+         * by ID and version. In some cases though, it may be desirable to preserve the version in resource
+         * links. In that case, this value should be set to <code>false</code>.
+         * <p>
+         * This method provides the ability to globally disable reference encoding. If finer-grained control is needed,
+         * use {@link #setDontStripVersionsFromReferencesAtPaths(List)}
+         * </p>
+         *
+         * @param stripVersionsFromReferences Set this to
+         *                                    <code>false<code> to prevent the parser from removing resource versions
+         *                                    from references (or <code>null</code> to apply the default setting from
+         *                                    the {@link #setParserOptions(Object)}
+         * @see                               #setDontStripVersionsFromReferencesAtPaths(List)
+         */
+        public T stripVersionsFromReferences(boolean stripVersionsFromReferences) {
+            this.stripVersionsFromReferences = Boolean.toString(stripVersionsFromReferences);
+            return (T) this;
+        }
+
+        /**
          * If set to <code>true</code> (which is the default), the Bundle.entry.fullUrl will override the
          * Bundle.entry.resource's resource id if the fullUrl is defined. This behavior happens when parsing the source
          * data into a Bundle object. Set this to <code>false</code> if this is not the desired behavior (e.g. the
@@ -603,6 +659,22 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
         }
 
         /**
+         * If set to <code>true</code> (which is the default), the Bundle.entry.fullUrl will override the
+         * Bundle.entry.resource's resource id if the fullUrl is defined. This behavior happens when parsing the source
+         * data into a Bundle object. Set this to <code>false</code> if this is not the desired behavior (e.g. the
+         * client code wishes to perform additional validation checks between the fullUrl and the resource id).
+         *
+         * @param overrideResourceIdWithBundleEntryFullUrl Set this to <code>false</code> to prevent the parser from
+         *                                                 overriding resource ids with the Bundle.entry.fullUrl (or
+         *                                                 <code>null</code> to apply the default setting from the
+         *                                                 {@link #setParserOptions(Object)})
+         */
+        public T overrideResourceIdWithBundleEntryFullUrl(boolean overrideResourceIdWithBundleEntryFullUrl) {
+            this.overrideResourceIdWithBundleEntryFullUrl = Boolean.toString(overrideResourceIdWithBundleEntryFullUrl);
+            return (T) this;
+        }
+
+        /**
          * If set to <code>true</code> (default is <code>false</code>) only elements marked by the FHIR specification as
          * being "summary elements" will be included.
          */
@@ -612,11 +684,29 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
         }
 
         /**
+         * If set to <code>true</code> (default is <code>false</code>) only elements marked by the FHIR specification as
+         * being "summary elements" will be included.
+         */
+        public T summaryMode(boolean summaryMode) {
+            this.summaryMode = Boolean.toString(summaryMode);
+            return (T) this;
+        }
+
+        /**
          * If set to <code>true</code> (default is <code>false</code>), narratives will not be included in the encoded
          * values.
          */
         public T suppressNarratives(String suppressNarratives) {
             this.suppressNarratives = suppressNarratives;
+            return (T) this;
+        }
+
+        /**
+         * If set to <code>true</code> (default is <code>false</code>), narratives will not be included in the encoded
+         * values.
+         */
+        public T suppressNarratives(boolean suppressNarratives) {
+            this.suppressNarratives = Boolean.toString(suppressNarratives);
             return (T) this;
         }
 
@@ -647,6 +737,11 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
 
         public T contentTypeHeader(String contentTypeHeader) {
             this.contentTypeHeader = contentTypeHeader;
+            return (T) this;
+        }
+
+        public T contentTypeHeader(boolean contentTypeHeader) {
+            this.contentTypeHeader = Boolean.toString(contentTypeHeader);
             return (T) this;
         }
     }

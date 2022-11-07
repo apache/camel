@@ -291,17 +291,17 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
             implements DataFormatBuilder<F> {
 
         private String nullValue;
-        private String skipEmptyLines = "true";
-        private String ignoreTrailingWhitespaces = "true";
-        private String ignoreLeadingWhitespaces = "true";
+        private String skipEmptyLines;
+        private String ignoreTrailingWhitespaces;
+        private String ignoreLeadingWhitespaces;
         private String headersDisabled;
         private List<UniVocityHeader> headers;
         private String headerExtractionEnabled;
         private String numberOfRecordsToRead;
         private String emptyValue;
         private String lineSeparator;
-        private String normalizedLineSeparator = "\\n";
-        private String comment = "#";
+        private String normalizedLineSeparator;
+        private String comment;
         private String lazyLoad;
         private String asMap;
 
@@ -326,12 +326,32 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         }
 
         /**
+         * Whether or not the empty lines must be ignored.
+         * <p/>
+         * The default value is true
+         */
+        public T skipEmptyLines(boolean skipEmptyLines) {
+            this.skipEmptyLines = Boolean.toString(skipEmptyLines);
+            return (T) this;
+        }
+
+        /**
          * Whether or not the trailing white spaces must be ignored.
          * <p/>
          * The default value is true
          */
         public T ignoreTrailingWhitespaces(String ignoreTrailingWhitespaces) {
             this.ignoreTrailingWhitespaces = ignoreTrailingWhitespaces;
+            return (T) this;
+        }
+
+        /**
+         * Whether or not the trailing white spaces must be ignored.
+         * <p/>
+         * The default value is true
+         */
+        public T ignoreTrailingWhitespaces(boolean ignoreTrailingWhitespaces) {
+            this.ignoreTrailingWhitespaces = Boolean.toString(ignoreTrailingWhitespaces);
             return (T) this;
         }
 
@@ -346,6 +366,16 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         }
 
         /**
+         * Whether or not the leading white spaces must be ignored.
+         * <p/>
+         * The default value is true
+         */
+        public T ignoreLeadingWhitespaces(boolean ignoreLeadingWhitespaces) {
+            this.ignoreLeadingWhitespaces = Boolean.toString(ignoreLeadingWhitespaces);
+            return (T) this;
+        }
+
+        /**
          * Whether or not the headers are disabled. When defined, this option explicitly sets the headers as null which
          * indicates that there is no header.
          * <p/>
@@ -353,6 +383,17 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
          */
         public T headersDisabled(String headersDisabled) {
             this.headersDisabled = headersDisabled;
+            return (T) this;
+        }
+
+        /**
+         * Whether or not the headers are disabled. When defined, this option explicitly sets the headers as null which
+         * indicates that there is no header.
+         * <p/>
+         * The default value is false
+         */
+        public T headersDisabled(boolean headersDisabled) {
+            this.headersDisabled = Boolean.toString(headersDisabled);
             return (T) this;
         }
 
@@ -375,10 +416,28 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         }
 
         /**
+         * Whether or not the header must be read in the first line of the test document
+         * <p/>
+         * The default value is false
+         */
+        public T headerExtractionEnabled(boolean headerExtractionEnabled) {
+            this.headerExtractionEnabled = Boolean.toString(headerExtractionEnabled);
+            return (T) this;
+        }
+
+        /**
          * The maximum number of record to read.
          */
         public T numberOfRecordsToRead(String numberOfRecordsToRead) {
             this.numberOfRecordsToRead = numberOfRecordsToRead;
+            return (T) this;
+        }
+
+        /**
+         * The maximum number of record to read.
+         */
+        public T numberOfRecordsToRead(int numberOfRecordsToRead) {
+            this.numberOfRecordsToRead = Integer.toString(numberOfRecordsToRead);
             return (T) this;
         }
 
@@ -432,6 +491,17 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         }
 
         /**
+         * Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must
+         * be read at one.
+         * <p/>
+         * The default value is false
+         */
+        public T lazyLoad(boolean lazyLoad) {
+            this.lazyLoad = Boolean.toString(lazyLoad);
+            return (T) this;
+        }
+
+        /**
          * Whether the unmarshalling should produce maps for the lines values instead of lists. It requires to have
          * header (either defined or collected).
          * <p/>
@@ -439,6 +509,17 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
          */
         public T asMap(String asMap) {
             this.asMap = asMap;
+            return (T) this;
+        }
+
+        /**
+         * Whether the unmarshalling should produce maps for the lines values instead of lists. It requires to have
+         * header (either defined or collected).
+         * <p/>
+         * The default value is false
+         */
+        public T asMap(boolean asMap) {
+            this.asMap = Boolean.toString(asMap);
             return (T) this;
         }
     }

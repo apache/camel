@@ -175,8 +175,8 @@ public class FlatpackDataFormat extends DataFormatDefinition {
 
         private String definition;
         private String fixed;
-        private String delimiter = ",";
-        private String ignoreFirstRecord = "true";
+        private String delimiter;
+        private String ignoreFirstRecord;
         private String allowShortLines;
         private String ignoreExtraColumns;
         private String textQualifier;
@@ -200,12 +200,30 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         }
 
         /**
+         * Delimited or fixed. Is by default false = delimited
+         */
+        public Builder fixed(boolean fixed) {
+            this.fixed = Boolean.toString(fixed);
+            return this;
+        }
+
+        /**
          * Whether the first line is ignored for delimited files (for the column headers).
          * <p/>
          * Is by default true.
          */
         public Builder ignoreFirstRecord(String ignoreFirstRecord) {
             this.ignoreFirstRecord = ignoreFirstRecord;
+            return this;
+        }
+
+        /**
+         * Whether the first line is ignored for delimited files (for the column headers).
+         * <p/>
+         * Is by default true.
+         */
+        public Builder ignoreFirstRecord(boolean ignoreFirstRecord) {
+            this.ignoreFirstRecord = Boolean.toString(ignoreFirstRecord);
             return this;
         }
 
@@ -236,10 +254,26 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         }
 
         /**
+         * Allows for lines to be shorter than expected and ignores the extra characters
+         */
+        public Builder allowShortLines(boolean allowShortLines) {
+            this.allowShortLines = Boolean.toString(allowShortLines);
+            return this;
+        }
+
+        /**
          * Allows for lines to be longer than expected and ignores the extra characters.
          */
         public Builder ignoreExtraColumns(String ignoreExtraColumns) {
             this.ignoreExtraColumns = ignoreExtraColumns;
+            return this;
+        }
+
+        /**
+         * Allows for lines to be longer than expected and ignores the extra characters.
+         */
+        public Builder ignoreExtraColumns(boolean ignoreExtraColumns) {
+            this.ignoreExtraColumns = Boolean.toString(ignoreExtraColumns);
             return this;
         }
 

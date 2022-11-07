@@ -111,7 +111,7 @@ public class TidyMarkupDataFormat extends DataFormatDefinition {
     public static class Builder implements DataFormatBuilder<TidyMarkupDataFormat> {
 
         private Class<?> dataObjectType;
-        private String dataObjectTypeName = "org.w3c.dom.Node";
+        private String dataObjectTypeName;
         private String omitXmlDeclaration;
 
         /**
@@ -139,6 +139,14 @@ public class TidyMarkupDataFormat extends DataFormatDefinition {
          */
         public Builder omitXmlDeclaration(String omitXmlDeclaration) {
             this.omitXmlDeclaration = omitXmlDeclaration;
+            return this;
+        }
+
+        /**
+         * When returning a String, do we omit the XML declaration in the top.
+         */
+        public Builder omitXmlDeclaration(boolean omitXmlDeclaration) {
+            this.omitXmlDeclaration = Boolean.toString(omitXmlDeclaration);
             return this;
         }
 

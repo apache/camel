@@ -44,7 +44,7 @@ public class YAMLDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
     @Metadata(defaultValue = "SnakeYAML")
-    private YAMLLibrary library = YAMLLibrary.SnakeYAML;
+    private YAMLLibrary library;
     @XmlAttribute(name = "unmarshalType")
     private String unmarshalTypeName;
     @XmlAttribute
@@ -288,11 +288,11 @@ public class YAMLDataFormat extends DataFormatDefinition {
         private String representer;
         private String dumperOptions;
         private String resolver;
-        private String useApplicationContextClassLoader = "true";
+        private String useApplicationContextClassLoader;
         private String prettyFlow;
         private String allowAnyType;
         private List<YAMLTypeFilterDefinition> typeFilters;
-        private String maxAliasesForCollections = "50";
+        private String maxAliasesForCollections;
         private String allowRecursiveKeys;
 
         /**
@@ -371,6 +371,14 @@ public class YAMLDataFormat extends DataFormatDefinition {
         }
 
         /**
+         * Use ApplicationContextClassLoader as custom ClassLoader
+         */
+        public Builder useApplicationContextClassLoader(boolean useApplicationContextClassLoader) {
+            this.useApplicationContextClassLoader = Boolean.toString(useApplicationContextClassLoader);
+            return this;
+        }
+
+        /**
          * Force the emitter to produce a pretty YAML document when using the flow style.
          */
         public Builder prettyFlow(String prettyFlow) {
@@ -379,10 +387,26 @@ public class YAMLDataFormat extends DataFormatDefinition {
         }
 
         /**
+         * Force the emitter to produce a pretty YAML document when using the flow style.
+         */
+        public Builder prettyFlow(boolean prettyFlow) {
+            this.prettyFlow = Boolean.toString(prettyFlow);
+            return this;
+        }
+
+        /**
          * Allow any class to be un-marshaled
          */
         public Builder allowAnyType(String allowAnyType) {
             this.allowAnyType = allowAnyType;
+            return this;
+        }
+
+        /**
+         * Allow any class to be un-marshaled
+         */
+        public Builder allowAnyType(boolean allowAnyType) {
+            this.allowAnyType = Boolean.toString(allowAnyType);
             return this;
         }
 
@@ -403,10 +427,26 @@ public class YAMLDataFormat extends DataFormatDefinition {
         }
 
         /**
+         * Set the maximum amount of aliases allowed for collections.
+         */
+        public Builder maxAliasesForCollections(int maxAliasesForCollections) {
+            this.maxAliasesForCollections = Integer.toString(maxAliasesForCollections);
+            return this;
+        }
+
+        /**
          * Set whether recursive keys are allowed.
          */
         public Builder allowRecursiveKeys(String allowRecursiveKeys) {
             this.allowRecursiveKeys = allowRecursiveKeys;
+            return this;
+        }
+
+        /**
+         * Set whether recursive keys are allowed.
+         */
+        public Builder allowRecursiveKeys(boolean allowRecursiveKeys) {
+            this.allowRecursiveKeys = Boolean.toString(allowRecursiveKeys);
             return this;
         }
 

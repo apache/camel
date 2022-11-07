@@ -229,8 +229,8 @@ public class BindyDataFormat extends DataFormatDefinition {
         private Class<?> clazz;
         private String type;
         private String classType;
-        private String allowEmptyStream = "false";
-        private String unwrapSingleInstance = "true";
+        private String allowEmptyStream;
+        private String unwrapSingleInstance;
         private String locale;
 
         /**
@@ -281,11 +281,29 @@ public class BindyDataFormat extends DataFormatDefinition {
         }
 
         /**
+         * When unmarshalling should a single instance be unwrapped and returned instead of wrapped in a
+         * <tt>java.util.List</tt>.
+         */
+        public Builder unwrapSingleInstance(boolean unwrapSingleInstance) {
+            this.unwrapSingleInstance = Boolean.toString(unwrapSingleInstance);
+            return this;
+        }
+
+        /**
          * Whether to allow empty streams in the unmarshal process. If true, no exception will be thrown when a body
          * without records is provided.
          */
         public Builder allowEmptyStream(String allowEmptyStream) {
             this.allowEmptyStream = allowEmptyStream;
+            return this;
+        }
+
+        /**
+         * Whether to allow empty streams in the unmarshal process. If true, no exception will be thrown when a body
+         * without records is provided.
+         */
+        public Builder allowEmptyStream(boolean allowEmptyStream) {
+            this.allowEmptyStream = Boolean.toString(allowEmptyStream);
             return this;
         }
 

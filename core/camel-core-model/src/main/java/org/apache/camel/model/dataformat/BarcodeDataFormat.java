@@ -121,10 +121,26 @@ public class BarcodeDataFormat extends DataFormatDefinition {
         }
 
         /**
+         * Width of the barcode
+         */
+        public Builder width(int width) {
+            this.width = Integer.toString(width);
+            return this;
+        }
+
+        /**
          * Height of the barcode
          */
         public Builder height(String height) {
             this.height = height;
+            return this;
+        }
+
+        /**
+         * Height of the barcode
+         */
+        public Builder height(int height) {
+            this.height = Integer.toString(height);
             return this;
         }
 

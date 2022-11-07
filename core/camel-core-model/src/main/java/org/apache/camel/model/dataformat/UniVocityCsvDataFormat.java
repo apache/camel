@@ -107,16 +107,24 @@ public class UniVocityCsvDataFormat extends UniVocityAbstractDataFormat {
     @XmlTransient
     public static class Builder extends AbstractBuilder<Builder, UniVocityCsvDataFormat> {
 
-        private String delimiter = ",";
+        private String delimiter;
         private String quoteAllFields;
-        private String quote = "\"";
-        private String quoteEscape = "\"";
+        private String quote;
+        private String quoteEscape;
 
         /**
          * Whether or not all values must be quoted when writing them.
          */
         public Builder quoteAllFields(String quoteAllFields) {
             this.quoteAllFields = quoteAllFields;
+            return this;
+        }
+
+        /**
+         * Whether or not all values must be quoted when writing them.
+         */
+        public Builder quoteAllFields(boolean quoteAllFields) {
+            this.quoteAllFields = Boolean.toString(quoteAllFields);
             return this;
         }
 

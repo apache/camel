@@ -510,7 +510,7 @@ public class CsvDataFormat extends DataFormatDefinition {
     @XmlTransient
     public static class Builder implements DataFormatBuilder<CsvDataFormat> {
         private String formatRef;
-        private String formatName = "DEFAULT";
+        private String formatName;
         private String commentMarkerDisabled;
         private String commentMarker;
         private String delimiter;
@@ -576,6 +576,14 @@ public class CsvDataFormat extends DataFormatDefinition {
         }
 
         /**
+         * Disables the comment marker of the reference format.
+         */
+        public Builder commentMarkerDisabled(boolean commentMarkerDisabled) {
+            this.commentMarkerDisabled = Boolean.toString(commentMarkerDisabled);
+            return this;
+        }
+
+        /**
          * Sets the comment marker of the reference format.
          */
         public Builder commentMarker(String commentMarker) {
@@ -602,6 +610,14 @@ public class CsvDataFormat extends DataFormatDefinition {
         }
 
         /**
+         * Use for disabling using escape character
+         */
+        public Builder escapeDisabled(boolean escapeDisabled) {
+            this.escapeDisabled = Boolean.toString(escapeDisabled);
+            return this;
+        }
+
+        /**
          * Sets the escape character to use
          */
         public Builder escape(String escape) {
@@ -611,6 +627,11 @@ public class CsvDataFormat extends DataFormatDefinition {
 
         public Builder headerDisabled(String headerDisabled) {
             this.headerDisabled = headerDisabled;
+            return this;
+        }
+
+        public Builder headerDisabled(boolean headerDisabled) {
+            this.headerDisabled = Boolean.toString(headerDisabled);
             return this;
         }
 
@@ -631,10 +652,26 @@ public class CsvDataFormat extends DataFormatDefinition {
         }
 
         /**
+         * Whether to allow missing column names.
+         */
+        public Builder allowMissingColumnNames(boolean allowMissingColumnNames) {
+            this.allowMissingColumnNames = Boolean.toString(allowMissingColumnNames);
+            return this;
+        }
+
+        /**
          * Whether to ignore empty lines.
          */
         public Builder ignoreEmptyLines(String ignoreEmptyLines) {
             this.ignoreEmptyLines = ignoreEmptyLines;
+            return this;
+        }
+
+        /**
+         * Whether to ignore empty lines.
+         */
+        public Builder ignoreEmptyLines(boolean ignoreEmptyLines) {
+            this.ignoreEmptyLines = Boolean.toString(ignoreEmptyLines);
             return this;
         }
 
@@ -647,10 +684,26 @@ public class CsvDataFormat extends DataFormatDefinition {
         }
 
         /**
+         * Whether to ignore surrounding spaces
+         */
+        public Builder ignoreSurroundingSpaces(boolean ignoreSurroundingSpaces) {
+            this.ignoreSurroundingSpaces = Boolean.toString(ignoreSurroundingSpaces);
+            return this;
+        }
+
+        /**
          * Used to disable null strings
          */
         public Builder nullStringDisabled(String nullStringDisabled) {
             this.nullStringDisabled = nullStringDisabled;
+            return this;
+        }
+
+        /**
+         * Used to disable null strings
+         */
+        public Builder nullStringDisabled(boolean nullStringDisabled) {
+            this.nullStringDisabled = Boolean.toString(nullStringDisabled);
             return this;
         }
 
@@ -667,6 +720,14 @@ public class CsvDataFormat extends DataFormatDefinition {
          */
         public Builder quoteDisabled(String quoteDisabled) {
             this.quoteDisabled = quoteDisabled;
+            return this;
+        }
+
+        /**
+         * Used to disable quotes
+         */
+        public Builder quoteDisabled(boolean quoteDisabled) {
+            this.quoteDisabled = Boolean.toString(quoteDisabled);
             return this;
         }
 
@@ -703,6 +764,14 @@ public class CsvDataFormat extends DataFormatDefinition {
         }
 
         /**
+         * Whether to skip the header record in the output
+         */
+        public Builder skipHeaderRecord(boolean skipHeaderRecord) {
+            this.skipHeaderRecord = Boolean.toString(skipHeaderRecord);
+            return this;
+        }
+
+        /**
          * Sets the quote mode
          */
         public Builder quoteMode(String quoteMode) {
@@ -720,6 +789,15 @@ public class CsvDataFormat extends DataFormatDefinition {
         }
 
         /**
+         * Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must
+         * be read at one.
+         */
+        public Builder lazyLoad(boolean lazyLoad) {
+            this.lazyLoad = Boolean.toString(lazyLoad);
+            return this;
+        }
+
+        /**
          * Whether the unmarshalling should produce maps (HashMap)for the lines values instead of lists. It requires to
          * have header (either defined or collected).
          */
@@ -729,11 +807,29 @@ public class CsvDataFormat extends DataFormatDefinition {
         }
 
         /**
+         * Whether the unmarshalling should produce maps (HashMap)for the lines values instead of lists. It requires to
+         * have header (either defined or collected).
+         */
+        public Builder useMaps(boolean useMaps) {
+            this.useMaps = Boolean.toString(useMaps);
+            return this;
+        }
+
+        /**
          * Whether the unmarshalling should produce ordered maps (LinkedHashMap) for the lines values instead of lists.
          * It requires to have header (either defined or collected).
          */
         public Builder useOrderedMaps(String useOrderedMaps) {
             this.useOrderedMaps = useOrderedMaps;
+            return this;
+        }
+
+        /**
+         * Whether the unmarshalling should produce ordered maps (LinkedHashMap) for the lines values instead of lists.
+         * It requires to have header (either defined or collected).
+         */
+        public Builder useOrderedMaps(boolean useOrderedMaps) {
+            this.useOrderedMaps = Boolean.toString(useOrderedMaps);
             return this;
         }
 
@@ -754,10 +850,26 @@ public class CsvDataFormat extends DataFormatDefinition {
         }
 
         /**
+         * Sets whether or not to trim leading and trailing blanks.
+         */
+        public Builder trim(boolean trim) {
+            this.trim = Boolean.toString(trim);
+            return this;
+        }
+
+        /**
          * Sets whether or not to ignore case when accessing header names.
          */
         public Builder ignoreHeaderCase(String ignoreHeaderCase) {
             this.ignoreHeaderCase = ignoreHeaderCase;
+            return this;
+        }
+
+        /**
+         * Sets whether or not to ignore case when accessing header names.
+         */
+        public Builder ignoreHeaderCase(boolean ignoreHeaderCase) {
+            this.ignoreHeaderCase = Boolean.toString(ignoreHeaderCase);
             return this;
         }
 
@@ -770,10 +882,26 @@ public class CsvDataFormat extends DataFormatDefinition {
         }
 
         /**
+         * Sets whether or not to add a trailing delimiter.
+         */
+        public Builder trailingDelimiter(boolean trailingDelimiter) {
+            this.trailingDelimiter = Boolean.toString(trailingDelimiter);
+            return this;
+        }
+
+        /**
          * Whether the unmarshalling should capture the header record and store it in the message header
          */
         public Builder captureHeaderRecord(String captureHeaderRecord) {
             this.captureHeaderRecord = captureHeaderRecord;
+            return this;
+        }
+
+        /**
+         * Whether the unmarshalling should capture the header record and store it in the message header
+         */
+        public Builder captureHeaderRecord(boolean captureHeaderRecord) {
+            this.captureHeaderRecord = Boolean.toString(captureHeaderRecord);
             return this;
         }
 

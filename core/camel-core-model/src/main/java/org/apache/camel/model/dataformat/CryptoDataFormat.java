@@ -191,10 +191,10 @@ public class CryptoDataFormat extends DataFormatDefinition {
         private String cryptoProvider;
         private String initVectorRef;
         private String algorithmParameterRef;
-        private String bufferSize = "4096";
+        private String bufferSize;
         private String macAlgorithm = "HmacSHA1";
-        private String shouldAppendHMAC = "true";
-        private String inline = "false";
+        private String shouldAppendHMAC;
+        private String inline;
 
         /**
          * The JCE algorithm name indicating the cryptographic algorithm that will be used.
@@ -247,6 +247,14 @@ public class CryptoDataFormat extends DataFormatDefinition {
         }
 
         /**
+         * The size of the buffer used in the signature process.
+         */
+        public Builder bufferSize(int bufferSize) {
+            this.bufferSize = Integer.toString(bufferSize);
+            return this;
+        }
+
+        /**
          * The JCE algorithm name indicating the Message Authentication algorithm.
          */
         public Builder macAlgorithm(String macAlgorithm) {
@@ -263,12 +271,30 @@ public class CryptoDataFormat extends DataFormatDefinition {
         }
 
         /**
+         * Flag indicating that a Message Authentication Code should be calculated and appended to the encrypted data.
+         */
+        public Builder shouldAppendHMAC(boolean shouldAppendHMAC) {
+            this.shouldAppendHMAC = Boolean.toString(shouldAppendHMAC);
+            return this;
+        }
+
+        /**
          * Flag indicating that the configured IV should be inlined into the encrypted data stream.
          * <p/>
          * Is by default false.
          */
         public Builder inline(String inline) {
             this.inline = inline;
+            return this;
+        }
+
+        /**
+         * Flag indicating that the configured IV should be inlined into the encrypted data stream.
+         * <p/>
+         * Is by default false.
+         */
+        public Builder inline(boolean inline) {
+            this.inline = Boolean.toString(inline);
             return this;
         }
 

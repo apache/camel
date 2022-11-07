@@ -65,7 +65,7 @@ public class ZipDeflaterDataFormat extends DataFormatDefinition {
     @XmlTransient
     public static class Builder implements DataFormatBuilder<ZipDeflaterDataFormat> {
 
-        private String compressionLevel = "-1";
+        private String compressionLevel;
 
         /**
          * To specify a specific compression between 0-9. -1 is default compression, 0 is no compression, and 9 is the
@@ -73,6 +73,15 @@ public class ZipDeflaterDataFormat extends DataFormatDefinition {
          */
         public Builder compressionLevel(String compressionLevel) {
             this.compressionLevel = compressionLevel;
+            return this;
+        }
+
+        /**
+         * To specify a specific compression between 0-9. -1 is default compression, 0 is no compression, and 9 is the
+         * best compression.
+         */
+        public Builder compressionLevel(int compressionLevel) {
+            this.compressionLevel = Integer.toString(compressionLevel);
             return this;
         }
 

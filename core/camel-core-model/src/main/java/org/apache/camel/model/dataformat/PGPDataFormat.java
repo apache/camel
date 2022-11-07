@@ -280,8 +280,8 @@ public class PGPDataFormat extends DataFormatDefinition {
         private String keyFileName;
         private String signatureKeyFileName;
         private String signatureKeyRing;
-        private String armored = "false";
-        private String integrity = "true";
+        private String armored;
+        private String integrity;
         private String provider;
         private String algorithm;
         private String compressionAlgorithm;
@@ -338,10 +338,27 @@ public class PGPDataFormat extends DataFormatDefinition {
         }
 
         /**
+         * Signature hash algorithm; possible values are defined in org.bouncycastle.bcpg.HashAlgorithmTags; for example
+         * 2 (= SHA1), 8 (= SHA256), 9 (= SHA384), 10 (= SHA512), 11 (=SHA224). Only relevant for signing.
+         */
+        public Builder hashAlgorithm(int hashAlgorithm) {
+            this.hashAlgorithm = Integer.toString(hashAlgorithm);
+            return this;
+        }
+
+        /**
          * This option will cause PGP to base64 encode the encrypted text, making it available for copy/paste, etc.
          */
         public Builder armored(String armored) {
             this.armored = armored;
+            return this;
+        }
+
+        /**
+         * This option will cause PGP to base64 encode the encrypted text, making it available for copy/paste, etc.
+         */
+        public Builder armored(boolean armored) {
+            this.armored = Boolean.toString(armored);
             return this;
         }
 
@@ -352,6 +369,16 @@ public class PGPDataFormat extends DataFormatDefinition {
          */
         public Builder integrity(String integrity) {
             this.integrity = integrity;
+            return this;
+        }
+
+        /**
+         * Adds an integrity check/sign into the encryption file.
+         * <p/>
+         * The default value is true.
+         */
+        public Builder integrity(boolean integrity) {
+            this.integrity = Boolean.toString(integrity);
             return this;
         }
 
@@ -385,11 +412,30 @@ public class PGPDataFormat extends DataFormatDefinition {
         }
 
         /**
+         * Symmetric key encryption algorithm; possible values are defined in
+         * org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags; for example 2 (= TRIPLE DES), 3 (= CAST5), 4 (= BLOWFISH), 6
+         * (= DES), 7 (= AES_128). Only relevant for encrypting.
+         */
+        public Builder algorithm(int algorithm) {
+            this.algorithm = Integer.toString(algorithm);
+            return this;
+        }
+
+        /**
          * Compression algorithm; possible values are defined in org.bouncycastle.bcpg.CompressionAlgorithmTags; for
          * example 0 (= UNCOMPRESSED), 1 (= ZIP), 2 (= ZLIB), 3 (= BZIP2). Only relevant for encrypting.
          */
         public Builder compressionAlgorithm(String compressionAlgorithm) {
             this.compressionAlgorithm = compressionAlgorithm;
+            return this;
+        }
+
+        /**
+         * Compression algorithm; possible values are defined in org.bouncycastle.bcpg.CompressionAlgorithmTags; for
+         * example 0 (= UNCOMPRESSED), 1 (= ZIP), 2 (= ZLIB), 3 (= BZIP2). Only relevant for encrypting.
+         */
+        public Builder compressionAlgorithm(int compressionAlgorithm) {
+            this.compressionAlgorithm = Integer.toString(compressionAlgorithm);
             return this;
         }
 

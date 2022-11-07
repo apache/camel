@@ -246,13 +246,13 @@ public class CBORDataFormat extends DataFormatDefinition {
         private Class<?> collectionType;
         private Class<?> unmarshalType;
         private String objectMapper;
-        private String useDefaultObjectMapper = "true";
+        private String useDefaultObjectMapper;
         private String unmarshalTypeName;
         private String collectionTypeName;
-        private String useList = "false";
-        private String allowUnmarshallType = "false";
-        private String prettyPrint = "false";
-        private String allowJmsType = "false";
+        private String useList;
+        private String allowUnmarshallType;
+        private String prettyPrint;
+        private String allowJmsType;
         private String enableFeatures;
         private String disableFeatures;
 
@@ -269,6 +269,14 @@ public class CBORDataFormat extends DataFormatDefinition {
          */
         public Builder useDefaultObjectMapper(String useDefaultObjectMapper) {
             this.useDefaultObjectMapper = useDefaultObjectMapper;
+            return this;
+        }
+
+        /**
+         * Whether to lookup and use default Jackson CBOR ObjectMapper from the registry.
+         */
+        public Builder useDefaultObjectMapper(boolean useDefaultObjectMapper) {
+            this.useDefaultObjectMapper = Boolean.toString(useDefaultObjectMapper);
             return this;
         }
 
@@ -291,11 +299,30 @@ public class CBORDataFormat extends DataFormatDefinition {
         }
 
         /**
+         * To enable pretty printing output nicely formatted.
+         * <p/>
+         * Is by default false.
+         */
+        public Builder prettyPrint(boolean prettyPrint) {
+            this.prettyPrint = Boolean.toString(prettyPrint);
+            return this;
+        }
+
+        /**
          * Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to
          * unmarshal to.
          */
         public Builder allowJmsType(String allowJmsType) {
             this.allowJmsType = allowJmsType;
+            return this;
+        }
+
+        /**
+         * Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to
+         * unmarshal to.
+         */
+        public Builder allowJmsType(boolean allowJmsType) {
+            this.allowJmsType = Boolean.toString(allowJmsType);
             return this;
         }
 
@@ -330,6 +357,14 @@ public class CBORDataFormat extends DataFormatDefinition {
         }
 
         /**
+         * To unmarshal to a List of Map or a List of Pojo.
+         */
+        public Builder useList(boolean useList) {
+            this.useList = Boolean.toString(useList);
+            return this;
+        }
+
+        /**
          * If enabled then Jackson CBOR is allowed to attempt to use the CamelCBORUnmarshalType header during the
          * unmarshalling.
          * <p/>
@@ -337,6 +372,17 @@ public class CBORDataFormat extends DataFormatDefinition {
          */
         public Builder allowUnmarshallType(String allowUnmarshallType) {
             this.allowUnmarshallType = allowUnmarshallType;
+            return this;
+        }
+
+        /**
+         * If enabled then Jackson CBOR is allowed to attempt to use the CamelCBORUnmarshalType header during the
+         * unmarshalling.
+         * <p/>
+         * This should only be enabled when desired to be used.
+         */
+        public Builder allowUnmarshallType(boolean allowUnmarshallType) {
+            this.allowUnmarshallType = Boolean.toString(allowUnmarshallType);
             return this;
         }
 

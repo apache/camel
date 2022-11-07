@@ -163,6 +163,17 @@ public class MimeMultipartDataFormat extends DataFormatDefinition {
         }
 
         /**
+         * Defines whether a message without attachment is also marshaled into a MIME Multipart (with only one body
+         * part).
+         * <p>
+         * Default is false.
+         */
+        public Builder multipartWithoutAttachment(boolean multipartWithoutAttachment) {
+            this.multipartWithoutAttachment = Boolean.toString(multipartWithoutAttachment);
+            return this;
+        }
+
+        /**
          * Defines whether the MIME-Multipart headers are part of the message body (true) or are set as Camel headers
          * (false).
          * <p>
@@ -170,6 +181,17 @@ public class MimeMultipartDataFormat extends DataFormatDefinition {
          */
         public Builder headersInline(String headersInline) {
             this.headersInline = headersInline;
+            return this;
+        }
+
+        /**
+         * Defines whether the MIME-Multipart headers are part of the message body (true) or are set as Camel headers
+         * (false).
+         * <p>
+         * Default is false.
+         */
+        public Builder headersInline(boolean headersInline) {
+            this.headersInline = Boolean.toString(headersInline);
             return this;
         }
 
@@ -191,6 +213,16 @@ public class MimeMultipartDataFormat extends DataFormatDefinition {
          */
         public Builder binaryContent(String binaryContent) {
             this.binaryContent = binaryContent;
+            return this;
+        }
+
+        /**
+         * Defines whether the content of binary parts in the MIME multipart is binary (true) or Base-64 encoded (false)
+         * <p>
+         * Default is false.
+         */
+        public Builder binaryContent(boolean binaryContent) {
+            this.binaryContent = Boolean.toString(binaryContent);
             return this;
         }
 

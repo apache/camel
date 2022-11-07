@@ -74,6 +74,14 @@ public class LZFDataFormat extends DataFormatDefinition {
             return this;
         }
 
+        /**
+         * Enable encoding (compress) using multiple processing cores.
+         */
+        public Builder usingParallelCompression(boolean usingParallelCompression) {
+            this.usingParallelCompression = Boolean.toString(usingParallelCompression);
+            return this;
+        }
+
         @Override
         public LZFDataFormat end() {
             return new LZFDataFormat(this);

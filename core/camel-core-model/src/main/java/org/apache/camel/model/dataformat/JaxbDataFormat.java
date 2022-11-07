@@ -356,7 +356,7 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         private String contextPath;
         private String contextPathIsClassName;
         private String schema;
-        private String schemaSeverityLevel = "0";
+        private String schemaSeverityLevel;
         private String prettyPrint;
         private String objectFactory;
         private String ignoreJAXBElement;
@@ -371,7 +371,7 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         private String schemaLocation;
         private String noNamespaceSchemaLocation;
         private String jaxbProviderProperties;
-        private String contentTypeHeader = "true";
+        private String contentTypeHeader;
 
         /**
          * Package name where your JAXB classes are located.
@@ -386,6 +386,14 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
          */
         public Builder contextPathIsClassName(String contextPathIsClassName) {
             this.contextPathIsClassName = contextPathIsClassName;
+            return this;
+        }
+
+        /**
+         * This can be set to true to mark that the contextPath is referring to a classname and not a package name.
+         */
+        public Builder contextPathIsClassName(boolean contextPathIsClassName) {
+            this.contextPathIsClassName = Boolean.toString(contextPathIsClassName);
             return this;
         }
 
@@ -410,12 +418,33 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         }
 
         /**
+         * Sets the schema severity level to use when validating against a schema. This level determines the minimum
+         * severity error that triggers JAXB to stop continue parsing. The default value of 0 (warning) means that any
+         * error (warning, error or fatal error) will trigger JAXB to stop. There are the following three levels:
+         * 0=warning, 1=error, 2=fatal error.
+         */
+        public Builder schemaSeverityLevel(int schemaSeverityLevel) {
+            this.schemaSeverityLevel = Integer.toString(schemaSeverityLevel);
+            return this;
+        }
+
+        /**
          * To enable pretty printing output nicely formatted.
          * <p/>
          * Is by default false.
          */
         public Builder prettyPrint(String prettyPrint) {
             this.prettyPrint = prettyPrint;
+            return this;
+        }
+
+        /**
+         * To enable pretty printing output nicely formatted.
+         * <p/>
+         * Is by default false.
+         */
+        public Builder prettyPrint(boolean prettyPrint) {
+            this.prettyPrint = Boolean.toString(prettyPrint);
             return this;
         }
 
@@ -429,10 +458,27 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         }
 
         /**
+         * Whether to allow using ObjectFactory classes to create the POJO classes during marshalling. This only applies
+         * to POJO classes that has not been annotated with JAXB and providing jaxb.index descriptor files.
+         */
+        public Builder objectFactory(boolean objectFactory) {
+            this.objectFactory = Boolean.toString(objectFactory);
+            return this;
+        }
+
+        /**
          * Whether to ignore JAXBElement elements - only needed to be set to false in very special use-cases.
          */
         public Builder ignoreJAXBElement(String ignoreJAXBElement) {
             this.ignoreJAXBElement = ignoreJAXBElement;
+            return this;
+        }
+
+        /**
+         * Whether to ignore JAXBElement elements - only needed to be set to false in very special use-cases.
+         */
+        public Builder ignoreJAXBElement(boolean ignoreJAXBElement) {
+            this.ignoreJAXBElement = Boolean.toString(ignoreJAXBElement);
             return this;
         }
 
@@ -442,6 +488,15 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
          */
         public Builder mustBeJAXBElement(String mustBeJAXBElement) {
             this.mustBeJAXBElement = mustBeJAXBElement;
+            return this;
+        }
+
+        /**
+         * Whether marhsalling must be java objects with JAXB annotations. And if not then it fails. This option can be
+         * set to false to relax that, such as when the data is already in XML format.
+         */
+        public Builder mustBeJAXBElement(boolean mustBeJAXBElement) {
+            this.mustBeJAXBElement = Boolean.toString(mustBeJAXBElement);
             return this;
         }
 
@@ -458,10 +513,30 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         }
 
         /**
+         * To turn on marshalling XML fragment trees. By default JAXB looks for @XmlRootElement annotation on given
+         * class to operate on whole XML tree. This is useful but not always - sometimes generated code does not
+         * have @XmlRootElement annotation, sometimes you need unmarshall only part of tree. In that case you can use
+         * partial unmarshalling. To enable this behaviours you need set property partClass. Camel will pass this class
+         * to JAXB's unmarshaler.
+         */
+        public Builder fragment(boolean fragment) {
+            this.fragment = Boolean.toString(fragment);
+            return this;
+        }
+
+        /**
          * To ignore non xml characters and replace them with an empty space.
          */
         public Builder filterNonXmlChars(String filterNonXmlChars) {
             this.filterNonXmlChars = filterNonXmlChars;
+            return this;
+        }
+
+        /**
+         * To ignore non xml characters and replace them with an empty space.
+         */
+        public Builder filterNonXmlChars(boolean filterNonXmlChars) {
+            this.filterNonXmlChars = Boolean.toString(filterNonXmlChars);
             return this;
         }
 
@@ -538,6 +613,11 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
 
         public Builder contentTypeHeader(String contentTypeHeader) {
             this.contentTypeHeader = contentTypeHeader;
+            return this;
+        }
+
+        public Builder contentTypeHeader(boolean contentTypeHeader) {
+            this.contentTypeHeader = Boolean.toString(contentTypeHeader);
             return this;
         }
 
