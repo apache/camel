@@ -26,7 +26,7 @@ a rest (can have more) as shown:
 [source,xml]
 ----
   <restContext id="myCoolRest" xmlns="http://camel.apache.org/schema/spring">
-    <rest uri="/say/hello">
+    <rest path="/say/hello">
       <get>
         <to uri="direct:hello"/>
       </get>
@@ -45,7 +45,7 @@ And then inside `<camelContext/>` you can refer to the
 
     <restContextRef ref="myCoolRest"/>
 
-    <rest uri="/say/bye">
+    <rest path="/say/bye">
       <get consumes="application/json">
         <to uri="direct:bye"/>
       </get>
