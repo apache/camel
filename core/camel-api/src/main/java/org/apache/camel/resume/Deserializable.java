@@ -22,6 +22,12 @@ import java.nio.ByteBuffer;
 
 public interface Deserializable {
 
+    /**
+     * Deserializes an arbitrary resumable object within a byte buffer
+     * 
+     * @param  buffer the buffer containing the object
+     * @return        the deserialized object
+     */
     default Object deserializeObject(ByteBuffer buffer) {
         buffer.clear();
 
@@ -53,13 +59,32 @@ public interface Deserializable {
         }
     }
 
+    /**
+     * Deserializes the key data
+     * 
+     * @param  keyBuffer the buffer containing the key data
+     * @return           the deserialized object
+     */
     default Object deserializeKey(ByteBuffer keyBuffer) {
         return deserializeObject(keyBuffer);
     }
 
+    /**
+     * Deserializes the value of resumable data
+     * 
+     * @param  valueBuffer the buffer containing the value data
+     * @return             the deserialized object
+     */
     default Object deserializeValue(ByteBuffer valueBuffer) {
         return deserializeObject(valueBuffer);
     }
 
+    /**
+     * Deserializes resume data (invalid data may be ignored)
+     * 
+     * @param  keyBuffer   the buffer containing the key data
+     * @param  valueBuffer the buffer containing the value data
+     * @return             true if successfully deserialized or false otherwise
+     */
     boolean deserialize(ByteBuffer keyBuffer, ByteBuffer valueBuffer);
 }
