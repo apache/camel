@@ -79,6 +79,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "proxyAuthPassword": target.setProxyAuthPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyauthport":
         case "proxyAuthPort": target.setProxyAuthPort(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "proxyauthscheme":
+        case "proxyAuthScheme": target.setProxyAuthScheme(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyauthusername":
         case "proxyAuthUsername": target.setProxyAuthUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "redirecthandlingdisabled":
@@ -162,6 +164,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "proxyAuthPassword": return java.lang.String.class;
         case "proxyauthport":
         case "proxyAuthPort": return java.lang.Integer.class;
+        case "proxyauthscheme":
+        case "proxyAuthScheme": return java.lang.String.class;
         case "proxyauthusername":
         case "proxyAuthUsername": return java.lang.String.class;
         case "redirecthandlingdisabled":
@@ -246,6 +250,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "proxyAuthPassword": return target.getProxyAuthPassword();
         case "proxyauthport":
         case "proxyAuthPort": return target.getProxyAuthPort();
+        case "proxyauthscheme":
+        case "proxyAuthScheme": return target.getProxyAuthScheme();
         case "proxyauthusername":
         case "proxyAuthUsername": return target.getProxyAuthUsername();
         case "redirecthandlingdisabled":
