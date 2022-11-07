@@ -73,7 +73,7 @@ class DownloadThreadPool extends ServiceSupport implements CamelContextAware {
         // only report at INFO if downloading took > 1s because loading from cache is faster
         // and then it is not downloaded over the internet
         long taken = watch.taken();
-        String msg = "Downloaded:  " + gav + " (took: "
+        String msg = "Downloaded: " + gav + " (took: "
                      + TimeUtils.printDuration(taken, true) + ")";
         if (taken < 1000) {
             log.debug(msg);
