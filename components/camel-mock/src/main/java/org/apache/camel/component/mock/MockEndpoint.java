@@ -547,10 +547,10 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * Sets a grace period after which the mock endpoint will re-assert to ensure the preliminary assertion is still
      * valid.
      * <p/>
-     * This is used for example to assert that <b>exactly</b> a number of messages arrives. For example if
-     * expected count was set to 5, then the assertion is satisfied when 5 or more message arrives.
-     * To ensure that exactly 5 messages arrives, then you would need to wait a little period to ensure no further
-     * message arrives. This is what you can use this method for.
+     * This is used for example to assert that <b>exactly</b> a number of messages arrives. For example if expected
+     * count was set to 5, then the assertion is satisfied when 5 or more message arrives. To ensure that exactly 5
+     * messages arrives, then you would need to wait a little period to ensure no further message arrives. This is what
+     * you can use this method for.
      * <p/>
      * By default this period is disabled.
      *
