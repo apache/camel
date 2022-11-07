@@ -578,6 +578,21 @@ public interface HttpsComponentBuilderFactory {
             return this;
         }
         /**
+         * Proxy authentication protocol scheme.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param proxyAuthScheme the value to set
+         * @return the dsl builder
+         */
+        default HttpsComponentBuilder proxyAuthScheme(
+                java.lang.String proxyAuthScheme) {
+            doSetProperty("proxyAuthScheme", proxyAuthScheme);
+            return this;
+        }
+        /**
          * Proxy authentication username.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -751,6 +766,7 @@ public interface HttpsComponentBuilderFactory {
             case "proxyAuthNtHost": ((HttpComponent) component).setProxyAuthNtHost((java.lang.String) value); return true;
             case "proxyAuthPassword": ((HttpComponent) component).setProxyAuthPassword((java.lang.String) value); return true;
             case "proxyAuthPort": ((HttpComponent) component).setProxyAuthPort((java.lang.Integer) value); return true;
+            case "proxyAuthScheme": ((HttpComponent) component).setProxyAuthScheme((java.lang.String) value); return true;
             case "proxyAuthUsername": ((HttpComponent) component).setProxyAuthUsername((java.lang.String) value); return true;
             case "sslContextParameters": ((HttpComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((HttpComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
