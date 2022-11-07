@@ -31,6 +31,8 @@ public class GitEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "gitconfigfile":
+        case "gitConfigFile": target.setGitConfigFile(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": target.setOperation(property(camelContext, java.lang.String.class, value)); return true;
@@ -62,6 +64,8 @@ public class GitEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "gitconfigfile":
+        case "gitConfigFile": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "operation": return java.lang.String.class;
@@ -94,6 +98,8 @@ public class GitEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "gitconfigfile":
+        case "gitConfigFile": return target.getGitConfigFile();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "operation": return target.getOperation();

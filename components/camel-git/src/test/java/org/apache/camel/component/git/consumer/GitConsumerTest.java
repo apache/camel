@@ -29,6 +29,7 @@ import org.eclipse.jgit.lib.Ref;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GitConsumerTest extends GitTestSupport {
@@ -160,6 +161,20 @@ public class GitConsumerTest extends GitTestSupport {
         git.close();
     }
 
+    @Test
+    public void injectConfigFileTest() throws Exception {
+        GitBranchConsumer consumer;
+
+        consumer = (GitBranchConsumer) context.getRoute("injectConfigFileFromClasspath").getConsumer();
+        assertEquals("fromClasspath", consumer.getRepository().getConfig().getString("init", null, "defaultBranch"));
+
+        consumer = (GitBranchConsumer) context.getRoute("injectConfigFileFromHttp").getConsumer();
+        assertEquals("fromHttp", consumer.getRepository().getConfig().getString("init", null, "defaultBranch"));
+
+        consumer = (GitBranchConsumer) context.getRoute("defaultBranchTest").getConsumer();
+        assertNull(consumer.getRepository().getConfig().getString("init", null, "defaultBranch"));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -175,7 +190,14 @@ public class GitConsumerTest extends GitTestSupport {
                 from("git://" + gitLocalRepo + "?type=commit&branchName=master").to("mock:result-commit");
                 from("git://" + gitLocalRepo + "?type=commit&branchName=notexisting").to("mock:result-commit-notexistent");
                 from("git://" + gitLocalRepo + "?type=tag").to("mock:result-tag");
-                from("git://" + gitLocalRepo + "?type=branch").to("mock:result-branch");
+                from("git://" + gitLocalRepo + "?type=branch&gitConfigFile=classpath:git.config")
+                        .id("injectConfigFileFromClasspath")
+                        .to("mock:result-branch-configfile");
+                from("git://" + gitLocalRepo
+                     + "?type=branch&gitConfigFile=https://gist.githubusercontent.com/gilvansfilho/a61f6ab811a5e8e9d46c4fba1235abc1/raw/a1f614c90e29f1cdd83534aa913f5d276beace2c/gitconfig")
+                             .id("injectConfigFileFromHttp")
+                             .to("mock:result-branch-configfile");
+                from("git://" + gitLocalRepo + "?type=branch").id("defaultBranchTest").to("mock:result-branch");
             }
         };
     }

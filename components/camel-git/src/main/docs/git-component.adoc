@@ -83,5 +83,20 @@ from("git:///tmp/testRepo?type=commit")
     .to(....)
 ---------------------------------------
 
+== Custom config file
+By default camel-git will load ``.gitconfig`` file from user home folder. You
+can override this by providing your own ``.gitconfig`` file.
+
+[source,java]
+---------------------------------------
+from("git:///tmp/testRepo?type=commit&gitConfigFile=file:/tmp/configfile")
+    .to(....) //will load from os dirs
+
+from("git:///tmp/testRepo?type=commit&gitConfigFile=classpath:configfile")
+    .to(....) //will load from resources dir
+
+from("git:///tmp/testRepo?type=commit&gitConfigFile=http://somedomain.xyz/gitconfigfile")
+    .to(....) //will load from http. You could also use https
+---------------------------------------
 
 include::spring-boot:partial$starter.adoc[]

@@ -77,6 +77,9 @@ public class GitEndpoint extends DefaultEndpoint {
               label = "producer")
     private String operation;
 
+    @UriParam(description = "A String with path to a .gitconfig file", label = "advanced")
+    private String gitConfigFile;
+
     public GitEndpoint(String uri, GitComponent component) {
         super(uri, component);
     }
@@ -218,5 +221,16 @@ public class GitEndpoint extends DefaultEndpoint {
 
     public void setTargetBranchName(String targetBranchName) {
         this.targetBranchName = targetBranchName;
+    }
+
+    /**
+     * A String with path to a .gitconfig file", label = "producer,consumer,advanced
+     */
+    public String getGitConfigFile() {
+        return this.gitConfigFile;
+    }
+
+    public void setGitConfigFile(String gitConfigFile) {
+        this.gitConfigFile = gitConfigFile;
     }
 }
