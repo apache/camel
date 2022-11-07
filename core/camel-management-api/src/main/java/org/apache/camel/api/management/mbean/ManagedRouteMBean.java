@@ -142,7 +142,7 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Oldest inflight exchange id")
     String getOldestInflightExchangeId();
 
-    @ManagedAttribute(description = "Route controller")
+    @ManagedAttribute(description = "Is using route controller")
     Boolean getHasRouteController();
 
     @ManagedAttribute(description = "Last error")

@@ -212,10 +212,10 @@ public interface Route extends RuntimeConfiguration {
      * Gets the last error that happened during changing the route lifecycle, i.e. such as when an exception was thrown
      * during starting the route.
      * <p/>
-     * This is only errors for route lifecycle changes, it is not exceptions thrown during routing messsages with the
+     * This is only errors for route lifecycle changes, it is not exceptions thrown during routing exchanges by the
      * Camel routing engine.
      *
-     * @return the error
+     * @return the error or <tt>null</tt> if no error
      */
     RouteError getLastError();
 
@@ -223,7 +223,7 @@ public interface Route extends RuntimeConfiguration {
      * Sets the last error that happened during changing the route lifecycle, i.e. such as when an exception was thrown
      * during starting the route.
      * <p/>
-     * This is only errors for route lifecycle changes, it is not exceptions thrown during routing messsages with the
+     * This is only errors for route lifecycle changes, it is not exceptions thrown during routing exchanges by the
      * Camel routing engine.
      *
      * @param error the error
