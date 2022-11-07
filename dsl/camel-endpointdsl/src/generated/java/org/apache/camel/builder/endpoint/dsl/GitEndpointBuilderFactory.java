@@ -214,6 +214,21 @@ public interface GitEndpointBuilderFactory {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
+        /**
+         * A String with path to a .gitconfig file.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param gitConfigFile the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGitEndpointConsumerBuilder gitConfigFile(
+                String gitConfigFile) {
+            doSetProperty("gitConfigFile", gitConfigFile);
+            return this;
+        }
     }
 
     /**
@@ -432,6 +447,21 @@ public interface GitEndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * A String with path to a .gitconfig file.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param gitConfigFile the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGitEndpointProducerBuilder gitConfigFile(
+                String gitConfigFile) {
+            doSetProperty("gitConfigFile", gitConfigFile);
+            return this;
+        }
     }
 
     /**
@@ -469,6 +499,20 @@ public interface GitEndpointBuilderFactory {
                 AdvancedGitEndpointProducerBuilder {
         default GitEndpointBuilder basic() {
             return (GitEndpointBuilder) this;
+        }
+        /**
+         * A String with path to a .gitconfig file.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param gitConfigFile the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGitEndpointBuilder gitConfigFile(String gitConfigFile) {
+            doSetProperty("gitConfigFile", gitConfigFile);
+            return this;
         }
     }
 
