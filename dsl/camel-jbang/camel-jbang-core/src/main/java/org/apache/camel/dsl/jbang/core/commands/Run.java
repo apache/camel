@@ -354,7 +354,7 @@ class Run extends CamelCommand {
         String dep = profileProperties != null ? profileProperties.getProperty("camel.jbang.dependencies") : null;
         if (dep == null) {
             dep = dependencies;
-        } else {
+        } else if (dependencies != null && !dependencies.equals(dep)) {
             dep += "," + dependencies;
         }
         if (dep != null) {
