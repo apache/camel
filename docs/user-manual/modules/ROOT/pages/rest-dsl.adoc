@@ -72,13 +72,13 @@ The example above can be defined in XML as shown below:
 ----
 <camelContext xmlns="http://camel.apache.org/schema/spring">
   <rest path="/say">
-    <get uri="/hello">
+    <get path="/hello">
       <to uri="direct:hello"/>
     </get>
-    <get uri="/bye" consumes="application/json">
+    <get path="/bye" consumes="application/json">
       <to uri="direct:bye"/>
     </get>
-    <post uri="/bye">
+    <post path="/bye">
       <to uri="mock:update"/>
     </post>
   </rest>
@@ -117,13 +117,13 @@ And using XML DSL it becomes:
 [source,xml]
 ----
 <rest path="/customers/">
-  <get uri="/{id}">
+  <get path="/{id}">
     <to uri="direct:customerDetail"/>
   </get>
-  <get uri="/{id}/orders">
+  <get path="/{id}/orders">
     <to uri="direct:customerOrders"/>
   </get>
-  <post uri="/neworder">
+  <post path="/neworder">
     <to uri="direct:customerNewOrder"/>
   </post>
 </rest>
@@ -141,13 +141,13 @@ only. The example above can be defined as:
 [source,xml]
 ----
 <rest>
-  <get uri="/customers/{id}">
+  <get path="/customers/{id}">
     <to uri="direct:customerDetail"/>
   </get>
-  <get uri="/customers/{id}/orders">
+  <get path="/customers/{id}/orders">
     <to uri="direct:customerOrders"/>
   </get>
-  <post uri="/customers/neworder">
+  <post path="/customers/neworder">
     <to uri="direct:customerNewOrder"/>
   </post>
 </rest>
@@ -214,13 +214,13 @@ And in XML:
 <restConfiguration inlineRoutes="true"/>
 
 <rest>
-  <get uri="/customers/{id}">
+  <get path="/customers/{id}">
     <to uri="direct:customerDetail"/>
   </get>
-  <get uri="/customers/{id}/orders">
+  <get path="/customers/{id}/orders">
     <to uri="direct:customerOrders"/>
   </get>
-  <post uri="/customers/neworder">
+  <post path="/customers/neworder">
     <to uri="direct:customerNewOrder"/>
   </post>
 </rest>
@@ -375,7 +375,7 @@ And in XML DSL:
 
 [source,xml]
 ----
-<rest uri="/users/">
+<rest path="/users/">
   <post type="UserPojo" outType="CountryPojo">
     <to uri="direct:newUser"/>
   </post>
@@ -714,7 +714,7 @@ can do as shown below:
 [source,xml]
 ----
 <!-- this is a rest GET to view an user by the given id -->
-<get uri="/{id}" outType="org.apache.camel.example.rest.User">
+<get path="/{id}" outType="org.apache.camel.example.rest.User">
   <description>Find user by id</description>
   <param name="id" type="path" description="The id of the user to get" dataType="int"/>
   <to uri="bean:userService?method=getUser(${header.id})"/>

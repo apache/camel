@@ -134,7 +134,7 @@ for example download a file from xref:ROOT:aws2-s3-component.adoc[AWS S3] as the
 ----
 <rest path="/report">
     <description>Report REST API</description>
-    <get uri="/{id}/payload">
+    <get path="/{id}/payload">
         <route id="report-payload-download">
             <pollEnrich>
                 <constant>aws-s3:xavier-dev?amazonS3Client=#s3client&amp;deleteAfterRead=false&amp;fileName=report-file.pdf</constant>
