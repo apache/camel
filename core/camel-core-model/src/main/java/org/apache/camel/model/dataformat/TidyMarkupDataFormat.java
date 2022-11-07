@@ -142,6 +142,14 @@ public class TidyMarkupDataFormat extends DataFormatDefinition {
             return this;
         }
 
+        /**
+         * When returning a String, do we omit the XML declaration in the top.
+         */
+        public Builder omitXmlDeclaration(boolean omitXmlDeclaration) {
+            this.omitXmlDeclaration = Boolean.toString(omitXmlDeclaration);
+            return this;
+        }
+
         @Override
         public TidyMarkupDataFormat end() {
             return new TidyMarkupDataFormat(this);

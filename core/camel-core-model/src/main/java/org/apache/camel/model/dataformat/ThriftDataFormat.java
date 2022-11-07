@@ -145,6 +145,11 @@ public class ThriftDataFormat extends DataFormatDefinition implements ContentTyp
             return this;
         }
 
+        public Builder contentTypeHeader(boolean contentTypeHeader) {
+            this.contentTypeHeader = Boolean.toString(contentTypeHeader);
+            return this;
+        }
+
         public Builder defaultInstance(Object defaultInstance) {
             this.defaultInstance = defaultInstance;
             return this;

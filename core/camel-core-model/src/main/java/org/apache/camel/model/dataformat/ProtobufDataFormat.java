@@ -597,6 +597,11 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
             return this;
         }
 
+        public Builder contentTypeHeader(boolean contentTypeHeader) {
+            this.contentTypeHeader = Boolean.toString(contentTypeHeader);
+            return this;
+        }
+
         public Builder defaultInstance(Object defaultInstance) {
             this.defaultInstance = defaultInstance;
             return this;
@@ -623,6 +628,14 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
          */
         public Builder useDefaultObjectMapper(String useDefaultObjectMapper) {
             this.useDefaultObjectMapper = useDefaultObjectMapper;
+            return this;
+        }
+
+        /**
+         * Whether to lookup and use default Jackson ObjectMapper from the registry.
+         */
+        public Builder useDefaultObjectMapper(boolean useDefaultObjectMapper) {
+            this.useDefaultObjectMapper = Boolean.toString(useDefaultObjectMapper);
             return this;
         }
 
@@ -681,6 +694,15 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         }
 
         /**
+         * Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to
+         * unmarshal to.
+         */
+        public Builder allowJmsType(boolean allowJmsType) {
+            this.allowJmsType = Boolean.toString(allowJmsType);
+            return this;
+        }
+
+        /**
          * Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but
          * allows to use different collection types than java.util.Collection based as default.
          */
@@ -699,6 +721,14 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
          */
         public Builder useList(String useList) {
             this.useList = useList;
+            return this;
+        }
+
+        /**
+         * To unmarshal to a List of Map or a List of Pojo.
+         */
+        public Builder useList(boolean useList) {
+            this.useList = Boolean.toString(useList);
             return this;
         }
 
@@ -761,6 +791,17 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         }
 
         /**
+         * If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the
+         * unmarshalling.
+         * <p/>
+         * This should only be enabled when desired to be used.
+         */
+        public Builder allowUnmarshallType(boolean allowUnmarshallType) {
+            this.allowUnmarshallType = Boolean.toString(allowUnmarshallType);
+            return this;
+        }
+
+        /**
          * If set then Jackson will use the Timezone when marshalling/unmarshalling.
          */
         public Builder timezone(String timezone) {
@@ -777,6 +818,14 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         }
 
         /**
+         * If set to true then Jackson will lookup for an objectMapper into the registry
+         */
+        public Builder autoDiscoverObjectMapper(boolean autoDiscoverObjectMapper) {
+            this.autoDiscoverObjectMapper = Boolean.toString(autoDiscoverObjectMapper);
+            return this;
+        }
+
+        /**
          * Optional schema resolver used to lookup schemas for the data in transit.
          */
         public Builder schemaResolver(String schemaResolver) {
@@ -789,6 +838,14 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
          */
         public Builder autoDiscoverSchemaResolver(String autoDiscoverSchemaResolver) {
             this.autoDiscoverSchemaResolver = autoDiscoverSchemaResolver;
+            return this;
+        }
+
+        /**
+         * When not disabled, the SchemaResolver will be looked up into the registry
+         */
+        public Builder autoDiscoverSchemaResolver(boolean autoDiscoverSchemaResolver) {
+            this.autoDiscoverSchemaResolver = Boolean.toString(autoDiscoverSchemaResolver);
             return this;
         }
 

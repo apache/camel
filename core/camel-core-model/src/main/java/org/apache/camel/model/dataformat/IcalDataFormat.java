@@ -74,6 +74,14 @@ public class IcalDataFormat extends DataFormatDefinition {
             return this;
         }
 
+        /**
+         * Whether to validate.
+         */
+        public Builder validating(boolean validating) {
+            this.validating = Boolean.toString(validating);
+            return this;
+        }
+
         @Override
         public IcalDataFormat end() {
             return new IcalDataFormat(this);

@@ -121,6 +121,14 @@ public class UniVocityCsvDataFormat extends UniVocityAbstractDataFormat {
         }
 
         /**
+         * Whether or not all values must be quoted when writing them.
+         */
+        public Builder quoteAllFields(boolean quoteAllFields) {
+            this.quoteAllFields = Boolean.toString(quoteAllFields);
+            return this;
+        }
+
+        /**
          * The quote symbol.
          */
         public Builder quote(String quote) {

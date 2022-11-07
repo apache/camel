@@ -125,6 +125,15 @@ public class ASN1DataFormat extends DataFormatDefinition {
         }
 
         /**
+         * If the asn1 file has more than one entry, the setting this option to true, allows working with the splitter
+         * EIP, to split the data using an iterator in a streaming mode.
+         */
+        public Builder usingIterator(boolean usingIterator) {
+            this.usingIterator = Boolean.toString(usingIterator);
+            return this;
+        }
+
+        /**
          * Class to use when unmarshalling.
          */
         public Builder unmarshalTypeName(String unmarshalTypeName) {

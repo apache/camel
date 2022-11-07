@@ -379,6 +379,15 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         }
 
         /**
+         * A boolean value to specify whether the XML Element is to be encrypted or the contents of the XML Element.
+         * false = Element Level. true = Element Content Level.
+         */
+        public Builder secureTagContents(boolean secureTagContents) {
+            this.secureTagContents = Boolean.toString(secureTagContents);
+            return this;
+        }
+
+        /**
          * The cipher algorithm to be used for encryption/decryption of the asymmetric key. The available choices are:
          * <ul>
          * <li>XMLCipher.RSA_v1dot5</li>
@@ -462,6 +471,15 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
          */
         public Builder addKeyValueForEncryptedKey(String addKeyValueForEncryptedKey) {
             this.addKeyValueForEncryptedKey = addKeyValueForEncryptedKey;
+            return this;
+        }
+
+        /**
+         * Whether to add the public key used to encrypt the session key as a KeyValue in the EncryptedKey structure or
+         * not.
+         */
+        public Builder addKeyValueForEncryptedKey(boolean addKeyValueForEncryptedKey) {
+            this.addKeyValueForEncryptedKey = Boolean.toString(addKeyValueForEncryptedKey);
             return this;
         }
 

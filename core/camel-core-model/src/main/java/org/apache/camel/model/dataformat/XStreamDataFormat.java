@@ -441,6 +441,11 @@ public class XStreamDataFormat extends DataFormatDefinition implements ContentTy
             return this;
         }
 
+        public Builder contentTypeHeader(boolean contentTypeHeader) {
+            this.contentTypeHeader = Boolean.toString(contentTypeHeader);
+            return this;
+        }
+
         @Override
         public XStreamDataFormat end() {
             return new XStreamDataFormat(this);

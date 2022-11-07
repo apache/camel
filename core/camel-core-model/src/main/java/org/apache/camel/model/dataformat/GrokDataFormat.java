@@ -139,6 +139,15 @@ public class GrokDataFormat extends DataFormatDefinition {
         }
 
         /**
+         * Turns on flattened mode. In flattened mode the exception is thrown when there are multiple pattern matches
+         * with same key.
+         */
+        public Builder flattened(boolean flattened) {
+            this.flattened = Boolean.toString(flattened);
+            return this;
+        }
+
+        /**
          * If false, every line of input is matched for pattern only once. Otherwise the line can be scanned multiple
          * times when non-terminal pattern is used.
          */
@@ -148,10 +157,27 @@ public class GrokDataFormat extends DataFormatDefinition {
         }
 
         /**
+         * If false, every line of input is matched for pattern only once. Otherwise the line can be scanned multiple
+         * times when non-terminal pattern is used.
+         */
+        public Builder allowMultipleMatchesPerLine(boolean allowMultipleMatchesPerLine) {
+            this.allowMultipleMatchesPerLine = Boolean.toString(allowMultipleMatchesPerLine);
+            return this;
+        }
+
+        /**
          * Whether to capture named expressions only or not (i.e. %{IP:ip} but not ${IP})
          */
         public Builder namedOnly(String namedOnly) {
             this.namedOnly = namedOnly;
+            return this;
+        }
+
+        /**
+         * Whether to capture named expressions only or not (i.e. %{IP:ip} but not ${IP})
+         */
+        public Builder namedOnly(boolean namedOnly) {
+            this.namedOnly = Boolean.toString(namedOnly);
             return this;
         }
 

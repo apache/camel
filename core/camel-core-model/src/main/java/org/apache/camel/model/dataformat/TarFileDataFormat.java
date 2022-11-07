@@ -130,11 +130,29 @@ public class TarFileDataFormat extends DataFormatDefinition {
         }
 
         /**
+         * If the tar file has more than one entry, the setting this option to true, allows working with the splitter
+         * EIP, to split the data using an iterator in a streaming mode.
+         */
+        public Builder usingIterator(boolean usingIterator) {
+            this.usingIterator = Boolean.toString(usingIterator);
+            return this;
+        }
+
+        /**
          * If the tar file has more than one entry, setting this option to true, allows to get the iterator even if the
          * directory is empty
          */
         public Builder allowEmptyDirectory(String allowEmptyDirectory) {
             this.allowEmptyDirectory = allowEmptyDirectory;
+            return this;
+        }
+
+        /**
+         * If the tar file has more than one entry, setting this option to true, allows to get the iterator even if the
+         * directory is empty
+         */
+        public Builder allowEmptyDirectory(boolean allowEmptyDirectory) {
+            this.allowEmptyDirectory = Boolean.toString(allowEmptyDirectory);
             return this;
         }
 
@@ -148,6 +166,15 @@ public class TarFileDataFormat extends DataFormatDefinition {
         }
 
         /**
+         * If the file name contains path elements, setting this option to true, allows the path to be maintained in the
+         * tar file.
+         */
+        public Builder preservePathElements(boolean preservePathElements) {
+            this.preservePathElements = Boolean.toString(preservePathElements);
+            return this;
+        }
+
+        /**
          * Set the maximum decompressed size of a tar file (in bytes). The default value if not specified corresponds to
          * 1 gigabyte. An IOException will be thrown if the decompressed size exceeds this amount. Set to -1 to disable
          * setting a maximum decompressed size.
@@ -156,6 +183,18 @@ public class TarFileDataFormat extends DataFormatDefinition {
          */
         public Builder maxDecompressedSize(String maxDecompressedSize) {
             this.maxDecompressedSize = maxDecompressedSize;
+            return this;
+        }
+
+        /**
+         * Set the maximum decompressed size of a tar file (in bytes). The default value if not specified corresponds to
+         * 1 gigabyte. An IOException will be thrown if the decompressed size exceeds this amount. Set to -1 to disable
+         * setting a maximum decompressed size.
+         *
+         * @param maxDecompressedSize the maximum decompressed size of a tar file (in bytes)
+         */
+        public Builder maxDecompressedSize(long maxDecompressedSize) {
+            this.maxDecompressedSize = Long.toString(maxDecompressedSize);
             return this;
         }
 
