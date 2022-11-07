@@ -218,7 +218,7 @@ class ExportQuarkus extends Export {
                     // use quarkus extension
                     gav.setGroupId(am.getGroupId());
                     gav.setArtifactId(am.getArtifactId());
-                    gav.setVersion(quarkusVersion);
+                    gav.setVersion(camelQuarkusVersion);
                 } else {
                     // there is no quarkus extension so use plain camel
                     gav.setVersion(camelVersion);
