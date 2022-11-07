@@ -154,6 +154,7 @@ abstract class ExportBaseCommand extends CamelCommand {
         // need to declare the profile to use for run
         run.profile = profile;
         run.localKameletDir = localKameletDir;
+        run.dependencies = dependencies;
         Integer code = run.runSilent();
         return code;
     }
