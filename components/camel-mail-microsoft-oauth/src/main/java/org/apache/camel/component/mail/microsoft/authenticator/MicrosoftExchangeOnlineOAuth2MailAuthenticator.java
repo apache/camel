@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mail;
+package org.apache.camel.component.mail.microsoft.authenticator;
 
 import java.net.MalformedURLException;
 import java.util.Collections;
@@ -28,7 +28,12 @@ import com.microsoft.aad.msal4j.ConfidentialClientApplication;
 import com.microsoft.aad.msal4j.IAuthenticationResult;
 import com.microsoft.aad.msal4j.IClientCredential;
 import com.microsoft.aad.msal4j.IConfidentialClientApplication;
+import org.apache.camel.component.mail.MailAuthenticator;
 
+/**
+ * This Mail Authenticator is intended for users of Microsoft Exchange Online that use an Azure Active Directory
+ * instance as Identity Provider and OAuth2 Client Credential Flow as Authentication protocol.
+ */
 public class MicrosoftExchangeOnlineOAuth2MailAuthenticator extends MailAuthenticator {
 
     /**
