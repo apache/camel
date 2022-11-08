@@ -175,20 +175,13 @@ public class LdapProducer extends DefaultProducer {
     }
 
     /**
-     * Given an LDAP search string, returns the string with certain characters
-     * escaped according to RFC 2254 guidelines.
+     * Given an LDAP search string, returns the string with certain characters escaped according to RFC 2254 guidelines.
      *
-     * The character mapping is as follows:
-     *     char -&gt;  Replacement
-     *    ---------------------------
-     *     *  -&gt; \2a
-     *     (  -&gt; \28
-     *     )  -&gt; \29
-     *     \  -&gt; \5c
-     *     \0 -&gt; \00
+     * The character mapping is as follows: char -&gt; Replacement --------------------------- * -&gt; \2a ( -&gt; \28 )
+     * -&gt; \29 \ -&gt; \5c \0 -&gt; \00
      *
-     * @param filter string to escape according to RFC 2254 guidelines
-     * @return String the escaped/encoded result
+     * @param  filter string to escape according to RFC 2254 guidelines
+     * @return        String the escaped/encoded result
      */
     private String escapeFilter(String filter) {
         if (filter == null) {
