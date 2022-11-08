@@ -19,6 +19,7 @@ package org.apache.camel.model.language;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 
@@ -37,8 +38,24 @@ public class HeaderExpression extends ExpressionDefinition {
         super(expression);
     }
 
+    private HeaderExpression(Builder builder) {
+        super(builder);
+    }
+
     @Override
     public String getLanguage() {
         return "header";
+    }
+
+    /**
+     * {@code Builder} is a specific builder for {@link HeaderExpression}.
+     */
+    @XmlTransient
+    public static class Builder extends AbstractBuilder<Builder, HeaderExpression> {
+
+        @Override
+        public HeaderExpression end() {
+            return new HeaderExpression(this);
+        }
     }
 }

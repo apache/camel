@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 
@@ -46,6 +47,13 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
 
     public XMLTokenizerExpression(String expression) {
         super(expression);
+    }
+
+    private XMLTokenizerExpression(Builder builder) {
+        super(builder);
+        this.headerName = builder.headerName;
+        this.mode = builder.mode;
+        this.group = builder.group;
     }
 
     @Override
@@ -92,4 +100,57 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
         this.group = group;
     }
 
+    /**
+     * {@code Builder} is a specific builder for {@link XMLTokenizerExpression}.
+     */
+    @XmlTransient
+    public static class Builder extends AbstractNamespaceAwareBuilder<Builder, XMLTokenizerExpression> {
+
+        private String headerName;
+        private String mode;
+        private String group;
+
+        /**
+         * Name of header to tokenize instead of using the message body.
+         */
+        public Builder headerName(String headerName) {
+            this.headerName = headerName;
+            return this;
+        }
+
+        /**
+         * The extraction mode. The available extraction modes are:
+         * <ul>
+         * <li>i - injecting the contextual namespace bindings into the extracted token (default)</li>
+         * <li>w - wrapping the extracted token in its ancestor context</li>
+         * <li>u - unwrapping the extracted token to its child content</li>
+         * <li>t - extracting the text content of the specified element</li>
+         * </ul>
+         */
+        public Builder mode(String mode) {
+            this.mode = mode;
+            return this;
+        }
+
+        /**
+         * To group N parts together
+         */
+        public Builder group(String group) {
+            this.group = group;
+            return this;
+        }
+
+        /**
+         * To group N parts together
+         */
+        public Builder group(int group) {
+            this.group = Integer.toString(group);
+            return this;
+        }
+
+        @Override
+        public XMLTokenizerExpression end() {
+            return new XMLTokenizerExpression(this);
+        }
+    }
 }

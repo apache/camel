@@ -88,6 +88,16 @@ public class MethodCallExpression extends ExpressionDefinition {
         setMethod(method);
     }
 
+    private MethodCallExpression(Builder builder) {
+        super(builder);
+        this.beanType = builder.beanType;
+        this.instance = builder.instance;
+        this.ref = builder.ref;
+        this.method = builder.method;
+        this.beanTypeName = builder.beanTypeName;
+        this.scope = builder.scope;
+    }
+
     @Override
     public String getLanguage() {
         return "bean";
@@ -192,4 +202,85 @@ public class MethodCallExpression extends ExpressionDefinition {
         return "bean[" + name + (method != null ? " method:" + method : "") + "]";
     }
 
+    /**
+     * {@code Builder} is a specific builder for {@link MethodCallExpression}.
+     */
+    @XmlTransient
+    public static class Builder extends AbstractBuilder<Builder, MethodCallExpression> {
+
+        private Class<?> beanType;
+        private Object instance;
+        private String ref;
+        private String method;
+        private String beanTypeName;
+        private String scope;
+
+        /**
+         * Name of method to call
+         */
+        public Builder method(String method) {
+            this.method = method;
+            return this;
+        }
+
+        /**
+         * Reference to an existing bean (bean id) to lookup in the registry
+         */
+        public Builder ref(String ref) {
+            this.ref = ref;
+            return this;
+        }
+
+        public Builder instance(Object instance) {
+            // people may by mistake pass in a class type as the instance
+            if (instance instanceof Class) {
+                this.beanType = (Class<?>) instance;
+                this.instance = null;
+            } else {
+                this.beanType = null;
+                this.instance = instance;
+            }
+            return this;
+        }
+
+        public Builder beanType(Class<?> beanType) {
+            this.beanType = beanType;
+            this.instance = null;
+            return this;
+        }
+
+        /**
+         * Class name (fully qualified) of the bean to use
+         *
+         * Will lookup in registry and if there is a single instance of the same type, then the existing bean is used,
+         * otherwise a new bean is created (requires a default no-arg constructor).
+         */
+        public Builder beanTypeName(String beanTypeName) {
+            this.beanTypeName = beanTypeName;
+            return this;
+        }
+
+        /**
+         * Scope of bean.
+         *
+         * When using singleton scope (default) the bean is created or looked up only once and reused for the lifetime
+         * of the endpoint. The bean should be thread-safe in case concurrent threads is calling the bean at the same
+         * time. When using request scope the bean is created or looked up once per request (exchange). This can be used
+         * if you want to store state on a bean while processing a request and you want to call the same bean instance
+         * multiple times while processing the request. The bean does not have to be thread-safe as the instance is only
+         * called from the same request. When using prototype scope, then the bean will be looked up or created per
+         * call. However in case of lookup then this is delegated to the bean registry such as Spring or CDI (if in
+         * use), which depends on their configuration can act as either singleton or prototype scope. So when using
+         * prototype scope then this depends on the bean registry implementation.
+         */
+        public Builder scope(String scope) {
+            this.scope = scope;
+            return this;
+        }
+
+        @Override
+        public MethodCallExpression end() {
+            return new MethodCallExpression(this);
+        }
+    }
 }

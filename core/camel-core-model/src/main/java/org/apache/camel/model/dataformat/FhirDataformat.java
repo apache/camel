@@ -395,7 +395,7 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
     }
 
     /**
-     * {@code Builder} is a specific builder for {@link FhirDataformat}.
+     * {@code AbstractBuilder} is the base builder for {@link FhirDataformat}.
      */
     @XmlTransient
     @SuppressWarnings("unchecked")

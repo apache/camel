@@ -19,6 +19,7 @@ package org.apache.camel.model.language;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 
@@ -37,8 +38,24 @@ public class MvelExpression extends ExpressionDefinition {
         super(expression);
     }
 
+    private MvelExpression(Builder builder) {
+        super(builder);
+    }
+
     @Override
     public String getLanguage() {
         return "mvel";
+    }
+
+    /**
+     * {@code Builder} is a specific builder for {@link MvelExpression}.
+     */
+    @XmlTransient
+    public static class Builder extends AbstractBuilder<Builder, MvelExpression> {
+
+        @Override
+        public MvelExpression end() {
+            return new MvelExpression(this);
+        }
     }
 }

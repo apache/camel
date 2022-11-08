@@ -283,7 +283,7 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * {@code Builder} is a specific builder for {@link UniVocityAbstractDataFormat}.
+     * {@code AbstractBuilder} is the base builder for {@link UniVocityAbstractDataFormat}.
      */
     @XmlTransient
     @SuppressWarnings("unchecked")

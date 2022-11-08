@@ -34,6 +34,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.ExpressionFactory;
 import org.apache.camel.Predicate;
 import org.apache.camel.PredicateFactory;
+import org.apache.camel.builder.LanguageBuilder;
 import org.apache.camel.model.HasExpressionType;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.spi.ExpressionFactoryAware;
@@ -83,6 +84,13 @@ public class ExpressionDefinition
 
     public ExpressionDefinition(Expression expression) {
         this.expressionValue = expression;
+    }
+
+    protected ExpressionDefinition(AbstractBuilder<?, ?> builder) {
+        this.id = builder.id;
+        this.expression = builder.expression;
+        this.trim = builder.trim;
+        this.predicate = builder.predicate;
     }
 
     public static String getLabel(List<ExpressionDefinition> expressions) {
@@ -258,6 +266,57 @@ public class ExpressionDefinition
     public void initPredicate(CamelContext context) {
         if (predicate == null) {
             predicate = createPredicate(context);
+        }
+    }
+
+    /**
+     * {@code AbstractBuilder} is the base expression builder.
+     */
+    @XmlTransient
+    @SuppressWarnings("unchecked")
+    abstract static class AbstractBuilder<T extends AbstractBuilder<T, E>, E extends ExpressionDefinition>
+            implements LanguageBuilder<E> {
+
+        private String id;
+        private String expression;
+        private String trim;
+        private Predicate predicate;
+
+        /**
+         * Sets the id of this node
+         */
+        public T id(String id) {
+            this.id = id;
+            return (T) this;
+        }
+
+        /**
+         * Whether to trim the value to remove leading and trailing whitespaces and line breaks
+         */
+        public T trim(String trim) {
+            this.trim = trim;
+            return (T) this;
+        }
+
+        /**
+         * Whether to trim the value to remove leading and trailing whitespaces and line breaks
+         */
+        public T trim(boolean trim) {
+            this.trim = Boolean.toString(trim);
+            return (T) this;
+        }
+
+        /**
+         * The expression value in your chosen language syntax
+         */
+        public T expression(String expression) {
+            this.expression = expression;
+            return (T) this;
+        }
+
+        public T predicate(Predicate predicate) {
+            this.predicate = predicate;
+            return (T) this;
         }
     }
 }

@@ -55,6 +55,13 @@ public abstract class BuilderSupport implements CamelContextAware {
     // -------------------------------------------------------------------------
 
     /**
+     * Returns a value builder for the given expression
+     */
+    public ValueBuilder expression(Expression exp) {
+        return new ValueBuilder(exp);
+    }
+
+    /**
      * Returns a value builder for the given header
      */
     public ValueBuilder header(String name) {

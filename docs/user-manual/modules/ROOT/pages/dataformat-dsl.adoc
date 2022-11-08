@@ -1,7 +1,7 @@
 = Data Format DSL
 
 The Data Format DSL is a builder API that allows using type safe construction of
-Camel xref:data-format.adoc[Data Format].
+Camel xref:data-format.adoc[Data Formats].
 
 The Data Format DSL is exclusively available as part of the Java DSL.
 

@@ -50,6 +50,14 @@ public class JoorExpression extends ExpressionDefinition {
         super(expression);
     }
 
+    private JoorExpression(Builder builder) {
+        super(builder);
+        this.preCompile = builder.preCompile;
+        this.singleQuotes = builder.singleQuotes;
+        this.resultTypeName = builder.resultTypeName;
+        this.resultType = builder.resultType;
+    }
+
     @Override
     public String getLanguage() {
         return "joor";
@@ -101,4 +109,72 @@ public class JoorExpression extends ExpressionDefinition {
         this.resultTypeName = resultTypeName;
     }
 
+    /**
+     * {@code Builder} is a specific builder for {@link JoorExpression}.
+     */
+    @XmlTransient
+    public static class Builder extends AbstractBuilder<Builder, JoorExpression> {
+
+        private String preCompile;
+        private String singleQuotes;
+        private String resultTypeName;
+        private Class<?> resultType;
+
+        /**
+         * Whether the expression should be pre compiled once during initialization phase. If this is turned off, then
+         * the expression is reloaded and compiled on each evaluation.
+         */
+        public Builder preCompile(String preCompile) {
+            this.preCompile = preCompile;
+            return this;
+        }
+
+        /**
+         * Whether the expression should be pre compiled once during initialization phase. If this is turned off, then
+         * the expression is reloaded and compiled on each evaluation.
+         */
+        public Builder preCompile(boolean preCompile) {
+            this.preCompile = Boolean.toString(preCompile);
+            return this;
+        }
+
+        /**
+         * Whether single quotes can be used as replacement for double quotes. This is convenient when you need to work
+         * with strings inside strings.
+         */
+        public Builder singleQuotes(String singleQuotes) {
+            this.singleQuotes = singleQuotes;
+            return this;
+        }
+
+        /**
+         * Whether single quotes can be used as replacement for double quotes. This is convenient when you need to work
+         * with strings inside strings.
+         */
+        public Builder singleQuotes(boolean singleQuotes) {
+            this.singleQuotes = Boolean.toString(singleQuotes);
+            return this;
+        }
+
+        /**
+         * Sets the class of the result type (type from output)
+         */
+        public Builder resultType(Class<?> resultType) {
+            this.resultType = resultType;
+            return this;
+        }
+
+        /**
+         * Sets the class name of the result type (type from output)
+         */
+        public Builder resultTypeName(String resultTypeName) {
+            this.resultTypeName = resultTypeName;
+            return this;
+        }
+
+        @Override
+        public JoorExpression end() {
+            return new JoorExpression(this);
+        }
+    }
 }

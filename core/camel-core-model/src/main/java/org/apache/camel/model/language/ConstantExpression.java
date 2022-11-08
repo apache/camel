@@ -44,6 +44,12 @@ public class ConstantExpression extends ExpressionDefinition {
         super(expression);
     }
 
+    private ConstantExpression(Builder builder) {
+        super(builder);
+        this.resultTypeName = builder.resultTypeName;
+        this.resultType = builder.resultType;
+    }
+
     @Override
     public String getLanguage() {
         return "constant";
@@ -71,4 +77,34 @@ public class ConstantExpression extends ExpressionDefinition {
         this.resultTypeName = resultTypeName;
     }
 
+    /**
+     * {@code Builder} is a specific builder for {@link ConstantExpression}.
+     */
+    @XmlTransient
+    public static class Builder extends AbstractBuilder<Builder, ConstantExpression> {
+
+        private String resultTypeName;
+        private Class<?> resultType;
+
+        /**
+         * Sets the class of the constant type
+         */
+        public Builder resultType(Class<?> resultType) {
+            this.resultType = resultType;
+            return this;
+        }
+
+        /**
+         * Sets the class name of the constant type
+         */
+        public Builder resultTypeName(String resultTypeName) {
+            this.resultTypeName = resultTypeName;
+            return this;
+        }
+
+        @Override
+        public ConstantExpression end() {
+            return new ConstantExpression(this);
+        }
+    }
 }

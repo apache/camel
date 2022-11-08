@@ -19,6 +19,7 @@ package org.apache.camel.model.language;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 
@@ -37,8 +38,24 @@ public class PythonExpression extends ExpressionDefinition {
         super(expression);
     }
 
+    private PythonExpression(Builder builder) {
+        super(builder);
+    }
+
     @Override
     public String getLanguage() {
         return "python";
+    }
+
+    /**
+     * {@code Builder} is a specific builder for {@link PythonExpression}.
+     */
+    @XmlTransient
+    public static class Builder extends AbstractBuilder<Builder, PythonExpression> {
+
+        @Override
+        public PythonExpression end() {
+            return new PythonExpression(this);
+        }
     }
 }
