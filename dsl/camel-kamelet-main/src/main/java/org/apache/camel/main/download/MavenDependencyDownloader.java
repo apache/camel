@@ -751,7 +751,9 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         SettingsBuilder settingsBuilder = registry.lookupByClass(SettingsBuilder.class);
         SettingsBuildingRequest sbRequest = new DefaultSettingsBuildingRequest();
         sbRequest.setSystemProperties(systemProperties);
-        sbRequest.setUserSettingsFile(new File(mavenSettings));
+        if (mavenSettings != null) {
+            sbRequest.setUserSettingsFile(new File(mavenSettings));
+        }
         Settings settings;
         try {
             SettingsBuildingResult sbResult = settingsBuilder.build(sbRequest);
