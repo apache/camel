@@ -91,8 +91,8 @@ public class Ddb2ClientHealthCheckCustomTest extends CamelTestSupport {
                     .filter(result -> result.getCheck().getId().startsWith("aws2-ddb-client"))
                     .findAny()
                     .isPresent();
-            Assertions.assertFalse(down, "liveness check");
-            Assertions.assertFalse(containsAws2DdbHealthCheck, "aws2-ddb check");
+            Assertions.assertTrue(down, "liveness check");
+            Assertions.assertTrue(containsAws2DdbHealthCheck, "aws2-ddb check");
         });
 
     }
