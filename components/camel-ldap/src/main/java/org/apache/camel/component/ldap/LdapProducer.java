@@ -43,10 +43,10 @@ public class LdapProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(LdapProducer.class);
 
-    private String remaining;
-    private SearchControls searchControls;
-    private String searchBase;
-    private Integer pageSize;
+    private final String remaining;
+    private final SearchControls searchControls;
+    private final String searchBase;
+    private final Integer pageSize;
 
     public LdapProducer(LdapEndpoint endpoint, String remaining, String base, int scope, Integer pageSize,
                         String returnedAttributes) {
@@ -59,17 +59,21 @@ public class LdapProducer extends DefaultProducer {
         this.searchControls = new SearchControls();
         this.searchControls.setSearchScope(scope);
         if (returnedAttributes != null) {
-            String returnedAtts[] = returnedAttributes.split(",");
+            String[] atts = returnedAttributes.split(",");
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Setting returning Attributes to searchControls: {}", Arrays.toString(returnedAtts));
+                LOG.debug("Setting returning Attributes to searchControls: {}", Arrays.toString(atts));
             }
-            searchControls.setReturningAttributes(returnedAtts);
+            searchControls.setReturningAttributes(atts);
         }
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
         String filter = exchange.getIn().getBody(String.class);
+        if (filter != null) {
+            // filter must be LDAP escaped
+            filter = escapeFilter(filter);
+        }
         DirContext dirContext = getDirContext();
 
         try {
@@ -168,6 +172,53 @@ public class LdapProducer extends DefaultProducer {
             ldapContext.setRequestControls(new Control[] { new PagedResultsControl(pageSize, cookie, Control.CRITICAL) });
             return true;
         }
+    }
+
+    /**
+     * Given an LDAP search string, returns the string with certain characters
+     * escaped according to RFC 2254 guidelines.
+     *
+     * The character mapping is as follows:
+     *     char -&gt;  Replacement
+     *    ---------------------------
+     *     *  -&gt; \2a
+     *     (  -&gt; \28
+     *     )  -&gt; \29
+     *     \  -&gt; \5c
+     *     \0 -&gt; \00
+     *
+     * @param filter string to escape according to RFC 2254 guidelines
+     * @return String the escaped/encoded result
+     */
+    private String escapeFilter(String filter) {
+        if (filter == null) {
+            return null;
+        }
+        StringBuilder buf = new StringBuilder(filter.length());
+        for (int i = 0; i < filter.length(); i++) {
+            char c = filter.charAt(i);
+            switch (c) {
+                case '\\':
+                    buf.append("\\5c");
+                    break;
+                case '*':
+                    buf.append("\\2a");
+                    break;
+                case '(':
+                    buf.append("\\28");
+                    break;
+                case ')':
+                    buf.append("\\29");
+                    break;
+                case '\0':
+                    buf.append("\\00");
+                    break;
+                default:
+                    buf.append(c);
+                    break;
+            }
+        }
+        return buf.toString();
     }
 
 }
