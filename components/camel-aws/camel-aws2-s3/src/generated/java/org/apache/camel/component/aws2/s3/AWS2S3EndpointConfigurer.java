@@ -71,6 +71,7 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "filename":
         case "fileName": target.getConfiguration().setFileName(property(camelContext, java.lang.String.class, value)); return true;
+        case "format": target.getConfiguration().setFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "ignorebody":
         case "ignoreBody": target.getConfiguration().setIgnoreBody(property(camelContext, boolean.class, value)); return true;
@@ -213,6 +214,7 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "filename":
         case "fileName": return java.lang.String.class;
+        case "format": return java.lang.String.class;
         case "greedy": return boolean.class;
         case "ignorebody":
         case "ignoreBody": return boolean.class;
@@ -351,6 +353,7 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exchangePattern": return target.getExchangePattern();
         case "filename":
         case "fileName": return target.getConfiguration().getFileName();
+        case "format": return target.getConfiguration().getFormat();
         case "greedy": return target.isGreedy();
         case "ignorebody":
         case "ignoreBody": return target.getConfiguration().isIgnoreBody();

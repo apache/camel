@@ -69,6 +69,22 @@ public class Ddb2Configuration implements Cloneable {
     private boolean useDefaultCredentialsProvider;
     @UriParam(defaultValue = "true")
     private boolean enabledInitialDescribeTable = true;
+    @UriParam
+    private String format;
+
+    public String getFormat() {
+        return format;
+    }
+
+    /**
+     * Set the input format of the producer to a supported data type (json). When the json input type is used the given
+     * object is automatically transformed into an aws2-ddb domain object.
+     * 
+     * @param format
+     */
+    public void setFormat(String format) {
+        this.format = format;
+    }
 
     public String getAccessKey() {
         return accessKey;

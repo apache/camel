@@ -55,6 +55,13 @@
             <version>${aws-java-sdk2-version}</version>
         </dependency>
 
+        <!-- Optional dependencies for data type conversion -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jackson</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>

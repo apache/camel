@@ -25,8 +25,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.aws2.ddb.client.Ddb2ClientFactory;
+import org.apache.camel.component.aws2.ddb.format.Ddb2JsonInputType;
+import org.apache.camel.format.DefaultDataTypeResolver;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.impl.health.ComponentsHealthCheckRepository;
+import org.apache.camel.spi.InputTypeAware;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -78,7 +81,16 @@ public class Ddb2Endpoint extends ScheduledPollEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new Ddb2Producer(this);
+        Ddb2Producer producer = new Ddb2Producer(this);
+
+        // ToDo: Move to superclass so all producers are configured with potential input type
+        DefaultDataTypeResolver resolver = new DefaultDataTypeResolver(); //ToDo: do not instantiate here, instead load from Camel context
+        resolver.registerComponentInputType("aws2-ddb", new Ddb2JsonInputType()); // ToDo: Auto register component input types via resource lookup and do not instantiate here as the input type requires optional camel-jackson dependency
+        resolver.setCamelContext(getCamelContext());
+        resolver.getInputType("aws2-ddb", configuration.getFormat())
+                .ifPresent(((InputTypeAware) producer)::setInputType);
+
+        return producer;
     }
 
     @Override

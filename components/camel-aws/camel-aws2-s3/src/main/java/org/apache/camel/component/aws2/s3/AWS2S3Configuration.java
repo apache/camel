@@ -128,6 +128,22 @@ public class AWS2S3Configuration implements Cloneable {
     private long streamingUploadTimeout;
     @UriParam(defaultValue = "override", label = "producer")
     private AWSS3RestartingPolicyEnum restartingPolicy = AWSS3RestartingPolicyEnum.override;
+    @UriParam
+    private String format;
+
+    public String getFormat() {
+        return format;
+    }
+
+    /**
+     * Set the input/output format of the component to a supported data type. Supported data types are binary, stream,
+     * string and json. The default is binary.
+     *
+     * @param format
+     */
+    public void setFormat(String format) {
+        this.format = format;
+    }
 
     public long getPartSize() {
         return partSize;

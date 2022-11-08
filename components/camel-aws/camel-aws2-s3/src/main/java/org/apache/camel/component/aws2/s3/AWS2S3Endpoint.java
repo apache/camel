@@ -22,7 +22,14 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.s3.client.AWS2S3ClientFactory;
+import org.apache.camel.component.aws2.s3.format.AWS2S3BinaryDataType;
+import org.apache.camel.component.aws2.s3.format.AWS2S3InputStreamDataType;
+import org.apache.camel.component.aws2.s3.format.AWS2S3JsonDataType;
+import org.apache.camel.component.aws2.s3.format.AWS2S3StringDataType;
 import org.apache.camel.component.aws2.s3.stream.AWS2S3StreamUploadProducer;
+import org.apache.camel.format.DefaultDataTypeResolver;
+import org.apache.camel.format.StringDataType;
+import org.apache.camel.spi.InputTypeAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -69,16 +76,39 @@ public class AWS2S3Endpoint extends ScheduledPollEndpoint {
         AWS2S3Consumer s3Consumer = new AWS2S3Consumer(this, processor);
         configureConsumer(s3Consumer);
         s3Consumer.setMaxMessagesPerPoll(maxMessagesPerPoll);
+
+        // ToDo: Move to superclass so all consumers are configured with potential output type
+        DefaultDataTypeResolver resolver = new DefaultDataTypeResolver(); //ToDo: do not instantiate here, instead load from Camel context
+        resolver.registerComponentOutputType("aws2-s3", new AWS2S3JsonDataType(),
+                new AWS2S3StringDataType(),
+                new AWS2S3BinaryDataType(),
+                new AWS2S3InputStreamDataType()); // ToDo: Auto register output types for components on classpath
+        resolver.setCamelContext(getCamelContext());
+        resolver.getOutputType("aws2-s3", configuration.getFormat())
+                .ifPresent(s3Consumer::setOutputType);
+
         return s3Consumer;
     }
 
     @Override
     public Producer createProducer() throws Exception {
+        Producer producer;
         if (!configuration.isStreamingUploadMode()) {
-            return new AWS2S3Producer(this);
+            producer = new AWS2S3Producer(this);
         } else {
-            return new AWS2S3StreamUploadProducer(this);
+            producer = new AWS2S3StreamUploadProducer(this);
         }
+
+        // ToDo: Move to superclass so all producers are configured with potential input type
+        if (producer instanceof InputTypeAware) {
+            DefaultDataTypeResolver resolver = new DefaultDataTypeResolver(); //ToDo: do not instantiate here, instead load from Camel context
+            resolver.registerComponentInputType("aws2-s3", new StringDataType()); // ToDo: Auto register default input types
+            resolver.setCamelContext(getCamelContext());
+            resolver.getInputType("aws2-s3", configuration.getFormat())
+                    .ifPresent(((InputTypeAware) producer)::setInputType);
+        }
+
+        return producer;
     }
 
     @Override

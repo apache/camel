@@ -28,9 +28,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class S3ConsumerIT extends Aws2S3Base {
+public class S3ConsumerStringOutputFormatIT extends Aws2S3Base {
 
     @EndpointInject
     private ProducerTemplate template;
@@ -40,7 +41,7 @@ public class S3ConsumerIT extends Aws2S3Base {
 
     @Test
     public void sendIn() throws Exception {
-        result.expectedMessageCount(3);
+        result.expectedMessageCount(1);
 
         template.send("direct:putObject", new Processor() {
 
@@ -51,27 +52,11 @@ public class S3ConsumerIT extends Aws2S3Base {
             }
         });
 
-        template.send("direct:putObject", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) {
-                exchange.getIn().setHeader(AWS2S3Constants.KEY, "test1.txt");
-                exchange.getIn().setBody("Test1");
-            }
-        });
-
-        template.send("direct:putObject", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) {
-                exchange.getIn().setHeader(AWS2S3Constants.KEY, "test2.txt");
-                exchange.getIn().setBody("Test2");
-            }
-        });
-
         Awaitility.await().atMost(10, TimeUnit.SECONDS)
                 .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
         assertNotNull(result.getExchanges().get(0).getMessage().getBody());
+        assertEquals(String.class, result.getExchanges().get(0).getMessage().getBody().getClass());
+        assertEquals(result.getExchanges().get(0).getMessage().getBody(), "Test");
     }
 
     @Override
@@ -83,7 +68,7 @@ public class S3ConsumerIT extends Aws2S3Base {
 
                 from("direct:putObject").startupOrder(1).to(awsEndpoint);
 
-                from("aws2-s3://mycamel?moveAfterRead=true&destinationBucket=camel-kafka-connector&autoCreateBucket=true&destinationBucketPrefix=RAW(movedPrefix)&destinationBucketSuffix=RAW(movedSuffix)")
+                from("aws2-s3://mycamel?format=string&moveAfterRead=true&destinationBucket=camel-kafka-connector&autoCreateBucket=true&destinationBucketPrefix=RAW(movedPrefix)&destinationBucketSuffix=RAW(movedSuffix)")
                         .startupOrder(2).log("${body}").to("mock:result");
 
             }

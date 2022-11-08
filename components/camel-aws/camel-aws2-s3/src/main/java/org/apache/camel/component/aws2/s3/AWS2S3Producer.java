@@ -34,6 +34,8 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.aws2.s3.utils.AWS2S3Utils;
+import org.apache.camel.spi.InputType;
+import org.apache.camel.spi.InputTypeAware;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -78,9 +80,12 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequ
  * A Producer which sends messages to the Amazon Web Service Simple Storage Service
  * <a href="http://aws.amazon.com/s3/">AWS S3</a>
  */
-public class AWS2S3Producer extends DefaultProducer {
+public class AWS2S3Producer extends DefaultProducer implements InputTypeAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(AWS2S3Producer.class);
+
+    // ToDo: Move to superclass
+    private InputType inputType;
 
     public AWS2S3Producer(final Endpoint endpoint) {
         super(endpoint);
@@ -88,6 +93,10 @@ public class AWS2S3Producer extends DefaultProducer {
 
     @Override
     public void process(final Exchange exchange) throws Exception {
+        if (inputType != null) {
+            inputType.convertIn(exchange);
+        }
+
         AWS2S3Operations operation = determineOperation(exchange);
         if (ObjectHelper.isEmpty(operation)) {
             if (getConfiguration().isMultiPartUpload()) {
@@ -660,4 +669,8 @@ public class AWS2S3Producer extends DefaultProducer {
         return exchange.getMessage();
     }
 
+    @Override
+    public void setInputType(InputType inputType) {
+        this.inputType = inputType;
+    }
 }

@@ -34,6 +34,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.WritableHealthCheckRepository;
+import org.apache.camel.spi.OutputType;
+import org.apache.camel.spi.OutputTypeAware;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.support.SynchronizationAdapter;
@@ -65,7 +67,7 @@ import software.amazon.awssdk.utils.IoUtils;
  * A Consumer of messages from the Amazon Web Service Simple Storage Service <a href="http://aws.amazon.com/s3/">AWS
  * S3</a>
  */
-public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
+public class AWS2S3Consumer extends ScheduledBatchPollingConsumer implements OutputTypeAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(AWS2S3Consumer.class);
 
@@ -73,6 +75,9 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
     private transient String s3ConsumerToString;
     private WritableHealthCheckRepository healthCheckRepository;
     private AWS2S3ConsumerHealthCheck consumerHealthCheck;
+
+    //ToDo: move to superclass
+    private OutputType outputType;
 
     public AWS2S3Consumer(AWS2S3Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -369,6 +374,11 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
         }
     }
 
+    @Override
+    public void setOutputType(OutputType type) {
+        this.outputType = type;
+    }
+
     protected AWS2S3Configuration getConfiguration() {
         return getEndpoint().getConfiguration();
     }
@@ -444,6 +454,10 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
                     }
                 });
             }
+        }
+
+        if (outputType != null) {
+            outputType.convertOut(exchange);
         }
 
         return exchange;

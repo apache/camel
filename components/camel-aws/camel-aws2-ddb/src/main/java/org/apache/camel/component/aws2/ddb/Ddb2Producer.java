@@ -18,6 +18,8 @@ package org.apache.camel.component.aws2.ddb;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.InputType;
+import org.apache.camel.spi.InputTypeAware;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.URISupport;
 
@@ -25,9 +27,11 @@ import org.apache.camel.util.URISupport;
  * A Producer which stores data into the Amazon DynamoDB Service <a href="http://aws.amazon.com/dynamodb/">AWS
  * DynamoDB</a>
  */
-public class Ddb2Producer extends DefaultProducer {
+public class Ddb2Producer extends DefaultProducer implements InputTypeAware {
 
     private transient String ddbProducerToString;
+
+    private InputType inputType;
 
     public Ddb2Producer(Endpoint endpoint) {
         super(endpoint);
@@ -35,6 +39,10 @@ public class Ddb2Producer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
+        if (inputType != null) {
+            inputType.convertIn(exchange);
+        }
+
         switch (determineOperation(exchange)) {
             case BatchGetItems:
                 new BatchGetItemsCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
@@ -91,5 +99,10 @@ public class Ddb2Producer extends DefaultProducer {
     @Override
     public Ddb2Endpoint getEndpoint() {
         return (Ddb2Endpoint) super.getEndpoint();
+    }
+
+    @Override
+    public void setInputType(InputType inputType) {
+        this.inputType = inputType;
     }
 }
