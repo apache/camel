@@ -49,6 +49,7 @@ import com.github.dockerjava.api.command.TopContainerCmd;
 import com.github.dockerjava.api.command.UnpauseContainerCmd;
 import com.github.dockerjava.api.command.VersionCmd;
 import com.github.dockerjava.api.model.AuthConfig;
+import com.github.dockerjava.api.model.Bind;
 import com.github.dockerjava.api.model.Capability;
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.ExposedPorts;
@@ -843,6 +844,12 @@ public class DockerProducer extends DefaultProducer {
 
         if (volume != null) {
             createContainerCmd.withVolumes(volume);
+        }
+
+        Bind[] binds = DockerHelper.getArrayProperty(DockerConstants.DOCKER_BINDS, message, Bind.class);
+
+        if (binds != null) {
+            createContainerCmd.getHostConfig().withBinds(binds);
         }
 
         VolumesFrom[] volumesFrom

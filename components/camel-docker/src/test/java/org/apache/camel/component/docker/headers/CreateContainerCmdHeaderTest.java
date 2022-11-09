@@ -19,6 +19,7 @@ package org.apache.camel.component.docker.headers;
 import java.util.Map;
 
 import com.github.dockerjava.api.command.CreateContainerCmd;
+import com.github.dockerjava.api.model.Bind;
 import com.github.dockerjava.api.model.Capability;
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.HostConfig;
@@ -31,12 +32,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 
 /**
  * Validates Create Container Request headers are parsed properly
  */
-public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateContainerCmd> {
+class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateContainerCmd> {
 
     @Mock
     private CreateContainerCmd mockObject;
@@ -73,6 +73,7 @@ public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateCon
         String[] entrypoint = new String[] { "sleep", "9999" };
         String portSpecs = "80";
         String dns = "8.8.8.8";
+        Bind bind = Bind.parse("/Users/foo/apps/:/apps:ro");
 
         Map<String, Object> headers = getDefaultParameters();
         headers.put(DockerConstants.DOCKER_IMAGE, image);
@@ -102,15 +103,16 @@ public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateCon
         headers.put(DockerConstants.DOCKER_PORT_SPECS, portSpecs);
         headers.put(DockerConstants.DOCKER_DNS, dns);
         headers.put(DockerConstants.DOCKER_DOMAIN_NAME, domainName);
+        headers.put(DockerConstants.DOCKER_BINDS, bind);
 
         Mockito.when(mockObject.getHostConfig()).thenReturn(hostConfig);
 
         template.sendBodyAndHeaders("direct:in", "", headers);
 
         Mockito.verify(dockerClient, Mockito.times(1)).createContainerCmd(image);
-        Mockito.verify(mockObject, Mockito.times(1)).withExposedPorts(eq(exposedPort));
-        Mockito.verify(mockObject, Mockito.times(1)).withTty(eq(tty));
-        Mockito.verify(mockObject, Mockito.times(1)).withName(eq(name));
+        Mockito.verify(mockObject, Mockito.times(1)).withExposedPorts(exposedPort);
+        Mockito.verify(mockObject, Mockito.times(1)).withTty(tty);
+        Mockito.verify(mockObject, Mockito.times(1)).withName(name);
         Mockito.verify(mockObject, Mockito.times(1)).withWorkingDir(workingDir);
         Mockito.verify(mockObject, Mockito.times(1)).withNetworkDisabled(disableNetwork);
         Mockito.verify(mockObject, Mockito.times(1)).withHostName(hostname);
@@ -129,6 +131,7 @@ public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateCon
         Mockito.verify(mockObject, Mockito.times(1)).withDomainName(domainName);
 
         Mockito.verify(hostConfig, Mockito.times(1)).withVolumesFrom(volumesFromContainer);
+        Mockito.verify(hostConfig, Mockito.times(1)).withBinds(bind);
         Mockito.verify(hostConfig, Mockito.times(1)).withCapAdd(capAdd);
         Mockito.verify(hostConfig, Mockito.times(1)).withCapDrop(capDrop);
         Mockito.verify(hostConfig, Mockito.times(1)).withDns(dns);
