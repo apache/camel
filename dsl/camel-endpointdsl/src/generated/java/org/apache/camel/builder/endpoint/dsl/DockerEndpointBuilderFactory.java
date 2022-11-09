@@ -2614,6 +2614,19 @@ public interface DockerEndpointBuilderFactory {
         }
 
         /**
+         * With binds.
+         * 
+         * The option is a: {@code Bind or Bind[]} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code DockerBinds}.
+         */
+        public String dockerBinds() {
+            return "DockerBinds";
+        }
+
+        /**
          * With cap add.
          * 
          * The option is a: {@code Capability or Capability[]} type.
