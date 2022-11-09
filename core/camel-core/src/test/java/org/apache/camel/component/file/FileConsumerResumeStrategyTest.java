@@ -31,11 +31,9 @@ import org.apache.camel.processor.resume.TransientResumeStrategy;
 import org.apache.camel.support.resume.Resumables;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org", disabledReason = "Always fails on Apache CI")
 @DisplayName("Tests whether file consumer works with the resume strategy")
 public class FileConsumerResumeStrategyTest extends ContextTestSupport {
 
@@ -51,7 +49,7 @@ public class FileConsumerResumeStrategyTest extends ContextTestSupport {
         @Override
         public boolean resume(File file) {
             resumedCalled = true;
-            return processedFiles.contains(file);
+            return processedFiles.contains(file.getName());
         }
     }
 
