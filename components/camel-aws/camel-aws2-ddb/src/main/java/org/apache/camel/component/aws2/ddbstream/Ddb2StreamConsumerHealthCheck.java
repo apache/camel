@@ -34,7 +34,7 @@ public class Ddb2StreamConsumerHealthCheck extends AbstractHealthCheck {
     private final String routeId;
 
     public Ddb2StreamConsumerHealthCheck(Ddb2StreamConsumer ddb2StreamConsumer, String routeId) {
-        super("camel", "aws2-dd2-stream-consumer-" + routeId);
+        super("camel", "aws2-ddbstream-consumer-" + routeId);
         this.ddb2StreamConsumer = ddb2StreamConsumer;
         this.routeId = routeId;
     }
