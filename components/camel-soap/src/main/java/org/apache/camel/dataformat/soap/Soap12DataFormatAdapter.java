@@ -230,7 +230,8 @@ public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
 
         JAXBElement<?> detailEl = (JAXBElement<?>) detailObj;
         Class<? extends Exception> exceptionClass
-                = getDataFormat().getElementNameStrategy().findExceptionForSoapActionAndFaultName(soapAction, detailEl.getName());
+                = getDataFormat().getElementNameStrategy().findExceptionForSoapActionAndFaultName(soapAction,
+                        detailEl.getName());
         Constructor<? extends Exception> messageConstructor;
         Constructor<? extends Exception> constructor;
 

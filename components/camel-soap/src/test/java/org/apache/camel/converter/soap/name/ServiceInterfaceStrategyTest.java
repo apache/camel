@@ -138,8 +138,10 @@ public class ServiceInterfaceStrategyTest {
     public void testQNameToException() {
         ServiceInterfaceStrategy strategy = new ServiceInterfaceStrategy(TestService.class, true);
         QName soapExceptionMultipleDefined = new QName("http://www.example.com/duplicateerror", "soapException");
-        assertEquals(ExceptionA.class, strategy.findExceptionForSoapActionAndFaultName("throwErrorA", soapExceptionMultipleDefined));
-        assertEquals(ExceptionB.class, strategy.findExceptionForSoapActionAndFaultName("throwErrorB", soapExceptionMultipleDefined));
+        assertEquals(ExceptionA.class,
+                strategy.findExceptionForSoapActionAndFaultName("throwErrorA", soapExceptionMultipleDefined));
+        assertEquals(ExceptionB.class,
+                strategy.findExceptionForSoapActionAndFaultName("throwErrorB", soapExceptionMultipleDefined));
 
         // This is implementation dependant (position in HashMap) one of ExceptionA or ExceptionB
         Class<? extends Exception> multiDefinedException = strategy.findExceptionForFaultName(soapExceptionMultipleDefined);
