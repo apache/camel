@@ -1551,6 +1551,9 @@ The follow options related to _exporting_, can be configured in `application.pro
 |`camel.jbang.localKameletDir`
 |Local directory for loading Kamelets
 
+|`camel.jbang.camelSpringBootVersion`
+|Camel version to use with Spring Boot
+
 |`camel.jbang.springBootVersion`
 |Spring Boot version
 
