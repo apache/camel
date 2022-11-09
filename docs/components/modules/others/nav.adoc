@@ -32,6 +32,7 @@
 ** xref:knative-http.adoc[Knative Http]
 ** xref:leveldb.adoc[LevelDB]
 ** xref:lra.adoc[LRA]
+** xref:mail-microsoft-oauth.adoc[Mail Microsoft Oauth]
 ** xref:main.adoc[Main]
 ** xref:microprofile-config.adoc[Microprofile Config]
 ** xref:microprofile-fault-tolerance.adoc[Microprofile Fault Tolerance]
