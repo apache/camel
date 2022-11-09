@@ -220,6 +220,15 @@ class ExportSpringBoot extends Export {
             if (gav.getVersion() != null) {
                 sb.append("            <version>").append(gav.getVersion()).append("</version>\n");
             }
+            // special for camel-kamelets-utils
+            if ("camel-kamelets-utils".equals(gav.getArtifactId())) {
+                sb.append("            <exclusions>\n");
+                sb.append("                <exclusion>\n");
+                sb.append("                    <groupId>org.apache.camel</groupId>\n");
+                sb.append("                    <artifactId>*</artifactId>\n");
+                sb.append("                </exclusion>\n");
+                sb.append("            </exclusions>\n");
+            }
             sb.append("        </dependency>\n");
         }
         context = context.replaceFirst("\\{\\{ \\.CamelDependencies }}", sb.toString());
