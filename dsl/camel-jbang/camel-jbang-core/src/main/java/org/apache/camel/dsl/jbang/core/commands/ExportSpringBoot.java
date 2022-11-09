@@ -247,7 +247,7 @@ class ExportSpringBoot extends Export {
         String context = readResourceTemplate("templates/spring-boot-build-gradle.tmpl");
 
         CamelCatalog catalog = loadSpringBootCatalog(camelSpringBootVersion);
-        String camelVersion = catalog.getCatalogVersion();
+        String camelVersion = catalog.getLoadedVersion();
 
         context = context.replaceFirst("\\{\\{ \\.GroupId }}", ids[0]);
         context = context.replaceFirst("\\{\\{ \\.ArtifactId }}", ids[1]);

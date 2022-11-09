@@ -1435,6 +1435,14 @@ To export to another directly (copies the files) you execute:
 camel export --runtime=spring-boot --gav=com.foo:acme:1.0-SNAPSHOT --dir=../myproject
 ----
 
+When exporting to Spring Boot then the Camel version defined in the `pom.xml` or `build.gradle` is
+the same version as Camel JBang uses. However, you can specify the Camel version as shown below:
+
+[source,bash]
+----
+camel export --runtime=spring-boot --gav=com.foo:acme:1.0-SNAPSHOT --dir=../myproject --camel-spring-boot-version=3.18.3
+----
+
 TIP: See the possible options by running: `camel export --help` for more details.
 
 === Exporting to Camel Quarkus
