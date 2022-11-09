@@ -26,10 +26,11 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.resume.Cacheable;
 import org.apache.camel.resume.Deserializable;
@@ -59,7 +60,7 @@ import org.slf4j.LoggerFactory;
  * integrations.
  */
 @JdkService("kafka-resume-strategy")
-public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy {
+public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, CamelContextAware {
     private static final Logger LOG = LoggerFactory.getLogger(SingleNodeKafkaResumeStrategy.class);
 
     private Consumer<byte[], byte[]> consumer;
@@ -69,12 +70,13 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy {
     private boolean subscribed;
     private ResumeAdapter adapter;
     private KafkaResumeStrategyConfiguration resumeStrategyConfiguration;
-    private final ExecutorService executorService;
+    private ExecutorService executorService;
     private final ReentrantLock writeLock = new ReentrantLock();
     private CountDownLatch initLatch;
+    private CamelContext camelContext;
 
     public SingleNodeKafkaResumeStrategy() {
-        executorService = Executors.newSingleThreadExecutor();
+
     }
 
     /**
@@ -84,7 +86,6 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy {
      */
     public SingleNodeKafkaResumeStrategy(KafkaResumeStrategyConfiguration resumeStrategyConfiguration) {
         this.resumeStrategyConfiguration = resumeStrategyConfiguration;
-        executorService = Executors.newSingleThreadExecutor();
     }
 
     /**
@@ -174,6 +175,11 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy {
         }
 
         initLatch = new CountDownLatch(resumeStrategyConfiguration.getMaxInitializationRetries());
+        if (executorService == null) {
+            executorService
+                    = camelContext.getExecutorServiceManager().newSingleThreadExecutor(this, "SingleNodeKafkaResumeStrategy");
+        }
+
         executorService.submit(() -> refresh(initLatch));
     }
 
@@ -397,11 +403,17 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy {
         try {
             LOG.info("Closing the Kafka consumer");
             consumer.wakeup();
-            executorService.shutdown();
 
-            if (!executorService.awaitTermination(2, TimeUnit.SECONDS)) {
-                LOG.warn("Kafka consumer did not shutdown within 2 seconds");
-                executorService.shutdownNow();
+            if (executorService != null) {
+                executorService.shutdown();
+
+                if (!executorService.awaitTermination(2, TimeUnit.SECONDS)) {
+                    LOG.warn("Kafka consumer did not shutdown within 2 seconds");
+                    executorService.shutdownNow();
+                }
+            } else {
+                // This may happen if the start up has failed in some other part
+                LOG.trace("There's no executor service to shutdown");
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -446,5 +458,15 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy {
     @Override
     public ResumeStrategyConfiguration getResumeStrategyConfiguration() {
         return resumeStrategyConfiguration;
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 }

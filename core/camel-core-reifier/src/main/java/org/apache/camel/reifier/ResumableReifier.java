@@ -18,6 +18,7 @@ package org.apache.camel.reifier;
 
 import java.util.Optional;
 
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
@@ -43,6 +44,10 @@ public class ResumableReifier extends ProcessorReifier<ResumableDefinition> {
 
         ResumeStrategy resumeStrategy = resolveResumeStrategy();
         ObjectHelper.notNull(resumeStrategy, ResumeStrategy.DEFAULT_NAME, definition);
+
+        if (resumeStrategy instanceof CamelContextAware) {
+            ((CamelContextAware) resumeStrategy).setCamelContext(camelContext);
+        }
 
         route.setResumeStrategy(resumeStrategy);
         LoggingLevel loggingLevel = resolveLoggingLevel();

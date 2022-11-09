@@ -20,7 +20,10 @@ package org.apache.camel.component.wal;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.concurrent.ScheduledExecutorService;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.resume.Deserializable;
 import org.apache.camel.resume.Offset;
@@ -45,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * recovered
  */
 @JdkService("write-ahead-resume-strategy")
-public class WriteAheadResumeStrategy implements ResumeStrategy {
+public class WriteAheadResumeStrategy implements ResumeStrategy, CamelContextAware {
 
     /**
      * An update callback that works for this strategy as well as for the delegate resume strategy that is wrapped in
@@ -72,6 +75,7 @@ public class WriteAheadResumeStrategy implements ResumeStrategy {
     private LogWriter logWriter;
     private ResumeStrategy resumeStrategy;
     private WriteAheadResumeStrategyConfiguration resumeStrategyConfiguration;
+    private CamelContext camelContext;
 
     /**
      * Creates a new write-ahead resume strategy
@@ -305,7 +309,12 @@ public class WriteAheadResumeStrategy implements ResumeStrategy {
             this.logFile = resumeStrategyConfiguration.getLogFile();
             this.resumeStrategy = resumeStrategyConfiguration.getDelegateResumeStrategy();
 
-            DefaultLogSupervisor flushPolicy = new DefaultLogSupervisor(resumeStrategyConfiguration.getSupervisorInterval());
+            final ScheduledExecutorService executorService = camelContext.getExecutorServiceManager()
+                    .newScheduledThreadPool(this, "SingleNodeKafkaResumeStrategy", 1);
+
+            DefaultLogSupervisor flushPolicy = new DefaultLogSupervisor(
+                    resumeStrategyConfiguration.getSupervisorInterval(),
+                    executorService);
             logWriter = new LogWriter(logFile, flushPolicy);
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
@@ -333,5 +342,15 @@ public class WriteAheadResumeStrategy implements ResumeStrategy {
     @Override
     public ResumeStrategyConfiguration getResumeStrategyConfiguration() {
         return resumeStrategyConfiguration;
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 }
