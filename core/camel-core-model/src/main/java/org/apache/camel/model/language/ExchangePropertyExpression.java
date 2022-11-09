@@ -19,6 +19,7 @@ package org.apache.camel.model.language;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 
@@ -37,8 +38,24 @@ public class ExchangePropertyExpression extends ExpressionDefinition {
         super(name);
     }
 
+    private ExchangePropertyExpression(Builder builder) {
+        super(builder);
+    }
+
     @Override
     public String getLanguage() {
         return "exchangeProperty";
+    }
+
+    /**
+     * {@code Builder} is a specific builder for {@link ExchangePropertyExpression}.
+     */
+    @XmlTransient
+    public static class Builder extends AbstractBuilder<Builder, ExchangePropertyExpression> {
+
+        @Override
+        public ExchangePropertyExpression end() {
+            return new ExchangePropertyExpression(this);
+        }
     }
 }

@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 
@@ -42,6 +43,11 @@ public class LanguageExpression extends ExpressionDefinition {
         setExpression(expression);
     }
 
+    private LanguageExpression(Builder builder) {
+        super(builder);
+        this.language = builder.language;
+    }
+
     @Override
     public String getLanguage() {
         return language;
@@ -52,5 +58,27 @@ public class LanguageExpression extends ExpressionDefinition {
      */
     public void setLanguage(String language) {
         this.language = language;
+    }
+
+    /**
+     * {@code Builder} is a specific builder for {@link LanguageExpression}.
+     */
+    @XmlTransient
+    public static class Builder extends AbstractBuilder<Builder, LanguageExpression> {
+
+        private String language;
+
+        /**
+         * The name of the language to use
+         */
+        public Builder language(String language) {
+            this.language = language;
+            return this;
+        }
+
+        @Override
+        public LanguageExpression end() {
+            return new LanguageExpression(this);
+        }
     }
 }

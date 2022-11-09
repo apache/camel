@@ -19,6 +19,7 @@ package org.apache.camel.model.language;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 
@@ -37,9 +38,24 @@ public class RefExpression extends ExpressionDefinition {
         super(ref);
     }
 
+    private RefExpression(Builder builder) {
+        super(builder);
+    }
+
     @Override
     public String getLanguage() {
         return "ref";
     }
 
+    /**
+     * {@code Builder} is a specific builder for {@link RefExpression}.
+     */
+    @XmlTransient
+    public static class Builder extends AbstractBuilder<Builder, RefExpression> {
+
+        @Override
+        public RefExpression end() {
+            return new RefExpression(this);
+        }
+    }
 }

@@ -19,6 +19,7 @@ package org.apache.camel.model.language;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
 
@@ -37,8 +38,24 @@ public class SpELExpression extends ExpressionDefinition {
         super(expression);
     }
 
+    private SpELExpression(Builder builder) {
+        super(builder);
+    }
+
     @Override
     public String getLanguage() {
         return "spel";
+    }
+
+    /**
+     * {@code Builder} is a specific builder for {@link SpELExpression}.
+     */
+    @XmlTransient
+    public static class Builder extends AbstractBuilder<Builder, SpELExpression> {
+
+        @Override
+        public SpELExpression end() {
+            return new SpELExpression(this);
+        }
     }
 }

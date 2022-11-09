@@ -35,6 +35,7 @@ For a deeper and better understanding of Apache Camel, an xref:faq:what-is-camel
 * xref:component-dsl.adoc[Component DSL]
 * xref:Endpoint-dsl.adoc[Endpoint DSL]
 * xref:dataformat-dsl.adoc[DataFormat DSL]
+* xref:language-dsl.adoc[Language DSL]
 * xref:dsl.adoc[DSL]
 * xref:components::index.adoc[Components]
 * xref:components:dataformats:index.adoc[Data Formats]

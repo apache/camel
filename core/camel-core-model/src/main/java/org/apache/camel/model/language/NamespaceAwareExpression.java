@@ -49,6 +49,12 @@ public abstract class NamespaceAwareExpression extends ExpressionDefinition impl
         super(expression);
     }
 
+    protected NamespaceAwareExpression(AbstractNamespaceAwareBuilder<?, ?> builder) {
+        super(builder);
+        this.namespace = builder.namespace;
+        this.namespaces = builder.namespaces;
+    }
+
     @Override
     public Map<String, String> getNamespaces() {
         return getNamespaceAsMap();
@@ -87,4 +93,34 @@ public abstract class NamespaceAwareExpression extends ExpressionDefinition impl
         return namespaces;
     }
 
+    /**
+     * {@code NamespaceAwareBuilder} is the base namespace aware expression builder.
+     */
+    @XmlTransient
+    @SuppressWarnings("unchecked")
+    abstract static class AbstractNamespaceAwareBuilder<
+            T extends AbstractNamespaceAwareBuilder<T, E>, E extends ExpressionDefinition>
+            extends AbstractBuilder<T, E> {
+
+        private List<PropertyDefinition> namespace;
+        private Map<String, String> namespaces;
+
+        /**
+         * Injects the XML Namespaces of prefix -> uri mappings
+         *
+         * @param namespaces the XML namespaces with the key of prefixes and the value the URIs
+         */
+        public T namespaces(Map<String, String> namespaces) {
+            this.namespaces = namespaces;
+            return (T) this;
+        }
+
+        /**
+         * Injects the XML Namespaces of prefix -> uri mappings
+         */
+        public T namespace(List<PropertyDefinition> namespace) {
+            this.namespace = namespace;
+            return (T) this;
+        }
+    }
 }

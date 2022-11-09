@@ -236,11 +236,35 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      *             .end()
      *     )
      *     .to("file:data");
+     * }
+     * </pre>
      *
      * @return an entry point to the builder of all supported data formats.
      */
     public DataFormatBuilderFactory dataFormat() {
         return new DataFormatBuilderFactory();
+    }
+
+    /**
+     * A utility method allowing to build any language using a fluent syntax as shown in the next example:
+     *
+     * <pre>
+     * {@code
+     * from("file:data")
+     *     .split(
+     *         expression()
+     *             .tokenize()
+     *                 .token("\n")
+     *             .end()
+     *     )
+     *     .process("processEntry");
+     * }
+     * </pre>
+     *
+     * @return an entry point to the builder of all supported languages.
+     */
+    public LanguageBuilderFactory expression() {
+        return new LanguageBuilderFactory();
     }
 
     /**

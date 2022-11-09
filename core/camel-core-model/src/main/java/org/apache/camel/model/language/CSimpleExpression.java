@@ -44,6 +44,12 @@ public class CSimpleExpression extends ExpressionDefinition {
         super(expression);
     }
 
+    private CSimpleExpression(Builder builder) {
+        super(builder);
+        this.resultTypeName = builder.resultTypeName;
+        this.resultType = builder.resultType;
+    }
+
     @Override
     public String getLanguage() {
         return "csimple";
@@ -71,4 +77,34 @@ public class CSimpleExpression extends ExpressionDefinition {
         this.resultTypeName = resultTypeName;
     }
 
+    /**
+     * {@code Builder} is a specific builder for {@link CSimpleExpression}.
+     */
+    @XmlTransient
+    public static class Builder extends AbstractBuilder<Builder, CSimpleExpression> {
+
+        private String resultTypeName;
+        private Class<?> resultType;
+
+        /**
+         * Sets the class of the result type (type from output)
+         */
+        public Builder resultType(Class<?> resultType) {
+            this.resultType = resultType;
+            return this;
+        }
+
+        /**
+         * Sets the class name of the result type (type from output)
+         */
+        public Builder resultTypeName(String resultTypeName) {
+            this.resultTypeName = resultTypeName;
+            return this;
+        }
+
+        @Override
+        public CSimpleExpression end() {
+            return new CSimpleExpression(this);
+        }
+    }
 }

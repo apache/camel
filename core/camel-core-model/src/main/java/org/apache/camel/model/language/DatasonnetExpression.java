@@ -53,6 +53,14 @@ public class DatasonnetExpression extends ExpressionDefinition {
         super(expression);
     }
 
+    private DatasonnetExpression(Builder builder) {
+        super(builder);
+        this.bodyMediaType = builder.bodyMediaType;
+        this.outputMediaType = builder.outputMediaType;
+        this.resultTypeName = builder.resultTypeName;
+        this.resultType = builder.resultType;
+    }
+
     @Override
     public String getLanguage() {
         return "datasonnet";
@@ -104,5 +112,58 @@ public class DatasonnetExpression extends ExpressionDefinition {
      */
     public void setResultTypeName(String resultTypeName) {
         this.resultTypeName = resultTypeName;
+    }
+
+    /**
+     * {@code Builder} is a specific builder for {@link DatasonnetExpression}.
+     */
+    @XmlTransient
+    public static class Builder extends AbstractBuilder<Builder, DatasonnetExpression> {
+
+        private String bodyMediaType;
+        private String outputMediaType;
+        private String resultTypeName;
+        private Class<?> resultType;
+
+        /**
+         * The String representation of the message's body MediaType
+         */
+        public Builder bodyMediaType(String bodyMediaType) {
+            this.bodyMediaType = bodyMediaType;
+            return this;
+        }
+
+        /**
+         * The String representation of the MediaType to output
+         */
+        public Builder outputMediaType(String outputMediaType) {
+            this.outputMediaType = outputMediaType;
+            return this;
+        }
+
+        /**
+         * Sets the class of the result type (type from output).
+         * <p/>
+         * The default result type is com.datasonnet.document.Document
+         */
+        public Builder resultType(Class<?> resultType) {
+            this.resultType = resultType;
+            return this;
+        }
+
+        /**
+         * Sets the class name of the result type (type from output)
+         * <p/>
+         * The default result type is com.datasonnet.document.Document
+         */
+        public Builder resultTypeName(String resultTypeName) {
+            this.resultTypeName = resultTypeName;
+            return this;
+        }
+
+        @Override
+        public DatasonnetExpression end() {
+            return new DatasonnetExpression(this);
+        }
     }
 }

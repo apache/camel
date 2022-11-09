@@ -48,6 +48,14 @@ public class JqExpression extends ExpressionDefinition {
         super(expression);
     }
 
+    private JqExpression(Builder builder) {
+        super(builder);
+        this.resultTypeName = builder.resultTypeName;
+        this.resultType = builder.resultType;
+        this.headerName = builder.headerName;
+        this.propertyName = builder.propertyName;
+    }
+
     @Override
     public String getLanguage() {
         return "jq";
@@ -99,5 +107,58 @@ public class JqExpression extends ExpressionDefinition {
      */
     public void setPropertyName(String propertyName) {
         this.propertyName = propertyName;
+    }
+
+    /**
+     * {@code Builder} is a specific builder for {@link JqExpression}.
+     */
+    @XmlTransient
+    public static class Builder extends AbstractBuilder<Builder, JqExpression> {
+
+        private String resultTypeName;
+        private Class<?> resultType;
+        private String headerName;
+        private String propertyName;
+
+        /**
+         * Sets the class name of the result type (type from output)
+         */
+        public Builder resultType(Class<?> resultType) {
+            this.resultType = resultType;
+            return this;
+        }
+
+        /**
+         * Sets the class of the result type (type from output)
+         */
+        public Builder resultTypeName(String resultTypeName) {
+            this.resultTypeName = resultTypeName;
+            return this;
+        }
+
+        /**
+         * Name of header to use as input, instead of the message body
+         * </p>
+         * It has as higher precedent than the propertyName if both are set.
+         */
+        public Builder headerName(String headerName) {
+            this.headerName = headerName;
+            return this;
+        }
+
+        /**
+         * Name of property to use as input, instead of the message body.
+         * </p>
+         * It has a lower precedent than the headerName if both are set.
+         */
+        public Builder propertyName(String propertyName) {
+            this.propertyName = propertyName;
+            return this;
+        }
+
+        @Override
+        public JqExpression end() {
+            return new JqExpression(this);
+        }
     }
 }
