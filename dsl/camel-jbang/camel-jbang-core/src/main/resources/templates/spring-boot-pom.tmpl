@@ -16,6 +16,7 @@
 
     <properties>
         <java.version>{{ .JavaVersion }}</java.version>
+{{ .jkubeProperties }}
     </properties>
 
     <dependencyManagement>
@@ -81,5 +82,9 @@
             </plugin>
         </plugins>
     </build>
+
+{{ .snapshotRepository }}
+
+{{ .jkubeProfiles }}
 
 </project>

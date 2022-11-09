@@ -381,7 +381,7 @@ abstract class ExportBaseCommand extends CamelCommand {
             String k = entry.getKey().toString();
             String v = entry.getValue().toString();
 
-            boolean skip = k.startsWith("camel.jbang.");
+            boolean skip = k.startsWith("camel.jbang.") || k.startsWith("jkube.");
             if (skip) {
                 continue;
             }

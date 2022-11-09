@@ -18,12 +18,15 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
@@ -103,7 +106,7 @@ class ExportSpringBoot extends Export {
         // gather dependencies
         Set<String> deps = resolveDependencies(settings, profile);
         if ("maven".equals(buildTool)) {
-            createMavenPom(settings, new File(BUILD_DIR, "pom.xml"), deps);
+            createMavenPom(settings, profile, new File(BUILD_DIR, "pom.xml"), deps);
             if (mavenWrapper) {
                 copyMavenWrapper();
             }
@@ -132,12 +135,10 @@ class ExportSpringBoot extends Export {
         IOHelper.writeText(text, new FileOutputStream(file, false));
     }
 
-    private void createMavenPom(File settings, File pom, Set<String> deps) throws Exception {
+    private void createMavenPom(File settings, File profile, File pom, Set<String> deps) throws Exception {
         String[] ids = gav.split(":");
 
-        InputStream is = ExportSpringBoot.class.getClassLoader().getResourceAsStream("templates/spring-boot-pom.tmpl");
-        String context = IOHelper.loadText(is);
-        IOHelper.close(is);
+        String context = readResourceTemplate("templates/spring-boot-pom.tmpl");
 
         CamelCatalog catalog = loadSpringBootCatalog();
         String camelVersion = catalog.getCatalogVersion();
@@ -149,8 +150,21 @@ class ExportSpringBoot extends Export {
         context = context.replaceFirst("\\{\\{ \\.JavaVersion }}", javaVersion);
         context = context.replaceFirst("\\{\\{ \\.CamelVersion }}", camelVersion);
 
+        // Convert jkube properties to maven properties
+        Properties allProps = new CamelCaseOrderedProperties();
+        RuntimeUtil.loadProperties(allProps, profile);
+
+        StringBuilder jkubeProperties = new StringBuilder();
+        allProps.stringPropertyNames().stream().filter(p -> p.startsWith("jkube")).forEach(key -> {
+            String value = allProps.getProperty(key);
+            jkubeProperties.append("        <").append(key).append(">").append(value).append("</").append(key).append(">\n");
+        });
+        context = context.replaceFirst(Pattern.quote("{{ .jkubeProperties }}"), Matcher.quoteReplacement(jkubeProperties.toString()));
+
+
         Properties prop = new CamelCaseOrderedProperties();
         RuntimeUtil.loadProperties(prop, settings);
+
         String repos = prop.getProperty("camel.jbang.repos");
         if (repos == null) {
             context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", "");
@@ -206,15 +220,27 @@ class ExportSpringBoot extends Export {
         }
         context = context.replaceFirst("\\{\\{ \\.CamelDependencies }}", sb.toString());
 
+        // add apache snapshot repository if camel version ends with SNAPSHOT
+        String contextSnapshot = "";
+        if (camelVersion.endsWith("SNAPSHOT")) {
+            contextSnapshot = readResourceTemplate("templates/apache-snapshot-maven.tmpl");
+        }
+        context = context.replaceFirst(Pattern.quote("{{ .snapshotRepository }}"), Matcher.quoteReplacement(contextSnapshot));
+
+        // add jkube profiles if there is jkube version property
+        String jkubeProfiles = "";
+        if (allProps.getProperty("jkube.version") != null) {
+            jkubeProfiles = readResourceTemplate("templates/jkube-profiles.tmpl");
+        }
+        context = context.replaceFirst(Pattern.quote("{{ .jkubeProfiles }}"), Matcher.quoteReplacement(jkubeProfiles));
+
         IOHelper.writeText(context, new FileOutputStream(pom, false));
     }
 
     private void createBuildGradle(File settings, File gradleBuild, Set<String> deps) throws Exception {
         String[] ids = gav.split(":");
 
-        InputStream is = ExportSpringBoot.class.getClassLoader().getResourceAsStream("templates/spring-boot-build-gradle.tmpl");
-        String context = IOHelper.loadText(is);
-        IOHelper.close(is);
+        String context = readResourceTemplate("templates/spring-boot-build-gradle.tmpl");
 
         CamelCatalog catalog = loadSpringBootCatalog();
         String camelVersion = catalog.getCatalogVersion();
@@ -293,9 +319,7 @@ class ExportSpringBoot extends Export {
     }
 
     private void createMainClassSource(File srcJavaDir, String packageName, String mainClassname) throws Exception {
-        InputStream is = ExportSpringBoot.class.getClassLoader().getResourceAsStream("templates/spring-boot-main.tmpl");
-        String context = IOHelper.loadText(is);
-        IOHelper.close(is);
+        String context = readResourceTemplate("templates/spring-boot-main.tmpl");
 
         context = context.replaceFirst("\\{\\{ \\.PackageName }}", packageName);
         context = context.replaceAll("\\{\\{ \\.MainClassname }}", mainClassname);
@@ -353,6 +377,13 @@ class ExportSpringBoot extends Export {
         }
 
         return answer;
+    }
+
+    private String readResourceTemplate(String name) throws IOException {
+        InputStream is = ExportSpringBoot.class.getClassLoader().getResourceAsStream(name);
+        String text = IOHelper.loadText(is);
+        IOHelper.close(is);
+        return text;
     }
 
 }
