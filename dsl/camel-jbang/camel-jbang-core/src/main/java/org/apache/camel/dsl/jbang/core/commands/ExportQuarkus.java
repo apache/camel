@@ -232,7 +232,14 @@ class ExportQuarkus extends Export {
 
         StringBuilder sb = new StringBuilder();
         for (MavenGav gav : gavs) {
-            sb.append("    implementation '").append(gav.toString()).append("'\n");
+            // special for camel-kamelets-utils
+            if ("camel-kamelets-utils".equals(gav.getArtifactId())) {
+                sb.append("    implementation ('").append(gav).append("') {\n");
+                sb.append("        exclude group: 'org.apache.camel', module: '*'\n");
+                sb.append("    }\n");
+            } else {
+                sb.append("    implementation '").append(gav).append("'\n");
+            }
         }
         context = context.replaceFirst("\\{\\{ \\.CamelDependencies }}", sb.toString());
 
