@@ -61,4 +61,9 @@ public class TypeNameStrategy implements ElementNameStrategy {
         throw new UnsupportedOperationException("Exception lookup is not supported for TypeNameStrategy");
     }
 
+    @Override
+    public Class<? extends Exception> findExceptionForSoapActionAndFaultName(String soapAction, QName faultName) {
+        throw new UnsupportedOperationException("Exception lookup is not supported for TypeNameStrategy");
+    }
+
 }

@@ -46,7 +46,7 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
     private Map<String, QName> outTypeNameToQName = new HashMap<>();
     private boolean isClient;
     private ElementNameStrategy fallBackStrategy;
-    private Map<QName, Class<? extends Exception>> faultNameToException = new HashMap<>();
+    private Map<String, Map<QName, Class<? extends Exception>>> faultNameToException = new HashMap<>();
 
     /**
      * Init with JAX-WS service interface
@@ -171,22 +171,25 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
             }
             if (info.getSoapAction() != null && !"".equals(info.getSoapAction())) {
                 soapActionToMethodInfo.put(info.getSoapAction(), info);
+                addExceptions(info.getSoapAction(), method);
+            } else {
+                addExceptions(null, method);
             }
 
             outTypeNameToQName.put(info.getOut().getTypeName(), info.getOut().getElName());
-
-            addExceptions(method);
         }
     }
 
     @SuppressWarnings("unchecked")
-    private void addExceptions(Method method) {
+    private void addExceptions(String soapAction, Method method) {
         Class<?>[] exTypes = method.getExceptionTypes();
         for (Class<?> exType : exTypes) {
             WebFault webFault = exType.getAnnotation(WebFault.class);
             if (webFault != null) {
                 QName faultName = new QName(webFault.targetNamespace(), webFault.name());
-                faultNameToException.put(faultName, (Class<? extends Exception>) exType);
+                faultNameToException.putIfAbsent(soapAction, new HashMap<>());
+                Map<QName, Class<? extends Exception>> soapActionFaultNameMap = faultNameToException.get(soapAction);
+                soapActionFaultNameMap.put(faultName, (Class<? extends Exception>) exType);
             }
         }
     }
@@ -236,7 +239,27 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
 
     @Override
     public Class<? extends Exception> findExceptionForFaultName(QName faultName) {
-        return faultNameToException.get(faultName);
+        for (Map<QName, Class<? extends Exception>> perSoapActionFaultNameToException : faultNameToException.values()) {
+            if (perSoapActionFaultNameToException.get(faultName) != null) {
+                return perSoapActionFaultNameToException.get(faultName);
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public Class<? extends Exception> findExceptionForSoapActionAndFaultName(String soapAction, QName faultName) {
+        if (soapAction == null || soapAction.isEmpty()) {
+            return findExceptionForFaultName(faultName);
+        }
+
+        Map<QName, Class<? extends Exception>> perSoapActionFaultNameToException = faultNameToException.get(soapAction);
+        if (perSoapActionFaultNameToException == null) {
+            return null;
+        }
+
+        return perSoapActionFaultNameToException.get(faultName);
     }
 
 }
