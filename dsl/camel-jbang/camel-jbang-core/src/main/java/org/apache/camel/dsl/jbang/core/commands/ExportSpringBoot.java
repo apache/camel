@@ -159,8 +159,8 @@ class ExportSpringBoot extends Export {
             String value = allProps.getProperty(key);
             jkubeProperties.append("        <").append(key).append(">").append(value).append("</").append(key).append(">\n");
         });
-        context = context.replaceFirst(Pattern.quote("{{ .jkubeProperties }}"), Matcher.quoteReplacement(jkubeProperties.toString()));
-
+        context = context.replaceFirst(Pattern.quote("{{ .jkubeProperties }}"),
+                Matcher.quoteReplacement(jkubeProperties.toString()));
 
         Properties prop = new CamelCaseOrderedProperties();
         RuntimeUtil.loadProperties(prop, settings);
