@@ -39,4 +39,12 @@ public interface ElementNameStrategy {
      * @return
      */
     Class<? extends Exception> findExceptionForFaultName(QName faultName);
+
+    /**
+     * Determine exception class for given SOAP Action and Fault QName
+     *
+     * @param  faultName
+     * @return
+     */
+    Class<? extends Exception> findExceptionForSoapActionAndFaultName(String soapAction, QName faultName);
 }

@@ -226,6 +226,11 @@
                                         </bindingFile>
                                     </bindingFiles>
                                 </wsdlOption>
+                                <wsdlOption>
+                                    <wsdl>
+                                        ${basedir}/src/test/resources/org/apache/camel/dataformat/soap/TestService.wsdl
+                                    </wsdl>
+                                </wsdlOption>
                             </wsdlOptions>
                         </configuration>
                         <goals>

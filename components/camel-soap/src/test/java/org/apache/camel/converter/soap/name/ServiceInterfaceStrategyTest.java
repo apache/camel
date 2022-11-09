@@ -22,6 +22,9 @@ import com.example.customerservice.CustomerService;
 import com.example.customerservice.GetCustomersByName;
 import com.example.customerservice.GetCustomersByNameResponse;
 import com.example.customerservice.multipart.MultiPartCustomerService;
+import com.example.duplicateerror.ExceptionA;
+import com.example.duplicateerror.ExceptionB;
+import com.example.duplicateerror.TestService;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dataformat.soap.name.ServiceInterfaceStrategy;
 import org.junit.jupiter.api.Test;
@@ -129,5 +132,20 @@ public class ServiceInterfaceStrategyTest {
 
         assertEquals("http://multipart.customerservice.example.com/", custTypeQName.getNamespaceURI());
         assertEquals("product", custTypeQName.getLocalPart());
+    }
+
+    @Test
+    public void testQNameToException() {
+        ServiceInterfaceStrategy strategy = new ServiceInterfaceStrategy(TestService.class, true);
+        QName soapExceptionMultipleDefined = new QName("http://www.example.com/duplicateerror", "soapException");
+        assertEquals(ExceptionA.class, strategy.findExceptionForSoapActionAndFaultName("throwErrorA", soapExceptionMultipleDefined));
+        assertEquals(ExceptionB.class, strategy.findExceptionForSoapActionAndFaultName("throwErrorB", soapExceptionMultipleDefined));
+
+        // This is implementation dependant (position in HashMap) one of ExceptionA or ExceptionB
+        Class<? extends Exception> multiDefinedException = strategy.findExceptionForFaultName(soapExceptionMultipleDefined);
+
+        if (multiDefinedException != ExceptionA.class && multiDefinedException != ExceptionB.class) {
+            fail("Not one of ExceptionA or ExceptionB");
+        }
     }
 }

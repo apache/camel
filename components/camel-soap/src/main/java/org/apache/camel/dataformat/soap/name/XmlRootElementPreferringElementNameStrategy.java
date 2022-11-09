@@ -73,4 +73,9 @@ public class XmlRootElementPreferringElementNameStrategy implements ElementNameS
         throw new UnsupportedOperationException("Exception lookup is not supported");
     }
 
+    @Override
+    public Class<? extends Exception> findExceptionForSoapActionAndFaultName(String soapAction, QName faultName) {
+        throw new UnsupportedOperationException("Exception lookup is not supported");
+    }
+
 }

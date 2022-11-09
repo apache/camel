@@ -174,7 +174,8 @@ public class Soap11DataFormatAdapter implements SoapDataFormatAdapter {
         Object payloadEl = anyElement.get(0);
         Object payload = JAXBIntrospector.getValue(payloadEl);
         if (payload instanceof Fault) {
-            Exception exception = createExceptionFromFault((Fault) payload);
+            String soapAction = exchange.getProperty(Exchange.SOAP_ACTION, String.class);
+            Exception exception = createExceptionFromFault(soapAction, (Fault) payload);
             exchange.setException(exception);
             return null;
         } else {
@@ -190,7 +191,7 @@ public class Soap11DataFormatAdapter implements SoapDataFormatAdapter {
      * @param  fault Soap fault
      * @return       created Exception
      */
-    private Exception createExceptionFromFault(Fault fault) {
+    private Exception createExceptionFromFault(String soapAction, Fault fault) {
         String message = fault.getFaultstring();
 
         Detail faultDetail = fault.getDetail();
@@ -214,7 +215,7 @@ public class Soap11DataFormatAdapter implements SoapDataFormatAdapter {
 
         JAXBElement<?> detailEl = (JAXBElement<?>) detailObj;
         Class<? extends Exception> exceptionClass
-                = getDataFormat().getElementNameStrategy().findExceptionForFaultName(detailEl.getName());
+                = getDataFormat().getElementNameStrategy().findExceptionForSoapActionAndFaultName(soapAction, detailEl.getName());
         Constructor<? extends Exception> messageConstructor;
         Constructor<? extends Exception> constructor;
 
