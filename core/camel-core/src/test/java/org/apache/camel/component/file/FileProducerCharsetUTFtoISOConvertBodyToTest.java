@@ -26,21 +26,22 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
  */
-public class FileProducerCharsetUTFtoISOConvertBodyToTest extends ContextTestSupport {
+class FileProducerCharsetUTFtoISOConvertBodyToTest extends ContextTestSupport {
 
     private static final String DATA = "ABC\u00e6";
 
     @Test
-    public void testFileProducerCharsetUTFtoISOConvertBodyTo() throws Exception {
+    void testFileProducerCharsetUTFtoISOConvertBodyTo() throws Exception {
         try (OutputStream fos = Files.newOutputStream(testFile("input.txt"))) {
             fos.write(DATA.getBytes(StandardCharsets.UTF_8));
         }
 
-        oneExchangeDone.matchesWaitTime();
+        assertTrue(oneExchangeDone.matchesWaitTime());
 
         assertFileExists(testFile("output.txt"));
         byte[] data = Files.readAllBytes(testFile("output.txt"));
@@ -54,7 +55,7 @@ public class FileProducerCharsetUTFtoISOConvertBodyToTest extends ContextTestSup
             @Override
             public void configure() throws Exception {
                 // the input file is in utf-8
-                from(fileUri("?initialDelay=0&delay=10&noop=true&charset=utf-8"))
+                from(fileUri("?initialDelay=0&delay=10&fileName=input.txt&charset=utf-8"))
                         // now convert the input file from utf-8 to iso-8859-1
                         .convertBodyTo(byte[].class, "iso-8859-1")
                         // and write the file using that encoding

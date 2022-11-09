@@ -25,21 +25,22 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
  */
-public class FileProducerCharsetUTFtoISOConfiguredTest extends ContextTestSupport {
+class FileProducerCharsetUTFtoISOConfiguredTest extends ContextTestSupport {
 
     private static final String DATA = "ABC\u00e6";
 
     @Test
-    public void testFileProducerCharsetUTFtoISO() throws Exception {
+    void testFileProducerCharsetUTFtoISO() throws Exception {
         try (OutputStream fos = Files.newOutputStream(testFile("input.txt"))) {
             fos.write(DATA.getBytes(StandardCharsets.UTF_8));
         }
 
-        oneExchangeDone.matchesWaitTime();
+        assertTrue(oneExchangeDone.matchesWaitTime());
 
         assertFileExists(testFile("output.txt"));
         byte[] data = Files.readAllBytes(testFile("output.txt"));
@@ -51,8 +52,8 @@ public class FileProducerCharsetUTFtoISOConfiguredTest extends ContextTestSuppor
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from(fileUri("?initialDelay=0&delay=10&charset=utf-8&noop=true"))
+            public void configure() {
+                from(fileUri("?initialDelay=0&delay=10&charset=utf-8&fileName=input.txt"))
                         .to(fileUri("?fileName=output.txt&charset=iso-8859-1"));
             }
         };

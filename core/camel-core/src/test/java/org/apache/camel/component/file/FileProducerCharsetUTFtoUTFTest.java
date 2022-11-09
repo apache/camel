@@ -30,18 +30,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  *
  */
-public class FileProducerCharsetUTFtoUTFTest extends ContextTestSupport {
+class FileProducerCharsetUTFtoUTFTest extends ContextTestSupport {
 
     private static final String DATA = "ABC\u00e6";
 
     @Test
-    public void testFileProducerCharsetUTFtoUTF() throws Exception {
+    void testFileProducerCharsetUTFtoUTF() throws Exception {
         byte[] source = DATA.getBytes(StandardCharsets.UTF_8);
         try (OutputStream fos = Files.newOutputStream(testFile("input.txt"))) {
             fos.write(source);
         }
 
-        oneExchangeDone.matchesWaitTime();
+        assertTrue(oneExchangeDone.matchesWaitTime());
 
         assertFileExists(testFile("output.txt"));
         byte[] target = Files.readAllBytes(testFile("output.txt"));
@@ -54,7 +54,7 @@ public class FileProducerCharsetUTFtoUTFTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(fileUri("?initialDelay=0&delay=10&noop=true"))
+                from(fileUri("?initialDelay=0&delay=10&fileName=input.txt"))
                         .to(fileUri("?fileName=output.txt&charset=utf-8"));
             }
         };
