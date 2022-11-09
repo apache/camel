@@ -280,11 +280,12 @@ public final class DockerConstants {
     public static final String DOCKER_VOLUMES_FROM = "CamelDockerVolumesFrom";
     @Metadata(description = "With domain name", javaType = "String")
     public static final String DOCKER_DOMAIN_NAME = "CamelDockerDomainName";
+    @Metadata(description = "With binds", javaType = "Bind or Bind[]")
+    public static final String DOCKER_BINDS = "CamelDockerBinds";
 
     /**
      * Start Container *
      */
-    public static final String DOCKER_BINDS = "CamelDockerBinds";
     @Metadata(description = "With cap add", javaType = "Capability or Capability[]")
     public static final String DOCKER_CAP_ADD = "CamelDockerCapAdd";
     @Metadata(description = "With cap drop", javaType = "Capability or Capability[]")
