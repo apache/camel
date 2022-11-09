@@ -40,8 +40,6 @@ public class Ddb2StreamComponent extends DefaultComponent {
 
     public Ddb2StreamComponent(CamelContext context) {
         super(context);
-
-        registerExtension(new Ddb2StreamComponentVerifierExtension());
     }
 
     @Override
