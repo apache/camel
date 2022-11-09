@@ -31,8 +31,11 @@ import java.util.regex.Pattern;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.RuntimeProvider;
+import org.apache.camel.catalog.VersionManager;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.main.KameletMain;
+import org.apache.camel.main.download.DependencyDownloaderClassLoader;
+import org.apache.camel.main.download.MavenArtifact;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.main.download.MavenGav;
 import org.apache.camel.tooling.model.ArtifactModel;
@@ -140,8 +143,8 @@ class ExportSpringBoot extends Export {
 
         String context = readResourceTemplate("templates/spring-boot-pom.tmpl");
 
-        CamelCatalog catalog = loadSpringBootCatalog();
-        String camelVersion = catalog.getCatalogVersion();
+        CamelCatalog catalog = loadSpringBootCatalog(camelSpringBootVersion);
+        String camelVersion = catalog.getLoadedVersion();
 
         context = context.replaceFirst("\\{\\{ \\.GroupId }}", ids[0]);
         context = context.replaceFirst("\\{\\{ \\.ArtifactId }}", ids[1]);
@@ -152,15 +155,16 @@ class ExportSpringBoot extends Export {
 
         // Convert jkube properties to maven properties
         Properties allProps = new CamelCaseOrderedProperties();
-        RuntimeUtil.loadProperties(allProps, profile);
-
-        StringBuilder jkubeProperties = new StringBuilder();
+        if (profile != null && profile.exists()) {
+            RuntimeUtil.loadProperties(allProps, profile);
+        }
+        StringBuilder sbJKube = new StringBuilder();
         allProps.stringPropertyNames().stream().filter(p -> p.startsWith("jkube")).forEach(key -> {
             String value = allProps.getProperty(key);
-            jkubeProperties.append("        <").append(key).append(">").append(value).append("</").append(key).append(">\n");
+            sbJKube.append("        <").append(key).append(">").append(value).append("</").append(key).append(">\n");
         });
         context = context.replaceFirst(Pattern.quote("{{ .jkubeProperties }}"),
-                Matcher.quoteReplacement(jkubeProperties.toString()));
+                Matcher.quoteReplacement(sbJKube.toString()));
 
         Properties prop = new CamelCaseOrderedProperties();
         RuntimeUtil.loadProperties(prop, settings);
@@ -242,7 +246,7 @@ class ExportSpringBoot extends Export {
 
         String context = readResourceTemplate("templates/spring-boot-build-gradle.tmpl");
 
-        CamelCatalog catalog = loadSpringBootCatalog();
+        CamelCatalog catalog = loadSpringBootCatalog(camelSpringBootVersion);
         String camelVersion = catalog.getCatalogVersion();
 
         context = context.replaceFirst("\\{\\{ \\.GroupId }}", ids[0]);
@@ -345,33 +349,47 @@ class ExportSpringBoot extends Export {
         return super.applicationPropertyLine(key, value);
     }
 
-    private CamelCatalog loadSpringBootCatalog() {
-        CamelCatalog answer = new DefaultCamelCatalog(true);
+    private CamelCatalog loadSpringBootCatalog(String version) throws Exception {
+        CamelCatalog answer = new DefaultCamelCatalog();
+        if (version == null) {
+            version = answer.getCatalogVersion();
+        }
 
         // use kamelet-main to dynamic download dependency via maven
         KameletMain main = new KameletMain();
         try {
             main.start();
 
-            MavenDependencyDownloader downloader = main.getCamelContext().hasService(MavenDependencyDownloader.class);
-            downloader.downloadDependency("org.apache.camel.springboot", "camel-catalog-provider-springboot",
-                    answer.getCatalogVersion());
+            // wrap downloaded catalog files in an isolated classloader
+            DependencyDownloaderClassLoader cl
+                    = new DependencyDownloaderClassLoader(main.getCamelContext().getApplicationContextClassLoader());
 
-            Class<RuntimeProvider> clazz = main.getCamelContext().getClassResolver().resolveClass(SPRING_BOOT_CATALOG_PROVIDER,
-                    RuntimeProvider.class);
+            // download camel-catalog for that specific version
+            MavenDependencyDownloader downloader = main.getCamelContext().hasService(MavenDependencyDownloader.class);
+            MavenArtifact ma = downloader.downloadArtifact("org.apache.camel", "camel-catalog", version);
+            if (ma != null) {
+                cl.addFile(ma.getFile());
+            } else {
+                throw new IOException("Cannot download org.apache.camel:camel-catalog:" + version);
+            }
+            ma = downloader.downloadArtifact("org.apache.camel.springboot", "camel-catalog-provider-springboot", version);
+            if (ma != null) {
+                cl.addFile(ma.getFile());
+            } else {
+                throw new IOException(
+                        "Cannot download org.apache.camel.springboot:camel-catalog-provider-springboot:" + version);
+            }
+
+            answer.setVersionManager(new SpringBootCatalogVersionManager(version, cl));
+            Class<RuntimeProvider> clazz = (Class<RuntimeProvider>) cl.loadClass(SPRING_BOOT_CATALOG_PROVIDER);
             if (clazz != null) {
                 RuntimeProvider provider = main.getCamelContext().getInjector().newInstance(clazz);
                 if (provider != null) {
-                    // re-create answer with the classloader that loaded spring-boot to be able to load resources in this catalog
-                    Class<CamelCatalog> clazz2 = main.getCamelContext().getClassResolver().resolveClass(DEFAULT_CAMEL_CATALOG,
-                            CamelCatalog.class);
-                    answer = main.getCamelContext().getInjector().newInstance(clazz2);
                     answer.setRuntimeProvider(provider);
-                    // use classloader that loaded spring-boot provider to ensure we can load its resources
-                    answer.getVersionManager().setClassLoader(main.getCamelContext().getApplicationContextClassLoader());
-                    answer.enableCache();
                 }
             }
+            answer.enableCache();
+
         } finally {
             main.stop();
         }
@@ -384,6 +402,47 @@ class ExportSpringBoot extends Export {
         String text = IOHelper.loadText(is);
         IOHelper.close(is);
         return text;
+    }
+
+    private final class SpringBootCatalogVersionManager implements VersionManager {
+
+        private ClassLoader classLoader;
+        private final String version;
+
+        public SpringBootCatalogVersionManager(String version, ClassLoader classLoader) {
+            this.version = version;
+            this.classLoader = classLoader;
+        }
+
+        @Override
+        public void setClassLoader(ClassLoader classLoader) {
+            this.classLoader = classLoader;
+        }
+
+        @Override
+        public String getLoadedVersion() {
+            return version;
+        }
+
+        @Override
+        public boolean loadVersion(String version) {
+            return this.version.equals(version);
+        }
+
+        @Override
+        public String getRuntimeProviderLoadedVersion() {
+            return version;
+        }
+
+        @Override
+        public boolean loadRuntimeProviderVersion(String groupId, String artifactId, String version) {
+            return true;
+        }
+
+        @Override
+        public InputStream getResourceAsStream(String name) {
+            return classLoader.getResourceAsStream(name);
+        }
     }
 
 }

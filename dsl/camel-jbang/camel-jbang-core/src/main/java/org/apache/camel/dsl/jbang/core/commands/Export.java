@@ -97,6 +97,7 @@ class Export extends ExportBaseCommand {
         cmd.logging = this.logging;
         cmd.loggingLevel = this.loggingLevel;
         cmd.mainClassname = this.mainClassname;
+        cmd.camelSpringBootVersion = this.camelSpringBootVersion;
         cmd.quarkusGroupId = this.quarkusGroupId;
         cmd.quarkusArtifactId = this.quarkusArtifactId;
         cmd.quarkusVersion = this.quarkusVersion;
