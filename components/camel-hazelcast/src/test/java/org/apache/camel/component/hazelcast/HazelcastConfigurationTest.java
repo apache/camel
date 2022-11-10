@@ -38,21 +38,21 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class HazelcastConfigurationTest {
+class HazelcastConfigurationTest {
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         Hazelcast.shutdownAll();
     }
 
     @Test
-    public void testNamedInstance() throws Exception {
+    void testNamedInstance() {
         DefaultCamelContext context = null;
 
-        try {
+        try (AvailablePortFinder.Port port = AvailablePortFinder.find()) {
             String instanceName = UUID.randomUUID().toString();
             Config config = new Config();
             config.setInstanceName(instanceName);
-            config.getNetworkConfig().setPort(6789);
+            config.getNetworkConfig().setPort(port.getPort());
             config.getNetworkConfig().getJoin().getAwsConfig().setEnabled(false);
             config.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(true);
             config.getNetworkConfig().getJoin().getTcpIpConfig().setEnabled(false);
@@ -80,7 +80,7 @@ public class HazelcastConfigurationTest {
                 assertFalse(hz.getConfig().getNetworkConfig().getJoin().getAwsConfig().isEnabled());
                 assertTrue(hz.getConfig().getNetworkConfig().getJoin().getMulticastConfig().isEnabled());
                 assertFalse(hz.getConfig().getNetworkConfig().getJoin().getTcpIpConfig().isEnabled());
-                assertEquals(6789, hz.getConfig().getNetworkConfig().getPort());
+                assertEquals(port.getPort(), hz.getConfig().getNetworkConfig().getPort());
             }
         } finally {
             if (context != null) {
@@ -90,7 +90,7 @@ public class HazelcastConfigurationTest {
     }
 
     @Test
-    public void testDefaultConfiguration() throws Exception {
+    void testDefaultConfiguration() {
         DefaultCamelContext context = null;
 
         try {
@@ -122,7 +122,7 @@ public class HazelcastConfigurationTest {
     }
 
     @Test
-    public void testNamedInstanceWithConfigurationUri() throws Exception {
+    void testNamedInstanceWithConfigurationUri() {
         DefaultCamelContext context = null;
 
         try {
@@ -155,7 +155,7 @@ public class HazelcastConfigurationTest {
     }
 
     @Test
-    public void testCustomConfigurationUri() throws Exception {
+    void testCustomConfigurationUri() {
         DefaultCamelContext context = null;
 
         try {
@@ -190,12 +190,12 @@ public class HazelcastConfigurationTest {
     }
 
     @Test
-    public void testCustomConfigurationReference() throws Exception {
+    void testCustomConfigurationReference() {
         DefaultCamelContext context = null;
 
-        try {
+        try (AvailablePortFinder.Port port = AvailablePortFinder.find()) {
             Config config = new Config();
-            config.getNetworkConfig().setPort(6789);
+            config.getNetworkConfig().setPort(port.getPort());
             config.getNetworkConfig().getJoin().getAwsConfig().setEnabled(false);
             config.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(true);
             config.getNetworkConfig().getJoin().getTcpIpConfig().setEnabled(false);
@@ -217,7 +217,7 @@ public class HazelcastConfigurationTest {
             assertFalse(hz.getConfig().getNetworkConfig().getJoin().getAwsConfig().isEnabled());
             assertTrue(hz.getConfig().getNetworkConfig().getJoin().getMulticastConfig().isEnabled());
             assertFalse(hz.getConfig().getNetworkConfig().getJoin().getTcpIpConfig().isEnabled());
-            assertEquals(6789, hz.getConfig().getNetworkConfig().getPort());
+            assertEquals(port.getPort(), hz.getConfig().getNetworkConfig().getPort());
 
         } finally {
             if (context != null) {
@@ -227,7 +227,7 @@ public class HazelcastConfigurationTest {
     }
 
     @Test
-    public void testMix() throws Exception {
+    void testMix() {
         DefaultCamelContext context = null;
 
         try (AvailablePortFinder.Port port1 = AvailablePortFinder.find();
