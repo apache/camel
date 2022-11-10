@@ -114,11 +114,11 @@ public final class PropertyBindingSupport {
      * {@link #build()} where each option can be customized, such as whether parameter should be removed, or whether
      * options are mandatory etc.
      *
-     * @param camelContext the camel context
-     * @param target       the target object
-     * @param properties   the properties (as flat key=value paris) where the bound properties will be removed
-     * @return true if one or more properties was bound
-     * @see #build()
+     * @param  camelContext the camel context
+     * @param  target       the target object
+     * @param  properties   the properties (as flat key=value paris) where the bound properties will be removed
+     * @return              true if one or more properties was bound
+     * @see                 #build()
      */
     public static boolean bindProperties(CamelContext camelContext, Object target, Map<String, Object> properties) {
         // mandatory parameters
@@ -136,12 +136,12 @@ public final class PropertyBindingSupport {
      * {@link #build()} where each option can be customized, such as whether parameter should be removed, or whether
      * options are mandatory etc.
      *
-     * @param camelContext the camel context
-     * @param target       the target object
-     * @param properties   the properties as (map of maps) where the properties will be flattened, and bound properties
-     *                     will be removed
-     * @return true if one or more properties was bound
-     * @see #build()
+     * @param  camelContext the camel context
+     * @param  target       the target object
+     * @param  properties   the properties as (map of maps) where the properties will be flattened, and bound properties
+     *                      will be removed
+     * @return              true if one or more properties was bound
+     * @see                 #build()
      */
     public static boolean bindWithFlattenProperties(CamelContext camelContext, Object target, Map<String, Object> properties) {
         // mandatory parameters
@@ -156,28 +156,28 @@ public final class PropertyBindingSupport {
      * Binds the properties with the given prefix to the target object, and removes the property that was bound from
      * properties. Note that the prefix is removed from the key before the property is bound.
      *
-     * @param camelContext       the camel context
-     * @param target             the target object
-     * @param properties         the properties where the bound properties will be removed from
-     * @param optionPrefix       the prefix used to filter properties
-     * @param ignoreCase         whether to ignore case for property keys
-     * @param removeParameter    whether to remove bound parameters
-     * @param flattenProperties  whether properties should be flattened (when properties is a map of maps)
-     * @param mandatory          whether all parameters must be bound
-     * @param optional           whether parameters can be optional such as configuring endpoints that are lenient
-     * @param nesting            whether nesting is in use
-     * @param deepNesting        whether deep nesting is in use, where Camel will attempt to walk as deep as possible
-     *                           by creating new objects in the OGNL graph if a property has a setter and the object
-     *                           can be created from a default no-arg constructor.
-     * @param fluentBuilder      whether fluent builder is allowed as a valid getter/setter
-     * @param allowPrivateSetter whether autowiring components allows to use private setter method when setting the
-     *                           value
-     * @param reference          whether reference parameter (syntax starts with #) is in use
-     * @param placeholder        whether to use Camels property placeholder to resolve placeholders on keys and values
-     * @param reflection         whether to allow using reflection (when there is no configurer available).
-     * @param configurer         to use an optional {@link PropertyConfigurer} to configure the properties
-     * @param listener           optional listener
-     * @return true if one or more properties was bound
+     * @param  camelContext       the camel context
+     * @param  target             the target object
+     * @param  properties         the properties where the bound properties will be removed from
+     * @param  optionPrefix       the prefix used to filter properties
+     * @param  ignoreCase         whether to ignore case for property keys
+     * @param  removeParameter    whether to remove bound parameters
+     * @param  flattenProperties  whether properties should be flattened (when properties is a map of maps)
+     * @param  mandatory          whether all parameters must be bound
+     * @param  optional           whether parameters can be optional such as configuring endpoints that are lenient
+     * @param  nesting            whether nesting is in use
+     * @param  deepNesting        whether deep nesting is in use, where Camel will attempt to walk as deep as possible
+     *                            by creating new objects in the OGNL graph if a property has a setter and the object
+     *                            can be created from a default no-arg constructor.
+     * @param  fluentBuilder      whether fluent builder is allowed as a valid getter/setter
+     * @param  allowPrivateSetter whether autowiring components allows to use private setter method when setting the
+     *                            value
+     * @param  reference          whether reference parameter (syntax starts with #) is in use
+     * @param  placeholder        whether to use Camels property placeholder to resolve placeholders on keys and values
+     * @param  reflection         whether to allow using reflection (when there is no configurer available).
+     * @param  configurer         to use an optional {@link PropertyConfigurer} to configure the properties
+     * @param  listener           optional listener
+     * @return                    true if one or more properties was bound
      */
     private static boolean doBindProperties(
             CamelContext camelContext, Object target, Map<String, Object> properties,
@@ -269,11 +269,11 @@ public final class PropertyBindingSupport {
             // remove quotes around the key
             name = StringHelper.removeLeadingAndEndingQuotes(name);
             newName = name;
-            parts = new String[]{name};
+            parts = new String[] { name };
         } else if (isDotKey(name)) {
             parts = splitKey(name);
         } else {
-            parts = new String[]{name};
+            parts = new String[] { name };
         }
         // last node should not be walked here (that happens later)
         for (int i = 0; i < parts.length - 1; i++) {
@@ -618,7 +618,7 @@ public final class PropertyBindingSupport {
                 if (!hit) {
                     throw new IllegalArgumentException(
                             "Cannot set property: " + name
-                                    + " as an array because target bean has no setter method for the array");
+                                                       + " as an array because target bean has no setter method for the array");
                 }
             }
             Array.set(obj, idx, value);
@@ -627,8 +627,8 @@ public final class PropertyBindingSupport {
             // not a map or list
             throw new IllegalArgumentException(
                     "Cannot set property: " + name
-                            + " as either a Map/List/array because target bean is not a Map, List or array type: "
-                            + target);
+                                               + " as either a Map/List/array because target bean is not a Map, List or array type: "
+                                               + target);
         }
     }
 
@@ -673,8 +673,8 @@ public final class PropertyBindingSupport {
                     // not a map or list
                     throw new IllegalArgumentException(
                             "Cannot set property: " + name
-                                    + " as either a Map/List/array because target bean is not a Map, List or array type: "
-                                    + target);
+                                                       + " as either a Map/List/array because target bean is not a Map, List or array type: "
+                                                       + target);
                 }
                 target = obj;
             }
@@ -726,7 +726,7 @@ public final class PropertyBindingSupport {
                 if (!hit) {
                     throw new IllegalArgumentException(
                             "Cannot set property: " + name
-                                    + " as an array because target bean has no setter method for the array");
+                                                       + " as an array because target bean has no setter method for the array");
                 }
             }
             Array.set(obj, idx, value);
@@ -735,8 +735,8 @@ public final class PropertyBindingSupport {
             // not a map or list
             throw new IllegalArgumentException(
                     "Cannot set property: " + name
-                            + " as either a Map/List/array because target bean is not a Map, List or array type: "
-                            + target);
+                                               + " as either a Map/List/array because target bean is not a Map, List or array type: "
+                                               + target);
         }
     }
 
@@ -788,14 +788,14 @@ public final class PropertyBindingSupport {
                     // fallback to reflection
                     Method method
                             = findBestSetterMethod(context, target.getClass(), undashKey, fluentBuilder, allowPrivateSetter,
-                            ignoreCase);
+                                    ignoreCase);
                     if (method != null) {
                         parameterType = method.getParameterTypes()[0];
                     } else {
                         throw new IllegalStateException(
                                 "Cannot find setter method with name: " + undashKey + " on class: "
-                                        + target.getClass().getName()
-                                        + " to use for autowiring");
+                                                        + target.getClass().getName()
+                                                        + " to use for autowiring");
                     }
                 }
                 if (parameterType != null) {
@@ -805,11 +805,11 @@ public final class PropertyBindingSupport {
                     } else if (types.size() > 1) {
                         throw new IllegalStateException(
                                 "Cannot select single type: " + parameterType + " as there are " + types.size()
-                                        + " beans in the registry with this type");
+                                                        + " beans in the registry with this type");
                     } else {
                         throw new IllegalStateException(
                                 "Cannot select single type: " + parameterType
-                                        + " as there are no beans in the registry with this type");
+                                                        + " as there are no beans in the registry with this type");
                     }
                 }
             }
@@ -876,7 +876,7 @@ public final class PropertyBindingSupport {
             // there is no setter with this given name, so lets report this as a problem
             throw new IllegalArgumentException(
                     "Cannot find setter method: " + name + " on bean: " + target + " of type: " + target.getClass().getName()
-                            + " when binding property: " + name);
+                                               + " when binding property: " + name);
         }
         return hit;
     }
@@ -925,14 +925,14 @@ public final class PropertyBindingSupport {
                     // not a map or list
                     throw new IllegalArgumentException(
                             "Cannot set property: " + property
-                                    + " as either a Map/List/array because target bean is not a Map, List or array type: "
-                                    + target);
+                                                       + " as either a Map/List/array because target bean is not a Map, List or array type: "
+                                                       + target);
                 }
                 boolean hit = configurer.configure(context, target, undashKey, answer, ignoreCase);
                 if (!hit) {
                     throw new IllegalArgumentException(
                             "Cannot set property: " + key
-                                    + " as an map/list/array because target bean has no suitable setter method");
+                                                       + " as an map/list/array because target bean has no suitable setter method");
                 }
             }
         }
@@ -992,7 +992,7 @@ public final class PropertyBindingSupport {
                 if (!hit) {
                     throw new IllegalArgumentException(
                             "Cannot set property: " + key
-                                    + " as an array because target bean has no setter method for the array");
+                                                       + " as an array because target bean has no setter method for the array");
                 }
             }
             Object instance = arr[idx];
@@ -1056,8 +1056,8 @@ public final class PropertyBindingSupport {
                     // not a map or list
                     throw new IllegalArgumentException(
                             "Cannot set property: " + property
-                                    + " as either a Map/List/array because target bean is not a Map, List or array type: "
-                                    + target);
+                                                       + " as either a Map/List/array because target bean is not a Map, List or array type: "
+                                                       + target);
                 }
                 boolean hit = false;
                 try {
@@ -1068,7 +1068,7 @@ public final class PropertyBindingSupport {
                 if (!hit) {
                     throw new IllegalArgumentException(
                             "Cannot set property: " + key
-                                    + " as an map/list/array because target bean has no suitable setter method");
+                                                       + " as an map/list/array because target bean has no suitable setter method");
                 }
             }
         }
@@ -1155,7 +1155,7 @@ public final class PropertyBindingSupport {
                 if (!hit) {
                     throw new IllegalArgumentException(
                             "Cannot set property: " + key
-                                    + " as an array because target bean has no setter method for the array");
+                                                       + " as an array because target bean has no setter method for the array");
                 }
             }
             Object instance = arr[idx];
@@ -1194,8 +1194,8 @@ public final class PropertyBindingSupport {
     /**
      * Is the given parameter a reference parameter (starting with a # char)
      *
-     * @param obj the parameter
-     * @return <tt>true</tt> if its a reference parameter
+     * @param  obj the parameter
+     * @return     <tt>true</tt> if its a reference parameter
      */
     private static boolean isReferenceParameter(Object obj) {
         if (obj == null) {
@@ -1223,12 +1223,12 @@ public final class PropertyBindingSupport {
     /**
      * Creates a new bean instance using the constructor that takes the given set of parameters.
      *
-     * @param camelContext the camel context
-     * @param type         the class type of the bean to create
-     * @param parameters   the parameters for the constructor
-     * @return the created bean, or null if there was no constructor that matched the given set of
-     * parameters
-     * @throws Exception is thrown if error creating the bean
+     * @param  camelContext the camel context
+     * @param  type         the class type of the bean to create
+     * @param  parameters   the parameters for the constructor
+     * @return              the created bean, or null if there was no constructor that matched the given set of
+     *                      parameters
+     * @throws Exception    is thrown if error creating the bean
      */
     public static Object newInstanceConstructorParameters(CamelContext camelContext, Class<?> type, String parameters)
             throws Exception {
@@ -1269,9 +1269,9 @@ public final class PropertyBindingSupport {
      * <p/>
      * This implementation is similar to the logic in camel-bean.
      *
-     * @param constructors the constructors
-     * @param params       the parameters
-     * @return the constructor, or null if no matching constructor can be found
+     * @param  constructors the constructors
+     * @param  params       the parameters
+     * @return              the constructor, or null if no matching constructor can be found
      */
     private static Constructor findMatchingConstructor(Constructor<?>[] constructors, String[] params) {
         List<Constructor> candidates = new ArrayList<>();
@@ -1320,12 +1320,12 @@ public final class PropertyBindingSupport {
     /**
      * Creates a new bean instance using a public static factory method from the given class
      *
-     * @param camelContext the camel context
-     * @param type         the class with the public static factory method
-     * @param parameters   optional parameters for the factory method
-     * @return the created bean, or null if there was no factory method (optionally matched the given set
-     * of parameters)
-     * @throws Exception is thrown if error creating the bean
+     * @param  camelContext the camel context
+     * @param  type         the class with the public static factory method
+     * @param  parameters   optional parameters for the factory method
+     * @return              the created bean, or null if there was no factory method (optionally matched the given set
+     *                      of parameters)
+     * @throws Exception    is thrown if error creating the bean
      */
     public static Object newInstanceFactoryParameters(
             CamelContext camelContext, Class<?> type, String factoryMethod, String parameters)
@@ -1355,10 +1355,10 @@ public final class PropertyBindingSupport {
      * <p/>
      * This implementation is similar to the logic in camel-bean.
      *
-     * @param methods       the methods
-     * @param factoryMethod the name of the factory method
-     * @param params        the parameters
-     * @return the constructor, or null if no matching constructor can be found
+     * @param  methods       the methods
+     * @param  factoryMethod the name of the factory method
+     * @param  params        the parameters
+     * @return               the constructor, or null if no matching constructor can be found
      */
     private static Method findMatchingFactoryMethod(Method[] methods, String factoryMethod, String[] params) {
         List<Method> candidates = new ArrayList<>();
@@ -1420,8 +1420,8 @@ public final class PropertyBindingSupport {
      * <p/>
      * This implementation is similar to the logic in camel-bean.
      *
-     * @param value the value
-     * @return the parameter type the given value is being mapped as, or <tt>null</tt> if not valid.
+     * @param  value the value
+     * @return       the parameter type the given value is being mapped as, or <tt>null</tt> if not valid.
      */
     private static Class<?> getValidParameterType(String value) {
         if (org.apache.camel.util.ObjectHelper.isEmpty(value)) {
@@ -1492,10 +1492,10 @@ public final class PropertyBindingSupport {
     /**
      * Resolves the value as either a class, type or bean.
      *
-     * @param camelContext the camel context
-     * @param value        how to resolve the bean with a prefix of either #class:, #type: or #bean:
-     * @return the resolve bean
-     * @throws Exception is thrown if error resolving the bean, or if the value is invalid.
+     * @param  camelContext the camel context
+     * @param  value        how to resolve the bean with a prefix of either #class:, #type: or #bean:
+     * @return              the resolve bean
+     * @throws Exception    is thrown if error resolving the bean, or if the value is invalid.
      */
     public static Object resolveBean(CamelContext camelContext, Object value) throws Exception {
         if (!(value instanceof String)) {
@@ -1553,7 +1553,7 @@ public final class PropertyBindingSupport {
             } else if (types.size() > 1) {
                 throw new IllegalStateException(
                         "Cannot select single type: " + typeName + " as there are " + types.size()
-                                + " beans in the registry with this type");
+                                                + " beans in the registry with this type");
             } else {
                 throw new IllegalStateException(
                         "Cannot select single type: " + typeName + " as there are no beans in the registry with this type");
@@ -1847,10 +1847,10 @@ public final class PropertyBindingSupport {
         /**
          * Binds the properties to the target object, and removes the property that was bound from properties.
          *
-         * @param camelContext the camel context
-         * @param target       the target object
-         * @param properties   the properties where the bound properties will be removed from
-         * @return true if one or more properties was bound
+         * @param  camelContext the camel context
+         * @param  target       the target object
+         * @param  properties   the properties where the bound properties will be removed from
+         * @return              true if one or more properties was bound
          */
         public boolean bind(CamelContext camelContext, Object target, Map<String, Object> properties) {
             CamelContext context = camelContext != null ? camelContext : this.camelContext;
@@ -1866,11 +1866,11 @@ public final class PropertyBindingSupport {
         /**
          * Binds the property to the target object.
          *
-         * @param camelContext the camel context
-         * @param target       the target object
-         * @param key          the property key
-         * @param value        the property value
-         * @return true if the property was bound
+         * @param  camelContext the camel context
+         * @param  target       the target object
+         * @param  key          the property key
+         * @param  value        the property value
+         * @return              true if the property was bound
          */
         public boolean bind(CamelContext camelContext, Object target, String key, Object value) {
             Map<String, Object> properties = new HashMap<>(1);
