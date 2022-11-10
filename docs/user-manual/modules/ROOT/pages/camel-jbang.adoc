@@ -1575,8 +1575,17 @@ The follow options related to _exporting_, can be configured in `application.pro
 |`camel.jbang.gradleWrapper`
 |Include Gradle Wrapper files in exported project
 
-|`camel.jbang.project`
-|Project (either maven or gradle)
+|`camel.jbang.buildTool`
+|Build tool to use (maven or gradle)
+
+|`camel.jbang.repos`
+|Additional maven repositories for download on-demand (Use commas to separate multiple repositories)
+
+|`camel.jbang.mavenSettings`
+|Optional location of maven setting.xml file to configure servers, repositories, mirrors and proxies. If set to false, not even the default ~/.m2/settings.xml will be used.
+
+|`camel.jbang.mavenSettingsSecurity`
+|Optional location of maven settings-security.xml file to decrypt settings.xml
 
 |`camel.jbang.exportDir`
 |Directory where the project will be exported
