@@ -1304,7 +1304,7 @@ you do not have to use a build system like Maven or Gradle to add every Camel co
 as a dependency.
 
 However, you may want to know what dependencies are required to run the Camel integration.
-To see this, you can use the `dependency-tree` command. The command output does not output a detailed
+To see this, you can use the `dependencies` command. The command output does not output a detailed
 tree, such as `mvn dependencies:tree`, as the output is intended to list which Camel components,
 and other JARs needed (when using Kamelets).
 
@@ -1312,7 +1312,7 @@ The dependency output by default is _vanilla_ Apache Camel with the camel-main a
 
 [source,bash]
 ----
-camel dependency-tree
+camel dependencies
 org.apache.camel:camel-dsl-modeline:3.20.0
 org.apache.camel:camel-health:3.20.0
 org.apache.camel:camel-kamelet:3.20.0
@@ -1331,7 +1331,7 @@ You can also specify the output should be in _Maven format_ as shown:
 
 [source,bash]
 ----
-camel dependency-tree --output=maven
+camel dependencies --output=maven
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-main</artifactId>
@@ -1393,7 +1393,7 @@ You can also choose the target runtime as either _quarkus_ or _spring-boot_ as s
 
 [source,bash]
 ----
-camel dependency-tree --runtime=spring-boot
+camel dependencies --runtime=spring-boot
 org.springframework.boot:spring-boot-starter-actuator:2.7.5
 org.springframework.boot:spring-boot-starter-web:2.7.5
 org.apache.camel.springboot:camel-spring-boot-engine-starter:3.20.0

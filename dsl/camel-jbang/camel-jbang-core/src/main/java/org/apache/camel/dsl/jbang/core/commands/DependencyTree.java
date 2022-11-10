@@ -35,6 +35,8 @@ import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
 
+@CommandLine.Command(name = "dependencies",
+                     description = "Displays all Camel dependencies required to run")
 public class DependencyTree extends Export {
 
     protected static final String EXPORT_DIR = ".camel-jbang/export";
