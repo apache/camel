@@ -143,7 +143,11 @@ class ExportSpringBoot extends Export {
 
         String context = readResourceTemplate("templates/spring-boot-pom.tmpl");
 
-        CamelCatalog catalog = loadSpringBootCatalog(camelSpringBootVersion);
+        Properties prop = new CamelCaseOrderedProperties();
+        RuntimeUtil.loadProperties(prop, settings);
+        String repos = getMavenRepos(prop, camelSpringBootVersion);
+
+        CamelCatalog catalog = loadSpringBootCatalog(repos, camelSpringBootVersion);
         String camelVersion = catalog.getLoadedVersion();
 
         context = context.replaceFirst("\\{\\{ \\.GroupId }}", ids[0]);
@@ -166,10 +170,6 @@ class ExportSpringBoot extends Export {
         context = context.replaceFirst(Pattern.quote("{{ .jkubeProperties }}"),
                 Matcher.quoteReplacement(sbJKube.toString()));
 
-        Properties prop = new CamelCaseOrderedProperties();
-        RuntimeUtil.loadProperties(prop, settings);
-
-        String repos = prop.getProperty("camel.jbang.repos");
         if (repos == null) {
             context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", "");
         } else {
@@ -180,6 +180,14 @@ class ExportSpringBoot extends Export {
                 sb.append("        <repository>\n");
                 sb.append("            <id>custom").append(i++).append("</id>\n");
                 sb.append("            <url>").append(repo).append("</url>\n");
+                if (repo.contains("snapshots")) {
+                    sb.append("            <releases>\n");
+                    sb.append("                <enabled>false</enabled>\n");
+                    sb.append("            </releases>\n");
+                    sb.append("            <snapshots>\n");
+                    sb.append("                <enabled>true</enabled>\n");
+                    sb.append("            </snapshots>\n");
+                }
                 sb.append("        </repository>\n");
             }
             sb.append("    </repositories>\n");
@@ -233,13 +241,6 @@ class ExportSpringBoot extends Export {
         }
         context = context.replaceFirst("\\{\\{ \\.CamelDependencies }}", sb.toString());
 
-        // add apache snapshot repository if camel version ends with SNAPSHOT
-        String contextSnapshot = "";
-        if (camelVersion.endsWith("SNAPSHOT")) {
-            contextSnapshot = readResourceTemplate("templates/apache-snapshot-maven.tmpl");
-        }
-        context = context.replaceFirst(Pattern.quote("{{ .snapshotRepository }}"), Matcher.quoteReplacement(contextSnapshot));
-
         // add jkube profiles if there is jkube version property
         String jkubeProfiles = "";
         if (allProps.getProperty("jkube.version") != null) {
@@ -255,7 +256,11 @@ class ExportSpringBoot extends Export {
 
         String context = readResourceTemplate("templates/spring-boot-build-gradle.tmpl");
 
-        CamelCatalog catalog = loadSpringBootCatalog(camelSpringBootVersion);
+        Properties prop = new CamelCaseOrderedProperties();
+        RuntimeUtil.loadProperties(prop, settings);
+        String repos = getMavenRepos(prop, camelSpringBootVersion);
+
+        CamelCatalog catalog = loadSpringBootCatalog(repos, camelSpringBootVersion);
         String camelVersion = catalog.getLoadedVersion();
 
         context = context.replaceFirst("\\{\\{ \\.GroupId }}", ids[0]);
@@ -265,16 +270,18 @@ class ExportSpringBoot extends Export {
         context = context.replaceFirst("\\{\\{ \\.JavaVersion }}", javaVersion);
         context = context.replaceAll("\\{\\{ \\.CamelVersion }}", camelVersion);
 
-        Properties prop = new CamelCaseOrderedProperties();
-        RuntimeUtil.loadProperties(prop, settings);
-        String repos = prop.getProperty("camel.jbang.repos");
         if (repos == null) {
             context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", "");
         } else {
             StringBuilder sb = new StringBuilder();
             for (String repo : repos.split(",")) {
                 sb.append("    maven {\n");
-                sb.append("        url: '").append(repo).append("'\n");
+                sb.append("        url '").append(repo).append("'\n");
+                if (repo.contains("snapshots")) {
+                    sb.append("        mavenContent {\n");
+                    sb.append("            snapshotsOnly()\n");
+                    sb.append("        }\n");
+                }
                 sb.append("    }\n");
             }
             context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", sb.toString());
@@ -365,7 +372,7 @@ class ExportSpringBoot extends Export {
         return super.applicationPropertyLine(key, value);
     }
 
-    private CamelCatalog loadSpringBootCatalog(String version) throws Exception {
+    private CamelCatalog loadSpringBootCatalog(String repos, String version) throws Exception {
         CamelCatalog answer = new DefaultCamelCatalog();
         if (version == null) {
             version = answer.getCatalogVersion();
@@ -374,6 +381,7 @@ class ExportSpringBoot extends Export {
         // use kamelet-main to dynamic download dependency via maven
         KameletMain main = new KameletMain();
         try {
+            main.setRepos(repos);
             main.start();
 
             // wrap downloaded catalog files in an isolated classloader

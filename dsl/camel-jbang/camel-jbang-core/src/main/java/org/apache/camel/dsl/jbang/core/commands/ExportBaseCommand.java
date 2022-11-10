@@ -33,6 +33,7 @@ import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.main.download.MavenGav;
 import org.apache.camel.util.CamelCaseOrderedProperties;
@@ -449,6 +450,32 @@ abstract class ExportBaseCommand extends CamelCommand {
 
     protected String applicationPropertyLine(String key, String value) {
         return key + "=" + value;
+    }
+
+    /**
+     * Gets the maven repositories
+     *
+     * @param  prop         settings
+     * @param  camelVersion the camel version
+     * @return              repositories or null if none are in use
+     */
+    protected static String getMavenRepos(Properties prop, String camelVersion) {
+        String answer = prop.getProperty("camel.jbang.repos");
+
+        if (camelVersion == null) {
+            camelVersion = new DefaultCamelCatalog().getCatalogVersion();
+        }
+
+        // include apache snapshot repo if we use SNAPSHOT version of Camel
+        if (camelVersion.endsWith("-SNAPSHOT")) {
+            if (answer == null) {
+                answer = "https://repository.apache.org/content/groups/snapshots/";
+            } else if (!answer.contains("https://repository.apache.org/content/groups/snapshots/")) {
+                answer += ",https://repository.apache.org/content/groups/snapshots/";
+            }
+        }
+
+        return answer;
     }
 
     protected static void safeCopy(File source, File target, boolean override) throws Exception {

@@ -1094,7 +1094,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                     String id = "custom" + customCount++;
                     RepositoryPolicy releasePolicy = fresh ? POLICY_FRESH : POLICY_DEFAULT;
                     if (repositoryURLs.add(url)) {
-                        if (url.getHost().equals("repository.apache.org") && url.getPath().startsWith("/snapshots")) {
+                        if (url.getHost().equals("repository.apache.org") && url.getPath().contains("/snapshots")) {
                             apacheSnapshotsIncluded = true;
                             repositories.add(apacheSnapshots);
                         } else {

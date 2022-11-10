@@ -138,7 +138,7 @@ class ExportCamelMain extends Export {
 
         Properties prop = new CamelCaseOrderedProperties();
         RuntimeUtil.loadProperties(prop, settings);
-        String repos = prop.getProperty("camel.jbang.repos");
+        String repos = getMavenRepos(prop, camelVersion);
         if (repos == null) {
             context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", "");
         } else {
@@ -149,6 +149,14 @@ class ExportCamelMain extends Export {
                 sb.append("        <repository>\n");
                 sb.append("            <id>custom").append(i++).append("</id>\n");
                 sb.append("            <url>").append(repo).append("</url>\n");
+                if (repo.contains("snapshots")) {
+                    sb.append("            <releases>\n");
+                    sb.append("                <enabled>false</enabled>\n");
+                    sb.append("            </releases>\n");
+                    sb.append("            <snapshots>\n");
+                    sb.append("                <enabled>true</enabled>\n");
+                    sb.append("            </snapshots>\n");
+                }
                 sb.append("        </repository>\n");
             }
             sb.append("    </repositories>\n");

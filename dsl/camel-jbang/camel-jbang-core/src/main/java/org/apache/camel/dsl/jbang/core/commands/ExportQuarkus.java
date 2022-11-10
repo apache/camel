@@ -175,7 +175,12 @@ class ExportQuarkus extends Export {
         String context = IOHelper.loadText(is);
         IOHelper.close(is);
 
-        CamelCatalog catalog = loadQuarkusCatalog();
+        Properties prop = new CamelCaseOrderedProperties();
+        RuntimeUtil.loadProperties(prop, settings);
+        // quarkus controls the camel version
+        String repos = getMavenRepos(prop, quarkusVersion);
+
+        CamelCatalog catalog = loadQuarkusCatalog(repos);
         if (camelVersion == null) {
             camelVersion = catalog.getCatalogVersion();
         }
@@ -190,16 +195,18 @@ class ExportQuarkus extends Export {
         context = context.replaceAll("\\{\\{ \\.JavaVersion }}", javaVersion);
         context = context.replaceAll("\\{\\{ \\.CamelVersion }}", camelVersion);
 
-        Properties prop = new CamelCaseOrderedProperties();
-        RuntimeUtil.loadProperties(prop, settings);
-        String repos = prop.getProperty("camel.jbang.repos");
         if (repos == null) {
             context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", "");
         } else {
             StringBuilder sb = new StringBuilder();
             for (String repo : repos.split(",")) {
                 sb.append("    maven {\n");
-                sb.append("        url: '").append(repo).append("'\n");
+                sb.append("        url '").append(repo).append("'\n");
+                if (repo.contains("snapshots")) {
+                    sb.append("        mavenContent {\n");
+                    sb.append("            snapshotsOnly()\n");
+                    sb.append("        }\n");
+                }
                 sb.append("    }\n");
             }
             context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", sb.toString());
@@ -276,7 +283,12 @@ class ExportQuarkus extends Export {
         String context = IOHelper.loadText(is);
         IOHelper.close(is);
 
-        CamelCatalog catalog = loadQuarkusCatalog();
+        Properties prop = new CamelCaseOrderedProperties();
+        RuntimeUtil.loadProperties(prop, settings);
+        // quarkus controls the camel version
+        String repos = getMavenRepos(prop, quarkusVersion);
+
+        CamelCatalog catalog = loadQuarkusCatalog(repos);
         if (camelVersion == null) {
             camelVersion = catalog.getCatalogVersion();
         }
@@ -290,9 +302,6 @@ class ExportQuarkus extends Export {
         context = context.replaceFirst("\\{\\{ \\.JavaVersion }}", javaVersion);
         context = context.replaceFirst("\\{\\{ \\.CamelVersion }}", camelVersion);
 
-        Properties prop = new CamelCaseOrderedProperties();
-        RuntimeUtil.loadProperties(prop, settings);
-        String repos = prop.getProperty("camel.jbang.repos");
         if (repos == null) {
             context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", "");
         } else {
@@ -303,6 +312,14 @@ class ExportQuarkus extends Export {
                 sb.append("        <repository>\n");
                 sb.append("            <id>custom").append(i++).append("</id>\n");
                 sb.append("            <url>").append(repo).append("</url>\n");
+                if (repo.contains("snapshots")) {
+                    sb.append("            <releases>\n");
+                    sb.append("                <enabled>false</enabled>\n");
+                    sb.append("            </releases>\n");
+                    sb.append("            <snapshots>\n");
+                    sb.append("                <enabled>true</enabled>\n");
+                    sb.append("            </snapshots>\n");
+                }
                 sb.append("        </repository>\n");
             }
             sb.append("    </repositories>\n");
@@ -370,12 +387,13 @@ class ExportQuarkus extends Export {
         return answer;
     }
 
-    private CamelCatalog loadQuarkusCatalog() {
+    private CamelCatalog loadQuarkusCatalog(String repos) {
         CamelCatalog answer = new DefaultCamelCatalog(true);
 
         // use kamelet-main to dynamic download dependency via maven
         KameletMain main = new KameletMain();
         try {
+            main.setRepos(repos);
             main.start();
 
             // shrinkwrap does not return POM file as result (they are hardcoded to be filtered out)
