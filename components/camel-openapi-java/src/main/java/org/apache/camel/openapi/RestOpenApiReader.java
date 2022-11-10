@@ -707,7 +707,7 @@ public class RestOpenApiReader {
                             bp.schema = arrayModel;
 
                         } else {
-                            String ref = modelTypeAsRef(type);
+                            String ref = modelTypeAsRef(type, openApi);
                             if (ref != null) {
                                 Oas30Schema refModel = (Oas30Schema) bp.createSchema();
                                 refModel.$ref = OAS30_SCHEMA_DEFINITION_PREFIX + ref;
@@ -930,7 +930,7 @@ public class RestOpenApiReader {
                             arrayModel = modelTypeAsProperty(type, openApi, arrayModel);
                             bp.schema = arrayModel;
                         } else {
-                            String ref = modelTypeAsRef(type);
+                            String ref = modelTypeAsRef(type, openApi);
                             if (ref != null) {
                                 Oas20Schema refModel = (Oas20Schema) bp.createSchema();
                                 refModel.$ref = OAS20_SCHEMA_DEFINITION_PREFIX + ref;
@@ -1355,7 +1355,7 @@ public class RestOpenApiReader {
         response.headers.addHeader(name, ip);
     }
 
-    private String modelTypeAsRef(String typeName) {
+    private String modelTypeAsRef(String typeName, OasDocument openApi) {
         boolean array = typeName.endsWith("[]");
         if (array) {
             typeName = typeName.substring(0, typeName.length() - 2);
@@ -1365,7 +1365,29 @@ public class RestOpenApiReader {
             return null;
         }
 
-        return typeName;
+        if (openApi instanceof Oas20Document) {
+            if (((Oas20Document) openApi).definitions != null) {
+                for (Oas20SchemaDefinition model : ((Oas20Document) openApi).definitions.getDefinitions()) {
+                    @SuppressWarnings("rawtypes")
+                    Map modelType = (Map) model.getExtension("x-className").value;
+                    if (modelType != null && typeName.equals(modelType.get("format"))) {
+                        return model.getName();
+                    }
+                }
+            }
+        } else if (openApi instanceof Oas30Document) {
+            if (((Oas30Document) openApi).components != null
+                    && ((Oas30Document) openApi).components.schemas != null) {
+                for (Oas30SchemaDefinition model : ((Oas30Document) openApi).components.schemas.values()) {
+                    @SuppressWarnings("rawtypes")
+                    Map modelType = (Map) model.getExtension("x-className").value;
+                    if (modelType != null && typeName.equals(modelType.get("format"))) {
+                        return model.getName();
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     private OasSchema modelTypeAsProperty(String typeName, OasDocument openApi, OasSchema prop) {
@@ -1374,7 +1396,7 @@ public class RestOpenApiReader {
             typeName = typeName.substring(0, typeName.length() - 2);
         }
 
-        String ref = modelTypeAsRef(typeName);
+        String ref = modelTypeAsRef(typeName, openApi);
 
         if (ref != null) {
             if (openApi instanceof Oas20Document) {
