@@ -196,6 +196,7 @@ abstract class ExportBaseCommand extends CamelCommand {
         }
 
         List<String> lines = Files.readAllLines(settings.toPath());
+        boolean kamelets = lines.stream().anyMatch(l -> l.startsWith("kamelet="));
         for (String line : lines) {
             if (line.startsWith("dependency=")) {
                 String v = StringHelper.after(line, "dependency=");
@@ -203,11 +204,12 @@ abstract class ExportBaseCommand extends CamelCommand {
                 // we let quarkus compile
                 boolean skip = v == null || v.contains("org.apache.camel:camel-core-languages")
                         || v.contains("org.apache.camel:camel-java-joor-dsl")
-                        || v.contains("camel-endpointdsl");
+                        || v.contains("camel-endpointdsl")
+                        || !kamelets && v.contains("org.apache.camel:camel-kamelet");
                 if (!skip) {
                     answer.add(v);
                 }
-                if (v != null && v.contains("org.apache.camel:camel-kamelet")) {
+                if (kamelets && v != null && v.contains("org.apache.camel:camel-kamelet")) {
                     // include yaml-dsl and kamelet catalog if we use kamelets
                     answer.add("camel:yaml-dsl");
                     answer.add("org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
@@ -217,7 +219,7 @@ abstract class ExportBaseCommand extends CamelCommand {
                 String deps = StringHelper.after(line, "camel.jbang.dependencies=");
                 for (String d : deps.split(",")) {
                     answer.add(d.trim());
-                    if (d.contains("org.apache.camel:camel-kamelet")) {
+                    if (kamelets && d.contains("org.apache.camel:camel-kamelet")) {
                         // include yaml-dsl and kamelet catalog if we use kamelets
                         answer.add("camel:yaml-dsl");
                         answer.add("org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
@@ -250,7 +252,7 @@ abstract class ExportBaseCommand extends CamelCommand {
                         }
                     }
                 }
-            } else if (line.startsWith("camel.component.kamelet.location=")) {
+            } else if (kamelets && line.startsWith("camel.component.kamelet.location=")) {
                 // include kamelet catalog if we use kamelets
                 answer.add("mvn:org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
                 answer.add("mvn:org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);

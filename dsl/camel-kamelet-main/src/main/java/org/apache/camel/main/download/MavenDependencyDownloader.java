@@ -472,6 +472,14 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     }
 
     @Override
+    public void onLoadingKamelet(String name) {
+        // trigger listener
+        for (DownloadListener listener : downloadListeners) {
+            listener.onLoadingKamelet(name);
+        }
+    }
+
+    @Override
     protected void doBuild() throws Exception {
         if (classLoader == null && camelContext != null) {
             classLoader = camelContext.getApplicationContextClassLoader();

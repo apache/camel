@@ -38,4 +38,11 @@ public interface DownloadListener {
      */
     void onAlreadyDownloadedDependency(String groupId, String artifactId, String version);
 
+    /**
+     * When a kamelet is being downloaded (typically loaded directly from camel-kamelets JAR)
+     */
+    default void onLoadingKamelet(String name) {
+        // noop
+    }
+
 }

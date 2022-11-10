@@ -30,6 +30,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kamelet.KameletComponent;
 import org.apache.camel.dsl.yaml.YamlRoutesBuilderLoaderSupport;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
+import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RouteTemplateLoaderListener;
 import org.apache.camel.support.service.ServiceHelper;
@@ -53,9 +54,17 @@ public final class DependencyDownloaderKamelet extends ServiceSupport
     private static final String KAMELETS_VERSION = "0.9.2";
     private KameletDependencyDownloader downloader;
     private CamelContext camelContext;
+    private volatile boolean kameletsInUse;
 
     public DependencyDownloaderKamelet(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    /**
+     * Whether any kamelets are in use.
+     */
+    public boolean isKameletsInUse() {
+        return kameletsInUse;
     }
 
     @Override
@@ -143,6 +152,10 @@ public final class DependencyDownloaderKamelet extends ServiceSupport
 
         @Override
         protected RouteBuilder builder(YamlDeserializationContext ctx, Node node) {
+            Node name = nodeAt(node, "/metadata/name");
+            String text = YamlDeserializerSupport.asText(name);
+            downloader.onLoadingKamelet(text);
+
             final List<String> dependencies = new ArrayList<>();
             // always include kamelets-utils
             dependencies.add("org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);

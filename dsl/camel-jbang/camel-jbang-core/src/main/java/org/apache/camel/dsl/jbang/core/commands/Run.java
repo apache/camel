@@ -309,6 +309,7 @@ class Run extends CamelCommand {
         final KameletMain main = createMainInstance();
 
         final Set<String> downloaded = new HashSet<>();
+        final Set<String> kamelets = new HashSet<>();
         main.setRepos(repos);
         main.setDownload(download);
         main.setFresh(fresh);
@@ -331,6 +332,14 @@ class Run extends CamelCommand {
             public void onAlreadyDownloadedDependency(String groupId, String artifactId, String version) {
                 // we want to register everything
                 onDownloadDependency(groupId, artifactId, version);
+            }
+
+            @Override
+            public void onLoadingKamelet(String name) {
+                if (!kamelets.contains(name)) {
+                    writeSettings("kamelet", name);
+                    kamelets.add(name);
+                }
             }
         });
         main.setAppName("Apache Camel (JBang)");

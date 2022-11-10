@@ -62,8 +62,6 @@ public interface DependencyDownloader extends CamelContextAware, StaticService {
 
     /**
      * Configure location of Maven settings.xml file
-     * 
-     * @param mavenSettings
      */
     void setMavenSettings(String mavenSettings);
 
@@ -71,8 +69,6 @@ public interface DependencyDownloader extends CamelContextAware, StaticService {
 
     /**
      * Configure location of Maven settings-security.xml file
-     * 
-     * @param mavenSettingsSecurity
      */
     void setMavenSettingsSecurity(String mavenSettingsSecurity);
 
@@ -123,5 +119,12 @@ public interface DependencyDownloader extends CamelContextAware, StaticService {
      * @return            true if already on classpath, false if not.
      */
     boolean alreadyOnClasspath(String groupId, String artifactId, String version);
+
+    /**
+     * When a kamelet is being loaded
+     *
+     * @param name the kamelet name
+     */
+    void onLoadingKamelet(String name);
 
 }
