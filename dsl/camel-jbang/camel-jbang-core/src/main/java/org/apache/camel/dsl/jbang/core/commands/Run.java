@@ -104,11 +104,11 @@ class Run extends CamelCommand {
     @Option(names = {"--repos"}, description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
     String repos;
 
-    @Option(names = {"--settings"}, description = "Optional location of maven setting.xml file to configure servers, repositories, mirrors and proxies." +
+    @Option(names = {"--maven-settings"}, description = "Optional location of maven setting.xml file to configure servers, repositories, mirrors and proxies." +
             " If set to \"false\", not even the default ~/.m2/settings.xml will be used.")
     String mavenSettings;
 
-    @Option(names = {"--settings-security"}, description = "Optional location of maven settings-security.xml file to decrypt settings.xml")
+    @Option(names = {"--maven-settings-security"}, description = "Optional location of maven settings-security.xml file to decrypt settings.xml")
     String mavenSettingsSecurity;
 
     @Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
@@ -274,6 +274,8 @@ class Run extends CamelCommand {
                 propertiesFiles = propertiesFiles + ",file:" + profilePropertiesFile.getName();
             }
             repos = profileProperties.getProperty("camel.jbang.repos", repos);
+            mavenSettings = profileProperties.getProperty("camel.jbang.maven-settings", mavenSettings);
+            mavenSettingsSecurity = profileProperties.getProperty("camel.jbang.maven-settings-security", mavenSettingsSecurity);
             openapi = profileProperties.getProperty("camel.jbang.openApi", openapi);
             download = "true".equals(profileProperties.getProperty("camel.jbang.download", download ? "true" : "false"));
         }

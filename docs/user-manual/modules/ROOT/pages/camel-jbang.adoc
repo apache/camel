@@ -226,7 +226,7 @@ Camel will download these JARs in the following order:
 2. from internet in Maven Central
 3. from internet in custom 3rd-party Maven repositories
 4. from all the repositories found in active profiles of `~/.m2/settings.xml` or a settings file specified using
-`--settings` option.
+`--maven-settings` option.
 
 If you do not want Camel JBang to download over the internet, you can turn this off with `--download`, as shown below:
 
@@ -317,6 +317,7 @@ encrypted) or active profiles and additional repositories.
 
 Maven repositories can use authentication and the Maven-way to configure credentials is through `<server>` elements,
 like this:
+
 [source,xml]
 ----
 <server>
@@ -338,6 +339,7 @@ Master password: camel
 ----
 
 The above password should be added to `~/.m2/settings-security.xml` file like this:
+
 [source,xml]
 ----
 <settingsSecurity>
@@ -346,6 +348,7 @@ The above password should be added to `~/.m2/settings-security.xml` file like th
 ----
 
 Then a normal password can be configured like this:
+
 [source,bash]
 ----
 $ mvn -ep
@@ -354,21 +357,21 @@ Password: camel
 {SSVqy/PexxQHvubrWhdguYuG7HnTvHlaNr6g3dJn7nk=}
 ----
 
-Finally such password can be used in `<server>/<password>` configuration.
+Finally, such password can be used in `<server>/<password>` configuration.
 
 By default, Maven reads the master password from `~/.m2/settings-security.xml` file, but we can override it.
 Location of the settings.xml file itself can be specified as well:
 
 [source,bash]
 ----
-camel run foo.java --settings=/path/to/settings.xml --settings-security=/path/to/settings-security.xml
+camel run foo.java --maven-settings=/path/to/settings.xml --maven-settings-security=/path/to/settings-security.xml
 ----
 
 If you want to run Camel application without assuming any location (even `~/.m2/settings.xml`), use this option:
 
 [source,bash]
 ----
-camel run foo.java --settings=false
+camel run foo.java --maven-settings=false
 ----
 
 
