@@ -141,6 +141,32 @@ public class MainBeansTest {
         main.stop();
     }
 
+    @Test
+    public void testBindBeansMapSquareDotKey() throws Exception {
+        Main main = new Main();
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
+
+        // create by class
+        main.addProperty("camel.beans.ldapserver['java.naming.provider.url']", "ldaps://ldap.local:636");
+        main.addProperty("camel.beans.ldapserver['java.naming.security.principal']", "scott");
+        main.addProperty("camel.beans.ldapserver['java.naming.security.credentials']", "tiger");
+
+        main.start();
+
+        CamelContext camelContext = main.getCamelContext();
+        assertNotNull(camelContext);
+
+        Map ldapserver = camelContext.getRegistry().lookupByNameAndType("ldapserver", Map.class);
+        assertNotNull(ldapserver);
+
+        assertEquals(3, ldapserver.size());
+        assertEquals("ldaps://ldap.local:636", ldapserver.get("java.naming.provider.url"));
+        assertEquals("scott", ldapserver.get("java.naming.security.principal"));
+        assertEquals("tiger", ldapserver.get("java.naming.security.credentials"));
+
+        main.stop();
+    }
+
     public static class MyRouteBuilder extends RouteBuilder {
         @Override
         public void configure() throws Exception {

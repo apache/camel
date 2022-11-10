@@ -649,6 +649,18 @@ camel.beans.mymap[quantity] = 1
 
 The Map is registered in the Camel Registry with the name `mymap`.
 
+=== Using dots in Map keys
+
+If the Map should contain keys with dots then the key must be quoted,
+as shown below using single quoted keys:
+
+[source,properties]
+----
+camel.beans.myldapserver['java.naming.provider.url'] = ldaps://ldap.local:636
+camel.beans.myldapserver['java.naming.security.principal'] = scott
+camel.beans.myldapserver['java.naming.security.credentials'] = tiger
+----
+
 == Defining a List bean
 
 This is similar to Map bean where the key is the index, eg 0, 1, 2, etc:
