@@ -54,8 +54,7 @@ public final class ActiveSpanManager {
      */
     public static void activate(Exchange exchange, SpanAdapter span) {
         exchange.setProperty(ACTIVE_SPAN_PROPERTY,
-                new Holder((Holder) exchange.getProperty(ACTIVE_SPAN_PROPERTY), span));
-
+                new Holder((Holder) exchange.getProperty(ACTIVE_SPAN_PROPERTY), span, span.makeCurrent()));
         if (exchange.getContext().isUseMDCLogging()) {
             MDC.put(MDC_TRACE_ID, "" + span.traceId());
             MDC.put(MDC_SPAN_ID, "" + span.spanId());
@@ -74,6 +73,14 @@ public final class ActiveSpanManager {
         if (holder != null) {
             exchange.setProperty(ACTIVE_SPAN_PROPERTY, holder.getParent());
 
+            if (holder.getScope() != null) {
+                try {
+                    holder.getScope().close();
+                } catch (Exception e) {
+                    // ignored
+                }
+            }
+
             if (exchange.getContext().isUseMDCLogging()) {
                 Holder parent = holder.getParent();
                 if (parent != null) {
@@ -88,6 +95,17 @@ public final class ActiveSpanManager {
         }
     }
 
+    public static void endScope(Exchange exchange) {
+        Holder holder = (Holder) exchange.getProperty(ACTIVE_SPAN_PROPERTY);
+        if (holder != null && holder.getScope() != null) {
+            try {
+                holder.getScope().close();
+            } catch (Exception e) {
+                // ignored
+            }
+        }
+    }
+
     /**
      * Simple holder for the currently active span and an optional reference to the parent holder. This will be used to
      * maintain a stack for spans, built up during the execution of a series of chained camel exchanges, and then
@@ -97,10 +115,12 @@ public final class ActiveSpanManager {
     public static class Holder {
         private Holder parent;
         private SpanAdapter span;
+        private AutoCloseable scope;
 
-        public Holder(Holder parent, SpanAdapter span) {
+        public Holder(Holder parent, SpanAdapter span, AutoCloseable scope) {
             this.parent = parent;
             this.span = span;
+            this.scope = scope;
         }
 
         public Holder getParent() {
@@ -109,6 +129,10 @@ public final class ActiveSpanManager {
 
         public SpanAdapter getSpan() {
             return span;
+        }
+
+        public AutoCloseable getScope() {
+            return scope;
         }
     }
 }

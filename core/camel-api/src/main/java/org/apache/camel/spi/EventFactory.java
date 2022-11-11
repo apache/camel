@@ -399,4 +399,5 @@ public interface EventFactory {
      */
     CamelEvent createCamelContextResumeFailureEvent(CamelContext context, Throwable cause);
 
+    CamelEvent createCamelExchangeAsyncStartedEvent(Exchange exchange);
 }

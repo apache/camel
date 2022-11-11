@@ -139,11 +139,11 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
             // set property which endpoint we send to
             exchange.setProperty(ExchangePropertyKey.TO_ENDPOINT, destination.getEndpointUri());
 
-            final boolean sending = camelContext.isEventNotificationApplicable()
+            final boolean sendingEventNotified = camelContext.isEventNotificationApplicable()
                     && EventHelper.notifyExchangeSending(exchange.getContext(), target, destination);
             // record timing for sending the exchange using the producer
             StopWatch watch;
-            if (sending) {
+            if (sendingEventNotified) {
                 watch = new StopWatch();
             } else {
                 watch = null;
@@ -167,9 +167,14 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
                     }
                 };
             }
+
             try {
                 LOG.debug(">>>> {} {}", destination, exchange);
-                return producer.process(exchange, ac);
+                var res = producer.process(exchange, ac);
+                if (sendingEventNotified) {
+                    EventHelper.notifyExchangeAsyncStartedEvent(exchange.getContext(), exchange);
+                }
+                return res;
             } catch (Throwable throwable) {
                 exchange.setException(throwable);
                 callback.done(true);

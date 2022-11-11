@@ -1458,6 +1458,52 @@ public final class EventHelper {
         return answer;
     }
 
+    public static boolean notifyExchangeAsyncStartedEvent(CamelContext context, Exchange exchange) {
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return false;
+        }
+
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return false;
+        }
+
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
+        if (notifiers == null || notifiers.isEmpty()) {
+            return false;
+        }
+
+        if (((ExtendedExchange) exchange).isNotifyEvent()) {
+            // do not generate events for an notify event
+            return false;
+        }
+
+        boolean answer = false;
+        CamelEvent event = null;
+        // optimise for loop using index access to avoid creating iterator object
+        for (int i = 0; i < notifiers.size(); i++) {
+            EventNotifier notifier = notifiers.get(i);
+            if (notifier.isDisabled()) {
+                continue;
+            }
+            if (notifier.isIgnoreExchangeEvents()) {
+                continue;
+            }
+
+            if (event == null) {
+                // only create event once
+                event = factory.createCamelExchangeAsyncStartedEvent(exchange);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return false;
+                }
+            }
+            answer |= doNotifyEvent(notifier, event);
+        }
+        return answer;
+    }
+
     private static boolean doNotifyEvent(EventNotifier notifier, CamelEvent event) {
         if (!notifier.isEnabled(event)) {
             LOG.trace("Notifier: {} is not enabled for the event: {}", notifier, event);
@@ -1472,5 +1518,4 @@ public final class EventHelper {
 
         return true;
     }
-
 }

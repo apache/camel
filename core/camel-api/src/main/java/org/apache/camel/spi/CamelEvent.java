@@ -52,6 +52,7 @@ public interface CamelEvent {
         ExchangeRedelivery,
         ExchangeSending,
         ExchangeSent,
+        ExchangeAsyncStarted,
         RoutesStarting,
         RoutesStarted,
         RoutesStopping,
@@ -446,6 +447,13 @@ public interface CamelEvent {
         @Override
         default Type getType() {
             return Type.ServiceStopFailure;
+        }
+    }
+
+    interface ExchangeAsyncStartedEvent extends ExchangeEvent {
+        @Override
+        default Type getType() {
+            return Type.ExchangeAsyncStarted;
         }
     }
 

@@ -57,6 +57,7 @@ import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.MessageHelper;
@@ -389,6 +390,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 LOG.trace("Processing exchange for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
             }
             boolean sync = processor.process(exchange, async);
+            EventHelper.notifyExchangeAsyncStartedEvent(exchange.getContext(), exchange);
             // ----------------------------------------------------------
             // CAMEL END USER - DEBUG ME HERE +++ END +++
             // ----------------------------------------------------------

@@ -53,6 +53,7 @@ import org.slf4j.LoggerFactory;
 public abstract class Tracer extends ServiceSupport implements RoutePolicyFactory, StaticService, CamelContextAware {
     protected static final Map<String, SpanDecorator> DECORATORS = new HashMap<>();
     private static final Logger LOG = LoggerFactory.getLogger(Tracer.class);
+    static final AutoCloseable NOOP_CLOSEABLE = () -> {};
 
     static {
         ServiceLoader.load(SpanDecorator.class).forEach(d -> {
@@ -267,6 +268,9 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
                     } else {
                         LOG.warn("Tracing: could not find managed span for exchange={}", ese.getExchange());
                     }
+                } else if (event instanceof CamelEvent.ExchangeAsyncStartedEvent) {
+                    CamelEvent.ExchangeAsyncStartedEvent ese = (CamelEvent.ExchangeAsyncStartedEvent) event;
+                    ActiveSpanManager.endScope(ese.getExchange());
                 }
             } catch (Exception t) {
                 // This exception is ignored

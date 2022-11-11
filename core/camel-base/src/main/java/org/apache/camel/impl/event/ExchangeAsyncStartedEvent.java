@@ -14,32 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.tracing;
+package org.apache.camel.impl.event;
 
-import java.util.Map;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.spi.CamelEvent;
 
-public interface SpanAdapter {
-    void setComponent(String component);
+/**
+ * Notifies that async processing is started (or sync processing is complete).
+ * @see ExchangeAsyncStartedEvent
+ */
+public class ExchangeAsyncStartedEvent extends AbstractExchangeEvent implements CamelEvent.ExchangeAsyncStartedEvent {
+    private static final long serialVersionUID = -19248832613958122L;
 
-    void setError(boolean error);
+    public ExchangeAsyncStartedEvent(Exchange source) {
+        super(source);
+    }
 
-    void setTag(Tag key, String value);
-
-    void setTag(Tag key, Number value);
-
-    void setTag(String key, String value);
-
-    void setTag(String key, Number value);
-
-    void setTag(String key, Boolean value);
-
-    void log(Map<String, String> log);
-
-    String traceId();
-
-    String spanId();
-
-    default AutoCloseable makeCurrent() {
-        return Tracer.NOOP_CLOSEABLE;
+    @Override
+    public String toString() {
+        return getExchange().getExchangeId();
     }
 }
