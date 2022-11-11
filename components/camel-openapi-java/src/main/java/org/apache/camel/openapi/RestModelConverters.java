@@ -18,9 +18,12 @@ package org.apache.camel.openapi;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.apicurio.datamodels.core.models.Extension;
 import io.apicurio.datamodels.openapi.models.OasDocument;
@@ -33,6 +36,9 @@ import io.apicurio.datamodels.openapi.v3.models.Oas30Document;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30AnyOfSchema;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30OneOfSchema;
 import io.apicurio.datamodels.openapi.v3.models.Oas30SchemaDefinition;
+import io.swagger.v3.core.converter.AnnotatedType;
+import io.swagger.v3.core.converter.ModelConverter;
+import io.swagger.v3.core.converter.ModelConverterContext;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.oas.models.media.ArraySchema;
@@ -50,11 +56,18 @@ import org.slf4j.LoggerFactory;
 public class RestModelConverters {
 
     private static final Logger LOG = LoggerFactory.getLogger(RestModelConverters.class);
-    private static final ModelConverters MODEL_CONVERTERS;
+    private static final ModelConverters MODEL30_CONVERTERS;
 
     static {
-        MODEL_CONVERTERS = ModelConverters.getInstance();
-        MODEL_CONVERTERS.addConverter(new FqnModelResolver());
+        MODEL30_CONVERTERS = ModelConverters.getInstance();
+        MODEL30_CONVERTERS.addConverter(new ClassNameExtensionModelResolver(new FqnModelResolver()));
+    }
+
+    private static final ModelConverters MODEL20_CONVERTERS;
+
+    static {
+        MODEL20_CONVERTERS = ModelConverters.getInstance();
+        MODEL20_CONVERTERS.addConverter(new ClassNameExtensionModelResolver());
     }
 
     public List<? extends OasSchema> readClass(OasDocument oasDocument, Class<?> clazz) {
@@ -80,13 +93,11 @@ public class RestModelConverters {
             oasDocument.components = oasDocument.createComponents();
         }
 
-        Map<String, Schema> swaggerModel = MODEL_CONVERTERS.readAll(clazz);
+        Map<String, Schema> swaggerModel = MODEL30_CONVERTERS.readAll(clazz);
         swaggerModel.forEach((key, schema) -> {
             Oas30SchemaDefinition model = oasDocument.components.createSchemaDefinition(key);
             oasDocument.components.addSchemaDefinition(key, model);
             processSchema(model, schema);
-
-            addClassNameExtension(model, key);
         });
 
         return oasDocument.components.getSchemaDefinitions();
@@ -102,13 +113,11 @@ public class RestModelConverters {
             oasDocument.definitions = oasDocument.createDefinitions();
         }
 
-        Map<String, Schema> swaggerModel = ModelConverters.getInstance().readAll(clazz);
+        Map<String, Schema> swaggerModel = MODEL20_CONVERTERS.readAll(clazz);
         swaggerModel.forEach((key, schema) -> {
             Oas20SchemaDefinition model = oasDocument.definitions.createSchemaDefinition(key);
             oasDocument.definitions.addDefinition(key, model);
             processSchema(model, schema);
-
-            addClassNameExtension(model, key);
         });
 
         return oasDocument.definitions.getDefinitions();
@@ -251,18 +260,10 @@ public class RestModelConverters {
                 Extension extension = model.createExtension();
                 extension.name = (String) key;
                 extension.value = value;
+
+                model.addExtension((String) key, extension);
             });
         }
-    }
-
-    private void addClassNameExtension(OasSchema schema, String name) {
-        Extension extension = schema.createExtension();
-        extension.name = "x-className";
-        Map<String, String> value = new HashMap<>();
-        value.put("type", "string");
-        value.put("format", name);
-        extension.value = value;
-        schema.addExtension("x-className", extension);
     }
 
     private static class FqnModelResolver extends ModelResolver {
@@ -273,6 +274,42 @@ public class RestModelConverters {
         public FqnModelResolver(ObjectMapper mapper) {
             super(mapper);
             this._typeNameResolver.setUseFqn(true);
+        }
+    }
+
+    private static class ClassNameExtensionModelResolver extends ModelResolver {
+        private final ModelResolver delegate;
+
+        public ClassNameExtensionModelResolver() {
+            this(new ModelResolver(new ObjectMapper()));
+        }
+
+        public ClassNameExtensionModelResolver(ModelResolver delegate) {
+            super(delegate.objectMapper());
+            this.delegate = delegate;
+        }
+
+        @Override
+        public Schema resolve(AnnotatedType annotatedType, ModelConverterContext context, Iterator<ModelConverter> next) {
+            Schema result = delegate.resolve(annotatedType, context, next);
+
+            if (result != null && Objects.equals("object", result.getType())) {
+                JavaType type;
+                if (annotatedType.getType() instanceof JavaType) {
+                    type = (JavaType) annotatedType.getType();
+                } else {
+                    type = _mapper.constructType(annotatedType.getType());
+                }
+
+                if (!type.isContainerType()) {
+                    Map<String, String> value = new HashMap<>();
+                    value.put("type", "string");
+                    value.put("format", type.getRawClass().getName());
+
+                    result.addExtension("x-className", value);
+                }
+            }
+            return result;
         }
     }
 
