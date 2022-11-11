@@ -94,7 +94,7 @@ public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
                             + "/nettyTestRouteB?throwExceptionOnFailure=false&bridgeEndpoint=true");
 
                 from("netty-http:http://localhost:" + port1 + "/nettyTestRouteB?matchOnUriPrefix=true")
-                                        .log("${body} ${headers}")
+                        .log("${body} ${headers}")
                         .log("Using NettyTestRouteB route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]")
                         .process(serviceProc);
 
