@@ -110,8 +110,9 @@ class ExportQuarkus extends Export {
         copySourceFiles(settings, profile, srcJavaDir, srcResourcesDir, srcCamelResourcesDir, packageName);
         // copy from settings to profile
         copySettingsAndProfile(settings, profile, srcResourcesDir, prop -> {
-            // turn off modeline as it is not supported in quarkus
-            prop.remove("camel.main.modeline");
+            if (!hasModeline(settings)) {
+                prop.remove("camel.main.modeline");
+            }
             return prop;
         });
         // copy docker files
@@ -379,10 +380,10 @@ class ExportQuarkus extends Export {
     protected Set<String> resolveDependencies(File settings, File profile) throws Exception {
         Set<String> answer = super.resolveDependencies(settings, profile);
 
+        // remove out of the box dependencies
         answer.removeIf(s -> s.contains("camel-core"));
         answer.removeIf(s -> s.contains("camel-platform-http"));
         answer.removeIf(s -> s.contains("camel-microprofile-health"));
-        answer.removeIf(s -> s.contains("camel-dsl-modeline"));
 
         return answer;
     }

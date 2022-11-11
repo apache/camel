@@ -256,6 +256,8 @@ abstract class ExportBaseCommand extends CamelCommand {
                 // include kamelet catalog if we use kamelets
                 answer.add("mvn:org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
                 answer.add("mvn:org.apache.camel.kamelets:camel-kamelets-utils:" + kameletsVersion);
+            } else if (line.startsWith("modeline=")) {
+                answer.add("camel:dsl-modeline");
             }
         }
 
@@ -478,6 +480,16 @@ abstract class ExportBaseCommand extends CamelCommand {
         }
 
         return answer;
+    }
+
+    protected static boolean hasModeline(File settings) {
+        try {
+            List<String> lines = Files.readAllLines(settings.toPath());
+            return lines.stream().anyMatch(l -> l.startsWith("modeline="));
+        } catch (Exception e) {
+            // ignore
+        }
+        return false;
     }
 
     protected static void safeCopy(File source, File target, boolean override) throws Exception {

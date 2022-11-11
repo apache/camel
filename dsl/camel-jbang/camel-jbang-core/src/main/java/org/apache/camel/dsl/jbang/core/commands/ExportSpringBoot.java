@@ -103,7 +103,12 @@ class ExportSpringBoot extends Export {
         srcCamelResourcesDir.mkdirs();
         copySourceFiles(settings, profile, srcJavaDir, srcResourcesDir, srcCamelResourcesDir, packageName);
         // copy from settings to profile
-        copySettingsAndProfile(settings, profile, srcResourcesDir, null);
+        copySettingsAndProfile(settings, profile, srcResourcesDir, prop -> {
+            if (!hasModeline(settings)) {
+                prop.remove("camel.main.modeline");
+            }
+            return prop;
+        });
         // create main class
         createMainClassSource(srcJavaDir, packageName, mainClassname);
         // gather dependencies
@@ -333,8 +338,8 @@ class ExportSpringBoot extends Export {
     protected Set<String> resolveDependencies(File settings, File profile) throws Exception {
         Set<String> answer = super.resolveDependencies(settings, profile);
 
+        // remove out of the box dependencies
         answer.removeIf(s -> s.contains("camel-core"));
-        answer.removeIf(s -> s.contains("camel-dsl-modeline"));
 
         // if platform-http is included then we need servlet as implementation
         if (answer.stream().anyMatch(s -> s.contains("camel-platform-http") && !s.contains("camel-servlet"))) {

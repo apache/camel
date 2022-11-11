@@ -96,6 +96,9 @@ class ExportCamelMain extends Export {
             if (!prop.containsKey("camel.main.basePackageScan") && !prop.containsKey("camel.main.base-package-scan")) {
                 prop.put("camel.main.basePackageScan", packageName);
             }
+            if (!hasModeline(settings)) {
+                prop.remove("camel.main.modeline");
+            }
             return prop;
         });
         // create main class
@@ -209,7 +212,6 @@ class ExportCamelMain extends Export {
         answer.removeIf(s -> s.contains("camel-core"));
         answer.removeIf(s -> s.contains("camel-main"));
         answer.removeIf(s -> s.contains("camel-health"));
-        answer.removeIf(s -> s.contains("camel-dsl-modeline"));
 
         // if platform-http is included then we need vertx as implementation
         if (answer.stream().anyMatch(s -> s.contains("camel-platform-http") && !s.contains("camel-platform-http-vertx"))) {

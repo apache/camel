@@ -18,7 +18,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.apache.camel.springboot:camel-spring-boot-engine-starter:{{ .CamelVersion }}'
-    implementation 'org.apache.camel.springboot:camel-dsl-modeline-starter:{{ .CamelVersion }}'
 {{ .CamelDependencies }}
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.apache.camel:camel-test-spring-junit5:{{ .CamelVersion }}'
