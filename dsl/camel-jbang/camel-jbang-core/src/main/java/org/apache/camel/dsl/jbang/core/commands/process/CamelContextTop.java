@@ -31,7 +31,7 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "integration", aliases = { "int", "integration", "integrations", "context" },
+@Command(name = "context",
          description = "Top status of Camel integrations")
 public class CamelContextTop extends ProcessBaseCommand {
 

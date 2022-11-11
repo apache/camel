@@ -32,7 +32,7 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "endpoint", aliases = { "endpoint", "endpoints" }, description = "Get usage of Camel endpoints")
+@Command(name = "endpoint", description = "Get usage of Camel endpoints")
 public class CamelEndpointStatus extends ProcessBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")

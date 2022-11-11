@@ -23,7 +23,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.tooling.model.OtherModel;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "other", aliases = { "other", "others" },
+@CommandLine.Command(name = "other",
                      description = "List miscellaneous components from the Camel Catalog")
 public class CatalogOther extends CatalogBaseCommand {
 

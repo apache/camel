@@ -31,8 +31,8 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "vault", aliases = { "vault", "vaults" },
-         description = "List secrets from security vaults (AWS, GCP and Azure) used by running Camel integrations")
+@Command(name = "vault",
+         description = "List secrets from security vaults used by running Camel integrations")
 public class ListVault extends ProcessBaseCommand {
 
     @CommandLine.Option(names = { "--sort" },

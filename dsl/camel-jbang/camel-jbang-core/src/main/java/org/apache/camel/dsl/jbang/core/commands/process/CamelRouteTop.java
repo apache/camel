@@ -26,7 +26,7 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import picocli.CommandLine.Command;
 
-@Command(name = "route", aliases = { "route", "routes" }, description = "Top performing routes")
+@Command(name = "route", description = "Top performing routes")
 public class CamelRouteTop extends CamelRouteStatus {
 
     public CamelRouteTop(CamelJBangMain main) {

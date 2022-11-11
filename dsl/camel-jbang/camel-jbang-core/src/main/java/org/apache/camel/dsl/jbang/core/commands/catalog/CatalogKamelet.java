@@ -35,7 +35,7 @@ import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "kamelet", aliases = { "kamelet", "kamelets" },
+@CommandLine.Command(name = "kamelet",
                      description = "List Kamelets from the Kamelet Catalog")
 public class CatalogKamelet extends CamelCommand {
 

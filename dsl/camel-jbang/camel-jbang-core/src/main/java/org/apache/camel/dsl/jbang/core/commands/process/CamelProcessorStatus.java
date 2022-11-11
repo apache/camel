@@ -33,7 +33,7 @@ import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "processor", aliases = { "processor", "processors" }, description = "Get status of Camel processors")
+@Command(name = "processor", description = "Get status of Camel processors")
 public class CamelProcessorStatus extends ProcessBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")

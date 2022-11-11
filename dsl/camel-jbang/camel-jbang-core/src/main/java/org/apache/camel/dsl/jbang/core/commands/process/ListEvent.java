@@ -31,8 +31,8 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "event", aliases = { "event", "events" },
-         description = "Get latest 25 events of Camel integrations")
+@Command(name = "event",
+         description = "Get latest events of Camel integrations")
 public class ListEvent extends ProcessBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")

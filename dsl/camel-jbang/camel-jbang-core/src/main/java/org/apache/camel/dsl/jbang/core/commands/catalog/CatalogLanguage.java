@@ -23,7 +23,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.tooling.model.LanguageModel;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "language", aliases = { "language", "languages" },
+@CommandLine.Command(name = "language",
                      description = "List expression languages from the Camel Catalog")
 public class CatalogLanguage extends CatalogBaseCommand {
 

@@ -23,7 +23,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.tooling.model.DataFormatModel;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "dataformat", aliases = { "dataformat", "dataformats" },
+@CommandLine.Command(name = "dataformat",
                      description = "List data formats from the Camel Catalog")
 public class CatalogDataFormat extends CatalogBaseCommand {
 

@@ -31,7 +31,7 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "service", aliases = { "service", "services" },
+@Command(name = "service",
          description = "Get services of Camel integrations")
 public class ListService extends ProcessBaseCommand {
 
