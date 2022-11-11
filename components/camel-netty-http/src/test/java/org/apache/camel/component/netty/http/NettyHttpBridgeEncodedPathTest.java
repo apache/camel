@@ -45,9 +45,9 @@ public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
 
     @Test
     public void testEncodedQuery() {
-        String response = template.requestBody("http://localhost:" + port2 + "/nettyTestRouteA?param1=%2B447777111222", null,
+        String response = template.requestBody("http://localhost:" + port2 + "/nettyTestRouteA?param1=44777%2B7111222", null,
                 String.class);
-        assertEquals("param1=+447777111222", response, "Get a wrong response");
+        assertEquals("param1=44777+7111222", response, "Get a wrong response");
     }
 
     @Test
@@ -80,19 +80,21 @@ public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
                     // %2B becomes decoded to a space
                     Object s = exchange.getIn().getHeader("param1");
                     // can be either + or %2B
-                    assertTrue(s.equals(" 447777111222") || s.equals("%20447777111222") || s.equals("+447777111222")
-                            || s.equals("%2B447777111222"));
+                    assertTrue(s.equals("44777 7111222") || s.equals("44777%207111222") || s.equals("44777+7111222")
+                            || s.equals("44777%2B7111222"));
 
                     // send back the query
                     exchange.getMessage().setBody(exchange.getIn().getHeader(Exchange.HTTP_QUERY));
                 };
 
                 from("netty-http:http://localhost:" + port2 + "/nettyTestRouteA?matchOnUriPrefix=true")
+                        .log("${body} ${headers}")
                         .log("Using NettyTestRouteA route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]")
                         .to("netty-http:http://localhost:" + port1
                             + "/nettyTestRouteB?throwExceptionOnFailure=false&bridgeEndpoint=true");
 
                 from("netty-http:http://localhost:" + port1 + "/nettyTestRouteB?matchOnUriPrefix=true")
+                                        .log("${body} ${headers}")
                         .log("Using NettyTestRouteB route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]")
                         .process(serviceProc);
 
