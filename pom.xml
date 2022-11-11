@@ -326,7 +326,7 @@
                             <exclude>**/user-manual/**</exclude>
                             <exclude>**/yarn.lock</exclude>
                             <exclude>**/docs/**/*</exclude>
-                            <exclude>**/yarn-berry.cjs</exclude>
+                            <exclude>**/yarn*.cjs</exclude>
                             <exclude>**/build-state.yml</exclude>
                             <!-- generated files -->
                             <exclude>**/target/**/*</exclude>
