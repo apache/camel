@@ -2716,9 +2716,10 @@ public class StaticEndpointBuilders {
      * Allows you to specify the name of a Language to use for evaluating the
      * message body. If there is any result from the evaluation, then the result
      * is put in the message body.
-     * There are 19 enums and the value can be one of: bean, constant, el,
-     * exchangeProperty, file, groovy, header, jsonpath, mvel, ognl, ref,
-     * simple, spel, sql, terser, tokenize, xpath, xquery, xtokenize
+     * There are 21 enums and the value can be one of: bean, constant, csimple,
+     * datasonnet, exchangeProperty, file, groovy, header, hl7terser, joor, jq,
+     * jsonpath, mvel, ognl, ref, simple, spel, tokenize, xpath, xquery,
+     * xtokenize
      * 
      * @param path command:language
      * @return the dsl builder
@@ -2745,9 +2746,10 @@ public class StaticEndpointBuilders {
      * Allows you to specify the name of a Language to use for evaluating the
      * message body. If there is any result from the evaluation, then the result
      * is put in the message body.
-     * There are 19 enums and the value can be one of: bean, constant, el,
-     * exchangeProperty, file, groovy, header, jsonpath, mvel, ognl, ref,
-     * simple, spel, sql, terser, tokenize, xpath, xquery, xtokenize
+     * There are 21 enums and the value can be one of: bean, constant, csimple,
+     * datasonnet, exchangeProperty, file, groovy, header, hl7terser, joor, jq,
+     * jsonpath, mvel, ognl, ref, simple, spel, tokenize, xpath, xquery,
+     * xtokenize
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

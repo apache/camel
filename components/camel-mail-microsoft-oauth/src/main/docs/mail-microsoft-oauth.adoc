@@ -4,7 +4,7 @@
 :artifactid: camel-mail-microsoft-oauth
 :description: Camel Mail OAuth2 Authenticator for Microsoft Exchange Online
 :since: 3.18.4
-:supportlevel: Stable
+:supportlevel: Preview
 
 //Manually maintained attributes
 :camel-spring-boot-name: mail-microsoft-oauth

@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "mail-microsoft-oauth",
+    "title": "Mail Microsoft Oauth",
+    "description": "Camel Mail OAuth2 Authenticator for Microsoft Exchange Online",
+    "deprecated": false,
+    "firstVersion": "3.18.4",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-mail-microsoft-oauth",
+    "version": "3.18.4-SNAPSHOT"
+  }
+}
