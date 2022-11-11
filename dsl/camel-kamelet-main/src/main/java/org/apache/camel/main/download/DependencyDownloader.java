@@ -127,4 +127,12 @@ public interface DependencyDownloader extends CamelContextAware, StaticService {
      */
     void onLoadingKamelet(String name);
 
+    /**
+     * When a modeline is being loaded
+     *
+     * @param key   modeline key
+     * @param value modeline value
+     */
+    void onLoadingModeline(String key, String value);
+
 }

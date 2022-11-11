@@ -28,6 +28,7 @@ import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
 @JdkService(ModelineFactory.FACTORY)
@@ -50,12 +51,24 @@ public class DefaultModelineFactory extends ServiceSupport
     @Override
     public void parseModeline(Resource resource) throws Exception {
         List<CamelContextCustomizer> customizers = parser.parse(resource);
-        customizers.forEach(c -> c.configure(camelContext));
+        customizers.forEach(this::onConfigureModeline);
+    }
+
+    /**
+     * Configures the modeline via the {@link CamelContextCustomizer}
+     *
+     * @param customizer the customer for configuring a detected modeline
+     */
+    protected void onConfigureModeline(CamelContextCustomizer customizer) {
+        customizer.configure(camelContext);
     }
 
     @Override
     protected void doInit() throws Exception {
-        parser = new ModelineParser(camelContext);
+        parser = CamelContextHelper.findSingleByType(camelContext, ModelineParser.class);
+        if (parser == null) {
+            parser = createModelineParser();
+        }
 
         // the property is both a trait and a source but we must use the same instance
         // so we need to get the existing instance from the properties component to
@@ -65,6 +78,10 @@ public class DefaultModelineFactory extends ServiceSupport
         if (ps instanceof Trait) {
             parser.addTrait((Trait) ps);
         }
+    }
+
+    protected ModelineParser createModelineParser() {
+        return new DefaultModelineParser(camelContext);
     }
 
     @Override

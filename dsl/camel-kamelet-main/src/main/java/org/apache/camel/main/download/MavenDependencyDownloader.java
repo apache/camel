@@ -480,6 +480,14 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     }
 
     @Override
+    public void onLoadingModeline(String key, String value) {
+        // trigger listener
+        for (DownloadListener listener : downloadListeners) {
+            listener.onLoadingModeline(key, value);
+        }
+    }
+
+    @Override
     protected void doBuild() throws Exception {
         if (classLoader == null && camelContext != null) {
             classLoader = camelContext.getApplicationContextClassLoader();

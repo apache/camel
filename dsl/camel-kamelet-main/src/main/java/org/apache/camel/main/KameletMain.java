@@ -42,6 +42,7 @@ import org.apache.camel.main.download.DependencyDownloaderRoutesLoader;
 import org.apache.camel.main.download.DependencyDownloaderStrategy;
 import org.apache.camel.main.download.DependencyDownloaderUriFactoryResolver;
 import org.apache.camel.main.download.DownloadListener;
+import org.apache.camel.main.download.DownloadModelineParser;
 import org.apache.camel.main.download.KameletMainInjector;
 import org.apache.camel.main.download.KnownDependenciesResolver;
 import org.apache.camel.main.download.MavenDependencyDownloader;
@@ -426,8 +427,8 @@ public class KameletMain extends MainCommandLineSupport {
             known.loadKnownDependencies();
             DependencyDownloaderPropertyBindingListener listener
                     = new DependencyDownloaderPropertyBindingListener(answer, known);
-            answer.getRegistry().bind(DependencyDownloaderPropertyBindingListener.class.getName(), listener);
-            answer.getRegistry().bind(DependencyDownloaderStrategy.class.getName(),
+            answer.getRegistry().bind(DependencyDownloaderPropertyBindingListener.class.getSimpleName(), listener);
+            answer.getRegistry().bind(DependencyDownloaderStrategy.class.getSimpleName(),
                     new DependencyDownloaderStrategy(answer));
             answer.setClassResolver(new DependencyDownloaderClassResolver(answer, known));
             answer.setComponentResolver(new DependencyDownloaderComponentResolver(answer, stub));
@@ -437,6 +438,7 @@ public class KameletMain extends MainCommandLineSupport {
             answer.setResourceLoader(new DependencyDownloaderResourceLoader(answer));
             answer.setInjector(new KameletMainInjector(answer.getInjector(), stub));
             answer.addService(new DependencyDownloaderKamelet(answer));
+            answer.getRegistry().bind(DownloadModelineParser.class.getSimpleName(), new DownloadModelineParser(answer));
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
         }

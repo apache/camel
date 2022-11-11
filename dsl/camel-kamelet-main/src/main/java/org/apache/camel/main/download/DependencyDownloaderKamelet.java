@@ -154,7 +154,9 @@ public final class DependencyDownloaderKamelet extends ServiceSupport
         protected RouteBuilder builder(YamlDeserializationContext ctx, Node node) {
             Node name = nodeAt(node, "/metadata/name");
             String text = YamlDeserializerSupport.asText(name);
-            downloader.onLoadingKamelet(text);
+            if (downloader != null) {
+                downloader.onLoadingKamelet(text);
+            }
 
             final List<String> dependencies = new ArrayList<>();
             // always include kamelets-utils
@@ -175,7 +177,9 @@ public final class DependencyDownloaderKamelet extends ServiceSupport
                 }
             }
 
-            downloadDependencies(dependencies);
+            if (downloader != null) {
+                downloadDependencies(dependencies);
+            }
 
             // need to fool and return an empty route builder
             return new RouteBuilder() {
