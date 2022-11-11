@@ -188,7 +188,7 @@
     <fastjson-version>1.2.83</fastjson-version>
     <findbugs-maven-plugin-version>3.0.5</findbugs-maven-plugin-version>
     <flatpack-version>4.0.5</flatpack-version>
-    <flink-version>1.15.0</flink-version>
+    <flink-version>1.16.0</flink-version>
     <fop-version>2.7</fop-version>
     <formatter-maven-plugin-version>2.17.1</formatter-maven-plugin-version>
     <freemarker-version>2.3.31</freemarker-version>
