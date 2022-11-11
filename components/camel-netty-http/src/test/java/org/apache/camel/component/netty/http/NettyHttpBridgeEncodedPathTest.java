@@ -88,13 +88,11 @@ public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
                 };
 
                 from("netty-http:http://localhost:" + port2 + "/nettyTestRouteA?matchOnUriPrefix=true")
-                        .log("${body} ${headers}")
                         .log("Using NettyTestRouteA route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]")
                         .to("netty-http:http://localhost:" + port1
                             + "/nettyTestRouteB?throwExceptionOnFailure=false&bridgeEndpoint=true");
 
                 from("netty-http:http://localhost:" + port1 + "/nettyTestRouteB?matchOnUriPrefix=true")
-                        .log("${body} ${headers}")
                         .log("Using NettyTestRouteB route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]")
                         .process(serviceProc);
 
