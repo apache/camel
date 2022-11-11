@@ -1,0 +1,101 @@
+{
+  "swagger" : "2.x",
+  "host" : "localhost:8080",
+  "basePath" : "/api",
+  "schemes" : [ "http" ],
+  "paths" : {
+    "/complexResponseWithSchemaAnnotation" : {
+      "get" : {
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "body",
+          "schema" : {
+            "$ref" : "#/definitions/SampleComplexRequestType_InnerClass"
+          },
+          "in" : "body",
+          "required" : true
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Returns a complex object",
+            "schema" : {
+              "$ref" : "#/definitions/sampleResponseWithSchema"
+            }
+          }
+        },
+        "operationId" : "verb",
+        "summary" : "Demo complex response type",
+        "x-camelContextId" : "camel"
+      }
+    }
+  },
+  "definitions" : {
+    "SampleComplexRequestType_InnerClass" : {
+      "type" : "object",
+      "properties" : {
+        "longField" : {
+          "format" : "int64",
+          "type" : "integer"
+        }
+      },
+      "x-className" : {
+        "format" : "org.apache.camel.openapi.model.SampleComplexRequestType$InnerClass",
+        "type" : "string"
+      }
+    },
+    "responseInner" : {
+      "type" : "object",
+      "properties" : {
+        "doubleField" : {
+          "format" : "double",
+          "type" : "number"
+        }
+      },
+      "x-className" : {
+        "format" : "org.apache.camel.openapi.model.SampleComplexResponseTypeWithSchemaAnnotation$InnerClass",
+        "type" : "string"
+      }
+    },
+    "sampleResponseWithSchema" : {
+      "required" : [ "arrayOfStrings", "responseField1" ],
+      "type" : "object",
+      "properties" : {
+        "responseField1" : {
+          "type" : "string"
+        },
+        "responseField2" : {
+          "type" : "string"
+        },
+        "arrayOfStrings" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "month" : {
+          "enum" : [ "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER" ],
+          "type" : "string"
+        },
+        "innerClass" : {
+          "$ref" : "#/definitions/responseInner"
+        }
+      },
+      "x-className" : {
+        "format" : "org.apache.camel.openapi.model.SampleComplexResponseTypeWithSchemaAnnotation",
+        "type" : "string"
+      }
+    }
+  },
+  "securityDefinitions" : {
+    "global" : {
+      "flow" : "accessCode",
+      "authorizationUrl" : "https://AUTHORIZATION_URL",
+      "tokenUrl" : "https://TOKEN_URL",
+      "scopes" : {
+        "groups" : "Required scopes for Camel REST APIs"
+      },
+      "type" : "oauth2"
+    }
+  }
+}

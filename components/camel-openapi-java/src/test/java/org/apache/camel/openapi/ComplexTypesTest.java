@@ -34,7 +34,9 @@ import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.openapi.model.SampleComplexRequestType;
+import org.apache.camel.openapi.model.SampleComplexRequestTypeWithSchemaAnnotation;
 import org.apache.camel.openapi.model.SampleComplexResponseType;
+import org.apache.camel.openapi.model.SampleComplexResponseTypeWithSchemaAnnotation;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -93,6 +95,39 @@ public class ComplexTypesTest extends CamelTestSupport {
                         .routeId("complex response type")
                         .log("/complex invoked")
                         .setBody(constant(new SampleComplexResponseType()));
+
+                rest().post("/complexRequestWithSchemaAnnotation")
+                        .description("Demo complex request type")
+                        .type(SampleComplexRequestTypeWithSchemaAnnotation.class)
+                        .consumes("application/json")
+                        .produces("text/plain")
+                        .bindingMode(RestBindingMode.json)
+                        .responseMessage()
+                        .code(200)
+                        .message("Receives a complex object as parameter")
+                        .endResponseMessage()
+                        .outType(SampleComplexResponseTypeWithSchemaAnnotation.InnerClass.class)
+                        .to("direct:requestWithSchemaAnnotation");
+                from("direct:requestWithSchemaAnnotation")
+                        .routeId("complex request type with schema annotation")
+                        .log("/complex request invoked");
+
+                rest().get("/complexResponseWithSchemaAnnotation")
+                        .description("Demo complex response type")
+                        .type(SampleComplexRequestType.InnerClass.class)
+                        .consumes("application/json")
+                        .outType(SampleComplexResponseTypeWithSchemaAnnotation.class)
+                        .produces("application/json")
+                        .bindingMode(RestBindingMode.json)
+                        .responseMessage()
+                        .code(200)
+                        .message("Returns a complex object")
+                        .endResponseMessage()
+                        .to("direct:responseWithSchemaAnnotation");
+                from("direct:responseWithSchemaAnnotation")
+                        .routeId("complex response type with schema annotation")
+                        .log("/complex invoked")
+                        .setBody(constant(new SampleComplexResponseTypeWithSchemaAnnotation()));
             }
         };
     }
@@ -115,6 +150,30 @@ public class ComplexTypesTest extends CamelTestSupport {
     @Test
     public void testV2SchemaForComplexTypesResponse() throws Exception {
         checkSchemaGeneration("/complexResponse", "2.0", "V2SchemaForComplexTypesResponse.json");
+    }
+
+    @Test
+    public void testV3SchemaForComplexTypesWithSchemaAnnotationRequest() throws Exception {
+        checkSchemaGeneration("/complexRequestWithSchemaAnnotation", "3.0",
+                "V3SchemaForComplexTypesRequestWithSchemaAnnotation.json");
+    }
+
+    @Test
+    public void testV2SchemaForComplexTypesWithSchemaAnnotationRequest() throws Exception {
+        checkSchemaGeneration("/complexRequestWithSchemaAnnotation", "2.0",
+                "V2SchemaForComplexTypesRequestWithSchemaAnnotation.json");
+    }
+
+    @Test
+    public void testV3SchemaForComplexTypesWithSchemaAnnotationResponse() throws Exception {
+        checkSchemaGeneration("/complexResponseWithSchemaAnnotation", "3.0",
+                "V3SchemaForComplexTypesResponseWithSchemaAnnotation.json");
+    }
+
+    @Test
+    public void testV2SchemaForComplexTypesWithSchemaAnnotationResponse() throws Exception {
+        checkSchemaGeneration("/complexResponseWithSchemaAnnotation", "2.0",
+                "V2SchemaForComplexTypesResponseWithSchemaAnnotation.json");
     }
 
     private void checkSchemaGeneration(String uri, String apiVersion, String schemaResource) throws Exception {
