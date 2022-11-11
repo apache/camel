@@ -39,6 +39,22 @@ TIP: The first time you run this command, it may cause dependencies to be cached
 
 All the commands support the `--help` and will display the appropriate help if that flag is provided.
 
+=== Enable shell completion
+
+Camel JBang provides shell completion for bash and zsh out of the box. To enable shell completion for Camel JBang, run:
+
+[source,bash]
+----
+source <(camel completion)
+----
+
+To make it permanent, run:
+
+[source,bash]
+----
+echo 'source <(camel completion)' >> ~/.bashrc
+----
+
 == Creating and running Camel routes
 
 You can create a new basic routes with the `init` command.
