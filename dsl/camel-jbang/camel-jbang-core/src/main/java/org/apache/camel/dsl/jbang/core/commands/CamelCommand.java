@@ -23,6 +23,9 @@ import picocli.CommandLine;
 
 public abstract class CamelCommand implements Callable<Integer> {
 
+    @CommandLine.Spec
+    CommandLine.Model.CommandSpec spec;
+
     private final CamelJBangMain main;
     private File camelDir;
 
