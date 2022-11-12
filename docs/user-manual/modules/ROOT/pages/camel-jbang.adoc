@@ -480,7 +480,7 @@ You can also download a single file, such as one of the Camel K examples:
 
 [source,bash]
 ----
-camel init https://github.com/apache/camel-k/blob/main/examples/languages/simple.groovy
+camel init https://github.com/apache/camel-k-examples/blob/main/generic-examples/languages/simple.groovy
 ----
 
 This is a groovy route, which you can run with (or use `*`):

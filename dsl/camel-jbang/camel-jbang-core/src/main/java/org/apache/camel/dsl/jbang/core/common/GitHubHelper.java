@@ -36,7 +36,7 @@ public final class GitHubHelper {
     public static String asGithubSingleUrl(String url) {
         // strip https://github.com/
         url = url.substring(19);
-        // https://github.com/apache/camel-k/blob/main/examples/languages/routes.kts
+        // https://github.com/apache/camel-k-examples/blob/main/generic-examples/languages/routes.kts
         // https://raw.githubusercontent.com/apache/camel-kamelets-examples/main/jbang/hello-java/Hey.java
         // https://github.com/apache/camel-kamelets-examples/blob/main/jbang/hello-java/Hey.java
         url = url.replaceFirst("/", ":");
