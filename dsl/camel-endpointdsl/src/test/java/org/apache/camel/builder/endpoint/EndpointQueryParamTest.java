@@ -18,28 +18,30 @@ package org.apache.camel.builder.endpoint;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
 
-public class EndpointQueryParamTest extends BaseEndpointDslTest {
+class EndpointQueryParamTest extends BaseEndpointDslTest {
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new EndpointRouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                restConfiguration().component("jetty").host("localhost").port(9999);
+            public void configure() {
+                int port = AvailablePortFinder.getNextAvailable();
+                restConfiguration().component("jetty").host("localhost").port(port);
                 rest().get("path/xyz")
                     .to("log:myLogger?level=INFO&showAll=true")
                     .to("mock:result");
                 from(direct("test"))
-                        .to(http("localhost:9999/path/xyz?param1=1&param2=2").httpMethod("GET"));
+                        .to(http(String.format("localhost:%d/path/xyz?param1=1&param2=2", port)).httpMethod("GET"));
                 from(direct("test2"))
-                        .to("http://localhost:9999/path/xyz?param1=1&param2=2&httpMethod=GET");
+                        .toF("http://localhost:%d/path/xyz?param1=1&param2=2&httpMethod=GET", port);
             }
         };
     }
 
     @Test
-    public void testRoute() throws InterruptedException {
+    void testRoute() throws Exception {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
 
         mockEndpoint.expectedHeaderReceived("param1", "1");
@@ -50,7 +52,7 @@ public class EndpointQueryParamTest extends BaseEndpointDslTest {
     }
 
     @Test
-    public void testEndpointDslRoute() throws InterruptedException {
+    void testEndpointDslRoute() throws Exception {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedHeaderReceived("param1", "1");
         mockEndpoint.expectedHeaderReceived("param2", "2");
