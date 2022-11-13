@@ -19,6 +19,8 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.util.Stack;
 import java.util.StringJoiner;
 
 import org.apache.camel.CamelContext;
@@ -31,9 +33,9 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.io.IOUtils;
-import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
+import picocli.CommandLine.Parameters;
 
 import static org.apache.camel.dsl.jbang.core.common.GistHelper.fetchGistUrls;
 import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.asGithubSingleUrl;
@@ -42,7 +44,10 @@ import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.fetchGithubUrl
 @Command(name = "init", description = "Creates a new Camel integration")
 class Init extends CamelCommand {
 
-    @CommandLine.Parameters(description = "Name of integration file (or a github link)", arity = "1")
+    @Parameters(description = "Name of integration file (or a github link)", arity = "1",
+                paramLabel = "<file>", parameterConsumer = FileConsumer.class)
+    private Path filePath; // Defined only for file path completion; the field never used
+
     private String file;
 
     @Option(names = { "--integration" },
@@ -222,6 +227,14 @@ class Init extends CamelCommand {
         }
 
         return 0;
+    }
+
+    static class FileConsumer extends ParameterConsumer<Init> {
+        @Override
+        protected void doConsumeParameters(Stack<String> args, Init cmd) {
+            String arg = args.pop();
+            cmd.file = arg;
+        }
     }
 
 }

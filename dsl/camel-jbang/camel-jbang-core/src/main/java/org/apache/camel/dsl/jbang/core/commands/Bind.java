@@ -19,8 +19,10 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.Stack;
 
 import org.apache.camel.github.GitHubResourceResolver;
 import org.apache.camel.impl.engine.DefaultResourceResolvers;
@@ -55,7 +57,10 @@ class Bind extends CamelCommand {
                         required = true)
     String sink;
 
-    @CommandLine.Parameters(description = "Name of binding file to be saved", arity = "1")
+    @CommandLine.Parameters(description = "Name of binding file to be saved", arity = "1",
+                            paramLabel = "<file>", parameterConsumer = FileConsumer.class)
+    Path filePath; // Defined only for file path completion; the field never used
+
     String file;
 
     public Bind(CamelJBangMain main) {
@@ -187,6 +192,14 @@ class Bind extends CamelCommand {
         }
 
         return sb.toString();
+    }
+
+    static class FileConsumer extends ParameterConsumer<Bind> {
+        @Override
+        protected void doConsumeParameters(Stack<String> args, Bind cmd) {
+            String arg = args.pop();
+            cmd.file = arg;
+        }
     }
 
 }
