@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +36,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Stack;
 import java.util.StringJoiner;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
@@ -90,7 +92,9 @@ class Run extends CamelCommand {
 
     //CHECKSTYLE:OFF
     @Parameters(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
-                arity = "0..9")
+                arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
+    Path[] filePaths; // Defined only for file path completion; the field never used
+
     String[] files;
 
     @Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "application",
@@ -101,20 +105,20 @@ class Run extends CamelCommand {
             "--dep", "--deps" }, description = "Add additional dependencies (Use commas to separate multiple dependencies)")
     String dependencies;
 
-    @Option(names = {"--repos"}, description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
+    @Option(names = { "--repos" }, description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
     String repos;
 
-    @Option(names = {"--maven-settings"}, description = "Optional location of maven setting.xml file to configure servers, repositories, mirrors and proxies." +
+    @Option(names = { "--maven-settings" }, description = "Optional location of maven setting.xml file to configure servers, repositories, mirrors and proxies." +
             " If set to \"false\", not even the default ~/.m2/settings.xml will be used.")
     String mavenSettings;
 
-    @Option(names = {"--maven-settings-security"}, description = "Optional location of maven settings-security.xml file to decrypt settings.xml")
+    @Option(names = { "--maven-settings-security" }, description = "Optional location of maven settings-security.xml file to decrypt settings.xml")
     String mavenSettingsSecurity;
 
     @Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
     boolean fresh;
 
-    @Option(names = {"--download"}, defaultValue = "true", description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
+    @Option(names = { "--download" }, defaultValue = "true", description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
     boolean download = true;
 
     @Option(names = { "--name" }, defaultValue = "CamelJBang", description = "The name of the Camel application")
@@ -845,6 +849,18 @@ class Run extends CamelCommand {
                 writeSettings("modeline", line);
                 modelines.add(line);
             }
+        }
+    }
+
+    static class FilesConsumer extends ParameterConsumer<Run> {
+        @Override
+        protected void doConsumeParameters(Stack<String> args, Run cmd) {
+            List<String> files = new ArrayList<>();
+            while (!args.isEmpty()) {
+                String arg = args.pop();
+                files.add(arg);
+            }
+            cmd.files = files.toArray(String[]::new);
         }
     }
 

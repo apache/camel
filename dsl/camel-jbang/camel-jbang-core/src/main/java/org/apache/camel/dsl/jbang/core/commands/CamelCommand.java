@@ -17,9 +17,14 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
+import java.util.Stack;
 import java.util.concurrent.Callable;
 
 import picocli.CommandLine;
+import picocli.CommandLine.IParameterConsumer;
+import picocli.CommandLine.Model.ArgSpec;
+import picocli.CommandLine.Model.CommandSpec;
+import picocli.CommandLine.ParameterException;
 
 public abstract class CamelCommand implements Callable<Integer> {
 
@@ -61,6 +66,20 @@ public abstract class CamelCommand implements Callable<Integer> {
             camelDir = new File(System.getProperty("user.home"), ".camel");
         }
         return new File(camelDir, pid + "-output.json");
+    }
+
+    protected abstract static class ParameterConsumer<T> implements IParameterConsumer {
+
+        @Override
+        public void consumeParameters(Stack<String> args, ArgSpec argSpec, CommandSpec cmdSpec) {
+            if (args.isEmpty()) {
+                throw new ParameterException(cmdSpec.commandLine(), "Error: missing required parameter");
+            }
+            T cmd = (T) cmdSpec.userObject();
+            doConsumeParameters(args, cmd);
+        }
+
+        protected abstract void doConsumeParameters(Stack<String> args, T cmd);
     }
 
 }

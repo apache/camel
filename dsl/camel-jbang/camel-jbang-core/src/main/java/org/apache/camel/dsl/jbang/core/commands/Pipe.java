@@ -16,12 +16,18 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.nio.file.Path;
+import java.util.Stack;
+
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "pipe", description = "Run Camel integration in pipe and filters mode for terminal scripting")
 class Pipe extends CamelCommand {
 
-    @CommandLine.Parameters(description = "Name of file", arity = "1")
+    @CommandLine.Parameters(description = "Name of file", arity = "1",
+                            paramLabel = "<file>", parameterConsumer = FileConsumer.class)
+    Path filePath; // Defined only for file path completion; the field never used
+
     String file;
 
     @CommandLine.Option(names = { "--max-messages" }, defaultValue = "0",
@@ -71,6 +77,14 @@ class Pipe extends CamelCommand {
         run.property = property;
         run.propertiesFiles = propertiesFiles;
         return run.runPipe(file);
+    }
+
+    static class FileConsumer extends ParameterConsumer<Pipe> {
+        @Override
+        protected void doConsumeParameters(Stack<String> args, Pipe cmd) {
+            String arg = args.pop();
+            cmd.file = arg;
+        }
     }
 
 }
