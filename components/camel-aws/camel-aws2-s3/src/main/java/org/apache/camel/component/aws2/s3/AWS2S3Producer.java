@@ -141,13 +141,12 @@ public class AWS2S3Producer extends DefaultProducer {
         }
 
         Map<String, String> objectMetadata = determineMetadata(exchange);
-        if (objectMetadata.containsKey("Content-Length")) {
-            if (objectMetadata.get("Content-Length").equalsIgnoreCase("0")) {
-                objectMetadata.put("Content-Length", String.valueOf(filePayload.length()));
-            }
-        } else {
-            objectMetadata.put("Content-Length", String.valueOf(filePayload.length()));
+
+        Long contentLength = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_LENGTH, Long.class);
+        if (contentLength == null || contentLength == 0) {
+            contentLength = filePayload.length();
         }
+        objectMetadata.put("Content-Length", contentLength.toString());
 
         final String keyName = AWS2S3Utils.determineKey(exchange, getConfiguration());
         CreateMultipartUploadRequest.Builder createMultipartUploadRequest
@@ -177,13 +176,28 @@ public class AWS2S3Producer extends DefaultProducer {
             createMultipartUploadRequest.contentType(contentType);
         }
 
+        String cacheControl = exchange.getIn().getHeader(AWS2S3Constants.CACHE_CONTROL, String.class);
+        if (cacheControl != null) {
+            createMultipartUploadRequest.cacheControl(cacheControl);
+        }
+
+        String contentDisposition = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_DISPOSITION, String.class);
+        if (contentDisposition != null) {
+            createMultipartUploadRequest.contentDisposition(contentDisposition);
+        }
+
+        String contentEncoding = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_ENCODING, String.class);
+        if (contentEncoding != null) {
+            createMultipartUploadRequest.contentEncoding(contentEncoding);
+        }
+
         AWS2S3Utils.setEncryption(createMultipartUploadRequest, getConfiguration());
 
         LOG.trace("Initiating multipart upload [{}] from exchange [{}]...", createMultipartUploadRequest, exchange);
 
         CreateMultipartUploadResponse initResponse
                 = getEndpoint().getS3Client().createMultipartUpload(createMultipartUploadRequest.build());
-        final long contentLength = Long.parseLong(objectMetadata.get("Content-Length"));
+        //final long contentLength = Long.parseLong(objectMetadata.get("Content-Length"));
         List<CompletedPart> completedParts = new ArrayList<CompletedPart>();
         long partSize = getConfiguration().getPartSize();
         CompleteMultipartUploadResponse uploadResult = null;
@@ -245,7 +259,7 @@ public class AWS2S3Producer extends DefaultProducer {
         Map<String, String> objectMetadata = determineMetadata(exchange);
 
         // the content-length may already be known
-        long contentLength = Long.parseLong(objectMetadata.getOrDefault(Exchange.CONTENT_LENGTH, "-1"));
+        long contentLength = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_LENGTH, -1, Long.class);
 
         Object obj = exchange.getIn().getMandatoryBody();
         InputStream inputStream = null;
@@ -277,9 +291,7 @@ public class AWS2S3Producer extends DefaultProducer {
                     }
                 }
             }
-            if (contentLength > 0) {
-                objectMetadata.put(Exchange.CONTENT_LENGTH, String.valueOf(contentLength));
-            }
+
             doPutObject(exchange, putObjectRequest, objectMetadata, filePayload, inputStream, contentLength);
         } finally {
             IOHelper.close(inputStream);
@@ -311,6 +323,25 @@ public class AWS2S3Producer extends DefaultProducer {
         String contentType = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_TYPE, String.class);
         if (contentType != null) {
             putObjectRequest.contentType(contentType);
+        }
+
+        String cacheControl = exchange.getIn().getHeader(AWS2S3Constants.CACHE_CONTROL, String.class);
+        if (cacheControl != null) {
+            putObjectRequest.cacheControl(cacheControl);
+        }
+
+        String contentDisposition = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_DISPOSITION, String.class);
+        if (contentDisposition != null) {
+            putObjectRequest.contentDisposition(contentDisposition);
+        }
+
+        String contentEncoding = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_ENCODING, String.class);
+        if (contentEncoding != null) {
+            putObjectRequest.contentEncoding(contentEncoding);
+        }
+
+        if (contentLength > 0) {
+            putObjectRequest.contentLength(contentLength);
         }
 
         BucketCannedACL acl = exchange.getIn().getHeader(AWS2S3Constants.ACL, BucketCannedACL.class);
@@ -608,36 +639,6 @@ public class AWS2S3Producer extends DefaultProducer {
 
     private Map<String, String> determineMetadata(final Exchange exchange) {
         Map<String, String> objectMetadata = new HashMap<String, String>();
-
-        Long contentLength = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_LENGTH, Long.class);
-        if (contentLength != null) {
-            objectMetadata.put(Exchange.CONTENT_LENGTH, String.valueOf(contentLength));
-        }
-
-        String contentType = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_TYPE, String.class);
-        if (contentType != null) {
-            objectMetadata.put("Content-Type", contentType);
-        }
-
-        String cacheControl = exchange.getIn().getHeader(AWS2S3Constants.CACHE_CONTROL, String.class);
-        if (cacheControl != null) {
-            objectMetadata.put("Cache-Control", cacheControl);
-        }
-
-        String contentDisposition = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_DISPOSITION, String.class);
-        if (contentDisposition != null) {
-            objectMetadata.put("Content-Disposition", contentDisposition);
-        }
-
-        String contentEncoding = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_ENCODING, String.class);
-        if (contentEncoding != null) {
-            objectMetadata.put("Content-Encoding", contentEncoding);
-        }
-
-        String contentMD5 = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_MD5, String.class);
-        if (contentMD5 != null) {
-            objectMetadata.put("Content-Md5", contentMD5);
-        }
 
         Map<String, String> metadata = exchange.getIn().getHeader(AWS2S3Constants.METADATA, Map.class);
         if (metadata != null) {
