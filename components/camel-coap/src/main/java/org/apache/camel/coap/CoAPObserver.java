@@ -30,6 +30,7 @@ import org.eclipse.californium.core.CoapResponse;
  */
 public class CoAPObserver extends DefaultConsumer implements CoapHandler {
     private final CoAPEndpoint endpoint;
+    private CoapClient client;
 
     public CoAPObserver(final CoAPEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
@@ -39,8 +40,10 @@ public class CoAPObserver extends DefaultConsumer implements CoapHandler {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        CoapClient client = endpoint.createCoapClient(endpoint.getUri());
-        client.observe(this);
+        if (this.client == null) {
+            client = endpoint.createCoapClient(endpoint.getUri());
+        }
+        startObserve();
     }
 
     @Override
@@ -62,5 +65,10 @@ public class CoAPObserver extends DefaultConsumer implements CoapHandler {
     @Override
     public void onError() {
         getExceptionHandler().handleException(new IOException("CoAP request timed out or has been rejected by the server"));
+        startObserve();
+    }
+
+    private void startObserve() {
+        this.client.observe(this);
     }
 }
