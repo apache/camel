@@ -470,7 +470,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
         servlets.put(pathSpec, servlet);
         ServletHolder servletHolder = new ServletHolder(servlet);
         servletHolder.getInitParameters().putAll(handler.getInitParams());
-        // Jetty 9 parameter bufferSize is now inputBufferSize
+        // Jetty 11 parameter bufferSize is now inputBufferSize
         servletHolder.setInitParameter("inputBufferSize", handler.getInitParameter("bufferSize"));
         handler.addServlet(servletHolder, pathSpec);
         return servlet;

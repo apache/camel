@@ -26,6 +26,7 @@ import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EventListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,8 +74,6 @@ import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.AbstractConnector;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.HttpConnectionFactory;
-import org.eclipse.jetty.server.MultiPartFormDataCompliance;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
@@ -591,7 +590,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
     protected Connector createConnector(Server server, JettyHttpEndpoint endpoint) {
 
         // now we just use the SelectChannelConnector as the default connector
-        SslContextFactory sslcf = null;
+        SslContextFactory.Server sslcf = null;
 
         // Note that this was set on the endpoint when it was constructed.  It was
         // either explicitly set at the component or on the endpoint, but either way,
@@ -601,12 +600,12 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
 
         if (endpointSslContextParameters != null) {
             try {
-                sslcf = createSslContextFactory(endpointSslContextParameters, false);
+                sslcf = (SslContextFactory.Server) createSslContextFactory(endpointSslContextParameters, false);
             } catch (Exception e) {
                 throw new RuntimeCamelException(e);
             }
         } else if ("https".equals(endpoint.getProtocol())) {
-            sslcf = new SslContextFactory();
+            sslcf = new SslContextFactory.Server();
             sslcf.setEndpointIdentificationAlgorithm(null);
             String keystoreProperty = System.getProperty(JETTY_SSL_KEYSTORE);
             if (keystoreProperty != null) {
@@ -634,7 +633,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
     }
 
     protected abstract AbstractConnector createConnectorJettyInternal(
-            Server server, JettyHttpEndpoint endpoint, SslContextFactory sslcf);
+            Server server, JettyHttpEndpoint endpoint, SslContextFactory.Server sslcf);
 
     private SslContextFactory createSslContextFactory(SSLContextParameters ssl, boolean client)
             throws GeneralSecurityException, IOException {
@@ -1177,16 +1176,6 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         // use rest enabled resolver in case we use rest
         camelServlet.setServletResolveConsumerStrategy(new HttpRestServletResolveConsumerStrategy());
 
-        //must make RFC7578 as default to avoid using the deprecated MultiPartInputStreamParser
-        try {
-            connector.getConnectionFactory(HttpConnectionFactory.class).getHttpConfiguration()
-                    .setMultiPartFormDataCompliance(MultiPartFormDataCompliance.RFC7578);
-        } catch (Exception e) {
-            // ignore this due to OSGi problems
-            LOG.debug("Cannot set MultiPartFormDataCompliance to RFC7578 due to {}. This exception is ignored.",
-                    e.getMessage(), e);
-        }
-
         return camelServlet;
     }
 
@@ -1344,7 +1333,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
 
         try {
             Object o = getContainer(server);
-            o.getClass().getMethod("addEventListener", Container.Listener.class).invoke(o, mbContainer);
+            o.getClass().getMethod("addEventListener", EventListener.class).invoke(o, mbContainer);
             mbContainer.getClass().getMethod("beanAdded", Container.class, Object.class)
                     .invoke(mbContainer, null, server);
         } catch (RuntimeException rex) {

@@ -3821,7 +3821,7 @@
     "kind": "component",
     "name": "jetty",
     "title": "Jetty",
-    "description": "Expose HTTP endpoints using Jetty 9.",
+    "description": "Expose HTTP endpoints using Jetty 11.",
     "deprecated": false,
     "deprecationNote": "",
     "firstVersion": "1.2.0",

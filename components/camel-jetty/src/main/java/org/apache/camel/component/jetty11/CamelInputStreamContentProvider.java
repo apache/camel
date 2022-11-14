@@ -14,11 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jetty9;
+package org.apache.camel.component.jetty11;
 
-import org.apache.camel.spi.annotations.SendDynamic;
+import java.io.InputStream;
 
-@SendDynamic("jetty")
-public class HttpSendDynamicAware extends org.apache.camel.http.base.HttpSendDynamicAware {
+import org.eclipse.jetty.client.util.InputStreamContentProvider;
 
+public class CamelInputStreamContentProvider extends InputStreamContentProvider {
+
+    private int length;
+
+    public CamelInputStreamContentProvider(InputStream stream, int length) {
+        super(stream);
+        this.length = length;
+    }
+
+    @Override
+    public long getLength() {
+        return length;
+    }
 }
