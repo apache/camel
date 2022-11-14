@@ -263,7 +263,7 @@
     <huaweicloud-obs-version>3.21.4.1</huaweicloud-obs-version>
     <huaweicloud-sdk-version>3.0.76</huaweicloud-sdk-version>
     <ical4j-version>1.0.7</ical4j-version>
-    <icu4j-version>70.1</icu4j-version>
+    <icu4j-version>72.1</icu4j-version>
     <ignite-version>2.12.0</ignite-version>
     <impsort-maven-plugin-version>1.6.0</impsort-maven-plugin-version>
     <infinispan-version>14.0.2.Final</infinispan-version>
