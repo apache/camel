@@ -251,7 +251,7 @@
         <influx-guava-version>20.0</influx-guava-version>
         <irclib-version>1.10</irclib-version>
         <ironmq-version>3.0.5</ironmq-version>
-        <ivy-version>2.5.0</ivy-version>
+        <ivy-version>2.5.1</ivy-version>
         <jackson-jq-version>1.0.0-preview.20220705</jackson-jq-version>
         <jackson-version>1.9.12</jackson-version>
         <jackson2-version>2.14.0</jackson2-version>
