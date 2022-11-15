@@ -342,7 +342,7 @@ class Run extends CamelCommand {
         if (dep == null) {
             dep = dependencies;
         } else if (dependencies != null && !dependencies.equals(dep)) {
-            dep = dep.substring(0,dep.lastIndexOf(","));
+            dep = dep.substring(0, dep.lastIndexOf(","));
             dep += "," + dependencies;
         }
         if (dep != null) {
