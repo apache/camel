@@ -41,6 +41,7 @@ import java.util.StringJoiner;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -95,7 +96,7 @@ class Run extends CamelCommand {
                 arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
     Path[] filePaths; // Defined only for file path completion; the field never used
 
-    String[] files;
+    List<String> files = new ArrayList<>();
 
     @Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "application",
             description = "Profile to use, which refers to loading properties file with the given profile name. By default application.properties is loaded.")
@@ -209,7 +210,7 @@ class Run extends CamelCommand {
     }
 
     protected Integer runPipe(String file) throws Exception {
-        this.files = new String[] { file };
+        this.files.add(file);
         pipeRun = true;
         return run();
     }
@@ -290,7 +291,7 @@ class Run extends CamelCommand {
         }
 
         // if no specific file to run then try to auto-detect
-        if (files == null || files.length == 0) {
+        if (files.isEmpty()) {
             String routes = profileProperties != null ? profileProperties.getProperty("camel.main.routesIncludePattern") : null;
             if (routes == null) {
                 if (!silentRun) {
@@ -298,13 +299,16 @@ class Run extends CamelCommand {
                     return 1;
                 } else {
                     // silent-run then auto-detect all files (except properties as they are loaded explicit or via profile)
-                    files = new File(".").list((dir, name) -> !name.endsWith(".properties"));
+                    String[] allFiles = new File(".").list((dir, name) -> !name.endsWith(".properties"));
+                    if (allFiles != null) {
+                        files.addAll(Arrays.asList(allFiles));
+                    }
                 }
             }
         }
         // filter out duplicate files
-        if (files != null && files.length > 0) {
-            files = Arrays.stream(files).distinct().toArray(String[]::new);
+        if (!files.isEmpty()) {
+            files = files.stream().distinct().collect(Collectors.toList());
         }
 
         // configure logging first
@@ -389,87 +393,80 @@ class Run extends CamelCommand {
 
         // include generated openapi to files to run
         if (openapi != null) {
-            List<String> list = new ArrayList<>();
-            if (files != null) {
-                list.addAll(Arrays.asList(files));
-            }
-            list.add(OPENAPI_GENERATED_FILE);
-            files = list.toArray(new String[0]);
+            files.add(OPENAPI_GENERATED_FILE);
         }
 
-        if (files != null) {
-            for (String file : files) {
-                if (file.startsWith("clipboard") && !(new File(file).exists())) {
-                    file = loadFromClipboard(file);
-                } else if (skipFile(file)) {
-                    continue;
-                } else if (!knownFile(file) && !file.endsWith(".properties")) {
-                    // non known files to be added on classpath
-                    sjClasspathFiles.add(file);
-                    continue;
-                }
+        for (String file : files) {
+            if (file.startsWith("clipboard") && !(new File(file).exists())) {
+                file = loadFromClipboard(file);
+            } else if (skipFile(file)) {
+                continue;
+            } else if (!knownFile(file) && !file.endsWith(".properties")) {
+                // non known files to be added on classpath
+                sjClasspathFiles.add(file);
+                continue;
+            }
 
-                // process known files as its likely DSLs or configuration files
+            // process known files as its likely DSLs or configuration files
 
-                // check for properties files
-                if (file.endsWith(".properties")) {
-                    if (!ResourceHelper.hasScheme(file) && !file.startsWith("github:")) {
-                        file = "file:" + file;
-                    }
-                    if (ObjectHelper.isEmpty(propertiesFiles)) {
-                        propertiesFiles = file;
-                    } else {
-                        propertiesFiles = propertiesFiles + "," + file;
-                    }
-                    if (dev && file.startsWith("file:")) {
-                        // we can only reload if file based
-                        sjReload.add(file.substring(5));
-                    }
-                    continue;
-                }
-
-                // Camel DSL files
+            // check for properties files
+            if (file.endsWith(".properties")) {
                 if (!ResourceHelper.hasScheme(file) && !file.startsWith("github:")) {
                     file = "file:" + file;
                 }
-                if (file.startsWith("file:")) {
-                    // check if file exist
-                    File inputFile = new File(file.substring(5));
-                    if (!inputFile.exists() && !inputFile.isFile()) {
-                        System.err.println("File does not exist: " + file);
-                        return 1;
-                    }
+                if (ObjectHelper.isEmpty(propertiesFiles)) {
+                    propertiesFiles = file;
+                } else {
+                    propertiesFiles = propertiesFiles + "," + file;
                 }
-
-                if (file.startsWith("file:") && file.endsWith(".kamelet.yaml")) {
-                    sjKamelets.add(file);
-                }
-
-                // automatic map github https urls to github resolver
-                if (file.startsWith("https://github.com/")) {
-                    file = evalGithubSource(main, file);
-                    if (file == null) {
-                        continue; // all mapped continue to next
-                    }
-                } else if (file.startsWith("https://gist.github.com/")) {
-                    file = evalGistSource(main, file);
-                    if (file == null) {
-                        continue; // all mapped continue to next
-                    }
-                }
-
-                if ("CamelJBang".equals(name)) {
-                    // no specific name was given so lets use the name from the first integration file
-                    // remove scheme and keep only the name (no path or ext)
-                    String s = StringHelper.after(file, ":");
-                    name = FileUtil.onlyName(s);
-                }
-
-                js.add(file);
                 if (dev && file.startsWith("file:")) {
                     // we can only reload if file based
                     sjReload.add(file.substring(5));
                 }
+                continue;
+            }
+
+            // Camel DSL files
+            if (!ResourceHelper.hasScheme(file) && !file.startsWith("github:")) {
+                file = "file:" + file;
+            }
+            if (file.startsWith("file:")) {
+                // check if file exist
+                File inputFile = new File(file.substring(5));
+                if (!inputFile.exists() && !inputFile.isFile()) {
+                    System.err.println("File does not exist: " + file);
+                    return 1;
+                }
+            }
+
+            if (file.startsWith("file:") && file.endsWith(".kamelet.yaml")) {
+                sjKamelets.add(file);
+            }
+
+            // automatic map github https urls to github resolver
+            if (file.startsWith("https://github.com/")) {
+                file = evalGithubSource(main, file);
+                if (file == null) {
+                    continue; // all mapped continue to next
+                }
+            } else if (file.startsWith("https://gist.github.com/")) {
+                file = evalGistSource(main, file);
+                if (file == null) {
+                    continue; // all mapped continue to next
+                }
+            }
+
+            if ("CamelJBang".equals(name)) {
+                // no specific name was given so lets use the name from the first integration file
+                // remove scheme and keep only the name (no path or ext)
+                String s = StringHelper.after(file, ":");
+                name = FileUtil.onlyName(s);
+            }
+
+            js.add(file);
+            if (dev && file.startsWith("file:")) {
+                // we can only reload if file based
+                sjReload.add(file.substring(5));
             }
         }
 
@@ -855,12 +852,8 @@ class Run extends CamelCommand {
     static class FilesConsumer extends ParameterConsumer<Run> {
         @Override
         protected void doConsumeParameters(Stack<String> args, Run cmd) {
-            List<String> files = new ArrayList<>();
-            while (!args.isEmpty()) {
-                String arg = args.pop();
-                files.add(arg);
-            }
-            cmd.files = files.toArray(String[]::new);
+            String arg = args.pop();
+            cmd.files.add(arg);
         }
     }
 
