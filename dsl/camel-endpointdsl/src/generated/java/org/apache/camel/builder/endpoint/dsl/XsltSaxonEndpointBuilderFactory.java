@@ -651,6 +651,19 @@ public interface XsltSaxonEndpointBuilderFactory {
          * Since: 3.0
          * Maven coordinates: org.apache.camel:camel-xslt-saxon
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default XsltSaxonHeaderNameBuilder xsltSaxon() {
+            return XsltSaxonHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * XSLT Saxon (camel-xslt-saxon)
+         * Transform XML payloads using an XSLT template using Saxon.
+         * 
+         * Category: core,transformation
+         * Since: 3.0
+         * Maven coordinates: org.apache.camel:camel-xslt-saxon
+         * 
          * Syntax: <code>xslt-saxon:resourceUri</code>
          * 
          * Path parameter: resourceUri (required)
@@ -696,6 +709,30 @@ public interface XsltSaxonEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return XsltSaxonEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the XSLT Saxon component.
+     */
+    public static class XsltSaxonHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final XsltSaxonHeaderNameBuilder INSTANCE = new XsltSaxonHeaderNameBuilder();
+
+        /**
+         * The XSLT file name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code XsltFileName}.
+         */
+        public String xsltFileName() {
+            return "XsltFileName";
         }
     }
     static XsltSaxonEndpointBuilder endpointBuilder(

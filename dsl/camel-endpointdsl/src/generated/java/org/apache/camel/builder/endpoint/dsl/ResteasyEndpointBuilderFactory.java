@@ -2199,6 +2199,155 @@ public interface ResteasyEndpointBuilderFactory {
         public String httpPath() {
             return "HttpPath";
         }
+
+        /**
+         * The HTTP content encoding. Is set on both the IN and OUT message to
+         * provide a content encoding, such as gzip.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code Content-Encoding}.
+         */
+        public String contentEncoding() {
+            return "Content-Encoding";
+        }
+
+        /**
+         * The HTTP response code from the external server. Is 200 for OK.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpResponseCode}.
+         */
+        public String httpResponseCode() {
+            return "HttpResponseCode";
+        }
+
+        /**
+         * The HTTP response text from the external server.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpResponseText}.
+         */
+        public String httpResponseText() {
+            return "HttpResponseText";
+        }
+
+        /**
+         * The version of the http protocol used.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpProtocolVersion}.
+         */
+        public String httpProtocolVersion() {
+            return "HttpProtocolVersion";
+        }
+
+        /**
+         * The target host.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code Host}.
+         */
+        public String host() {
+            return "Host";
+        }
+
+        /**
+         * The rest http URI.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code RestHttpUri}.
+         */
+        public String restHttpUri() {
+            return "RestHttpUri";
+        }
+
+        /**
+         * URI to call. Will override existing URI set directly on the endpoint.
+         * This uri is the uri of the http server to call. Its not the same as
+         * the Camel endpoint uri, where you can configure endpoint options such
+         * as security etc. This header does not support that, its only the uri
+         * of the http server.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpUri}.
+         */
+        public String httpUri() {
+            return "HttpUri";
+        }
+
+        /**
+         * The rest http query.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code RestHttpQuery}.
+         */
+        public String restHttpQuery() {
+            return "RestHttpQuery";
+        }
+
+        /**
+         * The http raw query.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpRawQuery}.
+         */
+        public String httpRawQuery() {
+            return "HttpRawQuery";
+        }
+
+        /**
+         * The http method to use.
+         * 
+         * The option is a: {@code org.apache.camel.component.http.HttpMethods}
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpMethod}.
+         */
+        public String httpMethod() {
+            return "HttpMethod";
+        }
+
+        /**
+         * The character encoding.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HttpCharacterEncoding}.
+         */
+        public String httpCharacterEncoding() {
+            return "HttpCharacterEncoding";
+        }
     }
     @Deprecated
     static ResteasyEndpointBuilder endpointBuilder(
