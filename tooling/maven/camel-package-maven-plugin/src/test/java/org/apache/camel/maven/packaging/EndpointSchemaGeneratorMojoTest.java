@@ -30,6 +30,7 @@ import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithHeaderClassHier
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithHeaderInterfaceHierarchy;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithJavadocAsDescription;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithoutHeaders;
+import org.apache.camel.maven.packaging.endpoint.SomeExtendingEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.ComponentModel.EndpointHeaderModel;
@@ -190,5 +191,26 @@ class EndpointSchemaGeneratorMojoTest {
                 String.format("%s#SOME_VALUE@%s", endpoint.headersClass().getName(),
                         endpoint.headersNameProvider() + (clazz.getName().contains("Method") ? "()" : "")),
                 header.getConstantName());
+    }
+
+    @Test
+    void testEndpointWithHeadersOnSelfAndSuperclass() {
+        ComponentModel parentModel = new ComponentModel();
+        mojo.addEndpointHeaders(parentModel, SomeEndpoint.class.getAnnotation(UriEndpoint.class), "some");
+        assertEquals(3, parentModel.getEndpointHeaders().size());
+        mojo.addEndpointHeaders(model, SomeExtendingEndpoint.class.getAnnotation(UriEndpoint.class), "someext");
+        mojo.enhanceComponentModel(model, parentModel, "", "");
+        List<EndpointHeaderModel> endpointHeaders = model.getEndpointHeaders();
+        assertEquals(4, endpointHeaders.size());
+        EndpointHeaderModel headerExtended = endpointHeaders.get(1);
+        assertEquals("header", headerExtended.getKind());
+        assertEquals("key on extended class", headerExtended.getDescription());
+        EndpointHeaderModel headerOverridden = endpointHeaders.get(0);
+        assertEquals("header", headerOverridden.getKind());
+        assertEquals("key on extended overriding parent", headerOverridden.getDescription());
+        EndpointHeaderModel headerFromParent = endpointHeaders.get(3);
+        assertEquals("header", headerFromParent.getKind());
+        assertEquals("KEY_EMPTY_WITH_JAVA_DOC", headerFromParent.getName());
+
     }
 }
