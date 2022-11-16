@@ -5645,6 +5645,137 @@ public interface NettyHttpEndpointBuilderFactory {
         public String httpUri() {
             return "HttpUri";
         }
+
+        /**
+         * The channel handler context.
+         * 
+         * The option is a: {@code io.netty.channel.ChannelHandlerContext} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code NettyChannelHandlerContext}.
+         */
+        public String nettyChannelHandlerContext() {
+            return "NettyChannelHandlerContext";
+        }
+
+        /**
+         * The remote address.
+         * 
+         * The option is a: {@code java.net.SocketAddress} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code NettyRemoteAddress}.
+         */
+        public String nettyRemoteAddress() {
+            return "NettyRemoteAddress";
+        }
+
+        /**
+         * The local address.
+         * 
+         * The option is a: {@code java.net.SocketAddress} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code NettyLocalAddress}.
+         */
+        public String nettyLocalAddress() {
+            return "NettyLocalAddress";
+        }
+
+        /**
+         * The SSL session.
+         * 
+         * The option is a: {@code javax.net.ssl.SSLSession} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code NettySSLSession}.
+         */
+        public String nettySSLSession() {
+            return "NettySSLSession";
+        }
+
+        /**
+         * The SSL client certificate subject name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code NettySSLClientCertSubjectName}.
+         */
+        public String nettySSLClientCertSubjectName() {
+            return "NettySSLClientCertSubjectName";
+        }
+
+        /**
+         * The SSL client certificate issuer name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code NettySSLClientCertIssuerName}.
+         */
+        public String nettySSLClientCertIssuerName() {
+            return "NettySSLClientCertIssuerName";
+        }
+
+        /**
+         * The SSL client certificate serial number.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * NettySSLClientCertSerialNumber}.
+         */
+        public String nettySSLClientCertSerialNumber() {
+            return "NettySSLClientCertSerialNumber";
+        }
+
+        /**
+         * The SSL client certificate not before.
+         * 
+         * The option is a: {@code java.util.Date} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code NettySSLClientCertNotBefore}.
+         */
+        public String nettySSLClientCertNotBefore() {
+            return "NettySSLClientCertNotBefore";
+        }
+
+        /**
+         * The SSL client certificate not after.
+         * 
+         * The option is a: {@code java.util.Date} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code NettySSLClientCertNotAfter}.
+         */
+        public String nettySSLClientCertNotAfter() {
+            return "NettySSLClientCertNotAfter";
+        }
+
+        /**
+         * The read timeout.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code NettyRequestTimeout}.
+         */
+        public String nettyRequestTimeout() {
+            return "NettyRequestTimeout";
+        }
     }
     static NettyHttpEndpointBuilder endpointBuilder(
             String componentName,

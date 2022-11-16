@@ -6821,6 +6821,20 @@ public interface ActiveMQEndpointBuilderFactory {
          * Since: 1.0
          * Maven coordinates: org.apache.camel:camel-activemq
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default ActiveMQHeaderNameBuilder activemq() {
+            return ActiveMQHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * ActiveMQ (camel-activemq)
+         * Send messages to (or consume from) Apache ActiveMQ. This component
+         * extends the Camel JMS component.
+         * 
+         * Category: messaging
+         * Since: 1.0
+         * Maven coordinates: org.apache.camel:camel-activemq
+         * 
          * Syntax: <code>activemq:destinationType:destinationName</code>
          * 
          * Path parameter: destinationType
@@ -6867,6 +6881,242 @@ public interface ActiveMQEndpointBuilderFactory {
                 String componentName,
                 String path) {
             return ActiveMQEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
+    }
+
+    /**
+     * The builder of headers' name for the ActiveMQ component.
+     */
+    public static class ActiveMQHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final ActiveMQHeaderNameBuilder INSTANCE = new ActiveMQHeaderNameBuilder();
+
+        /**
+         * The destination.
+         * 
+         * The option is a: {@code javax.jms.Destination} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JmsDestination}.
+         */
+        public String jmsDestination() {
+            return "JmsDestination";
+        }
+
+        /**
+         * The name of the queue or topic to use as destination.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code JmsDestinationName}.
+         */
+        public String jmsDestinationName() {
+            return "JmsDestinationName";
+        }
+
+        /**
+         * The JMS group ID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code JMSXGroupID}.
+         */
+        public String jMSXGroupID() {
+            return "JMSXGroupID";
+        }
+
+        /**
+         * The JMS unique message ID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code JMSMessageID}.
+         */
+        public String jMSMessageID() {
+            return "JMSMessageID";
+        }
+
+        /**
+         * The JMS correlation ID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code JMSCorrelationID}.
+         */
+        public String jMSCorrelationID() {
+            return "JMSCorrelationID";
+        }
+
+        /**
+         * The JMS correlation ID as bytes.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code JMSCorrelationIDAsBytes}.
+         */
+        public String jMSCorrelationIDAsBytes() {
+            return "JMSCorrelationIDAsBytes";
+        }
+
+        /**
+         * The JMS delivery mode.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code JMSDeliveryMode}.
+         */
+        public String jMSDeliveryMode() {
+            return "JMSDeliveryMode";
+        }
+
+        /**
+         * The JMS destination.
+         * 
+         * The option is a: {@code javax.jms.Destination} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code JMSDestination}.
+         */
+        public String jMSDestination() {
+            return "JMSDestination";
+        }
+
+        /**
+         * The JMS expiration.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code JMSExpiration}.
+         */
+        public String jMSExpiration() {
+            return "JMSExpiration";
+        }
+
+        /**
+         * The JMS priority (with 0 as the lowest priority and 9 as the
+         * highest).
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code JMSPriority}.
+         */
+        public String jMSPriority() {
+            return "JMSPriority";
+        }
+
+        /**
+         * Is the JMS message redelivered.
+         * 
+         * The option is a: {@code boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code JMSRedelivered}.
+         */
+        public String jMSRedelivered() {
+            return "JMSRedelivered";
+        }
+
+        /**
+         * The JMS timestamp.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code JMSTimestamp}.
+         */
+        public String jMSTimestamp() {
+            return "JMSTimestamp";
+        }
+
+        /**
+         * The JMS reply-to destination.
+         * 
+         * The option is a: {@code javax.jms.Destination} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code JMSReplyTo}.
+         */
+        public String jMSReplyTo() {
+            return "JMSReplyTo";
+        }
+
+        /**
+         * The JMS type.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code JMSType}.
+         */
+        public String jMSType() {
+            return "JMSType";
+        }
+
+        /**
+         * The XUser id.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code JMSXUserID}.
+         */
+        public String jMSXUserID() {
+            return "JMSXUserID";
+        }
+
+        /**
+         * The message type.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.jms.JmsMessageType} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code JmsMessageType}.
+         */
+        public String jmsMessageType() {
+            return "JmsMessageType";
+        }
+
+        /**
+         * The timeout for waiting for a reply when using the InOut Exchange
+         * Pattern (in milliseconds).
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Default: 20_000
+         * Group: producer
+         * 
+         * @return the name of the header {@code JmsRequestTimeout}.
+         */
+        public String jmsRequestTimeout() {
+            return "JmsRequestTimeout";
         }
     }
     static ActiveMQEndpointBuilder endpointBuilder(
