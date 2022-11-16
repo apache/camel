@@ -47,7 +47,7 @@ class ComponentDslBuilderFactoryGeneratorTest {
         assertTrue(classCode.contains("package org.apache.camel.builder.component.dsl;"));
 
         // check for the imports
-        assertTrue(classCode.contains("import javax.annotation.Generated;"));
+        assertTrue(classCode.contains("import javax.annotation.processing.Generated;"));
         assertTrue(classCode.contains("import org.apache.camel.builder.component.AbstractComponentBuilder;"));
         assertTrue(classCode.contains("import org.apache.camel.builder.component.ComponentBuilder;"));
         assertTrue(classCode.contains("import org.apache.camel.component.kafka.KafkaComponent;"));

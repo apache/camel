@@ -16,7 +16,7 @@
  */
 package org.apache.camel.builder.component;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 /**
  * Component DSL builder.

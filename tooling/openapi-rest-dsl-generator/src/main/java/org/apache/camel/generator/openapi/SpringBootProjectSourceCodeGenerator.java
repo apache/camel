@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 import javax.lang.model.element.Modifier;
 
 import com.squareup.javapoet.AnnotationSpec;

@@ -19,7 +19,7 @@ package org.apache.camel.component.dozer.example.xyz;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
