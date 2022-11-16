@@ -4,7 +4,7 @@
 :artifactid: camel-plc4x
 :description: Camel PLC4X support
 :since: 3.20
-:supportlevel: Preview
+:supportlevel: Stable
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: plc4x

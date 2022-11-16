@@ -19,8 +19,8 @@ public class GitEndpointUriFactory extends org.apache.camel.support.component.En
 
     private static final Set<String> PROPERTY_NAMES = Set.of(
             "allowEmpty", "branchName", "bridgeErrorHandler", "exceptionHandler", "exchangePattern", "gitConfigFile",
-            "lazyStartProducer", "localPath", "operation", "password", "remoteName", "remotePath", "tagName", "type",
-            "username");
+            "lazyStartProducer", "localPath", "operation", "password", "remoteName", "remotePath", "tagName",
+            "targetBranchName", "type", "username");
     private static final Set<String> SECRET_PROPERTY_NAMES = Set.of();
     private static final Set<String> MULTI_VALUE_PREFIXES = Set.of();
 
