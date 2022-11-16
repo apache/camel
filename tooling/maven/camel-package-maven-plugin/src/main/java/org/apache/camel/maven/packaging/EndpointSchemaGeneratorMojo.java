@@ -620,6 +620,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     = componentModel.getComponentOptions().stream().map(BaseOptionModel::getName).collect(Collectors.toSet());
             Set<String> endpointOptionNames
                     = componentModel.getEndpointOptions().stream().map(BaseOptionModel::getName).collect(Collectors.toSet());
+            Set<String> headerNames
+                    = componentModel.getEndpointHeaders().stream().map(BaseOptionModel::getName).collect(Collectors.toSet());
             Collections.addAll(componentOptionNames, excludedComponentProperties.split(","));
             Collections.addAll(endpointOptionNames, excludedEndpointProperties.split(","));
             parentData.getComponentOptions().stream()
@@ -628,6 +630,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             parentData.getEndpointOptions().stream()
                     .filter(option -> !endpointOptionNames.contains(option.getName()))
                     .forEach(option -> componentModel.getEndpointOptions().add(option));
+            parentData.getEndpointHeaders().stream()
+                    .filter(header -> !headerNames.contains(header.getName()))
+                    .forEach(header -> componentModel.getEndpointHeaders().add(header));
         }
     }
 
