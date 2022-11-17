@@ -32,7 +32,7 @@ public class DnsServiceDiscoveryTest {
         DnsConfiguration configuration = new DnsConfiguration();
         try (DnsServiceDiscovery discovery = new DnsServiceDiscovery(configuration)) {
 
-            configuration.setDomain("gmail.com");
+            configuration.setDomain("jabber.com");
             configuration.setProto("_tcp");
 
             List<ServiceDefinition> services = discovery.getServices("_xmpp-server");
