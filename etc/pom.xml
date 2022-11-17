@@ -126,7 +126,7 @@
                                             <entry key="org.eclipse.jdt.ui.text.custom_code_templates" value="${eclipse.code.templates}" />
 
                                             <!-- Add import order -->
-                                            <entry key="org.eclipse.jdt.ui.importorder" value="java;javax;org.w3c;org.xml;w3c;" />
+                                            <entry key="org.eclipse.jdt.ui.importorder" value="java;jakarta;javax;org.w3c;org.xml;w3c;" />
                                             <!-- Sort order -->
                                             <entry key="org.eclipse.jdt.ui.visibility.order" value="B,R,D,V," />
                                             <entry key="outlinesortoption" value="T,SF,F,SI,I,C,SM,M," />
