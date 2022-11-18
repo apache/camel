@@ -17,8 +17,6 @@
 package org.apache.camel.component.micrometer;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -67,31 +65,6 @@ public class MicrometerComponentTest {
     public void setUp() {
         component = new MicrometerComponent();
         inOrder = Mockito.inOrder(camelContext, camelRegistry, metricRegistry, typeConverter);
-    }
-
-    @Test
-    public void testCreateEndpoint() throws Exception {
-        component.setCamelContext(camelContext);
-        when(camelContext.getRegistry()).thenReturn(camelRegistry);
-        when(camelContext.getTypeConverter()).thenReturn(typeConverter);
-        when(typeConverter.convertTo(String.class, "key=value")).thenReturn("key=value");
-        when(camelRegistry.lookupByNameAndType(MicrometerConstants.METRICS_REGISTRY_NAME, MeterRegistry.class))
-                .thenReturn(metricRegistry);
-
-        Map<String, Object> params = new HashMap<>();
-        params.put("tags", "key=value");
-        Endpoint result = component.createEndpoint("micrometer:counter:counter", "counter:counter", params);
-        assertThat(result, is(notNullValue()));
-        assertThat(result, is(instanceOf(MicrometerEndpoint.class)));
-        MicrometerEndpoint me = (MicrometerEndpoint) result;
-        assertThat(me.getMetricsName(), is("counter"));
-        assertThat(me.getRegistry(), is(metricRegistry));
-        inOrder.verify(camelContext, times(1)).getRegistry();
-        inOrder.verify(camelRegistry, times(1)).lookupByNameAndType(MicrometerConstants.METRICS_REGISTRY_NAME,
-                MeterRegistry.class);
-        inOrder.verify(camelContext, times(1)).getTypeConverter();
-        inOrder.verify(typeConverter, times(1)).convertTo(String.class, "key=value");
-        inOrder.verifyNoMoreInteractions();
     }
 
     @Test
