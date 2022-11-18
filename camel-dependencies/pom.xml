@@ -531,7 +531,7 @@
     <swagger-java-version>1.6.4</swagger-java-version>
     <swagger-openapi3-version>2.1.13</swagger-openapi3-version>
     <templating-maven-plugin-version>1.0.0</templating-maven-plugin-version>
-    <testcontainers-version>1.17.5</testcontainers-version>
+    <testcontainers-version>1.17.6</testcontainers-version>
     <tika-version>2.5.0</tika-version>
     <trimStackTrace>false</trimStackTrace>
     <twilio-version>7.55.3</twilio-version>
