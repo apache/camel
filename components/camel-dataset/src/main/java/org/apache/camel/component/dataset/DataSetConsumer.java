@@ -35,11 +35,13 @@ public class DataSetConsumer extends DefaultConsumer {
     private DataSetEndpoint endpoint;
     private Processor reporter;
     private ExecutorService executorService;
+    private final boolean withIndexHeader;
 
     public DataSetConsumer(DataSetEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.camelContext = endpoint.getCamelContext();
+        this.withIndexHeader = !endpoint.getDataSetIndex().equals("off");
     }
 
     @Override
@@ -90,7 +92,7 @@ public class DataSetConsumer extends DefaultConsumer {
 
         endpoint.getDataSet().populateMessage(exchange, messageIndex);
 
-        if (!endpoint.getDataSetIndex().equals("off")) {
+        if (withIndexHeader) {
             Message in = exchange.getIn();
             in.setHeader(DataSetConstants.DATASET_INDEX, messageIndex);
         }
