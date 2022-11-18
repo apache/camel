@@ -532,7 +532,7 @@
     <swagger-openapi3-version>2.1.13</swagger-openapi3-version>
     <templating-maven-plugin-version>1.0.0</templating-maven-plugin-version>
     <testcontainers-version>1.17.6</testcontainers-version>
-    <tika-version>2.5.0</tika-version>
+    <tika-version>2.6.0</tika-version>
     <trimStackTrace>false</trimStackTrace>
     <twilio-version>7.55.3</twilio-version>
     <twitter4j-version>4.0.7</twitter4j-version>
