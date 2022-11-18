@@ -134,8 +134,8 @@ public class MicrometerConsole extends AbstractDevConsole {
 
         MeterRegistry mr = lookupMeterRegistry();
         int i = 0;
+        List<JsonObject> list = new ArrayList<>();
         for (Meter m : mr.getMeters()) {
-            final List<JsonObject> list = new ArrayList<>();
             if (m instanceof Counter) {
                 Counter c = (Counter) m;
                 if (i == 0) {
@@ -160,9 +160,10 @@ public class MicrometerConsole extends AbstractDevConsole {
                 list.add(jo);
             }
         }
+        list.sort(this::sortByName);
         i = 0;
+        list = new ArrayList<>();
         for (Meter m : mr.getMeters()) {
-            final List<JsonObject> list = new ArrayList<>();
             if (m instanceof Gauge) {
                 Gauge g = (Gauge) m;
                 if (i == 0) {
@@ -179,10 +180,11 @@ public class MicrometerConsole extends AbstractDevConsole {
                 list.add(jo);
             }
         }
+        list.sort(this::sortByName);
         i = 0;
+        list = new ArrayList<>();
         for (Meter m : mr.getMeters()) {
             if (m instanceof Timer) {
-                final List<JsonObject> list = new ArrayList<>();
                 Timer t = (Timer) m;
                 if (i == 0) {
                     root.put("timers", list);
@@ -201,10 +203,11 @@ public class MicrometerConsole extends AbstractDevConsole {
                 list.add(jo);
             }
         }
+        list.sort(this::sortByName);
         i = 0;
+        list = new ArrayList<>();
         for (Meter m : mr.getMeters()) {
             if (m instanceof LongTaskTimer) {
-                final List<JsonObject> list = new ArrayList<>();
                 LongTaskTimer t = (LongTaskTimer) m;
                 if (i == 0) {
                     root.put("longTaskTimers", list);
@@ -223,10 +226,11 @@ public class MicrometerConsole extends AbstractDevConsole {
                 list.add(jo);
             }
         }
+        list.sort(this::sortByName);
         i = 0;
+        list = new ArrayList<>();
         for (Meter m : mr.getMeters()) {
             if (m instanceof DistributionSummary) {
-                final List<JsonObject> list = new ArrayList<>();
                 DistributionSummary d = (DistributionSummary) m;
                 if (i == 0) {
                     root.put("distribution", list);
@@ -265,6 +269,10 @@ public class MicrometerConsole extends AbstractDevConsole {
     private MeterRegistry lookupMeterRegistry() {
         return MicrometerUtils.getOrCreateMeterRegistry(getCamelContext().getRegistry(),
                 MicrometerConstants.METRICS_REGISTRY_NAME);
+    }
+
+    private int sortByName(JsonObject o1, JsonObject o2) {
+        return o1.getString("name").compareToIgnoreCase(o2.getString("name"));
     }
 
 }

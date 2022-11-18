@@ -16,20 +16,20 @@
  */
 var answer = "";
 var registry = context.getRegistry();
-var mr = registry.lookupByNameAndType("metricRegistry", org.eclipse.microprofile.metrics.MetricRegistry.class);
+var mr = registry.lookupByNameAndType("metricsRegistry", io.micrometer.core.instrument.MeterRegistry.class);
 if (mr == null) {
     // automatic create metrics registry
-    answer = "Auto-configuring camel-microprofile-metrics: Creating default MetricRegistry";
-    mr = new io.smallrye.metrics.MetricRegistries().getApplicationRegistry();
-    registry.bind("metricRegistry", mr);
+    answer = "Auto-configuring camel-micrometer: Creating default MeterRegistry";
+    mr = new io.micrometer.core.instrument.simple.SimpleMeterRegistry();
+    registry.bind("metricsRegistry", mr);
     // also setup metrics as route policy factory to capture route level details
-    var rpf = new org.apache.camel.component.microprofile.metrics.route.policy.MicroProfileMetricsRoutePolicyFactory();
-    rpf.setMetricRegistry(mr);
+    var rpf = new org.apache.camel.component.micrometer.routepolicy.MicrometerRoutePolicyFactory();
+    rpf.setMeterRegistry(mr);
     context.addRoutePolicyFactory(rpf);
     // and setup dev console
     var dcr = context.getExtension(org.apache.camel.console.DevConsoleRegistry.class);
     if (dcr != null) {
-        dcr.register(new org.apache.camel.component.microprofile.metrics.MicroProfileConsole());
+        dcr.register(new org.apache.camel.component.micrometer.MicrometerConsole());
     }
 }
 return answer;
