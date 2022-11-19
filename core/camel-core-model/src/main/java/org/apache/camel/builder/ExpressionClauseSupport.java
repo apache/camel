@@ -30,6 +30,7 @@ import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.GroovyExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.Hl7TerserExpression;
+import org.apache.camel.model.language.JavaScriptExpression;
 import org.apache.camel.model.language.JoorExpression;
 import org.apache.camel.model.language.JqExpression;
 import org.apache.camel.model.language.JsonPathExpression;
@@ -348,6 +349,29 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      */
     public T groovy(String text) {
         return expression(new GroovyExpression(text));
+    }
+
+    /**
+     * Evaluates a JavaScript expression.
+     *
+     * @param  text the expression to be evaluated
+     * @return      the builder to continue processing the DSL
+     */
+    public T js(String text) {
+        return expression(new JavaScriptExpression(text));
+    }
+
+    /**
+     * Evaluates an JavaScript expression
+     *
+     * @param  text       the expression to be evaluated
+     * @param  resultType the return type expected by the expression
+     * @return            the builder to continue processing the DSL
+     */
+    public T js(String text, Class<?> resultType) {
+        JavaScriptExpression exp = new JavaScriptExpression(text);
+        exp.setResultType(resultType);
+        return expression(exp);
     }
 
     /**
