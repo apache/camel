@@ -1003,6 +1003,8 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 return "ZooKeeperMaster";
             case "org.apache.camel.component.jetty9.JettyHttpComponent9":
                 return "JettyHttp";
+            case "org.apache.camel.component.elasticsearch.ElasticsearchComponent":
+                return "ElasticsearchRest";
             default:
                 return name;
         }
