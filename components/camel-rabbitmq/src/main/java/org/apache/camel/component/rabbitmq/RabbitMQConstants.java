@@ -96,6 +96,7 @@ public final class RabbitMQConstants {
     public static final String RABBITMQ_QUEUE_MESSAGE_TTL_KEY = "x-message-ttl";
     public static final String RABBITMQ_QUEUE_TTL_KEY = "x-expires";
     public static final String RABBITMQ_QUEUE_SINGLE_ACTIVE_CONSUMER_KEY = "x-single-active-consumer";
+    public static final String RABBITMQ_QUEUE_TYPE_KEY = "x-queue-type";
 
     public static final Set<String> BASIC_AMQP_PROPERTIES = Stream
             .of(CONTENT_TYPE, PRIORITY, MESSAGE_ID, CLUSTERID, REPLY_TO, CORRELATIONID, DELIVERY_MODE, USERID, TYPE,
