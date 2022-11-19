@@ -100,6 +100,11 @@ public class RabbitMQDeclareSupport {
             queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_SINGLE_ACTIVE_CONSUMER_KEY,
                     Boolean.parseBoolean((String) singleConsumer));
         }
+
+        Object queueType = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_TYPE_KEY);
+        if (queueType instanceof String) {
+            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_TYPE_KEY, singleConsumer);
+        }
     }
 
     private void populateQueueArgumentsFromDeadLetterExchange(final Map<String, Object> queueArgs) {

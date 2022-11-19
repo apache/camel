@@ -718,6 +718,10 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
         if (arg instanceof String) {
             args.put(SpringRabbitMQConstants.SINGLE_ACTIVE_CONSUMER, Boolean.parseBoolean((String) arg));
         }
+        arg = args.get(SpringRabbitMQConstants.QUEUE_TYPE);
+        if (arg instanceof String) {
+            args.put(SpringRabbitMQConstants.QUEUE_TYPE, arg);
+        }
     }
 
 }
