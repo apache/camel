@@ -22,7 +22,6 @@ import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.JavaScriptExpression;
-import org.apache.camel.model.language.JqExpression;
 import org.apache.camel.spi.Language;
 
 public class JavaScriptExpressionReifier extends ExpressionReifier<JavaScriptExpression> {
