@@ -11,6 +11,7 @@
 ** xref:groovy-language.adoc[Groovy]
 ** xref:header-language.adoc[Header]
 ** xref:hl7terser-language.adoc[HL7 Terser]
+** xref:js-language.adoc[JavaScript]
 ** xref:joor-language.adoc[jOOR]
 ** xref:jq-language.adoc[JQ]
 ** xref:jsonpath-language.adoc[JSONPath]

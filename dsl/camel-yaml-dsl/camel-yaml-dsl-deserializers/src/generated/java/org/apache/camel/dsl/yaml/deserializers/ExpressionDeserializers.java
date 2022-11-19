@@ -66,6 +66,9 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
             case "jq": {
                 return asType(node, org.apache.camel.model.language.JqExpression.class);
             }
+            case "js": {
+                return asType(node, org.apache.camel.model.language.JavaScriptExpression.class);
+            }
             case "jsonpath": {
                 return asType(node, org.apache.camel.model.language.JsonPathExpression.class);
             }
@@ -132,6 +135,7 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "hl7terser", type = "object:org.apache.camel.model.language.Hl7TerserExpression"),
                     @YamlProperty(name = "joor", type = "object:org.apache.camel.model.language.JoorExpression"),
                     @YamlProperty(name = "jq", type = "object:org.apache.camel.model.language.JqExpression"),
+                    @YamlProperty(name = "js", type = "object:org.apache.camel.model.language.JavaScriptExpression"),
                     @YamlProperty(name = "jsonpath", type = "object:org.apache.camel.model.language.JsonPathExpression"),
                     @YamlProperty(name = "language", type = "object:org.apache.camel.model.language.LanguageExpression"),
                     @YamlProperty(name = "method", type = "object:org.apache.camel.model.language.MethodCallExpression"),
@@ -168,6 +172,7 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "hl7terser", type = "object:org.apache.camel.model.language.Hl7TerserExpression"),
                     @YamlProperty(name = "joor", type = "object:org.apache.camel.model.language.JoorExpression"),
                     @YamlProperty(name = "jq", type = "object:org.apache.camel.model.language.JqExpression"),
+                    @YamlProperty(name = "js", type = "object:org.apache.camel.model.language.JavaScriptExpression"),
                     @YamlProperty(name = "jsonpath", type = "object:org.apache.camel.model.language.JsonPathExpression"),
                     @YamlProperty(name = "language", type = "object:org.apache.camel.model.language.LanguageExpression"),
                     @YamlProperty(name = "method", type = "object:org.apache.camel.model.language.MethodCallExpression"),

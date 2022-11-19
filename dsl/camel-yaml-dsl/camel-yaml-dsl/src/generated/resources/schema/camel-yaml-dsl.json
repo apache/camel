@@ -906,6 +906,9 @@
           "jq" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.JqExpression"
           },
+          "js" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.JavaScriptExpression"
+          },
           "jsonpath" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.JsonPathExpression"
           },
@@ -6306,6 +6309,9 @@
           "jq" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.JqExpression"
           },
+          "js" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.JavaScriptExpression"
+          },
           "jsonpath" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.JsonPathExpression"
           },
@@ -6395,6 +6401,31 @@
               "type" : "string"
             },
             "id" : {
+              "type" : "string"
+            },
+            "trim" : {
+              "type" : "boolean"
+            }
+          }
+        } ],
+        "required" : [ "expression" ]
+      },
+      "org.apache.camel.model.language.JavaScriptExpression" : {
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "expression" : {
+              "type" : "string"
+            },
+            "header-name" : {
+              "type" : "string"
+            },
+            "id" : {
+              "type" : "string"
+            },
+            "result-type" : {
               "type" : "string"
             },
             "trim" : {
