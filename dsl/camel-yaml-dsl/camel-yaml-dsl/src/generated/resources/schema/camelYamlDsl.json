@@ -6495,7 +6495,13 @@
             "expression" : {
               "type" : "string"
             },
+            "headerName" : {
+              "type" : "string"
+            },
             "id" : {
+              "type" : "string"
+            },
+            "resultType" : {
               "type" : "string"
             },
             "trim" : {

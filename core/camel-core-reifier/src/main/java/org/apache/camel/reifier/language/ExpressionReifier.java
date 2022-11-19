@@ -144,7 +144,7 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
         } else if (definition instanceof OgnlExpression) {
             return new ExpressionReifier<>(camelContext, definition);
         } else if (definition instanceof PythonExpression) {
-            return new ExpressionReifier<>(camelContext, definition);
+            return new PythonExpressionReifier(camelContext, definition);
         } else if (definition instanceof RefExpression) {
             return new ExpressionReifier<>(camelContext, definition);
         } else if (definition instanceof SimpleExpression) {
