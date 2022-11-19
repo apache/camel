@@ -42,9 +42,7 @@ public class JavaScriptExpression extends ExpressionSupport {
 
     @Override
     public <T> T evaluate(Exchange exchange, Class<T> type) {
-        Context cx = Context.newBuilder("js")
-                .allowIO(true)
-                .build();
+        Context cx = JavaScriptHelper.newContext();
         Value b = cx.getBindings("js");
 
         b.putMember("exchange", exchange);

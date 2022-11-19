@@ -45,9 +45,7 @@ public class JavaScriptLanguage extends LanguageSupport implements ScriptingLang
     public <T> T evaluate(String script, Map<String, Object> bindings, Class<T> resultType) {
         script = loadResource(script);
 
-        Context cx = Context.newBuilder("js")
-                .allowIO(true)
-                .build();
+        Context cx = JavaScriptHelper.newContext();
         Value b = cx.getBindings("js");
 
         bindings.forEach(b::putMember);
