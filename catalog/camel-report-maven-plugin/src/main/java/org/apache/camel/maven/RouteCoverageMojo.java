@@ -47,7 +47,6 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import edu.emory.mathcs.backport.java.util.Collections;
 import org.apache.camel.maven.model.RouteCoverageNode;
 import org.apache.camel.parser.RouteBuilderParser;
 import org.apache.camel.parser.XmlRouteParser;
@@ -249,7 +248,7 @@ public class RouteCoverageMojo extends AbstractExecMojo {
                     getLog().warn("No route coverage data found for route: " + routeId
                         + ". Make sure to enable route coverage in your unit tests and assign unique route ids to your routes. Also remember to run unit tests first.");
                 } else {
-                    List<RouteCoverageNode> coverage = gatherRouteCoverageSummary(Collections.singletonList(t), coverageData);
+                    List<RouteCoverageNode> coverage = gatherRouteCoverageSummary(List.of(t), coverageData);
                     totalNumberOfNodes += coverage.size();
                     String out = templateCoverageData(fileName, routeId, coverage, notCovered, coveredNodes);
                     getLog().info("Route coverage summary:\n\n" + out);
