@@ -208,7 +208,7 @@
         <google-cloud-guava-version-prefix>30.1</google-cloud-guava-version-prefix>
         <google-cloud-guava-version>${google-cloud-guava-version-prefix}-jre</google-cloud-guava-version>
         <google-cloud-secretmanager-bom-version>2.2.0</google-cloud-secretmanager-bom-version>
-        <graaljs-version>22.1.0</graaljs-version>
+        <graaljs-version>22.2.0</graaljs-version>
         <graphql-java-version>18.3</graphql-java-version>
         <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
         <grpc-version>1.48.1</grpc-version>
