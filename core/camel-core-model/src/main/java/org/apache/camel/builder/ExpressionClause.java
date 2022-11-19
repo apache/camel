@@ -448,6 +448,20 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
+     * Returns a JavaScript expression value builder
+     */
+    public T js(String value) {
+        return delegate.js(value);
+    }
+
+    /**
+     * Returns a JavaScript expression value builder
+     */
+    public T js(String value, Class<?> resultType) {
+        return delegate.js(value, resultType);
+    }
+
+    /**
      * Evaluates a <a href="http://camel.apache.org/datasonnet.html">Datasonnet expression</a>
      *
      * @param  text the expression to be evaluated

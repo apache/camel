@@ -860,6 +860,16 @@ Evaluates a JQ expression against a JSON message body.
     </xs:annotation>
   </xs:element>
     
+  <xs:element name="js" type="tns:javaScriptExpression">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        <![CDATA[
+Evaluates a JavaScript expression.
+      ]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+    
   <xs:element name="json" type="tns:jsonDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -4519,6 +4529,8 @@ CamelContext or the route using it. Default value: false
             
       <xs:element ref="tns:hl7terser"/>
             
+      <xs:element ref="tns:js"/>
+            
       <xs:element ref="tns:joor"/>
             
       <xs:element ref="tns:jq"/>
@@ -4984,6 +4996,8 @@ should be intercepted by this exception type or not.
             <xs:element ref="tns:header"/>
                         
             <xs:element ref="tns:hl7terser"/>
+                        
+            <xs:element ref="tns:js"/>
                         
             <xs:element ref="tns:joor"/>
                         
@@ -6125,6 +6139,8 @@ To use a specific charset when converting.
                     
           <xs:element ref="tns:hl7terser"/>
                     
+          <xs:element ref="tns:js"/>
+                    
           <xs:element ref="tns:joor"/>
                     
           <xs:element ref="tns:jq"/>
@@ -6218,6 +6234,8 @@ To use a custom Thread Pool if asyncDelay has been enabled.
           <xs:element ref="tns:header"/>
                     
           <xs:element ref="tns:hl7terser"/>
+                    
+          <xs:element ref="tns:js"/>
                     
           <xs:element ref="tns:joor"/>
                     
@@ -6324,6 +6342,8 @@ producers.
           <xs:element ref="tns:header"/>
                     
           <xs:element ref="tns:hl7terser"/>
+                    
+          <xs:element ref="tns:js"/>
                     
           <xs:element ref="tns:joor"/>
                     
@@ -7127,6 +7147,8 @@ default WARN. Default value: WARN
                         
             <xs:element ref="tns:hl7terser"/>
                         
+            <xs:element ref="tns:js"/>
+                        
             <xs:element ref="tns:joor"/>
                         
             <xs:element ref="tns:jq"/>
@@ -7555,6 +7577,8 @@ Global option value.
             <xs:element ref="tns:header"/>
                         
             <xs:element ref="tns:hl7terser"/>
+                        
+            <xs:element ref="tns:js"/>
                         
             <xs:element ref="tns:joor"/>
                         
@@ -8903,6 +8927,8 @@ To refer to a custom logger instance to lookup from the registry.
             <xs:element ref="tns:header"/>
                         
             <xs:element ref="tns:hl7terser"/>
+                        
+            <xs:element ref="tns:js"/>
                         
             <xs:element ref="tns:joor"/>
                         
@@ -14744,6 +14770,8 @@ Sets a reference to use for lookup the policy in the registry.
                     
           <xs:element ref="tns:hl7terser"/>
                     
+          <xs:element ref="tns:js"/>
+                    
           <xs:element ref="tns:joor"/>
                     
           <xs:element ref="tns:jq"/>
@@ -14942,6 +14970,8 @@ by their type in the registry by prefixing with #type: syntax, eg
             
       <xs:element ref="tns:hl7terser"/>
             
+      <xs:element ref="tns:js"/>
+            
       <xs:element ref="tns:joor"/>
             
       <xs:element ref="tns:jq"/>
@@ -15009,6 +15039,8 @@ Property key.
           <xs:element ref="tns:header"/>
                     
           <xs:element ref="tns:hl7terser"/>
+                    
+          <xs:element ref="tns:js"/>
                     
           <xs:element ref="tns:joor"/>
                     
@@ -15399,6 +15431,8 @@ Name of property to remove.
             <xs:element ref="tns:header"/>
                         
             <xs:element ref="tns:hl7terser"/>
+                        
+            <xs:element ref="tns:js"/>
                         
             <xs:element ref="tns:joor"/>
                         
@@ -16387,6 +16421,8 @@ Description of the parameter.
                     
           <xs:element ref="tns:hl7terser"/>
                     
+          <xs:element ref="tns:js"/>
+                    
           <xs:element ref="tns:joor"/>
                     
           <xs:element ref="tns:jq"/>
@@ -16785,6 +16821,8 @@ after this many received.
                     
           <xs:element ref="tns:hl7terser"/>
                     
+          <xs:element ref="tns:js"/>
+                    
           <xs:element ref="tns:joor"/>
                     
           <xs:element ref="tns:jq"/>
@@ -16846,6 +16884,8 @@ after this many received.
           <xs:element ref="tns:header"/>
                     
           <xs:element ref="tns:hl7terser"/>
+                    
+          <xs:element ref="tns:js"/>
                     
           <xs:element ref="tns:joor"/>
                     
@@ -16934,6 +16974,8 @@ forward.
                     
           <xs:element ref="tns:hl7terser"/>
                     
+          <xs:element ref="tns:js"/>
+                    
           <xs:element ref="tns:joor"/>
                     
           <xs:element ref="tns:jq"/>
@@ -17007,6 +17049,8 @@ will be used.
           <xs:element ref="tns:header"/>
                     
           <xs:element ref="tns:hl7terser"/>
+                    
+          <xs:element ref="tns:js"/>
                     
           <xs:element ref="tns:joor"/>
                     
@@ -17082,6 +17126,8 @@ constant name will be used.
                     
           <xs:element ref="tns:hl7terser"/>
                     
+          <xs:element ref="tns:js"/>
+                    
           <xs:element ref="tns:joor"/>
                     
           <xs:element ref="tns:jq"/>
@@ -17155,6 +17201,8 @@ Sets the comparator to use for sorting.
             <xs:element ref="tns:header"/>
                         
             <xs:element ref="tns:hl7terser"/>
+                        
+            <xs:element ref="tns:js"/>
                         
             <xs:element ref="tns:joor"/>
                         
@@ -18017,6 +18065,8 @@ rejection handler. Is by default true. Default value: true
                         
             <xs:element ref="tns:hl7terser"/>
                         
+            <xs:element ref="tns:js"/>
+                        
             <xs:element ref="tns:joor"/>
                         
             <xs:element ref="tns:jq"/>
@@ -18469,6 +18519,8 @@ Sets a reference to use for lookup the policy in the registry.
                     
           <xs:element ref="tns:hl7terser"/>
                     
+          <xs:element ref="tns:js"/>
+                    
           <xs:element ref="tns:joor"/>
                     
           <xs:element ref="tns:jq"/>
@@ -18797,6 +18849,8 @@ value: false
           <xs:element ref="tns:header"/>
                     
           <xs:element ref="tns:hl7terser"/>
+                    
+          <xs:element ref="tns:js"/>
                     
           <xs:element ref="tns:joor"/>
                     
@@ -19825,6 +19879,8 @@ Set the base path to store in ZK.
                         
             <xs:element ref="tns:hl7terser"/>
                         
+            <xs:element ref="tns:js"/>
+                        
             <xs:element ref="tns:joor"/>
                         
             <xs:element ref="tns:jq"/>
@@ -20308,6 +20364,39 @@ type is com.datasonnet.document.Document.
     <xs:simpleContent>
             
       <xs:extension base="tns:expression"/>
+          
+    </xs:simpleContent>
+      
+  </xs:complexType>
+    
+  <xs:complexType name="javaScriptExpression">
+        
+    <xs:simpleContent>
+            
+      <xs:extension base="tns:expression">
+                
+        <xs:attribute name="resultType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+              <![CDATA[
+Sets the class of the result type (type from output).
+            ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="headerName" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+              <![CDATA[
+Name of header to use as input, instead of the message body It has as higher
+precedent than the propertyName if both are set.
+            ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+              
+      </xs:extension>
           
     </xs:simpleContent>
       
@@ -22678,6 +22767,8 @@ To configure a special tag for the operations within this rest definition.
           <xs:element ref="tns:header"/>
                     
           <xs:element ref="tns:hl7terser"/>
+                    
+          <xs:element ref="tns:js"/>
                     
           <xs:element ref="tns:joor"/>
                     
