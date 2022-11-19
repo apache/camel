@@ -23,6 +23,7 @@ import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.GroovyExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.Hl7TerserExpression;
+import org.apache.camel.model.language.JavaScriptExpression;
 import org.apache.camel.model.language.JoorExpression;
 import org.apache.camel.model.language.JqExpression;
 import org.apache.camel.model.language.JsonPathExpression;
@@ -91,6 +92,13 @@ public final class LanguageBuilderFactory {
      */
     public Hl7TerserExpression.Builder hl7terser() {
         return new Hl7TerserExpression.Builder();
+    }
+
+    /**
+     * Uses the JavaScript language
+     */
+    public JavaScriptExpression.Builder js() {
+        return new JavaScriptExpression.Builder();
     }
 
     /**
