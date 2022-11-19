@@ -42,20 +42,21 @@ public class JavaScriptExpression extends ExpressionSupport {
 
     @Override
     public <T> T evaluate(Exchange exchange, Class<T> type) {
-        Context cx = JavaScriptHelper.newContext();
-        Value b = cx.getBindings("js");
+        try (Context cx = JavaScriptHelper.newContext()) {
+            Value b = cx.getBindings("js");
 
-        b.putMember("exchange", exchange);
-        b.putMember("context", exchange.getContext());
-        b.putMember("exchangeId", exchange.getExchangeId());
-        b.putMember("message", exchange.getMessage());
-        b.putMember("headers", exchange.getMessage().getHeaders());
-        b.putMember("properties", exchange.getAllProperties());
-        b.putMember("body", exchange.getMessage().getBody());
+            b.putMember("exchange", exchange);
+            b.putMember("context", exchange.getContext());
+            b.putMember("exchangeId", exchange.getExchangeId());
+            b.putMember("message", exchange.getMessage());
+            b.putMember("headers", exchange.getMessage().getHeaders());
+            b.putMember("properties", exchange.getAllProperties());
+            b.putMember("body", exchange.getMessage().getBody());
 
-        Value o = cx.eval("js", expressionString);
-        Object answer = o != null ? o.as(type) : null;
-        return type.cast(answer);
+            Value o = cx.eval("js", expressionString);
+            Object answer = o != null ? o.as(type) : null;
+            return type.cast(answer);
+        }
     }
 
     public Class<?> getType() {

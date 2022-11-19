@@ -44,13 +44,12 @@ public class JavaScriptLanguage extends LanguageSupport implements ScriptingLang
     @Override
     public <T> T evaluate(String script, Map<String, Object> bindings, Class<T> resultType) {
         script = loadResource(script);
-
-        Context cx = JavaScriptHelper.newContext();
-        Value b = cx.getBindings("js");
-
-        bindings.forEach(b::putMember);
-        Value o = cx.eval("js", script);
-        Object answer = o != null ? o.as(resultType) : null;
-        return resultType.cast(answer);
+        try (Context cx = JavaScriptHelper.newContext()) {
+            Value b = cx.getBindings("js");
+            bindings.forEach(b::putMember);
+            Value o = cx.eval("js", script);
+            Object answer = o != null ? o.as(resultType) : null;
+            return resultType.cast(answer);
+        }
     }
 }
