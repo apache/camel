@@ -47,6 +47,7 @@ import javax.tools.SimpleJavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import org.apache.camel.util.FileUtil;
 import org.joor.ReflectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,6 +130,9 @@ public final class MultiCompile {
             CompilationTask task = compiler.getTask(out, fileManager, dc, options, null, files);
 
             boolean success = task.call();
+            // after compilation then we need to cleanup some unexpected output
+            cleanupWaste();
+
             if (!success || fileManager.isEmpty()) {
                 if (dc.getDiagnostics().isEmpty()) {
                     throw new ReflectException("Compilation error:\n" + out);
@@ -333,6 +337,13 @@ public final class MultiCompile {
         public CharSequence getCharContent(boolean ignoreEncodingErrors) {
             return content;
         }
+    }
+
+    /**
+     * Cleanup after compiling as for some weird reason a file named javax.inject.Named is created when using @Named
+     */
+    private static void cleanupWaste() {
+        FileUtil.deleteFile(new File("javax.inject.Named"));
     }
 
 }
