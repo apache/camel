@@ -4252,9 +4252,9 @@ public class StaticEndpointBuilders {
      * @return the dsl builder
      */
     @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.ElasticsearchEndpointBuilderFactory.ElasticsearchEndpointBuilder elasticsearchRest(
+    public static org.apache.camel.builder.endpoint.dsl.ElasticsearchRestEndpointBuilderFactory.ElasticsearchRestEndpointBuilder elasticsearchRest(
             String path) {
-        return org.apache.camel.builder.endpoint.dsl.ElasticsearchEndpointBuilderFactory.endpointBuilder("elasticsearch-rest", path);
+        return org.apache.camel.builder.endpoint.dsl.ElasticsearchRestEndpointBuilderFactory.endpointBuilder("elasticsearch-rest", path);
     }
     /**
      * Elasticsearch Rest (camel-elasticsearch-rest)
@@ -4275,10 +4275,10 @@ public class StaticEndpointBuilders {
      * @return the dsl builder
      */
     @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.ElasticsearchEndpointBuilderFactory.ElasticsearchEndpointBuilder elasticsearchRest(
+    public static org.apache.camel.builder.endpoint.dsl.ElasticsearchRestEndpointBuilderFactory.ElasticsearchRestEndpointBuilder elasticsearchRest(
             String componentName,
             String path) {
-        return org.apache.camel.builder.endpoint.dsl.ElasticsearchEndpointBuilderFactory.endpointBuilder(componentName, path);
+        return org.apache.camel.builder.endpoint.dsl.ElasticsearchRestEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Etcd v3 (camel-etcd3)
