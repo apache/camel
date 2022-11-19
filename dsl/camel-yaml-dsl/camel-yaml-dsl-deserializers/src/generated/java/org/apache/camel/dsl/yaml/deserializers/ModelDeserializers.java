@@ -11053,7 +11053,9 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true),
+                    @YamlProperty(name = "header-name", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
+                    @YamlProperty(name = "result-type", type = "string"),
                     @YamlProperty(name = "trim", type = "boolean")
             }
     )
@@ -11081,9 +11083,19 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setExpression(val);
                     break;
                 }
+                case "header-name": {
+                    String val = asText(node);
+                    target.setHeaderName(val);
+                    break;
+                }
                 case "id": {
                     String val = asText(node);
                     target.setId(val);
+                    break;
+                }
+                case "result-type": {
+                    String val = asText(node);
+                    target.setResultTypeName(val);
                     break;
                 }
                 case "trim": {

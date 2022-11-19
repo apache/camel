@@ -603,6 +603,17 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
+     * Evaluates a Python expression.
+     *
+     * @param  text       the expression to be evaluated
+     * @param  resultType the return type expected by the expression
+     * @return            the builder to continue processing the DSL
+     */
+    public T python(String text, Class<?> resultType) {
+        return delegate.python(text, resultType);
+    }
+
+    /**
      * Evaluates a <a href="http://camel.apache.org/mvel.html">MVEL expression</a>
      *
      * @param  text the expression to be evaluated

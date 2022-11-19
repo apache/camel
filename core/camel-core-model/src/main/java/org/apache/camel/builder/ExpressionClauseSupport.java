@@ -716,6 +716,19 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     }
 
     /**
+     * Evaluates Python expression
+     *
+     * @param  text       the expression to be evaluated
+     * @param  resultType the return type expected by the expression
+     * @return            the builder to continue processing the DSL
+     */
+    public T python(String text, Class<?> resultType) {
+        PythonExpression exp = new PythonExpression(text);
+        exp.setResultType(resultType);
+        return expression(exp);
+    }
+
+    /**
      * Evaluates a <a href="http://camel.apache.org/mvel.html">MVEL expression</a>
      *
      * @param  text the expression to be evaluated
