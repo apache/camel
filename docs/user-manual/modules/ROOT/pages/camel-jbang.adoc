@@ -1084,14 +1084,20 @@ You can use the following Quarkus annotations:
 
 === Debugging
 
+There are two kinds of debugging:
+
+* _Java debugging_ - Java code debugging (Standard Java)
+* _Camel route debugging_ - Debugging Camel routes (requires Camel tooling plugins)
+
 ==== Java debugging
 
-You can debug both Camel JBang and your integration scripts by making use of the `--debug` flag provided by JBang:
+You can debug your integration scripts by making use of the `--debug` flag provided by JBang.
+However, due to Java debugging must be enabled when starting the JVM, then you must do this
+using the `jbang` command, instead of `camel` as shown:
 
 [source,bash]
 ----
-camel --debug run /path/to/integration.java
-[jbang] Building jar...
+jbang --debug  camel@apache/camel run hello.yaml
 Listening for transport dt_socket at address: 4004
 ----
 
@@ -1099,9 +1105,9 @@ As you can see the default listening port is 4004 but can be configured as descr
 
 This is a standard Java debug socket. You can then use the IDE of your choice. For instance, see the generic documentation for https://www.jetbrains.com/help/idea/attaching-to-local-process.html#create-rc[IntelliJ], https://code.visualstudio.com/docs/java/java-debugging#_attach[VS Code] and https://www.vogella.com/tutorials/EclipseDebugging/article.html#remote-debugging[Eclipse Desktop]. You will surely want to add `Processor` to be able to put breakpoints hit during route execution (as opposed to route definition creation).
 
-==== Camel debugging
+==== Camel route debugging
 
-The Camel debugger is available by default (the `camel-debug` component is automatically added to the classpath). By default, it can be reached through JMX at the URL `service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi/camel`.
+The Camel route debugger is available by default (the `camel-debug` component is automatically added to the classpath). By default, it can be reached through JMX at the URL `service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi/camel`.
 
 You can then use the Integrated Development Environment (IDE) of your choice. For instance https://plugins.jetbrains.com/plugin/9371-apache-camel[IntelliJ], https://marketplace.visualstudio.com/items?itemName=redhat.vscode-debug-adapter-apache-camel[VS Code] or https://marketplace.eclipse.org/content/textual-debugging-apache-camel[Eclipse Desktop].
 
@@ -1110,7 +1116,6 @@ A specific how-to is available for VS Code, see this https://youtu.be/owNhWxf42q
 ==== Health Checks
 
 The status of health checks can be accessed via Camel JBang from the CLI as follows:
-
 
 [source,bash]
 ----
