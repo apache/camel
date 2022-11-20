@@ -48,7 +48,7 @@ public final class MicrometerConstants {
             = "CamelExchangesFailuresHandled";
     public static final String DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_EXTERNAL_REDELIVERIES_METER_NAME
             = "CamelExchangesExternalRedeliveries";
-    public static final String DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME = "CamelRoutePolicy";
+    public static final String DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME = "CamelRoute";
     public static final String DEFAULT_CAMEL_EXCHANGE_EVENT_METER_NAME = "CamelExchangeEventNotifier";
     public static final String DEFAULT_CAMEL_ROUTES_ADDED = "CamelRoutesAdded";
     public static final String DEFAULT_CAMEL_ROUTES_RUNNING = "CamelRoutesRunning";
