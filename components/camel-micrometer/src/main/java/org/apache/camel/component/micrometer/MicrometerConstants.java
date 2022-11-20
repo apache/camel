@@ -55,6 +55,7 @@ public final class MicrometerConstants {
     public static final String DEFAULT_CAMEL_ROUTES_EXCHANGES_INFLIGHT = "CamelExchangesInflight";
 
     public static final String ROUTE_ID_TAG = "routeId";
+    public static final String ROUTE_DESCRIPTION_TAG = "routeDescription";
     public static final String NODE_ID_TAG = "nodeId";
     public static final String FAILED_TAG = "failed";
     public static final String CAMEL_CONTEXT_TAG = "camelContext";

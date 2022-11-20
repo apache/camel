@@ -20,7 +20,6 @@ import java.util.function.Predicate;
 
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.Tags;
-import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_CONTEXT_TAG;
@@ -30,7 +29,7 @@ import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_TOTAL_METER_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
-import static org.apache.camel.component.micrometer.MicrometerConstants.FAILED_TAG;
+import static org.apache.camel.component.micrometer.MicrometerConstants.ROUTE_DESCRIPTION_TAG;
 import static org.apache.camel.component.micrometer.MicrometerConstants.ROUTE_ID_TAG;
 import static org.apache.camel.component.micrometer.MicrometerConstants.SERVICE_NAME;
 
@@ -66,12 +65,19 @@ public interface MicrometerRoutePolicyNamingStrategy {
         return DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_EXTERNAL_REDELIVERIES_METER_NAME;
     }
 
-    default Tags getTags(Route route, Exchange exchange) {
-        return Tags.of(
-                CAMEL_CONTEXT_TAG, route.getCamelContext().getName(),
-                SERVICE_NAME, MicrometerRoutePolicyService.class.getSimpleName(),
-                ROUTE_ID_TAG, route.getId(),
-                FAILED_TAG, Boolean.toString(exchange.isFailed()));
+    default Tags getTags(Route route) {
+        if (route.getRouteDescription() != null) {
+            return Tags.of(
+                    CAMEL_CONTEXT_TAG, route.getCamelContext().getName(),
+                    SERVICE_NAME, MicrometerRoutePolicyService.class.getSimpleName(),
+                    ROUTE_ID_TAG, route.getId(),
+                    ROUTE_DESCRIPTION_TAG, route.getRouteDescription());
+        } else {
+            return Tags.of(
+                    CAMEL_CONTEXT_TAG, route.getCamelContext().getName(),
+                    SERVICE_NAME, MicrometerRoutePolicyService.class.getSimpleName(),
+                    ROUTE_ID_TAG, route.getId());
+        }
     }
 
     default Tags getExchangeStatusTags(Route route) {

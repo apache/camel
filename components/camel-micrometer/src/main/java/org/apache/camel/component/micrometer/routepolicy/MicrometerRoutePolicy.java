@@ -64,11 +64,14 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
             this.meterRegistry = ObjectHelper.notNull(meterRegistry, "MeterRegistry", this);
             this.namingStrategy = ObjectHelper.notNull(namingStrategy, "MicrometerRoutePolicyNamingStrategy", this);
             this.route = route;
-            this.exchangesSucceeded = createCounter(namingStrategy.getExchangesSucceededName(route));
-            this.exchangesFailed = createCounter(namingStrategy.getExchangesFailedName(route));
-            this.exchangesTotal = createCounter(namingStrategy.getExchangesTotalName(route));
-            this.externalRedeliveries = createCounter(namingStrategy.getExternalRedeliveriesName(route));
-            this.failuresHandled = createCounter(namingStrategy.getFailuresHandledName(route));
+            this.exchangesSucceeded = createCounter(namingStrategy.getExchangesSucceededName(route),
+                    "Number of successfully completed exchanges");
+            this.exchangesFailed = createCounter(namingStrategy.getExchangesFailedName(route), "Number of failed exchanges");
+            this.exchangesTotal
+                    = createCounter(namingStrategy.getExchangesTotalName(route), "Total number of processed exchanges");
+            this.externalRedeliveries = createCounter(namingStrategy.getExternalRedeliveriesName(route),
+                    "Number of external initiated redeliveries (such as from JMS broker)");
+            this.failuresHandled = createCounter(namingStrategy.getFailuresHandledName(route), "Number of failures handled");
         }
 
         public void onExchangeBegin(Exchange exchange) {
@@ -80,8 +83,8 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
             Timer.Sample sample = (Timer.Sample) exchange.removeProperty(propertyName(exchange));
             if (sample != null) {
                 Timer timer = Timer.builder(namingStrategy.getName(route))
-                        .tags(namingStrategy.getTags(route, exchange))
-                        .description(route.getDescription())
+                        .tags(namingStrategy.getTags(route))
+                        .description("Route performance metrics")
                         .register(meterRegistry);
                 sample.stop(timer);
             }
@@ -107,10 +110,10 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
             return String.format("%s-%s-%s", DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME, route.getId(), exchange.getExchangeId());
         }
 
-        private Counter createCounter(String meterName) {
+        private Counter createCounter(String meterName, String description) {
             return Counter.builder(meterName)
                     .tags(namingStrategy.getExchangeStatusTags(route))
-                    .description(route.getDescription())
+                    .description(description)
                     .register(meterRegistry);
         }
     }
