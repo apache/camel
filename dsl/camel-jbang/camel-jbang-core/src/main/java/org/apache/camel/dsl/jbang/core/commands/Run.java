@@ -342,16 +342,15 @@ class Run extends CamelCommand {
         writeSetting(main, profileProperties, "camel.jbang.console", console ? "true" : "false");
         writeSetting(main, profileProperties, "camel.main.routesCompileDirectory", WORK_DIR);
         // merge existing dependencies with --deps
-        String dep = profileProperties != null ? profileProperties.getProperty("camel.jbang.dependencies") : null;
-        if (dep == null) {
-            dep = dependencies;
-        } else if (dependencies != null && !dependencies.equals(dep)) {
-            dep = dep.substring(0, dep.lastIndexOf(","));
-            dep += "," + dependencies;
+        String deps = RuntimeUtil.getDependencies(profileProperties);
+        if (deps.isBlank()) {
+            deps = dependencies;
+        } else if (dependencies != null && !dependencies.equals(deps)) {
+            deps += "," + dependencies;
         }
-        if (dep != null) {
-            main.addInitialProperty("camel.jbang.dependencies", dep);
-            writeSettings("camel.jbang.dependencies", dep);
+        if (deps != null) {
+            main.addInitialProperty("camel.jbang.dependencies", deps);
+            writeSettings("camel.jbang.dependencies", deps);
         }
 
         // command line arguments
