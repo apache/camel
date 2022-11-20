@@ -31,10 +31,6 @@
     <name>Camel :: JavaScript</name>
     <description>Camel JavaScript language</description>
 
-    <properties>
-        <supportLevel>Experimental</supportLevel>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

@@ -4,7 +4,7 @@
 :artifactid: camel-javascript
 :description: Evaluates a JavaScript expression.
 :since: 3.20
-:supportlevel: Experimental
+:supportlevel: Preview
 //Manually maintained attributes
 :camel-spring-boot-name: javascript
 

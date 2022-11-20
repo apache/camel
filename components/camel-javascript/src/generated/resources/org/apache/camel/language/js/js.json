@@ -8,7 +8,7 @@
     "firstVersion": "3.20.0",
     "label": "language,javascript",
     "javaType": "org.apache.camel.language.js.JavaScriptLanguage",
-    "supportLevel": "Experimental",
+    "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-javascript",
     "version": "3.20.0-SNAPSHOT",
