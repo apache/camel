@@ -18,8 +18,6 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import com.github.freva.asciitable.AsciiTable;
@@ -45,11 +43,11 @@ public class ListMicrometer extends ProcessBaseCommand {
     String sort;
 
     @CommandLine.Option(names = { "--filter" },
-            description = "Filter metric by type or name")
+                        description = "Filter metric by type or name")
     String filter;
 
     @CommandLine.Option(names = { "--custom" },
-            description = "Only show custom metrics", defaultValue = "false")
+                        description = "Only show custom metrics", defaultValue = "false")
     boolean custom;
 
     public ListMicrometer(CamelJBangMain main) {
