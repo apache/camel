@@ -40,6 +40,7 @@ public interface MicroprofileMetricsComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static MicroprofileMetricsComponentBuilder microprofileMetrics() {
         return new MicroprofileMetricsComponentBuilderImpl();
     }

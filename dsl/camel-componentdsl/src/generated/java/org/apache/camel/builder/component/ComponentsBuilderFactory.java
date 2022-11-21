@@ -2956,6 +2956,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.MicroprofileMetricsComponentBuilderFactory.MicroprofileMetricsComponentBuilder microprofileMetrics() {
         return org.apache.camel.builder.component.dsl.MicroprofileMetricsComponentBuilderFactory.microprofileMetrics();
     }

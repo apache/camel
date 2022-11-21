@@ -10152,6 +10152,7 @@ public class StaticEndpointBuilders {
      * @param path metricType:metricName
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.MicroProfileMetricsEndpointBuilderFactory.MicroProfileMetricsEndpointBuilder microprofileMetrics(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.MicroProfileMetricsEndpointBuilderFactory.endpointBuilder("microprofile-metrics", path);
@@ -10179,6 +10180,7 @@ public class StaticEndpointBuilders {
      * @param path metricType:metricName
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.MicroProfileMetricsEndpointBuilderFactory.MicroProfileMetricsEndpointBuilder microprofileMetrics(
             String componentName,
             String path) {
