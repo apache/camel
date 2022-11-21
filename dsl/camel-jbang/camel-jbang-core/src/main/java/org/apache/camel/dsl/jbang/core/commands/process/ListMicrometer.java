@@ -18,6 +18,8 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import com.github.freva.asciitable.AsciiTable;
@@ -41,6 +43,14 @@ public class ListMicrometer extends ProcessBaseCommand {
     @CommandLine.Option(names = { "--sort" },
                         description = "Sort by pid, name or age", defaultValue = "pid")
     String sort;
+
+    @CommandLine.Option(names = { "--filter" },
+            description = "Filter metric by type or name")
+    String filter;
+
+    @CommandLine.Option(names = { "--custom" },
+            description = "Only show custom metrics", defaultValue = "false")
+    boolean custom;
 
     public ListMicrometer(CamelJBangMain main) {
         super(main);
@@ -81,8 +91,15 @@ public class ListMicrometer extends ProcessBaseCommand {
                                     row.type = "counter";
                                     row.metricName = jo.getString("name");
                                     row.metricDescription = jo.getString("description");
+                                    row.metricRouteId = extractRouteId(jo);
                                     row.count = jo.getDouble("count");
-                                    rows.add(row);
+
+                                    if (custom && row.metricName.startsWith("Camel")) {
+                                        continue; // skip internal camel metrics
+                                    }
+                                    if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)) {
+                                        rows.add(row);
+                                    }
                                 }
                             }
                             arr = (JsonArray) mo.get("timers");
@@ -93,11 +110,18 @@ public class ListMicrometer extends ProcessBaseCommand {
                                     row.type = "timer";
                                     row.metricName = jo.getString("name");
                                     row.metricDescription = jo.getString("description");
+                                    row.metricRouteId = extractRouteId(jo);
                                     row.count = jo.getDouble("count");
                                     row.mean = jo.getDouble("mean");
                                     row.max = jo.getDouble("max");
                                     row.total = jo.getDouble("total");
-                                    rows.add(row);
+
+                                    if (custom && row.metricName.startsWith("Camel")) {
+                                        continue; // skip internal camel metrics
+                                    }
+                                    if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)) {
+                                        rows.add(row);
+                                    }
                                 }
                             }
                             arr = (JsonArray) mo.get("gauges");
@@ -108,8 +132,15 @@ public class ListMicrometer extends ProcessBaseCommand {
                                     row.type = "gauge";
                                     row.metricName = jo.getString("name");
                                     row.metricDescription = jo.getString("description");
+                                    row.metricRouteId = extractRouteId(jo);
                                     row.count = jo.getDouble("value");
-                                    rows.add(row);
+
+                                    if (custom && row.metricName.startsWith("Camel")) {
+                                        continue; // skip internal camel metrics
+                                    }
+                                    if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)) {
+                                        rows.add(row);
+                                    }
                                 }
                             }
                             arr = (JsonArray) mo.get("distribution");
@@ -120,11 +151,18 @@ public class ListMicrometer extends ProcessBaseCommand {
                                     row.type = "distribution";
                                     row.metricName = jo.getString("name");
                                     row.metricDescription = jo.getString("description");
+                                    row.metricRouteId = extractRouteId(jo);
                                     row.count = jo.getDouble("value");
                                     row.mean = jo.getDouble("mean");
                                     row.max = jo.getDouble("max");
                                     row.total = jo.getDouble("totalAmount");
-                                    rows.add(row);
+
+                                    if (custom && row.metricName.startsWith("Camel")) {
+                                        continue; // skip internal camel metrics
+                                    }
+                                    if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)) {
+                                        rows.add(row);
+                                    }
                                 }
                             }
                         }
@@ -140,7 +178,10 @@ public class ListMicrometer extends ProcessBaseCommand {
                     new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(r -> r.name),
                     new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).with(r -> r.type),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).with(r -> r.metricName),
+                    new Column().header("METRIC").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
+                            .with(r -> r.metricName),
+                    new Column().header("ROUTE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
+                            .with(r -> r.metricRouteId),
                     new Column().header("VALUE").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
                             .with(r -> getNumber(r.count)),
                     new Column().header("MEAN").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
@@ -183,6 +224,19 @@ public class ListMicrometer extends ProcessBaseCommand {
         return s;
     }
 
+    private String extractRouteId(JsonObject jo) {
+        List<JsonObject> tags = jo.getCollection("tags");
+        if (tags != null) {
+            for (JsonObject t : tags) {
+                String k = t.getString("key");
+                if ("routeId".equals(k)) {
+                    return t.getString("value");
+                }
+            }
+        }
+        return null;
+    }
+
     private static class Row implements Cloneable {
         String pid;
         String name;
@@ -191,6 +245,7 @@ public class ListMicrometer extends ProcessBaseCommand {
         String type;
         String metricName;
         String metricDescription;
+        String metricRouteId;
         double count;
         double mean;
         double max;
