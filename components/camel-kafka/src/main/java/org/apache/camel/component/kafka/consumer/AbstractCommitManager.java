@@ -91,4 +91,24 @@ public abstract class AbstractCommitManager implements CommitManager {
                 Duration.ofMillis(timeout));
     }
 
+    protected void saveStateToOffsetRepository(
+            TopicPartition partition, long partitionLastOffset,
+            StateRepository<String, String> offsetRepository) {
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Saving offset repository state {} [topic: {} partition: {} offset: {}]", threadId, partition.topic(),
+                    partition.partition(),
+                    partitionLastOffset);
+        }
+        offsetRepository.setState(serializeOffsetKey(partition), serializeOffsetValue(partitionLastOffset));
+    }
+
+    protected static String serializeOffsetKey(TopicPartition topicPartition) {
+        return topicPartition.topic() + '/' + topicPartition.partition();
+    }
+
+    protected static String serializeOffsetValue(long offset) {
+        return String.valueOf(offset);
+    }
+
 }
