@@ -129,6 +129,7 @@
         <java-diff-utils-version>4.7</java-diff-utils-version>
         <maven-bundle-plugin-version>5.1.8</maven-bundle-plugin-version>
         <maven-enforcer-plugin-version>3.0.0</maven-enforcer-plugin-version>
+        <maven-dependency-plugin-version>3.3.0</maven-dependency-plugin-version>
 
         <!-- eclipse plugin need the jaxb in this pom.xml file -->
         <!-- Make sure to keep JAXB version up to date in parent/pom.xml in the bottom of the file -->
