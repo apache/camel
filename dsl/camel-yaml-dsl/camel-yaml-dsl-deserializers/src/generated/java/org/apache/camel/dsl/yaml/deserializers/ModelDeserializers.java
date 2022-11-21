@@ -244,7 +244,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "asn1",
-            inline = true,
             types = org.apache.camel.model.dataformat.ASN1DataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -261,11 +260,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected ASN1DataFormat newInstance() {
             return new ASN1DataFormat();
-        }
-
-        @Override
-        protected ASN1DataFormat newInstance(String value) {
-            return new ASN1DataFormat(value);
         }
 
         @Override
@@ -517,7 +511,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "any23",
-            inline = true,
             types = org.apache.camel.model.dataformat.Any23DataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -536,11 +529,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected Any23DataFormat newInstance() {
             return new Any23DataFormat();
-        }
-
-        @Override
-        protected Any23DataFormat newInstance(String value) {
-            return new Any23DataFormat(value);
         }
 
         @Override
@@ -650,7 +638,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "avro",
-            inline = true,
             types = org.apache.camel.model.dataformat.AvroDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -685,11 +672,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected AvroDataFormat newInstance() {
             return new AvroDataFormat();
-        }
-
-        @Override
-        protected AvroDataFormat newInstance(String value) {
-            return new AvroDataFormat(value);
         }
 
         @Override
@@ -1025,7 +1007,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "bean",
-            inline = true,
             types = org.apache.camel.model.BeanDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -1047,11 +1028,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected BeanDefinition newInstance() {
             return new BeanDefinition();
-        }
-
-        @Override
-        protected BeanDefinition newInstance(String value) {
-            return new BeanDefinition(value);
         }
 
         @Override
@@ -1368,7 +1344,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "csimple",
-            inline = true,
             types = org.apache.camel.model.language.CSimpleExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -1386,11 +1361,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected CSimpleExpression newInstance() {
             return new CSimpleExpression();
-        }
-
-        @Override
-        protected CSimpleExpression newInstance(String value) {
-            return new CSimpleExpression(value);
         }
 
         @Override
@@ -2044,7 +2014,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "constant",
-            inline = true,
             types = org.apache.camel.model.language.ConstantExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -2062,11 +2031,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected ConstantExpression newInstance() {
             return new ConstantExpression();
-        }
-
-        @Override
-        protected ConstantExpression newInstance(String value) {
-            return new ConstantExpression(value);
         }
 
         @Override
@@ -2263,7 +2227,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     "convert-body-to",
                     "convertBodyTo"
             },
-            inline = true,
             types = org.apache.camel.model.ConvertBodyDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -2284,11 +2247,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected ConvertBodyDefinition newInstance() {
             return new ConvertBodyDefinition();
-        }
-
-        @Override
-        protected ConvertBodyDefinition newInstance(String value) {
-            return new ConvertBodyDefinition(value);
         }
 
         @Override
@@ -2429,7 +2387,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "csv",
-            inline = true,
             types = org.apache.camel.model.dataformat.CsvDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -2473,11 +2430,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected CsvDataFormat newInstance() {
             return new CsvDataFormat();
-        }
-
-        @Override
-        protected CsvDataFormat newInstance(String value) {
-            return new CsvDataFormat(value);
         }
 
         @Override
@@ -2644,7 +2596,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "custom",
-            inline = true,
             types = org.apache.camel.model.dataformat.CustomDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -2660,11 +2611,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected CustomDataFormat newInstance() {
             return new CustomDataFormat();
-        }
-
-        @Override
-        protected CustomDataFormat newInstance(String value) {
-            return new CustomDataFormat(value);
         }
 
         @Override
@@ -2694,7 +2640,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     "custom-load-balancer",
                     "customLoadBalancer"
             },
-            inline = true,
             types = org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -2710,11 +2655,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected CustomLoadBalancerDefinition newInstance() {
             return new CustomLoadBalancerDefinition();
-        }
-
-        @Override
-        protected CustomLoadBalancerDefinition newInstance(String value) {
-            return new CustomLoadBalancerDefinition(value);
         }
 
         @Override
@@ -3712,7 +3652,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "datasonnet",
-            inline = true,
             types = org.apache.camel.model.language.DatasonnetExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -3732,11 +3671,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected DatasonnetExpression newInstance() {
             return new DatasonnetExpression();
-        }
-
-        @Override
-        protected DatasonnetExpression newInstance(String value) {
-            return new DatasonnetExpression(value);
         }
 
         @Override
@@ -4292,7 +4226,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "description",
-            inline = true,
             types = org.apache.camel.model.DescriptionDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -4308,11 +4241,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected DescriptionDefinition newInstance() {
             return new DescriptionDefinition();
-        }
-
-        @Override
-        protected DescriptionDefinition newInstance(String value) {
-            return new DescriptionDefinition(value);
         }
 
         @Override
@@ -4826,7 +4754,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     "exchange-property",
                     "exchangeProperty"
             },
-            inline = true,
             types = org.apache.camel.model.language.ExchangePropertyExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -4843,11 +4770,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected ExchangePropertyExpression newInstance() {
             return new ExchangePropertyExpression();
-        }
-
-        @Override
-        protected ExchangePropertyExpression newInstance(String value) {
-            return new ExchangePropertyExpression(value);
         }
 
         @Override
@@ -5795,7 +5717,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "groovy",
-            inline = true,
             types = org.apache.camel.model.language.GroovyExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -5812,11 +5733,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected GroovyExpression newInstance() {
             return new GroovyExpression();
-        }
-
-        @Override
-        protected GroovyExpression newInstance(String value) {
-            return new GroovyExpression(value);
         }
 
         @Override
@@ -6071,7 +5987,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "header",
-            inline = true,
             types = org.apache.camel.model.language.HeaderExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -6088,11 +6003,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected HeaderExpression newInstance() {
             return new HeaderExpression();
-        }
-
-        @Override
-        protected HeaderExpression newInstance(String value) {
-            return new HeaderExpression(value);
         }
 
         @Override
@@ -6177,7 +6087,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "hl7terser",
-            inline = true,
             types = org.apache.camel.model.language.Hl7TerserExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -6194,11 +6103,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected Hl7TerserExpression newInstance() {
             return new Hl7TerserExpression();
-        }
-
-        @Override
-        protected Hl7TerserExpression newInstance(String value) {
-            return new Hl7TerserExpression(value);
         }
 
         @Override
@@ -6390,7 +6294,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     "in-only",
                     "inOnly"
             },
-            inline = true,
             types = org.apache.camel.model.InOnlyDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -6410,11 +6313,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected InOnlyDefinition newInstance() {
             return new InOnlyDefinition();
-        }
-
-        @Override
-        protected InOnlyDefinition newInstance(String value) {
-            return new InOnlyDefinition(value);
         }
 
         @Override
@@ -6465,7 +6363,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     "in-out",
                     "inOut"
             },
-            inline = true,
             types = org.apache.camel.model.InOutDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -6485,11 +6382,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected InOutDefinition newInstance() {
             return new InOutDefinition();
-        }
-
-        @Override
-        protected InOutDefinition newInstance(String value) {
-            return new InOutDefinition(value);
         }
 
         @Override
@@ -6654,7 +6546,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     "intercept-from",
                     "interceptFrom"
             },
-            inline = true,
             types = org.apache.camel.model.InterceptFromDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -6674,11 +6565,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected InterceptFromDefinition newInstance() {
             return new InterceptFromDefinition();
-        }
-
-        @Override
-        protected InterceptFromDefinition newInstance(String value) {
-            return new InterceptFromDefinition(value);
         }
 
         @Override
@@ -6727,7 +6613,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     "intercept-send-to-endpoint",
                     "interceptSendToEndpoint"
             },
-            inline = true,
             types = org.apache.camel.model.InterceptSendToEndpointDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -6749,11 +6634,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected InterceptSendToEndpointDefinition newInstance() {
             return new InterceptSendToEndpointDefinition();
-        }
-
-        @Override
-        protected InterceptSendToEndpointDefinition newInstance(String value) {
-            return new InterceptSendToEndpointDefinition(value);
         }
 
         @Override
@@ -6943,7 +6823,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "js",
-            inline = true,
             types = org.apache.camel.model.language.JavaScriptExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -6962,11 +6841,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected JavaScriptExpression newInstance() {
             return new JavaScriptExpression();
-        }
-
-        @Override
-        protected JavaScriptExpression newInstance(String value) {
-            return new JavaScriptExpression(value);
         }
 
         @Override
@@ -7166,7 +7040,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "joor",
-            inline = true,
             types = org.apache.camel.model.language.JoorExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -7186,11 +7059,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected JoorExpression newInstance() {
             return new JoorExpression();
-        }
-
-        @Override
-        protected JoorExpression newInstance(String value) {
-            return new JoorExpression(value);
         }
 
         @Override
@@ -7246,7 +7114,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "jq",
-            inline = true,
             types = org.apache.camel.model.language.JqExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -7265,11 +7132,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected JqExpression newInstance() {
             return new JqExpression();
-        }
-
-        @Override
-        protected JqExpression newInstance(String value) {
-            return new JqExpression(value);
         }
 
         @Override
@@ -7541,7 +7403,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "jsonpath",
-            inline = true,
             types = org.apache.camel.model.language.JsonPathExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -7566,11 +7427,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected JsonPathExpression newInstance() {
             return new JsonPathExpression();
-        }
-
-        @Override
-        protected JsonPathExpression newInstance(String value) {
-            return new JsonPathExpression(value);
         }
 
         @Override
@@ -8142,7 +7998,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "log",
-            inline = true,
             types = org.apache.camel.model.LogDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -8165,11 +8020,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected LogDefinition newInstance() {
             return new LogDefinition();
-        }
-
-        @Override
-        protected LogDefinition newInstance(String value) {
-            return new LogDefinition(value);
         }
 
         @Override
@@ -8627,7 +8477,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "method",
-            inline = true,
             types = org.apache.camel.model.language.MethodCallExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -8647,11 +8496,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected MethodCallExpression newInstance() {
             return new MethodCallExpression();
-        }
-
-        @Override
-        protected MethodCallExpression newInstance(String value) {
-            return new MethodCallExpression(value);
         }
 
         @Override
@@ -8943,7 +8787,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "mvel",
-            inline = true,
             types = org.apache.camel.model.language.MvelExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -8960,11 +8803,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected MvelExpression newInstance() {
             return new MvelExpression();
-        }
-
-        @Override
-        protected MvelExpression newInstance(String value) {
-            return new MvelExpression(value);
         }
 
         @Override
@@ -9112,7 +8950,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "ognl",
-            inline = true,
             types = org.apache.camel.model.language.OgnlExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -9129,11 +8966,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected OgnlExpression newInstance() {
             return new OgnlExpression();
-        }
-
-        @Override
-        protected OgnlExpression newInstance(String value) {
-            return new OgnlExpression(value);
         }
 
         @Override
@@ -10820,7 +10652,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "protobuf",
-            inline = true,
             types = org.apache.camel.model.dataformat.ProtobufDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -10856,11 +10687,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected ProtobufDataFormat newInstance() {
             return new ProtobufDataFormat();
-        }
-
-        @Override
-        protected ProtobufDataFormat newInstance(String value) {
-            return new ProtobufDataFormat(value);
         }
 
         @Override
@@ -11123,7 +10949,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "python",
-            inline = true,
             types = org.apache.camel.model.language.PythonExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -11142,11 +10967,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected PythonExpression newInstance() {
             return new PythonExpression();
-        }
-
-        @Override
-        protected PythonExpression newInstance(String value) {
-            return new PythonExpression(value);
         }
 
         @Override
@@ -11568,7 +11388,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "ref",
-            inline = true,
             types = org.apache.camel.model.language.RefExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -11585,11 +11404,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected RefExpression newInstance() {
             return new RefExpression();
-        }
-
-        @Override
-        protected RefExpression newInstance(String value) {
-            return new RefExpression(value);
         }
 
         @Override
@@ -11633,7 +11447,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     "remove-header",
                     "removeHeader"
             },
-            inline = true,
             types = org.apache.camel.model.RemoveHeaderDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -11652,11 +11465,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected RemoveHeaderDefinition newInstance() {
             return new RemoveHeaderDefinition();
-        }
-
-        @Override
-        protected RemoveHeaderDefinition newInstance(String value) {
-            return new RemoveHeaderDefinition(value);
         }
 
         @Override
@@ -11701,7 +11509,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     "remove-headers",
                     "removeHeaders"
             },
-            inline = true,
             types = org.apache.camel.model.RemoveHeadersDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -11721,11 +11528,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected RemoveHeadersDefinition newInstance() {
             return new RemoveHeadersDefinition();
-        }
-
-        @Override
-        protected RemoveHeadersDefinition newInstance(String value) {
-            return new RemoveHeadersDefinition(value);
         }
 
         @Override
@@ -11775,7 +11577,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     "remove-properties",
                     "removeProperties"
             },
-            inline = true,
             types = org.apache.camel.model.RemovePropertiesDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -11795,11 +11596,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected RemovePropertiesDefinition newInstance() {
             return new RemovePropertiesDefinition();
-        }
-
-        @Override
-        protected RemovePropertiesDefinition newInstance(String value) {
-            return new RemovePropertiesDefinition(value);
         }
 
         @Override
@@ -11849,7 +11645,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     "remove-property",
                     "removeProperty"
             },
-            inline = true,
             types = org.apache.camel.model.RemovePropertyDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -11868,11 +11663,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected RemovePropertyDefinition newInstance() {
             return new RemovePropertyDefinition();
-        }
-
-        @Override
-        protected RemovePropertyDefinition newInstance(String value) {
-            return new RemovePropertyDefinition(value);
         }
 
         @Override
@@ -12555,7 +12345,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     "rest-context-ref",
                     "restContextRef"
             },
-            inline = true,
             types = org.apache.camel.model.RestContextRefDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = @YamlProperty(name = "ref", type = "string", required = true)
@@ -12568,11 +12357,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected RestContextRefDefinition newInstance() {
             return new RestContextRefDefinition();
-        }
-
-        @Override
-        protected RestContextRefDefinition newInstance(String value) {
-            return new RestContextRefDefinition(value);
         }
 
         @Override
@@ -13027,7 +12811,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "rollback",
-            inline = true,
             types = org.apache.camel.model.RollbackDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -13048,11 +12831,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected RollbackDefinition newInstance() {
             return new RollbackDefinition();
-        }
-
-        @Override
-        protected RollbackDefinition newInstance(String value) {
-            return new RollbackDefinition(value);
         }
 
         @Override
@@ -13143,7 +12921,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     "route-builder",
                     "routeBuilder"
             },
-            inline = true,
             types = org.apache.camel.model.RouteBuilderDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -13159,11 +12936,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected RouteBuilderDefinition newInstance() {
             return new RouteBuilderDefinition();
-        }
-
-        @Override
-        protected RouteBuilderDefinition newInstance(String value) {
-            return new RouteBuilderDefinition(value);
         }
 
         @Override
@@ -13193,7 +12965,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     "route-configuration-context-ref",
                     "routeConfigurationContextRef"
             },
-            inline = true,
             types = org.apache.camel.model.RouteConfigurationContextRefDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = @YamlProperty(name = "ref", type = "string", required = true)
@@ -13206,11 +12977,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected RouteConfigurationContextRefDefinition newInstance() {
             return new RouteConfigurationContextRefDefinition();
-        }
-
-        @Override
-        protected RouteConfigurationContextRefDefinition newInstance(String value) {
-            return new RouteConfigurationContextRefDefinition(value);
         }
 
         @Override
@@ -13235,7 +13001,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     "route-context-ref",
                     "routeContextRef"
             },
-            inline = true,
             types = org.apache.camel.model.RouteContextRefDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = @YamlProperty(name = "ref", type = "string", required = true)
@@ -13248,11 +13013,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected RouteContextRefDefinition newInstance() {
             return new RouteContextRefDefinition();
-        }
-
-        @Override
-        protected RouteContextRefDefinition newInstance(String value) {
-            return new RouteContextRefDefinition(value);
         }
 
         @Override
@@ -13274,7 +13034,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "route",
-            inline = true,
             types = org.apache.camel.model.RouteDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -13293,11 +13052,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected RouteDefinition newInstance() {
             return new RouteDefinition();
-        }
-
-        @Override
-        protected RouteDefinition newInstance(String value) {
-            return new RouteDefinition(value);
         }
 
         @Override
@@ -13397,7 +13151,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     "routing-slip",
                     "routingSlip"
             },
-            inline = true,
             types = org.apache.camel.model.RoutingSlipDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -13420,11 +13173,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected RoutingSlipDefinition newInstance() {
             return new RoutingSlipDefinition();
-        }
-
-        @Override
-        protected RoutingSlipDefinition newInstance(String value) {
-            return new RoutingSlipDefinition(value);
         }
 
         @Override
@@ -13522,7 +13270,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            inline = true,
             types = org.apache.camel.model.SagaActionUriDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -13542,11 +13289,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected SagaActionUriDefinition newInstance() {
             return new SagaActionUriDefinition();
-        }
-
-        @Override
-        protected SagaActionUriDefinition newInstance(String value) {
-            return new SagaActionUriDefinition(value);
         }
 
         @Override
@@ -13694,7 +13436,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "sample",
-            inline = true,
             types = org.apache.camel.model.SamplingDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -13714,11 +13455,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected SamplingDefinition newInstance() {
             return new SamplingDefinition();
-        }
-
-        @Override
-        protected SamplingDefinition newInstance(String value) {
-            return new SamplingDefinition(value);
         }
 
         @Override
@@ -14058,7 +13794,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     "service-call",
                     "serviceCall"
             },
-            inline = true,
             types = org.apache.camel.model.cloud.ServiceCallDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -14100,11 +13835,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected ServiceCallDefinition newInstance() {
             return new ServiceCallDefinition();
-        }
-
-        @Override
-        protected ServiceCallDefinition newInstance(String value) {
-            return new ServiceCallDefinition(value);
         }
 
         @Override
@@ -14584,7 +14314,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     "set-exchange-pattern",
                     "setExchangePattern"
             },
-            inline = true,
             types = org.apache.camel.model.SetExchangePatternDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -14603,11 +14332,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected SetExchangePatternDefinition newInstance() {
             return new SetExchangePatternDefinition();
-        }
-
-        @Override
-        protected SetExchangePatternDefinition newInstance(String value) {
-            return new SetExchangePatternDefinition(value);
         }
 
         @Override
@@ -14805,7 +14529,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "simple",
-            inline = true,
             types = org.apache.camel.model.language.SimpleExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -14823,11 +14546,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected SimpleExpression newInstance() {
             return new SimpleExpression();
-        }
-
-        @Override
-        protected SimpleExpression newInstance(String value) {
-            return new SimpleExpression(value);
         }
 
         @Override
@@ -14873,7 +14591,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "soap",
-            inline = true,
             types = org.apache.camel.model.dataformat.SoapDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -14894,11 +14611,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected SoapDataFormat newInstance() {
             return new SoapDataFormat();
-        }
-
-        @Override
-        protected SoapDataFormat newInstance(String value) {
-            return new SoapDataFormat(value);
         }
 
         @Override
@@ -15025,7 +14737,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "spel",
-            inline = true,
             types = org.apache.camel.model.language.SpELExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -15042,11 +14753,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected SpELExpression newInstance() {
             return new SpELExpression();
-        }
-
-        @Override
-        protected SpELExpression newInstance(String value) {
-            return new SpELExpression(value);
         }
 
         @Override
@@ -15625,7 +15331,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     "swift-mt",
                     "swiftMt"
             },
-            inline = true,
             types = org.apache.camel.model.dataformat.SwiftMtDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -15641,11 +15346,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected SwiftMtDataFormat newInstance() {
             return new SwiftMtDataFormat();
-        }
-
-        @Override
-        protected SwiftMtDataFormat newInstance(String value) {
-            return new SwiftMtDataFormat(value);
         }
 
         @Override
@@ -16078,7 +15778,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "thrift",
-            inline = true,
             types = org.apache.camel.model.dataformat.ThriftDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -16096,11 +15795,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected ThriftDataFormat newInstance() {
             return new ThriftDataFormat();
-        }
-
-        @Override
-        protected ThriftDataFormat newInstance(String value) {
-            return new ThriftDataFormat(value);
         }
 
         @Override
@@ -16366,7 +16060,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "to",
-            inline = true,
             types = org.apache.camel.model.ToDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -16387,11 +16080,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected ToDefinition newInstance() {
             return new ToDefinition();
-        }
-
-        @Override
-        protected ToDefinition newInstance(String value) {
-            return new ToDefinition(value);
         }
 
         @Override
@@ -16447,7 +16135,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     "to-d",
                     "toD"
             },
-            inline = true,
             types = org.apache.camel.model.ToDynamicDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -16472,11 +16159,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected ToDynamicDefinition newInstance() {
             return new ToDynamicDefinition();
-        }
-
-        @Override
-        protected ToDynamicDefinition newInstance(String value) {
-            return new ToDynamicDefinition(value);
         }
 
         @Override
@@ -16549,7 +16231,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "tokenize",
-            inline = true,
             types = org.apache.camel.model.language.TokenizerExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -16575,11 +16256,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected TokenizerExpression newInstance() {
             return new TokenizerExpression();
-        }
-
-        @Override
-        protected TokenizerExpression newInstance(String value) {
-            return new TokenizerExpression(value);
         }
 
         @Override
@@ -18318,7 +17994,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "xtokenize",
-            inline = true,
             types = org.apache.camel.model.language.XMLTokenizerExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -18338,11 +18013,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected XMLTokenizerExpression newInstance() {
             return new XMLTokenizerExpression();
-        }
-
-        @Override
-        protected XMLTokenizerExpression newInstance(String value) {
-            return new XMLTokenizerExpression(value);
         }
 
         @Override
@@ -18398,7 +18068,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "xpath",
-            inline = true,
             types = org.apache.camel.model.language.XPathExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -18425,11 +18094,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected XPathExpression newInstance() {
             return new XPathExpression();
-        }
-
-        @Override
-        protected XPathExpression newInstance(String value) {
-            return new XPathExpression(value);
         }
 
         @Override
@@ -18520,7 +18184,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "xquery",
-            inline = true,
             types = org.apache.camel.model.language.XQueryExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -18541,11 +18204,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected XQueryExpression newInstance() {
             return new XQueryExpression();
-        }
-
-        @Override
-        protected XQueryExpression newInstance(String value) {
-            return new XQueryExpression(value);
         }
 
         @Override
@@ -18606,7 +18264,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
     @YamlType(
             nodes = "xstream",
-            inline = true,
             types = org.apache.camel.model.dataformat.XStreamDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -18631,11 +18288,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected XStreamDataFormat newInstance() {
             return new XStreamDataFormat();
-        }
-
-        @Override
-        protected XStreamDataFormat newInstance(String value) {
-            return new XStreamDataFormat(value);
         }
 
         @Override
