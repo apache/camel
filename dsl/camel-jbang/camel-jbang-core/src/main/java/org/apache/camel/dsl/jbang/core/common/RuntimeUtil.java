@@ -94,7 +94,7 @@ public final class RuntimeUtil {
                 deps = deps.substring(0, deps.lastIndexOf(","));
             }
         } else {
-            deps = new String("");
+            deps = "";
         }
         return deps;
     }
