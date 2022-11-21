@@ -393,6 +393,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * @param path metricType:metricName
          * @return the dsl builder
          */
+        @Deprecated
         default MicroProfileMetricsEndpointBuilder microprofileMetrics(
                 String path) {
             return MicroProfileMetricsEndpointBuilderFactory.endpointBuilder("microprofile-metrics", path);
@@ -420,6 +421,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * @param path metricType:metricName
          * @return the dsl builder
          */
+        @Deprecated
         default MicroProfileMetricsEndpointBuilder microprofileMetrics(
                 String componentName,
                 String path) {
@@ -615,6 +617,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
             return "MicroProfileMetricsTimerAction";
         }
     }
+    @Deprecated
     static MicroProfileMetricsEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
