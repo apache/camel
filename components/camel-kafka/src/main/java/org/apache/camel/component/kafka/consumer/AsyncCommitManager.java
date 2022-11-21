@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kafka.KafkaConsumer;
+import org.apache.camel.spi.StateRepository;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
@@ -34,11 +35,14 @@ public class AsyncCommitManager extends AbstractCommitManager {
     private final Consumer<?, ?> consumer;
 
     private final OffsetCache offsetCache = new OffsetCache();
+    private final StateRepository<String, String> offsetRepository;
 
     public AsyncCommitManager(Consumer<?, ?> consumer, KafkaConsumer kafkaConsumer, String threadId, String printableTopic) {
         super(consumer, kafkaConsumer, threadId, printableTopic);
 
         this.consumer = consumer;
+
+        offsetRepository = configuration.getOffsetRepository();
     }
 
     @Override
@@ -66,7 +70,7 @@ public class AsyncCommitManager extends AbstractCommitManager {
 
         final Map<TopicPartition, OffsetAndMetadata> topicPartitionOffsetAndMetadataMap
                 = Collections.singletonMap(partition, new OffsetAndMetadata(partitionLastOffset + 1));
-        consumer.commitAsync(topicPartitionOffsetAndMetadataMap, offsetCache::removeCommittedEntries);
+        consumer.commitAsync(topicPartitionOffsetAndMetadataMap, this::postCommitCallback);
     }
 
     @Override
@@ -84,5 +88,17 @@ public class AsyncCommitManager extends AbstractCommitManager {
     @Override
     public void recordOffset(TopicPartition partition, long partitionLastOffset) {
         offsetCache.recordOffset(partition, partitionLastOffset);
+    }
+
+    private void postCommitCallback(Map<TopicPartition, OffsetAndMetadata> committed, Exception exception) {
+        if (exception == null) {
+            if (offsetRepository != null) {
+                for (var entry : committed.entrySet()) {
+                    saveStateToOffsetRepository(entry.getKey(), entry.getValue().offset(), offsetRepository);
+                }
+            }
+        }
+
+        offsetCache.removeCommittedEntries(committed, exception);
     }
 }

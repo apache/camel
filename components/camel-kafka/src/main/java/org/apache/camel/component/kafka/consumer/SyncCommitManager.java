@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.apache.camel.component.kafka.KafkaConsumer;
+import org.apache.camel.spi.StateRepository;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
@@ -33,11 +34,14 @@ public class SyncCommitManager extends AbstractCommitManager {
 
     private final OffsetCache offsetCache = new OffsetCache();
     private final Consumer<?, ?> consumer;
+    private final StateRepository<String, String> offsetRepository;
 
     public SyncCommitManager(Consumer<?, ?> consumer, KafkaConsumer kafkaConsumer, String threadId, String printableTopic) {
         super(consumer, kafkaConsumer, threadId, printableTopic);
 
         this.consumer = consumer;
+
+        offsetRepository = configuration.getOffsetRepository();
     }
 
     @Override
@@ -61,10 +65,16 @@ public class SyncCommitManager extends AbstractCommitManager {
             return;
         }
 
+        final long lastOffset = offset + 1;
+
         final Map<TopicPartition, OffsetAndMetadata> offsets
-                = Collections.singletonMap(partition, new OffsetAndMetadata(offset + 1));
+                = Collections.singletonMap(partition, new OffsetAndMetadata(lastOffset));
         long timeout = configuration.getCommitTimeoutMs();
         consumer.commitSync(offsets, Duration.ofMillis(timeout));
+
+        if (offsetRepository != null) {
+            saveStateToOffsetRepository(partition, lastOffset, offsetRepository);
+        }
 
         offsetCache.removeCommittedEntries(offsets, null);
     }
