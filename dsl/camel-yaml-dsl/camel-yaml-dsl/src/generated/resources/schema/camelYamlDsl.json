@@ -403,38 +403,34 @@
         "required" : [ "aggregationStrategy" ]
       },
       "org.apache.camel.model.BeanDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "beanType" : {
-              "type" : "string"
-            },
-            "description" : {
-              "type" : "string"
-            },
-            "disabled" : {
-              "type" : "boolean"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
-            },
-            "method" : {
-              "type" : "string"
-            },
-            "ref" : {
-              "type" : "string"
-            },
-            "scope" : {
-              "type" : "string",
-              "enum" : [ "Singleton", "Request", "Prototype" ]
-            }
+        "type" : "object",
+        "properties" : {
+          "beanType" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "inheritErrorHandler" : {
+            "type" : "boolean"
+          },
+          "method" : {
+            "type" : "string"
+          },
+          "ref" : {
+            "type" : "string"
+          },
+          "scope" : {
+            "type" : "string",
+            "enum" : [ "Singleton", "Request", "Prototype" ]
           }
-        } ]
+        }
       },
       "org.apache.camel.model.CatchDefinition" : {
         "type" : "object",
@@ -593,34 +589,30 @@
         }
       },
       "org.apache.camel.model.ConvertBodyDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "charset" : {
-              "type" : "string"
-            },
-            "description" : {
-              "type" : "string"
-            },
-            "disabled" : {
-              "type" : "boolean"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
-            },
-            "mandatory" : {
-              "type" : "boolean"
-            },
-            "type" : {
-              "type" : "string"
-            }
+        "type" : "object",
+        "properties" : {
+          "charset" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "inheritErrorHandler" : {
+            "type" : "boolean"
+          },
+          "mandatory" : {
+            "type" : "boolean"
+          },
+          "type" : {
+            "type" : "string"
           }
-        } ],
+        },
         "required" : [ "type" ]
       },
       "org.apache.camel.model.DataFormatDefinition" : {
@@ -664,19 +656,15 @@
         }
       },
       "org.apache.camel.model.DescriptionDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "lang" : {
-              "type" : "string"
-            },
-            "text" : {
-              "type" : "string"
-            }
+        "type" : "object",
+        "properties" : {
+          "lang" : {
+            "type" : "string"
+          },
+          "text" : {
+            "type" : "string"
           }
-        } ]
+        }
       },
       "org.apache.camel.model.DynamicRouterDefinition" : {
         "type" : "object",
@@ -1049,59 +1037,51 @@
         "required" : [ "idempotentRepository" ]
       },
       "org.apache.camel.model.InOnlyDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "description" : {
-              "type" : "string"
-            },
-            "disabled" : {
-              "type" : "boolean"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
-            },
-            "parameters" : {
-              "type" : "object"
-            },
-            "uri" : {
-              "type" : "string"
-            }
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "inheritErrorHandler" : {
+            "type" : "boolean"
+          },
+          "parameters" : {
+            "type" : "object"
+          },
+          "uri" : {
+            "type" : "string"
           }
-        } ],
+        },
         "required" : [ "uri" ]
       },
       "org.apache.camel.model.InOutDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "description" : {
-              "type" : "string"
-            },
-            "disabled" : {
-              "type" : "boolean"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
-            },
-            "parameters" : {
-              "type" : "object"
-            },
-            "uri" : {
-              "type" : "string"
-            }
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "inheritErrorHandler" : {
+            "type" : "boolean"
+          },
+          "parameters" : {
+            "type" : "object"
+          },
+          "uri" : {
+            "type" : "string"
           }
-        } ],
+        },
         "required" : [ "uri" ]
       },
       "org.apache.camel.model.InputTypeDefinition" : {
@@ -1146,70 +1126,62 @@
         }
       },
       "org.apache.camel.model.InterceptFromDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "description" : {
-              "type" : "string"
-            },
-            "disabled" : {
-              "type" : "boolean"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
-            },
-            "steps" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
-              }
-            },
-            "uri" : {
-              "type" : "string"
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "inheritErrorHandler" : {
+            "type" : "boolean"
+          },
+          "steps" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
             }
+          },
+          "uri" : {
+            "type" : "string"
           }
-        } ]
+        }
       },
       "org.apache.camel.model.InterceptSendToEndpointDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "afterUri" : {
-              "type" : "string"
-            },
-            "description" : {
-              "type" : "string"
-            },
-            "disabled" : {
-              "type" : "boolean"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
-            },
-            "skipSendToOriginalEndpoint" : {
-              "type" : "string"
-            },
-            "steps" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
-              }
-            },
-            "uri" : {
-              "type" : "string"
+        "type" : "object",
+        "properties" : {
+          "afterUri" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "inheritErrorHandler" : {
+            "type" : "boolean"
+          },
+          "skipSendToOriginalEndpoint" : {
+            "type" : "string"
+          },
+          "steps" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
             }
+          },
+          "uri" : {
+            "type" : "string"
           }
-        } ],
+        },
         "required" : [ "uri" ]
       },
       "org.apache.camel.model.KameletDefinition" : {
@@ -1282,41 +1254,37 @@
         }
       },
       "org.apache.camel.model.LogDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "description" : {
-              "type" : "string"
-            },
-            "disabled" : {
-              "type" : "boolean"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
-            },
-            "logName" : {
-              "type" : "string"
-            },
-            "logger" : {
-              "type" : "string"
-            },
-            "loggingLevel" : {
-              "type" : "string",
-              "enum" : [ "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "OFF" ]
-            },
-            "marker" : {
-              "type" : "string"
-            },
-            "message" : {
-              "type" : "string"
-            }
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "inheritErrorHandler" : {
+            "type" : "boolean"
+          },
+          "logName" : {
+            "type" : "string"
+          },
+          "logger" : {
+            "type" : "string"
+          },
+          "loggingLevel" : {
+            "type" : "string",
+            "enum" : [ "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "OFF" ]
+          },
+          "marker" : {
+            "type" : "string"
+          },
+          "message" : {
+            "type" : "string"
           }
-        } ],
+        },
         "required" : [ "message" ]
       },
       "org.apache.camel.model.LoopDefinition" : {
@@ -2099,109 +2067,93 @@
         }
       },
       "org.apache.camel.model.RemoveHeaderDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "description" : {
-              "type" : "string"
-            },
-            "disabled" : {
-              "type" : "boolean"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
-            },
-            "name" : {
-              "type" : "string"
-            }
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "inheritErrorHandler" : {
+            "type" : "boolean"
+          },
+          "name" : {
+            "type" : "string"
           }
-        } ],
+        },
         "required" : [ "name" ]
       },
       "org.apache.camel.model.RemoveHeadersDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "description" : {
-              "type" : "string"
-            },
-            "disabled" : {
-              "type" : "boolean"
-            },
-            "excludePattern" : {
-              "type" : "string"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
-            },
-            "pattern" : {
-              "type" : "string"
-            }
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
+          },
+          "excludePattern" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "inheritErrorHandler" : {
+            "type" : "boolean"
+          },
+          "pattern" : {
+            "type" : "string"
           }
-        } ],
+        },
         "required" : [ "pattern" ]
       },
       "org.apache.camel.model.RemovePropertiesDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "description" : {
-              "type" : "string"
-            },
-            "disabled" : {
-              "type" : "boolean"
-            },
-            "excludePattern" : {
-              "type" : "string"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
-            },
-            "pattern" : {
-              "type" : "string"
-            }
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
+          },
+          "excludePattern" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "inheritErrorHandler" : {
+            "type" : "boolean"
+          },
+          "pattern" : {
+            "type" : "string"
           }
-        } ],
+        },
         "required" : [ "pattern" ]
       },
       "org.apache.camel.model.RemovePropertyDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "description" : {
-              "type" : "string"
-            },
-            "disabled" : {
-              "type" : "boolean"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
-            },
-            "name" : {
-              "type" : "string"
-            }
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "inheritErrorHandler" : {
+            "type" : "boolean"
+          },
+          "name" : {
+            "type" : "string"
           }
-        } ],
+        },
         "required" : [ "name" ]
       },
       "org.apache.camel.model.ResequenceDefinition" : {
@@ -2289,16 +2241,12 @@
         }
       },
       "org.apache.camel.model.RestContextRefDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "ref" : {
-              "type" : "string"
-            }
+        "type" : "object",
+        "properties" : {
+          "ref" : {
+            "type" : "string"
           }
-        } ],
+        },
         "required" : [ "ref" ]
       },
       "org.apache.camel.model.ResumableDefinition" : {
@@ -2326,62 +2274,50 @@
         "required" : [ "resumeStrategy" ]
       },
       "org.apache.camel.model.RollbackDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "description" : {
-              "type" : "string"
-            },
-            "disabled" : {
-              "type" : "boolean"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
-            },
-            "markRollbackOnly" : {
-              "type" : "boolean"
-            },
-            "markRollbackOnlyLast" : {
-              "type" : "boolean"
-            },
-            "message" : {
-              "type" : "string"
-            }
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "inheritErrorHandler" : {
+            "type" : "boolean"
+          },
+          "markRollbackOnly" : {
+            "type" : "boolean"
+          },
+          "markRollbackOnlyLast" : {
+            "type" : "boolean"
+          },
+          "message" : {
+            "type" : "string"
           }
-        } ]
+        }
       },
       "org.apache.camel.model.RouteBuilderDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "id" : {
-              "type" : "string"
-            },
-            "ref" : {
-              "type" : "string"
-            }
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "ref" : {
+            "type" : "string"
           }
-        } ],
+        },
         "required" : [ "ref" ]
       },
       "org.apache.camel.model.RouteConfigurationContextRefDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "ref" : {
-              "type" : "string"
-            }
+        "type" : "object",
+        "properties" : {
+          "ref" : {
+            "type" : "string"
           }
-        } ],
+        },
         "required" : [ "ref" ]
       },
       "org.apache.camel.model.RouteConfigurationDefinition" : {
@@ -2433,16 +2369,12 @@
         } ]
       },
       "org.apache.camel.model.RouteContextRefDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "ref" : {
-              "type" : "string"
-            }
+        "type" : "object",
+        "properties" : {
+          "ref" : {
+            "type" : "string"
           }
-        } ],
+        },
         "required" : [ "ref" ]
       },
       "org.apache.camel.model.RouteDefinition" : {
@@ -2563,67 +2495,59 @@
         "required" : [ "name" ]
       },
       "org.apache.camel.model.RoutingSlipDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "cacheSize" : {
-              "type" : "number"
-            },
-            "description" : {
-              "type" : "string"
-            },
-            "disabled" : {
-              "type" : "boolean"
-            },
-            "expression" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "ignoreInvalidEndpoints" : {
-              "type" : "boolean"
-            },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
-            },
-            "uriDelimiter" : {
-              "type" : "string"
-            }
-          }
-        } ],
+        "type" : "object",
         "anyOf" : [ {
           "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
-        } ]
+        } ],
+        "properties" : {
+          "cacheSize" : {
+            "type" : "number"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
+          },
+          "expression" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "ignoreInvalidEndpoints" : {
+            "type" : "boolean"
+          },
+          "inheritErrorHandler" : {
+            "type" : "boolean"
+          },
+          "uriDelimiter" : {
+            "type" : "string"
+          }
+        }
       },
       "org.apache.camel.model.SagaActionUriDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "description" : {
-              "type" : "string"
-            },
-            "disabled" : {
-              "type" : "boolean"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
-            },
-            "parameters" : {
-              "type" : "object"
-            },
-            "uri" : {
-              "type" : "string"
-            }
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "inheritErrorHandler" : {
+            "type" : "boolean"
+          },
+          "parameters" : {
+            "type" : "object"
+          },
+          "uri" : {
+            "type" : "string"
           }
-        } ],
+        },
         "required" : [ "uri" ]
       },
       "org.apache.camel.model.SagaDefinition" : {
@@ -2676,31 +2600,27 @@
         }
       },
       "org.apache.camel.model.SamplingDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "description" : {
-              "type" : "string"
-            },
-            "disabled" : {
-              "type" : "boolean"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
-            },
-            "messageFrequency" : {
-              "type" : "number"
-            },
-            "samplePeriod" : {
-              "type" : "string"
-            }
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "inheritErrorHandler" : {
+            "type" : "boolean"
+          },
+          "messageFrequency" : {
+            "type" : "number"
+          },
+          "samplePeriod" : {
+            "type" : "string"
           }
-        } ]
+        }
       },
       "org.apache.camel.model.ScriptDefinition" : {
         "type" : "object",
@@ -2749,29 +2669,25 @@
         }
       },
       "org.apache.camel.model.SetExchangePatternDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "description" : {
-              "type" : "string"
-            },
-            "disabled" : {
-              "type" : "boolean"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
-            },
-            "pattern" : {
-              "type" : "string",
-              "enum" : [ "InOnly", "InOut", "InOptionalOut" ]
-            }
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "inheritErrorHandler" : {
+            "type" : "boolean"
+          },
+          "pattern" : {
+            "type" : "string",
+            "enum" : [ "InOnly", "InOut", "InOptionalOut" ]
           }
-        } ],
+        },
         "required" : [ "pattern" ]
       },
       "org.apache.camel.model.SetHeaderDefinition" : {
@@ -3176,79 +3092,71 @@
         }
       },
       "org.apache.camel.model.ToDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "description" : {
-              "type" : "string"
-            },
-            "disabled" : {
-              "type" : "boolean"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
-            },
-            "parameters" : {
-              "type" : "object"
-            },
-            "pattern" : {
-              "type" : "string",
-              "enum" : [ "InOnly", "InOut", "InOptionalOut" ]
-            },
-            "uri" : {
-              "type" : "string"
-            }
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "inheritErrorHandler" : {
+            "type" : "boolean"
+          },
+          "parameters" : {
+            "type" : "object"
+          },
+          "pattern" : {
+            "type" : "string",
+            "enum" : [ "InOnly", "InOut", "InOptionalOut" ]
+          },
+          "uri" : {
+            "type" : "string"
           }
-        } ],
+        },
         "required" : [ "uri" ]
       },
       "org.apache.camel.model.ToDynamicDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "allowOptimisedComponents" : {
-              "type" : "boolean"
-            },
-            "autoStartComponents" : {
-              "type" : "boolean"
-            },
-            "cacheSize" : {
-              "type" : "number"
-            },
-            "description" : {
-              "type" : "string"
-            },
-            "disabled" : {
-              "type" : "boolean"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "ignoreInvalidEndpoint" : {
-              "type" : "boolean"
-            },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
-            },
-            "parameters" : {
-              "type" : "object"
-            },
-            "pattern" : {
-              "type" : "string",
-              "enum" : [ "InOnly", "InOut", "InOptionalOut" ]
-            },
-            "uri" : {
-              "type" : "string"
-            }
+        "type" : "object",
+        "properties" : {
+          "allowOptimisedComponents" : {
+            "type" : "boolean"
+          },
+          "autoStartComponents" : {
+            "type" : "boolean"
+          },
+          "cacheSize" : {
+            "type" : "number"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "ignoreInvalidEndpoint" : {
+            "type" : "boolean"
+          },
+          "inheritErrorHandler" : {
+            "type" : "boolean"
+          },
+          "parameters" : {
+            "type" : "object"
+          },
+          "pattern" : {
+            "type" : "string",
+            "enum" : [ "InOnly", "InOut", "InOptionalOut" ]
+          },
+          "uri" : {
+            "type" : "string"
           }
-        } ],
+        },
         "required" : [ "uri" ]
       },
       "org.apache.camel.model.TransactedDefinition" : {
@@ -3990,98 +3898,94 @@
         }
       },
       "org.apache.camel.model.cloud.ServiceCallDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "blacklistServiceFilter" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.cloud.BlacklistServiceCallServiceFilterConfiguration"
-            },
-            "cachingServiceDiscovery" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.cloud.CachingServiceCallServiceDiscoveryConfiguration"
-            },
-            "combinedServiceDiscovery" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.cloud.CombinedServiceCallServiceDiscoveryConfiguration"
-            },
-            "combinedServiceFilter" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.cloud.CombinedServiceCallServiceFilterConfiguration"
-            },
-            "component" : {
-              "type" : "string"
-            },
-            "configurationRef" : {
-              "type" : "string"
-            },
-            "consulServiceDiscovery" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.cloud.ConsulServiceCallServiceDiscoveryConfiguration"
-            },
-            "customServiceFilter" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.cloud.CustomServiceCallServiceFilterConfiguration"
-            },
-            "defaultLoadBalancer" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.cloud.DefaultServiceCallServiceLoadBalancerConfiguration"
-            },
-            "description" : {
-              "type" : "string"
-            },
-            "disabled" : {
-              "type" : "boolean"
-            },
-            "dnsServiceDiscovery" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.cloud.DnsServiceCallServiceDiscoveryConfiguration"
-            },
-            "expression" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.cloud.ServiceCallExpressionConfiguration"
-            },
-            "expressionRef" : {
-              "type" : "string"
-            },
-            "healthyServiceFilter" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.cloud.HealthyServiceCallServiceFilterConfiguration"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "inheritErrorHandler" : {
-              "type" : "boolean"
-            },
-            "kubernetesServiceDiscovery" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.cloud.KubernetesServiceCallServiceDiscoveryConfiguration"
-            },
-            "loadBalancerRef" : {
-              "type" : "string"
-            },
-            "name" : {
-              "type" : "string"
-            },
-            "passThroughServiceFilter" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.cloud.PassThroughServiceCallServiceFilterConfiguration"
-            },
-            "pattern" : {
-              "type" : "string",
-              "enum" : [ "InOnly", "InOut", "InOptionalOut" ]
-            },
-            "serviceChooserRef" : {
-              "type" : "string"
-            },
-            "serviceDiscoveryRef" : {
-              "type" : "string"
-            },
-            "serviceFilterRef" : {
-              "type" : "string"
-            },
-            "staticServiceDiscovery" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.cloud.StaticServiceCallServiceDiscoveryConfiguration"
-            },
-            "uri" : {
-              "type" : "string"
-            },
-            "zookeeperServiceDiscovery" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.cloud.ZooKeeperServiceCallServiceDiscoveryConfiguration"
-            }
+        "type" : "object",
+        "properties" : {
+          "blacklistServiceFilter" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.cloud.BlacklistServiceCallServiceFilterConfiguration"
+          },
+          "cachingServiceDiscovery" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.cloud.CachingServiceCallServiceDiscoveryConfiguration"
+          },
+          "combinedServiceDiscovery" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.cloud.CombinedServiceCallServiceDiscoveryConfiguration"
+          },
+          "combinedServiceFilter" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.cloud.CombinedServiceCallServiceFilterConfiguration"
+          },
+          "component" : {
+            "type" : "string"
+          },
+          "configurationRef" : {
+            "type" : "string"
+          },
+          "consulServiceDiscovery" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.cloud.ConsulServiceCallServiceDiscoveryConfiguration"
+          },
+          "customServiceFilter" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.cloud.CustomServiceCallServiceFilterConfiguration"
+          },
+          "defaultLoadBalancer" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.cloud.DefaultServiceCallServiceLoadBalancerConfiguration"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
+          },
+          "dnsServiceDiscovery" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.cloud.DnsServiceCallServiceDiscoveryConfiguration"
+          },
+          "expression" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.cloud.ServiceCallExpressionConfiguration"
+          },
+          "expressionRef" : {
+            "type" : "string"
+          },
+          "healthyServiceFilter" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.cloud.HealthyServiceCallServiceFilterConfiguration"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "inheritErrorHandler" : {
+            "type" : "boolean"
+          },
+          "kubernetesServiceDiscovery" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.cloud.KubernetesServiceCallServiceDiscoveryConfiguration"
+          },
+          "loadBalancerRef" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "passThroughServiceFilter" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.cloud.PassThroughServiceCallServiceFilterConfiguration"
+          },
+          "pattern" : {
+            "type" : "string",
+            "enum" : [ "InOnly", "InOut", "InOptionalOut" ]
+          },
+          "serviceChooserRef" : {
+            "type" : "string"
+          },
+          "serviceDiscoveryRef" : {
+            "type" : "string"
+          },
+          "serviceFilterRef" : {
+            "type" : "string"
+          },
+          "staticServiceDiscovery" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.cloud.StaticServiceCallServiceDiscoveryConfiguration"
+          },
+          "uri" : {
+            "type" : "string"
+          },
+          "zookeeperServiceDiscovery" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.cloud.ZooKeeperServiceCallServiceDiscoveryConfiguration"
           }
-        } ],
+        },
         "required" : [ "name" ]
       },
       "org.apache.camel.model.cloud.ServiceCallExpressionConfiguration" : {
@@ -4266,126 +4170,114 @@
         }
       },
       "org.apache.camel.model.dataformat.ASN1DataFormat" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "id" : {
-              "type" : "string"
-            },
-            "unmarshalType" : {
-              "type" : "string"
-            },
-            "usingIterator" : {
-              "type" : "boolean"
-            }
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "unmarshalType" : {
+            "type" : "string"
+          },
+          "usingIterator" : {
+            "type" : "boolean"
           }
-        } ]
+        }
       },
       "org.apache.camel.model.dataformat.Any23DataFormat" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "baseUri" : {
-              "type" : "string"
-            },
-            "configuration" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
-              }
-            },
-            "extractors" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "outputFormat" : {
-              "type" : "string",
-              "enum" : [ "NTRIPLES", "TURTLE", "NQUADS", "RDFXML", "JSONLD", "RDFJSON", "RDF4JMODEL" ]
+        "type" : "object",
+        "properties" : {
+          "baseUri" : {
+            "type" : "string"
+          },
+          "configuration" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
             }
+          },
+          "extractors" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "outputFormat" : {
+            "type" : "string",
+            "enum" : [ "NTRIPLES", "TURTLE", "NQUADS", "RDFXML", "JSONLD", "RDFJSON", "RDF4JMODEL" ]
           }
-        } ]
+        }
       },
       "org.apache.camel.model.dataformat.AvroDataFormat" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "allowJmsType" : {
-              "type" : "boolean"
-            },
-            "allowUnmarshallType" : {
-              "type" : "boolean"
-            },
-            "autoDiscoverObjectMapper" : {
-              "type" : "boolean"
-            },
-            "autoDiscoverSchemaResolver" : {
-              "type" : "boolean"
-            },
-            "collectionType" : {
-              "type" : "string"
-            },
-            "contentTypeHeader" : {
-              "type" : "boolean"
-            },
-            "disableFeatures" : {
-              "type" : "string"
-            },
-            "enableFeatures" : {
-              "type" : "string"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "include" : {
-              "type" : "string"
-            },
-            "instanceClassName" : {
-              "type" : "string"
-            },
-            "jsonView" : {
-              "type" : "string"
-            },
-            "library" : {
-              "type" : "string",
-              "enum" : [ "ApacheAvro", "Jackson" ]
-            },
-            "moduleClassNames" : {
-              "type" : "string"
-            },
-            "moduleRefs" : {
-              "type" : "string"
-            },
-            "objectMapper" : {
-              "type" : "string"
-            },
-            "schemaResolver" : {
-              "type" : "string"
-            },
-            "timezone" : {
-              "type" : "string"
-            },
-            "unmarshalType" : {
-              "type" : "string"
-            },
-            "useDefaultObjectMapper" : {
-              "type" : "boolean"
-            },
-            "useList" : {
-              "type" : "boolean"
-            }
+        "type" : "object",
+        "properties" : {
+          "allowJmsType" : {
+            "type" : "boolean"
+          },
+          "allowUnmarshallType" : {
+            "type" : "boolean"
+          },
+          "autoDiscoverObjectMapper" : {
+            "type" : "boolean"
+          },
+          "autoDiscoverSchemaResolver" : {
+            "type" : "boolean"
+          },
+          "collectionType" : {
+            "type" : "string"
+          },
+          "contentTypeHeader" : {
+            "type" : "boolean"
+          },
+          "disableFeatures" : {
+            "type" : "string"
+          },
+          "enableFeatures" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "include" : {
+            "type" : "string"
+          },
+          "instanceClassName" : {
+            "type" : "string"
+          },
+          "jsonView" : {
+            "type" : "string"
+          },
+          "library" : {
+            "type" : "string",
+            "enum" : [ "ApacheAvro", "Jackson" ]
+          },
+          "moduleClassNames" : {
+            "type" : "string"
+          },
+          "moduleRefs" : {
+            "type" : "string"
+          },
+          "objectMapper" : {
+            "type" : "string"
+          },
+          "schemaResolver" : {
+            "type" : "string"
+          },
+          "timezone" : {
+            "type" : "string"
+          },
+          "unmarshalType" : {
+            "type" : "string"
+          },
+          "useDefaultObjectMapper" : {
+            "type" : "boolean"
+          },
+          "useList" : {
+            "type" : "boolean"
           }
-        } ]
+        }
       },
       "org.apache.camel.model.dataformat.BarcodeDataFormat" : {
         "type" : "object",
@@ -4523,123 +4415,115 @@
         }
       },
       "org.apache.camel.model.dataformat.CsvDataFormat" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "allowMissingColumnNames" : {
-              "type" : "boolean"
-            },
-            "captureHeaderRecord" : {
-              "type" : "boolean"
-            },
-            "commentMarker" : {
+        "type" : "object",
+        "properties" : {
+          "allowMissingColumnNames" : {
+            "type" : "boolean"
+          },
+          "captureHeaderRecord" : {
+            "type" : "boolean"
+          },
+          "commentMarker" : {
+            "type" : "string"
+          },
+          "commentMarkerDisabled" : {
+            "type" : "boolean"
+          },
+          "delimiter" : {
+            "type" : "string"
+          },
+          "escape" : {
+            "type" : "string"
+          },
+          "escapeDisabled" : {
+            "type" : "boolean"
+          },
+          "formatName" : {
+            "type" : "string",
+            "enum" : [ "DEFAULT", "EXCEL", "INFORMIX_UNLOAD", "INFORMIX_UNLOAD_CSV", "MYSQL", "RFC4180" ]
+          },
+          "formatRef" : {
+            "type" : "string"
+          },
+          "header" : {
+            "type" : "array",
+            "items" : {
               "type" : "string"
-            },
-            "commentMarkerDisabled" : {
-              "type" : "boolean"
-            },
-            "delimiter" : {
-              "type" : "string"
-            },
-            "escape" : {
-              "type" : "string"
-            },
-            "escapeDisabled" : {
-              "type" : "boolean"
-            },
-            "formatName" : {
-              "type" : "string",
-              "enum" : [ "DEFAULT", "EXCEL", "INFORMIX_UNLOAD", "INFORMIX_UNLOAD_CSV", "MYSQL", "RFC4180" ]
-            },
-            "formatRef" : {
-              "type" : "string"
-            },
-            "header" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "headerDisabled" : {
-              "type" : "boolean"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "ignoreEmptyLines" : {
-              "type" : "boolean"
-            },
-            "ignoreHeaderCase" : {
-              "type" : "boolean"
-            },
-            "ignoreSurroundingSpaces" : {
-              "type" : "boolean"
-            },
-            "lazyLoad" : {
-              "type" : "boolean"
-            },
-            "marshallerFactoryRef" : {
-              "type" : "string"
-            },
-            "nullString" : {
-              "type" : "string"
-            },
-            "nullStringDisabled" : {
-              "type" : "boolean"
-            },
-            "quote" : {
-              "type" : "string"
-            },
-            "quoteDisabled" : {
-              "type" : "boolean"
-            },
-            "quoteMode" : {
-              "type" : "string",
-              "enum" : [ "ALL", "ALL_NON_NULL", "MINIMAL", "NON_NUMERIC", "NONE" ]
-            },
-            "recordConverterRef" : {
-              "type" : "string"
-            },
-            "recordSeparator" : {
-              "type" : "string"
-            },
-            "recordSeparatorDisabled" : {
-              "type" : "string"
-            },
-            "skipHeaderRecord" : {
-              "type" : "boolean"
-            },
-            "trailingDelimiter" : {
-              "type" : "boolean"
-            },
-            "trim" : {
-              "type" : "boolean"
-            },
-            "useMaps" : {
-              "type" : "boolean"
-            },
-            "useOrderedMaps" : {
-              "type" : "boolean"
             }
+          },
+          "headerDisabled" : {
+            "type" : "boolean"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "ignoreEmptyLines" : {
+            "type" : "boolean"
+          },
+          "ignoreHeaderCase" : {
+            "type" : "boolean"
+          },
+          "ignoreSurroundingSpaces" : {
+            "type" : "boolean"
+          },
+          "lazyLoad" : {
+            "type" : "boolean"
+          },
+          "marshallerFactoryRef" : {
+            "type" : "string"
+          },
+          "nullString" : {
+            "type" : "string"
+          },
+          "nullStringDisabled" : {
+            "type" : "boolean"
+          },
+          "quote" : {
+            "type" : "string"
+          },
+          "quoteDisabled" : {
+            "type" : "boolean"
+          },
+          "quoteMode" : {
+            "type" : "string",
+            "enum" : [ "ALL", "ALL_NON_NULL", "MINIMAL", "NON_NUMERIC", "NONE" ]
+          },
+          "recordConverterRef" : {
+            "type" : "string"
+          },
+          "recordSeparator" : {
+            "type" : "string"
+          },
+          "recordSeparatorDisabled" : {
+            "type" : "string"
+          },
+          "skipHeaderRecord" : {
+            "type" : "boolean"
+          },
+          "trailingDelimiter" : {
+            "type" : "boolean"
+          },
+          "trim" : {
+            "type" : "boolean"
+          },
+          "useMaps" : {
+            "type" : "boolean"
+          },
+          "useOrderedMaps" : {
+            "type" : "boolean"
           }
-        } ]
+        }
       },
       "org.apache.camel.model.dataformat.CustomDataFormat" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "id" : {
-              "type" : "string"
-            },
-            "ref" : {
-              "type" : "string"
-            }
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "ref" : {
+            "type" : "string"
           }
-        } ],
+        },
         "required" : [ "ref" ]
       },
       "org.apache.camel.model.dataformat.DataFormatsDefinition" : {
@@ -5264,81 +5148,77 @@
         }
       },
       "org.apache.camel.model.dataformat.ProtobufDataFormat" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "allowJmsType" : {
-              "type" : "boolean"
-            },
-            "allowUnmarshallType" : {
-              "type" : "boolean"
-            },
-            "autoDiscoverObjectMapper" : {
-              "type" : "boolean"
-            },
-            "autoDiscoverSchemaResolver" : {
-              "type" : "boolean"
-            },
-            "collectionType" : {
-              "type" : "string"
-            },
-            "contentTypeFormat" : {
-              "type" : "string",
-              "enum" : [ "native", "json" ]
-            },
-            "contentTypeHeader" : {
-              "type" : "boolean"
-            },
-            "disableFeatures" : {
-              "type" : "string"
-            },
-            "enableFeatures" : {
-              "type" : "string"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "include" : {
-              "type" : "string"
-            },
-            "instanceClass" : {
-              "type" : "string"
-            },
-            "jsonView" : {
-              "type" : "string"
-            },
-            "library" : {
-              "type" : "string",
-              "enum" : [ "GoogleProtobuf", "Jackson" ]
-            },
-            "moduleClassNames" : {
-              "type" : "string"
-            },
-            "moduleRefs" : {
-              "type" : "string"
-            },
-            "objectMapper" : {
-              "type" : "string"
-            },
-            "schemaResolver" : {
-              "type" : "string"
-            },
-            "timezone" : {
-              "type" : "string"
-            },
-            "unmarshalType" : {
-              "type" : "string"
-            },
-            "useDefaultObjectMapper" : {
-              "type" : "boolean"
-            },
-            "useList" : {
-              "type" : "boolean"
-            }
+        "type" : "object",
+        "properties" : {
+          "allowJmsType" : {
+            "type" : "boolean"
+          },
+          "allowUnmarshallType" : {
+            "type" : "boolean"
+          },
+          "autoDiscoverObjectMapper" : {
+            "type" : "boolean"
+          },
+          "autoDiscoverSchemaResolver" : {
+            "type" : "boolean"
+          },
+          "collectionType" : {
+            "type" : "string"
+          },
+          "contentTypeFormat" : {
+            "type" : "string",
+            "enum" : [ "native", "json" ]
+          },
+          "contentTypeHeader" : {
+            "type" : "boolean"
+          },
+          "disableFeatures" : {
+            "type" : "string"
+          },
+          "enableFeatures" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "include" : {
+            "type" : "string"
+          },
+          "instanceClass" : {
+            "type" : "string"
+          },
+          "jsonView" : {
+            "type" : "string"
+          },
+          "library" : {
+            "type" : "string",
+            "enum" : [ "GoogleProtobuf", "Jackson" ]
+          },
+          "moduleClassNames" : {
+            "type" : "string"
+          },
+          "moduleRefs" : {
+            "type" : "string"
+          },
+          "objectMapper" : {
+            "type" : "string"
+          },
+          "schemaResolver" : {
+            "type" : "string"
+          },
+          "timezone" : {
+            "type" : "string"
+          },
+          "unmarshalType" : {
+            "type" : "string"
+          },
+          "useDefaultObjectMapper" : {
+            "type" : "boolean"
+          },
+          "useList" : {
+            "type" : "boolean"
           }
-        } ]
+        }
       },
       "org.apache.camel.model.dataformat.RssDataFormat" : {
         "type" : "object",
@@ -5349,51 +5229,43 @@
         }
       },
       "org.apache.camel.model.dataformat.SoapDataFormat" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "contextPath" : {
-              "type" : "string"
-            },
-            "elementNameStrategyRef" : {
-              "type" : "string"
-            },
-            "encoding" : {
-              "type" : "string"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "namespacePrefixRef" : {
-              "type" : "string"
-            },
-            "schema" : {
-              "type" : "string"
-            },
-            "version" : {
-              "type" : "string",
-              "enum" : [ "1.1", "1.2" ]
-            }
+        "type" : "object",
+        "properties" : {
+          "contextPath" : {
+            "type" : "string"
+          },
+          "elementNameStrategyRef" : {
+            "type" : "string"
+          },
+          "encoding" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "namespacePrefixRef" : {
+            "type" : "string"
+          },
+          "schema" : {
+            "type" : "string"
+          },
+          "version" : {
+            "type" : "string",
+            "enum" : [ "1.1", "1.2" ]
           }
-        } ],
+        },
         "required" : [ "contextPath" ]
       },
       "org.apache.camel.model.dataformat.SwiftMtDataFormat" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "id" : {
-              "type" : "string"
-            },
-            "writeInJson" : {
-              "type" : "boolean"
-            }
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "writeInJson" : {
+            "type" : "boolean"
           }
-        } ]
+        }
       },
       "org.apache.camel.model.dataformat.SwiftMxDataFormat" : {
         "type" : "object",
@@ -5444,26 +5316,22 @@
         }
       },
       "org.apache.camel.model.dataformat.ThriftDataFormat" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "contentTypeFormat" : {
-              "type" : "string",
-              "enum" : [ "binary", "json", "sjson" ]
-            },
-            "contentTypeHeader" : {
-              "type" : "boolean"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "instanceClass" : {
-              "type" : "string"
-            }
+        "type" : "object",
+        "properties" : {
+          "contentTypeFormat" : {
+            "type" : "string",
+            "enum" : [ "binary", "json", "sjson" ]
+          },
+          "contentTypeHeader" : {
+            "type" : "boolean"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "instanceClass" : {
+            "type" : "string"
           }
-        } ]
+        }
       },
       "org.apache.camel.model.dataformat.TidyMarkupDataFormat" : {
         "type" : "object",
@@ -5723,59 +5591,55 @@
         }
       },
       "org.apache.camel.model.dataformat.XStreamDataFormat" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "aliases" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
-              }
-            },
-            "contentTypeHeader" : {
-              "type" : "boolean"
-            },
-            "converters" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
-              }
-            },
-            "driver" : {
-              "type" : "string"
-            },
-            "driverRef" : {
-              "type" : "string"
-            },
-            "encoding" : {
-              "type" : "string"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "implicitCollections" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
-              }
-            },
-            "mode" : {
-              "type" : "string",
-              "enum" : [ "NO_REFERENCES", "ID_REFERENCES", "XPATH_RELATIVE_REFERENCES", "XPATH_ABSOLUTE_REFERENCES", "SINGLE_NODE_XPATH_RELATIVE_REFERENCES", "SINGLE_NODE_XPATH_ABSOLUTE_REFERENCES" ]
-            },
-            "omitFields" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
-              }
-            },
-            "permissions" : {
-              "type" : "string"
+        "type" : "object",
+        "properties" : {
+          "aliases" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
             }
+          },
+          "contentTypeHeader" : {
+            "type" : "boolean"
+          },
+          "converters" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
+            }
+          },
+          "driver" : {
+            "type" : "string"
+          },
+          "driverRef" : {
+            "type" : "string"
+          },
+          "encoding" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "implicitCollections" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
+            }
+          },
+          "mode" : {
+            "type" : "string",
+            "enum" : [ "NO_REFERENCES", "ID_REFERENCES", "XPATH_RELATIVE_REFERENCES", "XPATH_ABSOLUTE_REFERENCES", "SINGLE_NODE_XPATH_RELATIVE_REFERENCES", "SINGLE_NODE_XPATH_ABSOLUTE_REFERENCES" ]
+          },
+          "omitFields" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
+            }
+          },
+          "permissions" : {
+            "type" : "string"
           }
-        } ]
+        }
       },
       "org.apache.camel.model.dataformat.YAMLDataFormat" : {
         "type" : "object",
@@ -6090,94 +5954,78 @@
         }
       },
       "org.apache.camel.model.language.CSimpleExpression" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "expression" : {
-              "type" : "string"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "resultType" : {
-              "type" : "string"
-            },
-            "trim" : {
-              "type" : "boolean"
-            }
+        "type" : "object",
+        "properties" : {
+          "expression" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "resultType" : {
+            "type" : "string"
+          },
+          "trim" : {
+            "type" : "boolean"
           }
-        } ],
+        },
         "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.ConstantExpression" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "expression" : {
-              "type" : "string"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "resultType" : {
-              "type" : "string"
-            },
-            "trim" : {
-              "type" : "boolean"
-            }
+        "type" : "object",
+        "properties" : {
+          "expression" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "resultType" : {
+            "type" : "string"
+          },
+          "trim" : {
+            "type" : "boolean"
           }
-        } ],
+        },
         "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.DatasonnetExpression" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "bodyMediaType" : {
-              "type" : "string"
-            },
-            "expression" : {
-              "type" : "string"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "outputMediaType" : {
-              "type" : "string"
-            },
-            "resultType" : {
-              "type" : "string"
-            },
-            "trim" : {
-              "type" : "boolean"
-            }
+        "type" : "object",
+        "properties" : {
+          "bodyMediaType" : {
+            "type" : "string"
+          },
+          "expression" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "outputMediaType" : {
+            "type" : "string"
+          },
+          "resultType" : {
+            "type" : "string"
+          },
+          "trim" : {
+            "type" : "boolean"
           }
-        } ],
+        },
         "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.ExchangePropertyExpression" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "expression" : {
-              "type" : "string"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "trim" : {
-              "type" : "boolean"
-            }
+        "type" : "object",
+        "properties" : {
+          "expression" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "trim" : {
+            "type" : "boolean"
           }
-        } ],
+        },
         "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.ExpressionDefinition" : {
@@ -6255,182 +6103,154 @@
         }
       },
       "org.apache.camel.model.language.GroovyExpression" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "expression" : {
-              "type" : "string"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "trim" : {
-              "type" : "boolean"
-            }
+        "type" : "object",
+        "properties" : {
+          "expression" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "trim" : {
+            "type" : "boolean"
           }
-        } ],
+        },
         "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.HeaderExpression" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "expression" : {
-              "type" : "string"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "trim" : {
-              "type" : "boolean"
-            }
+        "type" : "object",
+        "properties" : {
+          "expression" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "trim" : {
+            "type" : "boolean"
           }
-        } ],
+        },
         "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.Hl7TerserExpression" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "expression" : {
-              "type" : "string"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "trim" : {
-              "type" : "boolean"
-            }
+        "type" : "object",
+        "properties" : {
+          "expression" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "trim" : {
+            "type" : "boolean"
           }
-        } ],
+        },
         "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.JavaScriptExpression" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "expression" : {
-              "type" : "string"
-            },
-            "headerName" : {
-              "type" : "string"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "resultType" : {
-              "type" : "string"
-            },
-            "trim" : {
-              "type" : "boolean"
-            }
+        "type" : "object",
+        "properties" : {
+          "expression" : {
+            "type" : "string"
+          },
+          "headerName" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "resultType" : {
+            "type" : "string"
+          },
+          "trim" : {
+            "type" : "boolean"
           }
-        } ],
+        },
         "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.JoorExpression" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "expression" : {
-              "type" : "string"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "preCompile" : {
-              "type" : "boolean"
-            },
-            "resultType" : {
-              "type" : "string"
-            },
-            "singleQuotes" : {
-              "type" : "boolean"
-            },
-            "trim" : {
-              "type" : "boolean"
-            }
+        "type" : "object",
+        "properties" : {
+          "expression" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "preCompile" : {
+            "type" : "boolean"
+          },
+          "resultType" : {
+            "type" : "string"
+          },
+          "singleQuotes" : {
+            "type" : "boolean"
+          },
+          "trim" : {
+            "type" : "boolean"
           }
-        } ],
+        },
         "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.JqExpression" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "expression" : {
-              "type" : "string"
-            },
-            "headerName" : {
-              "type" : "string"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "resultType" : {
-              "type" : "string"
-            },
-            "trim" : {
-              "type" : "boolean"
-            }
+        "type" : "object",
+        "properties" : {
+          "expression" : {
+            "type" : "string"
+          },
+          "headerName" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "resultType" : {
+            "type" : "string"
+          },
+          "trim" : {
+            "type" : "boolean"
           }
-        } ],
+        },
         "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.JsonPathExpression" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "allowEasyPredicate" : {
-              "type" : "boolean"
-            },
-            "allowSimple" : {
-              "type" : "boolean"
-            },
-            "expression" : {
-              "type" : "string"
-            },
-            "headerName" : {
-              "type" : "string"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "option" : {
-              "type" : "string",
-              "enum" : [ "DEFAULT_PATH_LEAF_TO_NULL", "ALWAYS_RETURN_LIST", "AS_PATH_LIST", "SUPPRESS_EXCEPTIONS", "REQUIRE_PROPERTIES" ]
-            },
-            "resultType" : {
-              "type" : "string"
-            },
-            "suppressExceptions" : {
-              "type" : "boolean"
-            },
-            "trim" : {
-              "type" : "boolean"
-            },
-            "unpackArray" : {
-              "type" : "boolean"
-            },
-            "writeAsString" : {
-              "type" : "boolean"
-            }
+        "type" : "object",
+        "properties" : {
+          "allowEasyPredicate" : {
+            "type" : "boolean"
+          },
+          "allowSimple" : {
+            "type" : "boolean"
+          },
+          "expression" : {
+            "type" : "string"
+          },
+          "headerName" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "option" : {
+            "type" : "string",
+            "enum" : [ "DEFAULT_PATH_LEAF_TO_NULL", "ALWAYS_RETURN_LIST", "AS_PATH_LIST", "SUPPRESS_EXCEPTIONS", "REQUIRE_PROPERTIES" ]
+          },
+          "resultType" : {
+            "type" : "string"
+          },
+          "suppressExceptions" : {
+            "type" : "boolean"
+          },
+          "trim" : {
+            "type" : "boolean"
+          },
+          "unpackArray" : {
+            "type" : "boolean"
+          },
+          "writeAsString" : {
+            "type" : "boolean"
           }
-        } ],
+        },
         "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.LanguageExpression" : {
@@ -6452,334 +6272,286 @@
         "required" : [ "expression", "language" ]
       },
       "org.apache.camel.model.language.MethodCallExpression" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "beanType" : {
-              "type" : "string"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "method" : {
-              "type" : "string"
-            },
-            "ref" : {
-              "type" : "string"
-            },
-            "scope" : {
-              "type" : "string",
-              "enum" : [ "Singleton", "Request", "Prototype" ]
-            },
-            "trim" : {
-              "type" : "boolean"
-            }
+        "type" : "object",
+        "properties" : {
+          "beanType" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "method" : {
+            "type" : "string"
+          },
+          "ref" : {
+            "type" : "string"
+          },
+          "scope" : {
+            "type" : "string",
+            "enum" : [ "Singleton", "Request", "Prototype" ]
+          },
+          "trim" : {
+            "type" : "boolean"
           }
-        } ]
+        }
       },
       "org.apache.camel.model.language.MvelExpression" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "expression" : {
-              "type" : "string"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "trim" : {
-              "type" : "boolean"
-            }
+        "type" : "object",
+        "properties" : {
+          "expression" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "trim" : {
+            "type" : "boolean"
           }
-        } ],
+        },
         "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.OgnlExpression" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "expression" : {
-              "type" : "string"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "trim" : {
-              "type" : "boolean"
-            }
+        "type" : "object",
+        "properties" : {
+          "expression" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "trim" : {
+            "type" : "boolean"
           }
-        } ],
+        },
         "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.PythonExpression" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "expression" : {
-              "type" : "string"
-            },
-            "headerName" : {
-              "type" : "string"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "resultType" : {
-              "type" : "string"
-            },
-            "trim" : {
-              "type" : "boolean"
-            }
+        "type" : "object",
+        "properties" : {
+          "expression" : {
+            "type" : "string"
+          },
+          "headerName" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "resultType" : {
+            "type" : "string"
+          },
+          "trim" : {
+            "type" : "boolean"
           }
-        } ],
+        },
         "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.RefExpression" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "expression" : {
-              "type" : "string"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "trim" : {
-              "type" : "boolean"
-            }
+        "type" : "object",
+        "properties" : {
+          "expression" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "trim" : {
+            "type" : "boolean"
           }
-        } ],
+        },
         "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.SimpleExpression" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "expression" : {
-              "type" : "string"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "resultType" : {
-              "type" : "string"
-            },
-            "trim" : {
-              "type" : "boolean"
-            }
+        "type" : "object",
+        "properties" : {
+          "expression" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "resultType" : {
+            "type" : "string"
+          },
+          "trim" : {
+            "type" : "boolean"
           }
-        } ],
+        },
         "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.SpELExpression" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "expression" : {
-              "type" : "string"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "trim" : {
-              "type" : "boolean"
-            }
+        "type" : "object",
+        "properties" : {
+          "expression" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "trim" : {
+            "type" : "boolean"
           }
-        } ],
+        },
         "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.TokenizerExpression" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "endToken" : {
-              "type" : "string"
-            },
-            "group" : {
-              "type" : "string"
-            },
-            "groupDelimiter" : {
-              "type" : "string"
-            },
-            "headerName" : {
-              "type" : "string"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "includeTokens" : {
-              "type" : "boolean"
-            },
-            "inheritNamespaceTagName" : {
-              "type" : "string"
-            },
-            "regex" : {
-              "type" : "boolean"
-            },
-            "skipFirst" : {
-              "type" : "boolean"
-            },
-            "token" : {
-              "type" : "string"
-            },
-            "trim" : {
-              "type" : "boolean"
-            },
-            "xml" : {
-              "type" : "boolean"
-            }
+        "type" : "object",
+        "properties" : {
+          "endToken" : {
+            "type" : "string"
+          },
+          "group" : {
+            "type" : "string"
+          },
+          "groupDelimiter" : {
+            "type" : "string"
+          },
+          "headerName" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "includeTokens" : {
+            "type" : "boolean"
+          },
+          "inheritNamespaceTagName" : {
+            "type" : "string"
+          },
+          "regex" : {
+            "type" : "boolean"
+          },
+          "skipFirst" : {
+            "type" : "boolean"
+          },
+          "token" : {
+            "type" : "string"
+          },
+          "trim" : {
+            "type" : "boolean"
+          },
+          "xml" : {
+            "type" : "boolean"
           }
-        } ],
+        },
         "required" : [ "token" ]
       },
       "org.apache.camel.model.language.XMLTokenizerExpression" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "group" : {
-              "type" : "number"
-            },
-            "headerName" : {
-              "type" : "string"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "mode" : {
-              "type" : "string",
-              "enum" : [ "i", "w", "u", "t" ]
-            },
-            "namespace" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
-              }
-            },
-            "trim" : {
-              "type" : "boolean"
+        "type" : "object",
+        "properties" : {
+          "group" : {
+            "type" : "number"
+          },
+          "headerName" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "mode" : {
+            "type" : "string",
+            "enum" : [ "i", "w", "u", "t" ]
+          },
+          "namespace" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
             }
+          },
+          "trim" : {
+            "type" : "boolean"
           }
-        } ]
+        }
       },
       "org.apache.camel.model.language.XPathExpression" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "documentType" : {
-              "type" : "string"
-            },
-            "expression" : {
-              "type" : "string"
-            },
-            "factoryRef" : {
-              "type" : "string"
-            },
-            "headerName" : {
-              "type" : "string"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "logNamespaces" : {
-              "type" : "boolean"
-            },
-            "namespace" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
-              }
-            },
-            "objectModel" : {
-              "type" : "string"
-            },
-            "preCompile" : {
-              "type" : "boolean"
-            },
-            "resultType" : {
-              "type" : "string",
-              "enum" : [ "NUMBER", "STRING", "BOOLEAN", "NODESET", "NODE" ]
-            },
-            "saxon" : {
-              "type" : "boolean"
-            },
-            "threadSafety" : {
-              "type" : "boolean"
-            },
-            "trim" : {
-              "type" : "boolean"
+        "type" : "object",
+        "properties" : {
+          "documentType" : {
+            "type" : "string"
+          },
+          "expression" : {
+            "type" : "string"
+          },
+          "factoryRef" : {
+            "type" : "string"
+          },
+          "headerName" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "logNamespaces" : {
+            "type" : "boolean"
+          },
+          "namespace" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
             }
+          },
+          "objectModel" : {
+            "type" : "string"
+          },
+          "preCompile" : {
+            "type" : "boolean"
+          },
+          "resultType" : {
+            "type" : "string",
+            "enum" : [ "NUMBER", "STRING", "BOOLEAN", "NODESET", "NODE" ]
+          },
+          "saxon" : {
+            "type" : "boolean"
+          },
+          "threadSafety" : {
+            "type" : "boolean"
+          },
+          "trim" : {
+            "type" : "boolean"
           }
-        } ],
+        },
         "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.XQueryExpression" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "configurationRef" : {
-              "type" : "string"
-            },
-            "expression" : {
-              "type" : "string"
-            },
-            "headerName" : {
-              "type" : "string"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "namespace" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
-              }
-            },
-            "trim" : {
-              "type" : "boolean"
-            },
-            "type" : {
-              "type" : "string"
+        "type" : "object",
+        "properties" : {
+          "configurationRef" : {
+            "type" : "string"
+          },
+          "expression" : {
+            "type" : "string"
+          },
+          "headerName" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "namespace" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
             }
+          },
+          "trim" : {
+            "type" : "boolean"
+          },
+          "type" : {
+            "type" : "string"
           }
-        } ],
+        },
         "required" : [ "expression" ]
       },
       "org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "id" : {
-              "type" : "string"
-            },
-            "ref" : {
-              "type" : "string"
-            }
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "ref" : {
+            "type" : "string"
           }
-        } ],
+        },
         "required" : [ "ref" ]
       },
       "org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition" : {
