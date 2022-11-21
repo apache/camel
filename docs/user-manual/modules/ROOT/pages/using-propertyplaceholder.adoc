@@ -511,7 +511,7 @@ And we can use default values if the service has not been defined, for example t
 The `camel-kubernetes` component include the following functions:
 
 * `configmap` - A function to lookup the property from Kubernetes ConfigMaps.
-* `secert` - A function to lookup the property from Kubernetes Secrets.
+* `secret` - A function to lookup the property from Kubernetes Secrets.
 
 The syntax for both functions are:
 
