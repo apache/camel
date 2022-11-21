@@ -50,29 +50,9 @@ public class CommitToOffsetManager extends AbstractCommitManager {
         saveStateToOffsetRepository(partition, partitionLastOffset, offsetRepository);
     }
 
-    private void saveStateToOffsetRepository(
-            TopicPartition partition, long partitionLastOffset,
-            StateRepository<String, String> offsetRepository) {
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Saving offset repository state {} [topic: {} partition: {} offset: {}]", threadId, partition.topic(),
-                    partition.partition(),
-                    partitionLastOffset);
-        }
-        offsetRepository.setState(serializeOffsetKey(partition), serializeOffsetValue(partitionLastOffset));
-    }
-
     @Override
     public void commit() {
         // NO-OP ... commits to offset only
-    }
-
-    private static String serializeOffsetKey(TopicPartition topicPartition) {
-        return topicPartition.topic() + '/' + topicPartition.partition();
-    }
-
-    private static String serializeOffsetValue(long offset) {
-        return String.valueOf(offset);
     }
 
     @Override
