@@ -172,6 +172,16 @@ public class RestConfigurationProperties extends RestConfiguration implements Bo
     }
 
     /**
+     * Sets the route id to use for the route that services the REST API.
+     * <p/>
+     * The route will by default use an auto assigned route id.
+     */
+    public RestConfigurationProperties withApiContextRouteId(String apiContextRouteId) {
+        setApiContextRouteId(apiContextRouteId);
+        return this;
+    }
+
+    /**
      * Whether vendor extension is enabled in the Rest APIs. If enabled then Camel will include additional information
      * as vendor extension (eg keys starting with x-) such as route ids, class names etc. Not all 3rd party API gateways
      * and tools supports vendor-extensions when importing your API docs.

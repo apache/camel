@@ -3113,6 +3113,7 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "apiComponent": def.setApiComponent(val); break;
                 case "apiContextPath": def.setApiContextPath(val); break;
+                case "apiContextRouteId": def.setApiContextRouteId(val); break;
                 case "apiHost": def.setApiHost(val); break;
                 case "apiVendorExtension": def.setApiVendorExtension(Boolean.valueOf(val)); break;
                 case "bindingMode": def.setBindingMode(RestBindingMode.valueOf(val)); break;

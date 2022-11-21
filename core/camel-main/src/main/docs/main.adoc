@@ -176,13 +176,14 @@ The camel.health supports 8 options, which are listed below.
 |===
 
 === Camel Rest-DSL configurations
-The camel.rest supports 26 options, which are listed below.
+The camel.rest supports 27 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *camel.rest.apiComponent* | Sets the name of the Camel component to use as the REST API (such as swagger or openapi) |  | String
 | *camel.rest.apiContextPath* | Sets a leading API context-path the REST API services will be using. This can be used when using components such as camel-servlet where the deployed web application is deployed using a context-path. |  | String
+| *camel.rest.apiContextRouteId* | Sets the route id to use for the route that services the REST API. The route will by default use an auto assigned route id. |  | String
 | *camel.rest.apiHost* | To use a specific hostname for the API documentation (such as swagger or openapi) This can be used to override the generated host with this configured hostname |  | String
 | *camel.rest.apiProperties* | Sets additional options on api level |  | Map
 | *camel.rest.apiVendorExtension* | Whether vendor extension is enabled in the Rest APIs. If enabled then Camel will include additional information as vendor extension (eg keys starting with x-) such as route ids, class names etc. Not all 3rd party API gateways and tools supports vendor-extensions when importing your API docs. | false | boolean
