@@ -23,7 +23,7 @@ import org.testcontainers.containers.Network;
 import org.testcontainers.images.builder.ImageFromDockerfile;
 
 abstract class HadoopBaseContainer<T extends GenericContainer<T>> extends GenericContainer<T> {
-    private static final String FROM_IMAGE_NAME = "fedora:33";
+    private static final String FROM_IMAGE_NAME = "fedora:37";
     private static final String FROM_IMAGE_BUILDER_ARG = "FROMIMAGE_BUILDER";
     private static final String FROM_IMAGE_ARG = "FROMIMAGE";
 
