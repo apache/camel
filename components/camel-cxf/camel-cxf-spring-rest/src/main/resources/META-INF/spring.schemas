@@ -18,11 +18,11 @@
 #    under the License.
 #
 #
-http\://camel.apache.org/schema/cxf/jaxrs/camel-cxf.xsd=schema/cxfEndpoint.xsd
+http\://camel.apache.org/schema/cxf/jaxrs/camel-cxf.xsd=schema/cxfJaxrsEndpoint.xsd
 
-http\://camel.apache.org/schema/cxf/jaxrs/camel-cxf-${camel.version}.xsd=schema/cxfEndpoint.xsd
+http\://camel.apache.org/schema/cxf/jaxrs/camel-cxf-${camel.version}.xsd=schema/cxfJaxrsEndpoint.xsd
 
 
-http\://camel.apache.org/schema/cxf/jaxrs/camel-cxf-spring.xsd=schema/cxfEndpoint.xsd
+http\://camel.apache.org/schema/cxf/jaxrs/camel-cxf-spring.xsd=schema/cxfJaxrsEndpoint.xsd
 
-http\://camel.apache.org/schema/cxf/jaxrs/camel-cxf-${camel.version}-spring.xsd=schema/cxfEndpoint.xsd
+http\://camel.apache.org/schema/cxf/jaxrs/camel-cxf-${camel.version}-spring.xsd=schema/cxfJaxrsEndpoint.xsd
