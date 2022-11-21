@@ -131,6 +131,12 @@
             <version>2.2</version>
             <scope>test</scope>
             <optional>true</optional>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.components</groupId>
+                    <artifactId>geronimo-transaction</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
