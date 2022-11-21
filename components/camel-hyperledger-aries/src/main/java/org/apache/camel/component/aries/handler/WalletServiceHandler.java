@@ -20,6 +20,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.aries.HyperledgerAriesEndpoint;
 import org.apache.camel.component.aries.UnsupportedServiceException;
 import org.hyperledger.acy_py.generated.model.DID;
+import org.hyperledger.acy_py.generated.model.DIDEndpoint;
+
+import static org.apache.camel.component.aries.Constants.HEADER_DID;
 
 public class WalletServiceHandler extends AbstractServiceHandler {
 
@@ -32,6 +35,11 @@ public class WalletServiceHandler extends AbstractServiceHandler {
 
         if (service.equals("/wallet/did/public")) {
             DID resObj = createClient().walletDidPublic().orElse(null);
+            exchange.getIn().setBody(resObj);
+
+        } else if (service.equals("/wallet/get-did-endpoint")) {
+            String did = assertHeader(exchange, HEADER_DID, String.class);
+            DIDEndpoint resObj = createClient().walletGetDidEndpoint(did).orElse(null);
             exchange.getIn().setBody(resObj);
 
         } else {
