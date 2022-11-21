@@ -348,7 +348,7 @@ class Run extends CamelCommand {
         } else if (dependencies != null && !dependencies.equals(deps)) {
             deps += "," + dependencies;
         }
-        if (deps != null) {
+        if (!deps.isBlank()) {
             main.addInitialProperty("camel.jbang.dependencies", deps);
             writeSettings("camel.jbang.dependencies", deps);
         }
