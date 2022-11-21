@@ -987,7 +987,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
     @SuppressWarnings("MethodLength")
     private boolean generateSetValue(CodeBlock.Builder cb, MethodInfo method, Collection<AnnotationSpec> annotations) {
         final String name = StringHelper.camelCaseToDash(method.name()).toLowerCase(Locale.US).substring(4);
-        final Type parameterType = method.parameters().get(0);
+        final Type parameterType = method.parameterTypes().get(0);
 
         //
         // Others
