@@ -42,7 +42,7 @@ jobs:
             (github.event.action == 'opened' ||
              github.event.action == 'reopened' ||
              github.event.action == 'synchronize')
-        uses: actions/labeler@v4.0.2
+        uses: actions/labeler@4.1.0
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           configuration-path: .github/workflows/generic-pr/label-config.yml
