@@ -328,7 +328,7 @@
                         <configuration>
                             <artifacts>
                                 <artifact>
-                                    <file>./src/main/resources/schema/cxfEndpoint.xsd</file>
+                                    <file>./src/main/resources/schema/cxfJaxwsEndpoint.xsd</file>
                                     <classifier>spring</classifier>
                                     <type>xsd</type>
                                 </artifact>
