@@ -218,6 +218,9 @@ public class CamelContextTop extends ProcessBaseCommand {
 
     private String getJavaVersion(Row r) {
         String v = r.javaVersion;
+        if (v == null) {
+            v = "";
+        }
         for (int i = 0; i < v.length(); i++) {
             char ch = v.charAt(i);
             if (Character.isDigit(ch) || ch == '.') {
