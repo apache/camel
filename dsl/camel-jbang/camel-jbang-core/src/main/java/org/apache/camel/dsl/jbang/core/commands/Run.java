@@ -344,7 +344,7 @@ class Run extends CamelCommand {
         // merge existing dependencies with --deps
         String deps = RuntimeUtil.getDependencies(profileProperties);
         if (deps.isBlank()) {
-            deps = dependencies;
+            deps = dependencies != null ? dependencies : "";
         } else if (dependencies != null && !dependencies.equals(deps)) {
             deps += "," + dependencies;
         }
