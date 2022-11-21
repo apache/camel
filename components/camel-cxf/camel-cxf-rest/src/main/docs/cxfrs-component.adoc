@@ -72,14 +72,14 @@ You can also configure the CXF REST endpoint through the spring
 configuration. Since there are lots of difference between the CXF REST
 client and CXF REST Server, we provide different configuration for
 them. Please check out the
-https://github.com/apache/camel/blob/main/components/camel-cxf/src/main/resources/schema/cxfEndpoint.xsd[schema
+https://github.com/apache/camel/blob/main/components/camel-cxf/camel-cxf-spring-rest/src/main/resources/schema/cxfJaxrsEndpoint.xsd[schema
 file] and http://cxf.apache.org/docs/jax-rs.html[CXF JAX-RS
 documentation] for more information.
 
 == How to configure the REST endpoint in Camel
 
 In
-https://github.com/apache/camel/blob/main/components/camel-cxf/src/main/resources/schema/cxfEndpoint.xsd[camel-cxf
+https://github.com/apache/camel/blob/main/components/camel-cxf/camel-cxf-spring-rest/src/main/resources/schema/cxfJaxrsEndpoint.xsd[camel-cxf
 schema file], there are two elements for the REST endpoint definition.
 *cxf:rsServer* for REST consumer, *cxf:rsClient* for REST producer. +
  You can find a Camel REST service route configuration example here.
