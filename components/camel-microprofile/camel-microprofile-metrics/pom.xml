@@ -29,7 +29,7 @@
     <artifactId>camel-microprofile-metrics</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: MicroProfile :: Metrics</name>
+    <name>Camel :: MicroProfile :: Metrics (deprecated)</name>
     <description>Camel metrics exposed with Eclipse MicroProfile Metrics</description>
 
     <properties>

@@ -1,10 +1,11 @@
-= MicroProfile Metrics Component
+= MicroProfile Metrics Component (deprecated)
 :doctitle: MicroProfile Metrics
 :shortname: microprofile-metrics
 :artifactid: camel-microprofile-metrics
 :description: Expose metrics from Camel routes.
 :since: 3.0
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Only producer is supported
 
 *Since Camel {since}*
