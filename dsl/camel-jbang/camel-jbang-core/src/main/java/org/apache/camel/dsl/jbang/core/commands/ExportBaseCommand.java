@@ -265,8 +265,8 @@ abstract class ExportBaseCommand extends CamelCommand {
         if (profile != null && profile.exists()) {
             Properties prop = new CamelCaseOrderedProperties();
             RuntimeUtil.loadProperties(prop, profile);
-            String deps = prop.getProperty("camel.jbang.dependencies");
-            if (deps != null) {
+            String deps = RuntimeUtil.getDependencies(prop);
+            if (!deps.isBlank()) {
                 for (String d : deps.split(",")) {
                     answer.add(d.trim());
                 }
