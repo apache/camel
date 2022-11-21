@@ -22247,6 +22247,17 @@ application is deployed using a context-path.
       </xs:annotation>
     </xs:attribute>
         
+    <xs:attribute name="apiContextRouteId" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+          <![CDATA[
+Sets the route id to use for the route that services the REST API. The route
+will by default use an auto assigned route id.
+        ]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+        
     <xs:attribute name="apiVendorExtension" type="xs:boolean">
       <xs:annotation>
         <xs:documentation xml:lang="en">
