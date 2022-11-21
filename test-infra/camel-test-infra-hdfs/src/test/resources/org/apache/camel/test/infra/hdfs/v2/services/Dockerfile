@@ -16,7 +16,7 @@ ARG FROMIMAGE_BUILDER
 ARG FROMIMAGE
 FROM ${FROMIMAGE_BUILDER} as builder
 ARG HADOOP_VERSION
-ENV HADOOP_VERSION ${HADOOP_VERSION:-2.10.0}
+ENV HADOOP_VERSION ${HADOOP_VERSION:-2.10.2}
 RUN curl --retry 3 --retry-connrefused https://archive.apache.org/dist/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz -o hadoop.tar.gz
 RUN mkdir -p hadoop && tar --strip-components=1 -xvf hadoop.tar.gz -C /hadoop && rm -f hadoop.tar.gz
 ADD core-site.xml /hadoop/etc/hadoop/core-site.xml
@@ -28,7 +28,7 @@ ARG FROMIMAGE
 FROM $FROMIMAGE
 LABEL maintainer="orpiske@apache.org"
 ARG HADOOP_VERSION
-ENV HADOOP_VERSION ${HADOOP_VERSION:-2.10.0}
+ENV HADOOP_VERSION ${HADOOP_VERSION:-2.10.2}
 EXPOSE 8020 9000 50010 50020 50070 50075
 ENV JAVA_HOME /etc/alternatives/jre
 ENV HADOOP_HOME /hadoop
