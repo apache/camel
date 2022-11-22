@@ -18,7 +18,6 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.file.GenericFile;
