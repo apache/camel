@@ -322,7 +322,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
                 // restore caused exception
                 exchange.setException(cause);
                 // remove the exhausted marker as we want to be able to perform redeliveries with the error handler
-                exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(false);
+                exchange.getExchangeExtension().setRedeliveryExhausted(false);
 
                 // preserve the redelivery stats
                 if (redeliveried != null) {

@@ -548,7 +548,7 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
             exchange.setException(null);
             // and we should not be regarded as exhausted as we are in a try ..
             // catch block
-            exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(false);
+            exchange.getExchangeExtension().setRedeliveryExhausted(false);
             // run the fallback processor
             try {
                 LOG.debug("Running fallback: {} with exchange: {}", fallbackProcessor, exchange);

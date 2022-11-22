@@ -961,7 +961,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 exchange.setException(tce);
                 // because this is stream caching error then we cannot use redelivery as the message body is corrupt
                 // so mark as redelivery exhausted
-                exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(true);
+                exchange.getExchangeExtension().setRedeliveryExhausted(true);
             }
             // check if we somewhere failed due to a stream caching exception
             Throwable cause = exchange.getException();
@@ -987,7 +987,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                     exchange.setException(tce);
                     // because this is stream caching error then we cannot use redelivery as the message body is corrupt
                     // so mark as redelivery exhausted
-                    exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(true);
+                    exchange.getExchangeExtension().setRedeliveryExhausted(true);
                 }
             }
             return null;

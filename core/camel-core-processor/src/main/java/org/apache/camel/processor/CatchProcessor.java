@@ -115,7 +115,7 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
         exchange.setProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, e);
         exchange.setException(null);
         // and we should not be regarded as exhausted as we are in a try .. catch block
-        exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(false);
+        exchange.getExchangeExtension().setRedeliveryExhausted(false);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("The exception is handled for the exception: {} caused by: {}",
@@ -131,7 +131,7 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
                 EventHelper.notifyExchangeFailureHandled(exchange.getContext(), exchange, processor, false, null);
 
                 // always clear redelivery exhausted in a catch clause
-                exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(false);
+                exchange.getExchangeExtension().setRedeliveryExhausted(false);
 
                 if (rollbackOnly || rollbackOnlyLast || stop) {
                     exchange.setRouteStop(stop);

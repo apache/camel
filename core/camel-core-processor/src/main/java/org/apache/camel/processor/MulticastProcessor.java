@@ -827,7 +827,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
             // multicast uses error handling on its output processors and they have tried to redeliver
             // so we shall signal back to the other error handlers that we are exhausted and they should not
             // also try to redeliver as we would then do that twice
-            original.adapt(ExtendedExchange.class).setRedeliveryExhausted(exhaust);
+            original.getExchangeExtension().setRedeliveryExhausted(exhaust);
         }
 
         reactiveExecutor.schedule(callback);
