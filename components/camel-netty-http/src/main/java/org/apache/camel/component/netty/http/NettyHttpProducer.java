@@ -27,7 +27,6 @@ import io.netty.handler.codec.http.HttpUtil;
 import io.netty.util.ReferenceCountUtil;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.component.netty.NettyConfiguration;
 import org.apache.camel.component.netty.NettyProducer;
 import org.apache.camel.http.base.cookie.CookieHandler;
@@ -80,7 +79,7 @@ public class NettyHttpProducer extends NettyProducer {
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         if (getConfiguration().isDisableStreamCache() || getConfiguration().isHttpProxy()) {
-            exchange.adapt(ExtendedExchange.class).setStreamCacheDisabled(true);
+            exchange.getExchangeExtension().setStreamCacheDisabled(true);
         }
 
         return super.process(exchange, new NettyHttpProducerCallback(exchange, callback, getConfiguration()));

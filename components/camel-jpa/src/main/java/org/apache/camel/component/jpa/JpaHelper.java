@@ -23,7 +23,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
 
 /**
@@ -113,7 +112,7 @@ public final class JpaHelper {
                     data.put(getKey(entityManagerFactory), em);
                 }
             }
-            exchange.adapt(ExtendedExchange.class).addOnCompletion(new JpaCloseEntityManagerOnCompletion(em));
+            exchange.getExchangeExtension().addOnCompletion(new JpaCloseEntityManagerOnCompletion(em));
         }
         return em;
     }

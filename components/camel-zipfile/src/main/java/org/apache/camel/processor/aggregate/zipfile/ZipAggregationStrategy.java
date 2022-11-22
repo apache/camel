@@ -31,7 +31,6 @@ import java.util.Map;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.component.file.GenericFile;
@@ -220,7 +219,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
     public void onCompletion(Exchange exchange, Exchange inputExchange) {
         // this aggregation strategy added onCompletion which we should handover when we are complete
         if (inputExchange != null) {
-            exchange.adapt(ExtendedExchange.class).handoverCompletions(inputExchange);
+            exchange.getExchangeExtension().handoverCompletions(inputExchange);
         }
     }
 
