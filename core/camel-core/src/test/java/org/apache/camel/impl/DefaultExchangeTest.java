@@ -23,7 +23,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExchangeTestSupport;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
@@ -269,7 +268,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, "iso-8859-1");
 
         assertEquals(1, exchange.getProperties().size());
-        assertEquals(2, exchange.adapt(ExtendedExchange.class).getInternalProperties().size());
+        assertEquals(2, exchange.getExchangeExtension().getInternalProperties().size());
         assertEquals(3, exchange.getAllProperties().size());
     }
 
