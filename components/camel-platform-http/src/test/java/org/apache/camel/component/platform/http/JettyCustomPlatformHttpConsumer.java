@@ -27,7 +27,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.support.CamelContextHelper;
@@ -88,7 +87,7 @@ public class JettyCustomPlatformHttpConsumer extends DefaultConsumer {
                     exchange.getMessage().setHeader(Exchange.HTTP_PORT, httpServletRequest.getServerPort());
                     exchange.getMessage().setHeader(Exchange.HTTP_PATH, httpServletRequest.getPathInfo());
                     if (getEndpoint().isHttpProxy()) {
-                        exchange.adapt(ExtendedExchange.class).setStreamCacheDisabled(true);
+                        exchange.getExchangeExtension().setStreamCacheDisabled(true);
                     }
                     createUoW(exchange);
                     getProcessor().process(exchange);

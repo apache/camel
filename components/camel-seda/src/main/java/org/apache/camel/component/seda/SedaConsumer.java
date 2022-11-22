@@ -25,7 +25,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.Suspendable;
@@ -252,7 +251,7 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
             }
 
             // handover completions, as we need to done this when the multicast is done
-            final List<Synchronization> completions = exchange.adapt(ExtendedExchange.class).handoverCompletions();
+            final List<Synchronization> completions = exchange.getExchangeExtension().handoverCompletions();
 
             // use a multicast processor to process it
             AsyncProcessor mp = getEndpoint().getConsumerMulticastProcessor();

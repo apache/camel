@@ -28,7 +28,6 @@ import javax.xml.transform.Source;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.attachment.DefaultAttachmentMessage;
@@ -134,7 +133,7 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
         // create inbound message
         WebServiceMessage request = messageContext.getRequest();
 
-        SpringWebserviceMessage swm = exchange.adapt(ExtendedExchange.class).getInOrNull(SpringWebserviceMessage.class);
+        SpringWebserviceMessage swm = exchange.getExchangeExtension().getInOrNull(SpringWebserviceMessage.class);
         if (swm == null) {
             swm = new SpringWebserviceMessage(exchange.getContext(), request);
             exchange.setIn(swm);

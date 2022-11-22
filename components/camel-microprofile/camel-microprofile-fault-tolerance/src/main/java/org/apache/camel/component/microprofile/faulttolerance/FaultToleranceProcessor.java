@@ -39,7 +39,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -431,7 +430,7 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
             Throwable cause;
 
             // turn of interruption to allow fault tolerance to process the exchange under its handling
-            exchange.adapt(ExtendedExchange.class).setInterruptable(false);
+            exchange.getExchangeExtension().setInterruptable(false);
 
             try {
                 LOG.debug("Running processor: {} with exchange: {}", processor, exchange);

@@ -40,7 +40,6 @@ import io.vertx.ext.web.impl.RouteImpl;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.attachment.AttachmentMessage;
@@ -184,7 +183,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
         //
 
         if (getEndpoint().isHttpProxy()) {
-            exchange.adapt(ExtendedExchange.class).setStreamCacheDisabled(true);
+            exchange.getExchangeExtension().setStreamCacheDisabled(true);
             final MultiMap httpHeaders = ctx.request().headers();
             exchange.getMessage().setHeader(Exchange.HTTP_HOST, httpHeaders.get("Host"));
             exchange.getMessage().removeHeader("Proxy-Connection");
