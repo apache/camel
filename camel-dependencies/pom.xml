@@ -414,7 +414,7 @@
     <mina-version>2.1.6</mina-version>
     <minidns-version>0.3.4</minidns-version>
     <minimal-json-version>0.9.5</minimal-json-version>
-    <minio-version>8.4.5</minio-version>
+    <minio-version>8.4.6</minio-version>
     <mock-javamail-version>1.9</mock-javamail-version>
     <mockito-version>3.12.4</mockito-version>
     <mockwebserver-version>0.2.2</mockwebserver-version>
