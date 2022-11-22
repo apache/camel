@@ -22,7 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
@@ -69,12 +68,12 @@ public class PublishEventNotifier extends EventNotifierSupport implements CamelC
         // make sure we don't send out events for this as well
         // mark exchange as being published to event, to prevent creating new events
         // for this as well (causing a endless flood of events)
-        exchange.adapt(ExtendedExchange.class).setNotifyEvent(true);
+        exchange.getExchangeExtension().setNotifyEvent(true);
         try {
             producer.process(exchange);
         } finally {
             // and remove it when its done
-            exchange.adapt(ExtendedExchange.class).setNotifyEvent(false);
+            exchange.getExchangeExtension().setNotifyEvent(false);
         }
     }
 
