@@ -6931,6 +6931,9 @@
           "description" : {
             "type" : "string"
           },
+          "disabled" : {
+            "type" : "boolean"
+          },
           "enableCors" : {
             "type" : "boolean"
           },
@@ -7000,6 +7003,9 @@
           "description" : {
             "type" : "string"
           },
+          "disabled" : {
+            "type" : "boolean"
+          },
           "enableCors" : {
             "type" : "boolean"
           },
@@ -7068,6 +7074,9 @@
           },
           "description" : {
             "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
           },
           "enableCors" : {
             "type" : "boolean"
@@ -7243,6 +7252,9 @@
           "description" : {
             "type" : "string"
           },
+          "disabled" : {
+            "type" : "boolean"
+          },
           "enableCors" : {
             "type" : "boolean"
           },
@@ -7312,6 +7324,9 @@
           "description" : {
             "type" : "string"
           },
+          "disabled" : {
+            "type" : "boolean"
+          },
           "enableCors" : {
             "type" : "boolean"
           },
@@ -7380,6 +7395,9 @@
           },
           "description" : {
             "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
           },
           "enableCors" : {
             "type" : "boolean"
@@ -7661,6 +7679,9 @@
           },
           "description" : {
             "type" : "string"
+          },
+          "disabled" : {
+            "type" : "boolean"
           },
           "enableCors" : {
             "type" : "boolean"

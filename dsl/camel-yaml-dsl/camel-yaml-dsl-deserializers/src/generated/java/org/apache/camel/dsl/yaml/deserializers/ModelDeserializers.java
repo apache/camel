@@ -4164,6 +4164,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "consumes", type = "string"),
                     @YamlProperty(name = "deprecated", type = "boolean"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "enable-cors", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
@@ -4215,6 +4216,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "deprecated": {
                     String val = asText(node);
                     target.setDeprecated(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "enable-cors": {
@@ -5528,6 +5534,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "consumes", type = "string"),
                     @YamlProperty(name = "deprecated", type = "boolean"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "enable-cors", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
@@ -5579,6 +5586,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "deprecated": {
                     String val = asText(node);
                     target.setDeprecated(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "enable-cors": {
@@ -5943,6 +5955,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "consumes", type = "string"),
                     @YamlProperty(name = "deprecated", type = "boolean"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "enable-cors", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
@@ -5994,6 +6007,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "deprecated": {
                     String val = asText(node);
                     target.setDeprecated(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "enable-cors": {
@@ -10070,6 +10088,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "consumes", type = "string"),
                     @YamlProperty(name = "deprecated", type = "boolean"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "enable-cors", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
@@ -10121,6 +10140,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "deprecated": {
                     String val = asText(node);
                     target.setDeprecated(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "enable-cors": {
@@ -10508,6 +10532,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "consumes", type = "string"),
                     @YamlProperty(name = "deprecated", type = "boolean"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "enable-cors", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
@@ -10559,6 +10584,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "deprecated": {
                     String val = asText(node);
                     target.setDeprecated(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "enable-cors": {
@@ -10995,6 +11025,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "consumes", type = "string"),
                     @YamlProperty(name = "deprecated", type = "boolean"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "enable-cors", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "out-type", type = "string"),
@@ -11046,6 +11077,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "deprecated": {
                     String val = asText(node);
                     target.setDeprecated(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "enable-cors": {
@@ -12604,6 +12640,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "consumes", type = "string"),
                     @YamlProperty(name = "delete", type = "array:org.apache.camel.model.rest.DeleteDefinition"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "enable-cors", type = "boolean"),
                     @YamlProperty(name = "get", type = "array:org.apache.camel.model.rest.GetDefinition"),
                     @YamlProperty(name = "head", type = "array:org.apache.camel.model.rest.HeadDefinition"),
@@ -12651,6 +12688,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "consumes": {
                     String val = asText(node);
                     target.setConsumes(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
                     break;
                 }
                 case "enable-cors": {

@@ -233,6 +233,42 @@ If you use Camel Main / Spring Boot / Quarkus / or Camel JBang you can also enab
 camel.rest.inline-routes = true
 ----
 
+== Disabling REST services
+
+While developing REST services using Rest DSL, you may want to temporary disabled some REST endpoints,
+which you can do using `disabled` as shown in the following.
+
+[source,java]
+----
+rest("/customers/")
+    .get("/{id}").to("direct:customerDetail")
+    .get("/{id}/orders").to("direct:customerOrders").disabled("{{ordersEnabled}}")
+    .post("/neworder").to("direct:customerNewOrder").disabled();
+----
+
+And in XML:
+
+[source,xml]
+----
+<rest>
+  <get path="/customers/{id}">
+    <to uri="direct:customerDetail"/>
+  </get>
+  <get path="/customers/{id}/orders" disabled="{{ordersEnabled}}">
+    <to uri="direct:customerOrders"/>
+  </get>
+  <post path="/customers/neworder" disabled="true">
+    <to uri="direct:customerNewOrder"/>
+  </post>
+</rest>
+----
+
+In this example the last two REST endpoints are configured with `disabled`.
+You can use xref:manual:ROOT:using-propertyplaceholder.adoc[Property Placeholder] to
+let a external configuration determine if the REST endpoint is disabled or not.
+In this example the `/customers/{id}/orders` endpoint is disabled via a placeholder.
+The last REST endpoint is hardcoded to be disabled.
+
 == Binding to POJOs using
 
 The Rest DSL supports automatic binding json/xml contents to/from POJOs
