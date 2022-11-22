@@ -160,7 +160,7 @@ public class JettySimulateFailoverRoundRobinTest extends CamelTestSupport {
         private void prepareExchangeForFailover(Exchange exchange) {
             exchange.setException(null);
 
-            exchange.adapt(ExtendedExchange.class).setErrorHandlerHandled(null);
+            exchange.getExchangeExtension().setErrorHandlerHandled(null);
             exchange.setProperty(Exchange.FAILURE_HANDLED, null);
             exchange.setProperty(Exchange.EXCEPTION_CAUGHT, null);
             exchange.getIn().removeHeader(Exchange.REDELIVERED);
