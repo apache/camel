@@ -106,7 +106,7 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
                                     classConverters.addFallbackTypeConverter(ee);
                                 } else {
                                     Type to = ee.returnType();
-                                    Type from = ee.parameterTypes().get(0);
+                                    Type from = ee.parameters().get(0);
                                     if (asBoolean(annotation, "generateBulkLoader")) {
                                         bulkConverters.add(ee);
                                     } else {
@@ -161,8 +161,8 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
                 Integer order2 = asInteger(o2.annotation(CONVERTER_ANNOTATION), "order");
                 sort = order1.compareTo(order2);
                 if (sort == 0) {
-                    String str1 = o1.parameterTypes().stream().findFirst().map(Type::toString).orElse("");
-                    String str2 = o2.parameterTypes().stream().findFirst().map(Type::toString).orElse("");
+                    String str1 = o1.parameters().stream().findFirst().map(Type::toString).orElse("");
+                    String str2 = o2.parameters().stream().findFirst().map(Type::toString).orElse("");
                     return str1.compareTo(str2);
                 }
             }
@@ -295,7 +295,7 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
             } else {
                 to = method.returnType().name().toString();
             }
-            String from = method.parameterTypes().get(0).toString();
+            String from = method.parameters().get(0).toString();
             // clip generics
             if (to.indexOf('<') != -1) {
                 to = to.substring(0, to.indexOf('<'));
@@ -518,8 +518,7 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
         // the 2nd parameter is optional and can either be Exchange or CamelContext
         String param = "";
         String paramType
-                = converter.parameterTypes().size() == 2
-                        ? converter.parameterTypes().get(1).asClassType().name().toString() : null;
+                = converter.parameters().size() == 2 ? converter.parameters().get(1).asClassType().name().toString() : null;
         if (paramType != null) {
             if ("org.apache.camel.Exchange".equals(paramType)) {
                 param = ", exchange";
@@ -527,7 +526,7 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
                 param = ", camelContext";
             }
         }
-        String type = toString(converter.parameterTypes().get(0));
+        String type = toString(converter.parameters().get(0));
         String cast = type.equals("java.lang.Object") ? "" : "(" + type + ") ";
         return pfx + "(" + cast + "value" + param + ")";
     }
@@ -540,9 +539,9 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
             converterClasses.add(converter.declaringClass().toString());
             pfx = "get" + converter.declaringClass().simpleName() + "()." + converter.name();
         }
-        String type = toString(converter.parameterTypes().get(converter.parameterTypes().size() - 2));
+        String type = toString(converter.parameters().get(converter.parameters().size() - 2));
         String cast = type.equals("java.lang.Object") ? "" : "(" + type + ") ";
-        return pfx + "(type, " + (converter.parameterTypes().size() == 4 ? "exchange, " : "") + cast + "value" + ", registry)";
+        return pfx + "(type, " + (converter.parameters().size() == 4 ? "exchange, " : "") + cast + "value" + ", registry)";
     }
 
     private static boolean isFallbackCanPromote(MethodInfo element) {
