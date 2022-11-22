@@ -83,4 +83,20 @@ public final class RuntimeUtil {
         }
     }
 
+    public static String getDependencies(Properties properties) {
+        String deps = properties != null ? properties.getProperty("camel.jbang.dependencies") : null;
+        if (deps != null) {
+            deps = deps.trim();
+            if (deps.length() > 0 && deps.charAt(0) == ',') {
+                deps = deps.substring(1);
+            }
+            if (deps.length() > 0 && deps.charAt(deps.length() - 1) == ',') {
+                deps = deps.substring(0, deps.lastIndexOf(","));
+            }
+        } else {
+            deps = "";
+        }
+        return deps;
+    }
+
 }
