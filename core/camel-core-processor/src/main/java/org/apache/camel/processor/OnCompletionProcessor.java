@@ -177,7 +177,7 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
         boolean rollbackOnlyLast = ee.isRollbackOnlyLast();
         ee.setRollbackOnlyLast(false);
         // and we should not be regarded as exhausted as we are in a onCompletion block
-        boolean exhausted = ee.adapt(ExtendedExchange.class).isRedeliveryExhausted();
+        boolean exhausted = ee.getExchangeExtension().isRedeliveryExhausted();
         ee.setRedeliveryExhausted(false);
 
         Exception cause = ee.getException();

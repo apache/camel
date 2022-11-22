@@ -42,7 +42,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Predicate;
@@ -1435,8 +1434,8 @@ public class AggregateProcessor extends AsyncProcessorSupport
                                         // set redelivery counter
                                         exchange.getIn().setHeader(Exchange.REDELIVERY_COUNTER, data.redeliveryCounter);
                                         // and prepare for sending to DLC
-                                        exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(false);
-                                        exchange.adapt(ExtendedExchange.class).setRollbackOnly(false);
+                                        exchange.getExchangeExtension().setRedeliveryExhausted(false);
+                                        exchange.setRollbackOnly(false);
                                         deadLetterProducerTemplate.send(recoverable.getDeadLetterUri(), exchange);
                                     } catch (Throwable e) {
                                         exchange.setException(e);
