@@ -771,7 +771,7 @@ class AbstractExchange implements ExtendedExchange {
     public void handoverCompletions(Exchange target) {
         if (onCompletions != null) {
             for (Synchronization onCompletion : onCompletions) {
-                target.adapt(ExtendedExchange.class).addOnCompletion(onCompletion);
+                target.getExchangeExtension().addOnCompletion(onCompletion);
             }
             // cleanup the temporary on completion list as they have been handed over
             onCompletions.clear();
