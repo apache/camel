@@ -401,3 +401,63 @@ verifierExchangeRecord = verifierEvents.presentationEx()
 
 Assertions.assertTrue(verifierExchangeRecord.isVerified(), "Not VERIFIED");
 ---------------------------------------------------------------------------------------------
+
+==== Connectionless proofs
+
+There is a possibility to request proof without securing the connection beforehand.
+It's similar to usual credential verification process with two changes:
+
+1. Verifier should use `/present-proof/create-request` instead of `send-request` service.
+
+2. Verifier should decorate proof presentation with `~service` decorator with their recipient key and endpoint.
+
+[source,java]
+---------------------------------------------------------------------------------------------
+/* 1. Acme creates Job Application Proof Request.
+ *
+ * Notice no connectionId and new service endpoint.
+ * Everything else is the same as for send-request process.
+ */
+PresentProofRequest proofRequest = PresentProofRequest.builder()
+        .proofRequest(...)
+        .build();
+
+String exchangeId = template.requestBodyAndHeader("direct:acme", proofRequest,
+        HEADER_SERVICE, "/present-proof/create-request",
+        PresentationExchangeRecord.class).getPresentationExchangeId();
+
+/* 2. Acme generates presentation JSON.
+ *
+ * This is a new step. Acme needs to decorate the presentation request with their service details.
+ */
+JsonObject presentation = template.requestBodyAndHeader("direct:acme", null,
+        HEADER_SERVICE, "/present-proof/records/" + exchangeId,
+        PresentationExchangeRecord.class).getPresentationRequestDict();
+
+DID did = template.requestBodyAndHeader("direct:acme", null,
+        HEADER_SERVICE, "/wallet/did/public",
+        DID.class);
+
+String endpoint = template.requestBodyAndHeaders("direct:acme", null,
+        Map.of(HEADER_SERVICE, "/wallet/get-did-endpoint", HEADER_DID, did.getDid()),
+        DIDEndpoint.class).getEndpoint();
+
+var decorator = new JsonObject();
+var recipients = new JsonArray();
+recipients.add(did.getVerkey());
+decorator.add("recipientKeys", recipients);
+decorator.addProperty("serviceEndpoint", endpoint);
+
+presentation.add("~service", decorator);
+
+/* 3. Acme shares presentation request with Alice.
+ *
+ * This step is not Camel-specific, thus there is no example.
+ * The easiest way to share this JSON is to generate QR code using it
+ * and let Alice scan this QR using her Aries mobile wallet.
+ */
+---------------------------------------------------------------------------------------------
+
+
+
+
