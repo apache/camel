@@ -135,12 +135,12 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
                         if (deadLetterChannel) {
                             // special for dead letter channel as we want to let it determine what to do, depending how
                             // it has been configured
-                            exchange.adapt(ExtendedExchange.class).setErrorHandlerHandled(null);
+                            exchange.getExchangeExtension().setErrorHandlerHandled(null);
                         } else {
                             // mark this exchange as already been error handler handled (just by having this property)
                             // the false value mean the caught exception will be kept on the exchange, causing the
                             // exception to be propagated back to the caller, and to break out routing
-                            exchange.adapt(ExtendedExchange.class).setErrorHandlerHandled(false);
+                            exchange.getExchangeExtension().setErrorHandlerHandled(false);
                         }
                     }
                 } finally {

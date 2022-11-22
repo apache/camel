@@ -20,7 +20,6 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -75,8 +74,8 @@ public class BodyOnlyAggregationStrategyTest extends ContextTestSupport {
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             oldExchange.getIn().setBody(newExchange.getIn().getBody());
 
-            oldExchange.adapt(ExtendedExchange.class).setErrorHandlerHandled(
-                    newExchange.adapt(ExtendedExchange.class).getErrorHandlerHandled());
+            oldExchange.getExchangeExtension().setErrorHandlerHandled(
+                    newExchange.getExchangeExtension().getErrorHandlerHandled());
 
             return oldExchange;
         }

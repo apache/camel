@@ -36,8 +36,8 @@ public class ExchangeFailureHandledEvent extends AbstractExchangeEvent implement
         this.failureHandler = failureHandler;
         this.deadLetterChannel = deadLetterChannel;
         this.deadLetterUri = deadLetterUri;
-        this.handled = source.adapt(ExtendedExchange.class).isErrorHandlerHandledSet()
-                && source.adapt(ExtendedExchange.class).isErrorHandlerHandled();
+        this.handled = source.getExchangeExtension().isErrorHandlerHandledSet()
+                && source.getExchangeExtension().isErrorHandlerHandled();
     }
 
     @Override
