@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.component.aws2.ec2.client.AWS2EC2ClientFactory;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
+import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.ec2.Ec2Client;
@@ -59,13 +60,19 @@ public class AWS2EC2HealthCheck extends AbstractHealthCheck {
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
+            if (ObjectHelper.isNotEmpty(e.statusCode())) {
+                builder.detail(SERVICE_STATUS_CODE, e.statusCode());
+            }
+            if (ObjectHelper.isNotEmpty(e.awsErrorDetails().errorCode())) {
+                builder.detail(SERVICE_ERROR_CODE, e.awsErrorDetails().errorCode());
+            }
             builder.down();
+            return;
         } catch (Exception e) {
             builder.error(e);
             builder.down();
             return;
         }
         builder.up();
-
     }
 }
