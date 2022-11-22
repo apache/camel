@@ -46,7 +46,6 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.util.ReferenceCountUtil;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
@@ -104,7 +103,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             // for proxy use case pass the request body buffer directly to the response to avoid additional processing
             // we need to retain it so that the request can be released and we can keep the content
             answer.setBody(request.content().retain());
-            answer.getExchange().adapt(ExtendedExchange.class).setStreamCacheDisabled(true);
+            answer.getExchange().getExchangeExtension().setStreamCacheDisabled(true);
             exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                 @Override
                 public void onDone(Exchange exchange) {
@@ -337,7 +336,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             // keep the body as is, and use type converters
             answer.setBody(response.content());
             // turn off stream cache as we use the raw body as-is
-            answer.getExchange().adapt(ExtendedExchange.class).setStreamCacheDisabled(true);
+            answer.getExchange().getExchangeExtension().setStreamCacheDisabled(true);
         } else {
             // stores as byte array as the netty ByteBuf will be freed when the producer is done, and then we can no longer access the message body
             response.retain();
