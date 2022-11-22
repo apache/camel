@@ -457,7 +457,3 @@ presentation.add("~service", decorator);
  * and let Alice scan this QR using her Aries mobile wallet.
  */
 ---------------------------------------------------------------------------------------------
-
-
-
-
