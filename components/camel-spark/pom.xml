@@ -137,7 +137,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-scala_2.12</artifactId>
-            <version>${jackson2-version}</version>
+            <version>${jackson2-module-scala-version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.scala-lang</groupId>
