@@ -321,7 +321,7 @@
     <jcr-version>2.0</jcr-version>
     <jedis-client-version>3.7.1</jedis-client-version>
     <jetcd-version>0.5.11</jetcd-version>
-    <jettison-version>1.5.1</jettison-version>
+    <jettison-version>1.5.2</jettison-version>
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
     <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
     <jetty-version>${jetty9-version}</jetty-version>
