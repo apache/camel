@@ -213,7 +213,7 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         // we want the copy to have an uow
         UnitOfWork uow = getEndpoint().getCamelContext().adapt(ExtendedCamelContext.class).getUnitOfWorkFactory()
                 .createUnitOfWork(copy);
-        copy.adapt(ExtendedExchange.class).setUnitOfWork(uow);
+        copy.getExchangeExtension().setUnitOfWork(uow);
 
         return copy;
     }
