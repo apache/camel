@@ -81,6 +81,10 @@ public class PresentProofServiceHandler extends AbstractServiceHandler {
                 throw new UnsupportedServiceException(service);
             }
 
+        } else if (service.equals("/present-proof/create-request")) {
+            PresentProofRequest reqObj = assertBody(exchange, PresentProofRequest.class);
+            PresentationExchangeRecord resObj = createClient().presentProofCreateRequest(reqObj).get();
+            exchange.getIn().setBody(resObj);
         } else {
             throw new UnsupportedServiceException(service);
         }
