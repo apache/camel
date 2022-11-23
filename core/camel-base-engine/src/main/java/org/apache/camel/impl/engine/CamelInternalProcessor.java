@@ -770,8 +770,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 if (routeId == null) {
                     this.routeId = route.getRouteId();
                 }
-                ExtendedExchange ee = (ExtendedExchange) exchange;
-                ee.setFromRouteId(routeId);
+                exchange.getExchangeExtension().setFromRouteId(routeId);
             }
 
             // only return UnitOfWork if we created a new as then its us that handle the lifecycle to done the created UoW

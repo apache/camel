@@ -65,8 +65,7 @@ public class UnitOfWorkHelperTest extends ContextTestSupport {
         testMessage.setBody(testFile);
 
         testExchange.setIn(testMessage);
-        ExtendedExchange extExchange = testExchange.adapt(ExtendedExchange.class);
-        extExchange.setFromEndpoint(fromEndpoint);
+        testExchange.getExchangeExtension().setFromEndpoint(fromEndpoint);
         testExchange.setProperty(FileComponent.FILE_EXCHANGE_FILE, testFile);
 
         return testExchange;

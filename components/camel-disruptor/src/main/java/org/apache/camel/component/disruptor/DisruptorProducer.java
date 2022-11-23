@@ -197,7 +197,7 @@ public class DisruptorProducer extends DefaultAsyncProducer {
         // use a new copy of the exchange to route async
         final Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, handover);
         // set a new from endpoint to be the disruptor
-        copy.adapt(ExtendedExchange.class).setFromEndpoint(endpoint);
+        copy.getExchangeExtension().setFromEndpoint(endpoint);
         return copy;
     }
 }

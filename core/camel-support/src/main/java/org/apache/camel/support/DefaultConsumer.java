@@ -107,7 +107,7 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
         // if the exchange doesn't have from route id set, then set it if it originated
         // from this unit of work
         if (route != null && exchange.getFromRouteId() == null) {
-            exchange.adapt(ExtendedExchange.class).setFromRouteId(route.getId());
+            exchange.getExchangeExtension().setFromRouteId(route.getId());
         }
 
         // create uow (however for pooled exchanges then the uow is pre-created)
@@ -135,7 +135,8 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
     public Exchange createExchange(boolean autoRelease) {
         Exchange answer = exchangeFactory.create(getEndpoint(), autoRelease);
         endpoint.configureExchange(answer);
-        answer.adapt(ExtendedExchange.class).setFromRouteId(routeId);
+
+        answer.getExchangeExtension().setFromRouteId(routeId);
         return answer;
     }
 

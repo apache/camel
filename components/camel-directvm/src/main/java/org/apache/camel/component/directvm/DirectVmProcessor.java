@@ -89,7 +89,7 @@ public final class DirectVmProcessor extends DelegateAsyncProcessor {
         // send a new copied exchange with new camel context (do not handover completions)
         Exchange newExchange = ExchangeHelper.copyExchangeAndSetCamelContext(exchange, endpoint.getCamelContext(), false);
         // set the from endpoint
-        newExchange.adapt(ExtendedExchange.class).setFromEndpoint(endpoint);
+        newExchange.getExchangeExtension().setFromEndpoint(endpoint);
         // The StreamCache created by the child routes must not be
         // closed by the unit of work of the child route, but by the unit of
         // work of the parent route or grand parent route or grand grand parent route ...(in case of nesting).
