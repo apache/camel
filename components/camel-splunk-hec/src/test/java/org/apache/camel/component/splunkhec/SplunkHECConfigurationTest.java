@@ -37,6 +37,12 @@ public class SplunkHECConfigurationTest {
     }
 
     @Test
+    public void testDefaultEndpoint() {
+        SplunkHECConfiguration config = new SplunkHECConfiguration();
+        assertEquals("/services/collector/event", config.getSplunkEndpoint());
+    }
+
+    @Test
     public void testDefaultIndex() {
         SplunkHECConfiguration config = new SplunkHECConfiguration();
         assertEquals("camel", config.getIndex());
