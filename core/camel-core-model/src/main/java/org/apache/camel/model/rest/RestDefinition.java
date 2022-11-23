@@ -744,7 +744,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         // only include enabled verbs
         List<VerbDefinition> filter = new ArrayList<>();
         for (VerbDefinition verb : verbs) {
-            disabled = CamelContextHelper.parseBoolean(camelContext, verb.disabled);
+            disabled = CamelContextHelper.parseBoolean(camelContext, verb.getDisabled());
             if (disabled == null || !disabled) {
                 filter.add(verb);
             }
