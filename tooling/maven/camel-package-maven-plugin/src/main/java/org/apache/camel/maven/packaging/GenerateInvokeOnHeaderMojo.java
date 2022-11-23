@@ -141,7 +141,7 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
             } else {
                 model.setReturnType(mi.returnType().toString());
             }
-            for (Type type : mi.parameters()) {
+            for (Type type : mi.parameterTypes()) {
                 String arg = type.name().toString();
                 model.addArgs(arg);
             }

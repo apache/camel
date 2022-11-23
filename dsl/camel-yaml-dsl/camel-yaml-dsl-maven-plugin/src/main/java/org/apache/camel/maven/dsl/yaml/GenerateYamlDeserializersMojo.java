@@ -432,7 +432,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                 break;
             }
 
-            if (ctor.parameters().size() == 1 && ctor.parameters().get(0).name().equals(STRING_CLASS)) {
+            if (ctor.parameterTypes().size() == 1 && ctor.parameterTypes().get(0).name().equals(STRING_CLASS)) {
                 if ((ctor.flags() & java.lang.reflect.Modifier.PUBLIC) == 0) {
                     break;
                 }
@@ -987,7 +987,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
     @SuppressWarnings("MethodLength")
     private boolean generateSetValue(CodeBlock.Builder cb, MethodInfo method, Collection<AnnotationSpec> annotations) {
         final String name = StringHelper.camelCaseToDash(method.name()).toLowerCase(Locale.US).substring(4);
-        final Type parameterType = method.parameters().get(0);
+        final Type parameterType = method.parameterTypes().get(0);
 
         //
         // Others
