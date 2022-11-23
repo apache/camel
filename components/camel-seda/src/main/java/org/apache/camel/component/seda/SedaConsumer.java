@@ -221,9 +221,8 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
      */
     protected Exchange prepareExchange(Exchange exchange) {
         // this consumer grabbed the exchange so mark its from this route/endpoint
-        ExtendedExchange ee = exchange.adapt(ExtendedExchange.class);
-        ee.setFromEndpoint(getEndpoint());
-        ee.setFromRouteId(getRouteId());
+        exchange.getExchangeExtension().setFromEndpoint(getEndpoint());
+        exchange.getExchangeExtension().setFromRouteId(getRouteId());
         return exchange;
     }
 

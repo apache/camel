@@ -227,7 +227,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         assertExpression("${header.foo}", "abc");
         assertExpression("${headers.foo}", "abc");
         assertExpression("${routeId}", exchange.getFromRouteId());
-        exchange.adapt(ExtendedExchange.class).setFromRouteId("myRouteId");
+        exchange.getExchangeExtension().setFromRouteId("myRouteId");
         assertExpression("${routeId}", "myRouteId");
     }
 

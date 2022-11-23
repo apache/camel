@@ -139,7 +139,7 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
         final Exchange newExchange = ExchangeHelper
                 .copyExchangeAndSetCamelContext(exchange, endpoint.getCamelContext(), false);
         // set the from endpoint
-        newExchange.adapt(ExtendedExchange.class).setFromEndpoint(endpoint);
+        newExchange.getExchangeExtension().setFromEndpoint(endpoint);
         return newExchange;
     }
 
