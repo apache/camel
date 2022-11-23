@@ -914,19 +914,17 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
         @Override
         public String before(Exchange exchange) throws Exception {
-            ExtendedExchange ee = (ExtendedExchange) exchange;
-            ee.setHistoryNodeId(id);
-            ee.setHistoryNodeLabel(label);
-            ee.setHistoryNodeSource(source);
+            exchange.getExchangeExtension().setHistoryNodeId(id);
+            exchange.getExchangeExtension().setHistoryNodeLabel(label);
+            exchange.getExchangeExtension().setHistoryNodeSource(source);
             return null;
         }
 
         @Override
         public void after(Exchange exchange, Object data) throws Exception {
-            ExtendedExchange ee = (ExtendedExchange) exchange;
-            ee.setHistoryNodeId(null);
-            ee.setHistoryNodeLabel(null);
-            ee.setHistoryNodeSource(null);
+            exchange.getExchangeExtension().setHistoryNodeId(null);
+            exchange.getExchangeExtension().setHistoryNodeLabel(null);
+            exchange.getExchangeExtension().setHistoryNodeSource(null);
         }
 
         @Override
@@ -974,7 +972,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             }
             boolean failed = cause != null && ObjectHelper.getException(StreamCacheException.class, cause) != null;
             if (!failed) {
-                boolean disabled = exchange.adapt(ExtendedExchange.class).isStreamCacheDisabled();
+                boolean disabled = exchange.getExchangeExtension().isStreamCacheDisabled();
                 if (disabled) {
                     return null;
                 }

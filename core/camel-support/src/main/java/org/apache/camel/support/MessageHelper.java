@@ -728,7 +728,7 @@ public final class MessageHelper {
         if (list == null || list.isEmpty()) {
             // message history is not enabled but we can show the last processed
             // instead
-            id = exchange.adapt(ExtendedExchange.class).getHistoryNodeId();
+            id = exchange.getExchangeExtension().getHistoryNodeId();
             if (id != null) {
                 loc = exchange.adapt(ExtendedExchange.class).getHistoryNodeSource();
                 if (loc == null) {
@@ -738,7 +738,7 @@ public final class MessageHelper {
                 if (rid != null) {
                     routeId = rid;
                 }
-                label = exchange.adapt(ExtendedExchange.class).getHistoryNodeLabel();
+                label = exchange.getExchangeExtension().getHistoryNodeLabel();
                 // we need to avoid leak the sensible information here
                 // the sanitizeUri takes a very long time for very long string
                 // and the format cuts this to
