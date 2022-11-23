@@ -142,8 +142,9 @@ public class RestConfiguration {
 
     /**
      * Sets the location of the api document (swagger api) the REST producer will use to validate the REST uri and query
-     * parameters are valid accordingly to the api document. This requires adding camel-swagger-java to the classpath,
-     * and any miss configuration will let Camel fail on startup and report the error(s).
+     * parameters are valid accordingly to the api document. This requires adding camel-openapi-java, or
+     * camel-swagger-java to the classpath, and any miss configuration will let Camel fail on startup and report the
+     * error(s).
      * <p/>
      * The location of the api document is loaded from classpath by default, but you can use <tt>file:</tt> or
      * <tt>http:</tt> to refer to resources to load from file or http url.
