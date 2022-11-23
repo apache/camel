@@ -18,7 +18,6 @@ package org.apache.camel.processor.transformer;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.DataType;
@@ -70,7 +69,7 @@ public class ProcessorTransformer extends Transformer {
         // must create a copy in this way
         Exchange transformExchange = new DefaultExchange(exchange);
         transformExchange.setIn(message);
-        transformExchange.adapt(ExtendedExchange.class).setProperties(exchange.getProperties());
+        transformExchange.getExchangeExtension().setProperties(exchange.getProperties());
         processor.process(transformExchange);
         Message answer = transformExchange.getMessage();
 
