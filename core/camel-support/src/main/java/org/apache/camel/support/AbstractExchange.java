@@ -160,10 +160,10 @@ class AbstractExchange implements ExtendedExchange {
         exchange.setRouteStop(routeStop);
         exchange.setRollbackOnly(rollbackOnly);
         exchange.setRollbackOnlyLast(rollbackOnlyLast);
-        exchange.setNotifyEvent(notifyEvent);
-        exchange.setRedeliveryExhausted(redeliveryExhausted);
-        exchange.setErrorHandlerHandled(errorHandlerHandled);
-        exchange.setStreamCacheDisabled(streamCacheDisabled);
+        exchange.getExchangeExtension().setNotifyEvent(notifyEvent);
+        exchange.getExchangeExtension().setRedeliveryExhausted(redeliveryExhausted);
+        exchange.getExchangeExtension().setErrorHandlerHandled(errorHandlerHandled);
+        exchange.getExchangeExtension().setStreamCacheDisabled(streamCacheDisabled);
 
         // copy properties after body as body may trigger lazy init
         if (hasProperties()) {
