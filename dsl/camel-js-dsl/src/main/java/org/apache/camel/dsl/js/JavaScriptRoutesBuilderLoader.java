@@ -48,6 +48,7 @@ public class JavaScriptRoutesBuilderLoader extends EndpointRouteBuilderLoaderSup
                 .allowExperimentalOptions(true)
                 .allowHostClassLookup(s -> true)
                 .allowPolyglotAccess(PolyglotAccess.NONE)
+                .allowIO(true)
                 .option("engine.WarnInterpreterOnly", "false");
 
         final Context context = contextBuilder.build();
@@ -76,7 +77,7 @@ public class JavaScriptRoutesBuilderLoader extends EndpointRouteBuilderLoaderSup
         // Run the script.
         //
         context.eval(
-                newBuilder(LANGUAGE_ID, reader, "Unnamed").buildLiteral());
+                newBuilder(LANGUAGE_ID, reader, "Unnamed.mjs").buildLiteral());
 
         //
         // Close the polyglot context when the camel context stops
