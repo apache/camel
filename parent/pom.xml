@@ -392,7 +392,7 @@
         <maven-wagon-version>3.5.2</maven-wagon-version>
         <maven-war-plugin-version>3.3.1</maven-war-plugin-version>
         <metrics-version>4.2.9</metrics-version>
-        <micrometer-version>1.9.5</micrometer-version>
+        <micrometer-version>1.10.1</micrometer-version>
         <microprofile-config-version>2.0.1</microprofile-config-version>
         <microprofile-metrics-version>3.0.1</microprofile-metrics-version>
         <microprofile-fault-tolerance-version>3.0</microprofile-fault-tolerance-version>
@@ -458,7 +458,7 @@
         <rdf4j-rio-version>3.7.4</rdf4j-rio-version>
         <rdf4j-model-version>3.7.4</rdf4j-model-version>
         <reactive-streams-version>1.0.4</reactive-streams-version>
-        <reactor-version>3.4.14</reactor-version>
+        <reactor-version>3.4.25</reactor-version>
         <reactor-netty-version>1.0.2</reactor-netty-version>
         <redisson-version>3.16.7</redisson-version>
         <resilience4j-version>1.7.1</resilience4j-version>
