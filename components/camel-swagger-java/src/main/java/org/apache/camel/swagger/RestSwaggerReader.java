@@ -74,6 +74,7 @@ import org.apache.camel.model.rest.RestSecurityDefinition;
 import org.apache.camel.model.rest.SecurityDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.FileUtil;
 
@@ -94,7 +95,7 @@ public class RestSwaggerReader {
      * @param  config                 the swagger configuration
      * @param  classResolver          class resolver to use
      * @return                        the swagger model
-     * @throws ClassNotFoundException
+     * @throws ClassNotFoundException is thrown if error loading class
      */
     public Swagger read(
             CamelContext camelContext,
@@ -103,7 +104,10 @@ public class RestSwaggerReader {
         Swagger swagger = new Swagger();
 
         for (RestDefinition rest : rests) {
-            parse(camelContext, swagger, rest, camelContextId, classResolver);
+            Boolean disabled = CamelContextHelper.parseBoolean(camelContext, rest.getDisabled());
+            if (disabled == null || !disabled) {
+                parse(camelContext, swagger, rest, camelContextId, classResolver);
+            }
         }
 
         // configure before returning
@@ -114,7 +118,16 @@ public class RestSwaggerReader {
     private void parse(
             CamelContext camelContext, Swagger swagger, RestDefinition rest, String camelContextId, ClassResolver classResolver)
             throws ClassNotFoundException {
-        List<VerbDefinition> verbs = new ArrayList<>(rest.getVerbs());
+
+        // only include enabled verbs
+        List<VerbDefinition> filter = new ArrayList<>();
+        for (VerbDefinition verb : rest.getVerbs()) {
+            Boolean disabled = CamelContextHelper.parseBoolean(camelContext, verb.getDisabled());
+            if (disabled == null || !disabled) {
+                filter.add(verb);
+            }
+        }
+        List<VerbDefinition> verbs = new ArrayList<>(filter);
         // must sort the verbs by uri so we group them together when an uri has multiple operations
         verbs.sort(new VerbOrdering());
 

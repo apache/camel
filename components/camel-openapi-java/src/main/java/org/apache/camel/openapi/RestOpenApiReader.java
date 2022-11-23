@@ -157,7 +157,10 @@ public class RestOpenApiReader {
         }
 
         for (RestDefinition rest : rests) {
-            parse(camelContext, openApi, rest, camelContextId, classResolver);
+            Boolean disabled = CamelContextHelper.parseBoolean(camelContext, rest.getDisabled());
+            if (disabled == null || !disabled) {
+                parse(camelContext, openApi, rest, camelContextId, classResolver);
+            }
         }
 
         shortenClassNames(openApi);
@@ -191,7 +194,15 @@ public class RestOpenApiReader {
             ClassResolver classResolver)
             throws ClassNotFoundException {
 
-        List<VerbDefinition> verbs = new ArrayList<>(rest.getVerbs());
+        // only include enabled verbs
+        List<VerbDefinition> filter = new ArrayList<>();
+        for (VerbDefinition verb : rest.getVerbs()) {
+            Boolean disabled = CamelContextHelper.parseBoolean(camelContext, verb.getDisabled());
+            if (disabled == null || !disabled) {
+                filter.add(verb);
+            }
+        }
+        List<VerbDefinition> verbs = new ArrayList<>(filter);
         // must sort the verbs by uri so we group them together when an uri has multiple operations
         verbs.sort(new VerbOrdering(camelContext));
 
