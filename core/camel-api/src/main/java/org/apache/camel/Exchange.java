@@ -275,6 +275,7 @@ public interface Exchange {
      * @param  type the type to adapt to
      * @return      this {@link org.apache.camel.Exchange} adapted to the given type
      */
+    @Deprecated
     <T extends Exchange> T adapt(Class<T> type);
 
     /**
