@@ -62,7 +62,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     private String produces;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
-    protected String disabled;
+    private String disabled;
     @XmlAttribute
     @Metadata(defaultValue = "off", enums = "off,auto,json,xml,json_xml")
     private String bindingMode;

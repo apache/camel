@@ -55,7 +55,7 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
     private String produces;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
-    protected String disabled;
+    private String disabled;
     @XmlAttribute
     @Metadata(label = "advanced")
     private String type;
