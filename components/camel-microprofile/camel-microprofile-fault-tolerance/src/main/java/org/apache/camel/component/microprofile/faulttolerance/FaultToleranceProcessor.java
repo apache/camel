@@ -445,7 +445,7 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
                 } else {
                     // prepare uow on copy
                     uow = copy.getContext().adapt(ExtendedCamelContext.class).getUnitOfWorkFactory().createUnitOfWork(copy);
-                    copy.adapt(ExtendedExchange.class).setUnitOfWork(uow);
+                    copy.getExchangeExtension().setUnitOfWork(uow);
                     // the copy must be starting from the route where its copied from
                     Route route = ExchangeHelper.getRoute(exchange);
                     if (route != null) {

@@ -782,15 +782,13 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 // If there is no existing UoW, then we should start one and
                 // terminate it once processing is completed for the exchange.
                 created = createUnitOfWork(exchange);
-                ExtendedExchange ee = (ExtendedExchange) exchange;
-                ee.setUnitOfWork(created);
+                exchange.getExchangeExtension().setUnitOfWork(created);
                 uow = created;
             } else {
                 // reuse existing exchange
                 if (uow.onPrepare(exchange)) {
                     // need to re-attach uow
-                    ExtendedExchange ee = (ExtendedExchange) exchange;
-                    ee.setUnitOfWork(uow);
+                    exchange.getExchangeExtension().setUnitOfWork(uow);
                     // we are prepared for reuse and can regard it as-if we created the unit of work
                     // so the after method knows that this is the outer bounds and should done the unit of work
                     created = uow;

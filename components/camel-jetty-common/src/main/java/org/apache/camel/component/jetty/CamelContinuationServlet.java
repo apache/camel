@@ -33,7 +33,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.http.common.CamelServlet;
 import org.apache.camel.http.common.HttpCommonEndpoint;
@@ -239,8 +238,7 @@ public class CamelContinuationServlet extends CamelServlet {
                 }
             } else if (uow.onPrepare(exchange)) {
                 // need to re-attach uow
-                ExtendedExchange ee = (ExtendedExchange) exchange;
-                ee.setUnitOfWork(uow);
+                exchange.getExchangeExtension().setUnitOfWork(uow);
             }
 
             ClassLoader oldTccl = overrideTccl(exchange);
