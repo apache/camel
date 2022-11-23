@@ -31,7 +31,6 @@ import com.obs.services.model.ObsObject;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.huaweicloud.obs.constants.OBSHeaders;
 import org.apache.camel.spi.Synchronization;
@@ -167,7 +166,7 @@ public class OBSConsumer extends ScheduledBatchPollingConsumer {
             // update number of pending exchanges
             pendingExchanges = total - index - 1;
 
-            exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
+            exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
                 @Override
                 public void onComplete(Exchange exchange) {
                     processComplete(exchange);

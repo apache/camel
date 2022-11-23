@@ -31,7 +31,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.health.HealthCheckHelper;
@@ -188,7 +187,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                 final ScheduledFuture<?> scheduledFuture = this.scheduledExecutor.scheduleAtFixedRate(
                         new TimeoutExtender(exchange, repeatSeconds), delay, period,
                         TimeUnit.SECONDS);
-                exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
+                exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
                     @Override
                     public void onComplete(Exchange exchange) {
                         cancelExtender(exchange);
@@ -209,7 +208,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
             }
 
             // add on completion to handle after work when the exchange is done
-            exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
+            exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
                 @Override
                 public void onComplete(Exchange exchange) {
                     processCommit(exchange);

@@ -153,7 +153,7 @@ public class TarAggregationStrategy implements AggregationStrategy {
                 throw new GenericFileOperationFailedException(e.getMessage(), e);
             }
             answer = newExchange;
-            answer.adapt(ExtendedExchange.class).addOnCompletion(new DeleteTarFileOnCompletion(tarFile));
+            answer.getExchangeExtension().addOnCompletion(new DeleteTarFileOnCompletion(tarFile));
         } else {
             tarFile = oldExchange.getIn().getBody(File.class);
         }

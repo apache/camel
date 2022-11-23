@@ -31,7 +31,6 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.PropertyBindingSupport;
@@ -203,7 +202,7 @@ public class JdbcProducer extends DefaultProducer {
             // are not using try-with-resources here.
             final Statement stmt = conn.createStatement();
             // ensure statement is closed (to not leak) when exchange is done
-            exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
+            exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                 @Override
                 public void onDone(Exchange exchange) {
                     closeQuietly(stmt);
@@ -346,7 +345,7 @@ public class JdbcProducer extends DefaultProducer {
                     .setBody(new StreamListIterator(
                             getEndpoint().getCamelContext(), getEndpoint().getOutputClass(), getEndpoint().getBeanRowMapper(),
                             iterator));
-            exchange.adapt(ExtendedExchange.class).addOnCompletion(new ResultSetIteratorCompletion(iterator));
+            exchange.getExchangeExtension().addOnCompletion(new ResultSetIteratorCompletion(iterator));
             // do not close resources as we are in streaming mode
             answer = false;
         } else if (outputType == JdbcOutputType.SelectList) {

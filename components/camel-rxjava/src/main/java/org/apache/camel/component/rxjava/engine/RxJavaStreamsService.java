@@ -25,7 +25,6 @@ import io.reactivex.Flowable;
 import io.reactivex.Single;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsCamelSubscriber;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsConsumer;
@@ -304,7 +303,7 @@ final class RxJavaStreamsService extends ServiceSupport implements CamelReactive
         }
 
         Single<Exchange> source = Single.<Exchange> create(
-                emitter -> data.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
+                emitter -> data.getExchangeExtension().addOnCompletion(new Synchronization() {
                     @Override
                     public void onComplete(Exchange exchange) {
                         emitter.onSuccess(exchange);

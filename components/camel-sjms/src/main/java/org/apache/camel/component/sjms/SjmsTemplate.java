@@ -26,14 +26,18 @@ import jakarta.jms.MessageProducer;
 import jakarta.jms.Session;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
 import org.apache.camel.component.sjms.jms.JmsConstants;
 import org.apache.camel.component.sjms.jms.JmsMessageHelper;
 import org.apache.camel.component.sjms.jms.MessageCreator;
 import org.apache.camel.util.ObjectHelper;
 
-import static org.apache.camel.component.sjms.SjmsHelper.*;
+import static org.apache.camel.component.sjms.SjmsHelper.closeConnection;
+import static org.apache.camel.component.sjms.SjmsHelper.closeConsumer;
+import static org.apache.camel.component.sjms.SjmsHelper.closeProducer;
+import static org.apache.camel.component.sjms.SjmsHelper.closeSession;
+import static org.apache.camel.component.sjms.SjmsHelper.commitIfNeeded;
+import static org.apache.camel.component.sjms.SjmsHelper.isTransactionOrClientAcknowledgeMode;
 
 public class SjmsTemplate {
 
@@ -148,10 +152,9 @@ public class SjmsTemplate {
                 try {
                     if (transacted) {
                         // defer closing till end of UoW
-                        ExtendedExchange ecc = exchange.adapt(ExtendedExchange.class);
                         TransactionOnCompletion toc = new TransactionOnCompletion(session, this.message);
-                        if (!ecc.containsOnCompletion(toc)) {
-                            ecc.addOnCompletion(toc);
+                        if (!exchange.getExchangeExtension().containsOnCompletion(toc)) {
+                            exchange.getExchangeExtension().addOnCompletion(toc);
                         }
                     } else {
                         closeSession(session);

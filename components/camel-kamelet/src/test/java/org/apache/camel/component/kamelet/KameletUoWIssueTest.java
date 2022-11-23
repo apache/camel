@@ -17,7 +17,6 @@
 package org.apache.camel.component.kamelet;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -54,7 +53,7 @@ public class KameletUoWIssueTest extends CamelTestSupport {
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {
-                                exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
+                                exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                                     @Override
                                     public void onDone(Exchange exchange) {
                                         super.onDone(exchange);

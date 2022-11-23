@@ -38,7 +38,6 @@ import io.minio.errors.MinioException;
 import io.minio.messages.Item;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Synchronization;
@@ -272,7 +271,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                     minioObject = getObject(srcBucketName, getMinioClient(), srcObjectName);
                     exchange.getIn().setBody(IOUtils.toByteArray(minioObject));
                     if (getConfiguration().isAutoCloseBody()) {
-                        exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
+                        exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                             @Override
                             public void onDone(Exchange exchange) {
                                 IOHelper.close(minioObject);
@@ -286,7 +285,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
             }
 
             // add on completion to handle after work when the exchange is done
-            exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
+            exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
                 public void onComplete(Exchange exchange) {
                     processCommit(exchange);
                 }

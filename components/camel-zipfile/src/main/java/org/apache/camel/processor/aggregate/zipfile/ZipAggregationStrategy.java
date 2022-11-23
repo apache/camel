@@ -170,7 +170,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
                 throw new GenericFileOperationFailedException(e.getMessage(), e);
             }
             answer = newExchange;
-            answer.adapt(ExtendedExchange.class).addOnCompletion(new DeleteZipFileOnCompletion(zipFile));
+            answer.getExchangeExtension().addOnCompletion(new DeleteZipFileOnCompletion(zipFile));
         } else {
             zipFile = oldExchange.getIn().getBody(File.class);
         }

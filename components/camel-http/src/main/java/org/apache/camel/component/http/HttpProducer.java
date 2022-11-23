@@ -37,7 +37,6 @@ import java.util.Map.Entry;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.file.GenericFile;
@@ -298,7 +297,7 @@ public class HttpProducer extends DefaultProducer {
             final HttpResponse response = httpResponse;
             if (httpResponse != null && getEndpoint().isDisableStreamCache()) {
                 // close the stream at the end of the exchange to ensure it gets eventually closed later
-                exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
+                exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                     @Override
                     public void onDone(Exchange exchange) {
                         try {
