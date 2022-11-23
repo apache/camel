@@ -602,7 +602,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                             messageAsXml,
                             messageAsJSon);
                     backlogTracer.traceEvent(pseudoFirst);
-                    exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
+                    exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                         @Override
                         public void onDone(Exchange exchange) {
                             // create pseudo last
@@ -1076,7 +1076,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                     boolean contains = exchange.getUnitOfWork().containsSynchronization(tracingAfterRoute);
                     if (!contains) {
                         tracer.traceBeforeRoute(routeDefinition, exchange);
-                        exchange.adapt(ExtendedExchange.class).addOnCompletion(tracingAfterRoute);
+                        exchange.getExchangeExtension().addOnCompletion(tracingAfterRoute);
                     }
                 }
                 tracer.traceBeforeNode(processorDefinition, exchange);

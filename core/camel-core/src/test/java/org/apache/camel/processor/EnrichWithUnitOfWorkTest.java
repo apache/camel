@@ -18,7 +18,6 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.SynchronizationAdapter;
@@ -50,7 +49,7 @@ public class EnrichWithUnitOfWorkTest extends ContextTestSupport {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getMessage().setBody("Hello World");
-                exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
+                exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                     @Override
                     public void onDone(Exchange exchange) {
                         exchange.getMessage().setBody("Done " + exchange.getMessage().getBody());
@@ -80,7 +79,7 @@ public class EnrichWithUnitOfWorkTest extends ContextTestSupport {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getMessage().setBody("Hello World");
-                exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
+                exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                     @Override
                     public void onDone(Exchange exchange) {
                         exchange.getMessage().setBody("Done " + exchange.getMessage().getBody());

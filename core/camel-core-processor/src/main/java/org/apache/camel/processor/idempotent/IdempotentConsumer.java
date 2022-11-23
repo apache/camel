@@ -27,7 +27,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.IdAware;
@@ -163,7 +162,7 @@ public class IdempotentConsumer extends AsyncProcessorSupport
                 // we can use existing callback as target
                 target = callback;
                 // the scope is to do the idempotent completion work as an unit of work on the exchange when its done being routed
-                exchange.adapt(ExtendedExchange.class).addOnCompletion(onCompletion);
+                exchange.getExchangeExtension().addOnCompletion(onCompletion);
             }
         } catch (Exception e) {
             exchange.setException(e);
