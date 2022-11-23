@@ -30,7 +30,6 @@ import java.util.TreeMap;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.Route;
@@ -730,7 +729,7 @@ public final class MessageHelper {
             // instead
             id = exchange.getExchangeExtension().getHistoryNodeId();
             if (id != null) {
-                loc = exchange.adapt(ExtendedExchange.class).getHistoryNodeSource();
+                loc = exchange.getExchangeExtension().getHistoryNodeSource();
                 if (loc == null) {
                     loc = "";
                 }

@@ -304,7 +304,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         DefaultExchange exchange = new DefaultExchange(context);
         SafeProperty property = new SafeProperty();
         UnsafeProperty unsafeProperty = new UnsafeProperty();
-        exchange.setSafeCopyProperty(SAFE_PROPERTY, property);
+        exchange.getExchangeExtension().setSafeCopyProperty(SAFE_PROPERTY, property);
         exchange.setProperty(UNSAFE_PROPERTY, unsafeProperty);
 
         Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);

@@ -44,7 +44,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -786,8 +785,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
         // also we would need to know if any error handler has attempted redelivery and exhausted
         boolean stoppedOnException = false;
         boolean exception = false;
-        ExtendedExchange see = (ExtendedExchange) subExchange;
-        boolean exhaust = forceExhaust || see != null && (see.getException() != null || see.isRedeliveryExhausted());
+        boolean exhaust = forceExhaust || subExchange != null && (subExchange.getException() != null || subExchange.getExchangeExtension().isRedeliveryExhausted());
         if (original.getException() != null || subExchange != null && subExchange.getException() != null) {
             // there was an exception and we stopped
             stoppedOnException = isStopOnException();
@@ -911,7 +909,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
         for (Processor processor : processors) {
             // copy exchange, and do not share the unit of work
             Exchange copy = processorExchangeFactory.createCorrelatedCopy(exchange, false);
-            copy.adapt(ExtendedExchange.class).setTransacted(exchange.isTransacted());
+            copy.getExchangeExtension().setTransacted(exchange.isTransacted());
             // If we are in a transaction, set TRANSACTION_CONTEXT_DATA property for new exchanges to share txData
             // during the transaction.
             if (exchange.isTransacted() && copy.getProperty(Exchange.TRANSACTION_CONTEXT_DATA) == null) {
