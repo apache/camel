@@ -266,7 +266,7 @@ And in XML:
 In this example the last two REST endpoints are configured with `disabled`.
 You can use xref:manual:ROOT:using-propertyplaceholder.adoc[Property Placeholder] to
 let a external configuration determine if the REST endpoint is disabled or not.
-In this example the `/customers/{id}/orders` endpoint is disabled via a placeholder.
+In this example the `/customers/\{id}/orders` endpoint is disabled via a placeholder.
 The last REST endpoint is hardcoded to be disabled.
 
 == Binding to POJOs using
