@@ -164,7 +164,7 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
             // (see org.apache.camel.processor.CamelInternalProcessor.InternalCallback#done).
             // To solve this problem, a new synchronization is set on the exchange that is to be
             // processed
-            result.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
+            result.getExchangeExtension().addOnCompletion(new Synchronization() {
                 @Override
                 public void onComplete(Exchange exchange) {
                     synchronizedExchange.consumed(result);

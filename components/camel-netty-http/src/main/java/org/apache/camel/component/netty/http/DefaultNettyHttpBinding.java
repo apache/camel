@@ -105,7 +105,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             // we need to retain it so that the request can be released and we can keep the content
             answer.setBody(request.content().retain());
             answer.getExchange().adapt(ExtendedExchange.class).setStreamCacheDisabled(true);
-            exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
+            exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                 @Override
                 public void onDone(Exchange exchange) {
                     ReferenceCountUtil.release(request.content());
@@ -115,7 +115,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             // turn the body into stream cached (on the client/consumer side we can facade the netty stream instead of converting to byte array)
             NettyChannelBufferStreamCache cache = new NettyChannelBufferStreamCache(request.content());
             // add on completion to the cache which is needed for Camel to keep track of the lifecycle of the cache
-            exchange.adapt(ExtendedExchange.class).addOnCompletion(new NettyChannelBufferStreamCacheOnCompletion(cache));
+            exchange.getExchangeExtension().addOnCompletion(new NettyChannelBufferStreamCacheOnCompletion(cache));
             answer.setBody(cache);
         }
         return answer;

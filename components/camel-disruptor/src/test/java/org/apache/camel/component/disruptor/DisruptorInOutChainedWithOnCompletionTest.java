@@ -17,7 +17,6 @@
 package org.apache.camel.component.disruptor;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -50,7 +49,7 @@ public class DisruptorInOutChainedWithOnCompletionTest extends CamelTestSupport 
                     @Override
                     public void process(final Exchange exchange) {
                         // should come in last
-                        exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
+                        exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                             @Override
                             public void onDone(final Exchange exchange) {
                                 template.sendBody("mock:c", "onCustomCompletion");

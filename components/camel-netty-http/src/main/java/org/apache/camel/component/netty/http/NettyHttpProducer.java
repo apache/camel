@@ -148,7 +148,7 @@ public class NettyHttpProducer extends NettyProducer {
                             response.content().retain();
 
                             // need to release the response when we are done
-                            exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
+                            exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                                 @Override
                                 public void onDone(Exchange exchange) {
                                     if (response.refCnt() > 0) {

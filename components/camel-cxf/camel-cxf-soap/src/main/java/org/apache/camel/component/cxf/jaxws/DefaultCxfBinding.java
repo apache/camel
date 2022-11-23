@@ -51,7 +51,6 @@ import org.w3c.dom.Node;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.DefaultAttachment;
 import org.apache.camel.component.cxf.common.CxfBinding;
@@ -223,7 +222,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
      * @param cxfExchange
      */
     private void addAttachmentFileCloseUoW(Exchange camelExchange, org.apache.cxf.message.Exchange cxfExchange) {
-        camelExchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
+        camelExchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
             @Override
             public void onDone(org.apache.camel.Exchange exchange) {
                 Collection<Attachment> atts = cxfExchange.getInMessage().getAttachments();

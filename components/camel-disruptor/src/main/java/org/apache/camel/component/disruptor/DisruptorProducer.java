@@ -86,7 +86,7 @@ public class DisruptorProducer extends DefaultAsyncProducer {
             final CountDownLatch latch = new CountDownLatch(1);
 
             // we should wait for the reply so install a on completion so we know when its complete
-            copy.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
+            copy.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                 @Override
                 public void onDone(final Exchange response) {
                     // check for timeout, which then already would have invoked the latch

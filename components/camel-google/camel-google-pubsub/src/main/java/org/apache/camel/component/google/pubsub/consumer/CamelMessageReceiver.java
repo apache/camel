@@ -21,7 +21,6 @@ import com.google.cloud.pubsub.v1.MessageReceiver;
 import com.google.common.base.Strings;
 import com.google.pubsub.v1.PubsubMessage;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.google.pubsub.GooglePubsubConstants;
 import org.apache.camel.component.google.pubsub.GooglePubsubConsumer;
@@ -64,7 +63,7 @@ public class CamelMessageReceiver implements MessageReceiver {
         }
 
         if (endpoint.getAckMode() != GooglePubsubConstants.AckMode.NONE) {
-            exchange.adapt(ExtendedExchange.class).addOnCompletion(new AcknowledgeAsync(ackReplyConsumer));
+            exchange.getExchangeExtension().addOnCompletion(new AcknowledgeAsync(ackReplyConsumer));
         }
 
         try {
