@@ -876,7 +876,7 @@ public class AggregateProcessor extends AsyncProcessorSupport
         LOG.debug("Processing aggregated exchange: {}", exchange);
 
         // add on completion task so we remember to update the inProgressCompleteExchanges
-        exchange.adapt(ExtendedExchange.class).addOnCompletion(new AggregateOnCompletion(exchange.getExchangeId()));
+        exchange.getExchangeExtension().addOnCompletion(new AggregateOnCompletion(exchange.getExchangeId()));
 
         // send this exchange
         executorService.execute(() -> {
