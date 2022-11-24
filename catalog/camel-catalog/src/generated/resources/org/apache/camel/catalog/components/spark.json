@@ -4,7 +4,7 @@
     "name": "spark",
     "title": "Spark",
     "description": "Send RDD or DataFrame jobs to Apache Spark clusters.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.17.0",
     "label": "bigdata,iot",
     "javaType": "org.apache.camel.component.spark.SparkComponent",

@@ -40,6 +40,7 @@ public interface SparkComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static SparkComponentBuilder spark() {
         return new SparkComponentBuilderImpl();
     }

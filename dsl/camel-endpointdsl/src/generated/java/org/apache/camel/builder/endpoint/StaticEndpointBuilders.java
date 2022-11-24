@@ -13607,6 +13607,7 @@ public class StaticEndpointBuilders {
      * @param path endpointType
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.SparkEndpointBuilderFactory.SparkEndpointBuilder spark(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.SparkEndpointBuilderFactory.endpointBuilder("spark", path);
@@ -13630,6 +13631,7 @@ public class StaticEndpointBuilders {
      * @param path endpointType
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.SparkEndpointBuilderFactory.SparkEndpointBuilder spark(
             String componentName,
             String path) {
