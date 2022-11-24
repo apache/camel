@@ -323,6 +323,40 @@ public class HdfsProducerTest extends HdfsTestSupport {
         }
     }
 
+    @Test
+    public void testCompressWithBZip2() throws Exception {
+        byte aByte = 8;
+        template.sendBody("direct:bzip2", aByte);
+
+        Configuration conf = new Configuration();
+        Path file1 = new Path("file:///" + TEMP_DIR.toUri() + "/test-camel-bzip2");
+        SequenceFile.Reader reader = new SequenceFile.Reader(conf, SequenceFile.Reader.file(file1));
+        Writable key = (Writable) ReflectionUtils.newInstance(reader.getKeyClass(), conf);
+        Writable value = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), conf);
+        reader.next(key, value);
+        byte rByte = ((ByteWritable) value).get();
+        assertEquals(rByte, aByte);
+
+        IOHelper.close(reader);
+    }
+
+    @Test
+    public void testCompressWithSnappy() throws Exception {
+        byte aByte = 8;
+        template.sendBody("direct:snappy", aByte);
+
+        Configuration conf = new Configuration();
+        Path file1 = new Path("file:///" + TEMP_DIR.toUri() + "/test-camel-snappy");
+        SequenceFile.Reader reader = new SequenceFile.Reader(conf, SequenceFile.Reader.file(file1));
+        Writable key = (Writable) ReflectionUtils.newInstance(reader.getKeyClass(), conf);
+        Writable value = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), conf);
+        reader.next(key, value);
+        byte rByte = ((ByteWritable) value).get();
+        assertEquals(rByte, aByte);
+
+        IOHelper.close(reader);
+    }
+
     @Override
     @AfterEach
     public void tearDown() throws Exception {
@@ -389,6 +423,15 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
                 from("direct:write_dynamic_filename")
                         .to("hdfs:localhost/" + TEMP_DIR.toUri() + "/test-camel-dynamic/?fileSystemType=LOCAL&valueType=TEXT");
+
+                /* For testing compression codecs */
+                from("direct:bzip2")
+                        .to("hdfs:localhost/" + TEMP_DIR.toUri()
+                            + "/test-camel-bzip2?fileSystemType=LOCAL&valueType=BYTE&fileType=SEQUENCE_FILE&compressionCodec=BZIP2&compressionType=BLOCK");
+
+                from("direct:snappy")
+                        .to("hdfs:localhost/" + TEMP_DIR.toUri()
+                            + "/test-camel-snappy?fileSystemType=LOCAL&valueType=BYTE&fileType=SEQUENCE_FILE&compressionCodec=SNAPPY&compressionType=BLOCK");
             }
         };
     }

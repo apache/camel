@@ -20,6 +20,7 @@ import org.apache.hadoop.io.compress.BZip2Codec;
 import org.apache.hadoop.io.compress.CompressionCodec;
 import org.apache.hadoop.io.compress.DefaultCodec;
 import org.apache.hadoop.io.compress.GzipCodec;
+import org.apache.hadoop.io.compress.SnappyCodec;
 
 public enum HdfsCompressionCodec {
 
@@ -41,6 +42,13 @@ public enum HdfsCompressionCodec {
         @Override
         public CompressionCodec getCodec() {
             return new BZip2Codec();
+        }
+    },
+
+    SNAPPY {
+        @Override
+        public CompressionCodec getCodec() {
+            return new SnappyCodec();
         }
     };
 
