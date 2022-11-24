@@ -1,10 +1,11 @@
-= Spark Component
+= Spark Component (deprecated)
 :doctitle: Spark
 :shortname: spark
 :artifactid: camel-spark
 :description: Send RDD or DataFrame jobs to Apache Spark clusters.
 :since: 2.17
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: spark

@@ -291,6 +291,7 @@ public interface SparkEndpointBuilderFactory {
          * @param path endpointType
          * @return the dsl builder
          */
+        @Deprecated
         default SparkEndpointBuilder spark(String path) {
             return SparkEndpointBuilderFactory.endpointBuilder("spark", path);
         }
@@ -313,6 +314,7 @@ public interface SparkEndpointBuilderFactory {
          * @param path endpointType
          * @return the dsl builder
          */
+        @Deprecated
         default SparkEndpointBuilder spark(String componentName, String path) {
             return SparkEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
@@ -382,6 +384,7 @@ public interface SparkEndpointBuilderFactory {
             return "_SPARK_DATAFRAME_CALLBACK";
         }
     }
+    @Deprecated
     static SparkEndpointBuilder endpointBuilder(
             String componentName,
             String path) {

@@ -3971,6 +3971,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.SparkComponentBuilderFactory.SparkComponentBuilder spark() {
         return org.apache.camel.builder.component.dsl.SparkComponentBuilderFactory.spark();
     }
