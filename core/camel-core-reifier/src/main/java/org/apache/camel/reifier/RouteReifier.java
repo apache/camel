@@ -164,32 +164,6 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
             }
         }
 
-        // configure route policy
-        if (definition.getRoutePolicies() != null && !definition.getRoutePolicies().isEmpty()) {
-            for (RoutePolicy policy : definition.getRoutePolicies()) {
-                LOG.debug("RoutePolicy is enabled: {} on route: {}", policy, definition.getId());
-                route.getRoutePolicyList().add(policy);
-            }
-        }
-        if (definition.getRoutePolicyRef() != null) {
-            StringTokenizer policyTokens = new StringTokenizer(definition.getRoutePolicyRef(), ",");
-            while (policyTokens.hasMoreTokens()) {
-                String ref = policyTokens.nextToken().trim();
-                RoutePolicy policy = mandatoryLookup(ref, RoutePolicy.class);
-                LOG.debug("RoutePolicy is enabled: {} on route: {}", policy, definition.getId());
-                route.getRoutePolicyList().add(policy);
-            }
-        }
-        if (camelContext.getRoutePolicyFactories() != null) {
-            for (RoutePolicyFactory factory : camelContext.getRoutePolicyFactories()) {
-                RoutePolicy policy = factory.createRoutePolicy(camelContext, definition.getId(), definition);
-                if (policy != null) {
-                    LOG.debug("RoutePolicy is enabled: {} on route: {}", policy, definition.getId());
-                    route.getRoutePolicyList().add(policy);
-                }
-            }
-        }
-
         // configure auto startup
         Boolean isAutoStartup = parseBoolean(definition.getAutoStartup());
 
@@ -260,6 +234,31 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         InternalProcessor internal = camelContext.adapt(ExtendedCamelContext.class).getInternalProcessorFactory()
                 .addUnitOfWorkProcessorAdvice(camelContext, target, route);
 
+        // configure route policy
+        if (definition.getRoutePolicies() != null && !definition.getRoutePolicies().isEmpty()) {
+            for (RoutePolicy policy : definition.getRoutePolicies()) {
+                LOG.debug("RoutePolicy is enabled: {} on route: {}", policy, definition.getId());
+                route.getRoutePolicyList().add(policy);
+            }
+        }
+        if (definition.getRoutePolicyRef() != null) {
+            StringTokenizer policyTokens = new StringTokenizer(definition.getRoutePolicyRef(), ",");
+            while (policyTokens.hasMoreTokens()) {
+                String ref = policyTokens.nextToken().trim();
+                RoutePolicy policy = mandatoryLookup(ref, RoutePolicy.class);
+                LOG.debug("RoutePolicy is enabled: {} on route: {}", policy, definition.getId());
+                route.getRoutePolicyList().add(policy);
+            }
+        }
+        if (camelContext.getRoutePolicyFactories() != null) {
+            for (RoutePolicyFactory factory : camelContext.getRoutePolicyFactories()) {
+                RoutePolicy policy = factory.createRoutePolicy(camelContext, definition.getId(), definition);
+                if (policy != null) {
+                    LOG.debug("RoutePolicy is enabled: {} on route: {}", policy, definition.getId());
+                    route.getRoutePolicyList().add(policy);
+                }
+            }
+        }
         // and then optionally add route policy processor if a custom policy is set
         List<RoutePolicy> routePolicyList = route.getRoutePolicyList();
         if (routePolicyList != null && !routePolicyList.isEmpty()) {
