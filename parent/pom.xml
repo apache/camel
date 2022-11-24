@@ -158,7 +158,7 @@
         <debezium-mysql-connector-version>8.0.28</debezium-mysql-connector-version>
         <eddsa-version>0.3.0</eddsa-version>
         <egit-github-core-version>2.1.5</egit-github-core-version>
-        <ehcache3-version>3.10.2</ehcache3-version>
+        <ehcache3-version>3.10.8</ehcache3-version>
         <elasticsearch-java-client-version>8.5.2</elasticsearch-java-client-version>
         <elasticsearch-java-client-sniffer-version>8.5.2</elasticsearch-java-client-sniffer-version>
         <elasticsearch-rest-sniffer-version>7.10.2</elasticsearch-rest-sniffer-version>
@@ -233,7 +233,7 @@
         <hbase-version>2.5.0</hbase-version>
         <hdrhistrogram-version>2.1.11</hdrhistrogram-version>
         <hibernate-validator-version>6.2.5.Final</hibernate-validator-version>
-        <hibernate-version>5.6.12.Final</hibernate-version>
+        <hibernate-version>5.6.14.Final</hibernate-version>
         <hk2-version>2.6.1</hk2-version>
         <hsqldb-version>2.7.1</hsqldb-version>
         <httpunit-version>1.7</httpunit-version>
@@ -391,7 +391,7 @@
         <maven-surefire-report-plugin-version>3.0.0-M4</maven-surefire-report-plugin-version>
         <maven-wagon-version>3.5.2</maven-wagon-version>
         <maven-war-plugin-version>3.3.1</maven-war-plugin-version>
-        <metrics-version>4.2.9</metrics-version>
+        <metrics-version>4.2.13</metrics-version>
         <micrometer-version>1.10.2</micrometer-version>
         <microprofile-config-version>2.0.1</microprofile-config-version>
         <microprofile-metrics-version>3.0.1</microprofile-metrics-version>
@@ -507,7 +507,7 @@
         <spring5-version>5.3.24</spring5-version>
         <spring-rabbitmq-version>2.4.7</spring-rabbitmq-version>
         <spring-security-version>5.7.5</spring-security-version>
-        <spring-ws-version>3.1.3</spring-ws-version>
+        <spring-ws-version>3.1.4</spring-ws-version>
         <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.9</squareup-okhttp-version>
         <squareup-okio-version>1.17.2</squareup-okio-version>
