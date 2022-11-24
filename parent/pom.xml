@@ -238,7 +238,7 @@
         <hbase-version>2.5.0</hbase-version>
         <hdrhistrogram-version>2.1.11</hdrhistrogram-version>
         <hibernate-validator-version>6.2.5.Final</hibernate-validator-version>
-        <hibernate-version>5.6.11.Final</hibernate-version>
+        <hibernate-version>5.6.14.Final</hibernate-version>
         <hk2-version>2.6.1</hk2-version>
         <hsqldb-version>2.7.1</hsqldb-version>
         <httpunit-version>1.7</httpunit-version>
@@ -390,8 +390,8 @@
         <maven-shade-plugin-version>3.2.3</maven-shade-plugin-version>
         <maven-surefire-report-plugin-version>3.0.0-M4</maven-surefire-report-plugin-version>
         <maven-war-plugin-version>3.3.1</maven-war-plugin-version>
-        <metrics-version>4.2.9</metrics-version>
-        <micrometer-version>1.9.5</micrometer-version>
+        <metrics-version>4.2.13</metrics-version>
+        <micrometer-version>1.10.2</micrometer-version>
         <microprofile-config-version>2.0.1</microprofile-config-version>
         <microprofile-metrics-version>3.0.1</microprofile-metrics-version>
         <microprofile-fault-tolerance-version>3.0</microprofile-fault-tolerance-version>
@@ -414,7 +414,7 @@
         <nessus-ipfs-version>1.0.0.Beta4</nessus-ipfs-version>
         <nessus-weka-version>1.0.1</nessus-weka-version>
         <neoscada-version>0.4.0</neoscada-version>
-        <netty-version>4.1.79.Final</netty-version>
+        <netty-version>4.1.85.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.0.69</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>9.22</nimbus-jose-jwt>
@@ -499,10 +499,10 @@
         <spring-vault-core-version>2.3.2</spring-vault-core-version>
         <spring-version-range>[5,6)</spring-version-range>
         <spring-version>${spring5-version}</spring-version>
-        <spring5-version>5.3.23</spring5-version>
+        <spring5-version>5.3.24</spring5-version>
         <spring-rabbitmq-version>2.4.7</spring-rabbitmq-version>
         <spring-security-version>5.7.4</spring-security-version>
-        <spring-ws-version>3.1.3</spring-ws-version>
+        <spring-ws-version>3.1.4</spring-ws-version>
         <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.9</squareup-okhttp-version>
         <squareup-okio-version>1.17.2</squareup-okio-version>
