@@ -1089,6 +1089,7 @@ public interface HBaseEndpointBuilderFactory {
          * @param path tableName
          * @return the dsl builder
          */
+        @Deprecated
         default HBaseEndpointBuilder hbase(String path) {
             return HBaseEndpointBuilderFactory.endpointBuilder("hbase", path);
         }
@@ -1110,6 +1111,7 @@ public interface HBaseEndpointBuilderFactory {
          * @param path tableName
          * @return the dsl builder
          */
+        @Deprecated
         default HBaseEndpointBuilder hbase(String componentName, String path) {
             return HBaseEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
@@ -1217,6 +1219,7 @@ public interface HBaseEndpointBuilderFactory {
             return "HBaseMarkedRowId";
         }
     }
+    @Deprecated
     static HBaseEndpointBuilder endpointBuilder(
             String componentName,
             String path) {

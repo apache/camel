@@ -1,10 +1,11 @@
-= HBase Component
+= HBase Component (deprecated)
 :doctitle: HBase
 :shortname: hbase
 :artifactid: camel-hbase
 :description: Reading and write from/to an HBase store (Hadoop database).
 :since: 2.10
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: hbase
