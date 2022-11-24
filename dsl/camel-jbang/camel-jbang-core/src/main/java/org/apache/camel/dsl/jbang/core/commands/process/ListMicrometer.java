@@ -50,6 +50,10 @@ public class ListMicrometer extends ProcessBaseCommand {
                         description = "Only show custom metrics", defaultValue = "false")
     boolean custom;
 
+    @CommandLine.Option(names = { "--all" },
+                        description = "Whether to show all metrics (also unused with counter being 0)", defaultValue = "false")
+    boolean all;
+
     public ListMicrometer(CamelJBangMain main) {
         super(main);
     }
@@ -95,6 +99,9 @@ public class ListMicrometer extends ProcessBaseCommand {
                                     if (custom && row.metricName.startsWith("Camel")) {
                                         continue; // skip internal camel metrics
                                     }
+                                    if (!all && getNumber(row.count).isEmpty()) {
+                                        continue;
+                                    }
                                     if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)) {
                                         rows.add(row);
                                     }
@@ -117,6 +124,9 @@ public class ListMicrometer extends ProcessBaseCommand {
                                     if (custom && row.metricName.startsWith("Camel")) {
                                         continue; // skip internal camel metrics
                                     }
+                                    if (!all && getNumber(row.count).isEmpty()) {
+                                        continue;
+                                    }
                                     if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)) {
                                         rows.add(row);
                                     }
@@ -135,6 +145,9 @@ public class ListMicrometer extends ProcessBaseCommand {
 
                                     if (custom && row.metricName.startsWith("Camel")) {
                                         continue; // skip internal camel metrics
+                                    }
+                                    if (!all && getNumber(row.count).isEmpty()) {
+                                        continue;
                                     }
                                     if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)) {
                                         rows.add(row);
@@ -158,6 +171,9 @@ public class ListMicrometer extends ProcessBaseCommand {
                                     if (custom && row.metricName.startsWith("Camel")) {
                                         continue; // skip internal camel metrics
                                     }
+                                    if (!all && getNumber(row.count).isEmpty()) {
+                                        continue;
+                                    }
                                     if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)) {
                                         rows.add(row);
                                     }
@@ -176,7 +192,7 @@ public class ListMicrometer extends ProcessBaseCommand {
                     new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(r -> r.name),
                     new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).with(r -> r.type),
-                    new Column().header("METRIC").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
+                    new Column().header("METRIC").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(r -> r.metricName),
                     new Column().header("ROUTE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(r -> r.metricRouteId),
@@ -200,16 +216,29 @@ public class ListMicrometer extends ProcessBaseCommand {
             s = s.substring(1);
             negate = -1;
         }
+
+        int answer;
         switch (s) {
             case "pid":
-                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid)) * negate;
+                answer = Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid)) * negate;
+                break;
             case "name":
-                return o1.name.compareToIgnoreCase(o2.name) * negate;
+                answer = o1.name.compareToIgnoreCase(o2.name) * negate;
+                break;
             case "age":
-                return Long.compare(o1.uptime, o2.uptime) * negate;
+                answer = Long.compare(o1.uptime, o2.uptime) * negate;
+                break;
             default:
-                return 0;
+                answer = 0;
         }
+        if (answer == 0) {
+            // sort by metric/route
+            answer = o1.metricName.compareToIgnoreCase(o2.metricName) * negate;
+            if (answer == 0) {
+                answer = o1.metricRouteId.compareToIgnoreCase(o2.metricRouteId) * negate;
+            }
+        }
+        return answer;
     }
 
     private String getNumber(double d) {
@@ -232,7 +261,7 @@ public class ListMicrometer extends ProcessBaseCommand {
                 }
             }
         }
-        return null;
+        return "";
     }
 
     private static class Row implements Cloneable {
