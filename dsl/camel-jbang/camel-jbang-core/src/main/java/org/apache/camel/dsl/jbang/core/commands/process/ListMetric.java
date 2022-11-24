@@ -31,9 +31,9 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "micrometer",
+@Command(name = "metric",
          description = "Get metrics (micrometer) of running Camel integrations")
-public class ListMicrometer extends ProcessBaseCommand {
+public class ListMetric extends ProcessBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -54,7 +54,7 @@ public class ListMicrometer extends ProcessBaseCommand {
                         description = "Whether to show all metrics (also unused with counter being 0)", defaultValue = "false")
     boolean all;
 
-    public ListMicrometer(CamelJBangMain main) {
+    public ListMetric(CamelJBangMain main) {
         super(main);
     }
 
