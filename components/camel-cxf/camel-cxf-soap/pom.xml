@@ -280,22 +280,6 @@
             </resource>
         </resources>
         <plugins>
-            <!-- generate the attached tests jar -->
-            <plugin>
-                <artifactId>maven-jar-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>test-jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <excludes>
-                        <exclude>log4j2.properties</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
