@@ -644,7 +644,7 @@ class Run extends CamelCommand {
         return main;
     }
 
-    private void configureLogging() throws Exception {
+    private void configureLogging() {
         if (silentRun) {
             // do not configure logging
         } else if (logging) {
