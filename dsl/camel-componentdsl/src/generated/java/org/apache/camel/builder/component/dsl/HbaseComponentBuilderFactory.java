@@ -40,6 +40,7 @@ public interface HbaseComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static HbaseComponentBuilder hbase() {
         return new HbaseComponentBuilderImpl();
     }
