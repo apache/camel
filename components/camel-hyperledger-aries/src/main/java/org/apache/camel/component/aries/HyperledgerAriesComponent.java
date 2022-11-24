@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.aries;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -116,7 +115,7 @@ public class HyperledgerAriesComponent extends DefaultComponent {
         return adminClient;
     }
 
-    public AriesClient createClient(String walletName) throws IOException {
+    public AriesClient createClient(String walletName) {
         NessusWallet wallet = assertWallet(walletName);
         AgentConfiguration agentConfig = getAgentConfiguration();
         return AriesClientFactory.createClient(agentConfig, wallet);

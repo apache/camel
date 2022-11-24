@@ -208,7 +208,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
         return configuration.createInOnlyTemplate(endpoint, pubSubDomain, destination);
     }
 
-    public AbstractMessageListenerContainer createMessageListenerContainer(JmsEndpoint endpoint) throws Exception {
+    public AbstractMessageListenerContainer createMessageListenerContainer(JmsEndpoint endpoint) {
         return configuration.createMessageListenerContainer(endpoint);
     }
 
@@ -692,8 +692,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
         return JmsConfiguration.createDestinationResolver(destinationEndpoint);
     }
 
-    public void configureMessageListenerContainer(AbstractMessageListenerContainer container, JmsEndpoint endpoint)
-            throws Exception {
+    public void configureMessageListenerContainer(AbstractMessageListenerContainer container, JmsEndpoint endpoint) {
         configuration.configureMessageListenerContainer(container, endpoint);
     }
 
