@@ -83,6 +83,7 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
             String name = namingStrategy.getInflightExchangesName(exchange, exchange.getFromEndpoint());
             Tags tags = namingStrategy.getInflightExchangesTags(exchangeEvent, exchange.getFromEndpoint());
             Gauge.builder(name, () -> getInflightExchangesInRoute(exchangeEvent))
+                    .description("Route inflight messages")
                     .tags(tags)
                     .register(getMeterRegistry());
         }
