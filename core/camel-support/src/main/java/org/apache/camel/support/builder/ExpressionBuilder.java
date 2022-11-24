@@ -45,6 +45,7 @@ import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.ConstantExpressionAdapter;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
@@ -822,6 +823,40 @@ public class ExpressionBuilder {
             @Override
             public String toString() {
                 return "body";
+            }
+        };
+    }
+
+    /**
+     * Returns the expression for the original incoming message body
+     */
+    public static Expression originalBodyExpression() {
+        return new ExpressionAdapter() {
+
+            private boolean enabled;
+            @Override
+            public Object evaluate(Exchange exchange) {
+                if (enabled) {
+                    UnitOfWork uow = exchange.adapt(Exchange.class).getUnitOfWork();
+                    if (uow != null) {
+                        Message msg = uow.getOriginalInMessage();
+                        if (msg != null) {
+                            return msg.getBody();
+                        }
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                super.init(context);
+                this.enabled = context.isAllowUseOriginalMessage();
+            }
+
+            @Override
+            public String toString() {
+                return "originalBody";
             }
         };
     }
