@@ -41,14 +41,7 @@ import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
 import org.apache.camel.dsl.yaml.common.exception.InvalidEndpointException;
 import org.apache.camel.dsl.yaml.common.exception.InvalidNodeTypeException;
 import org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition;
-import org.apache.camel.model.KameletDefinition;
-import org.apache.camel.model.OnExceptionDefinition;
-import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.RouteConfigurationDefinition;
-import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.RouteTemplateDefinition;
-import org.apache.camel.model.TemplatedRouteDefinition;
-import org.apache.camel.model.ToDefinition;
+import org.apache.camel.model.*;
 import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition;
 import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
@@ -168,6 +161,14 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     return true;
                 } else if (item instanceof CamelContextCustomizer) {
                     ((CamelContextCustomizer) item).configure(getCamelContext());
+                    return true;
+                } else if (item instanceof OnCompletionDefinition) {
+                    if (!getRouteCollection().getRoutes().isEmpty()) {
+                        throw new IllegalArgumentException(
+                                "onCompletion must be defined before any routes in the RouteBuilder");
+                    }
+                    CamelContextAware.trySetCamelContext(getRouteCollection(), getCamelContext());
+                    getRouteCollection().getOnCompletions().add((OnCompletionDefinition) item);
                     return true;
                 } else if (item instanceof OnExceptionDefinition) {
                     if (!getRouteCollection().getRoutes().isEmpty()) {
