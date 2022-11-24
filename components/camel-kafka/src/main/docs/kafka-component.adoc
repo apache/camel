@@ -369,12 +369,15 @@ This will force a synchronous commit which will block until the commit is acknow
 You can use an asynchronous commit as well by configuring the `KafkaManualCommitFactory` with the `DefaultKafkaManualAsyncCommitFactory` implementation.
 
 Then the commit will be done in the next consumer loop using the kafka asynchronous commit api.
-Be aware that records from a partition must be processed and committed by a unique thread.
-If not, this could lead with non-consistent behaviors.
-This is mostly useful with aggregation's completion timeout strategies.
 
 If you want to use a custom implementation of `KafkaManualCommit` then you can configure a custom `KafkaManualCommitFactory`
 on the `KafkaComponent` that creates instances of your custom implementation.
+
+*Note 1*: records from a partition must be processed and committed by the same thread as the consumer. This means that certain EIPs, async or concurrent operations
+in the DSL, may cause the commit to fail. In such circumstances, tyring to commit the transaction will cause the Kafka client to throw a `java.util.ConcurrentModificationException`
+exception with the message `KafkaConsumer is not safe for multi-threaded access`. To prevent this from happening, redesign your route to avoid those operations.
+
+*Note 2: this is mostly useful with aggregation's completion timeout strategies.
 
 == Pausable Consumers
 
