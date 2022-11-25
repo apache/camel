@@ -22,7 +22,7 @@ import org.apache.camel.StaticService;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.util.RegistryBeanResolver;
-import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.support.TypedLanguageSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.expression.BeanFactoryResolver;
@@ -32,22 +32,22 @@ import org.springframework.expression.BeanResolver;
  * A Spring Expression {@link org.apache.camel.spi.Language} plugin
  */
 @Language("spel")
-public class SpelLanguage extends LanguageSupport implements StaticService {
+public class SpelLanguage extends TypedLanguageSupport implements StaticService {
 
     private BeanResolver beanResolver;
 
     @Override
     public Predicate createPredicate(String expression) {
-        expression = loadResource(expression);
-        Predicate answer = new SpelExpression(expression, Boolean.class, beanResolver);
-        answer.init(getCamelContext());
-        return answer;
+        return createSpelExpression(expression, Boolean.class);
     }
 
     @Override
     public Expression createExpression(String expression) {
-        expression = loadResource(expression);
-        Expression answer = new SpelExpression(expression, Object.class, beanResolver);
+        return createSpelExpression(expression, Object.class);
+    }
+
+    private SpelExpression createSpelExpression(String expression, Class<?> type) {
+        SpelExpression answer = new SpelExpression(loadResource(expression), type, beanResolver);
         answer.init(getCamelContext());
         return answer;
     }

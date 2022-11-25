@@ -34,14 +34,13 @@ public class XQueryExpression extends NamespaceAwareExpression {
 
     @XmlTransient
     private Class<?> resultType;
+    @XmlAttribute(name = "resultType")
+    private String resultTypeName;
     @XmlTransient
     private Object configuration;
 
     @XmlAttribute
     private String type;
-    @XmlAttribute
-    @Metadata(label = "advanced")
-    private String headerName;
     @XmlAttribute
     @Metadata(label = "advanced")
     private String configurationRef;
@@ -55,10 +54,10 @@ public class XQueryExpression extends NamespaceAwareExpression {
 
     private XQueryExpression(Builder builder) {
         super(builder);
+        this.resultTypeName = builder.resultTypeName;
         this.resultType = builder.resultType;
         this.configuration = builder.configuration;
         this.type = builder.type;
-        this.headerName = builder.headerName;
         this.configurationRef = builder.configurationRef;
     }
 
@@ -93,15 +92,15 @@ public class XQueryExpression extends NamespaceAwareExpression {
         this.resultType = resultType;
     }
 
-    public String getHeaderName() {
-        return headerName;
+    public String getResultTypeName() {
+        return resultTypeName;
     }
 
     /**
-     * Name of header to use as input, instead of the message body
+     * Sets the class of the result type (type from output)
      */
-    public void setHeaderName(String headerName) {
-        this.headerName = headerName;
+    public void setResultTypeName(String resultTypeName) {
+        this.resultTypeName = resultTypeName;
     }
 
     public String getConfigurationRef() {
@@ -135,11 +134,19 @@ public class XQueryExpression extends NamespaceAwareExpression {
     @XmlTransient
     public static class Builder extends AbstractNamespaceAwareBuilder<Builder, XQueryExpression> {
 
+        private String resultTypeName;
         private Class<?> resultType;
         private Object configuration;
         private String type;
-        private String headerName;
         private String configurationRef;
+
+        /**
+         * Sets the class of the result type (type from output)
+         */
+        public Builder resultTypeName(String resultTypeName) {
+            this.resultTypeName = resultTypeName;
+            return this;
+        }
 
         /**
          * Sets the class of the result type (type from output).
@@ -167,14 +174,6 @@ public class XQueryExpression extends NamespaceAwareExpression {
          */
         public Builder type(String type) {
             this.type = type;
-            return this;
-        }
-
-        /**
-         * Name of header to use as input, instead of the message body
-         */
-        public Builder headerName(String headerName) {
-            this.headerName = headerName;
             return this;
         }
 

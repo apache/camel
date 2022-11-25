@@ -28,13 +28,14 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.NamespaceAware;
+import org.apache.camel.support.builder.Namespaces;
 
 /**
  * A useful base class for any expression which may be namespace or XML content aware such as {@link XPathExpression} or
  * {@link XQueryExpression}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class NamespaceAwareExpression extends ExpressionDefinition implements NamespaceAware {
+public abstract class NamespaceAwareExpression extends SingleInputExpressionDefinition implements NamespaceAware {
 
     @XmlElement(name = "namespace")
     @Metadata(label = "common")
@@ -42,10 +43,10 @@ public abstract class NamespaceAwareExpression extends ExpressionDefinition impl
     @XmlTransient
     private Map<String, String> namespaces;
 
-    public NamespaceAwareExpression() {
+    protected NamespaceAwareExpression() {
     }
 
-    public NamespaceAwareExpression(String expression) {
+    protected NamespaceAwareExpression(String expression) {
         super(expression);
     }
 
@@ -99,11 +100,21 @@ public abstract class NamespaceAwareExpression extends ExpressionDefinition impl
     @XmlTransient
     @SuppressWarnings("unchecked")
     abstract static class AbstractNamespaceAwareBuilder<
-            T extends AbstractNamespaceAwareBuilder<T, E>, E extends ExpressionDefinition>
+            T extends AbstractNamespaceAwareBuilder<T, E>, E extends NamespaceAwareExpression>
             extends AbstractBuilder<T, E> {
 
         private List<PropertyDefinition> namespace;
         private Map<String, String> namespaces;
+
+        /**
+         * Injects the XML Namespaces of prefix -> uri mappings
+         *
+         * @param namespaces the XML namespaces
+         */
+        public T namespaces(Namespaces namespaces) {
+            this.namespaces = namespaces.getNamespaces();
+            return (T) this;
+        }
 
         /**
          * Injects the XML Namespaces of prefix -> uri mappings

@@ -999,6 +999,24 @@ public class ExpressionBuilder {
     }
 
     /**
+     * @param headerName the name of the header from which the input data must be extracted if not empty.
+     * @param propertyName the name of the property from which the input data must be extracted if not empty and {@code headerName} is empty.
+     * @return a header expression if {@code headerName} is not empty, otherwise a property expression if {@code propertyName} is not empty
+     * or finally a body expression.
+     */
+    public static Expression singleInputExpression(String headerName, String propertyName) {
+        final Expression exp;
+        if (ObjectHelper.isNotEmpty(headerName)) {
+            exp = headerExpression(headerName);
+        } else if (ObjectHelper.isNotEmpty(propertyName)) {
+            exp = exchangePropertyExpression(propertyName);
+        } else {
+            exp = bodyExpression();
+        }
+        return exp;
+    }
+
+    /**
      * Returns the expression for the current thread name
      */
     public static Expression threadNameExpression() {

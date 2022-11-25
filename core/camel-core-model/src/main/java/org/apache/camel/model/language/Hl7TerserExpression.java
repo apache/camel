@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(firstVersion = "2.11.0", label = "language,hl7", title = "HL7 Terser")
 @XmlRootElement(name = "hl7terser")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Hl7TerserExpression extends ExpressionDefinition {
+public class Hl7TerserExpression extends SingleInputTypedExpressionDefinition {
 
     public Hl7TerserExpression() {
     }

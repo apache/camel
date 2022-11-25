@@ -17,32 +17,17 @@
 package org.apache.camel.reifier.language;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.JoorExpression;
-import org.apache.camel.spi.Language;
 
-public class JoorExpressionReifier extends ExpressionReifier<JoorExpression> {
+public class JoorExpressionReifier extends TypedExpressionReifier<JoorExpression> {
 
     public JoorExpressionReifier(CamelContext camelContext, ExpressionDefinition definition) {
-        super(camelContext, (JoorExpression) definition);
+        super(camelContext, definition);
     }
 
     @Override
-    protected void configureLanguage(Language language) {
-        if (definition.getResultType() == null && definition.getResultTypeName() != null) {
-            try {
-                Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(definition.getResultTypeName());
-                definition.setResultType(clazz);
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeException(e);
-            }
-        }
-    }
-
-    private Object[] createProperties() {
+    protected Object[] createProperties() {
         Object[] properties = new Object[3];
         properties[0] = parseBoolean(definition.getPreCompile());
         properties[1] = definition.getResultType();
@@ -54,16 +39,6 @@ public class JoorExpressionReifier extends ExpressionReifier<JoorExpression> {
     public boolean isResolveOptionalExternalScriptEnabled() {
         // we handle this in camel-joor
         return false;
-    }
-
-    @Override
-    protected Expression createExpression(Language language, String exp) {
-        return language.createExpression(exp, createProperties());
-    }
-
-    @Override
-    protected Predicate createPredicate(Language language, String exp) {
-        return language.createPredicate(exp, createProperties());
     }
 
 }

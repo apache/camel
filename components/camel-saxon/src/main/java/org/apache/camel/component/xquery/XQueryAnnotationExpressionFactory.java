@@ -42,6 +42,9 @@ public class XQueryAnnotationExpressionFactory extends DefaultAnnotationExpressi
             if (ObjectHelper.isNotEmpty(xQueryAnnotation.headerName())) {
                 builder.setHeaderName(xQueryAnnotation.headerName());
             }
+            if (ObjectHelper.isNotEmpty(xQueryAnnotation.propertyName())) {
+                builder.setPropertyName(xQueryAnnotation.propertyName());
+            }
             NamespacePrefix[] namespaces = xQueryAnnotation.namespaces();
             if (namespaces != null) {
                 for (NamespacePrefix namespacePrefix : namespaces) {
@@ -49,16 +52,23 @@ public class XQueryAnnotationExpressionFactory extends DefaultAnnotationExpressi
                 }
             }
         }
-        if (expressionReturnType.isAssignableFrom(String.class)) {
+        Class<?> resultType = getResultType(annotation);
+        if (resultType.equals(Object.class)) {
+            resultType = expressionReturnType;
+        }
+        if (resultType.isAssignableFrom(String.class)) {
             builder.setResultsFormat(ResultFormat.String);
-        } else if (expressionReturnType.isAssignableFrom(CollectionFn.class)) {
+        } else if (resultType.isAssignableFrom(CollectionFn.class)) {
             builder.setResultsFormat(ResultFormat.List);
-        } else if (expressionReturnType.isAssignableFrom(Node.class)) {
+        } else if (resultType.isAssignableFrom(Node.class)) {
             builder.setResultsFormat(ResultFormat.DOM);
-        } else if (expressionReturnType.isAssignableFrom(byte[].class)) {
+        } else if (resultType.isAssignableFrom(byte[].class)) {
             builder.setResultsFormat(ResultFormat.Bytes);
         }
         return builder;
     }
 
+    protected Class<?> getResultType(Annotation annotation) {
+        return (Class<?>) getAnnotationObjectValue(annotation, "resultType");
+    }
 }

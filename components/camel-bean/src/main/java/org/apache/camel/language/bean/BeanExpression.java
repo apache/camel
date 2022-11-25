@@ -58,7 +58,7 @@ public class BeanExpression implements Expression, Predicate {
     private ParameterMappingStrategy parameterMappingStrategy;
     private BeanComponent beanComponent;
     private Language simple;
-
+    private Class<?> resultType;
     private Object bean;
     private String beanName;
     private Class<?> type;
@@ -134,6 +134,14 @@ public class BeanExpression implements Expression, Predicate {
 
     public void setSimple(Language simple) {
         this.simple = simple;
+    }
+
+    public Class<?> getResultType() {
+        return resultType;
+    }
+
+    public void setResultType(Class<?> resultType) {
+        this.resultType = resultType;
     }
 
     @Override
@@ -213,7 +221,8 @@ public class BeanExpression implements Expression, Predicate {
         Object result = evaluate(exchange);
         if (Object.class == type) {
             // do not use type converter if type is Object (optimize)
-            return (T) result;
+            return (T) (resultType == null
+                    ? result : exchange.getContext().getTypeConverter().convertTo(resultType, exchange, result));
         } else {
             return exchange.getContext().getTypeConverter().convertTo(type, exchange, result);
         }

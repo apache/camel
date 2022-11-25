@@ -30,7 +30,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(firstVersion = "2.0.0", label = "language,core", title = "Tokenize")
 @XmlRootElement(name = "tokenize")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TokenizerExpression extends ExpressionDefinition {
+public class TokenizerExpression extends SingleInputExpressionDefinition {
 
     @XmlAttribute(required = true)
     private String token;
@@ -39,9 +39,6 @@ public class TokenizerExpression extends ExpressionDefinition {
     @XmlAttribute
     @Metadata(label = "advanced")
     private String inheritNamespaceTagName;
-    @XmlAttribute
-    @Metadata(label = "advanced")
-    private String headerName;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String regex;
@@ -73,7 +70,6 @@ public class TokenizerExpression extends ExpressionDefinition {
         this.token = builder.token;
         this.endToken = builder.endToken;
         this.inheritNamespaceTagName = builder.inheritNamespaceTagName;
-        this.headerName = builder.headerName;
         this.regex = builder.regex;
         this.xml = builder.xml;
         this.includeTokens = builder.includeTokens;
@@ -109,17 +105,6 @@ public class TokenizerExpression extends ExpressionDefinition {
      */
     public void setEndToken(String endToken) {
         this.endToken = endToken;
-    }
-
-    public String getHeaderName() {
-        return headerName;
-    }
-
-    /**
-     * Name of header to tokenize instead of using the message body.
-     */
-    public void setHeaderName(String headerName) {
-        this.headerName = headerName;
     }
 
     /**
@@ -210,7 +195,15 @@ public class TokenizerExpression extends ExpressionDefinition {
         if (endToken != null) {
             return "tokenize{body() using tokens: " + token + "..." + endToken + "}";
         } else {
-            return "tokenize{" + (headerName != null ? "header: " + headerName : "body()") + " using token: " + token + "}";
+            final String source;
+            if (getHeaderName() != null) {
+                source = "header: " + getHeaderName();
+            } else if (getPropertyName() != null) {
+                source = "property: " + getPropertyName();
+            } else {
+                source = "body()";
+            }
+            return "tokenize{" + source + " using token: " + token + "}";
         }
     }
 
@@ -223,7 +216,6 @@ public class TokenizerExpression extends ExpressionDefinition {
         private String token;
         private String endToken;
         private String inheritNamespaceTagName;
-        private String headerName;
         private String regex;
         private String xml;
         private String includeTokens;
@@ -255,14 +247,6 @@ public class TokenizerExpression extends ExpressionDefinition {
          */
         public Builder inheritNamespaceTagName(String inheritNamespaceTagName) {
             this.inheritNamespaceTagName = inheritNamespaceTagName;
-            return this;
-        }
-
-        /**
-         * Name of header to tokenize instead of using the message body.
-         */
-        public Builder headerName(String headerName) {
-            this.headerName = headerName;
             return this;
         }
 

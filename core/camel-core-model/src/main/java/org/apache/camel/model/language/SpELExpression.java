@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(firstVersion = "2.7.0", label = "language,spring", title = "SpEL")
 @XmlRootElement(name = "spel")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SpELExpression extends ExpressionDefinition {
+public class SpELExpression extends TypedExpressionDefinition {
 
     public SpELExpression() {
     }

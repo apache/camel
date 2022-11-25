@@ -21,38 +21,10 @@ import org.apache.camel.Predicate;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
-import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.support.SingleInputTypedLanguageSupport;
 
 @Language("jq")
-public class JqLanguage extends LanguageSupport implements StaticService {
-
-    private Class<?> resultType;
-    private String headerName;
-    private String propertyName;
-
-    public Class<?> getResultType() {
-        return resultType;
-    }
-
-    public void setResultType(Class<?> resultType) {
-        this.resultType = resultType;
-    }
-
-    public String getHeaderName() {
-        return headerName;
-    }
-
-    public void setHeaderName(String headerName) {
-        this.headerName = headerName;
-    }
-
-    public String getPropertyName() {
-        return propertyName;
-    }
-
-    public void setPropertyName(String propertyName) {
-        this.propertyName = propertyName;
-    }
+public class JqLanguage extends SingleInputTypedLanguageSupport implements StaticService {
 
     @Override
     public void start() {
@@ -77,9 +49,9 @@ public class JqLanguage extends LanguageSupport implements StaticService {
     @Override
     public Expression createExpression(String expression) {
         JqExpression answer = new JqExpression(expression);
-        answer.setResultType(resultType);
-        answer.setHeaderName(headerName);
-        answer.setPropertyName(propertyName);
+        answer.setResultType(getResultType());
+        answer.setHeaderName(getHeaderName());
+        answer.setPropertyName(getPropertyName());
         answer.init(getCamelContext());
         return answer;
     }
@@ -87,9 +59,9 @@ public class JqLanguage extends LanguageSupport implements StaticService {
     @Override
     public Expression createExpression(String expression, Object[] properties) {
         JqExpression answer = new JqExpression(expression);
-        answer.setResultType(property(Class.class, properties, 0, resultType));
-        answer.setHeaderName(property(String.class, properties, 1, headerName));
-        answer.setPropertyName(property(String.class, properties, 2, propertyName));
+        answer.setResultType(property(Class.class, properties, 0, getResultType()));
+        answer.setHeaderName(property(String.class, properties, 1, getHeaderName()));
+        answer.setPropertyName(property(String.class, properties, 2, getPropertyName()));
         answer.init(getCamelContext());
         return answer;
     }

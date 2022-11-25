@@ -227,7 +227,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     /**
      * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html>bean language</a> which
      * basically means the bean is invoked to determine the expression value.
-     *
+     * <p>
      * Will lookup in registry and if there is a single instance of the same type, then the existing bean is used,
      * otherwise a new bean is created (requires a default no-arg constructor).
      *
@@ -294,7 +294,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     /**
      * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html>bean language</a> which
      * basically means the bean is invoked to determine the expression value.
-     *
+     * <p>
      * Will lookup in registry and if there is a single instance of the same type, then the existing bean is used,
      * otherwise a new bean is created (requires a default no-arg constructor).
      *
@@ -309,7 +309,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     /**
      * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html>bean language</a> which
      * basically means the bean is invoked to determine the expression value.
-     *
+     * <p>
      * Will lookup in registry and if there is a single instance of the same type, then the existing bean is used,
      * otherwise a new bean is created (requires a default no-arg constructor).
      *
@@ -326,7 +326,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     /**
      * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html>bean language</a> which
      * basically means the bean is invoked to determine the expression value.
-     *
+     * <p>
      * Will lookup in registry and if there is a single instance of the same type, then the existing bean is used,
      * otherwise a new bean is created (requires a default no-arg constructor).
      *
@@ -1125,6 +1125,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      */
     public T xpath(String text, Class<?> resultType, String headerName) {
         XPathExpression expression = new XPathExpression(text);
+        expression.setResultType(resultType);
         expression.setHeaderName(headerName);
         expression(expression);
         return result;
@@ -1253,6 +1254,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      */
     public T xquery(String text, Class<?> resultType, String headerName) {
         XQueryExpression expression = new XQueryExpression(text);
+        expression.setResultType(resultType);
         expression.setHeaderName(headerName);
         expression(expression);
         return result;

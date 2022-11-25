@@ -21,7 +21,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
-import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.support.SingleInputLanguageSupport;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -39,12 +39,11 @@ import org.apache.camel.util.ObjectHelper;
  * <tt>token</tt> and <tt>endToken</tt>. And the <tt>xml</tt> mode supports the <tt>inheritNamespaceTagName</tt> option.
  */
 @org.apache.camel.spi.annotations.Language("tokenize")
-public class TokenizeLanguage extends LanguageSupport implements PropertyConfigurer {
+public class TokenizeLanguage extends SingleInputLanguageSupport implements PropertyConfigurer {
 
     private String token;
     private String endToken;
     private String inheritNamespaceTagName;
-    private String headerName;
     private boolean regex;
     private boolean xml;
     private boolean includeTokens;
@@ -62,7 +61,7 @@ public class TokenizeLanguage extends LanguageSupport implements PropertyConfigu
         TokenizeLanguage language = new TokenizeLanguage();
         language.setToken(token);
         language.setRegex(regex);
-        return language.createExpression((String) null);
+        return language.createExpression(null);
     }
 
     @Deprecated
@@ -76,7 +75,7 @@ public class TokenizeLanguage extends LanguageSupport implements PropertyConfigu
         language.setHeaderName(headerName);
         language.setToken(token);
         language.setRegex(regex);
-        return language.createExpression((String) null);
+        return language.createExpression(null);
     }
 
     @Deprecated
@@ -85,7 +84,7 @@ public class TokenizeLanguage extends LanguageSupport implements PropertyConfigu
         language.setToken(startToken);
         language.setEndToken(endToken);
         language.setIncludeTokens(includeTokens);
-        return language.createExpression((String) null);
+        return language.createExpression(null);
     }
 
     @Deprecated
@@ -117,6 +116,10 @@ public class TokenizeLanguage extends LanguageSupport implements PropertyConfigu
             case "headername":
             case "headerName":
                 setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value));
+                return true;
+            case "propertyname":
+            case "propertyName":
+                setPropertyName(PropertyConfigurerSupport.property(camelContext, String.class, value));
                 return true;
             case "regex":
                 setRegex(PropertyConfigurerSupport.property(camelContext, Boolean.class, value));
@@ -172,8 +175,7 @@ public class TokenizeLanguage extends LanguageSupport implements PropertyConfigu
 
         if (answer == null) {
             // use the regular tokenizer
-            Expression exp
-                    = headerName == null ? ExpressionBuilder.bodyExpression() : ExpressionBuilder.headerExpression(headerName);
+            final Expression exp = ExpressionBuilder.singleInputExpression(getHeaderName(), getPropertyName());
             if (regex) {
                 answer = ExpressionBuilder.regexTokenizeExpression(exp, token);
             } else {
@@ -221,13 +223,14 @@ public class TokenizeLanguage extends LanguageSupport implements PropertyConfigu
         answer.setEndToken(property(String.class, properties, 1, endToken));
         answer.setInheritNamespaceTagName(
                 property(String.class, properties, 2, inheritNamespaceTagName));
-        answer.setHeaderName(property(String.class, properties, 3, headerName));
+        answer.setHeaderName(property(String.class, properties, 3, getHeaderName()));
         answer.setGroupDelimiter(property(String.class, properties, 4, groupDelimiter));
         answer.setRegex(property(boolean.class, properties, 5, regex));
         answer.setXml(property(boolean.class, properties, 6, xml));
         answer.setIncludeTokens(property(boolean.class, properties, 7, includeTokens));
         answer.setGroup(property(String.class, properties, 8, group));
         answer.setSkipFirst(property(boolean.class, properties, 9, skipFirst));
+        answer.setPropertyName(property(String.class, properties, 10, getPropertyName()));
         return answer.createExpression(expression);
     }
 
@@ -245,14 +248,6 @@ public class TokenizeLanguage extends LanguageSupport implements PropertyConfigu
 
     public void setEndToken(String endToken) {
         this.endToken = endToken;
-    }
-
-    public String getHeaderName() {
-        return headerName;
-    }
-
-    public void setHeaderName(String headerName) {
-        this.headerName = headerName;
     }
 
     public boolean isRegex() {

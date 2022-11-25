@@ -39,8 +39,8 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
-import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.TypedLanguageSupport;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
@@ -57,7 +57,7 @@ import org.apache.camel.util.URISupport;
  * As of Camel 1.5 the bean language also supports invoking a provided bean by its classname or the bean itself.
  */
 @org.apache.camel.spi.annotations.Language("bean")
-public class BeanLanguage extends LanguageSupport implements ScriptingLanguage, PropertyConfigurer, StaticService {
+public class BeanLanguage extends TypedLanguageSupport implements ScriptingLanguage, PropertyConfigurer, StaticService {
     public static final String LANGUAGE = "bean";
 
     private volatile BeanComponent beanComponent;
@@ -135,6 +135,10 @@ public class BeanLanguage extends LanguageSupport implements ScriptingLanguage, 
             case "scope":
                 setScope(PropertyConfigurerSupport.property(camelContext, BeanScope.class, value));
                 return true;
+            case "resultType":
+            case "resulttype":
+                setResultType(PropertyConfigurerSupport.property(camelContext, Class.class, value));
+                return true;
             default:
                 return false;
         }
@@ -174,7 +178,7 @@ public class BeanLanguage extends LanguageSupport implements ScriptingLanguage, 
         if (answer == null) {
             throw new IllegalArgumentException("Bean language requires bean, beanType, or ref argument");
         }
-        if (properties.length == 5) {
+        if (properties.length >= 5) {
             Object scope = properties[4];
             if (scope instanceof BeanScope) {
                 answer.setScope((BeanScope) scope);
@@ -182,6 +186,7 @@ public class BeanLanguage extends LanguageSupport implements ScriptingLanguage, 
                 answer.setScope(BeanScope.valueOf(scope.toString()));
             }
         }
+        answer.setResultType(property(Class.class, properties, 5, getResultType()));
         answer.setBeanComponent(beanComponent);
         answer.setParameterMappingStrategy(parameterMappingStrategy);
         answer.setSimple(simple);

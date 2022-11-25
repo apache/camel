@@ -5813,6 +5813,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true),
                     @YamlProperty(name = "id", type = "string"),
+                    @YamlProperty(name = "result-type", type = "string"),
                     @YamlProperty(name = "trim", type = "boolean")
             }
     )
@@ -5843,6 +5844,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "id": {
                     String val = asText(node);
                     target.setId(val);
+                    break;
+                }
+                case "result-type": {
+                    String val = asText(node);
+                    target.setResultTypeName(val);
                     break;
                 }
                 case "trim": {
@@ -6200,7 +6206,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true),
+                    @YamlProperty(name = "header-name", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
+                    @YamlProperty(name = "property-name", type = "string"),
+                    @YamlProperty(name = "result-type", type = "string"),
                     @YamlProperty(name = "trim", type = "boolean")
             }
     )
@@ -6228,9 +6237,24 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setExpression(val);
                     break;
                 }
+                case "header-name": {
+                    String val = asText(node);
+                    target.setHeaderName(val);
+                    break;
+                }
                 case "id": {
                     String val = asText(node);
                     target.setId(val);
+                    break;
+                }
+                case "property-name": {
+                    String val = asText(node);
+                    target.setPropertyName(val);
+                    break;
+                }
+                case "result-type": {
+                    String val = asText(node);
+                    target.setResultTypeName(val);
                     break;
                 }
                 case "trim": {
@@ -6966,7 +6990,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true),
-                    @YamlProperty(name = "header-name", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "result-type", type = "string"),
                     @YamlProperty(name = "trim", type = "boolean")
@@ -6994,11 +7017,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "expression": {
                     String val = asText(node);
                     target.setExpression(val);
-                    break;
-                }
-                case "header-name": {
-                    String val = asText(node);
-                    target.setHeaderName(val);
                     break;
                 }
                 case "id": {
@@ -7271,6 +7289,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "expression", type = "string", required = true),
                     @YamlProperty(name = "header-name", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
+                    @YamlProperty(name = "property-name", type = "string"),
                     @YamlProperty(name = "result-type", type = "string"),
                     @YamlProperty(name = "trim", type = "boolean")
             }
@@ -7307,6 +7326,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "id": {
                     String val = asText(node);
                     target.setId(val);
+                    break;
+                }
+                case "property-name": {
+                    String val = asText(node);
+                    target.setPropertyName(val);
                     break;
                 }
                 case "result-type": {
@@ -7569,6 +7593,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "header-name", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "option", type = "enum:DEFAULT_PATH_LEAF_TO_NULL,ALWAYS_RETURN_LIST,AS_PATH_LIST,SUPPRESS_EXCEPTIONS,REQUIRE_PROPERTIES"),
+                    @YamlProperty(name = "property-name", type = "string"),
                     @YamlProperty(name = "result-type", type = "string"),
                     @YamlProperty(name = "suppress-exceptions", type = "boolean"),
                     @YamlProperty(name = "trim", type = "boolean"),
@@ -7623,6 +7648,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "option": {
                     String val = asText(node);
                     target.setOption(val);
+                    break;
+                }
+                case "property-name": {
+                    String val = asText(node);
+                    target.setPropertyName(val);
                     break;
                 }
                 case "result-type": {
@@ -8653,6 +8683,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "method", type = "string"),
                     @YamlProperty(name = "ref", type = "string"),
+                    @YamlProperty(name = "result-type", type = "string"),
                     @YamlProperty(name = "scope", type = "enum:Singleton,Request,Prototype"),
                     @YamlProperty(name = "trim", type = "boolean")
             }
@@ -8694,6 +8725,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "ref": {
                     String val = asText(node);
                     target.setRef(val);
+                    break;
+                }
+                case "result-type": {
+                    String val = asText(node);
+                    target.setResultTypeName(val);
                     break;
                 }
                 case "scope": {
@@ -8967,6 +9003,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true),
                     @YamlProperty(name = "id", type = "string"),
+                    @YamlProperty(name = "result-type", type = "string"),
                     @YamlProperty(name = "trim", type = "boolean")
             }
     )
@@ -8997,6 +9034,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "id": {
                     String val = asText(node);
                     target.setId(val);
+                    break;
+                }
+                case "result-type": {
+                    String val = asText(node);
+                    target.setResultTypeName(val);
                     break;
                 }
                 case "trim": {
@@ -9136,6 +9178,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true),
                     @YamlProperty(name = "id", type = "string"),
+                    @YamlProperty(name = "result-type", type = "string"),
                     @YamlProperty(name = "trim", type = "boolean")
             }
     )
@@ -9166,6 +9209,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "id": {
                     String val = asText(node);
                     target.setId(val);
+                    break;
+                }
+                case "result-type": {
+                    String val = asText(node);
+                    target.setResultTypeName(val);
                     break;
                 }
                 case "trim": {
@@ -11164,7 +11212,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true),
-                    @YamlProperty(name = "header-name", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "result-type", type = "string"),
                     @YamlProperty(name = "trim", type = "boolean")
@@ -11192,11 +11239,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "expression": {
                     String val = asText(node);
                     target.setExpression(val);
-                    break;
-                }
-                case "header-name": {
-                    String val = asText(node);
-                    target.setHeaderName(val);
                     break;
                 }
                 case "id": {
@@ -11610,6 +11652,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true),
                     @YamlProperty(name = "id", type = "string"),
+                    @YamlProperty(name = "result-type", type = "string"),
                     @YamlProperty(name = "trim", type = "boolean")
             }
     )
@@ -11640,6 +11683,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "id": {
                     String val = asText(node);
                     target.setId(val);
+                    break;
+                }
+                case "result-type": {
+                    String val = asText(node);
+                    target.setResultTypeName(val);
                     break;
                 }
                 case "trim": {
@@ -15073,6 +15121,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true),
                     @YamlProperty(name = "id", type = "string"),
+                    @YamlProperty(name = "result-type", type = "string"),
                     @YamlProperty(name = "trim", type = "boolean")
             }
     )
@@ -15103,6 +15152,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "id": {
                     String val = asText(node);
                     target.setId(val);
+                    break;
+                }
+                case "result-type": {
+                    String val = asText(node);
+                    target.setResultTypeName(val);
                     break;
                 }
                 case "trim": {
@@ -16602,6 +16656,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "include-tokens", type = "boolean"),
                     @YamlProperty(name = "inherit-namespace-tag-name", type = "string"),
+                    @YamlProperty(name = "property-name", type = "string"),
                     @YamlProperty(name = "regex", type = "boolean"),
                     @YamlProperty(name = "skip-first", type = "boolean"),
                     @YamlProperty(name = "token", type = "string", required = true),
@@ -16661,6 +16716,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "inherit-namespace-tag-name": {
                     String val = asText(node);
                     target.setInheritNamespaceTagName(val);
+                    break;
+                }
+                case "property-name": {
+                    String val = asText(node);
+                    target.setPropertyName(val);
                     break;
                 }
                 case "regex": {
@@ -18369,6 +18429,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "mode", type = "enum:i,w,u,t"),
                     @YamlProperty(name = "namespace", type = "array:org.apache.camel.model.PropertyDefinition"),
+                    @YamlProperty(name = "property-name", type = "string"),
                     @YamlProperty(name = "trim", type = "boolean")
             }
     )
@@ -18416,6 +18477,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setNamespace(val);
                     break;
                 }
+                case "property-name": {
+                    String val = asText(node);
+                    target.setPropertyName(val);
+                    break;
+                }
                 case "trim": {
                     String val = asText(node);
                     target.setTrim(val);
@@ -18453,6 +18519,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "namespace", type = "array:org.apache.camel.model.PropertyDefinition"),
                     @YamlProperty(name = "object-model", type = "string"),
                     @YamlProperty(name = "pre-compile", type = "boolean"),
+                    @YamlProperty(name = "property-name", type = "string"),
                     @YamlProperty(name = "result-type", type = "enum:NUMBER,STRING,BOOLEAN,NODESET,NODE"),
                     @YamlProperty(name = "saxon", type = "boolean"),
                     @YamlProperty(name = "thread-safety", type = "boolean"),
@@ -18523,6 +18590,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setPreCompile(val);
                     break;
                 }
+                case "property-name": {
+                    String val = asText(node);
+                    target.setPropertyName(val);
+                    break;
+                }
                 case "result-type": {
                     String val = asText(node);
                     target.setResultTypeName(val);
@@ -18571,6 +18643,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "header-name", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "namespace", type = "array:org.apache.camel.model.PropertyDefinition"),
+                    @YamlProperty(name = "property-name", type = "string"),
+                    @YamlProperty(name = "result-type", type = "string"),
                     @YamlProperty(name = "trim", type = "boolean"),
                     @YamlProperty(name = "type", type = "string")
             }
@@ -18617,6 +18691,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "namespace": {
                     java.util.List<org.apache.camel.model.PropertyDefinition> val = asFlatList(node, org.apache.camel.model.PropertyDefinition.class);
                     target.setNamespace(val);
+                    break;
+                }
+                case "property-name": {
+                    String val = asText(node);
+                    target.setPropertyName(val);
+                    break;
+                }
+                case "result-type": {
+                    String val = asText(node);
+                    target.setResultTypeName(val);
                     break;
                 }
                 case "trim": {

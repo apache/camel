@@ -44,8 +44,19 @@ public @interface XQuery {
     };
 
     /**
-     * @return The name of the header we want to apply the Xquery expression to. If this is empty then the Xquery
-     *         expression will be applied to the body instead.
+     * The desired return type.
+     */
+    Class<?> resultType() default Object.class;
+
+    /**
+     * @return The name of the header we want to apply the XQuery expression to. If this is empty then the Xquery
+     *         expression will be applied to the value of the exchange property or the body instead.
      */
     String headerName() default "";
+
+    /**
+     * @return The name of the property we want to apply the XQuery expression to. If this is empty then the Xquery
+     *         expression will be applied to the body instead.
+     */
+    String propertyName() default "";
 }
