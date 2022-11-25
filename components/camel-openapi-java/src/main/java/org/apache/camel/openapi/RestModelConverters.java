@@ -225,6 +225,7 @@ public class RestModelConverters {
                         model.enum_ = new ArrayList<String>(schema.getEnum());
                     }
                     break;
+                case "boolean":
                 case "number":
                 case "integer":
                     break;
