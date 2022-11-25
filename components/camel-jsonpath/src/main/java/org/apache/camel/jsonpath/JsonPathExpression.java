@@ -44,6 +44,7 @@ public class JsonPathExpression extends ExpressionAdapter {
     private boolean writeAsString;
     private boolean unpackArray;
     private String headerName;
+    private String propertyName;
     private Option[] options;
 
     public JsonPathExpression(String expression) {
@@ -139,6 +140,19 @@ public class JsonPathExpression extends ExpressionAdapter {
         this.headerName = headerName;
     }
 
+    public String getPropertyName() {
+        return propertyName;
+    }
+
+    /**
+     * Name of property to use as input, instead of the message body.
+     * <p>
+     * It has a lower precedent than the name of header if both are set.
+     */
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
+    }
+
     public Option[] getOptions() {
         return options;
     }
@@ -190,7 +204,8 @@ public class JsonPathExpression extends ExpressionAdapter {
 
         LOG.debug("Initializing {} using: {}", predicate ? "predicate" : "expression", exp);
         try {
-            engine = new JsonPathEngine(exp, writeAsString, suppressExceptions, allowSimple, headerName, options, context);
+            engine = new JsonPathEngine(
+                    exp, writeAsString, suppressExceptions, allowSimple, headerName, propertyName, options, context);
         } catch (Exception e) {
             throw new ExpressionIllegalSyntaxException(exp, e);
         }

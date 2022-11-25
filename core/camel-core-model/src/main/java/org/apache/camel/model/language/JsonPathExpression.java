@@ -30,12 +30,8 @@ import org.apache.camel.spi.Metadata;
 @Metadata(firstVersion = "2.13.0", label = "language,json", title = "JSONPath")
 @XmlRootElement(name = "jsonpath")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JsonPathExpression extends ExpressionDefinition {
+public class JsonPathExpression extends SingleInputTypedExpressionDefinition {
 
-    @XmlAttribute(name = "resultType")
-    private String resultTypeName;
-    @XmlTransient
-    private Class<?> resultType;
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String suppressExceptions;
@@ -52,9 +48,6 @@ public class JsonPathExpression extends ExpressionDefinition {
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String unpackArray;
     @XmlAttribute
-    @Metadata(label = "advanced")
-    private String headerName;
-    @XmlAttribute
     @Metadata(label = "advanced",
               enums = "DEFAULT_PATH_LEAF_TO_NULL,ALWAYS_RETURN_LIST,AS_PATH_LIST,SUPPRESS_EXCEPTIONS,REQUIRE_PROPERTIES")
     private String option;
@@ -68,37 +61,12 @@ public class JsonPathExpression extends ExpressionDefinition {
 
     private JsonPathExpression(Builder builder) {
         super(builder);
-        this.resultTypeName = builder.resultTypeName;
-        this.resultType = builder.resultType;
         this.suppressExceptions = builder.suppressExceptions;
         this.allowSimple = builder.allowSimple;
         this.allowEasyPredicate = builder.allowEasyPredicate;
         this.writeAsString = builder.writeAsString;
         this.unpackArray = builder.unpackArray;
-        this.headerName = builder.headerName;
         this.option = builder.option;
-    }
-
-    public String getResultTypeName() {
-        return resultTypeName;
-    }
-
-    /**
-     * Sets the class name of the result type (type from output)
-     */
-    public void setResultTypeName(String resultTypeName) {
-        this.resultTypeName = resultTypeName;
-    }
-
-    public Class<?> getResultType() {
-        return resultType;
-    }
-
-    /**
-     * Sets the class of the result type (type from output)
-     */
-    public void setResultType(Class<?> resultType) {
-        this.resultType = resultType;
     }
 
     public String getSuppressExceptions() {
@@ -156,17 +124,6 @@ public class JsonPathExpression extends ExpressionDefinition {
         this.unpackArray = unpackArray;
     }
 
-    public String getHeaderName() {
-        return headerName;
-    }
-
-    /**
-     * Name of header to use as input, instead of the message body
-     */
-    public void setHeaderName(String headerName) {
-        this.headerName = headerName;
-    }
-
     public String getOption() {
         return option;
     }
@@ -189,31 +146,12 @@ public class JsonPathExpression extends ExpressionDefinition {
     @XmlTransient
     public static class Builder extends AbstractBuilder<Builder, JsonPathExpression> {
 
-        private String resultTypeName;
-        private Class<?> resultType;
         private String suppressExceptions;
         private String allowSimple;
         private String allowEasyPredicate;
         private String writeAsString;
         private String unpackArray;
-        private String headerName;
         private String option;
-
-        /**
-         * Sets the class of the result type (type from output)
-         */
-        public Builder resultType(Class<?> resultType) {
-            this.resultType = resultType;
-            return this;
-        }
-
-        /**
-         * Sets the class name of the result type (type from output)
-         */
-        public Builder resultTypeName(String resultTypeName) {
-            this.resultTypeName = resultTypeName;
-            return this;
-        }
 
         /**
          * Whether to suppress exceptions such as PathNotFoundException.
@@ -292,14 +230,6 @@ public class JsonPathExpression extends ExpressionDefinition {
          */
         public Builder unpackArray(boolean unpackArray) {
             this.unpackArray = Boolean.toString(unpackArray);
-            return this;
-        }
-
-        /**
-         * Name of header to use as input, instead of the message body
-         */
-        public Builder headerName(String headerName) {
-            this.headerName = headerName;
             return this;
         }
 

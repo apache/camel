@@ -17,42 +17,17 @@
 package org.apache.camel.reifier.language;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.language.DatasonnetExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.spi.Language;
 
-public class DatasonnetExpressionReifier extends ExpressionReifier<DatasonnetExpression> {
+public class DatasonnetExpressionReifier extends TypedExpressionReifier<DatasonnetExpression> {
 
     public DatasonnetExpressionReifier(CamelContext camelContext, ExpressionDefinition definition) {
-        super(camelContext, (DatasonnetExpression) definition);
+        super(camelContext, definition);
     }
 
     @Override
-    protected void configureLanguage(Language language) {
-        if (definition.getResultType() == null && definition.getResultTypeName() != null) {
-            try {
-                Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(definition.getResultTypeName());
-                definition.setResultType(clazz);
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeException(e);
-            }
-        }
-    }
-
-    @Override
-    protected Expression createExpression(Language language, String exp) {
-        return language.createExpression(exp, createProperties());
-    }
-
-    @Override
-    protected Predicate createPredicate(Language language, String exp) {
-        return language.createPredicate(exp, createProperties());
-    }
-
-    private Object[] createProperties() {
+    protected Object[] createProperties() {
         Object[] properties = new Object[3];
         properties[0] = definition.getResultType();
         properties[1] = parseString(definition.getBodyMediaType());

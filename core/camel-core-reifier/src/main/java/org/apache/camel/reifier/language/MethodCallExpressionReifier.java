@@ -17,31 +17,32 @@
 package org.apache.camel.reifier.language;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.spi.Language;
 
-public class MethodCallExpressionReifier extends ExpressionReifier<MethodCallExpression> {
+public class MethodCallExpressionReifier extends TypedExpressionReifier<MethodCallExpression> {
 
     public MethodCallExpressionReifier(CamelContext camelContext, ExpressionDefinition definition) {
-        super(camelContext, (MethodCallExpression) definition);
+        super(camelContext, definition);
     }
 
+    @Override
     protected Object[] createProperties() {
-        Object[] properties = new Object[5];
+        Object[] properties = new Object[6];
         properties[0] = definition.getInstance();
         properties[1] = parseString(definition.getMethod());
         properties[2] = definition.getBeanType();
         properties[3] = parseString(definition.getRef());
         properties[4] = parseString(definition.getScope());
+        properties[5] = definition.getResultType();
         return properties;
     }
 
     @Override
     protected void configureLanguage(Language language) {
+        super.configureLanguage(language);
         if (definition.getBeanType() == null && definition.getBeanTypeName() != null) {
             try {
                 Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(definition.getBeanTypeName());
@@ -50,15 +51,5 @@ public class MethodCallExpressionReifier extends ExpressionReifier<MethodCallExp
                 throw RuntimeCamelException.wrapRuntimeException(e);
             }
         }
-    }
-
-    @Override
-    protected Expression createExpression(Language language, String exp) {
-        return language.createExpression(exp, createProperties());
-    }
-
-    @Override
-    protected Predicate createPredicate(Language language, String exp) {
-        return language.createPredicate(exp, createProperties());
     }
 }

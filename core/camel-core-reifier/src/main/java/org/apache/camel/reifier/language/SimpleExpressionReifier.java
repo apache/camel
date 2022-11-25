@@ -17,17 +17,13 @@
 package org.apache.camel.reifier.language;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.SimpleExpression;
-import org.apache.camel.spi.Language;
 
-public class SimpleExpressionReifier extends ExpressionReifier<SimpleExpression> {
+public class SimpleExpressionReifier extends TypedExpressionReifier<SimpleExpression> {
 
     public SimpleExpressionReifier(CamelContext camelContext, ExpressionDefinition definition) {
-        super(camelContext, (SimpleExpression) definition);
+        super(camelContext, definition);
     }
 
     @Override
@@ -37,33 +33,11 @@ public class SimpleExpressionReifier extends ExpressionReifier<SimpleExpression>
     }
 
     @Override
-    protected Expression createExpression(Language language, String exp) {
-        return language.createExpression(exp, createProperties());
-    }
-
-    @Override
-    protected Predicate createPredicate(Language language, String exp) {
-        return language.createPredicate(exp, createProperties());
-    }
-
-    private Object[] createProperties() {
+    protected Object[] createProperties() {
         Object[] properties = new Object[2];
         properties[0] = definition.getResultType();
         properties[1] = parseBoolean(definition.getTrim());
         return properties;
-    }
-
-    @Override
-    protected void configureLanguage(Language language) {
-        if (definition.getResultType() == null && definition.getResultTypeName() != null) {
-            Class<?> clazz;
-            try {
-                clazz = camelContext.getClassResolver().resolveMandatoryClass(definition.getResultTypeName());
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeException(e);
-            }
-            definition.setResultType(clazz);
-        }
     }
 
 }

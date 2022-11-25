@@ -99,6 +99,12 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     private ModuleURIResolver moduleURIResolver;
     private boolean allowStAX;
     private String headerName;
+    /**
+     * Name of property to use as input, instead of the message body.
+     * <p>
+     * It has a lower precedent than the name of header if both are set.
+     */
+    private String propertyName;
 
     @Override
     public String toString() {
@@ -518,8 +524,24 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         return headerName;
     }
 
+    /**
+     * Name of header to use as input, instead of the message body
+     */
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
+    }
+
+    public String getPropertyName() {
+        return propertyName;
+    }
+
+    /**
+     * Name of property to use as input, instead of the message body.
+     * <p>
+     * It has a lower precedent than the name of header if both are set.
+     */
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
     }
 
     public boolean isAllowStAX() {
@@ -547,9 +569,11 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         DynamicQueryContext dynamicQueryContext = new DynamicQueryContext(config);
 
         Message in = exchange.getIn();
-        Item item = null;
+        Item item;
         if (ObjectHelper.isNotEmpty(getHeaderName())) {
             item = in.getHeader(getHeaderName(), Item.class);
+        } else if (ObjectHelper.isNotEmpty(getPropertyName())) {
+            item = exchange.getProperty(getPropertyName(), Item.class);
         } else {
             item = in.getBody(Item.class);
         }
@@ -559,6 +583,8 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
             Object body;
             if (ObjectHelper.isNotEmpty(getHeaderName())) {
                 body = in.getHeader(getHeaderName());
+            } else if (ObjectHelper.isNotEmpty(getPropertyName())) {
+                body = exchange.getProperty(getPropertyName());
             } else {
                 body = in.getBody();
             }
@@ -571,6 +597,8 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
                 if (isInputStreamNeeded(exchange)) {
                     if (ObjectHelper.isNotEmpty(getHeaderName())) {
                         is = exchange.getIn().getHeader(getHeaderName(), InputStream.class);
+                    } else if (ObjectHelper.isNotEmpty(getPropertyName())) {
+                        is = exchange.getProperty(getPropertyName(), InputStream.class);
                     } else {
                         is = exchange.getIn().getBody(InputStream.class);
                     }

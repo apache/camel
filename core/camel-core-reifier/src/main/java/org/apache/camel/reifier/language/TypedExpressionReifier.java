@@ -21,13 +21,19 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.model.language.PythonExpression;
+import org.apache.camel.model.language.TypedExpressionDefinition;
 import org.apache.camel.spi.Language;
 
-public class PythonExpressionReifier extends ExpressionReifier<PythonExpression> {
+/**
+ * {@code TypedExpressionReifier} is a specific reifier for expressions for which a result type can be provided.
+ *
+ * @param <T> the type of expression
+ */
+class TypedExpressionReifier<T extends TypedExpressionDefinition> extends ExpressionReifier<T> {
 
-    public PythonExpressionReifier(CamelContext camelContext, ExpressionDefinition definition) {
-        super(camelContext, (PythonExpression) definition);
+    @SuppressWarnings("unchecked")
+    TypedExpressionReifier(CamelContext camelContext, ExpressionDefinition definition) {
+        super(camelContext, (T) definition);
     }
 
     @Override
@@ -42,11 +48,9 @@ public class PythonExpressionReifier extends ExpressionReifier<PythonExpression>
         }
     }
 
-    private Object[] createProperties() {
-        Object[] properties = new Object[3];
+    protected Object[] createProperties() {
+        Object[] properties = new Object[1];
         properties[0] = definition.getResultType();
-        properties[1] = parseString(definition.getHeaderName());
-        properties[2] = parseString(definition.getPropertyName());
         return properties;
     }
 
@@ -59,5 +63,4 @@ public class PythonExpressionReifier extends ExpressionReifier<PythonExpression>
     protected Predicate createPredicate(Language language, String exp) {
         return language.createPredicate(exp, createProperties());
     }
-
 }

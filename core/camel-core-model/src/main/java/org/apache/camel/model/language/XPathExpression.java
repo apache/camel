@@ -60,9 +60,6 @@ public class XPathExpression extends NamespaceAwareExpression {
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String logNamespaces;
     @XmlAttribute
-    @Metadata(label = "advanced")
-    private String headerName;
-    @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String threadSafety;
     @XmlAttribute
@@ -91,7 +88,6 @@ public class XPathExpression extends NamespaceAwareExpression {
         this.factoryRef = builder.factoryRef;
         this.objectModel = builder.objectModel;
         this.logNamespaces = builder.logNamespaces;
-        this.headerName = builder.headerName;
         this.threadSafety = builder.threadSafety;
         this.preCompile = builder.preCompile;
     }
@@ -197,17 +193,6 @@ public class XPathExpression extends NamespaceAwareExpression {
         return logNamespaces;
     }
 
-    public String getHeaderName() {
-        return headerName;
-    }
-
-    /**
-     * Name of header to use as input, instead of the message body
-     */
-    public void setHeaderName(String headerName) {
-        this.headerName = headerName;
-    }
-
     public XPathFactory getXPathFactory() {
         return xpathFactory;
     }
@@ -240,7 +225,7 @@ public class XPathExpression extends NamespaceAwareExpression {
     /**
      * Whether to enable pre-compiling the xpath expression during initialization phase. pre-compile is enabled by
      * default.
-     *
+     * <p>
      * This can be used to turn off, for example in cases the compilation phase is desired at the starting phase, such
      * as if the application is ahead of time compiled (for example with camel-quarkus) which would then load the xpath
      * factory of the built operating system, and not a JVM runtime.
@@ -264,7 +249,6 @@ public class XPathExpression extends NamespaceAwareExpression {
         private String factoryRef;
         private String objectModel;
         private String logNamespaces;
-        private String headerName;
         private String threadSafety;
         private String preCompile;
 
@@ -362,14 +346,6 @@ public class XPathExpression extends NamespaceAwareExpression {
         }
 
         /**
-         * Name of header to use as input, instead of the message body
-         */
-        public Builder headerName(String headerName) {
-            this.headerName = headerName;
-            return this;
-        }
-
-        /**
          * Whether to enable thread-safety for the returned result of the xpath expression. This applies to when using
          * NODESET as the result type, and the returned set has multiple elements. In this situation there can be
          * thread-safety issues if you process the NODESET concurrently such as from a Camel Splitter EIP in parallel
@@ -400,7 +376,7 @@ public class XPathExpression extends NamespaceAwareExpression {
         /**
          * Whether to enable pre-compiling the xpath expression during initialization phase. pre-compile is enabled by
          * default.
-         *
+         * <p>
          * This can be used to turn off, for example in cases the compilation phase is desired at the starting phase,
          * such as if the application is ahead of time compiled (for example with camel-quarkus) which would then load
          * the xpath factory of the built operating system, and not a JVM runtime.
@@ -413,7 +389,7 @@ public class XPathExpression extends NamespaceAwareExpression {
         /**
          * Whether to enable pre-compiling the xpath expression during initialization phase. pre-compile is enabled by
          * default.
-         *
+         * <p>
          * This can be used to turn off, for example in cases the compilation phase is desired at the starting phase,
          * such as if the application is ahead of time compiled (for example with camel-quarkus) which would then load
          * the xpath factory of the built operating system, and not a JVM runtime.

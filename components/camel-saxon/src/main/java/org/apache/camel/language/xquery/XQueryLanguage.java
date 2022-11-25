@@ -23,31 +23,13 @@ import org.apache.camel.Predicate;
 import org.apache.camel.component.xquery.XQueryBuilder;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.annotations.Language;
-import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.support.SingleInputTypedLanguageSupport;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
 @Language("xquery")
-public class XQueryLanguage extends LanguageSupport implements PropertyConfigurer {
+public class XQueryLanguage extends SingleInputTypedLanguageSupport implements PropertyConfigurer {
 
-    private Class<?> resultType;
-    private String headerName;
     private Configuration configuration;
-
-    public Class<?> getResultType() {
-        return resultType;
-    }
-
-    public void setResultType(Class<?> resultType) {
-        this.resultType = resultType;
-    }
-
-    public String getHeaderName() {
-        return headerName;
-    }
-
-    public void setHeaderName(String headerName) {
-        this.headerName = headerName;
-    }
 
     public Configuration getConfiguration() {
         return configuration;
@@ -82,13 +64,17 @@ public class XQueryLanguage extends LanguageSupport implements PropertyConfigure
     }
 
     protected void configureBuilder(XQueryBuilder builder, Object[] properties) {
-        Class<?> clazz = property(Class.class, properties, 0, resultType);
+        Class<?> clazz = property(Class.class, properties, 0, getResultType());
         if (clazz != null) {
             builder.setResultType(clazz);
         }
-        String str = property(String.class, properties, 1, headerName);
+        String str = property(String.class, properties, 1, getHeaderName());
         if (str != null) {
             builder.setHeaderName(str);
+        }
+        str = property(String.class, properties, 2, getPropertyName());
+        if (str != null) {
+            builder.setPropertyName(str);
         }
         if (configuration != null) {
             builder.setConfiguration(configuration);
@@ -108,6 +94,10 @@ public class XQueryLanguage extends LanguageSupport implements PropertyConfigure
             case "headername":
             case "headerName":
                 setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value));
+                return true;
+            case "propertyname":
+            case "propertyName":
+                setPropertyName(PropertyConfigurerSupport.property(camelContext, String.class, value));
                 return true;
             case "configuration":
             case "Configuration":

@@ -6266,6 +6266,9 @@
             "id" : {
               "type" : "string"
             },
+            "resultType" : {
+              "type" : "string"
+            },
             "trim" : {
               "type" : "boolean"
             }
@@ -6301,7 +6304,16 @@
             "expression" : {
               "type" : "string"
             },
+            "headerName" : {
+              "type" : "string"
+            },
             "id" : {
+              "type" : "string"
+            },
+            "propertyName" : {
+              "type" : "string"
+            },
+            "resultType" : {
               "type" : "string"
             },
             "trim" : {
@@ -6318,9 +6330,6 @@
           "type" : "object",
           "properties" : {
             "expression" : {
-              "type" : "string"
-            },
-            "headerName" : {
               "type" : "string"
             },
             "id" : {
@@ -6379,6 +6388,9 @@
             "id" : {
               "type" : "string"
             },
+            "propertyName" : {
+              "type" : "string"
+            },
             "resultType" : {
               "type" : "string"
             },
@@ -6413,6 +6425,9 @@
             "option" : {
               "type" : "string",
               "enum" : [ "DEFAULT_PATH_LEAF_TO_NULL", "ALWAYS_RETURN_LIST", "AS_PATH_LIST", "SUPPRESS_EXCEPTIONS", "REQUIRE_PROPERTIES" ]
+            },
+            "propertyName" : {
+              "type" : "string"
             },
             "resultType" : {
               "type" : "string"
@@ -6469,6 +6484,9 @@
             "ref" : {
               "type" : "string"
             },
+            "resultType" : {
+              "type" : "string"
+            },
             "scope" : {
               "type" : "string",
               "enum" : [ "Singleton", "Request", "Prototype" ]
@@ -6491,6 +6509,9 @@
             "id" : {
               "type" : "string"
             },
+            "resultType" : {
+              "type" : "string"
+            },
             "trim" : {
               "type" : "boolean"
             }
@@ -6510,6 +6531,9 @@
             "id" : {
               "type" : "string"
             },
+            "resultType" : {
+              "type" : "string"
+            },
             "trim" : {
               "type" : "boolean"
             }
@@ -6524,9 +6548,6 @@
           "type" : "object",
           "properties" : {
             "expression" : {
-              "type" : "string"
-            },
-            "headerName" : {
               "type" : "string"
             },
             "id" : {
@@ -6552,6 +6573,9 @@
               "type" : "string"
             },
             "id" : {
+              "type" : "string"
+            },
+            "resultType" : {
               "type" : "string"
             },
             "trim" : {
@@ -6595,6 +6619,9 @@
             "id" : {
               "type" : "string"
             },
+            "resultType" : {
+              "type" : "string"
+            },
             "trim" : {
               "type" : "boolean"
             }
@@ -6627,6 +6654,9 @@
               "type" : "boolean"
             },
             "inheritNamespaceTagName" : {
+              "type" : "string"
+            },
+            "propertyName" : {
               "type" : "string"
             },
             "regex" : {
@@ -6673,6 +6703,9 @@
                 "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
               }
             },
+            "propertyName" : {
+              "type" : "string"
+            },
             "trim" : {
               "type" : "boolean"
             }
@@ -6715,6 +6748,9 @@
             "preCompile" : {
               "type" : "boolean"
             },
+            "propertyName" : {
+              "type" : "string"
+            },
             "resultType" : {
               "type" : "string",
               "enum" : [ "NUMBER", "STRING", "BOOLEAN", "NODESET", "NODE" ]
@@ -6755,6 +6791,12 @@
               "items" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
               }
+            },
+            "propertyName" : {
+              "type" : "string"
+            },
+            "resultType" : {
+              "type" : "string"
             },
             "trim" : {
               "type" : "boolean"

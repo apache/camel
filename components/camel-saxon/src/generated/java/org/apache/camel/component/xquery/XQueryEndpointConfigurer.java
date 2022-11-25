@@ -54,6 +54,8 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
         case "properties": target.setProperties(property(camelContext, java.util.Properties.class, value)); return true;
+        case "propertyname":
+        case "propertyName": target.setPropertyName(property(camelContext, java.lang.String.class, value)); return true;
         case "repeatcount":
         case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
         case "resulttype":
@@ -119,6 +121,8 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "pollstrategy":
         case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
         case "properties": return java.util.Properties.class;
+        case "propertyname":
+        case "propertyName": return java.lang.String.class;
         case "repeatcount":
         case "repeatCount": return long.class;
         case "resulttype":
@@ -185,6 +189,8 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "pollstrategy":
         case "pollStrategy": return target.getPollStrategy();
         case "properties": return target.getProperties();
+        case "propertyname":
+        case "propertyName": return target.getPropertyName();
         case "repeatcount":
         case "repeatCount": return target.getRepeatCount();
         case "resulttype":

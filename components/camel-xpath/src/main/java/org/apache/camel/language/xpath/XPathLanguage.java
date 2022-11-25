@@ -24,15 +24,14 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.annotations.Language;
-import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.support.SingleInputTypedLanguageSupport;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
 /**
  * XPath language.
  */
 @Language("xpath")
-public class XPathLanguage extends LanguageSupport implements PropertyConfigurer {
-    private Class<?> resultType;
+public class XPathLanguage extends SingleInputTypedLanguageSupport implements PropertyConfigurer {
     private QName resultQName;
     private Class<?> documentType;
     private XPathFactory xpathFactory;
@@ -40,7 +39,6 @@ public class XPathLanguage extends LanguageSupport implements PropertyConfigurer
     private String objectModelUri;
     private Boolean threadSafety;
     private Boolean logNamespaces;
-    private String headerName;
     private Boolean preCompile;
 
     @Override
@@ -75,20 +73,12 @@ public class XPathLanguage extends LanguageSupport implements PropertyConfigurer
         return builder;
     }
 
-    public Class<?> getResultType() {
-        return resultType;
-    }
-
     public void setResultQName(QName qName) {
         this.resultQName = qName;
     }
 
     public QName getResultQName() {
         return resultQName;
-    }
-
-    public void setResultType(Class<?> resultType) {
-        this.resultType = resultType;
     }
 
     public Class<?> getDocumentType() {
@@ -139,14 +129,6 @@ public class XPathLanguage extends LanguageSupport implements PropertyConfigurer
         this.logNamespaces = logNamespaces;
     }
 
-    public String getHeaderName() {
-        return headerName;
-    }
-
-    public void setHeaderName(String headerName) {
-        this.headerName = headerName;
-    }
-
     public Boolean getPreCompile() {
         return preCompile;
     }
@@ -164,7 +146,7 @@ public class XPathLanguage extends LanguageSupport implements PropertyConfigurer
         if (qname != null) {
             builder.setResultQName(qname);
         }
-        clazz = property(Class.class, properties, 2, resultType);
+        clazz = property(Class.class, properties, 2, getResultType());
         if (clazz != null) {
             builder.setResultType(clazz);
         }
@@ -198,9 +180,13 @@ public class XPathLanguage extends LanguageSupport implements PropertyConfigurer
         if (bool != null) {
             builder.setLogNamespaces(bool);
         }
-        String str = property(String.class, properties, 9, headerName);
+        String str = property(String.class, properties, 9, getHeaderName());
         if (str != null) {
             builder.setHeaderName(str);
+        }
+        str = property(String.class, properties, 10, getPropertyName());
+        if (str != null) {
+            builder.setPropertyName(str);
         }
     }
 
@@ -245,6 +231,10 @@ public class XPathLanguage extends LanguageSupport implements PropertyConfigurer
             case "headername":
             case "headerName":
                 setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value));
+                return true;
+            case "propertyname":
+            case "propertyName":
+                setPropertyName(PropertyConfigurerSupport.property(camelContext, String.class, value));
                 return true;
             case "preCompile":
             case "precompile":

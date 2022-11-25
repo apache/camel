@@ -30,7 +30,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(firstVersion = "3.7.0", label = "language", title = "jOOR")
 @XmlRootElement(name = "joor")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JoorExpression extends ExpressionDefinition {
+public class JoorExpression extends TypedExpressionDefinition {
 
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
@@ -38,10 +38,6 @@ public class JoorExpression extends ExpressionDefinition {
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String singleQuotes;
-    @XmlAttribute(name = "resultType")
-    private String resultTypeName;
-    @XmlTransient
-    private Class<?> resultType;
 
     public JoorExpression() {
     }
@@ -54,8 +50,6 @@ public class JoorExpression extends ExpressionDefinition {
         super(builder);
         this.preCompile = builder.preCompile;
         this.singleQuotes = builder.singleQuotes;
-        this.resultTypeName = builder.resultTypeName;
-        this.resultType = builder.resultType;
     }
 
     @Override
@@ -87,28 +81,6 @@ public class JoorExpression extends ExpressionDefinition {
         this.singleQuotes = singleQuotes;
     }
 
-    public Class<?> getResultType() {
-        return resultType;
-    }
-
-    /**
-     * Sets the class of the result type (type from output)
-     */
-    public void setResultType(Class<?> resultType) {
-        this.resultType = resultType;
-    }
-
-    public String getResultTypeName() {
-        return resultTypeName;
-    }
-
-    /**
-     * Sets the class name of the result type (type from output)
-     */
-    public void setResultTypeName(String resultTypeName) {
-        this.resultTypeName = resultTypeName;
-    }
-
     /**
      * {@code Builder} is a specific builder for {@link JoorExpression}.
      */
@@ -117,8 +89,6 @@ public class JoorExpression extends ExpressionDefinition {
 
         private String preCompile;
         private String singleQuotes;
-        private String resultTypeName;
-        private Class<?> resultType;
 
         /**
          * Whether the expression should be pre compiled once during initialization phase. If this is turned off, then
@@ -153,22 +123,6 @@ public class JoorExpression extends ExpressionDefinition {
          */
         public Builder singleQuotes(boolean singleQuotes) {
             this.singleQuotes = Boolean.toString(singleQuotes);
-            return this;
-        }
-
-        /**
-         * Sets the class of the result type (type from output)
-         */
-        public Builder resultType(Class<?> resultType) {
-            this.resultType = resultType;
-            return this;
-        }
-
-        /**
-         * Sets the class name of the result type (type from output)
-         */
-        public Builder resultTypeName(String resultTypeName) {
-            this.resultTypeName = resultTypeName;
             return this;
         }
 

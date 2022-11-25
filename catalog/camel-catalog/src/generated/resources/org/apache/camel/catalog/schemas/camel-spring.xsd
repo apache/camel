@@ -20246,13 +20246,23 @@ References to an existing or custom error handler.
         
     <xs:simpleContent>
             
+      <xs:extension base="tns:typedExpressionDefinition"/>
+          
+    </xs:simpleContent>
+      
+  </xs:complexType>
+    
+  <xs:complexType abstract="true" name="typedExpressionDefinition">
+        
+    <xs:simpleContent>
+            
       <xs:extension base="tns:expression">
                 
         <xs:attribute name="resultType" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
               <![CDATA[
-Sets the class name of the result type (type from output).
+Sets the class of the result type (type from output).
             ]]>
             </xs:documentation>
           </xs:annotation>
@@ -20268,19 +20278,7 @@ Sets the class name of the result type (type from output).
         
     <xs:simpleContent>
             
-      <xs:extension base="tns:expression">
-                
-        <xs:attribute name="resultType" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-              <![CDATA[
-Sets the class name of the constant type.
-            ]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-              
-      </xs:extension>
+      <xs:extension base="tns:typedExpressionDefinition"/>
           
     </xs:simpleContent>
       
@@ -20290,7 +20288,7 @@ Sets the class name of the constant type.
         
     <xs:simpleContent>
             
-      <xs:extension base="tns:expression">
+      <xs:extension base="tns:typedExpressionDefinition">
                 
         <xs:attribute name="bodyMediaType" type="xs:string">
           <xs:annotation>
@@ -20307,17 +20305,6 @@ The String representation of the message's body MediaType.
             <xs:documentation xml:lang="en">
               <![CDATA[
 The String representation of the MediaType to output.
-            ]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="resultType" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-              <![CDATA[
-Sets the class name of the result type (type from output) The default result
-type is com.datasonnet.document.Document.
             ]]>
             </xs:documentation>
           </xs:annotation>
@@ -20343,7 +20330,7 @@ type is com.datasonnet.document.Document.
         
     <xs:simpleContent>
             
-      <xs:extension base="tns:expression"/>
+      <xs:extension base="tns:typedExpressionDefinition"/>
           
     </xs:simpleContent>
       
@@ -20363,27 +20350,17 @@ type is com.datasonnet.document.Document.
         
     <xs:simpleContent>
             
-      <xs:extension base="tns:expression"/>
+      <xs:extension base="tns:singleInputTypedExpressionDefinition"/>
           
     </xs:simpleContent>
       
   </xs:complexType>
     
-  <xs:complexType name="javaScriptExpression">
+  <xs:complexType abstract="true" name="singleInputTypedExpressionDefinition">
         
     <xs:simpleContent>
             
-      <xs:extension base="tns:expression">
-                
-        <xs:attribute name="resultType" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-              <![CDATA[
-Sets the class of the result type (type from output).
-            ]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
+      <xs:extension base="tns:typedExpressionDefinition">
                 
         <xs:attribute name="headerName" type="xs:string">
           <xs:annotation>
@@ -20395,8 +20372,29 @@ precedent than the propertyName if both are set.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+                
+        <xs:attribute name="propertyName" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+              <![CDATA[
+Name of property to use as input, instead of the message body. It has a lower
+precedent than the headerName if both are set.
+            ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
               
       </xs:extension>
+          
+    </xs:simpleContent>
+      
+  </xs:complexType>
+    
+  <xs:complexType name="javaScriptExpression">
+        
+    <xs:simpleContent>
+            
+      <xs:extension base="tns:typedExpressionDefinition"/>
           
     </xs:simpleContent>
       
@@ -20406,7 +20404,7 @@ precedent than the propertyName if both are set.
         
     <xs:simpleContent>
             
-      <xs:extension base="tns:expression">
+      <xs:extension base="tns:typedExpressionDefinition">
                 
         <xs:attribute name="preCompile" type="xs:string">
           <xs:annotation>
@@ -20431,16 +20429,6 @@ true
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-                
-        <xs:attribute name="resultType" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-              <![CDATA[
-Sets the class name of the result type (type from output).
-            ]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
               
       </xs:extension>
           
@@ -20452,30 +20440,7 @@ Sets the class name of the result type (type from output).
         
     <xs:simpleContent>
             
-      <xs:extension base="tns:expression">
-                
-        <xs:attribute name="resultType" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-              <![CDATA[
-Sets the class of the result type (type from output).
-            ]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="headerName" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-              <![CDATA[
-Name of header to use as input, instead of the message body It has as higher
-precedent than the propertyName if both are set.
-            ]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-              
-      </xs:extension>
+      <xs:extension base="tns:singleInputTypedExpressionDefinition"/>
           
     </xs:simpleContent>
       
@@ -20485,17 +20450,7 @@ precedent than the propertyName if both are set.
         
     <xs:simpleContent>
             
-      <xs:extension base="tns:expression">
-                
-        <xs:attribute name="resultType" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-              <![CDATA[
-Sets the class name of the result type (type from output).
-            ]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
+      <xs:extension base="tns:singleInputTypedExpressionDefinition">
                 
         <xs:attribute name="suppressExceptions" type="xs:string">
           <xs:annotation>
@@ -20552,16 +20507,6 @@ false
           </xs:annotation>
         </xs:attribute>
                 
-        <xs:attribute name="headerName" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-              <![CDATA[
-Name of header to use as input, instead of the message body.
-            ]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
         <xs:attribute name="option" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -20605,7 +20550,7 @@ The name of the language to use.
         
     <xs:simpleContent>
             
-      <xs:extension base="tns:expression">
+      <xs:extension base="tns:typedExpressionDefinition">
                 
         <xs:attribute name="ref" type="xs:string">
           <xs:annotation>
@@ -20671,7 +20616,7 @@ implementation. Default value: Singleton
         
     <xs:simpleContent>
             
-      <xs:extension base="tns:expression"/>
+      <xs:extension base="tns:typedExpressionDefinition"/>
           
     </xs:simpleContent>
       
@@ -20681,37 +20626,17 @@ implementation. Default value: Singleton
         
     <xs:simpleContent>
             
-      <xs:extension base="tns:expression"/>
+      <xs:extension base="tns:singleInputExpressionDefinition"/>
           
     </xs:simpleContent>
       
   </xs:complexType>
     
-  <xs:complexType name="ognlExpression">
-        
-    <xs:simpleContent>
-            
-      <xs:extension base="tns:expression"/>
-          
-    </xs:simpleContent>
-      
-  </xs:complexType>
-    
-  <xs:complexType name="pythonExpression">
+  <xs:complexType abstract="true" name="singleInputExpressionDefinition">
         
     <xs:simpleContent>
             
       <xs:extension base="tns:expression">
-                
-        <xs:attribute name="resultType" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-              <![CDATA[
-Sets the class of the result type (type from output).
-            ]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
                 
         <xs:attribute name="headerName" type="xs:string">
           <xs:annotation>
@@ -20723,34 +20648,13 @@ precedent than the propertyName if both are set.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-              
-      </xs:extension>
-          
-    </xs:simpleContent>
-      
-  </xs:complexType>
-    
-  <xs:complexType name="refExpression">
-        
-    <xs:simpleContent>
-            
-      <xs:extension base="tns:expression"/>
-          
-    </xs:simpleContent>
-      
-  </xs:complexType>
-    
-  <xs:complexType name="simpleExpression">
-        
-    <xs:simpleContent>
-            
-      <xs:extension base="tns:expression">
                 
-        <xs:attribute name="resultType" type="xs:string">
+        <xs:attribute name="propertyName" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
               <![CDATA[
-Sets the class name of the result type (type from output).
+Name of property to use as input, instead of the message body. It has a lower
+precedent than the headerName if both are set.
             ]]>
             </xs:documentation>
           </xs:annotation>
@@ -20762,11 +20666,51 @@ Sets the class name of the result type (type from output).
       
   </xs:complexType>
     
+  <xs:complexType name="ognlExpression">
+        
+    <xs:simpleContent>
+            
+      <xs:extension base="tns:typedExpressionDefinition"/>
+          
+    </xs:simpleContent>
+      
+  </xs:complexType>
+    
+  <xs:complexType name="pythonExpression">
+        
+    <xs:simpleContent>
+            
+      <xs:extension base="tns:typedExpressionDefinition"/>
+          
+    </xs:simpleContent>
+      
+  </xs:complexType>
+    
+  <xs:complexType name="refExpression">
+        
+    <xs:simpleContent>
+            
+      <xs:extension base="tns:typedExpressionDefinition"/>
+          
+    </xs:simpleContent>
+      
+  </xs:complexType>
+    
+  <xs:complexType name="simpleExpression">
+        
+    <xs:simpleContent>
+            
+      <xs:extension base="tns:typedExpressionDefinition"/>
+          
+    </xs:simpleContent>
+      
+  </xs:complexType>
+    
   <xs:complexType name="spELExpression">
         
     <xs:simpleContent>
             
-      <xs:extension base="tns:expression"/>
+      <xs:extension base="tns:typedExpressionDefinition"/>
           
     </xs:simpleContent>
       
@@ -20776,7 +20720,7 @@ Sets the class name of the result type (type from output).
         
     <xs:simpleContent>
             
-      <xs:extension base="tns:expression">
+      <xs:extension base="tns:singleInputExpressionDefinition">
                 
         <xs:attribute name="token" type="xs:string" use="required">
           <xs:annotation>
@@ -20806,16 +20750,6 @@ simple language as the token to support dynamic tokens.
               <![CDATA[
 To inherit namespaces from a root/parent tag name when using XML You can use
 simple language as the tag name to support dynamic names.
-            ]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="headerName" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-              <![CDATA[
-Name of header to tokenize instead of using the message body.
             ]]>
             </xs:documentation>
           </xs:annotation>
@@ -20897,16 +20831,6 @@ To skip the very first element. Default value: false
     <xs:simpleContent>
             
       <xs:extension base="tns:namespaceAwareExpression">
-                
-        <xs:attribute name="headerName" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-              <![CDATA[
-Name of header to tokenize instead of using the message body.
-            ]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
                 
         <xs:attribute name="mode" type="xs:string">
           <xs:annotation>
@@ -21005,16 +20929,6 @@ value: false
           </xs:annotation>
         </xs:attribute>
                 
-        <xs:attribute name="headerName" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-              <![CDATA[
-Name of header to use as input, instead of the message body.
-            ]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
         <xs:attribute name="threadSafety" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -21059,22 +20973,22 @@ JVM runtime. Default value: true
             
       <xs:extension base="tns:namespaceAwareExpression">
                 
+        <xs:attribute name="resultType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+              <![CDATA[
+Sets the class of the result type (type from output).
+            ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
         <xs:attribute name="type" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
               <![CDATA[
 Sets the class name of the result type (type from output) The default result
 type is NodeSet.
-            ]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="headerName" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-              <![CDATA[
-Name of header to use as input, instead of the message body.
             ]]>
             </xs:documentation>
           </xs:annotation>

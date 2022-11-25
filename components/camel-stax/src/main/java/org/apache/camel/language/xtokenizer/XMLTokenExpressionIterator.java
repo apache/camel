@@ -58,15 +58,17 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
     protected char mode;
     protected int group;
     protected String headerName;
+    protected String propertyName;
     protected Map<String, String> nsmap;
 
     public XMLTokenExpressionIterator(String path, char mode) {
-        this(path, mode, 1, null);
+        this(path, mode, 1, null, null);
     }
 
-    public XMLTokenExpressionIterator(String path, char mode, int group, String headerName) {
+    public XMLTokenExpressionIterator(String path, char mode, int group, String headerName, String propertyName) {
         StringHelper.notEmpty(path, "path");
         this.headerName = headerName;
+        this.propertyName = propertyName;
         this.path = path;
         this.mode = mode;
         this.group = Math.max(group, 1);
@@ -104,6 +106,14 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
 
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
+    }
+
+    public String getPropertyName() {
+        return propertyName;
+    }
+
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
     }
 
     protected Iterator<?> createIterator(InputStream in, String charset)
@@ -146,6 +156,9 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         try {
             if (headerName != null) {
                 String val = exchange.getIn().getHeader(headerName, String.class);
+                reader = new StringReader(val);
+            } else if (propertyName != null) {
+                String val = exchange.getProperty(propertyName, String.class);
                 reader = new StringReader(val);
             } else {
                 InputStream in = exchange.getIn().getMandatoryBody(InputStream.class);
