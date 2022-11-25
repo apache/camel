@@ -21,7 +21,7 @@
 //REPOS mavencentral,apache=https://repository.apache.org/snapshots
 //DEPS org.apache.camel:camel-bom:${camel.jbang.version:3.18.3}@pom
 //DEPS org.apache.camel:camel-jbang-core:${camel.jbang.version:3.18.3}
-//DEPS org.apache.camel.kamelets:camel-kamelets:${camel-kamelets.version:0.9.0}
+//DEPS org.apache.camel.kamelets:camel-kamelets:${camel-kamelets.version:0.9.3}
 
 package main;
 
