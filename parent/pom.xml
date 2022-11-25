@@ -141,12 +141,12 @@
         <corda-version>4.8</corda-version>
         <couchbase-client-version>3.3.4</couchbase-client-version>
         <curator-version>4.3.0</curator-version>
-        <cxf-version>3.5.3</cxf-version>
+        <cxf-version>3.5.4</cxf-version>
         <cxf-version-range>[3.5,3.6)</cxf-version-range>
-        <cxf-codegen-plugin-version>3.5.3</cxf-codegen-plugin-version>
+        <cxf-codegen-plugin-version>3.5.4</cxf-codegen-plugin-version>
         <!-- cxf-xjc is not released as often -->
         <cxf-xjc-plugin-version>3.3.2</cxf-xjc-plugin-version>
-        <cxf-xjc-utils-version>3.3.1</cxf-xjc-utils-version>
+        <cxf-xjc-utils-version>3.3.2</cxf-xjc-utils-version>
         <datasonnet-mapper-version>2.1.4</datasonnet-mapper-version>
         <deltaspike-version>1.9.5</deltaspike-version>
         <depends-maven-plugin-version>1.4.0</depends-maven-plugin-version>
