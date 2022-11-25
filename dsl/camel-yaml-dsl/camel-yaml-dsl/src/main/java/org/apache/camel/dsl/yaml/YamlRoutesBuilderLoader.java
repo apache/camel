@@ -41,6 +41,9 @@ import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
 import org.apache.camel.dsl.yaml.common.exception.InvalidEndpointException;
 import org.apache.camel.dsl.yaml.common.exception.InvalidNodeTypeException;
 import org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition;
+import org.apache.camel.model.InterceptDefinition;
+import org.apache.camel.model.InterceptFromDefinition;
+import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.KameletDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
@@ -169,6 +172,30 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     return true;
                 } else if (item instanceof CamelContextCustomizer) {
                     ((CamelContextCustomizer) item).configure(getCamelContext());
+                    return true;
+                } else if (item instanceof InterceptFromDefinition) {
+                    if (!getRouteCollection().getRoutes().isEmpty()) {
+                        throw new IllegalArgumentException(
+                                "interceptFrom must be defined before any routes in the RouteBuilder");
+                    }
+                    CamelContextAware.trySetCamelContext(getRouteCollection(), getCamelContext());
+                    getRouteCollection().getInterceptFroms().add((InterceptFromDefinition) item);
+                    return true;
+                } else if (item instanceof InterceptDefinition) {
+                    if (!getRouteCollection().getRoutes().isEmpty()) {
+                        throw new IllegalArgumentException(
+                                "intercept must be defined before any routes in the RouteBuilder");
+                    }
+                    CamelContextAware.trySetCamelContext(getRouteCollection(), getCamelContext());
+                    getRouteCollection().getIntercepts().add((InterceptDefinition) item);
+                    return true;
+                } else if (item instanceof InterceptSendToEndpointDefinition) {
+                    if (!getRouteCollection().getRoutes().isEmpty()) {
+                        throw new IllegalArgumentException(
+                                "interceptSendToEndpoint must be defined before any routes in the RouteBuilder");
+                    }
+                    CamelContextAware.trySetCamelContext(getRouteCollection(), getCamelContext());
+                    getRouteCollection().getInterceptSendTos().add((InterceptSendToEndpointDefinition) item);
                     return true;
                 } else if (item instanceof OnCompletionDefinition) {
                     if (!getRouteCollection().getRoutes().isEmpty()) {
