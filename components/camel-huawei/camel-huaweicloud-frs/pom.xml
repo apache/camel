@@ -24,7 +24,7 @@
   <parent>
     <artifactId>camel-huawei-parent</artifactId>
     <groupId>org.apache.camel</groupId>
-    <version>3.18.4</version>
+    <version>3.18.5-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-huaweicloud-frs</artifactId>
