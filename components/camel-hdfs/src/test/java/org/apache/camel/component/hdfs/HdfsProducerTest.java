@@ -24,6 +24,7 @@ import java.net.URL;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.IOHelper;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -47,10 +48,13 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.language.simple.SimpleLanguage.simple;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class HdfsProducerTest extends HdfsTestSupport {
 
     private static final Path TEMP_DIR = new Path(new File("target/test/").getAbsolutePath());
+
+    private static final boolean LD_LIBRARY_PATH_DEFINED = StringUtils.isNotBlank(System.getenv("LD_LIBRARY_PATH"));
 
     @Override
     @BeforeEach
@@ -324,6 +328,24 @@ public class HdfsProducerTest extends HdfsTestSupport {
     }
 
     @Test
+    public void testCompressWithGZip() throws Exception {
+        assumeTrue(LD_LIBRARY_PATH_DEFINED);
+        byte aByte = 8;
+        template.sendBody("direct:gzip", aByte);
+
+        Configuration conf = new Configuration();
+        Path file1 = new Path("file:///" + TEMP_DIR.toUri() + "/test-camel-gzip");
+        SequenceFile.Reader reader = new SequenceFile.Reader(conf, SequenceFile.Reader.file(file1));
+        Writable key = (Writable) ReflectionUtils.newInstance(reader.getKeyClass(), conf);
+        Writable value = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), conf);
+        reader.next(key, value);
+        byte rByte = ((ByteWritable) value).get();
+        assertEquals(rByte, aByte);
+
+        IOHelper.close(reader);
+    }
+
+    @Test
     public void testCompressWithBZip2() throws Exception {
         byte aByte = 8;
         template.sendBody("direct:bzip2", aByte);
@@ -347,6 +369,41 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
         Configuration conf = new Configuration();
         Path file1 = new Path("file:///" + TEMP_DIR.toUri() + "/test-camel-snappy");
+        SequenceFile.Reader reader = new SequenceFile.Reader(conf, SequenceFile.Reader.file(file1));
+        Writable key = (Writable) ReflectionUtils.newInstance(reader.getKeyClass(), conf);
+        Writable value = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), conf);
+        reader.next(key, value);
+        byte rByte = ((ByteWritable) value).get();
+        assertEquals(rByte, aByte);
+
+        IOHelper.close(reader);
+    }
+
+    @Test
+    public void testCompressWithLz4() throws Exception {
+        byte aByte = 8;
+        template.sendBody("direct:lz4", aByte);
+
+        Configuration conf = new Configuration();
+        Path file1 = new Path("file:///" + TEMP_DIR.toUri() + "/test-camel-lz4");
+        SequenceFile.Reader reader = new SequenceFile.Reader(conf, SequenceFile.Reader.file(file1));
+        Writable key = (Writable) ReflectionUtils.newInstance(reader.getKeyClass(), conf);
+        Writable value = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), conf);
+        reader.next(key, value);
+        byte rByte = ((ByteWritable) value).get();
+        assertEquals(rByte, aByte);
+
+        IOHelper.close(reader);
+    }
+
+    @Test
+    public void testCompressWithZStandard() throws Exception {
+        assumeTrue(LD_LIBRARY_PATH_DEFINED);
+        byte aByte = 8;
+        template.sendBody("direct:zstandard", aByte);
+
+        Configuration conf = new Configuration();
+        Path file1 = new Path("file:///" + TEMP_DIR.toUri() + "/test-camel-zstandard");
         SequenceFile.Reader reader = new SequenceFile.Reader(conf, SequenceFile.Reader.file(file1));
         Writable key = (Writable) ReflectionUtils.newInstance(reader.getKeyClass(), conf);
         Writable value = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), conf);
@@ -432,6 +489,26 @@ public class HdfsProducerTest extends HdfsTestSupport {
                 from("direct:snappy")
                         .to("hdfs:localhost/" + TEMP_DIR.toUri()
                             + "/test-camel-snappy?fileSystemType=LOCAL&valueType=BYTE&fileType=SEQUENCE_FILE&compressionCodec=SNAPPY&compressionType=BLOCK");
+
+                from("direct:lz4")
+                        .to("hdfs:localhost/" + TEMP_DIR.toUri()
+                            + "/test-camel-lz4?fileSystemType=LOCAL&valueType=BYTE&fileType=SEQUENCE_FILE&compressionCodec=LZ4&compressionType=BLOCK");
+
+                // GZip and ZStandard requires native hadoop library. To run these tests,
+                // 1. install shared libraries for these codecs (e.g., libz.so and libzstd.so on Linux)
+                // 2. download pre-built native hadoop library, or build it yourself in accordance with
+                //    https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/NativeLibraries.html
+                // 3. set LD_LIBRARY_PATH to point native hadoop library when running tests, like
+                //    `$ LD_LIBRARY_PATH=/path/to/hadoop/lib/native ./mvnw clean test -f components/camel-hdfs`
+                if (LD_LIBRARY_PATH_DEFINED) {
+                    from("direct:gzip")
+                            .to("hdfs:localhost/" + TEMP_DIR.toUri()
+                                + "/test-camel-gzip?fileSystemType=LOCAL&valueType=BYTE&fileType=SEQUENCE_FILE&compressionCodec=GZIP&compressionType=BLOCK");
+
+                    from("direct:zstandard")
+                            .to("hdfs:localhost/" + TEMP_DIR.toUri()
+                                + "/test-camel-zstandard?fileSystemType=LOCAL&valueType=BYTE&fileType=SEQUENCE_FILE&compressionCodec=ZSTANDARD&compressionType=BLOCK");
+                }
             }
         };
     }
