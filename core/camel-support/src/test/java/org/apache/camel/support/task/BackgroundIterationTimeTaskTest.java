@@ -42,7 +42,8 @@ public class BackgroundIterationTimeTaskTest extends TaskTestSupport {
                         .withMaxIterations(3)
                         .withInterval(Duration.ofSeconds(1))
                         .withInitialDelay(Duration.ZERO)
-                        .withMaxDuration(Duration.ofSeconds(5))
+                        // use unlimited duration so we're sure that the task is really canceled after maxIterations
+                        .withUnlimitedDuration()
                         .build())
                 .build();
 
