@@ -73,7 +73,7 @@ public class SplunkHECProducer extends DefaultProducer {
 
         HttpPost httppost = new HttpPost(
                 (endpoint.getConfiguration().isHttps() ? "https" : "http") + "://"
-                        + endpoint.getSplunkURL() + endpoint.getConfiguration().getSplunkEndpoint());
+                                         + endpoint.getSplunkURL() + endpoint.getConfiguration().getSplunkEndpoint());
         httppost.addHeader("Authorization", " Splunk " + endpoint.getToken());
 
         EntityTemplate entityTemplate = new EntityTemplate(outputStream -> MAPPER.writer().writeValue(outputStream, payload));

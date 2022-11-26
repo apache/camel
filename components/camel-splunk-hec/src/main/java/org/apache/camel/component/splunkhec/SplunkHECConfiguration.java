@@ -102,16 +102,14 @@ public class SplunkHECConfiguration {
     }
 
     /**
-     * Splunk endpoint
-     *   Defaults to /services/collector/event
-     *   To write RAW data like JSON use /services/collector/raw
-     *   For a list of all endpoints refer to splunk documentation (HTTP Event Collector REST API endpoints)
-     *   Example for Spunk 8.2.x: https://docs.splunk.com/Documentation/SplunkCloud/8.2.2203/Data/HECRESTendpoints
+     * Splunk endpoint Defaults to /services/collector/event To write RAW data like JSON use /services/collector/raw For
+     * a list of all endpoints refer to splunk documentation (HTTP Event Collector REST API endpoints) Example for Spunk
+     * 8.2.x: https://docs.splunk.com/Documentation/SplunkCloud/8.2.2203/Data/HECRESTendpoints
      *
-     *   To extract timestamps in Splunk>8.0 /services/collector/event?auto_extract_timestamp=true
-     *   Remember to utilize RAW{} for questionmarks or slashes in parameters, see:
-     *   https://camel.apache.org/manual/faq/how-do-i-configure-endpoints.html
-     *   #HowdoIconfigureendpoints-Configuringparametervaluesusingrawvalues
+     * To extract timestamps in Splunk>8.0 /services/collector/event?auto_extract_timestamp=true Remember to utilize
+     * RAW{} for questionmarks or slashes in parameters, see:
+     * https://camel.apache.org/manual/faq/how-do-i-configure-endpoints.html
+     * #HowdoIconfigureendpoints-Configuringparametervaluesusingrawvalues
      */
     public void setSplunkEndpoint(String splunkEndpoint) {
         this.splunkEndpoint = splunkEndpoint;
@@ -175,6 +173,5 @@ public class SplunkHECConfiguration {
     public void setTime(Long time) {
         this.time = time;
     }
-
 
 }
