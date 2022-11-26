@@ -294,6 +294,19 @@ dependency in your own `pom.xml`.
 
 This is needed because Spring Boot v2 provides jakarta.json-api:1.1.6, and Elasticsearch requires to use json-api v2.
 
+=== Use RestClient provided by Spring Boot
+
+By default Spring Boot will auto configure an Elasticsearch RestClient that will be used by camel, it is possible to customize the client with the following basic properties:
+
+[source,properties]
+----
+spring.elasticsearch.uris=myelkhost:9200
+spring.elasticsearch.username=elkuser
+spring.elasticsearch.password=secure!!
+----
+
+More information can be found in https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#application-properties.data.spring.elasticsearch.connection-timeout
+
 === Disable Sniffer when using Spring Boot
 
 When Spring Boot is on the classpath the Sniffer client for Elasticsearch is enabled by default. This option can be disabled in the Spring Boot Configuration:
