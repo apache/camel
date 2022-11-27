@@ -530,10 +530,6 @@ and add a `JmxMeterRegistry` instance:
 The `HierarchicalNameMapper` strategy determines how meter name and tags are assembled into
 an MBean name.
 
-== Examples
-
-You can find examples for Camel standalone and Spring Boot for how to set up Micrometer monitoring with
-Camel and a Prometheus backend.
 
 == Using Camel Micrometer with Spring Boot
 
