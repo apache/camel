@@ -1203,6 +1203,14 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
+    public void addTemplatedRoutes(RoutesBuilder builder) throws Exception {
+        try (LifecycleHelper helper = new LifecycleHelper()) {
+            build();
+            LOG.debug("Adding templated routes from builder: {}", builder);
+            builder.addTemplatedRoutesToCamelContext(AbstractCamelContext.this);
+        }
+    }
+    @Override
     public void addRoutesConfigurations(RouteConfigurationsBuilder builder) throws Exception {
         try (LifecycleHelper helper = new LifecycleHelper()) {
             build();

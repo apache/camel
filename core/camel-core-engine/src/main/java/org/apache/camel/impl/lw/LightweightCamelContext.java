@@ -577,6 +577,11 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public void addTemplatedRoutes(RoutesBuilder builder) throws Exception {
+        delegate.addTemplatedRoutes(builder);
+    }
+
+    @Override
     public void addRoutesConfigurations(RouteConfigurationsBuilder builder) throws Exception {
         delegate.addRoutesConfigurations(builder);
     }
