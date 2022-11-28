@@ -580,7 +580,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     void addRoutes(RoutesBuilder builder) throws Exception;
 
     /**
-     * Adds the templated route from the routes builder.
+     * Adds the templated routes from the routes builder.
      * For example in Java DSL you can use {@link org.apache.camel.builder.TemplatedRouteBuilder}.
      *
      * @param  builder   the builder which has templated routes
