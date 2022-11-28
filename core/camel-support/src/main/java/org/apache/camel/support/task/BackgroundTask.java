@@ -106,11 +106,6 @@ public class BackgroundTask implements BlockingTask {
     }
 
     @Override
-    public <T> boolean run(Predicate<T> predicate, T payload) {
-        return this.run(() -> predicate.test(payload));
-    }
-
-    @Override
     public boolean run(BooleanSupplier supplier) {
         final CountDownLatch latch = new CountDownLatch(1);
         // we need a wrapper for the actual result that will be defined in the runTaskWrapper method which 
