@@ -38,6 +38,7 @@ import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kms.KmsClient;
 import software.amazon.awssdk.services.lambda.LambdaClient;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.S3ClientBuilder;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 import software.amazon.awssdk.services.sns.SnsClient;
 import software.amazon.awssdk.services.sqs.SqsClient;
@@ -101,6 +102,10 @@ public final class AWSSDKClientUtils {
 
         } else {
             clientBuilder.credentialsProvider(new SystemPropertiesAWSCredentialsProvider());
+        }
+
+        if (clientBuilder instanceof S3ClientBuilder) {
+            ((S3ClientBuilder) clientBuilder).forcePathStyle(true);
         }
 
         Object o = clientBuilder.build();
