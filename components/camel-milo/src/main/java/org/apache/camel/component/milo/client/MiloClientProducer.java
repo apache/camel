@@ -92,14 +92,13 @@ public class MiloClientProducer extends DefaultAsyncProducer {
 
         if (TRUE.equals(await)) {
             future.whenComplete((result, throwable) -> {
-                        if (throwable != null) {
-                            msg.getExchange().setException(throwable);
-                        } else {
-                            msg.setBody(result);
-                        }
-                        async.done(false);
-                    }
-            );
+                if (throwable != null) {
+                    msg.getExchange().setException(throwable);
+                } else {
+                    msg.setBody(result);
+                }
+                async.done(false);
+            });
             return false;
         } else {
             async.done(true);

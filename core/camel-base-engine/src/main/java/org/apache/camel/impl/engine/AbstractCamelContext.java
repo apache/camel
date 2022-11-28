@@ -1210,6 +1210,7 @@ public abstract class AbstractCamelContext extends BaseService
             builder.addTemplatedRoutesToCamelContext(AbstractCamelContext.this);
         }
     }
+
     @Override
     public void addRoutesConfigurations(RouteConfigurationsBuilder builder) throws Exception {
         try (LifecycleHelper helper = new LifecycleHelper()) {
