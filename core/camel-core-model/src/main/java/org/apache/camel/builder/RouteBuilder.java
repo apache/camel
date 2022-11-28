@@ -605,7 +605,6 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         populateTransformers();
         populateValidators();
         populateRouteTemplates();
-        populateTemplatedRoutes();
 
         // ensure routes are prepared before being populated
         for (RouteDefinition route : routeCollection.getRoutes()) {
@@ -616,6 +615,11 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         if (this instanceof OnCamelContextEvent) {
             context.addLifecycleStrategy(LifecycleStrategySupport.adapt((OnCamelContextEvent) this));
         }
+    }
+
+    @Override
+    public void addTemplatedRoutesToCamelContext(CamelContext context) throws Exception {
+        populateTemplatedRoutes();
     }
 
     @Override
