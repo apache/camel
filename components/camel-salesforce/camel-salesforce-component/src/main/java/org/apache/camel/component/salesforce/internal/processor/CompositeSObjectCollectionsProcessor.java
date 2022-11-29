@@ -93,8 +93,8 @@ public class CompositeSObjectCollectionsProcessor extends AbstractSalesforceProc
 
     private boolean processRetrieveSObjectCollections(Exchange exchange, AsyncCallback callback)
             throws SalesforceException {
-        List<String> ids = getListParameter(SalesforceEndpointConfig.SOBJECT_IDS, exchange, USE_BODY, NOT_OPTIONAL);
-        List<String> fields = getListParameter(SalesforceEndpointConfig.SOBJECT_FIELDS, exchange, USE_BODY, NOT_OPTIONAL);
+        List<String> ids = getListParameter(SalesforceEndpointConfig.SOBJECT_IDS, exchange, IGNORE_BODY, NOT_OPTIONAL);
+        List<String> fields = getListParameter(SalesforceEndpointConfig.SOBJECT_FIELDS, exchange, IGNORE_BODY, NOT_OPTIONAL);
         String sObjectName = getParameter(SalesforceEndpointConfig.SOBJECT_NAME, exchange, IGNORE_BODY, IS_OPTIONAL);
 
         // gets class by sObjectName if not null, otherwise tries the SOBJECT_CLASS option

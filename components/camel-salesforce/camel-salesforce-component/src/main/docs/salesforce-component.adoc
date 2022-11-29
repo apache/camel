@@ -912,8 +912,8 @@ Retrieve one or more records of the same object type.
 |===
 | Parameter | Type | Description | Default | Required
 
-| ids | List of String or comma-separated string | A list of one or more IDs of the objects to return. All IDs must belong to the same object type. | | x
-| fields | List of String or comma-separated string | A list of fields to include in the response. The field names you specify must be valid, and you must have read-level permissions to each field. | | x
+| sObjectIds | List of String or comma-separated string | A list of one or more IDs of the objects to return. All IDs must belong to the same object type. | | x
+| sObjectFields | List of String or comma-separated string | A list of fields to include in the response. The field names you specify must be valid, and you must have read-level permissions to each field. | | x
 | sObjectName | String | Type of SObject, e.g. `Account` | | x
 | sObjectClass | String | Fully-qualified class name of DTO class to use for deserializing the response. | | Required if `sObjectName` parameter does not resolve to a class that exists in the package specified by the `package` option.
 |===
