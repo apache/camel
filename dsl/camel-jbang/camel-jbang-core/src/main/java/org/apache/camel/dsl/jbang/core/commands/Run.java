@@ -616,7 +616,12 @@ class Run extends CamelCommand {
                     throw new IllegalArgumentException(
                             "Cannot determine the Java class name from the source in the clipboard");
                 }
-                fn = fqn + ".java";
+                // drop package in file name
+                String cn = fqn;
+                if (fqn.contains(".")) {
+                    cn = cn.substring(cn.lastIndexOf('.') + 1);
+                }
+                fn = cn + ".java";
             }
             Files.write(Paths.get(fn), t.toString().getBytes(StandardCharsets.UTF_8));
             file = "file:" + fn;
