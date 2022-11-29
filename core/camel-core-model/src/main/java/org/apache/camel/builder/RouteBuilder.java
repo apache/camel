@@ -619,7 +619,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
     @Override
     public void addTemplatedRoutesToCamelContext(CamelContext context) throws Exception {
-        populateTemplatedRoutes();
+        populateTemplatedRoutes(context);
     }
 
     @Override
@@ -740,7 +740,10 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     }
 
     protected void populateTemplatedRoutes() throws Exception {
-        CamelContext camelContext = notNullCamelContext();
+        populateTemplatedRoutes(notNullCamelContext());
+    }
+
+    private void populateTemplatedRoutes(CamelContext camelContext) throws Exception {
         getTemplatedRouteCollection().setCamelContext(camelContext);
         camelContext.getExtension(Model.class).addRouteFromTemplatedRoutes(getTemplatedRouteCollection().getTemplatedRoutes());
     }
