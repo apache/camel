@@ -16,15 +16,24 @@
  */
 package org.apache.camel.maven.packaging;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -33,6 +42,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.apache.maven.shared.utils.xml.pull.XmlPullParserException;
 
 /**
  * Prepares the parent/pom.xml to keep the Camel artifacts up-to-date.
@@ -76,32 +86,45 @@ public class PrepareParentPomMojo extends AbstractMojo {
     }
 
     protected void updateParentPom(String groupId, File dir, String token) throws MojoExecutionException, MojoFailureException {
-        SortedSet<String> artifactIds = new TreeSet<>();
+        SortedSet<ParentDependency> dependencies = new TreeSet<>();
 
         try {
             Set<File> poms = new HashSet<>();
             findComponentPoms(dir, poms);
+
             for (File pom : poms) {
-                String aid = asArtifactId(pom);
-                if (aid != null) {
-                    artifactIds.add(aid);
+                BufferedReader in = new BufferedReader(new FileReader(pom));
+                MavenXpp3Reader reader = new MavenXpp3Reader();
+                Model model = reader.read(in);
+
+                ParentDependency dep = new ParentDependency();
+                dep.setArtifactId(model.getArtifactId());
+                dep.setType(model.getPackaging());
+
+                if (model.getArtifactId() != null) {
+                    dependencies.add(dep);
                 }
             }
         } catch (IOException e) {
-            throw new MojoFailureException("Error due " + e.getMessage(), e);
+            throw new MojoFailureException("Error due to " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new MojoFailureException("Error due to " + e.getMessage(), e);
         }
 
         if (getLog().isDebugEnabled()) {
-            getLog().debug("ArtifactIds: " + artifactIds);
+            getLog().debug("ArtifactIds: " + dependencies);
         }
 
         StringBuilder sb = new StringBuilder();
-        for (String aid : artifactIds) {
-            sb.append("      <dependency>\n");
-            sb.append("        <groupId>").append(groupId).append("</groupId>\n");
-            sb.append("        <artifactId>").append(aid).append("</artifactId>\n");
-            sb.append("        <version>${project.version}</version>\n");
-            sb.append("      </dependency>\n");
+        for (ParentDependency dep : dependencies) {
+            sb.append("            <dependency>\n");
+            sb.append("               <groupId>").append(groupId).append("</groupId>\n");
+            sb.append("               <artifactId>").append(dep.getArtifactId()).append("</artifactId>\n");
+            if (dep.getType() != null && !"jar".equals(dep.getType()) && !"maven-plugin".equals(dep.getType())) {
+                sb.append("           <type>").append(dep.getType()).append("</type>\n");
+            }
+            sb.append("               <version>${project.version}</version>\n");
+            sb.append("            </dependency>\n");
         }
         String changed = sb.toString();
         boolean updated = updateParentPom(parentPom, token, changed);
@@ -111,7 +134,7 @@ public class PrepareParentPomMojo extends AbstractMojo {
         } else {
             getLog().debug("No changes to parent/pom.xml file");
         }
-        getLog().info("parent/pom.xml contains " + artifactIds.size() + " " + token + " dependencies");
+        getLog().info("parent/pom.xml contains " + dependencies.size() + " " + token + " dependencies");
     }
 
     private void findComponentPoms(File parentDir, Set<File> components) {
@@ -125,16 +148,6 @@ public class PrepareParentPomMojo extends AbstractMojo {
                 }
             }
         }
-    }
-
-    private String asArtifactId(File pom) throws IOException {
-        String text = PackageHelper.loadText(pom);
-        text = Strings.after(text, "</parent>");
-        if (text != null) {
-            text = Strings.between(text, "<artifactId>", "</artifactId>");
-            return text;
-        }
-        return null;
     }
 
     private boolean updateParentPom(File file, String token, String changed) throws MojoExecutionException {
@@ -158,7 +171,7 @@ public class PrepareParentPomMojo extends AbstractMojo {
                 } else {
                     String before = Strings.before(text, start);
                     String after = Strings.after(text, end);
-                    text = before + start + "\n      " + changed + "\n      " + end + after;
+                    text = before + start + "\n" + "            " + changed + "\n      " + end + after;
                     PackageHelper.writeText(file, text);
                     return true;
                 }
@@ -167,6 +180,13 @@ public class PrepareParentPomMojo extends AbstractMojo {
             }
         } catch (Exception e) {
             throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
+        }
+    }
+
+    private class ParentDependency extends Dependency implements Comparable {
+        public int compareTo(Object obj) {
+            ParentDependency pd = (ParentDependency) obj;
+            return getArtifactId().compareTo(pd.getArtifactId());
         }
     }
 
