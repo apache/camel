@@ -60,6 +60,17 @@
             <artifactId>camel-test-spring-junit5</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+            <scope>test</scope>
+        </dependency>
         <!-- camel-jaxb is used for XPath testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>

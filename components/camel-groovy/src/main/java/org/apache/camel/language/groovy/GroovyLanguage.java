@@ -25,12 +25,12 @@ import org.apache.camel.Service;
 import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.LRUCacheFactory;
-import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.TypedLanguageSupport;
 import org.codehaus.groovy.runtime.InvokerHelper;
 
 @Language("groovy")
-public class GroovyLanguage extends LanguageSupport implements ScriptingLanguage {
+public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLanguage {
 
     // Cache used to stores the compiled scripts (aka their classes)
     private final Map<String, GroovyClassService> scriptCache = LRUCacheFactory.newLRUSoftCache(16, 1000, true);

@@ -50,7 +50,7 @@ public class MicrometerMessageHistory extends DefaultMessageHistory {
         super.nodeProcessingDone();
         Timer timer = Timer.builder(namingStrategy.getName(route, getNode()))
                 .tags(namingStrategy.getTags(route, getNode()))
-                .description(getNode().getDescriptionText())
+                .description("Node performance metrics")
                 .register(meterRegistry);
         sample.stop(timer);
     }

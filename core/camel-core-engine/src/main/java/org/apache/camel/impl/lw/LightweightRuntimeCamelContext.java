@@ -2044,6 +2044,11 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public void addTemplatedRoutes(RoutesBuilder builder) throws Exception {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void addRoutesConfigurations(RouteConfigurationsBuilder builder) throws Exception {
         throw new UnsupportedOperationException();
     }

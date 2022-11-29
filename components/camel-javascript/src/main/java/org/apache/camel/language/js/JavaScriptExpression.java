@@ -40,6 +40,7 @@ public class JavaScriptExpression extends ExpressionSupport {
         return expressionString;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T> T evaluate(Exchange exchange, Class<T> type) {
         try (Context cx = JavaScriptHelper.newContext()) {
@@ -54,8 +55,11 @@ public class JavaScriptExpression extends ExpressionSupport {
             b.putMember("body", exchange.getMessage().getBody());
 
             Value o = cx.eval("js", expressionString);
-            Object answer = o != null ? o.as(type) : null;
-            return type.cast(answer);
+            Object answer = o != null ? o.as(Object.class) : null;
+            if (type == Object.class) {
+                return (T) answer;
+            }
+            return exchange.getContext().getTypeConverter().convertTo(type, exchange, answer);
         }
     }
 

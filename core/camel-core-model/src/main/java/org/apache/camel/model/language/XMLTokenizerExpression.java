@@ -33,9 +33,6 @@ import org.apache.camel.spi.Metadata;
 public class XMLTokenizerExpression extends NamespaceAwareExpression {
 
     @XmlAttribute
-    @Metadata(label = "advanced")
-    private String headerName;
-    @XmlAttribute
     @Metadata(label = "advanced", enums = "i,w,u,t")
     private String mode;
     @XmlAttribute
@@ -51,7 +48,6 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
 
     private XMLTokenizerExpression(Builder builder) {
         super(builder);
-        this.headerName = builder.headerName;
         this.mode = builder.mode;
         this.group = builder.group;
     }
@@ -59,17 +55,6 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
     @Override
     public String getLanguage() {
         return "xtokenize";
-    }
-
-    public String getHeaderName() {
-        return headerName;
-    }
-
-    /**
-     * Name of header to tokenize instead of using the message body.
-     */
-    public void setHeaderName(String headerName) {
-        this.headerName = headerName;
     }
 
     public String getMode() {
@@ -106,17 +91,8 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
     @XmlTransient
     public static class Builder extends AbstractNamespaceAwareBuilder<Builder, XMLTokenizerExpression> {
 
-        private String headerName;
         private String mode;
         private String group;
-
-        /**
-         * Name of header to tokenize instead of using the message body.
-         */
-        public Builder headerName(String headerName) {
-            this.headerName = headerName;
-            return this;
-        }
 
         /**
          * The extraction mode. The available extraction modes are:

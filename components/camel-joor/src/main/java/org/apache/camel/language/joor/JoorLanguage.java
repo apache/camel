@@ -28,15 +28,15 @@ import org.apache.camel.StaticService;
 import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
-import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.support.ScriptHelper;
+import org.apache.camel.support.TypedLanguageSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Language("joor")
-public class JoorLanguage extends LanguageSupport implements ScriptingLanguage, StaticService {
+public class JoorLanguage extends TypedLanguageSupport implements ScriptingLanguage, StaticService {
 
     private static final Logger LOG = LoggerFactory.getLogger(JoorLanguage.class);
 
@@ -48,7 +48,6 @@ public class JoorLanguage extends LanguageSupport implements ScriptingLanguage, 
 
     private String configResource = "classpath:camel-joor.properties?optional=true";
     private boolean preCompile = true;
-    private Class<?> resultType;
     private boolean singleQuotes = true;
 
     public String getConfigResource() {
@@ -67,14 +66,6 @@ public class JoorLanguage extends LanguageSupport implements ScriptingLanguage, 
 
     public void setPreCompile(boolean preCompile) {
         this.preCompile = preCompile;
-    }
-
-    public Class<?> getResultType() {
-        return resultType;
-    }
-
-    public void setResultType(Class<?> resultType) {
-        this.resultType = resultType;
     }
 
     public boolean isSingleQuotes() {
@@ -111,7 +102,7 @@ public class JoorLanguage extends LanguageSupport implements ScriptingLanguage, 
     public Expression createExpression(String expression) {
         JoorExpression exp = new JoorExpression(expression);
         exp.setCompiler(compiler);
-        exp.setResultType(resultType);
+        exp.setResultType(getResultType());
         exp.setSingleQuotes(singleQuotes);
         exp.init(getCamelContext());
         return exp;
@@ -127,7 +118,7 @@ public class JoorLanguage extends LanguageSupport implements ScriptingLanguage, 
         JoorExpression exp = new JoorExpression(expression);
         exp.setCompiler(compiler);
         exp.setPreCompile(property(boolean.class, properties, 0, preCompile));
-        exp.setResultType(property(Class.class, properties, 1, resultType));
+        exp.setResultType(property(Class.class, properties, 1, getResultType()));
         exp.setSingleQuotes(property(boolean.class, properties, 2, singleQuotes));
         exp.init(getCamelContext());
         return exp;

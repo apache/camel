@@ -56,6 +56,10 @@ public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressio
         if (ObjectHelper.isNotEmpty(headerName)) {
             builder.setHeaderName(headerName);
         }
+        String propertyName = getPropertyName(annotation);
+        if (ObjectHelper.isNotEmpty(propertyName)) {
+            builder.setPropertyName(propertyName);
+        }
 
         return builder;
     }
@@ -72,7 +76,7 @@ public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressio
      * Extracts the value of the header method in the Annotation. For backwards compatibility this method will return
      * null if the annotation's method is not found.
      * 
-     * @return If the annotation has the method 'header' then the name of the header we want to apply the XPath
+     * @return If the annotation has the method 'headerName' then the name of the header we want to apply the XPath
      *         expression to. Otherwise, null will be returned
      */
     protected String getHeaderName(Annotation annotation) {
@@ -83,6 +87,23 @@ public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressio
             // Do Nothing
         }
         return headerValue;
+    }
+
+    /**
+     * Extracts the value of the property method in the Annotation. For backwards compatibility this method will return
+     * null if the annotation's method is not found.
+     *
+     * @return If the annotation has the method 'propertyName' then the name of the property we want to apply the XPath
+     *         expression to. Otherwise, null will be returned
+     */
+    protected String getPropertyName(Annotation annotation) {
+        String propertyValue = null;
+        try {
+            propertyValue = (String) getAnnotationObjectValue(annotation, "propertyName");
+        } catch (Exception e) {
+            // Do Nothing
+        }
+        return propertyValue;
     }
 
     protected boolean isLogNamespaces(Annotation annotation) {

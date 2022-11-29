@@ -432,7 +432,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                 break;
             }
 
-            if (ctor.parameters().size() == 1 && ctor.parameters().get(0).name().equals(STRING_CLASS)) {
+            if (ctor.parameterTypes().size() == 1 && ctor.parameterTypes().get(0).name().equals(STRING_CLASS)) {
                 if ((ctor.flags() & java.lang.reflect.Modifier.PUBLIC) == 0) {
                     break;
                 }

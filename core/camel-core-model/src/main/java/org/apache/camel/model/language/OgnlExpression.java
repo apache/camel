@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(firstVersion = "1.1.0", label = "language,java", title = "OGNL")
 @XmlRootElement(name = "ognl")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OgnlExpression extends ExpressionDefinition {
+public class OgnlExpression extends TypedExpressionDefinition {
 
     public OgnlExpression() {
     }

@@ -31,7 +31,11 @@ public class JoorAnnotationExpressionFactory extends DefaultAnnotationExpression
             LanguageAnnotation languageAnnotation, Class<?> expressionReturnType) {
 
         Object[] params = new Object[3];
-        params[1] = expressionReturnType;
+        Class<?> resultType = getResultType(annotation);
+        if (resultType.equals(Object.class)) {
+            resultType = expressionReturnType;
+        }
+        params[1] = resultType;
         if (annotation instanceof Joor) {
             Joor joorAnnotation = (Joor) annotation;
             params[0] = joorAnnotation.preCompile();
@@ -41,4 +45,7 @@ public class JoorAnnotationExpressionFactory extends DefaultAnnotationExpression
         return camelContext.resolveLanguage("joor").createExpression(expression, params);
     }
 
+    private Class<?> getResultType(Annotation annotation) {
+        return (Class<?>) getAnnotationObjectValue(annotation, "resultType");
+    }
 }

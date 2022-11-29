@@ -297,7 +297,7 @@ public class XmlConverter {
      * easy to derive from this class to add new kinds of conversion).
      */
     @Converter(order = 15)
-    public SAXSource toSAXSource(String source, Exchange exchange) throws IOException, SAXException, TransformerException {
+    public SAXSource toSAXSource(String source, Exchange exchange) throws SAXException, TransformerException {
         return toSAXSource(toSource(source), exchange);
     }
 
@@ -326,7 +326,7 @@ public class XmlConverter {
      * easy to derive from this class to add new kinds of conversion).
      */
     @Converter(order = 18)
-    public SAXSource toSAXSource(InputStream source, Exchange exchange) throws IOException, SAXException, TransformerException {
+    public SAXSource toSAXSource(InputStream source, Exchange exchange) throws SAXException, TransformerException {
         return toSAXSource(toStreamSource(source), exchange);
     }
 
@@ -335,7 +335,7 @@ public class XmlConverter {
      * easy to derive from this class to add new kinds of conversion).
      */
     @Converter(order = 19)
-    public SAXSource toSAXSource(byte[] in, Exchange exchange) throws IOException, SAXException, TransformerException {
+    public SAXSource toSAXSource(byte[] in, Exchange exchange) throws SAXException, TransformerException {
         return toSAXSource(toStreamSource(in, exchange), exchange);
     }
 
@@ -391,13 +391,13 @@ public class XmlConverter {
     }
 
     @Converter(order = 27)
-    public StreamSource toStreamSource(byte[] in, Exchange exchange) throws TransformerException {
+    public StreamSource toStreamSource(byte[] in, Exchange exchange) {
         InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, in);
         return new StreamSource(is);
     }
 
     @Converter(order = 28)
-    public StreamSource toStreamSource(ByteBuffer in, Exchange exchange) throws TransformerException {
+    public StreamSource toStreamSource(ByteBuffer in, Exchange exchange) {
         InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, in);
         return new StreamSource(is);
     }
@@ -829,7 +829,7 @@ public class XmlConverter {
      * easy to derive from this class to add new kinds of conversion).
      */
     @Converter(order = 64)
-    public SAXSource toSAXSource(Source source, Exchange exchange) throws IOException, SAXException, TransformerException {
+    public SAXSource toSAXSource(Source source, Exchange exchange) throws SAXException, TransformerException {
         if (source instanceof SAXSource) {
             return (SAXSource) source;
         } else if (source instanceof DOMSource) {

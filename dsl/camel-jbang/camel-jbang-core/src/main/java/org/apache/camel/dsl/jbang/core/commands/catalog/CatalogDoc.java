@@ -38,6 +38,7 @@ import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.LanguageModel;
+import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.model.OtherModel;
 import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
@@ -83,6 +84,15 @@ public class CatalogDoc extends CamelCommand {
         String prefix = StringHelper.before(name, ":");
         if (prefix != null) {
             name = StringHelper.after(name, ":");
+        }
+
+        // special for camel-main
+        if ("main".equals(name)) {
+            MainModel mm = catalog.mainModel();
+            if (mm != null) {
+                docMain(mm);
+                return 0;
+            }
         }
 
         if (prefix == null || "kamelet".equals(prefix)) {
@@ -226,6 +236,70 @@ public class CatalogDoc extends CamelCommand {
                     new Column().header("EXAMPLE").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.NEWLINE)
                             .with(r -> r.example))));
             System.out.println("");
+        }
+
+        if (link != null) {
+            System.out.println(link);
+            System.out.println("");
+        }
+    }
+
+    private void docMain(MainModel mm) throws Exception {
+        String link = websiteLink("other", name, catalog.getCatalogVersion());
+        if (openUrl) {
+            if (link != null) {
+                Desktop.getDesktop().browse(new URI(link));
+            }
+            return;
+        }
+        if (url) {
+            if (link != null) {
+                System.out.println(link);
+            }
+            return;
+        }
+
+        System.out.printf("Name: %s%n", "main");
+        System.out.printf("Since: %s%n", "3.0");
+        System.out.println("");
+        System.out.printf("%s%n",
+                "This module is used for running Camel standalone via a main class extended from camel-main.");
+        System.out.println("");
+        System.out.println("    <dependency>");
+        System.out.println("        <groupId>" + "org.apache.camel" + "</groupId>");
+        System.out.println("        <artifactId>" + "camel.main" + "</artifactId>");
+        System.out.println("        <version>" + catalog.getCatalogVersion() + "</version>");
+        System.out.println("    </dependency>");
+        System.out.println("");
+
+        System.out.printf("%s%n%n%n",
+                "When running Camel via camel-main you can configure Camel in the application.properties file");
+
+        for (MainModel.MainGroupModel g : mm.getGroups()) {
+            var go = filterMain(g.getName(), null, mm.getOptions());
+            var filtered = filter(filter, go);
+            var total1 = go.size();
+            var total2 = filtered.size();
+            if (total2 > 0) {
+                if (total1 == total2) {
+                    System.out.printf("%s (total: %s):%n", g.getDescription(), total1);
+                } else {
+                    System.out.printf("%s options (total: %s match-filter: %s):%n", g.getDescription(), total1, total2);
+                }
+                System.out.println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, filtered, Arrays.asList(
+                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20)
+                                .maxWidth(40, OverflowBehaviour.NEWLINE)
+                                .with(this::getName),
+                        new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(80, OverflowBehaviour.NEWLINE)
+                                .with(this::getDescription),
+                        new Column().header("DEFAULT").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
+                                .with(r -> r.getShortDefaultValue(25)),
+                        new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.NEWLINE)
+                                .with(BaseOptionModel::getShortJavaType))));
+                System.out.println("");
+                System.out.println("");
+            }
         }
 
         if (link != null) {
@@ -523,7 +597,8 @@ public class CatalogDoc extends CamelCommand {
         }
         String target = name.toLowerCase(Locale.ROOT);
         return options.stream().filter(
-                r -> r.getName().equalsIgnoreCase(target) || r.getDescription().toLowerCase(Locale.ROOT).contains(target)
+                r -> r.getName().contains(target) || r.getName().equalsIgnoreCase(target)
+                        || r.getDescription().toLowerCase(Locale.ROOT).contains(target)
                         || r.getShortGroup() != null && r.getShortGroup().toLowerCase(Locale.ROOT).contains(target))
                 .collect(Collectors.toList());
     }
@@ -558,6 +633,20 @@ public class CatalogDoc extends CamelCommand {
         }
 
         return null;
+    }
+
+    List<? extends BaseOptionModel> filterMain(String prefix, String name, List<? extends BaseOptionModel> options) {
+        options = options.stream().filter(o -> o.getName().startsWith(prefix)).collect(Collectors.toList());
+
+        if (name == null || name.isEmpty()) {
+            return options;
+        }
+        String target = name.toLowerCase(Locale.ROOT);
+        return options.stream().filter(
+                r -> r.getName().contains(target) || r.getName().equalsIgnoreCase(target)
+                        || r.getDescription().toLowerCase(Locale.ROOT).contains(target)
+                        || r.getShortGroup() != null && r.getShortGroup().toLowerCase(Locale.ROOT).contains(target))
+                .collect(Collectors.toList());
     }
 
 }

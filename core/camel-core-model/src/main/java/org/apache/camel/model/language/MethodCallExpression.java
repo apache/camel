@@ -31,7 +31,7 @@ import org.apache.camel.util.StringHelper;
 @Metadata(firstVersion = "1.3.0", label = "language,core,java", title = "Bean Method")
 @XmlRootElement(name = "method")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class MethodCallExpression extends ExpressionDefinition {
+public class MethodCallExpression extends TypedExpressionDefinition {
 
     @XmlTransient
     private Class<?> beanType;

@@ -17,33 +17,18 @@
 package org.apache.camel.reifier.language;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.JsonPathExpression;
-import org.apache.camel.spi.Language;
 
-public class JsonPathExpressionReifier extends ExpressionReifier<JsonPathExpression> {
+public class JsonPathExpressionReifier extends SingleInputTypedExpressionReifier<JsonPathExpression> {
 
     public JsonPathExpressionReifier(CamelContext camelContext, ExpressionDefinition definition) {
-        super(camelContext, (JsonPathExpression) definition);
+        super(camelContext, definition);
     }
 
     @Override
-    protected void configureLanguage(Language language) {
-        if (definition.getResultType() == null && definition.getResultTypeName() != null) {
-            try {
-                Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(definition.getResultTypeName());
-                definition.setResultType(clazz);
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeException(e);
-            }
-        }
-    }
-
-    private Object[] createProperties() {
-        Object[] properties = new Object[8];
+    protected Object[] createProperties() {
+        Object[] properties = new Object[9];
         properties[0] = definition.getResultType();
         properties[1] = parseBoolean(definition.getSuppressExceptions());
         properties[2] = parseBoolean(definition.getAllowSimple());
@@ -52,17 +37,8 @@ public class JsonPathExpressionReifier extends ExpressionReifier<JsonPathExpress
         properties[5] = parseBoolean(definition.getUnpackArray());
         properties[6] = parseString(definition.getHeaderName());
         properties[7] = parseString(definition.getOption());
+        properties[8] = parseString(definition.getPropertyName());
         return properties;
-    }
-
-    @Override
-    protected Expression createExpression(Language language, String exp) {
-        return language.createExpression(exp, createProperties());
-    }
-
-    @Override
-    protected Predicate createPredicate(Language language, String exp) {
-        return language.createPredicate(exp, createProperties());
     }
 
 }

@@ -95,6 +95,10 @@ public class AutoConfigureDownloadListener implements DownloadListener, CamelCon
         InputStream is = getClass().getResourceAsStream("/auto-configure/" + artifactId + ".joor");
         if (is != null) {
             try {
+                // ensure java-joor is downloaded
+                DependencyDownloader downloader = getCamelContext().hasService(DependencyDownloader.class);
+                // these are extra dependencies used in special use-case so download as hidden
+                downloader.downloadHiddenDependency("org.apache.camel", "camel-joor", camelContext.getVersion());
                 // execute script via java-joor
                 String script = IOHelper.loadText(is);
                 Language lan = camelContext.resolveLanguage("joor");

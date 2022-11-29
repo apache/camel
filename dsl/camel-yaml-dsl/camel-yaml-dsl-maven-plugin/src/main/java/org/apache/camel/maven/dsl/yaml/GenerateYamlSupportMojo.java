@@ -186,7 +186,7 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
         if (target == null) {
             return false;
         }
-        return target.classAnnotation(annotationName) != null;
+        return target.declaredAnnotation(annotationName) != null;
     }
 
     protected static boolean hasAnnotation(FieldInfo target, DotName annotationName) {
@@ -207,7 +207,7 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
             return false;
         }
         return annotationValue(
-                target.classAnnotation(annotationName),
+                target.declaredAnnotation(annotationName),
                 name).isPresent();
     }
 
@@ -222,7 +222,7 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
             return Optional.empty();
         }
         return annotationValue(
-                target.classAnnotation(annotationName),
+                target.declaredAnnotation(annotationName),
                 name);
     }
 
@@ -352,7 +352,7 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
         Map<String, ClassInfo> answer = new TreeMap<>();
 
         for (ClassInfo ci : view.getAllKnownSubclasses(type)) {
-            AnnotationInstance instance = ci.classAnnotation(XML_ROOT_ELEMENT_ANNOTATION_CLASS);
+            AnnotationInstance instance = ci.declaredAnnotation(XML_ROOT_ELEMENT_ANNOTATION_CLASS);
             if (instance != null) {
                 AnnotationValue name = instance.value("name");
                 if (name != null) {
@@ -405,8 +405,8 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
         annotated(XML_ROOT_ELEMENT_ANNOTATION_CLASS)
                 .forEach(
                         i -> {
-                            AnnotationInstance meta = i.classAnnotation(METADATA_ANNOTATION_CLASS);
-                            AnnotationInstance root = i.classAnnotation(XML_ROOT_ELEMENT_ANNOTATION_CLASS);
+                            AnnotationInstance meta = i.declaredAnnotation(METADATA_ANNOTATION_CLASS);
+                            AnnotationInstance root = i.declaredAnnotation(XML_ROOT_ELEMENT_ANNOTATION_CLASS);
 
                             if (meta == null || root == null) {
                                 return;

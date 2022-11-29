@@ -30,26 +30,16 @@ import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.Predicate;
 import org.apache.camel.model.ExpressionSubElementDefinition;
 import org.apache.camel.model.language.CSimpleExpression;
-import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.DatasonnetExpression;
-import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.model.language.GroovyExpression;
-import org.apache.camel.model.language.HeaderExpression;
-import org.apache.camel.model.language.Hl7TerserExpression;
-import org.apache.camel.model.language.JavaScriptExpression;
 import org.apache.camel.model.language.JoorExpression;
 import org.apache.camel.model.language.JqExpression;
 import org.apache.camel.model.language.JsonPathExpression;
-import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.MethodCallExpression;
-import org.apache.camel.model.language.MvelExpression;
-import org.apache.camel.model.language.OgnlExpression;
-import org.apache.camel.model.language.PythonExpression;
-import org.apache.camel.model.language.RefExpression;
 import org.apache.camel.model.language.SimpleExpression;
-import org.apache.camel.model.language.SpELExpression;
+import org.apache.camel.model.language.SingleInputTypedExpressionDefinition;
 import org.apache.camel.model.language.TokenizerExpression;
+import org.apache.camel.model.language.TypedExpressionDefinition;
 import org.apache.camel.model.language.XMLTokenizerExpression;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
@@ -116,44 +106,20 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
 
     private static ExpressionReifier<? extends ExpressionDefinition> coreReifier(
             CamelContext camelContext, ExpressionDefinition definition) {
-        if (definition instanceof ConstantExpression) {
-            return new ConstantExpressionReifier(camelContext, definition);
-        } else if (definition instanceof CSimpleExpression) {
+        if (definition instanceof CSimpleExpression) {
             return new CSimpleExpressionReifier(camelContext, definition);
         } else if (definition instanceof DatasonnetExpression) {
             return new DatasonnetExpressionReifier(camelContext, definition);
-        } else if (definition instanceof ExchangePropertyExpression) {
-            return new ExpressionReifier<>(camelContext, definition);
-        } else if (definition instanceof GroovyExpression) {
-            return new ExpressionReifier<>(camelContext, definition);
-        } else if (definition instanceof HeaderExpression) {
-            return new ExpressionReifier<>(camelContext, definition);
-        } else if (definition instanceof Hl7TerserExpression) {
-            return new ExpressionReifier<>(camelContext, definition);
-        } else if (definition instanceof JavaScriptExpression) {
-            return new JavaScriptExpressionReifier(camelContext, definition);
         } else if (definition instanceof JoorExpression) {
             return new JoorExpressionReifier(camelContext, definition);
         } else if (definition instanceof JqExpression) {
             return new JqExpressionReifier(camelContext, definition);
         } else if (definition instanceof JsonPathExpression) {
             return new JsonPathExpressionReifier(camelContext, definition);
-        } else if (definition instanceof LanguageExpression) {
-            return new ExpressionReifier<>(camelContext, definition);
         } else if (definition instanceof MethodCallExpression) {
             return new MethodCallExpressionReifier(camelContext, definition);
-        } else if (definition instanceof MvelExpression) {
-            return new ExpressionReifier<>(camelContext, definition);
-        } else if (definition instanceof OgnlExpression) {
-            return new ExpressionReifier<>(camelContext, definition);
-        } else if (definition instanceof PythonExpression) {
-            return new PythonExpressionReifier(camelContext, definition);
-        } else if (definition instanceof RefExpression) {
-            return new ExpressionReifier<>(camelContext, definition);
         } else if (definition instanceof SimpleExpression) {
             return new SimpleExpressionReifier(camelContext, definition);
-        } else if (definition instanceof SpELExpression) {
-            return new ExpressionReifier<>(camelContext, definition);
         } else if (definition instanceof TokenizerExpression) {
             return new TokenizerExpressionReifier(camelContext, definition);
         } else if (definition instanceof XMLTokenizerExpression) {
@@ -162,7 +128,11 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
             return new XPathExpressionReifier(camelContext, definition);
         } else if (definition instanceof XQueryExpression) {
             return new XQueryExpressionReifier(camelContext, definition);
-        } else if (definition instanceof ExpressionDefinition) {
+        } else if (definition instanceof SingleInputTypedExpressionDefinition) {
+            return new SingleInputTypedExpressionReifier<>(camelContext, definition);
+        } else if (definition instanceof TypedExpressionDefinition) {
+            return new TypedExpressionReifier<>(camelContext, definition);
+        } else if (definition != null) {
             return new ExpressionReifier<>(camelContext, definition);
         }
         return null;

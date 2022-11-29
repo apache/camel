@@ -17,51 +17,19 @@
 package org.apache.camel.reifier.language;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.language.CSimpleExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.spi.Language;
 
-public class CSimpleExpressionReifier extends ExpressionReifier<CSimpleExpression> {
+public class CSimpleExpressionReifier extends TypedExpressionReifier<CSimpleExpression> {
 
     public CSimpleExpressionReifier(CamelContext camelContext, ExpressionDefinition definition) {
-        super(camelContext, (CSimpleExpression) definition);
-    }
-
-    @Override
-    protected void configureLanguage(Language language) {
-        if (definition.getResultType() == null && definition.getResultTypeName() != null) {
-            try {
-                Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(definition.getResultTypeName());
-                definition.setResultType(clazz);
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeException(e);
-            }
-        }
-    }
-
-    private Object[] createProperties() {
-        Object[] properties = new Object[1];
-        properties[0] = definition.getResultType();
-        return properties;
+        super(camelContext, definition);
     }
 
     @Override
     public boolean isResolveOptionalExternalScriptEnabled() {
         // csimple language will handle to resolve external scripts as they can be dynamic using simple language itself
         return false;
-    }
-
-    @Override
-    protected Expression createExpression(Language language, String exp) {
-        return language.createExpression(exp, createProperties());
-    }
-
-    @Override
-    protected Predicate createPredicate(Language language, String exp) {
-        return language.createPredicate(exp, createProperties());
     }
 
 }

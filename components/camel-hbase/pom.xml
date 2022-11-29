@@ -28,7 +28,7 @@
 
     <artifactId>camel-hbase</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Hbase</name>
+    <name>Camel :: Hbase (deprecated)</name>
     <description>Camel HBase component</description>
 
     <dependencies>

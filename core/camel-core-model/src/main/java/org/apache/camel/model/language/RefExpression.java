@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(firstVersion = "2.8.0", label = "language,core", title = "Ref")
 @XmlRootElement(name = "ref")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RefExpression extends ExpressionDefinition {
+public class RefExpression extends TypedExpressionDefinition {
 
     public RefExpression() {
     }

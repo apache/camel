@@ -126,6 +126,22 @@ public interface XQueryEndpointBuilderFactory {
             return this;
         }
         /**
+         * To use a Camel Exchange property as the input source instead of
+         * Message body. It has a lower precedent than the name of header if
+         * both are set.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param propertyName the value to set
+         * @return the dsl builder
+         */
+        default XQueryEndpointConsumerBuilder propertyName(String propertyName) {
+            doSetProperty("propertyName", propertyName);
+            return this;
+        }
+        /**
          * What output result to use.
          * 
          * The option is a:
@@ -1183,6 +1199,22 @@ public interface XQueryEndpointBuilderFactory {
             return this;
         }
         /**
+         * To use a Camel Exchange property as the input source instead of
+         * Message body. It has a lower precedent than the name of header if
+         * both are set.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param propertyName the value to set
+         * @return the dsl builder
+         */
+        default XQueryEndpointProducerBuilder propertyName(String propertyName) {
+            doSetProperty("propertyName", propertyName);
+            return this;
+        }
+        /**
          * What output result to use.
          * 
          * The option is a:
@@ -1622,6 +1654,22 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointBuilder namespacePrefixes(String namespacePrefixes) {
             doSetProperty("namespacePrefixes", namespacePrefixes);
+            return this;
+        }
+        /**
+         * To use a Camel Exchange property as the input source instead of
+         * Message body. It has a lower precedent than the name of header if
+         * both are set.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param propertyName the value to set
+         * @return the dsl builder
+         */
+        default XQueryEndpointBuilder propertyName(String propertyName) {
+            doSetProperty("propertyName", propertyName);
             return this;
         }
         /**

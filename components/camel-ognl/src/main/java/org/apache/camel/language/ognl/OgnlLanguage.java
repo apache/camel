@@ -25,21 +25,23 @@ import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.spi.annotations.Language;
-import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.support.TypedLanguageSupport;
 
 @Language("ognl")
-public class OgnlLanguage extends LanguageSupport implements ScriptingLanguage {
+public class OgnlLanguage extends TypedLanguageSupport implements ScriptingLanguage {
 
     @Override
     public Predicate createPredicate(String expression) {
-        expression = loadResource(expression);
-        return new OgnlExpression(expression, Boolean.class);
+        return createOgnlExpression(expression, Boolean.class);
     }
 
     @Override
     public Expression createExpression(String expression) {
-        expression = loadResource(expression);
-        return new OgnlExpression(expression, Object.class);
+        return createOgnlExpression(expression, Object.class);
+    }
+
+    private OgnlExpression createOgnlExpression(String expression, Class<?> type) {
+        return new OgnlExpression(loadResource(expression), type);
     }
 
     @Override

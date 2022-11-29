@@ -36,7 +36,8 @@ import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.annotations.Language;
-import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.support.TypedLanguageSupport;
+import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
@@ -44,7 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Language("csimple")
-public class CSimpleLanguage extends LanguageSupport implements StaticService {
+public class CSimpleLanguage extends TypedLanguageSupport implements StaticService {
 
     public static final String PRE_COMPILED_FILE = "META-INF/services/org/apache/camel/csimple.properties";
     public static final String CONFIG_FILE = "camel-csimple.properties";
@@ -130,7 +131,7 @@ public class CSimpleLanguage extends LanguageSupport implements StaticService {
             throw new IllegalArgumentException("expression must be specified");
         }
         // text should be single line and trimmed as it can be multi lined
-        String text = expression.replaceAll("\n", "");
+        String text = expression.replace("\n", "");
         text = text.trim();
 
         Predicate answer = compiledPredicates.get(text);
@@ -150,13 +151,16 @@ public class CSimpleLanguage extends LanguageSupport implements StaticService {
 
     @Override
     public Expression createExpression(String expression, Object[] properties) {
-        Class<?> resultType = (Class<?>) (properties != null && properties.length == 1 ? properties[0] : null);
+        Class<?> resultType = property(Class.class, properties, 0, getResultType());
         if (Boolean.class == resultType || boolean.class == resultType) {
             // we want it compiled as a predicate
             return (Expression) createPredicate(expression);
-        } else {
+        } else if (resultType == null || resultType == Object.class) {
+            // No specific result type has been provided
             return createExpression(expression);
         }
+        // A specific result type has been provided
+        return ExpressionBuilder.convertToExpression(createExpression(expression), resultType);
     }
 
     @Override
@@ -165,7 +169,7 @@ public class CSimpleLanguage extends LanguageSupport implements StaticService {
             throw new IllegalArgumentException("expression must be specified");
         }
         // text should be single line and trimmed as it can be multi lined
-        String text = expression.replaceAll("\n", "");
+        String text = expression.replace("\n", "");
         text = text.trim();
 
         Expression answer = compiledExpressions.get(text);

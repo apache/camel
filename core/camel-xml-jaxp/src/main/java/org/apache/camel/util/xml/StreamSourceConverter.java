@@ -19,7 +19,6 @@ package org.apache.camel.util.xml;
 import java.io.IOException;
 import java.io.Serializable;
 
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
 
@@ -54,7 +53,7 @@ public final class StreamSourceConverter {
     }
 
     @Converter(order = 3)
-    public static StreamCache convertToStreamCache(SAXSource source, Exchange exchange) throws TransformerException {
+    public static StreamCache convertToStreamCache(SAXSource source, Exchange exchange) {
         String data = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, source);
         return new SourceCache(data);
     }

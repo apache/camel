@@ -74,6 +74,8 @@ public class XQueryEndpoint extends ProcessorEndpoint {
     private boolean allowStAX;
     @UriParam
     private String headerName;
+    @UriParam
+    private String propertyName;
 
     public XQueryEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -222,6 +224,19 @@ public class XQueryEndpoint extends ProcessorEndpoint {
         this.headerName = headerName;
     }
 
+    public String getPropertyName() {
+        return propertyName;
+    }
+
+    /**
+     * To use a Camel Exchange property as the input source instead of Message body.
+     * <p>
+     * It has a lower precedent than the name of header if both are set.
+     */
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
+    }
+
     @Override
     protected void doInit() throws Exception {
         super.doInit();
@@ -255,6 +270,7 @@ public class XQueryEndpoint extends ProcessorEndpoint {
         this.xquery.setStripsAllWhiteSpace(isStripsAllWhiteSpace());
         this.xquery.setAllowStAX(isAllowStAX());
         this.xquery.setHeaderName(getHeaderName());
+        this.xquery.setPropertyName(getPropertyName());
         this.xquery.setModuleURIResolver(getModuleURIResolver());
         this.xquery.init(getCamelContext());
 

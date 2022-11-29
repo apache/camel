@@ -43,8 +43,6 @@ public class IAM2Component extends DefaultComponent {
 
     public IAM2Component(CamelContext context) {
         super(context);
-
-        registerExtension(new IAM2ComponentVerifierExtension());
     }
 
     @Override

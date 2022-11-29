@@ -45,7 +45,7 @@ class IntegrationLoaderDependenciesTest extends YamlTestSupport {
                 spec:
                   dependencies:
                     - "mvn:org.apache.commons:commons-dbcp2:2.9.0"
-                    - "mvn:org.postgresql:postgresql:42.4.1"
+                    - "mvn:org.postgresql:postgresql:42.5.1"
                   flows:
                     - from:
                         uri: "sql:SELECT * FROM table1"
@@ -76,7 +76,7 @@ class IntegrationLoaderDependenciesTest extends YamlTestSupport {
 
             deps.size() == 2
             deps[0] == 'mvn:org.apache.commons:commons-dbcp2:2.9.0'
-            deps[1] == 'mvn:org.postgresql:postgresql:42.4.1'
+            deps[1] == 'mvn:org.postgresql:postgresql:42.5.1'
     }
 
 }

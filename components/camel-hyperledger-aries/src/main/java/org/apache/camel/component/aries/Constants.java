@@ -21,6 +21,8 @@ public final class Constants {
     // The ACA-Py API path 
     public static final String HEADER_SERVICE = "service";
 
+    public static final String HEADER_DID = "did";
+
     public static final String HEADER_WALLET_NAME = "WalletName";
     public static final String HEADER_WALLET_RECORD = "WalletRecord";
 

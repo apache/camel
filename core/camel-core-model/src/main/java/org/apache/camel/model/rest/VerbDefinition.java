@@ -53,7 +53,10 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
     private String consumes;
     @XmlAttribute
     private String produces;
-    @XmlAttribute()
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    private String disabled;
+    @XmlAttribute
     @Metadata(label = "advanced")
     private String type;
     @XmlTransient
@@ -189,6 +192,18 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
      */
     public void setProduces(String produces) {
         this.produces = produces;
+    }
+
+    public String getDisabled() {
+        return disabled;
+    }
+
+    /**
+     * Whether to disable this REST service from the route during build time. Once an REST service has been disabled
+     * then it cannot be enabled later at runtime.
+     */
+    public void setDisabled(String disabled) {
+        this.disabled = disabled;
     }
 
     public String getBindingMode() {

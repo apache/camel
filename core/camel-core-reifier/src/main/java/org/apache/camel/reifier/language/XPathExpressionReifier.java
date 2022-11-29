@@ -62,7 +62,7 @@ public class XPathExpressionReifier extends ExpressionReifier<XPathExpression> {
     }
 
     protected Object[] createProperties() {
-        Object[] properties = new Object[10];
+        Object[] properties = new Object[11];
         properties[0] = definition.getDocumentType();
         // resultType can either point to a QName or it can be a regular class that influence the qname
         // so we need this special logic to set resultQName and resultType accordingly
@@ -80,6 +80,7 @@ public class XPathExpressionReifier extends ExpressionReifier<XPathExpression> {
         properties[7] = parseBoolean(definition.getPreCompile());
         properties[8] = parseBoolean(definition.getLogNamespaces());
         properties[9] = parseString(definition.getHeaderName());
+        properties[10] = parseString(definition.getPropertyName());
         return properties;
     }
 

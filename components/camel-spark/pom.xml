@@ -30,7 +30,7 @@
 
     <artifactId>camel-spark</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Apache Spark</name>
+    <name>Camel :: Apache Spark (deprecated)</name>
     <description>Camel Apache Spark Support</description>
 
     <properties>

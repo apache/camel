@@ -1886,6 +1886,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.HbaseComponentBuilderFactory.HbaseComponentBuilder hbase() {
         return org.apache.camel.builder.component.dsl.HbaseComponentBuilderFactory.hbase();
     }
@@ -3970,6 +3971,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.SparkComponentBuilderFactory.SparkComponentBuilder spark() {
         return org.apache.camel.builder.component.dsl.SparkComponentBuilderFactory.spark();
     }

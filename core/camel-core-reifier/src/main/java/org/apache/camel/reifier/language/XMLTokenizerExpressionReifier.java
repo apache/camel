@@ -65,11 +65,12 @@ public class XMLTokenizerExpressionReifier extends ExpressionReifier<XMLTokenize
     }
 
     protected Object[] createProperties() {
-        Object[] properties = new Object[4];
+        Object[] properties = new Object[5];
         properties[0] = parseString(definition.getHeaderName());
         properties[1] = parseString(definition.getMode());
         properties[2] = parseInt(definition.getGroup());
         properties[3] = definition.getNamespaces();
+        properties[4] = parseString(definition.getPropertyName());
         return properties;
     }
 

@@ -56,6 +56,7 @@ public class JsonPathEngine {
     private final String expression;
     private final boolean writeAsString;
     private final String headerName;
+    private final String propertyName;
     private final Configuration configuration;
     private final boolean hasSimple;
     private JsonPathAdapter adapter;
@@ -63,14 +64,15 @@ public class JsonPathEngine {
 
     @Deprecated
     public JsonPathEngine(String expression) {
-        this(expression, false, false, true, null, null, null);
+        this(expression, false, false, true, null, null, null, null);
     }
 
     public JsonPathEngine(String expression, boolean writeAsString, boolean suppressExceptions, boolean allowSimple,
-                          String headerName, Option[] options, CamelContext context) {
+                          String headerName, String propertyName, Option[] options, CamelContext context) {
         this.expression = expression;
         this.writeAsString = writeAsString;
         this.headerName = headerName;
+        this.propertyName = propertyName;
 
         Configuration.ConfigurationBuilder builder = Configuration.builder();
         if (options != null) {
@@ -170,8 +172,23 @@ public class JsonPathEngine {
         return answer;
     }
 
+    private Object getPayload(Exchange exchange) {
+        Object payload = null;
+        if (headerName == null && propertyName == null) {
+            payload = exchange.getIn().getBody();
+        } else {
+            if (headerName != null) {
+                payload = exchange.getIn().getHeader(headerName);
+            }
+            if (payload == null && propertyName != null) {
+                payload = exchange.getProperty(propertyName);
+            }
+        }
+        return payload;
+    }
+
     private Object doRead(String path, Exchange exchange) throws IOException, CamelExchangeException {
-        Object json = headerName != null ? exchange.getIn().getHeader(headerName) : exchange.getIn().getBody();
+        final Object json = getPayload(exchange);
 
         if (json instanceof InputStream) {
             return readWithInputStream(path, exchange);
