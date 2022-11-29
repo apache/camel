@@ -460,6 +460,10 @@ class Run extends CamelCommand {
                 // no specific name was given so lets use the name from the first integration file
                 // remove scheme and keep only the name (no path or ext)
                 String s = StringHelper.after(file, ":");
+                if (s.contains(":")) {
+                    // its maybe a gist/github url so we need only the last part which has the name
+                    s = StringHelper.afterLast(s, ":");
+                }
                 name = FileUtil.onlyName(s);
             }
 
