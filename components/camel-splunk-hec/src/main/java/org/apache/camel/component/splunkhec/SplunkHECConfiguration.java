@@ -107,9 +107,7 @@ public class SplunkHECConfiguration {
      * 8.2.x: https://docs.splunk.com/Documentation/SplunkCloud/8.2.2203/Data/HECRESTendpoints
      *
      * To extract timestamps in Splunk>8.0 /services/collector/event?auto_extract_timestamp=true Remember to utilize
-     * RAW{} for questionmarks or slashes in parameters, see:
-     * https://camel.apache.org/manual/faq/how-do-i-configure-endpoints.html
-     * #HowdoIconfigureendpoints-Configuringparametervaluesusingrawvalues
+     * RAW{} for questionmarks or slashes in parameters.
      */
     public void setSplunkEndpoint(String splunkEndpoint) {
         this.splunkEndpoint = splunkEndpoint;
