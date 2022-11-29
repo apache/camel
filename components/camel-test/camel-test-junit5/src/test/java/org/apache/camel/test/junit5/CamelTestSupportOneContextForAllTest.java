@@ -27,15 +27,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultRegistry;
-import org.apache.camel.test.junit5.patterns.CreateCamelContextPerTestTrueTest;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class CamelTestSupporOneContextForAllTest extends CamelTestSupport {
-
-    private static final Logger LOG = LoggerFactory.getLogger(CreateCamelContextPerTestTrueTest.class);
+class CamelTestSupportOneContextForAllTest extends CamelTestSupport {
 
     private static final CamelContext CUSTOM_CONTEXT;
 
@@ -68,7 +63,7 @@ public class CamelTestSupporOneContextForAllTest extends CamelTestSupport {
 
     @Test
     @Order(1)
-    public void initContextTest() throws Exception {
+    void initContextTest() throws Exception {
         String expectedBody = "<matched/>";
 
         resultEndpoint.expectedBodiesReceived(expectedBody);
@@ -82,7 +77,7 @@ public class CamelTestSupporOneContextForAllTest extends CamelTestSupport {
 
     @Test
     @Order(2)
-    public void stopNotEnabledTest() throws Exception {
+    void stopNotEnabledTest() throws Exception {
         String expectedBody = "<matched/>";
 
         resultEndpoint.expectedBodiesReceived(expectedBody);
@@ -105,16 +100,14 @@ public class CamelTestSupporOneContextForAllTest extends CamelTestSupport {
 
     private static class MockContext extends DefaultCamelContext {
 
-        boolean initialized;
+        private boolean initialized;
 
         @Override
         protected Registry createRegistry() {
             if (initialized) {
                 throw new UnsupportedOperationException();
             }
-            if (!initialized) {
-                initialized = true;
-            }
+            initialized = true;
             return new DefaultRegistry();
         }
 
