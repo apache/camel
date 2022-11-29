@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest;
 import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetResponse;
 import com.google.api.services.sheets.v4.model.Request;
@@ -32,121 +33,134 @@ import org.apache.camel.component.google.sheets.internal.GoogleSheetsApiCollecti
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsConstants;
 import org.apache.camel.component.google.sheets.internal.SheetsSpreadsheetsApiMethod;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.google.sheets.server.GoogleSheetsApiTestServerAssert.assertThatGoogleApi;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test class for {@link com.google.api.services.sheets.v4.Sheets.Spreadsheets} APIs.
  */
-@EnabledIf(value = "org.apache.camel.component.google.sheets.AbstractGoogleSheetsTestSupport#hasCredentials",
-           disabledReason = "Google Sheets credentials were not provided")
-public class SheetsSpreadsheetsIT extends AbstractGoogleSheetsTestSupport {
+public class SheetsSpreadsheetsIT {
 
     private static final Logger LOG = LoggerFactory.getLogger(SheetsSpreadsheetsIT.class);
     private static final String PATH_PREFIX
             = GoogleSheetsApiCollection.getCollection().getApiName(SheetsSpreadsheetsApiMethod.class).getName();
 
-    @Test
-    public void testCreate() {
-        String title = "camel-sheets-" + new SecureRandom().nextInt(Integer.MAX_VALUE);
-        Spreadsheet sheetToCreate = new Spreadsheet();
-        SpreadsheetProperties sheetProperties = new SpreadsheetProperties();
-        sheetProperties.setTitle(title);
+    public static class CreateTest extends AbstractGoogleSheetsTestSupport {
+        private String title = "camel-sheets-" + new SecureRandom().nextInt(Integer.MAX_VALUE);
 
-        sheetToCreate.setProperties(sheetProperties);
+        @Test
+        public void test() {
+            Spreadsheet sheetToCreate = new Spreadsheet();
+            SpreadsheetProperties sheetProperties = new SpreadsheetProperties();
+            sheetProperties.setTitle(title);
 
-        assertThatGoogleApi(getGoogleApiTestServer())
-                .createSpreadsheetRequest()
-                .hasTitle(title)
-                .andReturnRandomSpreadsheet();
+            sheetToCreate.setProperties(sheetProperties);
 
-        final Spreadsheet result = requestBody("direct://CREATE", sheetToCreate);
+            final Spreadsheet result = requestBody("direct://CREATE", sheetToCreate);
 
-        assertNotNull(result, "create result is null");
-        assertEquals(title, result.getProperties().getTitle());
+            assertNotNull(result, "create result is null");
+            assertEquals(title, result.getProperties().getTitle());
 
-        LOG.debug("create: " + result);
+            LOG.debug("create: " + result);
+        }
+
+        @Override
+        protected GoogleSheetsClientFactory getClientFactory() throws Exception {
+            return new MockGoogleSheetsClientFactory(
+                    new MockLowLevelHttpResponse().setContent("{\"properties\":{\"title\":\"" + title + "\"}}"));
+        }
+
+        @Override
+        protected RouteBuilder createRouteBuilder() {
+            return new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct://CREATE")
+                            .to("google-sheets://" + PATH_PREFIX + "/create?inBody=content");
+                }
+            };
+        }
     }
 
-    @Test
-    public void testGet() throws Exception {
-        assertThatGoogleApi(getGoogleApiTestServer())
-                .createSpreadsheetRequest()
-                .hasSheetTitle("TestData")
-                .andReturnRandomSpreadsheet();
+    public static class GetTest extends AbstractGoogleSheetsTestSupport {
+        private Spreadsheet testSheet = getSpreadsheet();
 
-        Spreadsheet testSheet = getSpreadsheet();
+        @Test
+        public void test() throws Exception {
+            final Spreadsheet result = requestBody("direct://GET", testSheet.getSpreadsheetId());
 
-        assertThatGoogleApi(getGoogleApiTestServer())
-                .getSpreadsheetRequest(testSheet.getSpreadsheetId())
-                .andReturnSpreadsheet(testSheet);
+            assertNotNull(result, "get result is null");
+            assertEquals(testSheet.getSpreadsheetId(), result.getSpreadsheetId());
 
-        // using String message body for single parameter "spreadsheetId"
-        final Spreadsheet result = requestBody("direct://GET", testSheet.getSpreadsheetId());
+            LOG.debug("get: " + result);
+        }
 
-        assertNotNull(result, "get result is null");
-        assertEquals(testSheet.getSpreadsheetId(), result.getSpreadsheetId());
+        @Override
+        protected GoogleSheetsClientFactory getClientFactory() throws Exception {
+            return new MockGoogleSheetsClientFactory(new MockLowLevelHttpResponse().setContent(testSheet.toPrettyString()));
+        }
 
-        LOG.debug("get: " + result);
+        @Override
+        protected RouteBuilder createRouteBuilder() {
+            return new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct://GET")
+                            .to("google-sheets://" + PATH_PREFIX + "/get?inBody=spreadsheetId");
+                }
+            };
+        }
     }
 
-    @Test
-    public void testBatchUpdate() {
-        assertThatGoogleApi(getGoogleApiTestServer())
-                .createSpreadsheetRequest()
-                .hasSheetTitle("TestData")
-                .andReturnRandomSpreadsheet();
+    public static class BatchUpdateTest extends AbstractGoogleSheetsTestSupport {
+        private Spreadsheet testSheet = getSpreadsheet();
+        private String updateTitle = "updated-" + testSheet.getProperties().getTitle();
 
-        Spreadsheet testSheet = getSpreadsheet();
-        String updateTitle = "updated-" + testSheet.getProperties().getTitle();
+        @Test
+        public void test() {
+            final Map<String, Object> headers = new HashMap<>();
+            // parameter type is String
+            headers.put(GoogleSheetsConstants.PROPERTY_PREFIX + "spreadsheetId", testSheet.getSpreadsheetId());
+            // parameter type is com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest
+            headers.put(GoogleSheetsConstants.PROPERTY_PREFIX + "batchUpdateSpreadsheetRequest",
+                    new BatchUpdateSpreadsheetRequest()
+                            .setIncludeSpreadsheetInResponse(true)
+                            .setRequests(Collections
+                                    .singletonList(new Request()
+                                            .setUpdateSpreadsheetProperties(new UpdateSpreadsheetPropertiesRequest()
+                                                    .setProperties(new SpreadsheetProperties().setTitle(updateTitle))
+                                                    .setFields("title")))));
 
-        assertThatGoogleApi(getGoogleApiTestServer())
-                .batchUpdateSpreadsheetRequest(testSheet.getSpreadsheetId())
-                .updateTitle(updateTitle)
-                .andReturnUpdated();
+            final BatchUpdateSpreadsheetResponse result = requestBodyAndHeaders("direct://BATCHUPDATE", null, headers);
 
-        final Map<String, Object> headers = new HashMap<>();
-        // parameter type is String
-        headers.put(GoogleSheetsConstants.PROPERTY_PREFIX + "spreadsheetId", testSheet.getSpreadsheetId());
-        // parameter type is com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest
-        headers.put(GoogleSheetsConstants.PROPERTY_PREFIX + "batchUpdateSpreadsheetRequest", new BatchUpdateSpreadsheetRequest()
-                .setIncludeSpreadsheetInResponse(true)
-                .setRequests(Collections
-                        .singletonList(new Request().setUpdateSpreadsheetProperties(new UpdateSpreadsheetPropertiesRequest()
-                                .setProperties(new SpreadsheetProperties().setTitle(updateTitle))
-                                .setFields("title")))));
+            assertNotNull(result, "batchUpdate result is null");
+            assertEquals(updateTitle, result.getUpdatedSpreadsheet().getProperties().getTitle());
 
-        final BatchUpdateSpreadsheetResponse result = requestBodyAndHeaders("direct://BATCHUPDATE", null, headers);
+            LOG.debug("batchUpdate: " + result);
+        }
 
-        assertNotNull(result, "batchUpdate result is null");
-        assertEquals(updateTitle, result.getUpdatedSpreadsheet().getProperties().getTitle());
+        @Override
+        protected GoogleSheetsClientFactory getClientFactory() throws Exception {
+            return new MockGoogleSheetsClientFactory(
+                    new MockLowLevelHttpResponse()
+                            .setContent("{\"spreadsheetId\":\"" + testSheet.getSpreadsheetId()
+                                        + "\",\"updatedSpreadsheet\":{\"properties\":{\"title\":\"" + updateTitle
+                                        + "\"},\"spreadsheetId\":\"" + testSheet.getSpreadsheetId() + "\"}}"));
+        }
 
-        LOG.debug("batchUpdate: " + result);
+        @Override
+        protected RouteBuilder createRouteBuilder() {
+            return new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct://BATCHUPDATE")
+                            .to("google-sheets://" + PATH_PREFIX + "/batchUpdate");
+                }
+            };
+        }
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            @Override
-            public void configure() {
-                // test route for batchUpdate
-                from("direct://BATCHUPDATE")
-                        .to("google-sheets://" + PATH_PREFIX + "/batchUpdate");
-
-                // test route for create
-                from("direct://CREATE")
-                        .to("google-sheets://" + PATH_PREFIX + "/create?inBody=content");
-
-                // test route for get
-                from("direct://GET")
-                        .to("google-sheets://" + PATH_PREFIX + "/get?inBody=spreadsheetId");
-
-            }
-        };
-    }
 }

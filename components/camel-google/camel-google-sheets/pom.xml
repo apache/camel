@@ -38,53 +38,7 @@
         <componentPackage>org.apache.camel.component.google.sheets</componentPackage>
         <outPackage>org.apache.camel.component.google.sheets.internal</outPackage>
         <camel.osgi.private.pkg>org.apache.camel.component.google.sheets.internal</camel.osgi.private.pkg>
-        <spring-security-oauth2-version>2.3.6.RELEASE</spring-security-oauth2-version>
     </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <!-- Test dependencies -->
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-webmvc</artifactId>
-                <version>${spring-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-web</artifactId>
-                <version>${spring-security-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security.oauth</groupId>
-                <artifactId>spring-security-oauth2</artifactId>
-                <version>${spring-security-oauth2-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.consol.citrus</groupId>
-                <artifactId>citrus-core</artifactId>
-                <version>${citrus-version}</version>
-                <scope>test</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.google.code.findbugs</groupId>
-                        <artifactId>jsr305</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>com.consol.citrus</groupId>
-                <artifactId>citrus-java-dsl</artifactId>
-                <version>${citrus-version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.consol.citrus</groupId>
-                <artifactId>citrus-http</artifactId>
-                <version>${citrus-version}</version>
-                <scope>test</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -153,38 +107,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security.oauth</groupId>
-            <artifactId>spring-security-oauth2</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.consol.citrus</groupId>
-            <artifactId>citrus-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.consol.citrus</groupId>
-            <artifactId>citrus-java-dsl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.consol.citrus</groupId>
-            <artifactId>citrus-http</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
