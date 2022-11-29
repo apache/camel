@@ -32,7 +32,7 @@ public final class GistHelper {
     private GistHelper() {
     }
 
-    public static String asGistSingleUrl(String url) throws Exception {
+    public static String asGistSingleUrl(String url) {
         if (url.startsWith("https://gist.githubusercontent.com/")) {
             url = url.substring(35);
         } else if (url.startsWith("https://gist.github.com/")) {

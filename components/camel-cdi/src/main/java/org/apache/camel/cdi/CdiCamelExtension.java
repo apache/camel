@@ -23,9 +23,11 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -432,12 +434,16 @@ public class CdiCamelExtension implements Extension {
             Set<Bean<?>> routes = new HashSet<>(manager.getBeans(RoutesBuilder.class, Any.Literal.INSTANCE));
             routes.addAll(manager.getBeans(RouteContainer.class, Any.Literal.INSTANCE));
             for (Bean<?> context : manager.getBeans(CamelContext.class, Any.Literal.INSTANCE)) {
+                List<BooleanSupplier> postAdditionActions = new ArrayList<>();
                 for (Bean<?> route : routes) {
                     Set<Annotation> qualifiers = new HashSet<>(context.getQualifiers());
                     qualifiers.retainAll(route.getQualifiers());
                     if (qualifiers.size() > 1) {
-                        deploymentException |= !addRouteToContext(route, context, manager, adv);
+                        deploymentException |= !addRouteToContext(route, context, manager, adv, postAdditionActions);
                     }
+                }
+                for (BooleanSupplier action : postAdditionActions) {
+                    deploymentException |= !action.getAsBoolean();
                 }
             }
             // Let's return to avoid starting misconfigured contexts
@@ -474,14 +480,40 @@ public class CdiCamelExtension implements Extension {
         Stream.of(producerBeans, producerQualifiers).forEach(Map::clear);
     }
 
+    /**
+     * Gives an action that adds the templated routes defined in the given builder to the given context.
+     * 
+     * @return a {@link BooleanSupplier} that gives {@code true} if the addition was successful, {@code false}
+     *         otherwise.
+     */
+    private BooleanSupplier templatedRoutesAddition(
+            Bean<?> routeBean, AfterDeploymentValidation adv, CamelContext context, RoutesBuilder builder) {
+        return () -> {
+            try {
+                context.addTemplatedRoutes(builder);
+                return true;
+            } catch (Exception cause) {
+                adv.addDeploymentProblem(
+                        new InjectionException(
+                                "Error adding templated routes of type [" + routeBean.getBeanClass().getName() + "] "
+                                               + "to Camel context [" + context.getName() + "]",
+                                cause));
+            }
+            return false;
+        };
+    }
+
     private boolean addRouteToContext(
-            Bean<?> routeBean, Bean<?> contextBean, BeanManager manager, AfterDeploymentValidation adv) {
+            Bean<?> routeBean, Bean<?> contextBean, BeanManager manager, AfterDeploymentValidation adv,
+            List<BooleanSupplier> postAdditionActions) {
         try {
             CamelContext context = getReference(manager, CamelContext.class, contextBean);
             try {
                 Object route = getReference(manager, Object.class, routeBean);
                 if (route instanceof RoutesBuilder) {
-                    context.addRoutes((RoutesBuilder) route);
+                    RoutesBuilder builder = (RoutesBuilder) route;
+                    context.addRoutes(builder);
+                    postAdditionActions.add(templatedRoutesAddition(routeBean, adv, context, builder));
                 } else if (route instanceof RouteContainer) {
                     context.getExtension(Model.class).addRouteDefinitions(((RouteContainer) route).getRoutes());
                 } else if (route instanceof RouteTemplateContainer) {

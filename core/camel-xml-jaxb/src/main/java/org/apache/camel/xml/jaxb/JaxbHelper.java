@@ -169,7 +169,7 @@ public final class JaxbHelper {
      * @param document   the DOM document
      * @param namespaces the map of namespaces to add new found XML namespaces
      */
-    public static void extractNamespaces(Document document, Map<String, String> namespaces) throws JAXBException {
+    public static void extractNamespaces(Document document, Map<String, String> namespaces) {
         NamedNodeMap attributes = document.getDocumentElement().getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
             Node item = attributes.item(i);

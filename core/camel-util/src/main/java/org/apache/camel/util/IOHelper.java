@@ -724,7 +724,7 @@ public final class IOHelper {
         return IOHelper.buffered(new EncodingFileWriter(os, charset));
     }
 
-    public static BufferedWriter toWriter(FileOutputStream os, Charset charset) throws IOException {
+    public static BufferedWriter toWriter(FileOutputStream os, Charset charset) {
         return IOHelper.buffered(new EncodingFileWriter(os, charset));
     }
 }

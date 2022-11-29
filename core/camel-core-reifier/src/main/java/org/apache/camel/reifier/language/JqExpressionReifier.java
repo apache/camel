@@ -17,53 +17,19 @@
 package org.apache.camel.reifier.language;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.JqExpression;
-import org.apache.camel.spi.Language;
 
-public class JqExpressionReifier extends ExpressionReifier<JqExpression> {
+public class JqExpressionReifier extends SingleInputTypedExpressionReifier<JqExpression> {
 
     public JqExpressionReifier(CamelContext camelContext, ExpressionDefinition definition) {
-        super(camelContext, (JqExpression) definition);
-    }
-
-    @Override
-    protected void configureLanguage(Language language) {
-        if (definition.getResultType() == null && definition.getResultTypeName() != null) {
-            try {
-                Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(definition.getResultTypeName());
-                definition.setResultType(clazz);
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeException(e);
-            }
-        }
-    }
-
-    private Object[] createProperties() {
-        Object[] properties = new Object[3];
-        properties[0] = definition.getResultType();
-        properties[1] = parseString(definition.getHeaderName());
-        properties[2] = parseString(definition.getPropertyName());
-        return properties;
+        super(camelContext, definition);
     }
 
     @Override
     public boolean isResolveOptionalExternalScriptEnabled() {
         // we handle this in camel-jq
         return false;
-    }
-
-    @Override
-    protected Expression createExpression(Language language, String exp) {
-        return language.createExpression(exp, createProperties());
-    }
-
-    @Override
-    protected Predicate createPredicate(Language language, String exp) {
-        return language.createPredicate(exp, createProperties());
     }
 
 }

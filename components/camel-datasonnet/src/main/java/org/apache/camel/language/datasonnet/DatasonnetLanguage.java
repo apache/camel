@@ -34,13 +34,13 @@ import org.apache.camel.Predicate;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.LRUCacheFactory;
-import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.support.TypedLanguageSupport;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Language("datasonnet")
-public class DatasonnetLanguage extends LanguageSupport implements PropertyConfigurer {
+public class DatasonnetLanguage extends TypedLanguageSupport implements PropertyConfigurer {
     private static final Logger LOG = LoggerFactory.getLogger(DatasonnetLanguage.class);
 
     private static final Map<String, String> CLASSPATH_IMPORTS = new HashMap<>();
@@ -67,7 +67,6 @@ public class DatasonnetLanguage extends LanguageSupport implements PropertyConfi
 
     private MediaType bodyMediaType;
     private MediaType outputMediaType;
-    private Class<?> resultType;
     private Collection<String> libraryPaths;
 
     @Override
@@ -90,7 +89,7 @@ public class DatasonnetLanguage extends LanguageSupport implements PropertyConfi
         expression = loadResource(expression);
 
         DatasonnetExpression answer = new DatasonnetExpression(expression);
-        answer.setResultType(property(Class.class, properties, 0, resultType));
+        answer.setResultType(property(Class.class, properties, 0, getResultType()));
 
         String stringBodyMediaType = property(String.class, properties, 1, null);
         answer.setBodyMediaType(stringBodyMediaType != null ? MediaType.valueOf(stringBodyMediaType) : bodyMediaType);
@@ -169,9 +168,5 @@ public class DatasonnetLanguage extends LanguageSupport implements PropertyConfi
 
     public void setLibraryPaths(Collection<String> libraryPaths) {
         this.libraryPaths = libraryPaths;
-    }
-
-    public void setResultType(Class<?> targetType) {
-        this.resultType = targetType;
     }
 }

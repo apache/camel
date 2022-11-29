@@ -54,7 +54,7 @@ import org.apache.camel.dsl.jbang.core.commands.process.ListCircuitBreaker;
 import org.apache.camel.dsl.jbang.core.commands.process.ListEvent;
 import org.apache.camel.dsl.jbang.core.commands.process.ListHealth;
 import org.apache.camel.dsl.jbang.core.commands.process.ListInflight;
-import org.apache.camel.dsl.jbang.core.commands.process.ListMicrometer;
+import org.apache.camel.dsl.jbang.core.commands.process.ListMetric;
 import org.apache.camel.dsl.jbang.core.commands.process.ListProcess;
 import org.apache.camel.dsl.jbang.core.commands.process.ListService;
 import org.apache.camel.dsl.jbang.core.commands.process.ListVault;
@@ -84,7 +84,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("blocked", new CommandLine(new ListBlocked(main)))
                         .addSubcommand("route-controller", new CommandLine(new RouteControllerAction(main)))
                         .addSubcommand("circuit-breaker", new CommandLine(new ListCircuitBreaker(main)))
-                        .addSubcommand("micrometer", new CommandLine(new ListMicrometer(main)))
+                        .addSubcommand("metric", new CommandLine(new ListMetric(main)))
                         .addSubcommand("service", new CommandLine(new ListService(main)))
                         .addSubcommand("source", new CommandLine(new CamelSourceAction(main)))
                         .addSubcommand("vault", new CommandLine(new ListVault(main))))

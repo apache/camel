@@ -236,6 +236,11 @@ public class RoutesConfigurer {
             LOG.debug("Adding routes into CamelContext from RoutesBuilder: {}", builder);
             camelContext.addRoutes(builder);
         }
+        // then add templated routes last
+        for (RoutesBuilder builder : routes) {
+            LOG.debug("Adding templated routes into CamelContext from RoutesBuilder: {}", builder);
+            camelContext.addTemplatedRoutes(builder);
+        }
     }
 
     /**

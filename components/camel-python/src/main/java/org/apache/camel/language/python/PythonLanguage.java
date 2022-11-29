@@ -23,23 +23,25 @@ import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.spi.annotations.Language;
-import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.support.TypedLanguageSupport;
 import org.python.core.PyObject;
 import org.python.util.PythonInterpreter;
 
 @Language("python")
-public class PythonLanguage extends LanguageSupport implements ScriptingLanguage {
+public class PythonLanguage extends TypedLanguageSupport implements ScriptingLanguage {
 
     @Override
     public Predicate createPredicate(String expression) {
-        expression = loadResource(expression);
-        return new PythonExpression(expression, Boolean.class);
+        return createPythonExpression(expression, Boolean.class);
     }
 
     @Override
     public Expression createExpression(String expression) {
-        expression = loadResource(expression);
-        return new PythonExpression(expression, Object.class);
+        return createPythonExpression(expression, Object.class);
+    }
+
+    private PythonExpression createPythonExpression(String expression, Class<?> type) {
+        return new PythonExpression(loadResource(expression), type);
     }
 
     @Override

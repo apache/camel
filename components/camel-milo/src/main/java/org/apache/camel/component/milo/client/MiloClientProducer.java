@@ -91,7 +91,14 @@ public class MiloClientProducer extends DefaultAsyncProducer {
         final Boolean await = msg.getHeader(MiloConstants.HEADER_AWAIT, this.defaultAwaitWrites, Boolean.class);
 
         if (TRUE.equals(await)) {
-            future.whenComplete((v, ex) -> async.done(false));
+            future.whenComplete((result, throwable) -> {
+                if (throwable != null) {
+                    msg.getExchange().setException(throwable);
+                } else {
+                    msg.setBody(result);
+                }
+                async.done(false);
+            });
             return false;
         } else {
             async.done(true);

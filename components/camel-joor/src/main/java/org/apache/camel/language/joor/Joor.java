@@ -47,4 +47,8 @@ public @interface Joor {
      */
     boolean singleQuotes() default true;
 
+    /**
+     * The desired return type.
+     */
+    Class<?> resultType() default Object.class;
 }

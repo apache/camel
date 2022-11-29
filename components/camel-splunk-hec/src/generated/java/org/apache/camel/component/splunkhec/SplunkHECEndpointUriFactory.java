@@ -21,7 +21,7 @@ public class SplunkHECEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(12);
+        Set<String> props = new HashSet<>(13);
         props.add("bodyOnly");
         props.add("headersOnly");
         props.add("host");
@@ -31,6 +31,7 @@ public class SplunkHECEndpointUriFactory extends org.apache.camel.support.compon
         props.add("skipTlsVerify");
         props.add("source");
         props.add("sourceType");
+        props.add("splunkEndpoint");
         props.add("splunkURL");
         props.add("time");
         props.add("token");

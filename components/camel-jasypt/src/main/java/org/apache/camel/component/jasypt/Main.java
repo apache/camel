@@ -175,7 +175,7 @@ public class Main {
         return valid;
     }
 
-    public void run(String[] args) throws Exception {
+    public void run(String[] args) {
         if (!parseArguments(args)) {
             showOptions();
             return;

@@ -24,24 +24,26 @@ import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.spi.annotations.Language;
-import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.support.TypedLanguageSupport;
 
 /**
  * An <a href="http://mvel.codehaus.org/">MVEL</a> {@link org.apache.camel.spi.Language} plugin
  */
 @Language("mvel")
-public class MvelLanguage extends LanguageSupport implements ScriptingLanguage {
+public class MvelLanguage extends TypedLanguageSupport implements ScriptingLanguage {
 
     @Override
     public Predicate createPredicate(String expression) {
-        expression = loadResource(expression);
-        return new MvelExpression(expression, Boolean.class);
+        return createMvelExpression(expression, Boolean.class);
     }
 
     @Override
     public Expression createExpression(String expression) {
-        expression = loadResource(expression);
-        return new MvelExpression(expression, Object.class);
+        return createMvelExpression(expression, Object.class);
+    }
+
+    private MvelExpression createMvelExpression(String expression, Class<?> type) {
+        return new MvelExpression(loadResource(expression), type);
     }
 
     @Override

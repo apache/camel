@@ -37,6 +37,14 @@ public interface RoutesBuilder {
     void addRoutesToCamelContext(CamelContext context) throws Exception;
 
     /**
+     * Adds the templated routes from this Route Builder to the CamelContext.
+     *
+     * @param  context   the Camel context
+     * @throws Exception is thrown if initialization of routes failed
+     */
+    void addTemplatedRoutesToCamelContext(CamelContext context) throws Exception;
+
+    /**
      * Adds or updates the routes from this Route Builder to the CamelContext.
      *
      * @param  context   the Camel context

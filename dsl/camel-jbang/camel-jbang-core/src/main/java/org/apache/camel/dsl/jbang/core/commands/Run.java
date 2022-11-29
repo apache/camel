@@ -460,6 +460,10 @@ class Run extends CamelCommand {
                 // no specific name was given so lets use the name from the first integration file
                 // remove scheme and keep only the name (no path or ext)
                 String s = StringHelper.after(file, ":");
+                if (s.contains(":")) {
+                    // its maybe a gist/github url so we need only the last part which has the name
+                    s = StringHelper.afterLast(s, ":");
+                }
                 name = FileUtil.onlyName(s);
             }
 
@@ -616,7 +620,12 @@ class Run extends CamelCommand {
                     throw new IllegalArgumentException(
                             "Cannot determine the Java class name from the source in the clipboard");
                 }
-                fn = fqn + ".java";
+                // drop package in file name
+                String cn = fqn;
+                if (fqn.contains(".")) {
+                    cn = cn.substring(cn.lastIndexOf('.') + 1);
+                }
+                fn = cn + ".java";
             }
             Files.write(Paths.get(fn), t.toString().getBytes(StandardCharsets.UTF_8));
             file = "file:" + fn;
@@ -644,7 +653,7 @@ class Run extends CamelCommand {
         return main;
     }
 
-    private void configureLogging() throws Exception {
+    private void configureLogging() {
         if (silentRun) {
             // do not configure logging
         } else if (logging) {

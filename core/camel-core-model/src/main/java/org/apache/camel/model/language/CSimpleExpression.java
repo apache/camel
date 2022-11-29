@@ -18,7 +18,6 @@ package org.apache.camel.model.language;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -30,12 +29,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(firstVersion = "3.7.0", label = "language,java", title = "CSimple")
 @XmlRootElement(name = "csimple")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CSimpleExpression extends ExpressionDefinition {
-
-    @XmlAttribute(name = "resultType")
-    private String resultTypeName;
-    @XmlTransient
-    private Class<?> resultType;
+public class CSimpleExpression extends TypedExpressionDefinition {
 
     public CSimpleExpression() {
     }
@@ -46,8 +40,6 @@ public class CSimpleExpression extends ExpressionDefinition {
 
     private CSimpleExpression(Builder builder) {
         super(builder);
-        this.resultTypeName = builder.resultTypeName;
-        this.resultType = builder.resultType;
     }
 
     @Override
@@ -55,52 +47,11 @@ public class CSimpleExpression extends ExpressionDefinition {
         return "csimple";
     }
 
-    public Class<?> getResultType() {
-        return resultType;
-    }
-
-    /**
-     * Sets the class of the result type (type from output)
-     */
-    public void setResultType(Class<?> resultType) {
-        this.resultType = resultType;
-    }
-
-    public String getResultTypeName() {
-        return resultTypeName;
-    }
-
-    /**
-     * Sets the class name of the result type (type from output)
-     */
-    public void setResultTypeName(String resultTypeName) {
-        this.resultTypeName = resultTypeName;
-    }
-
     /**
      * {@code Builder} is a specific builder for {@link CSimpleExpression}.
      */
     @XmlTransient
     public static class Builder extends AbstractBuilder<Builder, CSimpleExpression> {
-
-        private String resultTypeName;
-        private Class<?> resultType;
-
-        /**
-         * Sets the class of the result type (type from output)
-         */
-        public Builder resultType(Class<?> resultType) {
-            this.resultType = resultType;
-            return this;
-        }
-
-        /**
-         * Sets the class name of the result type (type from output)
-         */
-        public Builder resultTypeName(String resultTypeName) {
-            this.resultTypeName = resultTypeName;
-            return this;
-        }
 
         @Override
         public CSimpleExpression end() {

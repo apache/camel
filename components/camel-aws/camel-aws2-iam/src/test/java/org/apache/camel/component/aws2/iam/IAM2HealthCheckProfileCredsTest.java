@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.apache.camel.component.aws2.eks;
+package org.apache.camel.component.aws2.iam;
 
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
@@ -31,14 +30,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.eks.EksClient;
 
 import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
-public class EKS2CliientHealthCheckCustomTest extends CamelTestSupport {
-
-    private static final Logger LOG = LoggerFactory.getLogger(EKS2CliientHealthCheckCustomTest.class);
+public class IAM2HealthCheckProfileCredsTest extends CamelTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(IAM2HealthCheckProfileCredsTest.class);
 
     CamelContext context;
 
@@ -46,10 +42,6 @@ public class EKS2CliientHealthCheckCustomTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         context = super.createCamelContext();
         context.getPropertiesComponent().setLocation("ref:prop");
-        EKS2Component component = new EKS2Component(context);
-        component.getConfiguration().setEksClient(EksClient.builder().region(Region.of("Ciao")).build());
-        component.init();
-        context.addComponent("aws2-eks", component);
 
         // install health check manually (yes a bit cumbersome)
         HealthCheckRegistry registry = new DefaultHealthCheckRegistry();
@@ -71,8 +63,8 @@ public class EKS2CliientHealthCheckCustomTest extends CamelTestSupport {
 
             @Override
             public void configure() {
-                from("direct:listClusters")
-                        .to("aws2-eks://test?operation=listClusters");
+                from("direct:listAccessKeys")
+                        .to("aws2-iam://test?operation=listAccessKeys&region=l&useDefaultCredentialsProvider=true");
             }
         };
     }
@@ -88,12 +80,15 @@ public class EKS2CliientHealthCheckCustomTest extends CamelTestSupport {
         await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> {
             Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
             boolean down = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
-            boolean containsAws2AthenaHealthCheck = res2.stream()
-                    .filter(result -> result.getCheck().getId().startsWith("aws2-eks-client"))
+            boolean containsHealthCheck = res2.stream()
+                    .filter(result -> result.getCheck().getId().startsWith("aws2-iam-client"))
                     .findAny()
                     .isPresent();
+            boolean hasRegionMessage = res2.stream()
+                    .anyMatch(r -> r.getMessage().stream().anyMatch(msg -> msg.contains("region")));
             Assertions.assertTrue(down, "liveness check");
-            Assertions.assertTrue(containsAws2AthenaHealthCheck, "aws2-eks check");
+            Assertions.assertTrue(containsHealthCheck, "aws2-iam check");
+            Assertions.assertTrue(hasRegionMessage, "aws2-iam check error message");
         });
 
     }

@@ -24,7 +24,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
-import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.support.SingleInputLanguageSupport;
 import org.apache.camel.support.builder.Namespaces;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -41,9 +41,8 @@ import org.apache.camel.util.ObjectHelper;
  * </ul>
  */
 @Language("xtokenize")
-public class XMLTokenizeLanguage extends LanguageSupport implements PropertyConfigurer {
+public class XMLTokenizeLanguage extends SingleInputLanguageSupport implements PropertyConfigurer {
 
-    private String headerName;
     private String path;
     private char mode;
     private int group;
@@ -91,7 +90,7 @@ public class XMLTokenizeLanguage extends LanguageSupport implements PropertyConf
     public Expression createExpression(String expression) {
         String path = expression != null ? expression : this.path;
         ObjectHelper.notNull(path, "path");
-        XMLTokenExpressionIterator expr = new XMLTokenExpressionIterator(path, mode, group, headerName);
+        XMLTokenExpressionIterator expr = new XMLTokenExpressionIterator(path, mode, group, getHeaderName(), getPropertyName());
         if (namespaces != null) {
             expr.setNamespaces(namespaces.getNamespaces());
         }
@@ -106,7 +105,7 @@ public class XMLTokenizeLanguage extends LanguageSupport implements PropertyConf
     @Override
     public Expression createExpression(String expression, Object[] properties) {
         XMLTokenizeLanguage answer = new XMLTokenizeLanguage();
-        answer.setHeaderName(property(String.class, properties, 0, headerName));
+        answer.setHeaderName(property(String.class, properties, 0, getHeaderName()));
         answer.setMode(property(Character.class, properties, 1, "i"));
         answer.setGroup(property(Integer.class, properties, 2, group));
         Object obj = properties[3];
@@ -120,15 +119,8 @@ public class XMLTokenizeLanguage extends LanguageSupport implements PropertyConf
             throw new IllegalArgumentException("Namespaces is not instance of java.util.Map or " + Namespaces.class.getName());
         }
         String path = expression != null ? expression : this.path;
+        answer.setPropertyName(property(String.class, properties, 4, getPropertyName()));
         return answer.createExpression(path);
-    }
-
-    public String getHeaderName() {
-        return headerName;
-    }
-
-    public void setHeaderName(String headerName) {
-        this.headerName = headerName;
     }
 
     public String getPath() {
@@ -172,6 +164,10 @@ public class XMLTokenizeLanguage extends LanguageSupport implements PropertyConf
             case "headername":
             case "headerName":
                 setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value));
+                return true;
+            case "propertyname":
+            case "propertyName":
+                setPropertyName(PropertyConfigurerSupport.property(camelContext, String.class, value));
                 return true;
             case "mode":
                 setMode(PropertyConfigurerSupport.property(camelContext, char.class, value));

@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(firstVersion = "1.3.0", label = "language,script", title = "Groovy")
 @XmlRootElement(name = "groovy")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GroovyExpression extends ExpressionDefinition {
+public class GroovyExpression extends TypedExpressionDefinition {
 
     public GroovyExpression() {
     }

@@ -45,6 +45,7 @@ import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.ConstantExpressionAdapter;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
@@ -827,6 +828,40 @@ public class ExpressionBuilder {
     }
 
     /**
+     * Returns the expression for the original incoming message body
+     */
+    public static Expression originalBodyExpression() {
+        return new ExpressionAdapter() {
+
+            private boolean enabled;
+            @Override
+            public Object evaluate(Exchange exchange) {
+                if (enabled) {
+                    UnitOfWork uow = exchange.adapt(Exchange.class).getUnitOfWork();
+                    if (uow != null) {
+                        Message msg = uow.getOriginalInMessage();
+                        if (msg != null) {
+                            return msg.getBody();
+                        }
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                super.init(context);
+                this.enabled = context.isAllowUseOriginalMessage();
+            }
+
+            @Override
+            public String toString() {
+                return "originalBody";
+            }
+        };
+    }
+
+    /**
      * Returns a functional expression for the exchanges inbound message body
      */
     public static Expression bodyExpression(final Function<Object, Object> function) {
@@ -961,6 +996,24 @@ public class ExpressionBuilder {
                 return "bodyAs[" + name + "]";
             }
         };
+    }
+
+    /**
+     * @param headerName the name of the header from which the input data must be extracted if not empty.
+     * @param propertyName the name of the property from which the input data must be extracted if not empty and {@code headerName} is empty.
+     * @return a header expression if {@code headerName} is not empty, otherwise a property expression if {@code propertyName} is not empty
+     * or finally a body expression.
+     */
+    public static Expression singleInputExpression(String headerName, String propertyName) {
+        final Expression exp;
+        if (ObjectHelper.isNotEmpty(headerName)) {
+            exp = headerExpression(headerName);
+        } else if (ObjectHelper.isNotEmpty(propertyName)) {
+            exp = exchangePropertyExpression(propertyName);
+        } else {
+            exp = bodyExpression();
+        }
+        return exp;
     }
 
     /**

@@ -6439,6 +6439,7 @@ public class StaticEndpointBuilders {
      * @param path tableName
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.HBaseEndpointBuilderFactory.HBaseEndpointBuilder hbase(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.HBaseEndpointBuilderFactory.endpointBuilder("hbase", path);
@@ -6461,6 +6462,7 @@ public class StaticEndpointBuilders {
      * @param path tableName
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.HBaseEndpointBuilderFactory.HBaseEndpointBuilder hbase(
             String componentName,
             String path) {
@@ -13607,6 +13609,7 @@ public class StaticEndpointBuilders {
      * @param path endpointType
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.SparkEndpointBuilderFactory.SparkEndpointBuilder spark(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.SparkEndpointBuilderFactory.endpointBuilder("spark", path);
@@ -13630,6 +13633,7 @@ public class StaticEndpointBuilders {
      * @param path endpointType
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.SparkEndpointBuilderFactory.SparkEndpointBuilder spark(
             String componentName,
             String path) {

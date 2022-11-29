@@ -490,7 +490,7 @@ public class EventbridgeProducer extends DefaultProducer {
         }
     }
 
-    private void putEvent(EventBridgeClient eventbridgeClient, Exchange exchange) throws InvalidPayloadException, IOException {
+    private void putEvent(EventBridgeClient eventbridgeClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof PutEventsRequest) {

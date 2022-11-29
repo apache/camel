@@ -55,9 +55,17 @@ public @interface XPath {
 
     /**
      * The name of the header we want to apply the XPath expression to. If this is empty then the XPath expression will
-     * be applied to the body instead.
+     * be applied to the exchange property or the body instead.
      */
     String headerName() default "";
+
+    /**
+     * The name of the header we want to apply the XPath expression to. If this is empty then the XPath expression will
+     * be applied to the body instead.
+     * <p>
+     * It has a lower precedent than the name of header if both are set.
+     */
+    String propertyName() default "";
 
     /**
      * Whether to log namespaces which can assist during troubleshooting

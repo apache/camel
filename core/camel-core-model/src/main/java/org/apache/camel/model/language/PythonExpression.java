@@ -18,7 +18,6 @@ package org.apache.camel.model.language;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -30,17 +29,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(firstVersion = "3.19.0", label = "language,python", title = "Python")
 @XmlRootElement(name = "python")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PythonExpression extends ExpressionDefinition {
-
-    @XmlAttribute(name = "resultType")
-    private String resultTypeName;
-    @XmlTransient
-    private Class<?> resultType;
-    @XmlAttribute
-    @Metadata(label = "advanced")
-    private String headerName;
-    @Metadata(label = "advanced")
-    private String propertyName;
+public class PythonExpression extends TypedExpressionDefinition {
 
     public PythonExpression() {
     }
@@ -49,12 +38,8 @@ public class PythonExpression extends ExpressionDefinition {
         super(expression);
     }
 
-    private PythonExpression(PythonExpression.Builder builder) {
+    private PythonExpression(Builder builder) {
         super(builder);
-        this.resultTypeName = builder.resultTypeName;
-        this.resultType = builder.resultType;
-        this.headerName = builder.headerName;
-        this.propertyName = builder.propertyName;
     }
 
     @Override
@@ -62,100 +47,11 @@ public class PythonExpression extends ExpressionDefinition {
         return "python";
     }
 
-    public String getResultTypeName() {
-        return resultTypeName;
-    }
-
-    /**
-     * Sets the class of the result type (type from output)
-     */
-    public void setResultTypeName(String resultTypeName) {
-        this.resultTypeName = resultTypeName;
-    }
-
-    public Class<?> getResultType() {
-        return resultType;
-    }
-
-    /**
-     * Sets the class name of the result type (type from output)
-     */
-    public void setResultType(Class<?> resultType) {
-        this.resultType = resultType;
-    }
-
-    public String getHeaderName() {
-        return headerName;
-    }
-
-    /**
-     * Name of header to use as input, instead of the message body
-     * </p>
-     * It has as higher precedent than the propertyName if both are set.
-     */
-    public void setHeaderName(String headerName) {
-        this.headerName = headerName;
-    }
-
-    public String getPropertyName() {
-        return propertyName;
-    }
-
-    /**
-     * Name of property to use as input, instead of the message body.
-     * </p>
-     * It has a lower precedent than the headerName if both are set.
-     */
-    public void setPropertyName(String propertyName) {
-        this.propertyName = propertyName;
-    }
-
     /**
      * {@code Builder} is a specific builder for {@link PythonExpression}.
      */
     @XmlTransient
-    public static class Builder extends AbstractBuilder<PythonExpression.Builder, PythonExpression> {
-
-        private String resultTypeName;
-        private Class<?> resultType;
-        private String headerName;
-        private String propertyName;
-
-        /**
-         * Sets the class name of the result type (type from output)
-         */
-        public PythonExpression.Builder resultType(Class<?> resultType) {
-            this.resultType = resultType;
-            return this;
-        }
-
-        /**
-         * Sets the class of the result type (type from output)
-         */
-        public PythonExpression.Builder resultTypeName(String resultTypeName) {
-            this.resultTypeName = resultTypeName;
-            return this;
-        }
-
-        /**
-         * Name of header to use as input, instead of the message body
-         * </p>
-         * It has as higher precedent than the propertyName if both are set.
-         */
-        public PythonExpression.Builder headerName(String headerName) {
-            this.headerName = headerName;
-            return this;
-        }
-
-        /**
-         * Name of property to use as input, instead of the message body.
-         * </p>
-         * It has a lower precedent than the headerName if both are set.
-         */
-        public PythonExpression.Builder propertyName(String propertyName) {
-            this.propertyName = propertyName;
-            return this;
-        }
+    public static class Builder extends AbstractBuilder<Builder, PythonExpression> {
 
         @Override
         public PythonExpression end() {

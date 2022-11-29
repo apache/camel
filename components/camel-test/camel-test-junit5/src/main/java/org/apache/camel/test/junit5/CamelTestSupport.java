@@ -523,8 +523,12 @@ public abstract class CamelTestSupport
                 }
             }
             for (RoutesBuilder builder : builders) {
-                LOG.debug("Using created route builder: {}", builder);
+                LOG.debug("Using created route builder to add routes: {}", builder);
                 context.addRoutes(builder);
+            }
+            for (RoutesBuilder builder : builders) {
+                LOG.debug("Using created route builder to add templated routes: {}", builder);
+                context.addTemplatedRoutes(builder);
             }
             replaceFromEndpoints();
             boolean skip = "true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"));

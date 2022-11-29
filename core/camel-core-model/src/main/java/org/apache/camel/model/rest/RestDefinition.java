@@ -40,6 +40,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -59,6 +60,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     private String consumes;
     @XmlAttribute
     private String produces;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
+    private String disabled;
     @XmlAttribute
     @Metadata(defaultValue = "off", enums = "off,auto,json,xml,json_xml")
     private String bindingMode;
@@ -140,6 +144,18 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
      */
     public void setProduces(String produces) {
         this.produces = produces;
+    }
+
+    public String getDisabled() {
+        return disabled;
+    }
+
+    /**
+     * Whether to disable this REST service from the route during build time. Once an REST service has been disabled
+     * then it cannot be enabled later at runtime.
+     */
+    public void setDisabled(String disabled) {
+        this.disabled = disabled;
     }
 
     public String getBindingMode() {
@@ -253,6 +269,40 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
      */
     public RestDefinition path(String path) {
         setPath(path);
+        return this;
+    }
+
+    /**
+     * Disables this REST service from the route during build time. Once an REST service has been disabled then it
+     * cannot be enabled later at runtime.
+     */
+    public RestDefinition disabled() {
+        disabled("true");
+        return this;
+    }
+
+    /**
+     * Whether to disable this REST service from the route during build time. Once an REST service has been disabled
+     * then it cannot be enabled later at runtime.
+     */
+    public RestDefinition disabled(boolean disabled) {
+        disabled(disabled ? "true" : "false");
+        return this;
+    }
+
+    /**
+     * Whether to disable this REST service from the route during build time. Once an REST service has been disabled
+     * then it cannot be enabled later at runtime.
+     */
+    public RestDefinition disabled(String disabled) {
+        if (getVerbs().isEmpty()) {
+            this.disabled = disabled;
+        } else {
+            // add on last verb as that is how the Java DSL works
+            VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+            verb.setDisabled(disabled);
+        }
+
         return this;
     }
 
@@ -684,23 +734,36 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     public List<RouteDefinition> asRouteDefinition(CamelContext camelContext) {
         ObjectHelper.notNull(camelContext, "CamelContext");
 
-        // sanity check this rest definition do not have duplicates
-        validateUniquePaths();
-
         List<RouteDefinition> answer = new ArrayList<>();
+
+        Boolean disabled = CamelContextHelper.parseBoolean(camelContext, this.disabled);
+        if (disabled != null && disabled) {
+            return answer; // all rest services are disabled
+        }
+
+        // only include enabled verbs
+        List<VerbDefinition> filter = new ArrayList<>();
+        for (VerbDefinition verb : verbs) {
+            disabled = CamelContextHelper.parseBoolean(camelContext, verb.getDisabled());
+            if (disabled == null || !disabled) {
+                filter.add(verb);
+            }
+        }
+
+        // sanity check this rest definition do not have duplicates
+        validateUniquePaths(filter);
 
         RestConfiguration config = camelContext.getRestConfiguration();
         if (config.isInlineRoutes()) {
             // sanity check this rest definition do not have duplicates linked routes via direct endpoints
-            validateUniqueDirects();
+            validateUniqueDirects(filter);
         }
-
-        addRouteDefinition(camelContext, answer, config.getComponent(), config.getProducerComponent());
+        addRouteDefinition(camelContext, filter, answer, config.getComponent(), config.getProducerComponent());
 
         return answer;
     }
 
-    protected void validateUniquePaths() {
+    protected void validateUniquePaths(List<VerbDefinition> verbs) {
         Set<String> paths = new HashSet<>();
         for (VerbDefinition verb : verbs) {
             String path = verb.asVerb();
@@ -713,7 +776,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         }
     }
 
-    protected void validateUniqueDirects() {
+    protected void validateUniqueDirects(List<VerbDefinition> verbs) {
         Set<String> directs = new HashSet<>();
         for (VerbDefinition verb : verbs) {
             ToDefinition to = verb.getTo();
@@ -794,8 +857,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
     @SuppressWarnings("rawtypes")
     private void addRouteDefinition(
-            CamelContext camelContext, List<RouteDefinition> answer, String component, String producerComponent) {
-        for (VerbDefinition verb : getVerbs()) {
+            CamelContext camelContext, List<VerbDefinition> verbs, List<RouteDefinition> answer,
+            String component, String producerComponent) {
+        for (VerbDefinition verb : verbs) {
             // use a route as facade for this REST service
             RouteDefinition route = new RouteDefinition();
             if (verb.getTo() == null) {

@@ -22,23 +22,21 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.spi.annotations.Language;
-import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.support.TypedLanguageSupport;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Value;
 
 @Language("js")
-public class JavaScriptLanguage extends LanguageSupport implements ScriptingLanguage {
+public class JavaScriptLanguage extends TypedLanguageSupport implements ScriptingLanguage {
 
     @Override
     public Predicate createPredicate(String expression) {
-        expression = loadResource(expression);
-        return new JavaScriptExpression(expression, Boolean.class);
+        return createJavaScriptExpression(expression, Boolean.class);
     }
 
     @Override
     public Expression createExpression(String expression) {
-        expression = loadResource(expression);
-        return new JavaScriptExpression(expression, Object.class);
+        return createJavaScriptExpression(expression, Object.class);
     }
 
     @Override
@@ -51,5 +49,14 @@ public class JavaScriptLanguage extends LanguageSupport implements ScriptingLang
             Object answer = o != null ? o.as(resultType) : null;
             return resultType.cast(answer);
         }
+    }
+
+    /**
+     * @param  expression the expression to evaluate
+     * @param  type       the type of the result
+     * @return            the corresponding {@code JavaScriptExpression}
+     */
+    private JavaScriptExpression createJavaScriptExpression(String expression, Class<?> type) {
+        return new JavaScriptExpression(loadResource(expression), type);
     }
 }

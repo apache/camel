@@ -88,7 +88,7 @@ public class LoggerAction extends ActionBaseCommand {
         return 0;
     }
 
-    protected Integer callList() throws Exception {
+    protected Integer callList() {
         List<Row> rows = new ArrayList<>();
 
         List<Long> pids = findPids("*");

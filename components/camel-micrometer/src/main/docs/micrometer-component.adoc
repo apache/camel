@@ -530,10 +530,22 @@ and add a `JmxMeterRegistry` instance:
 The `HierarchicalNameMapper` strategy determines how meter name and tags are assembled into
 an MBean name.
 
-== Example
 
-`camel-example-micrometer` provides an example how to set up Micrometer monitoring with
-Camel using Java configuration and a Prometheus backend.
+== Using Camel Micrometer with Spring Boot
 
+When you use `camel-micrometer-starter` with Spring Boot, then Spring Boot auto configuration
+will automatically enable metrics capture if a `io.micrometer.core.instrument.MeterRegistry` is available.
+
+For example to capture data with Prometheus, you can add the following dependency:
+
+[source,xml]
+----
+<dependency>
+    <groupId>io.micrometer</groupId>
+    <artifactId>micrometer-registry-prometheus</artifactId>
+</dependency>
+----
+
+See the following table for options to specify what metrics to capture, or to turn it off.
 
 include::spring-boot:partial$starter.adoc[]
