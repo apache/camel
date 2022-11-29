@@ -802,6 +802,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
             } else {
                 // copy the current result to original so it will contain this result of this eip
                 ExchangeHelper.copyResults(original, subExchange);
+                subExchange.adapt(ExtendedExchange.class).handoverCompletions(original);
             }
         }
 
