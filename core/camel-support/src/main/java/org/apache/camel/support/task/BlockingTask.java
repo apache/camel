@@ -37,7 +37,7 @@ public interface BlockingTask extends Task {
      *                   task was interrupted.
      */
     default <T> boolean run(Predicate<T> predicate, T payload) {
-    	return this.run(() -> predicate.test(payload));
+        return this.run(() -> predicate.test(payload));
     }
 
     /**
