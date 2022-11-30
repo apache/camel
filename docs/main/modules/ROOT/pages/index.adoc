@@ -1,0 +1,10 @@
+= Apache Camel Core
+
+Apache Camel is an Open Source integration framework that empowers you to quickly and easily integrate various systems consuming or producing data.
+
+The Apache Camel Core is the foundation for all other projects. Ideal for experienced Java developers or architects willing to innovate and build upon a lower level integration framework.
+
+++++
+include::attachment$contents-table.html[]
+++++
+
