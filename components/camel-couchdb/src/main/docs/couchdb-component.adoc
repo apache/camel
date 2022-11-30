@@ -87,6 +87,8 @@ or the insert / update will fail. If the body is an instance of a
 com.google.gson.JsonElement then it will be inserted as is. Otherwise
 the producer will throw an exception of unsupported body type.
 
+NOTE: To update a CouchDB document, it's _id and _rev field must be part of the json payload routed to CouchDB by Camel.
+
 == Samples
 
 For example if you wish to consume all inserts, updates and deletes from
