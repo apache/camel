@@ -1583,7 +1583,7 @@
 		</dependency>
             <dependency>
                 <groupId>org.apache.camel.maven</groupId>
-                <artifactId>camel-servicenow-maven-plugin</artifactId>
+                <artifactId>camel-salesforce-maven-plugin</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
