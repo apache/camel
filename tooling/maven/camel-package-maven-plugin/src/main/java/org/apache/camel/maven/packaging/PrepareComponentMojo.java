@@ -225,9 +225,9 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
             }
 
             String d = "<dependency>\n"
-                    + "                <groupId>" + project.getGroupId() + "</groupId>\n"
-                    + "                <artifactId>" + project.getArtifactId() + "</artifactId>\n"
-                    + "                <version>${project.version}</version>\n";
+                       + "                <groupId>" + project.getGroupId() + "</groupId>\n"
+                       + "                <artifactId>" + project.getArtifactId() + "</artifactId>\n"
+                       + "                <version>${project.version}</version>\n";
             String type = project.getArtifact().getType();
             if (type != null && !"jar".equals(type) && !"maven-plugin".equals(type)) {
                 d += "                <type>" + type + "</type>\n";
@@ -236,10 +236,10 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
             dependencies.add(d);
 
             final String updatedPom = before + startDependenciesMarker
-                    + "\n            "
-                    + String.join("\n            ", dependencies)
-                    + "\n            "
-                    + endDependenciesMarker + after;
+                                      + "\n            "
+                                      + String.join("\n            ", dependencies)
+                                      + "\n            "
+                                      + endDependenciesMarker + after;
 
             updateResource(buildContext, pomFile, updatedPom);
         } catch (IOException e) {
@@ -275,9 +275,9 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
             }
 
             String d = "<dependency>\n"
-                    + "                <groupId>" + project.getGroupId() + "</groupId>\n"
-                    + "                <artifactId>" + project.getArtifactId() + "</artifactId>\n"
-                    + "                <version>${project.version}</version>\n";
+                       + "                <groupId>" + project.getGroupId() + "</groupId>\n"
+                       + "                <artifactId>" + project.getArtifactId() + "</artifactId>\n"
+                       + "                <version>${project.version}</version>\n";
             String type = project.getArtifact().getType();
             if (type != null && !"jar".equals(type) && !"maven-plugin".equals(type)) {
                 d += "                <type>" + type + "</type>\n";
@@ -286,10 +286,10 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
             dependencies.add(d);
 
             final String updatedPom = before + startDependenciesMarker
-                    + "\n            "
-                    + String.join("\n            ", dependencies)
-                    + "\n            "
-                    + endDependenciesMarker + after;
+                                      + "\n            "
+                                      + String.join("\n            ", dependencies)
+                                      + "\n            "
+                                      + endDependenciesMarker + after;
 
             updateResource(buildContext, pomFile, updatedPom);
         } catch (IOException e) {
