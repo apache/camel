@@ -806,10 +806,10 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * Group: common
          * 
-         * @return the name of the header {@code GooglePubsub.MessageId}.
+         * @return the name of the header {@code GooglePubsubMessageId}.
          */
-        public String googlepubsubMessageid() {
-            return "GooglePubsub.MessageId";
+        public String googlePubsubMessageId() {
+            return "GooglePubsubMessageId";
         }
 
         /**
@@ -819,10 +819,10 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code GooglePubsub.MsgAckId}.
+         * @return the name of the header {@code GooglePubsubMsgAckId}.
          */
-        public String googlepubsubMsgackid() {
-            return "GooglePubsub.MsgAckId";
+        public String googlePubsubMsgAckId() {
+            return "GooglePubsubMsgAckId";
         }
 
         /**
@@ -832,10 +832,10 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code GooglePubsub.PublishTime}.
+         * @return the name of the header {@code GooglePubsubPublishTime}.
          */
-        public String googlepubsubPublishtime() {
-            return "GooglePubsub.PublishTime";
+        public String googlePubsubPublishTime() {
+            return "GooglePubsubPublishTime";
         }
 
         /**
@@ -845,10 +845,10 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * Group: common
          * 
-         * @return the name of the header {@code GooglePubsub.Attributes}.
+         * @return the name of the header {@code GooglePubsubAttributes}.
          */
-        public String googlepubsubAttributes() {
-            return "GooglePubsub.Attributes";
+        public String googlePubsubAttributes() {
+            return "GooglePubsubAttributes";
         }
 
         /**
@@ -859,10 +859,10 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code GooglePubsub.OrderingKey}.
+         * @return the name of the header {@code GooglePubsubOrderingKey}.
          */
-        public String googlepubsubOrderingkey() {
-            return "GooglePubsub.OrderingKey";
+        public String googlePubsubOrderingKey() {
+            return "GooglePubsubOrderingKey";
         }
     }
     static GooglePubsubEndpointBuilder endpointBuilder(
