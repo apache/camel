@@ -77,7 +77,7 @@ public class JavaScriptRoutesBuilderLoader extends EndpointRouteBuilderLoaderSup
         // Run the script.
         //
         context.eval(
-                newBuilder(LANGUAGE_ID, reader, "Unnamed").buildLiteral());
+                newBuilder(LANGUAGE_ID, reader, "Unnamed").mimeType("application/javascript+module").buildLiteral());
 
         //
         // Close the polyglot context when the camel context stops

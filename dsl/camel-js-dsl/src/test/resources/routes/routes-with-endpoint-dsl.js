@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-f = timer("tick");
-t = log("info");
+const f = timer("tick");
+const t = log("info");
 
 from(f)
     .to(t);
