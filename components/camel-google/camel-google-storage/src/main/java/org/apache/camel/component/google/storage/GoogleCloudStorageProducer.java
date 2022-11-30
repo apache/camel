@@ -23,10 +23,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import com.google.cloud.storage.Blob;
@@ -320,8 +317,27 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
 
         Blob blob = storage.get(BlobId.of(bucketName, objectName));
         Message message = getMessageForResponse(exchange);
-        message.setBody(blob);
-
+        message.setBody(blob.getContent(Blob.BlobSourceOption.generationMatch()));
+        message.setHeader(GoogleCloudStorageConstants.OBJECT_NAME, blob.getName());
+        message.setHeader(GoogleCloudStorageConstants.CACHE_CONTROL, blob.getCacheControl());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_COMPONENT_COUNT, blob.getComponentCount());
+        message.setHeader(GoogleCloudStorageConstants.CONTENT_DISPOSITION, blob.getContentDisposition());
+        message.setHeader(GoogleCloudStorageConstants.CONTENT_ENCODING, blob.getContentEncoding());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_CONTENT_LANGUAGE, blob.getContentLanguage());
+        message.setHeader(GoogleCloudStorageConstants.CONTENT_TYPE, blob.getContentType());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_CUSTOM_TIME, blob.getCustomTime());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_CRC32C_HEX, blob.getCrc32cToHexString());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_ETAG, blob.getEtag());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_GENERATION, blob.getGeneration());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_BLOB_ID, blob.getBlobId());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_KMS_KEY_NAME, blob.getKmsKeyName());
+        message.setHeader(GoogleCloudStorageConstants.CONTENT_MD5, blob.getMd5ToHexString());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_MEDIA_LINK, blob.getMediaLink());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_METAGENERATION, blob.getMetageneration());
+        message.setHeader(GoogleCloudStorageConstants.CONTENT_LENGTH, blob.getSize());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_STORAGE_CLASS, blob.getStorageClass());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_CREATE_TIME, blob.getCreateTime());
+        message.setHeader(GoogleCloudStorageConstants.METADATA_LAST_UPDATE, new Date(blob.getUpdateTime()));
     }
 
     private void listObjects(Storage storage, Exchange exchange) {
