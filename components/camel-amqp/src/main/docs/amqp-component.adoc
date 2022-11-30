@@ -144,7 +144,7 @@ If you, for example, need to enable `amqp.traceFrames` you can do that by append
 AMQPComponent amqp = AMQPComponent.amqpComponent("amqp://localhost:5672?amqp.traceFrames=true");
 ----
 
-For reference take a look at the https://qpid.apache.org/releases/qpid-jms-0.51.0/docs/index.html[QPID JMS client configuration]
+For reference take a look at the https://qpid.apache.org/releases/qpid-jms-1.7.0/docs/index.html[QPID JMS client configuration]
 
 == Using topics
 
