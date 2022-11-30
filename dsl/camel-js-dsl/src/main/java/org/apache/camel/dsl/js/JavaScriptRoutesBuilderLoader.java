@@ -24,6 +24,7 @@ import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
 import org.apache.camel.endpointdsl.support.EndpointRouteBuilderLoaderSupport;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.LifecycleStrategySupport;
+import org.apache.camel.util.FileUtil;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.HostAccess;
 import org.graalvm.polyglot.PolyglotAccess;
@@ -53,6 +54,7 @@ public class JavaScriptRoutesBuilderLoader extends EndpointRouteBuilderLoaderSup
 
         final Context context = contextBuilder.build();
         final Value bindings = context.getBindings(LANGUAGE_ID);
+        final String name = FileUtil.onlyName(builder.getResource().getLocation(), true) + "." + EXTENSION;
 
         // configure bindings
         bindings.putMember("__dsl", new JavaScriptDSL(builder));
@@ -72,12 +74,11 @@ public class JavaScriptRoutesBuilderLoader extends EndpointRouteBuilderLoaderSup
                         "        return Reflect.get((key in __dsl) ? __dsl : target, key, receiver);",
                         "    }",
                         "}));"));
-
         //
         // Run the script.
         //
         context.eval(
-                newBuilder(LANGUAGE_ID, reader, "Unnamed").mimeType("application/javascript+module").buildLiteral());
+                newBuilder(LANGUAGE_ID, reader, name).mimeType("application/javascript+module").buildLiteral());
 
         //
         // Close the polyglot context when the camel context stops

@@ -19,7 +19,10 @@ package org.apache.camel.language.js;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.ExpressionSupport;
 import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
+
+import static org.graalvm.polyglot.Source.newBuilder;
 
 public class JavaScriptExpression extends ExpressionSupport {
 
@@ -54,7 +57,9 @@ public class JavaScriptExpression extends ExpressionSupport {
             b.putMember("properties", exchange.getAllProperties());
             b.putMember("body", exchange.getMessage().getBody());
 
-            Value o = cx.eval("js", expressionString);
+            Source source = newBuilder("js", expressionString, "Unnamed")
+                    .mimeType("application/javascript+module").buildLiteral();
+            Value o = cx.eval(source);
             Object answer = o != null ? o.as(Object.class) : null;
             if (type == Object.class) {
                 return (T) answer;

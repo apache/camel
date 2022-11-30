@@ -24,7 +24,10 @@ import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.TypedLanguageSupport;
 import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
+
+import static org.graalvm.polyglot.Source.newBuilder;
 
 @Language("js")
 public class JavaScriptLanguage extends TypedLanguageSupport implements ScriptingLanguage {
@@ -45,7 +48,9 @@ public class JavaScriptLanguage extends TypedLanguageSupport implements Scriptin
         try (Context cx = JavaScriptHelper.newContext()) {
             Value b = cx.getBindings("js");
             bindings.forEach(b::putMember);
-            Value o = cx.eval("js", script);
+            Source source = newBuilder("js", script, "Unnamed")
+                    .mimeType("application/javascript+module").buildLiteral();
+            Value o = cx.eval(source);
             Object answer = o != null ? o.as(resultType) : null;
             return resultType.cast(answer);
         }
