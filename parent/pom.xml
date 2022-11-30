@@ -92,7 +92,7 @@
         <brave-zipkin-version>5.13.3</brave-zipkin-version>
         <build-helper-maven-plugin-version>3.2.0</build-helper-maven-plugin-version>
         <c3p0-version>0.9.5.5</c3p0-version>
-	<caffeine-version>3.1.2</caffeine-version>
+        <caffeine-version>3.1.2</caffeine-version>
         <californium-version>2.7.2</californium-version>
         <californium-scandium-version>2.7.4</californium-scandium-version>
         <cassandra-driver-version>4.15.0</cassandra-driver-version>
