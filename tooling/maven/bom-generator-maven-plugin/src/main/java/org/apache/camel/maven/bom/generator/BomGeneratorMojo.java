@@ -168,6 +168,8 @@ public class BomGeneratorMojo extends AbstractMojo {
 
         for (Dependency dep : dependencyList) {
             boolean accept = inclusions.matches(dep) && !exclusions.matches(dep);
+            // skip test-jar
+            accept &= !"test-jar".equals(dep.getType());
             getLog().debug(dep + (accept ? " included in the BOM" : " excluded from BOM"));
 
             if (accept) {
