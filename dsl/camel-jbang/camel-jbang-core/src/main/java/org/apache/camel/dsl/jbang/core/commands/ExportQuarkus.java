@@ -405,13 +405,9 @@ class ExportQuarkus extends Export {
             // shrinkwrap does not return POM file as result (they are hardcoded to be filtered out)
             // so after this we download a JAR and then use its File location to compute the file for the downloaded POM
             MavenDependencyDownloader downloader = main.getCamelContext().hasService(MavenDependencyDownloader.class);
-            downloader.downloadArtifact("io.quarkus.platform", "quarkus-camel-bom:pom", quarkusVersion);
-            MavenArtifact ma = downloader.downloadArtifact("io.quarkus", "quarkus-core", quarkusVersion);
+            MavenArtifact ma = downloader.downloadArtifact("io.quarkus.platform", "quarkus-camel-bom:pom", quarkusVersion);
             if (ma != null && ma.getFile() != null) {
                 String name = ma.getFile().getAbsolutePath();
-                name = name.replace("io/quarkus/quarkus-core", "io/quarkus/platform/quarkus-camel-bom");
-                name = name.replace("quarkus-core", "quarkus-camel-bom");
-                name = name.replace(".jar", ".pom");
                 File file = new File(name);
                 if (file.exists()) {
                     DocumentBuilderFactory dbf = XmlHelper.createDocumentBuilderFactory();
