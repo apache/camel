@@ -12,6 +12,21 @@ The `org.apache.camel.support.jsse.SSLContextParameters` is now using `ResourceL
 to load keystore and other resources in a standard way. Therefore, the `SSLContextParameters` now must have been pre-configured
 with a `CamelContext` otherwise an exception is thrown.
 
+== camel-bom
+
+The `camel-bom` BOM no longer includes dependencies with `<type>test-jar</type>` as these are for internal testing
+of the Apache Camel project.
+
+The following Maven Plugins has been fixed to use correct GAV:
+
+- camel-debezium-maven-plugin
+- camel-salesforce-maven-plugin
+- camel-servicenow-maven-plugin
+
+from `<groupdId>org.apache.camel</groupdId>` to `<groupdId>org.apache.camel.maven</groupdId>`.
+
+Dependencies not intended for end users has been removed, such as all `-parent` JARs.
+
 === camel-jsonpath
 
 There is a new option `unpackArray` that unpacks a single-element Json array, matched by a Jsonpath, into an object. This option is disabled by default (this behaviour was enabled by default in previous Camel versions). There is a new expression `jsonpathUnpack(String text, Class<?> resultType)` that makes use of this new option.
