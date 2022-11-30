@@ -1,0 +1,12 @@
+= Reference Documentation
+
+* *Reference*
+* xref:components::index.adoc[Components]
+* xref:components:dataformats:index.adoc[Data Formats]
+* xref:components:languages:index.adoc[Languages]
+* xref:components:eips:enterprise-integration-patterns.adoc[EIPs]
+* xref:manual::examples.adoc[Examples]
+* https://www.javadoc.io/doc/org.apache.camel/camel-api/latest/index.html[API Documentation] for the latest version
+
+
+
