@@ -33,1562 +33,1567 @@
     <description>Depends on all components to ensure correct build ordering</description>
 
 	<dependencies>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-activemq</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-amqp</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-any23</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-arangodb</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-as2-api</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-as2</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-asn1</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-asterisk</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-atlasmap</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-atmos</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-atmosphere-websocket</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-atom</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-attachments</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-avro-rpc-jetty</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-avro-rpc-spi</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-avro-rpc</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-avro</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-aws-cloudtrail</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-aws-secrets-manager</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-aws-xray</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-aws2-athena</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-aws2-cw</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-aws2-ddb</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-aws2-ec2</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-aws2-ecs</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-aws2-eks</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-aws2-eventbridge</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-aws2-iam</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-aws2-kinesis</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-aws2-kms</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-aws2-lambda</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-aws2-mq</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-aws2-msk</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-aws2-s3</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-aws2-ses</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-aws2-sns</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-aws2-sqs</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-aws2-sts</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-aws2-translate</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-azure-cosmosdb</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-azure-eventhubs</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-azure-key-vault</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-azure-servicebus</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-azure-storage-blob</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-azure-storage-datalake</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-azure-storage-queue</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-barcode</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-base64</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-bean-validator</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-bean</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-bindy</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-bonita</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-box-api</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-box</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-braintree</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-browse</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-caffeine-lrucache</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-caffeine</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-cassandraql</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-cbor</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-cdi-jta</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-cdi-main</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-cdi</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-chatscript</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-chunk</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-cloudevents</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-cm-sms</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-cmis</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-coap</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-cometd</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-consul</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-controlbus</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-corda</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-couchbase</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-couchdb</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-cron</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-crypto</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-csimple-joor</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-csv</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-cxf-rest</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-cxf-soap</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-cxf-spring-rest</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-cxf-spring-soap</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-cxf-spring-transport</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-cxf-transport</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-dataformat</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-dataset</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-datasonnet</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-debezium-common</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-debezium-db2</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-debezium-mongodb</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-debezium-mysql</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-debezium-oracle</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-debezium-postgres</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-debezium-sqlserver</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-debug</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-digitalocean</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-direct</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-directvm</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-disruptor</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-djl</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-dns</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-docker</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-dozer</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-drill</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-dropbox</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-dynamic-router</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-ehcache</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-elasticsearch-rest</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-elasticsearch</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-elytron</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-etcd3</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-exec</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-facebook</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-fastjson</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-fhir-api</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-fhir</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-file-watch</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-file</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-flatpack</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-flink</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-fop</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-freemarker</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-ftp</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-geocoder</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-git</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-github</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-google-bigquery</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-google-calendar</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-google-drive</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-google-functions</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-google-mail</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-google-pubsub</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-google-secret-manager</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-google-sheets</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-google-storage</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-gora</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-grape</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-graphql</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-grok</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-groovy</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-grpc</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-gson</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-guava-eventbus</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-hashicorp-vault</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-hazelcast</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-hbase</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-hdfs</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-headersmap</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-hl7</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-http-base</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-http-common</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-http</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-huaweicloud-common</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-huaweicloud-dms</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-huaweicloud-frs</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-huaweicloud-functiongraph</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-huaweicloud-iam</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-huaweicloud-imagerecognition</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-huaweicloud-obs</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-huaweicloud-smn</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-hyperledger-aries</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-ical</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-iec60870</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-ignite</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-infinispan-common</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-infinispan-embedded</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-infinispan</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-influxdb</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-iota</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-ipfs</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-irc</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-ironmq</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jackson-avro</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jackson-protobuf</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jackson</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jacksonxml</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jasypt</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-javascript</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jaxb</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jbpm</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jcache</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jclouds</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jcr</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jdbc</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jetty-common</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jetty</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jfr</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jgroups-raft</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jgroups</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jira</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jms</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jmx</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-johnzon</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jolt</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jooq</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-joor</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jpa</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jq</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jsch</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jslt</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-json-patch</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-json-validator</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jsonapi</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jsonata</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jsonb</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jsonpath</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jt400</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jta</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-kafka</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-kamelet</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-knative-api</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-knative-http</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-knative</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-kubernetes</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-kudu</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-language</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-ldap</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-ldif</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-leveldb</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-log</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-lra</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-lucene</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-lumberjack</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-lzf</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-mail-microsoft-oauth</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-mail</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-mapstruct</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-master</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-metrics</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-micrometer</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-microprofile-config</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-microprofile-fault-tolerance</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-microprofile-health</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-microprofile-metrics</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-milo</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-mina</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-minio</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-mllp</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-mock</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-mongodb-gridfs</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-mongodb</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-mustache</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-mvel</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-mybatis</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-nats</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-netty-http</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-netty</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-nitrite</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-oaipmh</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-ognl</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-olingo2-api</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-olingo2</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-olingo4-api</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-olingo4</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-openapi-java</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-openstack</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-opentelemetry</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-opentracing</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-optaplanner</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-paho-mqtt5</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-paho</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-pdf</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-pg-replication-slot</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-pgevent</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-platform-http-vertx</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-platform-http</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-plc4x</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-printer</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-protobuf</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-pubnub</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-pulsar</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-python</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-quartz</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-quickfix</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-rabbitmq</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-reactive-executor-tomcat</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-reactive-executor-vertx</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-reactive-streams</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-reactor</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-redis</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-ref</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-resilience4j</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-resourceresolver-github</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-rest-openapi</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-rest-swagger</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-rest</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-resteasy</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-robotframework</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-rss</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-rxjava</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-saga</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-salesforce-codegen</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-salesforce</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-sap-netweaver</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-saxon</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-scheduler</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-schematron</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-seda</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-service</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-servicenow</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-servlet</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-shiro</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-sjms2</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-sjms</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-slack</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-smpp</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-snakeyaml</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-snmp</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-soap</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-solr</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-spark</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-splunk-hec</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-splunk</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-spring-batch</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-spring-integration</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-spring-jdbc</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-spring-ldap</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-spring-main</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-spring-rabbitmq</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-spring-redis</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-spring-security</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-spring-ws</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-spring-xml</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-spring</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-sql</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-ssh</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-stax</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-stitch</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-stomp</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-stream</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-stringtemplate</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-stub</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-swagger-java</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-swift</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-syslog</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-tarfile</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-telegram</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-test-cdi-junit5</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-test-cdi</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-test-junit5</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-test-main-junit5</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-test-spring-junit5</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-test-spring</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-test</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-threadpoolfactory-vertx</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-thrift</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-tika</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-timer</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-tracing</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-twilio</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-twitter</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-undertow-spring-security</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-undertow</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-univocity-parsers</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-validator</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-velocity</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-vertx-common</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-vertx-http</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-vertx-kafka</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-vertx-websocket</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-vertx</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-vm</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-wal</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-weather</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-web3j</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-webhook</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-websocket-jsr356</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-websocket</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-weka</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-whatsapp</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-wordpress</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-workday</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-xchange</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-xj</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-xmlsecurity</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-xmpp</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-xpath</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-xslt-saxon</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-xslt</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-xstream</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-zendesk</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-zip-deflater</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-zipfile</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-zipkin</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-zookeeper-master</artifactId>
 		</dependency>
-		<dependency>
+            <dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-zookeeper</artifactId>
 		</dependency>
-		<dependency>
-                        <groupId>org.apache.camel</groupId>
-                        <artifactId>camel-cxf-common</artifactId>
-                </dependency>
-		<dependency>
-                        <groupId>org.apache.camel</groupId>
-                        <artifactId>camel-cxf-spring-common</artifactId>
-                </dependency>
-	</dependencies>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-wal</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-cxf-common</artifactId>
+        </dependency>
+            <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-cxf-spring-common</artifactId>
+        </dependency>
+            </dependencies>
 
 </project>

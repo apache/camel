@@ -51,6 +51,12 @@ import static org.apache.camel.tooling.util.PackageHelper.loadText;
 public class PrepareComponentMojo extends AbstractGeneratorMojo {
 
     /**
+     * The base directory
+     */
+    @Parameter(defaultValue = "${project.basedir}")
+    protected File baseDir;
+
+    /**
      * The output directory for generated components file
      */
     @Parameter(defaultValue = "${project.basedir}/src/generated/java")
@@ -142,11 +148,7 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
             new PackageOtherMojo(
                     getLog(), project, projectHelper, otherOutDir,
                     schemaOutDir, buildContext).prepareOthers();
-            // skip maven plugins or from core as core is maintained manually
-            boolean skip = project.getArtifactId().endsWith("-maven-plugin");
-            if (!skip) {
-                count = 1;
-            }
+            count = 1;
         }
 
         // whether to sync pom in allcomponents/parent
@@ -169,7 +171,10 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
         }
         if (count > 0) {
             if ("true".equals(syncParent)) {
-                syncParentPomFile();
+                // we can sync either components or dsl in parent
+                boolean dsl = isParentArtifact(project, "dsl");
+                String token = dsl ? "dsl" : "components";
+                syncParentPomFile(token);
             }
             if ("true".equals(syncComponents)) {
                 syncAllComponentsPomFile();
@@ -192,12 +197,12 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
         return false;
     }
 
-    private void syncParentPomFile() throws MojoExecutionException {
+    private void syncParentPomFile(String token) throws MojoExecutionException {
         Path root = findCamelDirectory(project.getBasedir(), "parent").toPath();
         Path pomFile = root.resolve("pom.xml");
 
-        final String startDependenciesMarker = "<!-- camel components: START -->";
-        final String endDependenciesMarker = "<!-- camel components: END -->";
+        final String startDependenciesMarker = "<!-- camel " + token + ": START -->";
+        final String endDependenciesMarker = "<!-- camel " + token + ": END -->";
 
         if (!Files.isRegularFile(pomFile)) {
             throw new MojoExecutionException("Pom file " + pomFile + " does not exist");
@@ -219,15 +224,22 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
                 dependencies.add(matcher.group());
             }
 
-            dependencies.add("<dependency>\n"
-                             + "\t\t\t\t<groupId>" + project.getGroupId() + "</groupId>\n"
-                             + "\t\t\t\t<artifactId>" + project.getArtifactId() + "</artifactId>\n"
-                             + "\t\t\t\t<version>${project.version}</version>\n"
-                             + "\t\t\t</dependency>");
+            String d = "<dependency>\n"
+                    + "                <groupId>" + project.getGroupId() + "</groupId>\n"
+                    + "                <artifactId>" + project.getArtifactId() + "</artifactId>\n"
+                    + "                <version>${project.version}</version>\n";
+            String type = project.getArtifact().getType();
+            if (type != null && !"jar".equals(type) && !"maven-plugin".equals(type)) {
+                d += "                <type>" + type + "</type>\n";
+            }
+            d += "            </dependency>";
+            dependencies.add(d);
 
-            final String updatedPom = before + startDependenciesMarker + "\n\t\t\t"
-                                      + String.join("\n\t\t\t", dependencies) + "\n\t\t\t"
-                                      + endDependenciesMarker + after;
+            final String updatedPom = before + startDependenciesMarker
+                    + "\n            "
+                    + String.join("\n            ", dependencies)
+                    + "\n            "
+                    + endDependenciesMarker + after;
 
             updateResource(buildContext, pomFile, updatedPom);
         } catch (IOException e) {
@@ -261,14 +273,23 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
             while (matcher.find()) {
                 dependencies.add(matcher.group());
             }
-            dependencies.add("<dependency>\n"
-                             + "\t\t\t<groupId>" + project.getGroupId() + "</groupId>\n"
-                             + "\t\t\t<artifactId>" + project.getArtifactId() + "</artifactId>\n"
-                             + "\t\t</dependency>");
 
-            final String updatedPom = before + startDependenciesMarker + "\n\t\t"
-                                      + String.join("\n\t\t", dependencies) + "\n\t"
-                                      + endDependenciesMarker + after;
+            String d = "<dependency>\n"
+                    + "                <groupId>" + project.getGroupId() + "</groupId>\n"
+                    + "                <artifactId>" + project.getArtifactId() + "</artifactId>\n"
+                    + "                <version>${project.version}</version>\n";
+            String type = project.getArtifact().getType();
+            if (type != null && !"jar".equals(type) && !"maven-plugin".equals(type)) {
+                d += "                <type>" + type + "</type>\n";
+            }
+            d += "            </dependency>";
+            dependencies.add(d);
+
+            final String updatedPom = before + startDependenciesMarker
+                    + "\n            "
+                    + String.join("\n            ", dependencies)
+                    + "\n            "
+                    + endDependenciesMarker + after;
 
             updateResource(buildContext, pomFile, updatedPom);
         } catch (IOException e) {

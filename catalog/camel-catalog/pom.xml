@@ -160,8 +160,6 @@
                         <goals>
                             <!-- prepare the catalog, readme files, etc. -->
                             <goal>prepare-catalog</goal>
-                            <!-- prepare apache-camel assembly -->
-                            <goal>prepare-assembly</goal>
                             <!-- update secrets in camel-util -->
                             <goal>update-sensitive-helper</goal>
                             <!-- update names in camel-main -->

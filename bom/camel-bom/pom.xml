@@ -32,6 +32,26 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
+        <groupId>org.apache.camel.maven</groupId>
+        <artifactId>camel-debezium-maven-plugin</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel.maven</groupId>
+        <artifactId>camel-salesforce-maven-plugin</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel.maven</groupId>
+        <artifactId>camel-servicenow-maven-plugin</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel.maven</groupId>
+        <artifactId>camel-vertx-kafka-maven-plugin</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-activemq</artifactId>
         <version>${project.version}</version>
@@ -615,11 +635,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-debezium-maven-plugin</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-debezium-mongodb</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1110,11 +1125,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-jbang</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-jbpm</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1296,11 +1306,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-knative-http</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-kotlin-dsl</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -1736,11 +1741,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-salesforce-maven-plugin</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-sap-netweaver</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1772,11 +1772,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-servicenow</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-servicenow-maven-plugin</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2106,11 +2101,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-vertx-kafka-maven-plugin</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-vertx-websocket</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -2202,11 +2192,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-xml-jaxb-dsl</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-xml-jaxb-dsl-test</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

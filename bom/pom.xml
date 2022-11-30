@@ -58,12 +58,12 @@
                     <dependencies>
                         <includes>
                             <include>org.apache.camel:*</include>
+                            <include>org.apache.camel.maven:*</include>
                         </includes>
                         <excludes>
                             <exclude>org.apache.camel:camel-allcomponents</exclude>
                         </excludes>
                     </dependencies>
-
                     <sourcePom>${basedir}/target-template-pom.xml</sourcePom>
                     <targetPom>${basedir}/camel-bom/pom.xml</targetPom>
                 </configuration>
