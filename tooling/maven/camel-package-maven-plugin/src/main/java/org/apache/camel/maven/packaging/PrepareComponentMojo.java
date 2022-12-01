@@ -229,7 +229,8 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
                        + "                <artifactId>" + project.getArtifactId() + "</artifactId>\n"
                        + "                <version>${project.version}</version>\n";
             String type = project.getArtifact().getType();
-            if (type != null && !"jar".equals(type) && !"maven-plugin".equals(type)) {
+            String pack = project.getPackaging();
+            if (type != null && !"jar".equals(type) && !"maven-plugin".equals(pack)) {
                 d += "                <type>" + type + "</type>\n";
             }
             d += "            </dependency>";
@@ -279,7 +280,8 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
                        + "                <artifactId>" + project.getArtifactId() + "</artifactId>\n"
                        + "                <version>${project.version}</version>\n";
             String type = project.getArtifact().getType();
-            if (type != null && !"jar".equals(type) && !"maven-plugin".equals(type)) {
+            String pack = project.getPackaging();
+            if (type != null && !"jar".equals(type) && !"maven-plugin".equals(pack)) {
                 d += "                <type>" + type + "</type>\n";
             }
             d += "            </dependency>";
