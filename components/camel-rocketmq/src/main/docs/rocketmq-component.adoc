@@ -1,0 +1,106 @@
+= RocketMQ Component
+:doctitle: RocketMQ
+:shortname: rocketmq
+:artifactid: camel-rocketmq
+:description: Send and receive messages from RocketMQ instances.
+:since: 3.20.0
+:supportlevel: Stable
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The RocketMQ component allows you to produce and consume messages from
+https://rocketmq.apache.org/[RocketMQ] instances.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-rocketmq</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+----
+rocketmq:topicName?[options]
+----
+
+The topic name determines the topic to which the produced 
+messages will be sent to. In the case of consumers, the topic name 
+determines the topic will be subscribed.
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+== InOut Pattern
+
+InOut Pattern based on Message Key. When the producer sending the message, a messageKey will be generated and append to the message's key.
+
+After the message sent, a consumer will listen to the topic configured by the parameter `ReplyToTopic`.
+
+When a message from `ReplyToTpic` contains the key, it means that the reply received and continue routing.
+
+If `requestTimeoutMillis` elapsed and no reply received, an exception will be thrown.
+
+[source,java]
+----
+from("rocketmq:START_TOPIC?producerGroup=p1&consumerGroup=c1")
+
+.to(ExchangePattern.InOut, "rocketmq:INTERMEDIATE_TOPIC" +
+        "?producerGroup=intermediaProducer" +
+        "&consumerGroup=intermediateConsumer" +
+        "&replyToTopic=REPLY_TO_TOPIC" +
+        "&replyToConsumerGroup=replyToConsumerGroup" +
+        "&requestTimeoutMillis=30000")
+
+.to("log:InOutRoute?showAll=true")
+----
+
+== Examples
+
+Receive messages from a topic named `from_topic`, route to `to_topic`.
+
+[source,java]
+----
+from("rocketmq:FROM_TOPIC?namesrvAddr=localhost:9876&consumerGroup=consumer")
+    .to("rocketmq:TO_TOPIC?namesrvAddr=localhost:9876&producerGroup=producer");
+----
+
+Setting specific headers can change routing behaviour. For example, if header `RocketMQConstants.OVERRIDE_TOPIC_NAME` was set,
+the message will be sent to `ACTUAL_TARGET` instead of `ORIGIN_TARGET`.
+
+[source,java]
+----
+from("rocketmq:FROM?consumerGroup=consumer")
+        .process(exchange -> {
+            exchange.getMessage().setHeader(RocketMQConstants.OVERRIDE_TOPIC_NAME, "ACTUAL_TARGET");
+            exchange.getMessage().setHeader(RocketMQConstants.OVERRIDE_TAG, "OVERRIDE_TAG");
+            exchange.getMessage().setHeader(RocketMQConstants.OVERRIDE_MESSAGE_KEY, "OVERRIDE_MESSAGE_KEY");
+        }
+)
+.to("rocketmq:ORIGIN_TARGET?producerGroup=producer")
+.to("log:RocketRoute?showAll=true")
+----
