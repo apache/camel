@@ -58,7 +58,7 @@ public class InfinispanRemoteProducerIT extends InfinispanRemoteTestSupport impl
         assertEquals(InfinispanProducerTestSupport.VALUE_TWO, getCache().get(InfinispanProducerTestSupport.KEY_TWO));
 
         assertEquals(
-                2,
+                -1,
                 fluentTemplate()
                         .to("direct:start")
                         .withHeader(InfinispanConstants.OPERATION, InfinispanOperation.STATS)
