@@ -283,6 +283,8 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
 
             // generate string output of all dependencies
             String s = dependencies.stream()
+                    // skip maven plugins
+                    .filter(g -> !g.artifactId.contains("-maven-plugin"))
                     .map(MavenGav::toString)
                     .collect(Collectors.joining("\n"));
             final String updatedPom = before + startDependenciesMarker
