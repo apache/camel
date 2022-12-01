@@ -31,3 +31,7 @@ Dependencies not intended for end users has been removed, such as all `-parent` 
 
 There is a new option `unpackArray` that unpacks a single-element Json array, matched by a Jsonpath, into an object. This option is disabled by default (this behaviour was enabled by default in previous Camel versions). There is a new expression `jsonpathUnpack(String text, Class<?> resultType)` that makes use of this new option.
 
+=== camel-google-pubsub
+
+The headers used by the Camel Google Pubsub component has been renamed. The prefix `CamelGooglePubsub.` has been updated to `CamelGooglePubsub` without any dot. This is related to CAMEL-18773 issue.
+
