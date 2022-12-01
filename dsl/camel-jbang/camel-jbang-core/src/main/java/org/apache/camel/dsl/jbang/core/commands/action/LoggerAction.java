@@ -27,6 +27,7 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
@@ -107,7 +108,7 @@ public class LoggerAction extends ActionBaseCommand {
                         }
                         row.name = context.getString("name");
                         if ("CamelJBang".equals(row.name)) {
-                            row.name = extractName(root, ph);
+                            row.name = ProcessHelper.extractName(root, ph);
                         }
                         JsonObject jo = (JsonObject) root.get("logger");
                         if (jo != null) {

@@ -30,6 +30,7 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -105,7 +106,7 @@ public class ListHealth extends ProcessBaseCommand {
                             row.ago = TimeUtils.printSince(row.uptime);
                             row.name = context.getString("name");
                             if ("CamelJBang".equals(row.name)) {
-                                row.name = extractName(root, ph);
+                                row.name = ProcessHelper.extractName(root, ph);
                             }
                             row.id = o.getString("id");
                             row.group = o.getString("group");

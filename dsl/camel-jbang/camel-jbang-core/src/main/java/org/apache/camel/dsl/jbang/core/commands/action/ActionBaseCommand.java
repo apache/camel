@@ -19,18 +19,15 @@ package org.apache.camel.dsl.jbang.core.commands.action;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.StringJoiner;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
@@ -64,7 +61,7 @@ abstract class ActionBaseCommand extends CamelCommand {
                     JsonObject root = loadStatus(ph.pid());
                     // there must be a status file for the running Camel integration
                     if (root != null) {
-                        String pName = extractName(root, ph);
+                        String pName = ProcessHelper.extractName(root, ph);
                         // ignore file extension, so it is easier to match by name
                         pName = FileUtil.onlyName(pName);
                         if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pattern)) {
@@ -74,115 +71,6 @@ abstract class ActionBaseCommand extends CamelCommand {
                 });
 
         return pids;
-    }
-
-    static String extractMainClass(JsonObject root) {
-        JsonObject runtime = (JsonObject) root.get("runtime");
-        return runtime != null ? runtime.getString("mainClass") : null;
-    }
-
-    static String extractName(JsonObject root, ProcessHandle ph) {
-        String name = doExtractName(root, ph);
-        return FileUtil.stripPath(name);
-    }
-
-    static String doExtractName(JsonObject root, ProcessHandle ph) {
-        // favour main class if known
-        if (root != null) {
-            String mc = extractMainClass(root);
-            if (mc != null) {
-                return mc;
-            }
-        }
-        String cl = ph.info().commandLine().orElse("");
-
-        // this may be a maven plugin run that spawns a child process where Camel actually runs (link to child)
-        String mvn = extractMavenPluginName(cl);
-        if (mvn != null) {
-            // is camel running in any of the children?
-            boolean camel = ph.children().anyMatch(ch -> !extractName(root, ch).isEmpty());
-            if (camel) {
-                return ""; // skip parent as we want only the child process with camel
-            }
-        }
-
-        // try first camel-jbang
-        String name = extractCamelJBangName(cl);
-        if (name != null) {
-            return name;
-        }
-
-        // this may be a maven plugin run that spawns a child process where Camel actually runs (link to parent)
-        mvn = extractMavenPluginName(cl);
-        if (mvn == null && ph.parent().isPresent()) {
-            // try parent as it may spawn a sub process
-            String clp = ph.parent().get().info().commandLine().orElse("");
-            mvn = extractMavenPluginName(clp);
-        }
-
-        name = extractCamelName(cl, mvn);
-        return name == null ? "" : name;
-    }
-
-    private static String extractMavenPluginName(String cl) {
-        String name = StringHelper.after(cl, "org.codehaus.plexus.classworlds.launcher.Launcher");
-        if (name != null) {
-            return name.trim();
-        }
-        return null;
-    }
-
-    private static String extractCamelName(String cl, String mvn) {
-        if (cl != null) {
-            if (cl.contains("camel-spring-boot") && mvn != null) {
-                int pos = cl.lastIndexOf(" ");
-                if (pos != -1) {
-                    String after = cl.substring(pos);
-                    after = after.trim();
-                    if (after.matches("[\\w|.]+")) {
-                        return after;
-                    }
-                }
-                return mvn;
-            } else if (cl.contains("camel-quarkus") && mvn != null) {
-                return mvn;
-            } else {
-                int pos = cl.lastIndexOf(" ");
-                if (pos != -1) {
-                    String after = cl.substring(pos);
-                    after = after.trim();
-                    if (after.matches("[\\w|.]+")) {
-                        return after;
-                    }
-                }
-                if (mvn != null) {
-                    return mvn;
-                }
-                return cl.contains("camel-main") ? "camel-main" : "camel-core";
-            }
-        }
-
-        return null;
-    }
-
-    static String extractCamelJBangName(String cl) {
-        String name = StringHelper.after(cl, "main.CamelJBang run");
-        if (name != null) {
-            name = name.trim();
-            StringJoiner js = new StringJoiner(" ");
-            // focus only on the route files supported (to skip such as readme files)
-            Matcher matcher = PATTERN.matcher(name);
-            while (matcher.find()) {
-                String part = matcher.group();
-                String ext = FileUtil.onlyExt(part, true);
-                if (ext != null && Arrays.asList(DSL_EXT).contains(ext)) {
-                    js.add(part);
-                }
-            }
-            return js.toString();
-        }
-
-        return null;
     }
 
     static long extractSince(ProcessHandle ph) {
