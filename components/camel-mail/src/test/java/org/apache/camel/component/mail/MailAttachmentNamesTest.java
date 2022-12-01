@@ -37,10 +37,11 @@ import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MailAttachmentNamesTest extends CamelTestSupport {
 
@@ -91,14 +92,14 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
 
         resultEndpoint.assertIsSatisfied();
         Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);
-        Assert.assertNotNull(exchange.getIn(AttachmentMessage.class));
-        Assert.assertNotNull(exchange.getIn(AttachmentMessage.class).getAttachmentObjects());
-        Assert.assertEquals(1, exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
+        assertNotNull(exchange.getIn(AttachmentMessage.class));
+        assertNotNull(exchange.getIn(AttachmentMessage.class).getAttachmentObjects());
+        assertEquals(1, exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
 
         Map.Entry<String, Attachment> entry
                 = exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().iterator().next();
         String name = entry.getKey();
-        Assert.assertTrue(isUUID(name));
+        assertTrue(isUUID(name));
     }
 
     @Test
@@ -107,12 +108,12 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
 
         resultEndpoint.assertIsSatisfied();
         Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);
-        Assert.assertEquals(1, exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
+        assertEquals(1, exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
 
         Map.Entry<String, Attachment> entry
                 = exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().iterator().next();
         String name = entry.getKey();
-        Assert.assertTrue(isUUID(name));
+        assertTrue(isUUID(name));
     }
 
     @Test
@@ -121,13 +122,13 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
 
         resultEndpoint.assertIsSatisfied();
         Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);
-        Assert.assertEquals(2, exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
+        assertEquals(2, exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
 
         Map<String, Attachment> attachments = exchange.getIn(AttachmentMessage.class).getAttachmentObjects();
         for (Map.Entry<String, Attachment> entry : attachments.entrySet()) {
-            Assert.assertEquals(48, entry.getKey().length());
-            Assert.assertTrue(startsWithUUID(entry.getKey()));
-            Assert.assertTrue(entry.getKey().endsWith("Capture.PNG"));
+            assertEquals(48, entry.getKey().length());
+            assertTrue(startsWithUUID(entry.getKey()));
+            assertTrue(entry.getKey().endsWith("Capture.PNG"));
         }
     }
 
@@ -142,10 +143,10 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
 
         resultDefaultEndpoint.assertIsSatisfied();
         Exchange exchange = resultDefaultEndpoint.getReceivedExchanges().get(0);
-        Assert.assertEquals(1, exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
+        assertEquals(1, exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
         Map<String, Attachment> attachments = exchange.getIn(AttachmentMessage.class).getAttachmentObjects();
 
-        Assert.assertNotNull(attachments.get("Capture.PNG"));
+        assertNotNull(attachments.get("Capture.PNG"));
     }
 
     /**
@@ -159,8 +160,8 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
 
         resultDefaultEndpoint.assertIsSatisfied();
         Exchange exchange = resultDefaultEndpoint.getReceivedExchanges().get(0);
-        Assert.assertNotNull(exchange.getIn(AttachmentMessage.class));
-        Assert.assertNull(exchange.getIn(AttachmentMessage.class).getAttachmentObjects());
+        assertNotNull(exchange.getIn(AttachmentMessage.class));
+        assertNull(exchange.getIn(AttachmentMessage.class).getAttachmentObjects());
     }
 
     /**
@@ -174,8 +175,8 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
 
         resultDefaultEndpoint.assertIsSatisfied();
         Exchange exchange = resultDefaultEndpoint.getReceivedExchanges().get(0);
-        Assert.assertNotNull(exchange.getIn(AttachmentMessage.class));
-        Assert.assertNull(exchange.getIn(AttachmentMessage.class).getAttachmentObjects());
+        assertNotNull(exchange.getIn(AttachmentMessage.class));
+        assertNull(exchange.getIn(AttachmentMessage.class).getAttachmentObjects());
     }
 
     @Test
@@ -184,12 +185,12 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
 
         resultEndpoint.assertIsSatisfied();
         Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);
-        Assert.assertEquals(2, exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
+        assertEquals(2, exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
 
         Map<String, Attachment> attachments = exchange.getIn(AttachmentMessage.class).getAttachmentObjects();
         for (Map.Entry<String, Attachment> entry : attachments.entrySet()) {
             Pattern guidPattern = Pattern.compile("^Capture\\_" + UUID_EXPRESSION + "\\.PNG$");
-            Assert.assertTrue(guidPattern.matcher(entry.getKey()).matches());
+            assertTrue(guidPattern.matcher(entry.getKey()).matches());
         }
     }
 
@@ -199,12 +200,12 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
 
         resultEndpoint.assertIsSatisfied();
         Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);
-        Assert.assertEquals(2, exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
+        assertEquals(2, exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
 
         Map<String, Attachment> attachments = exchange.getIn(AttachmentMessage.class).getAttachmentObjects();
         for (Map.Entry<String, Attachment> entry : attachments.entrySet()) {
             Pattern guidPattern = Pattern.compile("^\\.file.name\\_" + UUID_EXPRESSION + "\\.PNG$");
-            Assert.assertTrue(guidPattern.matcher(entry.getKey()).matches());
+            assertTrue(guidPattern.matcher(entry.getKey()).matches());
         }
     }
 
@@ -214,12 +215,12 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
 
         resultEndpoint.assertIsSatisfied();
         Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);
-        Assert.assertEquals(2, exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
+        assertEquals(2, exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
 
         Map<String, Attachment> attachments = exchange.getIn(AttachmentMessage.class).getAttachmentObjects();
         for (Map.Entry<String, Attachment> entry : attachments.entrySet()) {
             Pattern guidPattern = Pattern.compile("^Capture\\_" + UUID_EXPRESSION + "$");
-            Assert.assertTrue(guidPattern.matcher(entry.getKey()).matches());
+            assertTrue(guidPattern.matcher(entry.getKey()).matches());
         }
     }
 
@@ -229,12 +230,12 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
 
         resultEndpoint.assertIsSatisfied();
         Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);
-        Assert.assertEquals(2, exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
+        assertEquals(2, exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet().size());
 
         Map<String, Attachment> attachments = exchange.getIn(AttachmentMessage.class).getAttachmentObjects();
         for (Map.Entry<String, Attachment> entry : attachments.entrySet()) {
             Pattern guidPattern = Pattern.compile("^\\.fileName\\_" + UUID_EXPRESSION + "$");
-            Assert.assertTrue(guidPattern.matcher(entry.getKey()).matches());
+            assertTrue(guidPattern.matcher(entry.getKey()).matches());
         }
     }
 
