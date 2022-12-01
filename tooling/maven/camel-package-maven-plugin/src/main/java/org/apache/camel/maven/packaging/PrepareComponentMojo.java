@@ -219,30 +219,26 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
             final String between = pomText.substring(before.length(), pomText.length() - after.length());
 
             Pattern pattern = Pattern.compile(
-                    "<dependency>\\s*<groupId>(?<groupId>.*)</groupId>\\s*<artifactId>(?<artifactId>.*)</artifactId>\\s*<version>(?<version>.*)</version>\\s*</dependency>");
+                    "<dependency>\\s*<groupId>(?<groupId>.*)</groupId>\\s*<artifactId>(?<artifactId>.*)</artifactId>\\s*<version>(?<version>.*)</version>");
             Matcher matcher = pattern.matcher(between);
-            TreeSet<String> dependencies = new TreeSet<>();
+
+            TreeSet<MavenGav> dependencies = new TreeSet<>();
             while (matcher.find()) {
-                dependencies.add(matcher.group());
+                String v = matcher.groupCount() > 2 ? matcher.group(3) : project.getVersion();
+                MavenGav gav = new MavenGav(matcher.group(1), matcher.group(2), v, null);
+                dependencies.add(gav);
             }
+            // add ourselves
+            dependencies.add(new MavenGav(
+                    project.getGroupId(), project.getArtifactId(), "${project.version}", project.getArtifact().getType()));
 
-            String d = "<dependency>\n"
-                       + "                <groupId>" + project.getGroupId() + "</groupId>\n"
-                       + "                <artifactId>" + project.getArtifactId() + "</artifactId>\n"
-                       + "                <version>${project.version}</version>\n";
-            String type = project.getArtifact().getType();
-            String pack = project.getPackaging();
-            if (type != null && !"jar".equals(type) && !"maven-plugin".equals(pack)) {
-                d += "                <type>" + type + "</type>\n";
-            }
-            d += "            </dependency>";
-            dependencies.add(d);
-
+            // generate string output of all dependencies
+            String s = dependencies.stream()
+                    .map(g -> g.asString("            "))
+                    .collect(Collectors.joining("\n"));
             final String updatedPom = before + startDependenciesMarker
-                                      + "\n            "
-                                      + String.join("\n            ", dependencies)
-                                      + "\n            "
-                                      + endDependenciesMarker + after;
+                                      + "\n" + s + "\n"
+                                      + "        " + endDependenciesMarker + after;
 
             updateResource(buildContext, pomFile, updatedPom);
         } catch (IOException e) {
@@ -285,7 +281,7 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
             String s = dependencies.stream()
                     // skip maven plugins
                     .filter(g -> !g.artifactId.contains("-maven-plugin"))
-                    .map(MavenGav::toString)
+                    .map(g -> g.asString("        "))
                     .collect(Collectors.joining("\n"));
             final String updatedPom = before + startDependenciesMarker
                                       + "\n" + s + "\n"
@@ -341,17 +337,16 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
             return result;
         }
 
-        @Override
-        public String toString() {
+        public String asString(String pad) {
             StringBuilder sb = new StringBuilder();
-            sb.append("        <dependency>\n");
-            sb.append("            <groupId>").append(groupId).append("</groupId>\n");
-            sb.append("            <artifactId>").append(artifactId).append("</artifactId>\n");
-            sb.append("            <version>").append(version).append("</version>\n");
+            sb.append(pad).append("<dependency>\n");
+            sb.append(pad).append("    <groupId>").append(groupId).append("</groupId>\n");
+            sb.append(pad).append("    <artifactId>").append(artifactId).append("</artifactId>\n");
+            sb.append(pad).append("    <version>").append(version).append("</version>\n");
             if (type != null) {
-                sb.append("            <type>").append(type).append("</type>\n");
+                sb.append(pad).append("    <type>").append(type).append("</type>\n");
             }
-            sb.append("        </dependency>");
+            sb.append(pad).append("</dependency>");
             return sb.toString();
         }
 
