@@ -20,9 +20,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.camel.tooling.util.Strings;
 import org.apache.maven.artifact.Artifact;
@@ -267,35 +269,100 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
 
             final String between = pomText.substring(before.length(), pomText.length() - after.length());
 
+            // load existing dependencies
             Pattern pattern = Pattern.compile(
-                    "<dependency>\\s*<groupId>(?<groupId>.*)</groupId>\\s*<artifactId>(?<artifactId>.*)</artifactId>\\s*</dependency>");
+                    "<dependency>\\s*<groupId>(?<groupId>.*)</groupId>\\s*<artifactId>(?<artifactId>.*)</artifactId>");
             Matcher matcher = pattern.matcher(between);
-            TreeSet<String> dependencies = new TreeSet<>();
+            TreeSet<MavenGav> dependencies = new TreeSet<>();
             while (matcher.find()) {
-                dependencies.add(matcher.group());
+                MavenGav gav = new MavenGav(matcher.group(1), matcher.group(2), "${project.version}", null);
+                dependencies.add(gav);
             }
+            // add ourselves
+            dependencies.add(new MavenGav(project.getGroupId(), project.getArtifactId(), "${project.version}", null));
 
-            String d = "<dependency>\n"
-                       + "                <groupId>" + project.getGroupId() + "</groupId>\n"
-                       + "                <artifactId>" + project.getArtifactId() + "</artifactId>\n"
-                       + "                <version>${project.version}</version>\n";
-            String type = project.getArtifact().getType();
-            String pack = project.getPackaging();
-            if (type != null && !"jar".equals(type) && !"maven-plugin".equals(pack)) {
-                d += "                <type>" + type + "</type>\n";
-            }
-            d += "            </dependency>";
-            dependencies.add(d);
-
+            // generate string output of all dependencies
+            String s = dependencies.stream()
+                    .map(MavenGav::toString)
+                    .collect(Collectors.joining("\n"));
             final String updatedPom = before + startDependenciesMarker
-                                      + "\n            "
-                                      + String.join("\n            ", dependencies)
-                                      + "\n            "
-                                      + endDependenciesMarker + after;
+                                      + "\n" + s + "\n"
+                                      + "    " + endDependenciesMarker + after;
 
             updateResource(buildContext, pomFile, updatedPom);
         } catch (IOException e) {
             throw new MojoExecutionException("Error reading file " + pomFile + " Reason: " + e, e);
+        }
+    }
+
+    private static class MavenGav implements Comparable<MavenGav> {
+        private final String groupId;
+        private final String artifactId;
+        private final String version;
+        private final String type;
+
+        public MavenGav(String groupId, String artifactId, String version, String type) {
+            this.groupId = groupId;
+            this.artifactId = artifactId;
+            this.version = version;
+            this.type = type;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            MavenGav mavenGav = (MavenGav) o;
+
+            if (!groupId.equals(mavenGav.groupId)) {
+                return false;
+            }
+            if (!artifactId.equals(mavenGav.artifactId)) {
+                return false;
+            }
+            if (!version.equals(mavenGav.version)) {
+                return false;
+            }
+            return Objects.equals(type, mavenGav.type);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = groupId.hashCode();
+            result = 31 * result + artifactId.hashCode();
+            result = 31 * result + version.hashCode();
+            result = 31 * result + (type != null ? type.hashCode() : 0);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append("        <dependency>\n");
+            sb.append("            <groupId>").append(groupId).append("</groupId>\n");
+            sb.append("            <artifactId>").append(artifactId).append("</artifactId>\n");
+            sb.append("            <version>").append(version).append("</version>\n");
+            if (type != null) {
+                sb.append("            <type>").append(type).append("</type>\n");
+            }
+            sb.append("        </dependency>");
+            return sb.toString();
+        }
+
+        @Override
+        public int compareTo(MavenGav o) {
+            int n = groupId.compareTo(o.groupId);
+            if (n == 0) {
+                n = artifactId.compareTo(o.artifactId);
+            }
+            if (n == 0) {
+                n = version.compareTo(o.version);
+            }
+            return n;
         }
     }
 
