@@ -1488,13 +1488,13 @@
             <artifactId>camel-robotframework</artifactId>
             <version>${project.version}</version>
         </dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-rocketmq</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-rocketmq</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-rss</artifactId>
             <version>${project.version}</version>
         </dependency>
