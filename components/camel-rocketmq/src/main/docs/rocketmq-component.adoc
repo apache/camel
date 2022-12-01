@@ -2,11 +2,10 @@
 :doctitle: RocketMQ
 :shortname: rocketmq
 :artifactid: camel-rocketmq
-:description: Send and receive messages from RocketMQ instances.
-:since: 3.20.0
-:supportlevel: Stable
+:description: Send and receive messages from RocketMQ cluster.
+:since: 3.20
+:supportlevel: Preview
 :component-header: Both producer and consumer are supported
-//Manually maintained attributes
 
 *Since Camel {since}*
 
