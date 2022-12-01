@@ -102,6 +102,9 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
             query = URISupport.createQueryString(new LinkedHashMap<>(entry.getLenientProperties()));
         }
 
+        if ((path == null || path.isEmpty()) && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Exchange.HTTP_PATH))) {
+            path = (String) exchange.getIn().getHeader(Exchange.HTTP_PATH);
+        }
         if (query == null && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Exchange.HTTP_QUERY))) {
             query = (String) exchange.getIn().getHeader(Exchange.HTTP_QUERY);
         }
