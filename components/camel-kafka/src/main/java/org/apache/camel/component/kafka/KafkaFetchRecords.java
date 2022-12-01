@@ -163,6 +163,8 @@ public class KafkaFetchRecords implements Runnable {
         if (LOG.isInfoEnabled()) {
             LOG.info("Terminating KafkaConsumer thread {} receiving from {}", threadId, getPrintableTopic());
         }
+
+        IOHelper.close(consumer);
     }
 
     private void setupInitializeErrorException(ForegroundTask task, int max) {
