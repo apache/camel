@@ -1583,7 +1583,7 @@
 		</dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-netty-http</artifactId>
+                <artifactId>camel-jooq</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
