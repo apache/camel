@@ -502,7 +502,16 @@ class Run extends CamelCommand {
         if (dev && sjReload.length() > 0) {
             String reload = sjReload.toString();
             main.addInitialProperty("camel.main.routesReloadEnabled", "true");
-            main.addInitialProperty("camel.main.routesReloadDirectory", ".");
+            // use current dir, however if we run a file that are in another folder, then we should track that folder instead
+            String reloadDir = ".";
+            for (String r : reload.split(",")) {
+                String path = FileUtil.onlyPath(r);
+                if (path != null) {
+                    reloadDir = path;
+                    break;
+                }
+            }
+            main.addInitialProperty("camel.main.routesReloadDirectory", reloadDir);
             main.addInitialProperty("camel.main.routesReloadPattern", reload);
             main.addInitialProperty("camel.main.routesReloadDirectoryRecursive", isReloadRecursive(reload) ? "true" : "false");
             // do not shutdown the JVM but stop routes when max duration is triggered
