@@ -81,36 +81,6 @@ public class ForegroundTask implements BlockingTask {
     }
 
     @Override
-    public <T> boolean run(Predicate<T> predicate, T payload) {
-        boolean completed = false;
-        try {
-            if (budget.initialDelay() > 0) {
-                Thread.sleep(budget.initialDelay());
-            }
-
-            while (budget.next()) {
-                if (predicate.test(payload)) {
-                    LOG.debug("Task {} is complete after {} iterations and it is ready to continue",
-                            name, budget.iteration());
-                    completed = true;
-                    break;
-                }
-
-                if (budget.canContinue()) {
-                    Thread.sleep(budget.interval());
-                }
-            }
-        } catch (InterruptedException e) {
-            LOG.warn("Interrupted {} while waiting for the repeatable task to finish", name);
-            Thread.currentThread().interrupt();
-        } finally {
-            elapsed = budget.elapsed();
-        }
-
-        return completed;
-    }
-
-    @Override
     public boolean run(BooleanSupplier supplier) {
         boolean completed = false;
 

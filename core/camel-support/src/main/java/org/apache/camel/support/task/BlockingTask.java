@@ -36,7 +36,9 @@ public interface BlockingTask extends Task {
      * @return           true if the task has completed successfully or false if: 1) the budget is exhausted or 2) the
      *                   task was interrupted.
      */
-    <T> boolean run(Predicate<T> predicate, T payload);
+    default <T> boolean run(Predicate<T> predicate, T payload) {
+        return this.run(() -> predicate.test(payload));
+    }
 
     /**
      * Run the task
