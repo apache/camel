@@ -83,7 +83,7 @@ class Run extends CamelCommand {
     private static final String CLIPBOARD_GENERATED_FILE = ".camel-jbang/generated-clipboard";
 
     private static final Pattern PACKAGE_PATTERN = Pattern.compile(
-            "^\\s*package\\s+([a-zA-Z][\\.\\w]*)\\s*;.*$", Pattern.MULTILINE);
+            "^\\s*package\\s+([a-zA-Z][.\\w]*)\\s*;.*$", Pattern.MULTILINE);
 
     private static final Pattern CLASS_PATTERN = Pattern.compile(
             "^\\s*public class\\s+([a-zA-Z0-9]*)[\\s+|;].*$", Pattern.MULTILINE);
@@ -229,10 +229,6 @@ class Run extends CamelCommand {
             main.addInitialProperty(key, val);
             writeSettings(key, val);
         }
-    }
-
-    private int stop() {
-        return 0;
     }
 
     private Properties loadProfileProperties(File source) throws Exception {
