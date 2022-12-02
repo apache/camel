@@ -563,12 +563,14 @@ public class DefaultModel implements Model {
                 final String fm = factoryMethod;
                 final String fp = parameters;
                 routeTemplateContext.bind(beanFactory.getName(), Object.class, Suppliers.memorize(() -> {
+                    // resolve placeholders in parameters
+                    String params = camelContext.resolvePropertyPlaceholders(fp);
                     try {
                         Object local;
                         if (fm != null) {
                             if (fp != null) {
                                 // special to support factory method parameters
-                                local = PropertyBindingSupport.newInstanceFactoryParameters(camelContext, clazz, fm, fp);
+                                local = PropertyBindingSupport.newInstanceFactoryParameters(camelContext, clazz, fm, params);
                             } else {
                                 local = camelContext.getInjector().newInstance(clazz, fm);
                             }
@@ -578,7 +580,7 @@ public class DefaultModel implements Model {
                             }
                         } else {
                             // special to support constructor parameters
-                            local = PropertyBindingSupport.newInstanceConstructorParameters(camelContext, clazz, fp);
+                            local = PropertyBindingSupport.newInstanceConstructorParameters(camelContext, clazz, params);
                         }
                         if (!props.isEmpty()) {
                             setPropertiesOnTarget(camelContext, local, props);
