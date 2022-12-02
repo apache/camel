@@ -2795,6 +2795,16 @@
                 <artifactId>camel-yaml-dsl-deserializers</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-jbang-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-jbang-main</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <!-- camel catalog -->
             <dependency>
