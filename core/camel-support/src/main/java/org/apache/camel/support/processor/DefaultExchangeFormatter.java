@@ -50,9 +50,9 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
 
     @UriParam(label = "formatting", description = "Show the unique exchange ID.")
     private boolean showExchangeId;
-    @UriParam(label = "formatting", defaultValue = "true",
+    @UriParam(label = "formatting",
               description = "Shows the Message Exchange Pattern (or MEP for short).")
-    private boolean showExchangePattern = true;
+    private boolean showExchangePattern;
     @UriParam(label = "formatting", description = "Show the exchange properties (only custom).")
     private boolean showProperties;
     @UriParam(label = "formatting", description = "Show all the exchange properties (both internal and custom).")

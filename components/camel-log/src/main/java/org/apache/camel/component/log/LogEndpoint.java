@@ -76,9 +76,9 @@ public class LogEndpoint extends ProcessorEndpoint implements LineNumberAware {
     private ExchangeFormatter exchangeFormatter;
     @UriParam(label = "formatting", description = "Show the unique exchange ID.")
     private boolean showExchangeId;
-    @UriParam(label = "formatting", defaultValue = "true",
+    @UriParam(label = "formatting",
               description = "Shows the Message Exchange Pattern (or MEP for short).")
-    private boolean showExchangePattern = true;
+    private boolean showExchangePattern;
     @UriParam(label = "formatting",
               description = "Show the exchange properties (only custom). Use showAllProperties to show both internal and custom properties.")
     private boolean showProperties;
@@ -157,7 +157,7 @@ public class LogEndpoint extends ProcessorEndpoint implements LineNumberAware {
         if (this.localFormatter == null) {
 
             // are any options configured if not we can optimize to use shared default
-            boolean changed = !showExchangePattern || !skipBodyLineSeparator || !showBody || !showBodyType || maxChars != 10000
+            boolean changed = showExchangePattern || !skipBodyLineSeparator || !showBody || !showBodyType || maxChars != 10000
                     || style != DefaultExchangeFormatter.OutputStyle.Default || plain;
             changed |= showExchangeId || showProperties || showAllProperties || showHeaders || showException
                     || showCaughtException

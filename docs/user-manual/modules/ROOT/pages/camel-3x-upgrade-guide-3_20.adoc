@@ -33,6 +33,8 @@ The log component now shows cached streams (`org.apache.camel.StreamCache`) mess
 Camel comes with stream caching enabled out-of-the-box, and therefore using the log component you would
 expect to see the message body. Setting `showCachedStreams=false` to use old behaviour.
 
+The log component now does not show MEP by default. You can turn this on by `showExchangePattern=true`.
+
 === camel-jsonpath
 
 There is a new option `unpackArray` that unpacks a single-element Json array, matched by a Jsonpath, into an object. This option is disabled by default (this behaviour was enabled by default in previous Camel versions). There is a new expression `jsonpathUnpack(String text, Class<?> resultType)` that makes use of this new option.
