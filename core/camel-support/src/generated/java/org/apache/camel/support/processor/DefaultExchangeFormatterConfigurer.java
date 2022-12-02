@@ -35,6 +35,8 @@ public class DefaultExchangeFormatterConfigurer extends org.apache.camel.support
         case "ShowBody": target.setShowBody(property(camelContext, boolean.class, value)); return true;
         case "showbodytype":
         case "ShowBodyType": target.setShowBodyType(property(camelContext, boolean.class, value)); return true;
+        case "showcachedstreams":
+        case "ShowCachedStreams": target.setShowCachedStreams(property(camelContext, boolean.class, value)); return true;
         case "showcaughtexception":
         case "ShowCaughtException": target.setShowCaughtException(property(camelContext, boolean.class, value)); return true;
         case "showexception":
@@ -80,6 +82,8 @@ public class DefaultExchangeFormatterConfigurer extends org.apache.camel.support
         case "ShowBody": return boolean.class;
         case "showbodytype":
         case "ShowBodyType": return boolean.class;
+        case "showcachedstreams":
+        case "ShowCachedStreams": return boolean.class;
         case "showcaughtexception":
         case "ShowCaughtException": return boolean.class;
         case "showexception":
@@ -126,6 +130,8 @@ public class DefaultExchangeFormatterConfigurer extends org.apache.camel.support
         case "ShowBody": return target.isShowBody();
         case "showbodytype":
         case "ShowBodyType": return target.isShowBodyType();
+        case "showcachedstreams":
+        case "ShowCachedStreams": return target.isShowCachedStreams();
         case "showcaughtexception":
         case "ShowCaughtException": return target.isShowCaughtException();
         case "showexception":

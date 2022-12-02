@@ -27,11 +27,13 @@ from `<groupdId>org.apache.camel</groupdId>` to `<groupdId>org.apache.camel.mave
 
 Dependencies not intended for end users has been removed, such as all `-parent` JARs.
 
+=== camel-log
+
+The log component now shows cached streams (`org.apache.camel.StreamCache`) message bodies by default.
+Camel comes with stream caching enabled out-of-the-box, and therefore using the log component you would
+expect to see the message body. Setting `showCachedStreams=false` to use old behaviour.
+
 === camel-jsonpath
 
 There is a new option `unpackArray` that unpacks a single-element Json array, matched by a Jsonpath, into an object. This option is disabled by default (this behaviour was enabled by default in previous Camel versions). There is a new expression `jsonpathUnpack(String text, Class<?> resultType)` that makes use of this new option.
-
-=== camel-google-pubsub
-
-The headers used by the Camel Google Pubsub component has been renamed. The prefix `CamelGooglePubsub.` has been updated to `CamelGooglePubsub` without any dot. This is related to CAMEL-18773 issue.
 

@@ -112,6 +112,9 @@ public class LogEndpoint extends ProcessorEndpoint implements LineNumberAware {
     @UriParam(label = "formatting",
               description = "If enabled Camel will on Future objects wait for it to complete to obtain the payload to be logged.")
     private boolean showFuture;
+    @UriParam(label = "formatting", defaultValue = "true",
+              description = "Whether Camel should show cached stream bodies or not (org.apache.camel.StreamCache).")
+    private boolean showCachedStreams = true;
     @UriParam(label = "formatting",
               description = "Whether Camel should show stream bodies or not (eg such as java.io.InputStream). Beware if you enable this option then "
                             + "you may not be able later to access the message body as the stream have already been read by this logger. To remedy this you will have to use Stream Caching.")
@@ -159,7 +162,7 @@ public class LogEndpoint extends ProcessorEndpoint implements LineNumberAware {
             changed |= showExchangeId || showProperties || showAllProperties || showHeaders || showException
                     || showCaughtException
                     || showStackTrace;
-            changed |= showAll || multiline || showFuture || showStreams || showFiles;
+            changed |= showAll || multiline || showFuture || !showCachedStreams || showStreams || showFiles;
 
             if (changed) {
                 DefaultExchangeFormatter def = new DefaultExchangeFormatter();
@@ -177,6 +180,7 @@ public class LogEndpoint extends ProcessorEndpoint implements LineNumberAware {
                 def.setShowProperties(showProperties);
                 def.setShowAllProperties(showAllProperties);
                 def.setShowStackTrace(showStackTrace);
+                def.setShowCachedStreams(showCachedStreams);
                 def.setShowStreams(showStreams);
                 def.setMaxChars(maxChars);
                 def.setMultiline(multiline);
@@ -547,6 +551,14 @@ public class LogEndpoint extends ProcessorEndpoint implements LineNumberAware {
 
     public void setShowFuture(boolean showFuture) {
         this.showFuture = showFuture;
+    }
+
+    public boolean isShowCachedStreams() {
+        return showCachedStreams;
+    }
+
+    public void setShowCachedStreams(boolean showCachedStreams) {
+        this.showCachedStreams = showCachedStreams;
     }
 
     public boolean isShowStreams() {
