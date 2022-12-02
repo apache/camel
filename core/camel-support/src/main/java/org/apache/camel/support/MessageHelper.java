@@ -271,6 +271,33 @@ public final class MessageHelper {
     }
 
     /**
+     * Extracts the body for logging purpose.
+     * <p/>
+     * Will clip the body if its too big for logging.
+     *
+     * @see                       org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
+     * @param  message            the message
+     * @param  prepend            a message to prepend (optional)
+     * @param  allowCachedStreams whether or not cached streams is allowed
+     * @param  allowStreams       whether or not streams is allowed
+     * @param  allowFiles         whether or not files is allowed (currently not in use)
+     * @param  maxChars           limit to maximum number of chars. Use 0 for not limit, and -1 for turning logging
+     *                            message body off.
+     * @return                    the logging message
+     */
+    public static String extractBodyForLogging(
+            Message message, String prepend, boolean allowCachedStreams, boolean allowStreams, boolean allowFiles,
+            int maxChars) {
+        String value
+                = extractValueForLogging(message.getBody(), message, allowCachedStreams, allowStreams, allowFiles, maxChars);
+        if (prepend != null) {
+            return prepend + value;
+        } else {
+            return value;
+        }
+    }
+
+    /**
      * Extracts the value for logging purpose.
      * <p/>
      * Will clip the value if its too big for logging.
@@ -286,6 +313,27 @@ public final class MessageHelper {
      */
     public static String extractValueForLogging(
             Object obj, Message message, boolean allowStreams, boolean allowFiles, int maxChars) {
+        return extractValueForLogging(obj, message, allowStreams, allowStreams, allowFiles, maxChars);
+
+    }
+
+    /**
+     * Extracts the value for logging purpose.
+     * <p/>
+     * Will clip the value if its too big for logging.
+     *
+     * @see                       org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
+     * @param  obj                the value
+     * @param  message            the message
+     * @param  allowCachedStreams whether or not cached streams is allowed
+     * @param  allowStreams       whether or not streams is allowed
+     * @param  allowFiles         whether or not files is allowed (currently not in use)
+     * @param  maxChars           limit to maximum number of chars. Use 0 for not limit, and -1 for turning logging
+     *                            message body off.
+     * @return                    the logging message
+     */
+    public static String extractValueForLogging(
+            Object obj, Message message, boolean allowCachedStreams, boolean allowStreams, boolean allowFiles, int maxChars) {
         if (maxChars < 0) {
             return "[Body is not logged]";
         }
@@ -301,19 +349,22 @@ public final class MessageHelper {
         }
 
         if (!allowStreams) {
-            if (obj instanceof StreamCache) {
-                return "[Body is instance of org.apache.camel.StreamCache]";
-            } else if (obj instanceof InputStream) {
-                return "[Body is instance of java.io.InputStream]";
-            } else if (obj instanceof OutputStream) {
-                return "[Body is instance of java.io.OutputStream]";
-            } else if (obj instanceof Reader) {
-                return "[Body is instance of java.io.Reader]";
-            } else if (obj instanceof Writer) {
-                return "[Body is instance of java.io.Writer]";
-            } else if (obj.getClass().getName().equals("javax.xml.transform.stax.StAXSource")) {
-                // StAX source is streaming based
-                return "[Body is instance of javax.xml.transform.Source]";
+            boolean allow = allowCachedStreams && obj instanceof StreamCache;
+            if (!allow) {
+                if (obj instanceof StreamCache) {
+                    return "[Body is instance of org.apache.camel.StreamCache]";
+                } else if (obj instanceof InputStream) {
+                    return "[Body is instance of java.io.InputStream]";
+                } else if (obj instanceof OutputStream) {
+                    return "[Body is instance of java.io.OutputStream]";
+                } else if (obj instanceof Reader) {
+                    return "[Body is instance of java.io.Reader]";
+                } else if (obj instanceof Writer) {
+                    return "[Body is instance of java.io.Writer]";
+                } else if (obj.getClass().getName().equals("javax.xml.transform.stax.StAXSource")) {
+                    // StAX source is streaming based
+                    return "[Body is instance of javax.xml.transform.Source]";
+                }
             }
         }
 

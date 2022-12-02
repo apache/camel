@@ -49,6 +49,8 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "showBody": target.setShowBody(property(camelContext, boolean.class, value)); return true;
         case "showbodytype":
         case "showBodyType": target.setShowBodyType(property(camelContext, boolean.class, value)); return true;
+        case "showcachedstreams":
+        case "showCachedStreams": target.setShowCachedStreams(property(camelContext, boolean.class, value)); return true;
         case "showcaughtexception":
         case "showCaughtException": target.setShowCaughtException(property(camelContext, boolean.class, value)); return true;
         case "showexception":
@@ -109,6 +111,8 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "showBody": return boolean.class;
         case "showbodytype":
         case "showBodyType": return boolean.class;
+        case "showcachedstreams":
+        case "showCachedStreams": return boolean.class;
         case "showcaughtexception":
         case "showCaughtException": return boolean.class;
         case "showexception":
@@ -170,6 +174,8 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "showBody": return target.isShowBody();
         case "showbodytype":
         case "showBodyType": return target.isShowBodyType();
+        case "showcachedstreams":
+        case "showCachedStreams": return target.isShowCachedStreams();
         case "showcaughtexception":
         case "showCaughtException": return target.isShowCaughtException();
         case "showexception":

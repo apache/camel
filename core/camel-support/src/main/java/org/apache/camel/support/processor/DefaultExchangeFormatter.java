@@ -50,9 +50,9 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
 
     @UriParam(label = "formatting", description = "Show the unique exchange ID.")
     private boolean showExchangeId;
-    @UriParam(label = "formatting", defaultValue = "true",
+    @UriParam(label = "formatting",
               description = "Shows the Message Exchange Pattern (or MEP for short).")
-    private boolean showExchangePattern = true;
+    private boolean showExchangePattern;
     @UriParam(label = "formatting", description = "Show the exchange properties (only custom).")
     private boolean showProperties;
     @UriParam(label = "formatting", description = "Show all the exchange properties (both internal and custom).")
@@ -85,6 +85,9 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
     @UriParam(label = "formatting",
               description = "If enabled Camel will on Future objects wait for it to complete to obtain the payload to be logged.")
     private boolean showFuture;
+    @UriParam(label = "formatting", defaultValue = "true",
+              description = "Whether Camel should show cached stream bodies or not (org.apache.camel.StreamCache).")
+    private boolean showCachedStreams = true;
     @UriParam(label = "formatting",
               description = "Whether Camel should show stream bodies or not (eg such as java.io.InputStream). Beware if you enable this option then "
                             + "you may not be able later to access the message body as the stream have already been read by this logger. To remedy this you will have to use Stream Caching.")
@@ -415,6 +418,17 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
         this.showExchangePattern = showExchangePattern;
     }
 
+    public boolean isShowCachedStreams() {
+        return showCachedStreams;
+    }
+
+    /**
+     * Whether Camel should show cached stream bodies or not (org.apache.camel.StreamCache).
+     */
+    public void setShowCachedStreams(boolean showCachedStreams) {
+        this.showCachedStreams = showCachedStreams;
+    }
+
     public boolean isShowStreams() {
         return showStreams;
     }
@@ -466,12 +480,13 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
     protected String getBodyAsString(Message message) {
         if (message.getBody() instanceof Future) {
             if (!isShowFuture()) {
-                // just use a to string of the future object
+                // just use to string of the future object
                 return message.getBody().toString();
             }
         }
 
-        return MessageHelper.extractBodyForLogging(message, null, isShowStreams(), isShowFiles(), getMaxChars(message));
+        return MessageHelper.extractBodyForLogging(message, null, isShowCachedStreams(), isShowStreams(), isShowFiles(),
+                getMaxChars(message));
     }
 
     private int getMaxChars(Message message) {
