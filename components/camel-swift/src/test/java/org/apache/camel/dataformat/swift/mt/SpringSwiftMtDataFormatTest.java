@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dataformat.swift.mx;
+package org.apache.camel.dataformat.swift.mt;
 
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -24,7 +24,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prowidesoftware.swift.model.mt.mt1xx.MT103;
 import com.prowidesoftware.swift.model.mt.mt5xx.MT515;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.dataformat.swift.mt.SwiftMtDataFormat;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;

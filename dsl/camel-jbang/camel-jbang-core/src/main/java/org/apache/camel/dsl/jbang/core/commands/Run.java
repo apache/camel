@@ -83,7 +83,7 @@ class Run extends CamelCommand {
     private static final String CLIPBOARD_GENERATED_FILE = ".camel-jbang/generated-clipboard";
 
     private static final Pattern PACKAGE_PATTERN = Pattern.compile(
-            "^\\s*package\\s+([a-zA-Z][\\.\\w]*)\\s*;.*$", Pattern.MULTILINE);
+            "^\\s*package\\s+([a-zA-Z][.\\w]*)\\s*;.*$", Pattern.MULTILINE);
 
     private static final Pattern CLASS_PATTERN = Pattern.compile(
             "^\\s*public class\\s+([a-zA-Z0-9]*)[\\s+|;].*$", Pattern.MULTILINE);
@@ -229,10 +229,6 @@ class Run extends CamelCommand {
             main.addInitialProperty(key, val);
             writeSettings(key, val);
         }
-    }
-
-    private int stop() {
-        return 0;
     }
 
     private Properties loadProfileProperties(File source) throws Exception {
@@ -506,7 +502,16 @@ class Run extends CamelCommand {
         if (dev && sjReload.length() > 0) {
             String reload = sjReload.toString();
             main.addInitialProperty("camel.main.routesReloadEnabled", "true");
-            main.addInitialProperty("camel.main.routesReloadDirectory", ".");
+            // use current dir, however if we run a file that are in another folder, then we should track that folder instead
+            String reloadDir = ".";
+            for (String r : reload.split(",")) {
+                String path = FileUtil.onlyPath(r);
+                if (path != null) {
+                    reloadDir = path;
+                    break;
+                }
+            }
+            main.addInitialProperty("camel.main.routesReloadDirectory", reloadDir);
             main.addInitialProperty("camel.main.routesReloadPattern", reload);
             main.addInitialProperty("camel.main.routesReloadDirectoryRecursive", isReloadRecursive(reload) ? "true" : "false");
             // do not shutdown the JVM but stop routes when max duration is triggered
