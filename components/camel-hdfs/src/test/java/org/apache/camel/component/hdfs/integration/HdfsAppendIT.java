@@ -26,6 +26,7 @@ import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.hdfs.MiniDFSCluster;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,6 +45,9 @@ public class HdfsAppendIT extends CamelTestSupport {
 
     private static final int ITERATIONS = 10;
 
+    private MiniDFSCluster cluster;
+    private Configuration conf;
+
     @Override
     public boolean isUseRouteBuilder() {
         return false;
@@ -54,25 +58,25 @@ public class HdfsAppendIT extends CamelTestSupport {
     public void setUp() throws Exception {
         super.setUp();
 
-        Configuration conf = new Configuration();
+        conf = new Configuration();
         if (SystemUtils.IS_OS_MAC) {
             conf.addResource("hdfs-mac-test.xml");
         } else {
             conf.addResource("hdfs-test.xml");
         }
+        conf.set("dfs.namenode.fs-limits.max-directory-items", "1048576");
+        cluster = new MiniDFSCluster.Builder(conf).nameNodePort(9000).numDataNodes(3).format(true).build();
+        cluster.waitActive();
+
         String path = String.format("hdfs://%s:%d/tmp/test/test-camel-simple-write-file1", service.getHDFSHost(),
                 service.getPort());
-
         Path file = new Path(path);
         FileSystem fs = FileSystem.get(file.toUri(), conf);
-        if (fs.exists(file)) {
-            fs.delete(file, true);
+        try (FSDataOutputStream out = fs.create(file)) {
+            for (int i = 0; i < 10; ++i) {
+                out.write("PIPPO".getBytes("UTF-8"));
+            }
         }
-        FSDataOutputStream out = fs.create(file);
-        for (int i = 0; i < 10; ++i) {
-            out.write("PIPPO".getBytes("UTF-8"));
-        }
-        out.close();
     }
 
     @Test
@@ -91,21 +95,20 @@ public class HdfsAppendIT extends CamelTestSupport {
             template.sendBody("direct:start1", "PIPPQ");
         }
 
-        Configuration conf = new Configuration();
         String path = String.format("hdfs://%s:%d/tmp/test/test-camel-simple-write-file1", service.getHDFSHost(),
                 service.getPort());
         Path file = new Path(path);
         FileSystem fs = FileSystem.get(file.toUri(), conf);
-        FSDataInputStream in = fs.open(file);
-        byte[] buffer = new byte[5];
         int ret = 0;
-        for (int i = 0; i < 20; ++i) {
+        try (FSDataInputStream in = fs.open(file)) {
+            byte[] buffer = new byte[5];
+            for (int i = 0; i < 20; ++i) {
+                assertEquals(5, in.read(buffer));
+                LOG.info("> {}", new String(buffer));
+            }
             ret = in.read(buffer);
-            LOG.info("> {}", new String(buffer));
         }
-        ret = in.read(buffer);
         assertEquals(-1, ret);
-        in.close();
     }
 
     @Test
@@ -124,34 +127,29 @@ public class HdfsAppendIT extends CamelTestSupport {
             template.sendBodyAndHeader("direct:start1", "HELLO", Exchange.FILE_NAME, "camel-hdfs.log");
         }
 
-        Configuration conf = new Configuration();
         String path = String.format("hdfs://%s:%d/tmp/test-dynamic/camel-hdfs.log", service.getHDFSHost(),
                 service.getPort());
 
         Path file = new Path(path);
         FileSystem fs = FileSystem.get(file.toUri(), conf);
-        FSDataInputStream in = fs.open(file);
-        byte[] buffer = new byte[5];
-        for (int i = 0; i < ITERATIONS; ++i) {
-            assertEquals(5, in.read(buffer));
-            LOG.info("> {}", new String(buffer));
+        int ret = 0;
+        try (FSDataInputStream in = fs.open(file)) {
+            byte[] buffer = new byte[5];
+            for (int i = 0; i < ITERATIONS; ++i) {
+                assertEquals(5, in.read(buffer));
+                LOG.info("> {}", new String(buffer));
+            }
+            ret = in.read(buffer);
         }
-        int ret = in.read(buffer);
         assertEquals(-1, ret);
-        in.close();
     }
 
     @Override
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
-
-        Thread.sleep(250);
-        Configuration conf = new Configuration();
-        Path dir = new Path(String.format("hdfs://%s:%d/tmp/test", service.getHDFSHost(), service.getPort()));
-        FileSystem fs = FileSystem.get(dir.toUri(), conf);
-        fs.delete(dir, true);
-        dir = new Path(String.format("hdfs://%s:%d/tmp/test-dynamic", service.getHDFSHost(), service.getPort()));
-        fs.delete(dir, true);
+        if (cluster != null) {
+            cluster.shutdown();
+        }
     }
 }

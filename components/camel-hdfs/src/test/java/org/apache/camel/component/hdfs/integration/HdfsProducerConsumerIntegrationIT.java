@@ -31,21 +31,32 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.hdfs.MiniDFSCluster;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-@Disabled("Must run manual")
-public class HdfsProducerConsumerIntegrationManualIT extends CamelTestSupport {
+public class HdfsProducerConsumerIntegrationIT extends CamelTestSupport {
     private static final int ITERATIONS = 400;
+
+    private MiniDFSCluster cluster;
 
     @Override
     public boolean isUseRouteBuilder() {
         return false;
+    }
+
+    @Override
+    @BeforeEach
+    public void setUp() throws Exception {
+        super.setUp();
+        Configuration conf = new Configuration();
+        conf.set("dfs.namenode.fs-limits.max-directory-items", "1048576");
+        cluster = new MiniDFSCluster.Builder(conf).nameNodePort(9000).numDataNodes(3).format(true).build();
+        cluster.waitActive();
     }
 
     @Test
@@ -79,7 +90,7 @@ public class HdfsProducerConsumerIntegrationManualIT extends CamelTestSupport {
             String text = exchange.getIn().getBody(String.class);
             sent.remove(text);
         }
-        assertThat(sent.isEmpty(), is(true));
+        assertTrue(sent.isEmpty());
     }
 
     @Test
@@ -90,9 +101,9 @@ public class HdfsProducerConsumerIntegrationManualIT extends CamelTestSupport {
         FileSystem fs = FileSystem.get(p.toUri(), new Configuration());
         fs.mkdirs(p);
         for (int i = 1; i <= ITERATIONS; i++) {
-            FSDataOutputStream os = fs.create(new Path(p, String.format("file-%03d.txt", i)));
-            os.write(String.format("hello (%03d)\n", i).getBytes());
-            os.close();
+            try (FSDataOutputStream os = fs.create(new Path(p, String.format("file-%03d.txt", i)))) {
+                os.write(String.format("hello (%03d)\n", i).getBytes());
+            }
         }
 
         final Set<String> fileNames = new HashSet<>();
@@ -127,20 +138,16 @@ public class HdfsProducerConsumerIntegrationManualIT extends CamelTestSupport {
         latch.await(30, TimeUnit.SECONDS);
 
         resultEndpoint.assertIsSatisfied();
-        assertThat(fileNames.size(), equalTo(ITERATIONS));
+        assertEquals(fileNames.size(), ITERATIONS);
     }
 
     @Override
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
-
-        Thread.sleep(250);
-        Configuration conf = new Configuration();
-        Path dir = new Path("hdfs://localhost:9000/tmp/test");
-        FileSystem fs = FileSystem.get(dir.toUri(), conf);
-        fs.delete(dir, true);
-        fs.delete(new Path("hdfs://localhost:9000/tmp/test/multiple-consumers"), true);
+        if (cluster != null) {
+            cluster.shutdown();
+        }
     }
 
 }
