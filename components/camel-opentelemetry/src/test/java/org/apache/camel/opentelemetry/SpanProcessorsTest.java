@@ -46,7 +46,8 @@ public class SpanProcessorsTest extends CamelOpenTelemetryTestSupport {
         Exchange result = template.request("direct:start",
                 exchange -> {
                     exchange.getIn().setBody("Hello");
-                    exchange.getIn().setHeader("request-header", simple("request-header-value"));
+                    exchange.getIn().setHeader("request-header",
+                            context.resolveLanguage("simple").createExpression("request-header-value"));
                 });
 
         verify();

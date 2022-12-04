@@ -98,7 +98,7 @@ public class SetCorrelationContextProcessor extends AsyncProcessorSupport implem
     }
 
     public String getBaggageName() {
-        return baggageName.toString();
+        return baggageName;
     }
 
     public Expression getExpression() {
