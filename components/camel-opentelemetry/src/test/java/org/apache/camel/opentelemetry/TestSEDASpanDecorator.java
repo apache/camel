@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.decorators.SedaSpanDecorator;
 
-public class TestSEDASpanDecorator extends SedaSpanDecorator {
+class TestSEDASpanDecorator extends SedaSpanDecorator {
 
     @Override
     public void pre(SpanAdapter span, Exchange exchange, Endpoint endpoint) {

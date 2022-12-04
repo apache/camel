@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.language.simple.SimpleLanguage.simple;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SpanProcessorsTest extends CamelOpenTelemetryTestSupport {
+class SpanProcessorsTest extends CamelOpenTelemetryTestSupport {
 
     private static final SpanTestData[] TEST_DATA = {
             new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
@@ -37,12 +37,12 @@ public class SpanProcessorsTest extends CamelOpenTelemetryTestSupport {
             new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
     };
 
-    public SpanProcessorsTest() {
+    SpanProcessorsTest() {
         super(TEST_DATA);
     }
 
     @Test
-    public void testRoute() {
+    void testRoute() {
         Exchange result = template.request("direct:start",
                 exchange -> {
                     exchange.getIn().setBody("Hello");

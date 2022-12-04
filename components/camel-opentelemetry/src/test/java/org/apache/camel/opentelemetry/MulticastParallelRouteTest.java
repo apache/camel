@@ -20,7 +20,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-public class MulticastParallelRouteTest extends CamelOpenTelemetryTestSupport {
+class MulticastParallelRouteTest extends CamelOpenTelemetryTestSupport {
 
     private static SpanTestData[] testdata = {
             new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
@@ -32,12 +32,12 @@ public class MulticastParallelRouteTest extends CamelOpenTelemetryTestSupport {
             new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
     };
 
-    public MulticastParallelRouteTest() {
+    MulticastParallelRouteTest() {
         super(testdata);
     }
 
     @Test
-    public void testRoute() {
+    void testRoute() {
         template.requestBody("direct:start", "Hello");
         verify(true);
     }

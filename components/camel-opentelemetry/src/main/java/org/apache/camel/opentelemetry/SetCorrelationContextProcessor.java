@@ -41,10 +41,8 @@ public class SetCorrelationContextProcessor extends AsyncProcessorSupport implem
     private final Expression expression;
 
     public SetCorrelationContextProcessor(String baggageName, Expression expression) {
-        this.baggageName = baggageName;
-        this.expression = expression;
-        ObjectHelper.notNull(baggageName, "baggageName");
-        ObjectHelper.notNull(expression, "expression");
+        this.baggageName = ObjectHelper.notNull(baggageName, "baggageName");
+        this.expression = ObjectHelper.notNull(expression, "expression");
     }
 
     @Override
@@ -65,11 +63,6 @@ public class SetCorrelationContextProcessor extends AsyncProcessorSupport implem
         }
 
         return true;
-    }
-
-    @Override
-    public String toString() {
-        return id;
     }
 
     @Override
@@ -113,5 +106,10 @@ public class SetCorrelationContextProcessor extends AsyncProcessorSupport implem
     @Override
     protected void doStop() throws Exception {
         // noop
+    }
+
+    @Override
+    public String toString() {
+        return id;
     }
 }

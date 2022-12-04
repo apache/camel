@@ -20,7 +20,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-public class TwoServiceTest extends CamelOpenTelemetryTestSupport {
+class TwoServiceTest extends CamelOpenTelemetryTestSupport {
 
     private static SpanTestData[] testdata = {
             new SpanTestData().setLabel("ServiceB server").setUri("direct://ServiceB").setOperation("ServiceB")
@@ -28,12 +28,12 @@ public class TwoServiceTest extends CamelOpenTelemetryTestSupport {
             new SpanTestData().setLabel("ServiceA server").setUri("direct://ServiceA").setOperation("ServiceA")
     };
 
-    public TwoServiceTest() {
+    TwoServiceTest() {
         super(testdata);
     }
 
     @Test
-    public void testRoute() {
+    void testRoute() {
         template.requestBody("direct:ServiceA", "Hello");
 
         verify();
