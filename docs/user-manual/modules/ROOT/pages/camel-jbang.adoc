@@ -140,16 +140,16 @@ For very small Java routes then it is possible to provide the route as CLI argum
 
 [source,bash]
 ----
-camel run --code="from('kamelet:beer-source').to('log:beer')"
+camel run --code='from("kamelet:beer-source").to("log:beer")'
 ----
 
 This is very limited as the CLI argument is a bit cumbersome to use than files.
 
 - Java DSL code is only supported
-- Use single quote instead of double quotes
-- All routes must be defined in a single `--code` parameter.
+- Code wrapped in single quote, so you can use double quote in Java DSL
+- All route(s) must be defined in a single `--code` parameter.
 
-NOTE: Using `--code` is only usable for very quick and small prototype.
+NOTE: Using `--code` is only usable for very quick and small prototypes.
 
 === Dev mode with live reload
 
