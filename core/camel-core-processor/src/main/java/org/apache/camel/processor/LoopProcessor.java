@@ -124,6 +124,7 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
                 // but evaluation result is a textual representation of a numeric value.
                 String text = expression.evaluate(exchange, String.class);
                 count = ExchangeHelper.convertToMandatoryType(exchange, Integer.class, text);
+                // keep track of pending task if loop with fixed value
                 taskCount.add(count);
                 exchange.setProperty(ExchangePropertyKey.LOOP_SIZE, count);
             }
@@ -150,7 +151,10 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
                     processor.process(current, doneSync -> {
                         // increment counter after done
                         index++;
-                        taskCount.decrement();
+                        if (expression != null) {
+                            // keep track of pending task if loop with fixed value
+                            taskCount.decrement();
+                        }
                         reactiveExecutor.schedule(this);
                     });
                 } else {
