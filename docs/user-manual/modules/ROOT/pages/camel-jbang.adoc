@@ -134,6 +134,23 @@ camel run *
 
 TIP: The run goal can also detect files that are `properties`, such as `application.properties`.
 
+=== Running Route from input parameter
+
+For very small Java routes then it is possible to provide the route as CLI argument, as shown below:
+
+[source,bash]
+----
+camel run --code="from('kamelet:beer-source').to('log:beer')"
+----
+
+This is very limited as the CLI argument is a bit cumbersome to use than files.
+
+- Java DSL code is only supported
+- Use single quote instead of double quotes
+- All routes must be defined in a single `--code` parameter.
+
+NOTE: Using `--code` is only usable for very quick and small prototype.
+
 === Dev mode with live reload
 
 You can enable dev mode that comes with live reload of the route(s) when the source file is updated (saved),

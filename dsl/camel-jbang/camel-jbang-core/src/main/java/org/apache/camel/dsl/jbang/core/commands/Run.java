@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -189,6 +190,9 @@ class Run extends CamelCommand {
     @Option(names = { "--open-api" }, description = "Adds an OpenAPI spec from the given file")
     String openapi;
 
+    @Option(names = { "--code" }, description = "Run the given string as Java DSL route")
+    String code;
+
     public Run(CamelJBangMain main) {
         super(main);
     }
@@ -285,6 +289,13 @@ class Run extends CamelCommand {
         // generate open-api early
         if (openapi != null) {
             generateOpenApi();
+        }
+        // route code as option
+        if (code != null) {
+            // store code in temporary file
+            String codeFile = loadFromCode(code);
+            // use code as first file
+            files.add(0, codeFile);
         }
 
         // if no specific file to run then try to auto-detect
@@ -550,6 +561,23 @@ class Run extends CamelCommand {
         main.run();
 
         return main.getExitCode();
+    }
+
+    private String loadFromCode(String code) throws IOException {
+        String fn = WORK_DIR + "/CodeRoute.java";
+        InputStream is = Run.class.getClassLoader().getResourceAsStream("templates/code-java.tmpl");
+        String content = IOHelper.loadText(is);
+        IOHelper.close(is);
+        // need to replace single quote as double quotes and end with semicolon
+        code = code.replace("'", "\"");
+        code = code.trim();
+        if (!code.endsWith(";")) {
+            code = code + ";";
+        }
+        content = content.replaceFirst("\\{\\{ \\.Name }}", "CodeRoute");
+        content = content.replaceFirst("\\{\\{ \\.Code }}", code);
+        Files.write(Paths.get(fn), content.getBytes(StandardCharsets.UTF_8));
+        return "file:" + fn;
     }
 
     private String evalGistSource(KameletMain main, String file) throws Exception {
