@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class RouteConcurrentTest extends CamelOpenTelemetryTestSupport {
+class RouteConcurrentTest extends CamelOpenTelemetryTestSupport {
 
     private static SpanTestData[] testdata = {
             new SpanTestData().setLabel("seda:foo server").setUri("seda://foo?concurrentConsumers=5").setOperation("foo"),
@@ -33,12 +33,12 @@ public class RouteConcurrentTest extends CamelOpenTelemetryTestSupport {
                     .setParentId(0)
     };
 
-    public RouteConcurrentTest() {
+    RouteConcurrentTest() {
         super(testdata);
     }
 
     @Test
-    public void testSingleInvocationsOfRoute() {
+    void testSingleInvocationsOfRoute() {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).create();
 
         template.sendBody("seda:foo", "Hello World");
@@ -49,7 +49,7 @@ public class RouteConcurrentTest extends CamelOpenTelemetryTestSupport {
     }
 
     @Test
-    public void testConcurrentInvocationsOfRoute() {
+    void testConcurrentInvocationsOfRoute() {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(10).create();
 
         for (int i = 0; i < 5; i++) {

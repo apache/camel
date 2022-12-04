@@ -21,7 +21,7 @@ import org.apache.camel.tracing.ExtractAdapter;
 
 public class OpenTelemetryGetter implements TextMapGetter<ExtractAdapter> {
 
-    ExtractAdapter adapter;
+    private final ExtractAdapter adapter;
 
     public OpenTelemetryGetter(ExtractAdapter adapter) {
         this.adapter = adapter;

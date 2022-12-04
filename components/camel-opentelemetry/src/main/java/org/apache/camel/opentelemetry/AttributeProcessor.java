@@ -42,10 +42,8 @@ public class AttributeProcessor extends AsyncProcessorSupport implements Traceab
     private String routeId;
 
     public AttributeProcessor(String tagName, Expression expression) {
-        this.attributeName = tagName;
-        this.expression = expression;
-        ObjectHelper.notNull(tagName, "tagName");
-        ObjectHelper.notNull(expression, "expression");
+        this.attributeName = ObjectHelper.notNull(tagName, "tagName");
+        this.expression = ObjectHelper.notNull(expression, "expression");
     }
 
     @Override
@@ -67,11 +65,6 @@ public class AttributeProcessor extends AsyncProcessorSupport implements Traceab
         }
 
         return true;
-    }
-
-    @Override
-    public String toString() {
-        return id;
     }
 
     @Override
@@ -115,5 +108,10 @@ public class AttributeProcessor extends AsyncProcessorSupport implements Traceab
     @Override
     protected void doStop() throws Exception {
         // noop
+    }
+
+    @Override
+    public String toString() {
+        return id;
     }
 }

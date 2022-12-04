@@ -35,10 +35,8 @@ public class GetCorrelationContextProcessor extends AsyncProcessorSupport implem
     private String routeId;
 
     public GetCorrelationContextProcessor(String keyName, String headerName) {
-        this.keyName = keyName;
-        this.headerName = headerName;
-        ObjectHelper.notNull(keyName, "keyName");
-        ObjectHelper.notNull(headerName, "headerName");
+        this.keyName = ObjectHelper.notNull(keyName, "keyName");
+        this.headerName = ObjectHelper.notNull(headerName, "headerName");
     }
 
     @Override
@@ -59,11 +57,6 @@ public class GetCorrelationContextProcessor extends AsyncProcessorSupport implem
         }
 
         return true;
-    }
-
-    @Override
-    public String toString() {
-        return id;
     }
 
     @Override
@@ -107,5 +100,10 @@ public class GetCorrelationContextProcessor extends AsyncProcessorSupport implem
     @Override
     protected void doStop() throws Exception {
         // noop
+    }
+
+    @Override
+    public String toString() {
+        return id;
     }
 }

@@ -20,7 +20,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-public class CustomComponentNameRouteTest extends CamelOpenTelemetryTestSupport {
+class CustomComponentNameRouteTest extends CamelOpenTelemetryTestSupport {
 
     private static SpanTestData[] testdata = {
             new SpanTestData().setLabel("myseda:b server").setUri("myseda://b").setOperation("b")
@@ -32,12 +32,12 @@ public class CustomComponentNameRouteTest extends CamelOpenTelemetryTestSupport 
             new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
     };
 
-    public CustomComponentNameRouteTest() {
+    CustomComponentNameRouteTest() {
         super(testdata);
     }
 
     @Test
-    public void testRoute() {
+    void testRoute() {
         template.requestBody("direct:start", "Hello");
 
         verify();

@@ -39,7 +39,7 @@ import org.apache.camel.tracing.SpanDecorator;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class CamelOpenTelemetryTestSupport extends CamelTestSupport {
+class CamelOpenTelemetryTestSupport extends CamelTestSupport {
 
     static final AttributeKey<String> CAMEL_URI_KEY = AttributeKey.stringKey("camel-uri");
     static final AttributeKey<String> COMPONENT_KEY = AttributeKey.stringKey("component");
@@ -53,7 +53,7 @@ public class CamelOpenTelemetryTestSupport extends CamelTestSupport {
     private OpenTelemetryTracer ottracer;
     private SdkTracerProvider tracerFactory;
 
-    public CamelOpenTelemetryTestSupport(SpanTestData[] testdata) {
+    CamelOpenTelemetryTestSupport(SpanTestData[] testdata) {
         this.testdata = testdata;
     }
 
