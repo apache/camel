@@ -147,6 +147,7 @@ This is very limited as the CLI argument is a bit cumbersome to use than files.
 
 - Java DSL code is only supported
 - Code wrapped in single quote, so you can use double quote in Java DSL
+- Code limited to what literal values possible to provide from the terminal and JBang.
 - All route(s) must be defined in a single `--code` parameter.
 
 NOTE: Using `--code` is only usable for very quick and small prototypes.
