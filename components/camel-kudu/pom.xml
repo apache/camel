@@ -34,7 +34,7 @@
     <profiles>
         <profile>
             <!-- kudu-binary is not available for Windows. It is needed for tests, so skip that -->
-            <id>Windows-Kudu-SkipTests</id>
+            <id>Windows</id>
             <activation>
                 <os>
                     <family>Windows</family>

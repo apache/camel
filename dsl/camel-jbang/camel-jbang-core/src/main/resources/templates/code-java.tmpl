@@ -1,0 +1,14 @@
+// camel-k: language=java
+
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+
+public class {{ .Name }} extends RouteBuilder {
+
+    @Override
+    public void configure() throws Exception {
+        {{ .Code }}
+    }
+}

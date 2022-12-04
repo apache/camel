@@ -481,6 +481,39 @@ public interface LogEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether Camel should show cached stream bodies or not
+         * (org.apache.camel.StreamCache).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: formatting
+         * 
+         * @param showCachedStreams the value to set
+         * @return the dsl builder
+         */
+        default LogEndpointBuilder showCachedStreams(boolean showCachedStreams) {
+            doSetProperty("showCachedStreams", showCachedStreams);
+            return this;
+        }
+        /**
+         * Whether Camel should show cached stream bodies or not
+         * (org.apache.camel.StreamCache).
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: formatting
+         * 
+         * @param showCachedStreams the value to set
+         * @return the dsl builder
+         */
+        default LogEndpointBuilder showCachedStreams(String showCachedStreams) {
+            doSetProperty("showCachedStreams", showCachedStreams);
+            return this;
+        }
+        /**
          * If the exchange has a caught exception, show the exception message
          * (no stack trace). A caught exception is stored as a property on the
          * exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT)
@@ -588,7 +621,7 @@ public interface LogEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: formatting
          * 
          * @param showExchangePattern the value to set
@@ -605,7 +638,7 @@ public interface LogEndpointBuilderFactory {
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
          * 
-         * Default: true
+         * Default: false
          * Group: formatting
          * 
          * @param showExchangePattern the value to set

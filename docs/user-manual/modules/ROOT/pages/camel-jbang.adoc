@@ -134,6 +134,24 @@ camel run *
 
 TIP: The run goal can also detect files that are `properties`, such as `application.properties`.
 
+=== Running Route from input parameter
+
+For very small Java routes then it is possible to provide the route as CLI argument, as shown below:
+
+[source,bash]
+----
+camel run --code='from("kamelet:beer-source").to("log:beer")'
+----
+
+This is very limited as the CLI argument is a bit cumbersome to use than files.
+
+- Java DSL code is only supported
+- Code wrapped in single quote, so you can use double quote in Java DSL
+- Code limited to what literal values possible to provide from the terminal and JBang.
+- All route(s) must be defined in a single `--code` parameter.
+
+NOTE: Using `--code` is only usable for very quick and small prototypes.
+
 === Dev mode with live reload
 
 You can enable dev mode that comes with live reload of the route(s) when the source file is updated (saved),
@@ -1005,6 +1023,19 @@ You can also use Camel JBang to try local Kamelets, without the need to publish 
 ----
 camel run --local-kamelet-dir=/path/to/local/kamelets earthquake.yaml
 ----
+
+TIP: When the kamelets are from local file system, then they can be live reloaded, if they are updated, when you run
+Camel JBang in `--dev` mode.
+
+You can also point to a folder in a GitHub repository. For example, we have provided some custom Kamelets
+at https://github.com/apache/camel-kamelets-examples/tree/main/custom-kamelets which can be used easily:
+
+[source,bash]
+----
+camel run --local-kamelet-dir=https://github.com/apache/camel-kamelets-examples/tree/main/custom-kamelets user.java
+----
+
+NOTE: If a kamelet is loaded from GitHub, then they cannot be live reloaded.
 
 === Using platform-http component
 
