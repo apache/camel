@@ -66,6 +66,7 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
+import static org.apache.camel.dsl.jbang.core.common.GistHelper.asGistSingleUrl;
 import static org.apache.camel.dsl.jbang.core.common.GistHelper.fetchGistUrls;
 import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.asGithubSingleUrl;
 import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.fetchGithubUrls;
@@ -170,7 +171,7 @@ class Run extends CamelCommand {
     String jfrProfile;
 
     @Option(names = { "--local-kamelet-dir" },
-            description = "Local directory for loading Kamelets (takes precedence). Multiple directories can be specified separated by comma.")
+            description = "Local directory (or github link) for loading Kamelets (takes precedence). Multiple directories can be specified separated by comma.")
     String localKameletDir;
 
     @Option(names = { "--port" }, description = "Embeds a local HTTP server on this port")
@@ -638,7 +639,7 @@ class Run extends CamelCommand {
         return file;
     }
 
-    private KameletMain createMainInstance() {
+    private KameletMain createMainInstance() throws Exception {
         KameletMain main;
         if (localKameletDir == null || localKameletDir.isEmpty()) {
             main = new KameletMain();
@@ -646,8 +647,14 @@ class Run extends CamelCommand {
             StringJoiner sj = new StringJoiner(",");
             String[] parts = localKameletDir.split(",");
             for (String part : parts) {
+                // automatic map github https urls to github resolver
+                if (part.startsWith("https://github.com/")) {
+                    part = asGithubSingleUrl(part);
+                } else if (part.startsWith("https://gist.github.com/")) {
+                    part = asGistSingleUrl(part);
+                }
                 part = FileUtil.compactPath(part);
-                if (!ResourceHelper.hasScheme(part)) {
+                if (!ResourceHelper.hasScheme(part) && !part.startsWith("github:")) {
                     part = "file:" + part;
                 }
                 sj.add(part);
