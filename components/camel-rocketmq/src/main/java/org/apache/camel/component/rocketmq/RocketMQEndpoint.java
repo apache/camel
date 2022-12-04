@@ -54,15 +54,15 @@ public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private String replyToConsumerGroup;
     @UriParam(label = "common", defaultValue = "localhost:9876")
     private String namesrvAddr = "localhost:9876";
-    @UriParam(label = "advance", defaultValue = "10000")
+    @UriParam(label = "advanced", defaultValue = "10000")
     private long requestTimeoutMillis = 10000L;
-    @UriParam(label = "advance", defaultValue = "1000")
+    @UriParam(label = "advanced", defaultValue = "1000")
     private long requestTimeoutCheckerIntervalMillis = 1000L;
     @UriParam(label = "producer", defaultValue = "false")
     private boolean waitForSendResult;
-    @UriParam(label = "accessKey")
+    @UriParam(label = "security", secret = true)
     private String accessKey;
-    @UriParam(label = "secretKey")
+    @UriParam(label = "security", secret = true)
     private String secretKey;
 
     public RocketMQEndpoint() {
@@ -82,11 +82,6 @@ public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         RocketMQConsumer consumer = new RocketMQConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
     }
 
     public Exchange createRocketExchange(byte[] body) {

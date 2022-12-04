@@ -47,19 +47,19 @@ public class RocketMQComponent extends DefaultComponent {
     @Metadata(label = "producer")
     private String replyToConsumerGroup;
 
-    @Metadata(label = "advance", defaultValue = "10000")
+    @Metadata(label = "advanced", defaultValue = "10000")
     private long requestTimeoutMillis = 10000L;
 
-    @Metadata(label = "advance", defaultValue = "1000")
+    @Metadata(label = "advanced", defaultValue = "1000")
     private long requestTimeoutCheckerIntervalMillis = 1000L;
 
     @Metadata(label = "producer", defaultValue = "false")
     private boolean waitForSendResult;
 
-    @Metadata(label = "accessKey")
+    @Metadata(label = "secret", secret = true)
     private String accessKey;
 
-    @Metadata(label = "secretKey")
+    @Metadata(label = "secret", secret = true)
     private String secretKey;
 
     @Override
