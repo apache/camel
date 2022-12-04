@@ -17,47 +17,15 @@
 
 package org.apache.camel.component.rocketmq;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.support.DefaultMessage;
 import org.apache.rocketmq.common.message.MessageExt;
 
-public class RocketMQMessageConverter {
+public final class RocketMQMessageConverter {
 
-    public void setExchangeHeadersByMessageExt(Exchange exchange, MessageExt messageExt) {
-        populateMessageByMessageExt(exchange.getIn(), messageExt);
-    }
-
-    public void populateRocketExchange(Exchange exchange, MessageExt messageExt, final boolean out) {
-        Message message = resolveMessageFrom(exchange, out);
-        populateRoutingInfoHeaders(message, messageExt);
-        message.setBody(messageExt.getBody());
-    }
-
-    private void populateRoutingInfoHeaders(final Message message, final MessageExt messageExt) {
-        if (messageExt == null) {
-            return;
-        }
+    public static void populateHeadersByMessageExt(final Message message, final MessageExt messageExt) {
         message.setHeader(RocketMQConstants.TOPIC, messageExt.getTopic());
         message.setHeader(RocketMQConstants.TAG, messageExt.getTags());
         message.setHeader(RocketMQConstants.KEY, messageExt.getKeys());
-        populateMessageByMessageExt(message, messageExt);
-    }
-
-    private Message resolveMessageFrom(final Exchange exchange, final boolean out) {
-        Message message;
-        if (out) {
-            message = exchange.getOut();
-        } else {
-            if ((message = exchange.getIn()) == null) {
-                message = new DefaultMessage(exchange.getContext());
-                exchange.setIn(message);
-            }
-        }
-        return message;
-    }
-
-    private void populateMessageByMessageExt(final Message message, final MessageExt messageExt) {
         message.setHeader(RocketMQConstants.BROKER_NAME, messageExt.getBrokerName());
         message.setHeader(RocketMQConstants.QUEUE_ID, messageExt.getQueueId());
         message.setHeader(RocketMQConstants.STORE_SIZE, messageExt.getStoreSize());

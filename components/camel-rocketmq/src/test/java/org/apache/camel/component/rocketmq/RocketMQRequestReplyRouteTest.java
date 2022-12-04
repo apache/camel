@@ -127,8 +127,7 @@ public class RocketMQRequestReplyRouteTest extends CamelTestSupport {
     @Test
     public void testRouteMessageInRequestReplyMode() throws Exception {
         resultEndpoint.expectedBodiesReceived(EXPECTED_MESSAGE);
-        resultEndpoint.message(0)
-                .predicate(exchange -> !exchange.getIn().getHeader(RocketMQConstants.MSG_ID, String.class).isBlank());
+        resultEndpoint.message(0).header(RocketMQConstants.TOPIC).isEqualTo("REPLY_TO_TOPIC");
 
         template.sendBody(START_ENDPOINT_URI, "hello, RocketMQ.");
 

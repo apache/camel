@@ -37,7 +37,7 @@ public class RocketMQRouteTest extends CamelTestSupport {
 
     private static final String NAMESRV_ADDR = "127.0.0.1:" + NAMESRV_PORT;
 
-    private static final String START_ENDPOINT_URI = "rocketmq:START_TOPIC?producerGroup=p1&consumerGroup=c1";
+    private static final String START_ENDPOINT_URI = "rocketmq:START_TOPIC?producerGroup=p1&consumerGroup=c1&sendTag=startTag";
 
     private static final String RESULT_ENDPOINT_URI = "mock:result";
 
@@ -84,8 +84,8 @@ public class RocketMQRouteTest extends CamelTestSupport {
     @Test
     public void testSimpleRoute() throws Exception {
         resultEndpoint.expectedBodiesReceived(EXPECTED_MESSAGE);
-        resultEndpoint.message(0)
-                .predicate(exchange -> !exchange.getIn().getHeader(RocketMQConstants.MSG_ID, String.class).isBlank());
+        resultEndpoint.message(0).header(RocketMQConstants.TOPIC).isEqualTo("START_TOPIC");
+        resultEndpoint.message(0).header(RocketMQConstants.TAG).isEqualTo("startTag");
 
         template.sendBody(START_ENDPOINT_URI, EXPECTED_MESSAGE);
 

@@ -22,9 +22,9 @@ import org.apache.rocketmq.acl.common.AclClientRPCHook;
 import org.apache.rocketmq.acl.common.SessionCredentials;
 import org.apache.rocketmq.remoting.RPCHook;
 
-public final class AclUtils {
+public final class RocketMQAclUtils {
 
-    private AclUtils() {
+    private RocketMQAclUtils() {
     }
 
     public static RPCHook getAclRPCHook(String accessKey, String secretKey) {

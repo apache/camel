@@ -25,6 +25,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
+import org.apache.camel.Message;
 import org.apache.camel.component.rocketmq.RocketMQEndpoint;
 import org.apache.camel.component.rocketmq.RocketMQMessageConverter;
 import org.apache.camel.component.rocketmq.RocketMQProducer;
@@ -53,7 +54,6 @@ public class RocketMQReplyManagerSupport extends ServiceSupport implements Reply
     protected String replyToTopic;
     protected DefaultMQPushConsumer mqPushConsumer;
     protected ReplyTimeoutMap timeoutMap;
-    private final RocketMQMessageConverter messageConverter = new RocketMQMessageConverter();
 
     public RocketMQReplyManagerSupport(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -93,7 +93,7 @@ public class RocketMQReplyManagerSupport extends ServiceSupport implements Reply
         String messageKey = Arrays.stream(messageExt.getKeys().split(MessageConst.KEY_SEPARATOR))
                 .filter(s -> s.startsWith(RocketMQProducer.GENERATE_MESSAGE_KEY_PREFIX)).findFirst().orElse(null);
         if (messageKey == null) {
-            log.warn("Ignoreing message with no messageKey: {}", messageExt);
+            log.warn("Ignoring message with no messageKey: {}", messageExt);
             return;
         }
 
@@ -148,28 +148,33 @@ public class RocketMQReplyManagerSupport extends ServiceSupport implements Reply
 
     @Override
     public void processReply(ReplyHolder holder) {
-        if (null == holder || !isRunAllowed()) {
+        if (!isRunAllowed()) {
             return;
         }
         try {
             Exchange exchange = holder.getExchange();
-            boolean timeout = holder.isTimeout();
-            if (timeout) {
+            if (holder.isTimeout()) {
                 if (log.isWarnEnabled()) {
                     log.warn("Timeout occurred after {} millis waiting for reply message with messageKey [{}] on topic {}." +
                              " Setting ExchangeTimedOutException on {} and continue routing.",
                             holder.getTimeout(), holder.getMessageKey(), replyToTopic, ExchangeHelper.logIds(exchange));
                 }
-
                 String msg = "reply message with messageKey: " + holder.getMessageKey() + " not received on topic: "
                              + replyToTopic;
                 exchange.setException(new ExchangeTimedOutException(exchange, holder.getTimeout(), msg));
             } else {
-                messageConverter.populateRocketExchange(exchange, holder.getMessageExt(), true);
+                processReceivedReply(holder);
             }
         } finally {
             holder.getCallback().done(false);
         }
+    }
+
+    private static void processReceivedReply(ReplyHolder holder) {
+        Message message = holder.getExchange().getOut();
+        MessageExt messageExt = holder.getMessageExt();
+        message.setBody(messageExt.getBody());
+        RocketMQMessageConverter.populateHeadersByMessageExt(message, messageExt);
     }
 
     @Override

@@ -105,6 +105,7 @@ public class RocketMQProducer extends DefaultAsyncProducer {
                 if (!SendStatus.SEND_OK.equals(sendResult.getSendStatus())) {
                     exchange.setException(new SendFailedException(sendResult.toString()));
                     callback.done(false);
+                    return;
                 }
                 if (replyManager == null) {
                     LOG.warn("replyToTopic not set! Will not wait for reply.");
@@ -117,9 +118,12 @@ public class RocketMQProducer extends DefaultAsyncProducer {
 
             @Override
             public void onException(Throwable e) {
-                replyManager.cancelMessageKey(generateKey);
-                exchange.setException(e);
-                callback.done(false);
+                try {
+                    replyManager.cancelMessageKey(generateKey);
+                    exchange.setException(e);
+                } finally {
+                    callback.done(false);
+                }
             }
         });
         return false;
@@ -217,7 +221,7 @@ public class RocketMQProducer extends DefaultAsyncProducer {
     protected void doStart() throws Exception {
         this.mqProducer = new DefaultMQProducer(
                 null, getEndpoint().getProducerGroup(),
-                AclUtils.getAclRPCHook(getEndpoint().getAccessKey(), getEndpoint().getSecretKey()));
+                RocketMQAclUtils.getAclRPCHook(getEndpoint().getAccessKey(), getEndpoint().getSecretKey()));
         this.mqProducer.setNamesrvAddr(getEndpoint().getNamesrvAddr());
         this.mqProducer.start();
     }

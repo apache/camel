@@ -43,22 +43,19 @@ public class RocketMQConsumer extends DefaultConsumer implements Suspendable {
     }
 
     private void startConsumer() throws MQClientException {
-        if (mqPushConsumer != null) {
-            LOG.warn("Overriding RocketMQ Consumer! {}", mqPushConsumer);
-        }
         mqPushConsumer = new DefaultMQPushConsumer(
                 null, endpoint.getConsumerGroup(),
-                AclUtils.getAclRPCHook(getEndpoint().getAccessKey(), getEndpoint().getSecretKey()));
+                RocketMQAclUtils.getAclRPCHook(getEndpoint().getAccessKey(), getEndpoint().getSecretKey()));
         mqPushConsumer.setNamesrvAddr(endpoint.getNamesrvAddr());
         mqPushConsumer.subscribe(endpoint.getTopicName(), endpoint.getSubscribeTags());
         mqPushConsumer.registerMessageListener((MessageListenerConcurrently) (msgs, context) -> {
             MessageExt messageExt = msgs.get(0);
             Exchange exchange = endpoint.createRocketExchange(messageExt.getBody());
-            new RocketMQMessageConverter().setExchangeHeadersByMessageExt(exchange, messageExt);
+            RocketMQMessageConverter.populateHeadersByMessageExt(exchange.getIn(), messageExt);
             try {
                 getProcessor().process(exchange);
             } catch (Exception e) {
-                LOG.error(e.getLocalizedMessage());
+                getExceptionHandler().handleException(e);
                 return ConsumeConcurrentlyStatus.RECONSUME_LATER;
             }
             return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
