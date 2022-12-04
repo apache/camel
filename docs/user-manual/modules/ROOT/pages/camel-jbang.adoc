@@ -1006,6 +1006,19 @@ You can also use Camel JBang to try local Kamelets, without the need to publish 
 camel run --local-kamelet-dir=/path/to/local/kamelets earthquake.yaml
 ----
 
+TIP: When the kamelets are from local file system, then they can be live reloaded, if they are updated, when you run
+Camel JBang in `--dev` mode.
+
+You can also point to a folder in a GitHub repository. For example, we have provided some custom Kamelets
+at https://github.com/apache/camel-kamelets-examples/tree/main/custom-kamelets which can be used easily:
+
+[source,bash]
+----
+camel run --local-kamelet-dir=https://github.com/apache/camel-kamelets-examples/tree/main/custom-kamelets user.java
+----
+
+NOTE: If a kamelet is loaded from GitHub, then they cannot be live reloaded.
+
 === Using platform-http component
 
 When a route is started from `platform-http` then Camel JBang will automatically include a VertX HTTP server
