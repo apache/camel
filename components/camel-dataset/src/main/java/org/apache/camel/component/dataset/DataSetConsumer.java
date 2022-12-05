@@ -58,19 +58,16 @@ public class DataSetConsumer extends DefaultConsumer {
         sendMessages(0, preloadSize);
         executorService = camelContext.getExecutorServiceManager().newSingleThreadExecutor(this, endpoint.getEndpointUri());
 
-        executorService.execute(new Runnable() {
-            public void run() {
-                if (endpoint.getInitialDelay() > 0) {
-                    try {
-                        Thread.sleep(endpoint.getInitialDelay());
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        return;
-                    }
+        executorService.execute(() -> {
+            if (endpoint.getInitialDelay() > 0) {
+                try {
+                    Thread.sleep(endpoint.getInitialDelay());
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return;
                 }
-
-                sendMessages(preloadSize, dataSet.getSize());
             }
+            sendMessages(preloadSize, dataSet.getSize());
         });
     }
 
