@@ -20,12 +20,8 @@ package org.apache.camel.component.rocketmq.reply;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.support.DefaultTimeoutMap;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 
 public class ReplyTimeoutMap extends DefaultTimeoutMap<String, ReplyHandler> {
-
-    private static final Marker MARKER = MarkerFactory.getMarker("camel-rocketmq");
 
     public ReplyTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis) {
         super(executor, requestMapPollTimeMillis);
@@ -39,21 +35,20 @@ public class ReplyTimeoutMap extends DefaultTimeoutMap<String, ReplyHandler> {
     private void listener(Listener.Type type, String key, ReplyHandler handler) {
         switch (type) {
             case Put:
-                log.trace(MARKER, "Added messageKey: {}", key);
+                log.trace("Added messageKey: {}", key);
                 break;
             case Remove:
-                log.trace(MARKER, "Removed messageKey: {}", key);
+                log.trace("Removed messageKey: {}", key);
                 break;
             case Evict:
                 try {
                     handler.onTimeout(key);
                 } catch (Throwable e) {
-                    String message = String.format("Error processing onTimeout for messageKey: %s due: %s. " +
-                                                   "This exception is ignored.",
-                            key, e.getLocalizedMessage());
-                    log.warn(MARKER, message, e);
+                    log.warn("Error processing onTimeout for messageKey: {} due: {}. " +
+                             "This exception is ignored.",
+                            key, e.getLocalizedMessage(), e);
                 }
-                log.trace(MARKER, "Evicted messageKey: {}", key);
+                log.trace("Evicted messageKey: {}", key);
                 break;
             default:
         }
