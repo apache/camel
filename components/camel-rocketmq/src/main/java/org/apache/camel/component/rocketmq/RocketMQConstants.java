@@ -27,16 +27,18 @@ public final class RocketMQConstants {
     public static final String TAG = "CamelRockerMQTag";
     @Metadata(label = "consumer", description = "Key of message", javaType = "String")
     public static final String KEY = "CamelRockerMQKey";
-    @Metadata(label = "producer", description = "If this header is set, the message will be routed to the topic specified by this header\n" +
+    @Metadata(label = "producer",
+              description = "If this header is set, the message will be routed to the topic specified by this header\n" +
                             "instead of the origin topic in endpoint.",
               javaType = "String")
     public static final String OVERRIDE_TOPIC_NAME = "CamelRockerMQOverrideTopicName";
-    @Metadata(label = "producer", description = "If this header is set, the message's tag will be set to value specified by this header\n" +
+    @Metadata(label = "producer",
+              description = "If this header is set, the message's tag will be set to value specified by this header\n" +
                             "instead of the sendTag defined in endpoint.",
               javaType = "String")
     public static final String OVERRIDE_TAG = "CamelRockerMQOverrideTag";
     @Metadata(label = "producer", description = "Set keys for the message. When using in-out pattern,\n" +
-                            "the value will be prepended to the generated keys",
+                                                "the value will be prepended to the generated keys",
               javaType = "String")
     public static final String OVERRIDE_MESSAGE_KEY = "CamelRockerMQOverrideMessageKey";
     @Metadata(label = "consumer", description = "Broker name", javaType = "String")

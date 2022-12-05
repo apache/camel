@@ -22,6 +22,9 @@ import org.apache.rocketmq.common.message.MessageExt;
 
 public final class RocketMQMessageConverter {
 
+    private RocketMQMessageConverter() {
+    }
+
     public static void populateHeadersByMessageExt(final Message message, final MessageExt messageExt) {
         message.setHeader(RocketMQConstants.TOPIC, messageExt.getTopic());
         message.setHeader(RocketMQConstants.TAG, messageExt.getTags());
