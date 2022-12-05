@@ -7510,6 +7510,53 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.InfluxDbEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * InfluxDB2 (camel-influxdb2)
+     * Interact with InfluxDB, a time series database.
+     * 
+     * Category: database
+     * Since: 3.20
+     * Maven coordinates: org.apache.camel:camel-influxdb2
+     * 
+     * Syntax: <code>influxdb2:connectionBean?org=<org name>&bucket=<bucket
+     * name></code>
+     * 
+     * Path parameter: connectionBean (required)
+     * Connection to the influx2 database, of class
+     * com.influxdb.client.InfluxDBClient.class.
+     * 
+     * @param path connectionBean?org=<org name>&bucket=<bucket name>
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.InfluxDb2EndpointBuilderFactory.InfluxDb2EndpointBuilder influxdb2(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.InfluxDb2EndpointBuilderFactory.endpointBuilder("influxdb2", path);
+    }
+    /**
+     * InfluxDB2 (camel-influxdb2)
+     * Interact with InfluxDB, a time series database.
+     * 
+     * Category: database
+     * Since: 3.20
+     * Maven coordinates: org.apache.camel:camel-influxdb2
+     * 
+     * Syntax: <code>influxdb2:connectionBean?org=<org name>&bucket=<bucket
+     * name></code>
+     * 
+     * Path parameter: connectionBean (required)
+     * Connection to the influx2 database, of class
+     * com.influxdb.client.InfluxDBClient.class.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path connectionBean?org=<org name>&bucket=<bucket name>
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.InfluxDb2EndpointBuilderFactory.InfluxDb2EndpointBuilder influxdb2(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.InfluxDb2EndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * IOTA (camel-iota)
      * Manage financial transactions using IOTA distributed ledger.
      * 
