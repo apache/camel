@@ -18,8 +18,6 @@
 package org.apache.camel.test.infra.hdfs.v2.common;
 
 public final class HDFSProperties {
-    public static final String HDFS_HOST = "hdfs.host";
-    public static final String HDFS_PORT = "hdfs.port";
 
     private HDFSProperties() {
 
