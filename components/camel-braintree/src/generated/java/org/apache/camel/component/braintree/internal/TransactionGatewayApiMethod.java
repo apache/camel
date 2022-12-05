@@ -119,6 +119,12 @@ public enum TransactionGatewayApiMethod implements ApiMethod {
         arg("id", String.class),
         arg("request", com.braintreegateway.TransactionRequest.class)),
 
+    UPDATE_CUSTOM_FIELDS(
+        com.braintreegateway.Result.class,
+        "updateCustomFields",
+        arg("id", String.class),
+        arg("request", com.braintreegateway.TransactionRequest.class)),
+
     UPDATE_DETAILS(
         com.braintreegateway.Result.class,
         "updateDetails",
