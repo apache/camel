@@ -27,6 +27,12 @@ for this component:
 </dependency>
 ----
 
+[NOTE]
+====
+Since RocketMQ 5.x API is compatible with 4.x, this component works with both RocketMQ 4.x and 5.x.
+Users could change RocketMQ dependencies on their own.
+====
+
 == URI format
 
 ----
@@ -36,6 +42,7 @@ rocketmq:topicName?[options]
 The topic name determines the topic to which the produced 
 messages will be sent to. In the case of consumers, the topic name 
 determines the topic will be subscribed.
+This component uses RocketMQ push consumer by default.
 
 // component-configure options: START
 
