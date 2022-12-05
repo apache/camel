@@ -247,6 +247,7 @@
         <impsort-maven-plugin-version>1.6.0</impsort-maven-plugin-version>
         <infinispan-version>14.0.3.Final</infinispan-version>
         <influx-java-driver-version>2.22</influx-java-driver-version>
+        <influx-client-java-driver-version>6.7.0</influx-client-java-driver-version>
         <influx-guava-version>20.0</influx-guava-version>
         <irclib-version>1.10</irclib-version>
         <ironmq-version>3.0.5</ironmq-version>
@@ -1594,6 +1595,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-influxdb</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-influxdb2</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
