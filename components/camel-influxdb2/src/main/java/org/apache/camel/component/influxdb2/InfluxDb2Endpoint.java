@@ -17,7 +17,6 @@
 package org.apache.camel.component.influxdb2;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 
 import com.influxdb.client.BucketsQuery;
 import com.influxdb.client.InfluxDBClient;
@@ -42,7 +41,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Interact with <a href="https://influxdata.com/time-series-platform/influxdb/">InfluxDB</a>, a time series database.
  */
-@UriEndpoint(firstVersion = "3.19.0", scheme = "influxdb2", title = "Influxdb2",
+@UriEndpoint(firstVersion = "3.20.0", scheme = "influxdb2", title = "InfluxDB2",
              syntax = "influxdb2:connectionBean?org=<org name>&bucket=<bucket name>", category = { Category.DATABASE },
              producerOnly = true, headersClass = InfluxDb2Constants.class)
 public class InfluxDb2Endpoint extends DefaultEndpoint {
@@ -51,26 +50,28 @@ public class InfluxDb2Endpoint extends DefaultEndpoint {
     private InfluxDBClient influxDBClient;
 
     @UriPath
-    @Metadata(required = true, description = "connectionBean")
+    @Metadata(required = true,
+              description = "Connection to the influx2 database, of class com.influxdb.client.InfluxDBClient.class.")
     private String connectionBean;
     @UriParam
-    @Metadata(required = true, description = "organization name")
+    @Metadata(required = true, description = "The name of the organization where the time series will be stored.")
     private String org;
     @UriParam
-    @Metadata(required = true, description = "bucket name")
+    @Metadata(required = true, description = "The name of the bucket where the time series will be stored.")
     private String bucket;
-    @UriParam(defaultValue = "default", description = "retention policy")
+    @UriParam(defaultValue = "default", description = "Define the retention policy to the data created by the endpoint.")
     private String retentionPolicy = "default";
 
-    @UriParam(defaultValue = "INSERT", description = "operations")
+    @UriParam(defaultValue = "INSERT", description = "Define if this operation is an insert of ping.")
     private Operation operation = Operation.INSERT;
-    @UriParam(defaultValue = "true", description = "auto create organization")
+    @UriParam(defaultValue = "true", description = "Define if we want to auto create the organization if it's not present.")
     private boolean autoCreateOrg = true;
 
-    @UriParam(defaultValue = "true", description = "auto create bucket")
+    @UriParam(defaultValue = "true", description = "Define if we want to auto create the bucket if it's not present.")
     private boolean autoCreateBucket = true;
 
-    @UriParam(defaultValue = "ms", description = "influxdb2 write precision")
+    @UriParam(defaultValue = "ms",
+              description = "The format or precision of time series timestamps. see [here](https://docs.influxdata.com/influxdb/latest/reference/glossary/#precision)")
     private WritePrecision writePrecision = WritePrecision.MS;
     private String orgID;
 
@@ -174,11 +175,6 @@ public class InfluxDb2Endpoint extends DefaultEndpoint {
         super.doInit();
         ensureOrgExists();
         ensureBucketExists();
-    }
-
-    public ExecutorService createExecutor() {
-        // TODO: Delete me when you implemented your custom component
-        return getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "trueConsumer");
     }
 
     private void ensureOrgExists() {

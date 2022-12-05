@@ -1,9 +1,9 @@
-= Influxdb2 Component
-:doctitle: Influxdb2
+= InfluxDB2 Component
+:doctitle: InfluxDB2
 :shortname: influxdb2
 :artifactid: camel-influxdb2
 :description: Interact with InfluxDB, a time series database.
-:since: 3.19
+:since: 3.20
 :supportlevel: Preview
 :component-header: Only producer is supported
 //Manually maintained attributes

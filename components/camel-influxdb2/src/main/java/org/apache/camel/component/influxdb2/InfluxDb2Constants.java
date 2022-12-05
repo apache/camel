@@ -19,17 +19,15 @@ package org.apache.camel.component.influxdb2;
 import org.apache.camel.spi.Metadata;
 
 public final class InfluxDb2Constants {
-
     @Metadata(description = "The name of measurement", javaType = "String")
-    public static final String MEASUREMENT = "camelInfluxDB.MeasurementName";
+    public static final String MEASUREMENT = "CamelInfluxDB2MeasurementName";
     @Metadata(description = "The string that defines the retention policy to the data created by the endpoint",
               javaType = "String")
     public static final String RETENTION_POLICY = "camelInfluxDB.RetentionPolicy";
-    @Metadata(description = "The name of the database where the time series will be stored", javaType = "String")
-    public static final String ORG = "camelInfluxDB.org";
-    public static final String BUCKET = "camelInfluxDB.bucket";
-    @Metadata(description = "InfluxDb Write precision.", javaType = "WritePrecision")
-    public static final String WRITE_PRECISION = "camelInfluxDB.write_precision";
+    public static final String ORG = "CamelInfluxDB2Org";
+    public static final String BUCKET = "CamelInfluxDB2Bucket";
+    @Metadata(description = "InfluxDb Write precision.", javaType = "com.influxdb.client.domain.WritePrecision")
+    public static final String WRITE_PRECISION = "CamelInfluxDB2WritePrecision";
 
     private InfluxDb2Constants() {
 
