@@ -79,44 +79,41 @@ public class FacebookProducer extends DefaultAsyncProducer {
 
         // create a runnable invocation task to be submitted on a background thread pool
         // this way we avoid blocking the current thread for long running operations
-        Runnable invocation = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Invoking method {} with {}", method.getName(), properties.keySet());
-                    }
-
-                    // also check whether we need to get Raw JSON
-                    Object result;
-                    String rawJSON = null;
-                    if (endpoint.getConfiguration().getJsonStoreEnabled() == null
-                            || !endpoint.getConfiguration().getJsonStoreEnabled()) {
-                        result = FacebookMethodsTypeHelper.invokeMethod(
-                                endpoint.getConfiguration().getFacebook(), method, properties);
-                    } else {
-                        final Facebook facebook = endpoint.getConfiguration().getFacebook();
-                        // lock out the underlying Facebook object from other threads
-                        synchronized (facebook) {
-                            result = FacebookMethodsTypeHelper.invokeMethod(
-                                    facebook, method, properties);
-                            rawJSON = DataObjectFactory.getRawJSON(result);
-                        }
-                    }
-
-                    // producer returns a single response, even for methods with List return types
-                    exchange.getMessage().setBody(result);
-                    // copy headers
-                    exchange.getMessage().setHeaders(exchange.getIn().getHeaders());
-                    if (rawJSON != null) {
-                        exchange.getMessage().setHeader(FacebookConstants.RAW_JSON_HEADER, rawJSON);
-                    }
-
-                } catch (Exception t) {
-                    exchange.setException(RuntimeCamelException.wrapRuntimeCamelException(t));
-                } finally {
-                    callback.done(false);
+        Runnable invocation = () -> {
+            try {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Invoking method {} with {}", method.getName(), properties.keySet());
                 }
+
+                // also check whether we need to get Raw JSON
+                Object result;
+                String rawJSON = null;
+                if (endpoint.getConfiguration().getJsonStoreEnabled() == null
+                        || !endpoint.getConfiguration().getJsonStoreEnabled()) {
+                    result = FacebookMethodsTypeHelper.invokeMethod(
+                            endpoint.getConfiguration().getFacebook(), method, properties);
+                } else {
+                    final Facebook facebook = endpoint.getConfiguration().getFacebook();
+                    // lock out the underlying Facebook object from other threads
+                    synchronized (facebook) {
+                        result = FacebookMethodsTypeHelper.invokeMethod(
+                                facebook, method, properties);
+                        rawJSON = DataObjectFactory.getRawJSON(result);
+                    }
+                }
+
+                // producer returns a single response, even for methods with List return types
+                exchange.getMessage().setBody(result);
+                // copy headers
+                exchange.getMessage().setHeaders(exchange.getIn().getHeaders());
+                if (rawJSON != null) {
+                    exchange.getMessage().setHeader(FacebookConstants.RAW_JSON_HEADER, rawJSON);
+                }
+
+            } catch (Exception t) {
+                exchange.setException(RuntimeCamelException.wrapRuntimeCamelException(t));
+            } finally {
+                callback.done(false);
             }
         };
 
