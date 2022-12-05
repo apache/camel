@@ -3643,7 +3643,7 @@
     "kind": "component",
     "name": "influxdb",
     "title": "InfluxDB",
-    "description": "Interact with InfluxDB v1, a time series database.",
+    "description": "Interact with InfluxDB, a time series database.",
     "deprecated": false,
     "firstVersion": "2.18.0",
     "label": "database",
