@@ -43,10 +43,12 @@ public final class DependencyDownloaderLanguageResolver extends DefaultLanguageR
     @Override
     public Language resolveLanguage(String name, CamelContext context) {
         LanguageModel model = catalog.languageModel(name);
-        if (model != null && !downloader.alreadyOnClasspath(model.getGroupId(), model.getArtifactId(),
-                model.getVersion())) {
-            downloader.downloadDependency(model.getGroupId(), model.getArtifactId(),
-                    model.getVersion());
+        if (model != null) {
+            downloadLoader(model.getArtifactId(), model.getVersion());
+            if ("csimple".equals(name)) {
+                // need to include joor compiler also
+                downloadLoader("camel-csimple-joor", model.getVersion());
+            }
         }
         Language answer = super.resolveLanguage(name, context);
         if (answer == null) {
@@ -57,6 +59,14 @@ public final class DependencyDownloaderLanguageResolver extends DefaultLanguageR
             }
         }
         return answer;
+    }
+
+    private void downloadLoader(String artifactId, String version) {
+        if (!downloader.alreadyOnClasspath("org.apache.camel", artifactId,
+                version)) {
+            downloader.downloadDependency("org.apache.camel", artifactId,
+                    version);
+        }
     }
 
 }
