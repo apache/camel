@@ -38,27 +38,7 @@ import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogDoc;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogKamelet;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogLanguage;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogOther;
-import org.apache.camel.dsl.jbang.core.commands.process.CamelContextStatus;
-import org.apache.camel.dsl.jbang.core.commands.process.CamelContextTop;
-import org.apache.camel.dsl.jbang.core.commands.process.CamelEndpointStatus;
-import org.apache.camel.dsl.jbang.core.commands.process.CamelProcessorStatus;
-import org.apache.camel.dsl.jbang.core.commands.process.CamelProcessorTop;
-import org.apache.camel.dsl.jbang.core.commands.process.CamelRouteStatus;
-import org.apache.camel.dsl.jbang.core.commands.process.CamelRouteTop;
-import org.apache.camel.dsl.jbang.core.commands.process.CamelStatus;
-import org.apache.camel.dsl.jbang.core.commands.process.CamelTop;
-import org.apache.camel.dsl.jbang.core.commands.process.Hawtio;
-import org.apache.camel.dsl.jbang.core.commands.process.Jolokia;
-import org.apache.camel.dsl.jbang.core.commands.process.ListBlocked;
-import org.apache.camel.dsl.jbang.core.commands.process.ListCircuitBreaker;
-import org.apache.camel.dsl.jbang.core.commands.process.ListEvent;
-import org.apache.camel.dsl.jbang.core.commands.process.ListHealth;
-import org.apache.camel.dsl.jbang.core.commands.process.ListInflight;
-import org.apache.camel.dsl.jbang.core.commands.process.ListMetric;
-import org.apache.camel.dsl.jbang.core.commands.process.ListProcess;
-import org.apache.camel.dsl.jbang.core.commands.process.ListService;
-import org.apache.camel.dsl.jbang.core.commands.process.ListVault;
-import org.apache.camel.dsl.jbang.core.commands.process.StopProcess;
+import org.apache.camel.dsl.jbang.core.commands.process.*;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -88,6 +68,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("service", new CommandLine(new ListService(main)))
                         .addSubcommand("source", new CommandLine(new CamelSourceAction(main)))
                         .addSubcommand("vault", new CommandLine(new ListVault(main))))
+                .addSubcommand("count", new CommandLine(new CamelCount(main)))
                 .addSubcommand("top", new CommandLine(new CamelTop(main))
                         .addSubcommand("context", new CommandLine(new CamelContextTop(main)))
                         .addSubcommand("route", new CommandLine(new CamelRouteTop(main)))
