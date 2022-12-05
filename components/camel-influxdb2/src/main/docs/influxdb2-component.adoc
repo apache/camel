@@ -2,7 +2,7 @@
 :doctitle: InfluxDB2
 :shortname: influxdb2
 :artifactid: camel-influxdb2
-:description: Interact with InfluxDB, a time series database.
+:description: Interact with InfluxDB v2, a time series database.
 :since: 3.20
 :supportlevel: Preview
 :component-header: Only producer is supported
@@ -13,11 +13,11 @@
 
 *{component-header}*
 
-This component allows you to interact with InfluxDB
+This component allows you to interact with InfluxDB 2.x
 https://influxdata.com/time-series-platform/influxdb/ a time series database.
 The native body type for this component is Point (the native influxdb class), but it can also accept Map<String, Object> as message body and it will get converted to Point.class, please note that the map must contain an element with InfluxDbConstants.MEASUREMENT_NAME as key.
 
-Additionally of course you may register your own Converters to your data type to Point, or use the (un)marshalling tools provided by camel.
+Additionally, of course you may register your own Converters to your data type to Point, or use the (un)marshalling tools provided by camel.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -62,16 +62,17 @@ include::partial$component-endpoint-headers.adoc[]
 Below is an example route that stores a point into the db (taking the db name from the URI) specific key:
 
 [source,java]
-------------------------------------------------------------------------------------
+----
 from("direct:start")
         .to("influxdb2://connectionBean?org=<org>&bucket=<bucket>");
-------------------------------------------------------------------------------------
+----
+
 [source,java]
-------------------------------------------------------------------------------------
+----
 from("direct:start")
         .setHeader(InfluxDbConstants.ORG, "myTestOrg")
         .setHeader(InfluxDbConstants.BUCKET, "myTestBucket")
         .to("influxdb2://connectionBean?");
-------------------------------------------------------------------------------------
+----
 
 include::spring-boot:partial$starter.adoc[]

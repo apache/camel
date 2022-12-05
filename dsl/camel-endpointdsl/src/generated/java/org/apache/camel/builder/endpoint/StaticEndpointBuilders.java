@@ -7468,7 +7468,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * InfluxDB (camel-influxdb)
-     * Interact with InfluxDB, a time series database.
+     * Interact with InfluxDB v1, a time series database.
      * 
      * Category: database
      * Since: 2.18
@@ -7488,7 +7488,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * InfluxDB (camel-influxdb)
-     * Interact with InfluxDB, a time series database.
+     * Interact with InfluxDB v1, a time series database.
      * 
      * Category: database
      * Since: 2.18
@@ -7511,7 +7511,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * InfluxDB2 (camel-influxdb2)
-     * Interact with InfluxDB, a time series database.
+     * Interact with InfluxDB v2, a time series database.
      * 
      * Category: database
      * Since: 3.20
@@ -7521,7 +7521,7 @@ public class StaticEndpointBuilders {
      * name></code>
      * 
      * Path parameter: connectionBean (required)
-     * Connection to the influx2 database, of class
+     * Connection to the Influx database, of class
      * com.influxdb.client.InfluxDBClient.class.
      * 
      * @param path connectionBean?org=<org name>&bucket=<bucket name>
@@ -7533,7 +7533,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * InfluxDB2 (camel-influxdb2)
-     * Interact with InfluxDB, a time series database.
+     * Interact with InfluxDB v2, a time series database.
      * 
      * Category: database
      * Since: 3.20
@@ -7543,7 +7543,7 @@ public class StaticEndpointBuilders {
      * name></code>
      * 
      * Path parameter: connectionBean (required)
-     * Connection to the influx2 database, of class
+     * Connection to the Influx database, of class
      * com.influxdb.client.InfluxDBClient.class.
      * 
      * @param componentName to use a custom component name for the endpoint

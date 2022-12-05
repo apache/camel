@@ -39,7 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Interact with <a href="https://influxdata.com/time-series-platform/influxdb/">InfluxDB</a>, a time series database.
+ * Interact with <a href="https://influxdata.com/time-series-platform/influxdb/">InfluxDB</a> v2, a time series database.
  */
 @UriEndpoint(firstVersion = "3.20.0", scheme = "influxdb2", title = "InfluxDB2",
              syntax = "influxdb2:connectionBean?org=<org name>&bucket=<bucket name>", category = { Category.DATABASE },
@@ -51,7 +51,7 @@ public class InfluxDb2Endpoint extends DefaultEndpoint {
 
     @UriPath
     @Metadata(required = true,
-              description = "Connection to the influx2 database, of class com.influxdb.client.InfluxDBClient.class.")
+              description = "Connection to the Influx database, of class com.influxdb.client.InfluxDBClient.class.")
     private String connectionBean;
     @UriParam
     @Metadata(required = true, description = "The name of the organization where the time series will be stored.")
@@ -71,7 +71,7 @@ public class InfluxDb2Endpoint extends DefaultEndpoint {
     private boolean autoCreateBucket = true;
 
     @UriParam(defaultValue = "ms",
-              description = "The format or precision of time series timestamps. see [here](https://docs.influxdata.com/influxdb/latest/reference/glossary/#precision)")
+              description = "The format or precision of time series timestamps.")
     private WritePrecision writePrecision = WritePrecision.MS;
     private String orgID;
 

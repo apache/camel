@@ -31,17 +31,12 @@
     <name>Camel :: InfluxDB2</name>
     <description>Camel InfluxDB2 component</description>
 
-
-    <properties>
-    </properties>
-
     <dependencies>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
         </dependency>
-
 
         <!--InfluxDb-->
         <dependency>

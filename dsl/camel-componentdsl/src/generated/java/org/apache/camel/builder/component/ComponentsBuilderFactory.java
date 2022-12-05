@@ -2214,7 +2214,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * InfluxDB (camel-influxdb)
-     * Interact with InfluxDB, a time series database.
+     * Interact with InfluxDB v1, a time series database.
      * 
      * Category: database
      * Since: 2.18
@@ -2227,7 +2227,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * InfluxDB2 (camel-influxdb2)
-     * Interact with InfluxDB, a time series database.
+     * Interact with InfluxDB v2, a time series database.
      * 
      * Category: database
      * Since: 3.20
