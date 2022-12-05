@@ -1,0 +1,78 @@
+= InfluxDB2 Component
+:doctitle: InfluxDB2
+:shortname: influxdb2
+:artifactid: camel-influxdb2
+:description: Interact with InfluxDB v2, a time series database.
+:since: 3.20
+:supportlevel: Preview
+:component-header: Only producer is supported
+//Manually maintained attributes
+:camel-spring-boot-name: influxdb2
+
+*Since Camel {since}*
+
+*{component-header}*
+
+This component allows you to interact with InfluxDB 2.x
+https://influxdata.com/time-series-platform/influxdb/ a time series database.
+The native body type for this component is Point (the native influxdb class), but it can also accept Map<String, Object> as message body and it will get converted to Point.class, please note that the map must contain an element with InfluxDbConstants.MEASUREMENT_NAME as key.
+
+Additionally, of course you may register your own Converters to your data type to Point, or use the (un)marshalling tools provided by camel.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-influxdb2</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+-------------------------------
+influxdb2://connectionBean?[options]
+-------------------------------
+
+The producer allows sending messages to a influxdb configured in the registry, using the native java driver.
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+== Example
+
+Below is an example route that stores a point into the db (taking the db name from the URI) specific key:
+
+[source,java]
+----
+from("direct:start")
+        .to("influxdb2://connectionBean?org=<org>&bucket=<bucket>");
+----
+
+[source,java]
+----
+from("direct:start")
+        .setHeader(InfluxDbConstants.ORG, "myTestOrg")
+        .setHeader(InfluxDbConstants.BUCKET, "myTestBucket")
+        .to("influxdb2://connectionBean?");
+----
+
+include::spring-boot:partial$starter.adoc[]

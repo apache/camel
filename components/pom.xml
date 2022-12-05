@@ -171,6 +171,7 @@
         <module>camel-ignite</module>
         <module>camel-infinispan</module>
         <module>camel-influxdb</module>
+        <module>camel-influxdb2</module>
         <module>camel-iota</module>
         <module>camel-irc</module>
         <module>camel-ironmq</module>

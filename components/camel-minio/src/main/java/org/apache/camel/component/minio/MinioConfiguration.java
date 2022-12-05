@@ -489,7 +489,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * Source bucket name.
+     * Destination bucket name.
      */
     public void setDestinationBucketName(String destinationBucketName) {
         this.destinationBucketName = destinationBucketName;
@@ -500,7 +500,7 @@ public class MinioConfiguration implements Cloneable {
     }
 
     /**
-     * Source object name.
+     * Destination object name.
      */
     public void setDestinationObjectName(String destinationObjectName) {
         this.destinationObjectName = destinationObjectName;

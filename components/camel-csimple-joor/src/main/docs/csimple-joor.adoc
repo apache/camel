@@ -17,7 +17,7 @@ This module includes the jOOR compiler for the csimple language for runtime comp
 
 To use this, just include `camel-csimple-joor` in the classpath.
 
-NOTE: Java 8 is not supported. Java 11 or 14 is required.
+NOTE: Java 8 is not supported. Java 11 or newer is required.
 
 
 == Limitations

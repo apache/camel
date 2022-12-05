@@ -166,6 +166,7 @@
 ** xref:infinispan-component.adoc[Infinispan]
 ** xref:infinispan-embedded-component.adoc[Infinispan Embedded]
 ** xref:influxdb-component.adoc[InfluxDB]
+** xref:influxdb2-component.adoc[InfluxDB2]
 ** xref:iota-component.adoc[IOTA]
 ** xref:ipfs-component.adoc[IPFS]
 ** xref:irc-component.adoc[IRC]
