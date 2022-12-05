@@ -125,20 +125,18 @@ class CamelOutputStream extends CachedOutputStream {
     }
 
     protected void asyncInvokeFromWorkQueue(final org.apache.camel.Exchange exchange) throws IOException {
-        Runnable runnable = new Runnable() {
-            public void run() {
-                try {
-                    syncInvoke(exchange);
-                } catch (Throwable e) {
-                    ((PhaseInterceptorChain) outMessage.getInterceptorChain()).abort();
-                    outMessage.setContent(Exception.class, e);
-                    ((PhaseInterceptorChain) outMessage.getInterceptorChain()).unwind(outMessage);
-                    MessageObserver mo = outMessage.getInterceptorChain().getFaultObserver();
-                    if (mo == null) {
-                        mo = outMessage.getExchange().get(MessageObserver.class);
-                    }
-                    mo.onMessage(outMessage);
+        Runnable runnable = () -> {
+            try {
+                syncInvoke(exchange);
+            } catch (Throwable e) {
+                ((PhaseInterceptorChain) outMessage.getInterceptorChain()).abort();
+                outMessage.setContent(Exception.class, e);
+                ((PhaseInterceptorChain) outMessage.getInterceptorChain()).unwind(outMessage);
+                MessageObserver mo = outMessage.getInterceptorChain().getFaultObserver();
+                if (mo == null) {
+                    mo = outMessage.getExchange().get(MessageObserver.class);
                 }
+                mo.onMessage(outMessage);
             }
         };
 
