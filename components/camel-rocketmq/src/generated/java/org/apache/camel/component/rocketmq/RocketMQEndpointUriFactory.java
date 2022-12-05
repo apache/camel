@@ -40,7 +40,10 @@ public class RocketMQEndpointUriFactory extends org.apache.camel.support.compone
         props.add("topicName");
         props.add("waitForSendResult");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("accessKey");
+        secretProps.add("secretKey");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         MULTI_VALUE_PREFIXES = Collections.emptySet();
     }
 
