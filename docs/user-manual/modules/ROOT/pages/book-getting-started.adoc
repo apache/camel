@@ -1,7 +1,3 @@
 = Getting Started with Apache Camel
 
-[source,text]
-----
-TODO: This xref does not work breaks website build!
-This content was moved to the xref:camel-core:getting-started:index.adoc[getting-started].
-----
+This content was moved to the link:/camel-core/getting-started[Getting Started].
