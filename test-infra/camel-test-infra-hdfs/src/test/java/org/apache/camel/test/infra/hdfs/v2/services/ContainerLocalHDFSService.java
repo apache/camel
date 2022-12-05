@@ -18,84 +18,48 @@
 package org.apache.camel.test.infra.hdfs.v2.services;
 
 import org.apache.camel.test.infra.common.services.ContainerService;
-import org.apache.camel.test.infra.hdfs.v2.common.HDFSProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.Network;
 
-public class ContainerLocalHDFSService implements HDFSService, ContainerService<NameNodeContainer> {
+public class ContainerLocalHDFSService implements HDFSService, ContainerService<HDFSContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(ContainerLocalHDFSService.class);
-    private final NameNodeContainer nameNodeContainer;
-    private final DataNodeContainer dataNodeContainer;
+    private final HDFSContainer container;
 
     public ContainerLocalHDFSService() {
-        Network network = Network.newNetwork();
-
-        nameNodeContainer = initNameNodeContainer(network);
-        dataNodeContainer = initDataNodeContainer(network);
-    }
-
-    public ContainerLocalHDFSService(NameNodeContainer nameNodeContainer, DataNodeContainer dataNodeContainer) {
-        this.nameNodeContainer = nameNodeContainer;
-        this.dataNodeContainer = dataNodeContainer;
-    }
-
-    protected NameNodeContainer initNameNodeContainer(Network network) {
-        return new NameNodeContainer(network);
-    }
-
-    protected DataNodeContainer initDataNodeContainer(Network network) {
-        return new DataNodeContainer(network);
+        container = new HDFSContainer();
     }
 
     @Override
     public String getHDFSHost() {
-        return nameNodeContainer.getHost();
+        return container.getHost();
     }
 
     @Override
     public int getPort() {
-        return nameNodeContainer.getIpcPort();
+        return container.getPort();
     }
 
     @Override
-    public NameNodeContainer getContainer() {
-        return nameNodeContainer;
-    }
-
-    @Override
-    public void registerProperties() {
-        System.setProperty(HDFSProperties.HDFS_HOST, getHDFSHost());
-        System.getProperty(HDFSProperties.HDFS_PORT, String.valueOf(getPort()));
+    public HDFSContainer getContainer() {
+        return container;
     }
 
     @Override
     public void initialize() {
-        nameNodeContainer.start();
+        LOG.info("Trying to start the HDFS container");
+        container.start();
 
         registerProperties();
-
-        String hdfsNameNodeWeb = getNameNodeWebAddress();
-        LOG.info("HDFS Name node web UI running at address http://{}", hdfsNameNodeWeb);
-
-        dataNodeContainer.start();
-
-        String hdfsDataNodeWeb = getHdfsDataNodeWeb();
-        LOG.info("HDFS Data node web UI running at address http://{}", hdfsDataNodeWeb);
-        LOG.info("HDFS Data node running at address {}:{}", getHDFSHost(), getPort());
-    }
-
-    private String getHdfsDataNodeWeb() {
-        return dataNodeContainer.getHost() + ":" + dataNodeContainer.getHttpPort();
-    }
-
-    private String getNameNodeWebAddress() {
-        return nameNodeContainer.getHost() + ":" + nameNodeContainer.getHttpPort();
     }
 
     @Override
     public void shutdown() {
-        dataNodeContainer.stop();
-        nameNodeContainer.stop();
+        LOG.info("Stopping the HDFS container");
+        container.stop();
+    }
+
+    @Override
+    public void registerProperties() {
+        // NO-OP
     }
 }

@@ -27,14 +27,15 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.hdfs.HdfsTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultScheduledPollConsumerScheduler;
+import org.apache.camel.test.infra.hdfs.v2.services.HDFSService;
+import org.apache.camel.test.infra.hdfs.v2.services.HDFSServiceFactory;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.hdfs.MiniDFSCluster;
 import org.apache.hadoop.io.ArrayFile;
 import org.apache.hadoop.io.BooleanWritable;
 import org.apache.hadoop.io.ByteWritable;
@@ -48,53 +49,31 @@ import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.SequenceFile.Writer;
 import org.apache.hadoop.io.Text;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class HdfsConsumerIntegrationIT extends HdfsTestSupport {
-    private static final int ITERATIONS = 200;
+public class HdfsConsumerIntegrationIT extends CamelTestSupport {
+    @RegisterExtension
+    public static HDFSService service = HDFSServiceFactory.createSingletonService();
 
-    private MiniDFSCluster cluster;
-    private FileSystem fs;
-    private Configuration conf;
-    private Path dir;
+    private static final int ITERATIONS = 200;
 
     @Override
     public boolean isUseRouteBuilder() {
         return false;
     }
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        checkTest();
-
-        conf = new Configuration();
-        conf.set("dfs.namenode.fs-limits.max-directory-items", "1048576");
-        cluster = new MiniDFSCluster.Builder(conf).nameNodePort(9000).numDataNodes(3).format(true).build();
-        cluster.waitActive();
-
-        dir = new Path("hdfs://localhost:9000/tmp/test");
-        fs = FileSystem.get(dir.toUri(), conf);
-        fs.mkdirs(dir);
-
-        // must be able to get security configuration
-        try {
-            javax.security.auth.login.Configuration.getConfiguration();
-        } catch (Exception e) {
-            return;
-        }
-
-        super.setUp();
-    }
-
     @Test
     public void testSimpleConsumer() throws Exception {
-        final String file = "test-camel-normal-file";
-        try (FSDataOutputStream out = fs.create(new Path(dir, file))) {
+        final Path file = new Path(
+                String.format("hdfs://%s:%d/tmp/test/test-camel-normal-file",
+                        service.getHDFSHost(), service.getPort()));
+        Configuration conf = new Configuration();
+        FileSystem fs = FileSystem.get(file.toUri(), conf);
+        try (FSDataOutputStream out = fs.create(file)) {
             for (int i = 0; i < 1024; ++i) {
                 out.write(("PIPPO" + i).getBytes("UTF-8"));
                 out.flush();
@@ -106,7 +85,7 @@ public class HdfsConsumerIntegrationIT extends HdfsTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                fromF("%s?pattern=%s&fileSystemType=HDFS&chunkSize=4096&initialDelay=0", dir.toUri(), file)
+                from(file.toUri() + "?fileSystemType=HDFS&chunkSize=4096&initialDelay=0")
                         .to("mock:result");
             }
         });
@@ -117,7 +96,11 @@ public class HdfsConsumerIntegrationIT extends HdfsTestSupport {
 
     @Test
     public void testConcurrentConsumers() throws Exception {
-        final Path dir = new Path(this.dir, "multiple-consumers");
+        final Path dir = new Path(
+                String.format("hdfs://%s:%d/tmp/test/multiple-consumers",
+                        service.getHDFSHost(), service.getPort()));
+        Configuration conf = new Configuration();
+        FileSystem fs = FileSystem.get(dir.toUri(), conf);
         fs.mkdirs(dir);
         for (int i = 1; i <= ITERATIONS; i++) {
             try (FSDataOutputStream fos = fs.create(new Path(dir, String.format("file-%04d.txt", i)))) {
@@ -138,18 +121,14 @@ public class HdfsConsumerIntegrationIT extends HdfsTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from(dir.toUri()
-                     + "?pattern=*.txt&fileSystemType=HDFS&chunkSize=100&initialDelay=0")
-                             .to("mock:result");
-                from(dir.toUri()
-                     + "?pattern=*.txt&fileSystemType=HDFS&chunkSize=200&initialDelay=0")
-                             .to("mock:result");
-                from(dir.toUri()
-                     + "?pattern=*.txt&fileSystemType=HDFS&chunkSize=300&initialDelay=0")
-                             .to("mock:result");
-                from(dir.toUri()
-                     + "pattern=*.txt&fileSystemType=HDFS&chunkSize=400&initialDelay=0")
-                             .to("mock:result");
+                from(dir.toUri() + "?pattern=*.txt&fileSystemType=HDFS&chunkSize=100&initialDelay=0")
+                        .to("mock:result");
+                from(dir.toUri() + "?pattern=*.txt&fileSystemType=HDFS&chunkSize=200&initialDelay=0")
+                        .to("mock:result");
+                from(dir.toUri() + "?pattern=*.txt&fileSystemType=HDFS&chunkSize=300&initialDelay=0")
+                        .to("mock:result");
+                from(dir.toUri() + "?pattern=*.txt&fileSystemType=HDFS&chunkSize=400&initialDelay=0")
+                        .to("mock:result");
             }
         });
         context.start();
@@ -159,13 +138,17 @@ public class HdfsConsumerIntegrationIT extends HdfsTestSupport {
         latch.await(30, TimeUnit.SECONDS);
 
         resultEndpoint.assertIsSatisfied();
-        assertEquals(fileNames.size(), ITERATIONS);
+        assertEquals(ITERATIONS, fileNames.size());
     }
 
     @Test
     public void testSimpleConsumerWithEmptyFile() throws Exception {
-        final String file = "test-camel-normal-file";
-        fs.createNewFile(new Path(dir, file));
+        final Path file = new Path(
+                String.format("hdfs://%s:%d/tmp/test/test-camel-normal-file",
+                        service.getHDFSHost(), service.getPort()));
+        Configuration conf = new Configuration();
+        FileSystem fs = FileSystem.get(file.toUri(), conf);
+        fs.createNewFile(file);
 
         MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
         // TODO: See comment from Claus at ticket: https://issues.apache.org/jira/browse/CAMEL-8434
@@ -173,7 +156,7 @@ public class HdfsConsumerIntegrationIT extends HdfsTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                fromF("%s?pattern=%s&fileSystemType=HDFS&chunkSize=4096&initialDelay=0", dir.toUri(), file)
+                from(file.toUri() + "?fileSystemType=HDFS&chunkSize=4096&initialDelay=0")
                         .to("mock:result");
             }
         });
@@ -182,15 +165,18 @@ public class HdfsConsumerIntegrationIT extends HdfsTestSupport {
         Thread.sleep(2000);
 
         resultEndpoint.assertIsSatisfied();
-        assertEquals(
-                resultEndpoint.getReceivedExchanges().get(0).getIn().getBody(ByteArrayOutputStream.class).toByteArray().length,
-                0);
+        assertEquals(0,
+                resultEndpoint.getReceivedExchanges().get(0).getIn().getBody(ByteArrayOutputStream.class).toByteArray().length);
     }
 
     @Test
     public void testSimpleConsumerFileWithSizeEqualToNChunks() throws Exception {
-        final String file = "test-camel-normal-file";
-        try (FSDataOutputStream out = fs.create(new Path(dir, file))) {
+        final Path file = new Path(
+                String.format("hdfs://%s:%d/tmp/test/test-camel-normal-file",
+                        service.getHDFSHost(), service.getPort()));
+        Configuration conf = new Configuration();
+        FileSystem fs = FileSystem.get(file.toUri(), conf);
+        try (FSDataOutputStream out = fs.create(file)) {
             // size = 5 times chunk size = 210 bytes
             for (int i = 0; i < 42; ++i) {
                 out.write(new byte[] { 0x61, 0x62, 0x63, 0x64, 0x65 });
@@ -203,22 +189,23 @@ public class HdfsConsumerIntegrationIT extends HdfsTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                fromF("%s?pattern=%s&fileSystemType=HDFS&chunkSize=42&initialDelay=0", dir.toUri(), file)
-                        .to("mock:result");
+                from(file.toUri() + "?fileSystemType=HDFS&chunkSize=42&initialDelay=0").to("mock:result");
             }
         });
         context.start();
 
         resultEndpoint.assertIsSatisfied();
-        assertEquals(
-                resultEndpoint.getReceivedExchanges().get(0).getIn().getBody(ByteArrayOutputStream.class).toByteArray().length,
-                42);
+        assertEquals(42,
+                resultEndpoint.getReceivedExchanges().get(0).getIn().getBody(ByteArrayOutputStream.class).toByteArray().length);
     }
 
     @Test
     public void testSimpleConsumerWithEmptySequenceFile() throws Exception {
-        final String file = "test-camel-sequence-file";
-        try (SequenceFile.Writer writer = createWriter(conf, new Path(dir, file), NullWritable.class, BooleanWritable.class)) {
+        final Path file = new Path(
+                String.format("hdfs://%s:%d/tmp/test/test-camel-sequence-file",
+                        service.getHDFSHost(), service.getPort()));
+        Configuration conf = new Configuration();
+        try (SequenceFile.Writer writer = createWriter(conf, file, NullWritable.class, BooleanWritable.class)) {
             writer.sync();
         }
 
@@ -227,9 +214,8 @@ public class HdfsConsumerIntegrationIT extends HdfsTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                fromF("%s?pattern=%s&fileSystemType=HDFS&fileType=SEQUENCE_FILE&chunkSize=4096&initialDelay=0", dir.toUri(),
-                        file)
-                                .to("mock:result");
+                from(file.toUri() + "?fileSystemType=HDFS&fileType=SEQUENCE_FILE&chunkSize=4096&initialDelay=0")
+                        .to("mock:result");
             }
         });
         context.start();
@@ -239,10 +225,12 @@ public class HdfsConsumerIntegrationIT extends HdfsTestSupport {
 
     @Test
     public void testReadWithReadSuffix() throws Exception {
-        final String file = "test-camel-boolean";
+        final Path dir = new Path(String.format("hdfs://%s:%d/tmp/test/", service.getHDFSHost(), service.getPort()));
+        final Path file = new Path(dir, "test-camel-boolean");
+        Configuration conf = new Configuration();
         NullWritable keyWritable = NullWritable.get();
         BooleanWritable valueWritable = new BooleanWritable(true);
-        try (SequenceFile.Writer writer = createWriter(conf, new Path(dir, file), NullWritable.class, BooleanWritable.class)) {
+        try (SequenceFile.Writer writer = createWriter(conf, file, NullWritable.class, BooleanWritable.class)) {
             writer.append(keyWritable, valueWritable);
             writer.sync();
         }
@@ -267,23 +255,27 @@ public class HdfsConsumerIntegrationIT extends HdfsTestSupport {
         scheduler.getScheduledExecutorService().shutdown();
         scheduler.getScheduledExecutorService().awaitTermination(5000, TimeUnit.MILLISECONDS);
 
+        FileSystem fs = FileSystem.get(dir.toUri(), conf);
         assertEquals(fs.listStatus(dir).length, 1);
-        assertTrue(fs.delete(new Path(dir, file + ".handled")));
+        assertTrue(fs.delete(new Path(file.toUri() + ".handled")));
     }
 
     @Test
     public void testReadBoolean() throws Exception {
-        final String file = "test-camel-boolean";
+        final Path file = new Path(
+                String.format("hdfs://%s:%d/tmp/test/test-camel-boolean",
+                        service.getHDFSHost(), service.getPort()));
+        Configuration conf = new Configuration();
         NullWritable keyWritable = NullWritable.get();
         BooleanWritable valueWritable = new BooleanWritable(true);
-        try (SequenceFile.Writer writer = createWriter(conf, new Path(dir, file), NullWritable.class, BooleanWritable.class)) {
+        try (SequenceFile.Writer writer = createWriter(conf, file, NullWritable.class, BooleanWritable.class)) {
             writer.append(keyWritable, valueWritable);
             writer.sync();
         }
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                fromF("%s?pattern=%s&fileSystemType=HDFS&fileType=SEQUENCE_FILE&initialDelay=0", dir.toUri(), file)
+                from(file.toUri() + "?fileSystemType=HDFS&fileType=SEQUENCE_FILE&initialDelay=0")
                         .to("mock:result");
             }
         });
@@ -296,10 +288,13 @@ public class HdfsConsumerIntegrationIT extends HdfsTestSupport {
 
     @Test
     public void testReadByte() throws Exception {
-        final String file = "test-camel-byte";
+        final Path file = new Path(
+                String.format("hdfs://%s:%d/tmp/test/test-camel-byte",
+                        service.getHDFSHost(), service.getPort()));
+        Configuration conf = new Configuration();
         NullWritable keyWritable = NullWritable.get();
         ByteWritable valueWritable = new ByteWritable((byte) 3);
-        try (SequenceFile.Writer writer = createWriter(conf, new Path(dir, file), NullWritable.class, ByteWritable.class)) {
+        try (SequenceFile.Writer writer = createWriter(conf, file, NullWritable.class, ByteWritable.class)) {
             writer.append(keyWritable, valueWritable);
             writer.sync();
         }
@@ -310,7 +305,7 @@ public class HdfsConsumerIntegrationIT extends HdfsTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                fromF("%s?pattern=%s&fileSystemType=HDFS&fileType=SEQUENCE_FILE&initialDelay=0", dir.toUri(), file)
+                from(file.toUri() + "?fileSystemType=HDFS&fileType=SEQUENCE_FILE&initialDelay=0")
                         .to("mock:result");
             }
         });
@@ -321,10 +316,13 @@ public class HdfsConsumerIntegrationIT extends HdfsTestSupport {
 
     @Test
     public void testReadFloat() throws Exception {
-        final String file = "test-camel-float";
+        final Path file = new Path(
+                String.format("hdfs://%s:%d/tmp/test/test-camel-float",
+                        service.getHDFSHost(), service.getPort()));
+        Configuration conf = new Configuration();
         NullWritable keyWritable = NullWritable.get();
         FloatWritable valueWritable = new FloatWritable(3.1415926535f);
-        try (SequenceFile.Writer writer = createWriter(conf, new Path(dir, file), NullWritable.class, FloatWritable.class)) {
+        try (SequenceFile.Writer writer = createWriter(conf, file, NullWritable.class, FloatWritable.class)) {
             writer.append(keyWritable, valueWritable);
             writer.sync();
         }
@@ -334,7 +332,7 @@ public class HdfsConsumerIntegrationIT extends HdfsTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                fromF("%s?pattern=%s&fileSystemType=HDFS&fileType=SEQUENCE_FILE&initialDelay=0", dir.toUri(), file)
+                from(file.toUri() + "?fileSystemType=HDFS&fileType=SEQUENCE_FILE&initialDelay=0")
                         .to("mock:result");
             }
         });
@@ -345,10 +343,13 @@ public class HdfsConsumerIntegrationIT extends HdfsTestSupport {
 
     @Test
     public void testReadDouble() throws Exception {
-        final String file = "test-camel-double";
+        final Path file = new Path(
+                String.format("hdfs://%s:%d/tmp/test/test-camel-double",
+                        service.getHDFSHost(), service.getPort()));
+        Configuration conf = new Configuration();
         NullWritable keyWritable = NullWritable.get();
         DoubleWritable valueWritable = new DoubleWritable(3.1415926535);
-        try (SequenceFile.Writer writer = createWriter(conf, new Path(dir, file), NullWritable.class, DoubleWritable.class)) {
+        try (SequenceFile.Writer writer = createWriter(conf, file, NullWritable.class, DoubleWritable.class)) {
             writer.append(keyWritable, valueWritable);
             writer.sync();
         }
@@ -358,7 +359,7 @@ public class HdfsConsumerIntegrationIT extends HdfsTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                fromF("%s?pattern=%s&fileSystemType=HDFS&fileType=SEQUENCE_FILE&initialDelay=0", dir.toUri(), file)
+                from(file.toUri() + "?fileSystemType=HDFS&fileType=SEQUENCE_FILE&initialDelay=0")
                         .to("mock:result");
             }
         });
@@ -369,10 +370,13 @@ public class HdfsConsumerIntegrationIT extends HdfsTestSupport {
 
     @Test
     public void testReadInt() throws Exception {
-        final String file = "test-camel-int";
+        final Path file = new Path(
+                String.format("hdfs://%s:%d/tmp/test/test-camel-int",
+                        service.getHDFSHost(), service.getPort()));
+        Configuration conf = new Configuration();
         NullWritable keyWritable = NullWritable.get();
         IntWritable valueWritable = new IntWritable(314159265);
-        try (SequenceFile.Writer writer = createWriter(conf, new Path(dir, file), NullWritable.class, IntWritable.class)) {
+        try (SequenceFile.Writer writer = createWriter(conf, file, NullWritable.class, IntWritable.class)) {
             writer.append(keyWritable, valueWritable);
             writer.sync();
         }
@@ -382,7 +386,7 @@ public class HdfsConsumerIntegrationIT extends HdfsTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                fromF("%s?pattern=%s&fileSystemType=HDFS&fileType=SEQUENCE_FILE&initialDelay=0", dir.toUri(), file)
+                from(file.toUri() + "?fileSystemType=HDFS&fileType=SEQUENCE_FILE&initialDelay=0")
                         .to("mock:result");
             }
         });
@@ -393,10 +397,13 @@ public class HdfsConsumerIntegrationIT extends HdfsTestSupport {
 
     @Test
     public void testReadLong() throws Exception {
-        final String file = "test-camel-long";
+        final Path file = new Path(
+                String.format("hdfs://%s:%d/tmp/test/test-camel-long",
+                        service.getHDFSHost(), service.getPort()));
+        Configuration conf = new Configuration();
         NullWritable keyWritable = NullWritable.get();
         LongWritable valueWritable = new LongWritable(31415926535L);
-        try (SequenceFile.Writer writer = createWriter(conf, new Path(dir, file), NullWritable.class, LongWritable.class)) {
+        try (SequenceFile.Writer writer = createWriter(conf, file, NullWritable.class, LongWritable.class)) {
             writer.append(keyWritable, valueWritable);
             writer.sync();
         }
@@ -406,7 +413,7 @@ public class HdfsConsumerIntegrationIT extends HdfsTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                fromF("%s?pattern=%s&fileSystemType=HDFS&fileType=SEQUENCE_FILE&initialDelay=0", dir.toUri(), file)
+                from(file.toUri() + "?fileSystemType=HDFS&fileType=SEQUENCE_FILE&initialDelay=0")
                         .to("mock:result");
             }
         });
@@ -417,10 +424,13 @@ public class HdfsConsumerIntegrationIT extends HdfsTestSupport {
 
     @Test
     public void testReadBytes() throws Exception {
-        final String file = "test-camel-bytes";
+        final Path file = new Path(
+                String.format("hdfs://%s:%d/tmp/test/test-camel-bytes",
+                        service.getHDFSHost(), service.getPort()));
+        Configuration conf = new Configuration();
         NullWritable keyWritable = NullWritable.get();
         BytesWritable valueWritable = new BytesWritable("CIAO!".getBytes());
-        try (SequenceFile.Writer writer = createWriter(conf, new Path(dir, file), NullWritable.class, BytesWritable.class)) {
+        try (SequenceFile.Writer writer = createWriter(conf, file, NullWritable.class, BytesWritable.class)) {
             writer.append(keyWritable, valueWritable);
             writer.sync();
         }
@@ -430,7 +440,7 @@ public class HdfsConsumerIntegrationIT extends HdfsTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                fromF("%s?pattern=%s&fileSystemType=HDFS&fileType=SEQUENCE_FILE&initialDelay=0", dir.toUri(), file)
+                from(file.toUri() + "?fileSystemType=HDFS&fileType=SEQUENCE_FILE&initialDelay=0")
                         .to("mock:result");
             }
         });
@@ -441,10 +451,13 @@ public class HdfsConsumerIntegrationIT extends HdfsTestSupport {
 
     @Test
     public void testReadString() throws Exception {
-        final String file = "test-camel-string";
+        final Path file = new Path(
+                String.format("hdfs://%s:%d/tmp/test/test-camel-string",
+                        service.getHDFSHost(), service.getPort()));
+        Configuration conf = new Configuration();
         NullWritable keyWritable = NullWritable.get();
         Text valueWritable = new Text("CIAO!");
-        try (SequenceFile.Writer writer = createWriter(conf, new Path(dir, file), NullWritable.class, Text.class)) {
+        try (SequenceFile.Writer writer = createWriter(conf, file, NullWritable.class, Text.class)) {
             writer.append(keyWritable, valueWritable);
             writer.sync();
         }
@@ -454,7 +467,7 @@ public class HdfsConsumerIntegrationIT extends HdfsTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                fromF("%s?pattern=%s&fileSystemType=HDFS&fileType=SEQUENCE_FILE&initialDelay=0", dir.toUri(), file)
+                from(file.toUri() + "?fileSystemType=HDFS&fileType=SEQUENCE_FILE&initialDelay=0")
                         .to("mock:result");
             }
         });
@@ -465,9 +478,15 @@ public class HdfsConsumerIntegrationIT extends HdfsTestSupport {
 
     @Test
     public void testReadStringArrayFile() throws Exception {
-        final String file = "test-camel-string";
+        final Path dir = new Path(
+                String.format("hdfs://%s:%d/tmp/test",
+                        service.getHDFSHost(), service.getPort()));
+        Configuration conf = new Configuration();
+        FileSystem fs = FileSystem.get(dir.toUri(), conf);
+        fs.mkdirs(dir);
         Text valueWritable = new Text("CIAO!");
-        try (ArrayFile.Writer writer = new ArrayFile.Writer(conf, fs, dir.toUri() + "/" + file, Text.class)) {
+        try (ArrayFile.Writer writer = new ArrayFile.Writer(
+                conf, fs, new Path(dir, "test-camel-string1").toString(), Text.class)) {
             writer.append(valueWritable);
         }
 
@@ -476,7 +495,7 @@ public class HdfsConsumerIntegrationIT extends HdfsTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                fromF("%s?pattern=%s&fileSystemType=HDFS&fileType=ARRAY_FILE&initialDelay=0", dir.toUri(), file)
+                from(dir.toUri() + "?fileSystemType=HDFS&fileType=ARRAY_FILE&initialDelay=0")
                         .to("mock:result");
             }
         });
@@ -489,9 +508,11 @@ public class HdfsConsumerIntegrationIT extends HdfsTestSupport {
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
-        if (cluster != null) {
-            cluster.shutdown();
-        }
+        Thread.sleep(100);
+        Configuration conf = new Configuration();
+        Path dir = new Path(String.format("hdfs://%s:%d/tmp/test", service.getHDFSHost(), service.getPort()));
+        FileSystem fs = FileSystem.get(dir.toUri(), conf);
+        fs.delete(dir, true);
     }
 
     private Writer createWriter(

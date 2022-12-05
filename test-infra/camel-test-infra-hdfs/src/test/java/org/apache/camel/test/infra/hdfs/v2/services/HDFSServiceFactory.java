@@ -18,21 +18,56 @@
 package org.apache.camel.test.infra.hdfs.v2.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
 public final class HDFSServiceFactory {
+
+    static class SingletonHDFSService extends SingletonService<HDFSService> implements HDFSService {
+        public SingletonHDFSService(HDFSService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public String getHDFSHost() {
+            return getService().getHDFSHost();
+        }
+
+        @Override
+        public int getPort() {
+            return getService().getPort();
+        }
+
+        @Override
+        public void beforeAll(ExtensionContext extensionContext) {
+            addToStore(extensionContext);
+        }
+
+        @Override
+        public void afterAll(ExtensionContext extensionContext) {
+            // NO-OP
+        }
+    }
+
+    private static SimpleTestServiceBuilder<HDFSService> instance;
+    private static HDFSService service;
 
     private HDFSServiceFactory() {
 
     }
 
-    public static HDFSService createService() {
-        return builder()
-                .addLocalMapping(ContainerLocalHDFSService::new)
-                .addRemoteMapping(RemoteHDFSService::new)
-                .build();
-    }
-
     public static SimpleTestServiceBuilder<HDFSService> builder() {
         return new SimpleTestServiceBuilder<>("hdfs");
+    }
+
+    public static HDFSService createSingletonService() {
+        if (service == null) {
+            if (instance == null) {
+                instance = builder();
+                instance.addLocalMapping(() -> new SingletonHDFSService(new ContainerLocalHDFSService(), "hdfs"));
+            }
+            service = instance.build();
+        }
+        return service;
     }
 }
