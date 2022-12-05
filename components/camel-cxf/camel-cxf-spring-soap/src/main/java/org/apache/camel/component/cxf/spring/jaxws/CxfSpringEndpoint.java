@@ -322,39 +322,35 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
                     .getBean(AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME,
                             ApplicationEventMulticaster.class);
             aem.removeApplicationListener(cxfSpringBusListener);
-            ApplicationListener listener = new ApplicationListener() {
-                public void onApplicationEvent(final ApplicationEvent event) {
-                    new Thread() {
-                        public void run() {
-                            if (event instanceof ContextClosedEvent && bus.getState() == BusState.RUNNING) {
 
-                                try {
-                                    boolean done = false;
-                                    ShutdownStrategy shutdownStrategy = ((DefaultCamelContext) getCamelContext())
-                                            .getShutdownStrategy();
-                                    while (!done && !shutdownStrategy.hasTimeoutOccurred()) {
-                                        int inflight = getCamelContext().getInflightRepository().size();
-                                        if (inflight != 0) {
-                                            Thread.sleep(1000);
-                                        } else {
-                                            done = true;
-                                        }
+            abstractApplicationContext.addApplicationListener((final ApplicationEvent event) -> {
+                new Thread() {
+                    public void run() {
+                        if (event instanceof ContextClosedEvent && bus.getState() == BusState.RUNNING) {
+
+                            try {
+                                boolean done = false;
+                                ShutdownStrategy shutdownStrategy = ((DefaultCamelContext) getCamelContext())
+                                        .getShutdownStrategy();
+                                while (!done && !shutdownStrategy.hasTimeoutOccurred()) {
+                                    int inflight = getCamelContext().getInflightRepository().size();
+                                    if (inflight != 0) {
+                                        Thread.sleep(1000);
+                                    } else {
+                                        done = true;
                                     }
-
-                                } catch (Exception e) {
-
-                                    LOG.debug("Error when enabling SpringBus shutdown gracefully", e);
                                 }
-                                springBus.onApplicationEvent(event);
-                            } else {
-                                springBus.onApplicationEvent(event);
-                            }
-                        }
-                    }.start();
 
-                }
-            };
-            abstractApplicationContext.addApplicationListener(listener);
+                            } catch (Exception e) {
+                                LOG.debug("Error when enabling SpringBus shutdown gracefully", e);
+                            }
+                            springBus.onApplicationEvent(event);
+                        } else {
+                            springBus.onApplicationEvent(event);
+                        }
+                    }
+                }.start();
+            });
         }
 
     }
