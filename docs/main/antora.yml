@@ -20,3 +20,4 @@ title: Camel Core
 version: ~
 nav:
 - modules/ROOT/nav.adoc
+- modules/getting-started/nav.adoc
