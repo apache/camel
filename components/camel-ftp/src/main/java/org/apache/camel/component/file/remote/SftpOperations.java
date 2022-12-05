@@ -1171,18 +1171,16 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         final Socket[] sockp = new Socket[1];
         final Exception[] ee = new Exception[1];
         String message = "";
-        Thread tmp = new Thread(new Runnable() {
-            public void run() {
-                sockp[0] = null;
-                try {
-                    sockp[0] = new Socket(InetAddress.getByName(host), port, InetAddress.getByName(bindAddress), 0);
-                } catch (Exception e) {
-                    ee[0] = e;
-                    if (sockp[0] != null && sockp[0].isConnected()) {
-                        IOHelper.close(sockp[0]);
-                    }
-                    sockp[0] = null;
+        Thread tmp = new Thread(() -> {
+            sockp[0] = null;
+            try {
+                sockp[0] = new Socket(InetAddress.getByName(host), port, InetAddress.getByName(bindAddress), 0);
+            } catch (Exception e) {
+                ee[0] = e;
+                if (sockp[0] != null && sockp[0].isConnected()) {
+                    IOHelper.close(sockp[0]);
                 }
+                sockp[0] = null;
             }
         });
         tmp.setName("Opening Socket " + host);
