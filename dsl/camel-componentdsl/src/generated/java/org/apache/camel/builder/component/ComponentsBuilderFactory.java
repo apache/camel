@@ -2214,7 +2214,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * InfluxDB (camel-influxdb)
-     * Interact with InfluxDB, a time series database.
+     * Interact with InfluxDB v1, a time series database.
      * 
      * Category: database
      * Since: 2.18
@@ -2224,6 +2224,19 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.InfluxdbComponentBuilderFactory.InfluxdbComponentBuilder influxdb() {
         return org.apache.camel.builder.component.dsl.InfluxdbComponentBuilderFactory.influxdb();
+    }
+    /**
+     * InfluxDB2 (camel-influxdb2)
+     * Interact with InfluxDB v2, a time series database.
+     * 
+     * Category: database
+     * Since: 3.20
+     * Maven coordinates: org.apache.camel:camel-influxdb2
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.Influxdb2ComponentBuilderFactory.Influxdb2ComponentBuilder influxdb2() {
+        return org.apache.camel.builder.component.dsl.Influxdb2ComponentBuilderFactory.influxdb2();
     }
     /**
      * IOTA (camel-iota)

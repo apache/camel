@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -66,6 +67,7 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
+import static org.apache.camel.dsl.jbang.core.common.GistHelper.asGistSingleUrl;
 import static org.apache.camel.dsl.jbang.core.common.GistHelper.fetchGistUrls;
 import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.asGithubSingleUrl;
 import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.fetchGithubUrls;
@@ -170,7 +172,7 @@ class Run extends CamelCommand {
     String jfrProfile;
 
     @Option(names = { "--local-kamelet-dir" },
-            description = "Local directory for loading Kamelets (takes precedence). Multiple directories can be specified separated by comma.")
+            description = "Local directory (or github link) for loading Kamelets (takes precedence). Multiple directories can be specified separated by comma.")
     String localKameletDir;
 
     @Option(names = { "--port" }, description = "Embeds a local HTTP server on this port")
@@ -187,6 +189,9 @@ class Run extends CamelCommand {
 
     @Option(names = { "--open-api" }, description = "Adds an OpenAPI spec from the given file")
     String openapi;
+
+    @Option(names = { "--code" }, description = "Run the given string as Java DSL route")
+    String code;
 
     public Run(CamelJBangMain main) {
         super(main);
@@ -284,6 +289,13 @@ class Run extends CamelCommand {
         // generate open-api early
         if (openapi != null) {
             generateOpenApi();
+        }
+        // route code as option
+        if (code != null) {
+            // store code in temporary file
+            String codeFile = loadFromCode(code);
+            // use code as first file
+            files.add(0, codeFile);
         }
 
         // if no specific file to run then try to auto-detect
@@ -551,6 +563,23 @@ class Run extends CamelCommand {
         return main.getExitCode();
     }
 
+    private String loadFromCode(String code) throws IOException {
+        String fn = WORK_DIR + "/CodeRoute.java";
+        InputStream is = Run.class.getClassLoader().getResourceAsStream("templates/code-java.tmpl");
+        String content = IOHelper.loadText(is);
+        IOHelper.close(is);
+        // need to replace single quote as double quotes and end with semicolon
+        code = code.replace("'", "\"");
+        code = code.trim();
+        if (!code.endsWith(";")) {
+            code = code + ";";
+        }
+        content = content.replaceFirst("\\{\\{ \\.Name }}", "CodeRoute");
+        content = content.replaceFirst("\\{\\{ \\.Code }}", code);
+        Files.write(Paths.get(fn), content.getBytes(StandardCharsets.UTF_8));
+        return "file:" + fn;
+    }
+
     private String evalGistSource(KameletMain main, String file) throws Exception {
         StringJoiner routes = new StringJoiner(",");
         StringJoiner kamelets = new StringJoiner(",");
@@ -638,7 +667,7 @@ class Run extends CamelCommand {
         return file;
     }
 
-    private KameletMain createMainInstance() {
+    private KameletMain createMainInstance() throws Exception {
         KameletMain main;
         if (localKameletDir == null || localKameletDir.isEmpty()) {
             main = new KameletMain();
@@ -646,8 +675,14 @@ class Run extends CamelCommand {
             StringJoiner sj = new StringJoiner(",");
             String[] parts = localKameletDir.split(",");
             for (String part : parts) {
+                // automatic map github https urls to github resolver
+                if (part.startsWith("https://github.com/")) {
+                    part = asGithubSingleUrl(part);
+                } else if (part.startsWith("https://gist.github.com/")) {
+                    part = asGistSingleUrl(part);
+                }
                 part = FileUtil.compactPath(part);
-                if (!ResourceHelper.hasScheme(part)) {
+                if (!ResourceHelper.hasScheme(part) && !part.startsWith("github:")) {
                     part = "file:" + part;
                 }
                 sj.add(part);
