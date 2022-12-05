@@ -481,7 +481,7 @@ public interface MinioEndpointBuilderFactory {
             return this;
         }
         /**
-         * Source bucket name.
+         * Destination bucket name.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -496,7 +496,7 @@ public interface MinioEndpointBuilderFactory {
             return this;
         }
         /**
-         * Source object name.
+         * Destination object name.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
