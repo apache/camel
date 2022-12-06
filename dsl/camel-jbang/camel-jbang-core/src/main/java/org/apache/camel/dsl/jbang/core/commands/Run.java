@@ -95,7 +95,7 @@ class Run extends CamelCommand {
 
     //CHECKSTYLE:OFF
     @Parameters(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
-                arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
+            arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
     Path[] filePaths; // Defined only for file path completion; the field never used
 
     List<String> files = new ArrayList<>();
@@ -737,9 +737,10 @@ class Run extends CamelCommand {
                     if ("xml".equals(ext2)) {
                         return data.contains("<routes") || data.contains("<routeConfiguration") || data.contains("<rests");
                     } else {
-                        // also support kamelet bindings
+                        // also support Camel K integrations and Kamelet bindings
                         return data.contains("- from:") || data.contains("- route:") || data.contains("- route-configuration:")
-                                || data.contains("- rest:") || data.contains("KameletBinding");
+                                || data.contains("- rest:") || data.contains("KameletBinding")
+                                || data.contains("kind: Integration");
                     }
                 }
             }
