@@ -113,8 +113,9 @@ public class CamelCount extends ProcessBaseCommand {
                             builder.append(r.total);
                         }
                         if (fail) {
-                            if (total)
+                            if (total) {
                                 builder.append(",");
+                            }
                             builder.append(r.failed);
                         }
                         if (index < rows.size() - 1) {
