@@ -33,7 +33,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "count",
-         description = "Get total and failed exchanges for a running integration")
+         description = "Get total and failed exchanges for running integrations")
 public class CamelCount extends ProcessBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
@@ -44,11 +44,11 @@ public class CamelCount extends ProcessBaseCommand {
     String sort;
 
     @CommandLine.Option(names = { "--total" },
-            description = "Get the total exchanges from a running integration")
+                        description = "Get the total exchanges from a running integration")
     boolean total;
 
     @CommandLine.Option(names = { "--fail" },
-            description = "Get the failed exchanges from a running integration")
+                        description = "Get the failed exchanges from a running integration")
     boolean fail;
 
     public CamelCount(CamelJBangMain main) {
@@ -93,7 +93,8 @@ public class CamelCount extends ProcessBaseCommand {
             if (!rows.isEmpty()) {
                 System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                         new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
                                 .with(r -> r.name),
                         new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
                         new Column().header("TOTAL").with(r -> r.total),
@@ -104,8 +105,7 @@ public class CamelCount extends ProcessBaseCommand {
             if (total || fail) {
                 if (!rows.isEmpty()) {
                     int index = 0;
-                    for (Row r: rows
-                         ) {
+                    for (Row r : rows) {
                         if (rows.size() > 1) {
                             builder.append(r.name).append(",");
                         }
@@ -113,10 +113,11 @@ public class CamelCount extends ProcessBaseCommand {
                             builder.append(r.total);
                         }
                         if (fail) {
-                            if (total) builder.append(",");
+                            if (total)
+                                builder.append(",");
                             builder.append(r.failed);
                         }
-                        if (index < rows.size()-1) {
+                        if (index < rows.size() - 1) {
                             builder.append(System.getProperty("line.separator"));
                         }
                         index++;
@@ -127,18 +128,6 @@ public class CamelCount extends ProcessBaseCommand {
         }
 
         return 0;
-    }
-
-    private String extractPlatform(ProcessHandle ph, JsonObject runtime) {
-        String answer = runtime != null ? runtime.getString("platform") : null;
-        if ("Camel".equals(answer)) {
-            // generic camel, we need to check if we run in JBang
-            String cl = ph.info().commandLine().orElse("");
-            if (cl.contains("main.CamelJBang run")) {
-                answer = "JBang";
-            }
-        }
-        return answer;
     }
 
     protected int sortRow(Row o1, Row o2) {
