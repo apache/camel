@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * database.
  */
 @UriEndpoint(firstVersion = "3.20.0", scheme = "influxdb2", title = "InfluxDB2",
-             syntax = "influxdb2:connectionBean?org=<org name>&bucket=<bucket name>", category = { Category.DATABASE },
+             syntax = "influxdb2:connectionBean", category = { Category.DATABASE },
              producerOnly = true, headersClass = InfluxDb2Constants.class)
 public class InfluxDb2Endpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(InfluxDb2Endpoint.class);
