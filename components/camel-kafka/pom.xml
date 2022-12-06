@@ -173,6 +173,7 @@
                                     </systemPropertyVariables>
                                     <reuseForks>true</reuseForks>
                                     <reportNameSuffix>kafka-2</reportNameSuffix>
+                                    <excludedGroups>non-abstract</excludedGroups>
                                 </configuration>
                                 <goals>
                                     <goal>integration-test</goal>
