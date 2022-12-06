@@ -24,6 +24,7 @@ import org.apache.camel.component.aries.handler.CredentialDefinitionsServiceHand
 import org.apache.camel.component.aries.handler.CredentialsServiceHandler;
 import org.apache.camel.component.aries.handler.IssueCredentialV1ServiceHandler;
 import org.apache.camel.component.aries.handler.MultitenancyServiceHandler;
+import org.apache.camel.component.aries.handler.OutOfBandServiceHandler;
 import org.apache.camel.component.aries.handler.PresentProofServiceHandler;
 import org.apache.camel.component.aries.handler.RevocationServiceHandler;
 import org.apache.camel.component.aries.handler.SchemasServiceHandler;
@@ -63,6 +64,9 @@ public class HyperledgerAriesProducer extends DefaultProducer {
 
         } else if (service.startsWith("/multitenancy")) {
             serviceHandler = new MultitenancyServiceHandler(getEndpoint());
+
+        } else if (service.startsWith("/out-of-band")) {
+            serviceHandler = new OutOfBandServiceHandler(getEndpoint());
 
         } else if (service.startsWith("/present-proof")) {
             serviceHandler = new PresentProofServiceHandler(getEndpoint());
