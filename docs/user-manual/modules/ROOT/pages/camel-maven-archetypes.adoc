@@ -8,10 +8,6 @@ Camel is distributed with the following archetypes for Maven end users.
 |=======================================================================
 |Archetype |Description
 
-|camel-archetype-blueprint |This archetype is used to
-create a new Maven project for Camel routes to be running in OSGi using
-Blueprint.
-
 |camel-archetype-api-component |This archetype is used for creating a new
 Maven project for Camel xref:components::index.adoc[Components]. Use this if
 there is an API component missing in Camel that you want to create yourself.
