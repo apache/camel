@@ -43,6 +43,14 @@ public class CamelCount extends ProcessBaseCommand {
                         description = "Sort by pid, name or age", defaultValue = "pid")
     String sort;
 
+    @CommandLine.Option(names = { "--total" },
+            description = "Get the total exchanges from a running integration")
+    boolean total;
+
+    @CommandLine.Option(names = { "--fail" },
+            description = "Get the failed exchanges from a running integration")
+    boolean fail;
+
     public CamelCount(CamelJBangMain main) {
         super(main);
     }
@@ -81,14 +89,41 @@ public class CamelCount extends ProcessBaseCommand {
         // sort rows
         rows.sort(this::sortRow);
 
-        if (!rows.isEmpty()) {
-            System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.name),
-                    new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
-                    new Column().header("TOTAL").with(r -> r.total),
-                    new Column().header("FAIL").with(r -> r.failed))));
+        if (!total && !fail) {
+            if (!rows.isEmpty()) {
+                System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                        new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
+                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(r -> r.name),
+                        new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
+                        new Column().header("TOTAL").with(r -> r.total),
+                        new Column().header("FAIL").with(r -> r.failed))));
+            }
+        } else {
+            StringBuilder builder = new StringBuilder();
+            if (total || fail) {
+                if (!rows.isEmpty()) {
+                    int index = 0;
+                    for (Row r: rows
+                         ) {
+                        if (rows.size() > 1) {
+                            builder.append(r.name).append(",");
+                        }
+                        if (total) {
+                            builder.append(r.total);
+                        }
+                        if (fail) {
+                            if (total) builder.append(",");
+                            builder.append(r.failed);
+                        }
+                        if (index < rows.size()-1) {
+                            builder.append(System.getProperty("line.separator"));
+                        }
+                        index++;
+                    }
+                }
+            }
+            System.out.println(builder.toString());
         }
 
         return 0;
