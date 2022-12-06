@@ -269,16 +269,14 @@ public class HBaseEndpoint extends DefaultEndpoint {
      */
     public Table getTable() throws IOException {
         if (userGroupInformation != null) {
-            return userGroupInformation.doAs(new PrivilegedAction<Table>() {
-                @Override
-                public Table run() {
-                    try {
-                        return getComponent().getConnection().getTable(tableNameObj);
-                    } catch (IOException e) {
-                        throw new RuntimeCamelException(e);
-                    }
+            PrivilegedAction<Table> action = () -> {
+                try {
+                    return getComponent().getConnection().getTable(tableNameObj);
+                } catch (IOException e) {
+                    throw new RuntimeCamelException(e);
                 }
-            });
+            };
+            return userGroupInformation.doAs(action);
         } else {
             return getComponent().getConnection().getTable(tableNameObj);
         }
