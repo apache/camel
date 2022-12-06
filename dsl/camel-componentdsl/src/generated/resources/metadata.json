@@ -3632,7 +3632,7 @@
     "version": "3.20.0-SNAPSHOT",
     "scheme": "influxdb2",
     "extendsScheme": "",
-    "syntax": "influxdb2:connectionBean?org=<org name>&bucket=<bucket name>",
+    "syntax": "influxdb2:connectionBean",
     "async": false,
     "api": false,
     "consumerOnly": false,
