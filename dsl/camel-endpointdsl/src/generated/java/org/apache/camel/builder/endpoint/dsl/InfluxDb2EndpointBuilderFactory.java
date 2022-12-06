@@ -304,14 +304,13 @@ public interface InfluxDb2EndpointBuilderFactory {
          * Since: 3.20
          * Maven coordinates: org.apache.camel:camel-influxdb2
          * 
-         * Syntax: <code>influxdb2:connectionBean?org=<org name>&bucket=<bucket
-         * name></code>
+         * Syntax: <code>influxdb2:connectionBean</code>
          * 
          * Path parameter: connectionBean (required)
          * Connection to the Influx database, of class
          * com.influxdb.client.InfluxDBClient.class.
          * 
-         * @param path connectionBean?org=<org name>&bucket=<bucket name>
+         * @param path connectionBean
          * @return the dsl builder
          */
         default InfluxDb2EndpointBuilder influxdb2(String path) {
@@ -325,8 +324,7 @@ public interface InfluxDb2EndpointBuilderFactory {
          * Since: 3.20
          * Maven coordinates: org.apache.camel:camel-influxdb2
          * 
-         * Syntax: <code>influxdb2:connectionBean?org=<org name>&bucket=<bucket
-         * name></code>
+         * Syntax: <code>influxdb2:connectionBean</code>
          * 
          * Path parameter: connectionBean (required)
          * Connection to the Influx database, of class
@@ -334,7 +332,7 @@ public interface InfluxDb2EndpointBuilderFactory {
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path connectionBean?org=<org name>&bucket=<bucket name>
+         * @param path connectionBean
          * @return the dsl builder
          */
         default InfluxDb2EndpointBuilder influxdb2(
