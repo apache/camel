@@ -15,7 +15,7 @@ import org.apache.camel.spi.EndpointUriFactory;
  */
 public class InfluxDb2EndpointUriFactory extends org.apache.camel.support.component.EndpointUriFactorySupport implements EndpointUriFactory {
 
-    private static final String BASE = ":connectionBean?org=<org name>&bucket=<bucket name>";
+    private static final String BASE = ":connectionBean";
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
