@@ -3668,6 +3668,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.RobotframeworkComponentBuilderFactory.robotframework();
     }
     /**
+     * RocketMQ (camel-rocketmq)
+     * Send and receive messages from RocketMQ cluster.
+     * 
+     * Category: messaging
+     * Since: 3.20
+     * Maven coordinates: org.apache.camel:camel-rocketmq
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.RocketmqComponentBuilderFactory.RocketmqComponentBuilder rocketmq() {
+        return org.apache.camel.builder.component.dsl.RocketmqComponentBuilderFactory.rocketmq();
+    }
+    /**
      * RSS (camel-rss)
      * Poll RSS feeds.
      * 

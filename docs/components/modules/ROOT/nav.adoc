@@ -278,6 +278,7 @@
 ** xref:rest-swagger-component.adoc[REST Swagger]
 ** xref:resteasy-component.adoc[Resteasy]
 ** xref:robotframework-component.adoc[Robot Framework]
+** xref:rocketmq-component.adoc[RocketMQ]
 ** xref:rss-component.adoc[RSS]
 ** xref:saga-component.adoc[Saga]
 ** xref:salesforce-component.adoc[Salesforce]

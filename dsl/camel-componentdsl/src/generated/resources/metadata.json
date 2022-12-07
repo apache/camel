@@ -6027,6 +6027,28 @@
     "producerOnly": false,
     "lenientProperties": false
   },
+  "RocketmqComponentBuilderFactory": {
+    "kind": "component",
+    "name": "rocketmq",
+    "title": "RocketMQ",
+    "description": "Send and receive messages from RocketMQ cluster.",
+    "deprecated": false,
+    "firstVersion": "3.20.0",
+    "label": "messaging",
+    "javaType": "org.apache.camel.component.rocketmq.RocketMQComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-rocketmq",
+    "version": "3.20.0-SNAPSHOT",
+    "scheme": "rocketmq",
+    "extendsScheme": "",
+    "syntax": "rocketmq:topicName",
+    "async": true,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false
+  },
   "RssComponentBuilderFactory": {
     "kind": "component",
     "name": "rss",
