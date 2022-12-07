@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Route;
 import org.apache.camel.model.RouteTemplateDefinition;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,10 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RouteTemplatePrefixIdTest extends ContextTestSupport {
-
-    // TODO: docs
-    // TODO: <xml> tests
-    // TODO: regen
 
     @Test
     public void testDefineRouteTemplate() throws Exception {
@@ -74,6 +71,10 @@ public class RouteTemplatePrefixIdTest extends ContextTestSupport {
         template.sendBody("direct:two", "Hello Cake");
 
         assertMockEndpointsSatisfied();
+
+        // all nodes should include prefix
+        Assertions.assertEquals(3, context.getRoute("first").filter("aaa*").size());
+        Assertions.assertEquals(3, context.getRoute("second").filter("bbb*").size());
     }
 
     @Test
@@ -112,6 +113,10 @@ public class RouteTemplatePrefixIdTest extends ContextTestSupport {
         template.sendBody("direct:two", "Hello Cake");
 
         assertMockEndpointsSatisfied();
+
+        // all nodes should include prefix
+        Assertions.assertEquals(3, context.getRoute("first").filter("aaa*").size());
+        Assertions.assertEquals(3, context.getRoute("second").filter("bbb*").size());
     }
 
     @Test
@@ -138,6 +143,9 @@ public class RouteTemplatePrefixIdTest extends ContextTestSupport {
         template.sendBody("direct:one", "Hello Cheese");
 
         assertMockEndpointsSatisfied();
+
+        // all nodes should include prefix
+        Assertions.assertEquals(3, context.getRoute(routeId).filter("aaa*").size());
     }
 
     @Test
@@ -174,6 +182,9 @@ public class RouteTemplatePrefixIdTest extends ContextTestSupport {
         template.sendBody("direct:one", "Hello Cheese");
 
         assertMockEndpointsSatisfied();
+
+        // all nodes should include prefix
+        Assertions.assertEquals(3, context.getRoute(routeId).filter("aaa*").size());
     }
 
     @Override
