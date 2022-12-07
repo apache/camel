@@ -16,10 +16,7 @@
  */
 package org.apache.camel.component.salesforce.internal.streaming;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -39,8 +36,8 @@ import org.cometd.bayeux.client.ClientSessionChannel;
 import org.cometd.bayeux.client.ClientSessionChannel.MessageListener;
 import org.cometd.client.BayeuxClient;
 import org.cometd.client.BayeuxClient.State;
+import org.cometd.client.http.jetty.JettyHttpClientTransport;
 import org.cometd.client.transport.ClientTransport;
-import org.cometd.client.transport.LongPollingTransport;
 import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.http.HttpHeader;
 import org.slf4j.Logger;
@@ -297,7 +294,7 @@ public class SubscriptionHelper extends ServiceSupport {
                 if (client != null && client.isHandshook()) {
                     LOG.debug("Successful handshake!");
                     // reset backoff interval
-                    handshakeBackoff.set(client.getBackoffIncrement());
+                    handshakeBackoff.set(backoffIncrement);
                 } else {
                     LOG.error("Failed to handshake after pausing for {} msecs", backoff);
                     if ((backoff + backoffIncrement) > maxBackoff) {
@@ -387,7 +384,7 @@ public class SubscriptionHelper extends ServiceSupport {
             session.login(null);
         }
 
-        LongPollingTransport transport = new LongPollingTransport(options, httpClient) {
+        ClientTransport transport = new JettyHttpClientTransport(options, httpClient) {
             @Override
             protected void customize(Request request) {
                 super.customize(request);
@@ -401,7 +398,7 @@ public class SubscriptionHelper extends ServiceSupport {
                         throw new RuntimeException(e);
                     }
                 }
-                request.getHeaders().put(HttpHeader.AUTHORIZATION, "OAuth " + accessToken);
+                request.header(HttpHeader.AUTHORIZATION, "OAuth " + accessToken);
             }
         };
 

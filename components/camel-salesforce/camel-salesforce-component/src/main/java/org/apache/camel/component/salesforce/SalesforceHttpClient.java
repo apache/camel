@@ -33,6 +33,7 @@ import org.eclipse.jetty.client.HttpRequest;
 import org.eclipse.jetty.client.ProtocolHandler;
 import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.client.http.HttpClientTransportOverHTTP;
+import org.eclipse.jetty.io.ClientConnector;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 /**
@@ -61,12 +62,12 @@ public class SalesforceHttpClient extends HttpClient {
         this(null);
     }
 
-    public SalesforceHttpClient(SslContextFactory sslContextFactory) {
+    public SalesforceHttpClient(SslContextFactory.Client sslContextFactory) {
         this(null, Executors.newCachedThreadPool(), sslContextFactory);
     }
 
-    public SalesforceHttpClient(CamelContext context, ExecutorService workerPool, SslContextFactory sslContextFactory) {
-        super(new HttpClientTransportOverHTTP(), sslContextFactory);
+    public SalesforceHttpClient(CamelContext context, ExecutorService workerPool, SslContextFactory.Client sslContextFactory) {
+        super(new HttpClientTransportOverHTTP(newConnector(sslContextFactory)));
         this.workerPool = workerPool;
         this.camelContext = context;
 
@@ -88,6 +89,12 @@ public class SalesforceHttpClient extends HttpClient {
             throw new IllegalStateException(
                     "Found no method of adding SalesforceSecurityHandler as ProtocolHandler to Jetty HttpClient. You need Jetty 9.2 or newer on the classpath.");
         }
+    }
+
+    private static ClientConnector newConnector(SslContextFactory.Client sslContextFactory) {
+        ClientConnector connector = new ClientConnector();
+        connector.setSslContextFactory(sslContextFactory);
+        return connector;
     }
 
     @Override

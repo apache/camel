@@ -40,7 +40,7 @@ public class SessionIntegrationTest implements SalesforceSession.SalesforceSessi
     @Test
     public void testLogin() throws Exception {
 
-        final SslContextFactory sslContextFactory = new SslContextFactory.Client();
+        final SslContextFactory.Client sslContextFactory = new SslContextFactory.Client();
         sslContextFactory.setSslContext(new SSLContextParameters().createSSLContext(new DefaultCamelContext()));
         final SalesforceHttpClient httpClient = new SalesforceHttpClient(sslContextFactory);
         httpClient.setConnectTimeout(TIMEOUT);

@@ -253,15 +253,16 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
             if (copy) {
                 newRequest = httpClient.copyRequest(request, request.getURI());
                 newRequest.method(request.getMethod());
-                HttpFields headers = newRequest.getHeaders();
-                // copy cookies and host for subscriptions to avoid
-                // '403::Unknown Client' errors
-                for (HttpField field : request.getHeaders()) {
-                    HttpHeader header = field.getHeader();
-                    if (HttpHeader.COOKIE.equals(header) || HttpHeader.HOST.equals(header)) {
-                        headers.add(header, field.getValue());
+                newRequest.headers(headers -> {
+                    // copy cookies and host for subscriptions to avoid
+                    // '403::Unknown Client' errors
+                    for (HttpField field : request.getHeaders()) {
+                        HttpHeader header = field.getHeader();
+                        if (HttpHeader.COOKIE.equals(header) || HttpHeader.HOST.equals(header)) {
+                            headers.add(header, field.getValue());
+                        }
                     }
-                }
+                });
             } else {
                 newRequest = request;
             }

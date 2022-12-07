@@ -16,10 +16,8 @@
  */
 package org.apache.camel.component.salesforce;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
@@ -36,7 +34,6 @@ import org.apache.camel.test.junit5.params.Test;
 import org.eclipse.jetty.proxy.ConnectHandler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.util.B64Code;
 import org.eclipse.jetty.util.StringUtil;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -108,7 +105,8 @@ public class HttpProxyIntegrationTest extends AbstractSalesforceTestBase {
         server.addConnector(connector);
 
         final String authenticationString
-                = "Basic " + B64Code.encode(HTTP_PROXY_USER_NAME + ":" + HTTP_PROXY_PASSWORD, StringUtil.__ISO_8859_1);
+                = "Basic " + Base64.getEncoder().encodeToString(
+                        (HTTP_PROXY_USER_NAME + ":" + HTTP_PROXY_PASSWORD).getBytes(StandardCharsets.ISO_8859_1));
 
         ConnectHandler connectHandler = new ConnectHandler() {
             @Override

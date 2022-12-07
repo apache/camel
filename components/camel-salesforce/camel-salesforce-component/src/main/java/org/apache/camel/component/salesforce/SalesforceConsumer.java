@@ -170,7 +170,8 @@ public class SalesforceConsumer extends DefaultConsumer {
 
         if (rawPayload) {
             // getJSON is used for raw payload
-            in.setBody(message.getJSON());
+            in.setBody(new org.cometd.common.JacksonJSONContextClient()
+                            .generate(new org.cometd.common.HashMapMessage(message)));
         } else {
             payload.remove("ChangeEventHeader");
             in.setBody(payload);
@@ -200,7 +201,8 @@ public class SalesforceConsumer extends DefaultConsumer {
 
         if (rawPayload) {
             // getJSON is used for raw payload
-            in.setBody(message.getJSON());
+            in.setBody(new org.cometd.common.JacksonJSONContextClient()
+                    .generate(new org.cometd.common.HashMapMessage(message)));
         } else {
             in.setBody(platformEvent);
         }
