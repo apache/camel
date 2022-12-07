@@ -87,7 +87,7 @@ public class KafkaConsumerHealthCheckIT extends CamelTestSupport {
 
     @BeforeEach
     public void before() {
-        Properties props = BaseEmbeddedKafkaTestSupport.getDefaultProperties(service);
+        Properties props = AbstractKafkaTestSupport.getDefaultProperties(service);
         producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
         MockConsumerInterceptor.recordsCaptured.clear();
     }
@@ -109,7 +109,7 @@ public class KafkaConsumerHealthCheckIT extends CamelTestSupport {
     @BeforeEach
     public void setKafkaAdminClient() {
         if (kafkaAdminClient == null) {
-            kafkaAdminClient = BaseEmbeddedKafkaTestSupport.createAdminClient(service);
+            kafkaAdminClient = AbstractKafkaTestSupport.createAdminClient(service);
         }
     }
 

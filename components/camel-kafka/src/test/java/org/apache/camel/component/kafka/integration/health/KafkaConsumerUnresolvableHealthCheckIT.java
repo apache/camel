@@ -28,7 +28,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.KafkaComponent;
 import org.apache.camel.component.kafka.MockConsumerInterceptor;
-import org.apache.camel.component.kafka.integration.BaseEmbeddedKafkaTestSupport;
+import org.apache.camel.component.kafka.integration.AbstractKafkaTestSupport;
 import org.apache.camel.component.kafka.serde.DefaultKafkaHeaderDeserializer;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.health.HealthCheck;
@@ -84,7 +84,7 @@ public class KafkaConsumerUnresolvableHealthCheckIT extends CamelTestSupport {
 
     @BeforeEach
     public void before() {
-        Properties props = BaseEmbeddedKafkaTestSupport.getDefaultProperties(service);
+        Properties props = AbstractKafkaTestSupport.getDefaultProperties(service);
         producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
         MockConsumerInterceptor.recordsCaptured.clear();
     }
@@ -106,7 +106,7 @@ public class KafkaConsumerUnresolvableHealthCheckIT extends CamelTestSupport {
     @BeforeEach
     public void setKafkaAdminClient() {
         if (kafkaAdminClient == null) {
-            kafkaAdminClient = BaseEmbeddedKafkaTestSupport.createAdminClient(service);
+            kafkaAdminClient = AbstractKafkaTestSupport.createAdminClient(service);
         }
     }
 
