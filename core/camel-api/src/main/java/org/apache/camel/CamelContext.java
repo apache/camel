@@ -627,12 +627,12 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * Camel end users should favour using {@link org.apache.camel.builder.TemplatedRouteBuilder} which is a fluent
      * builder with more functionality than this API.
      *
-     * @param  routeId         the id of the new route to add (optional)
-     * @param  routeTemplateId the id of the route template (mandatory)
-     * @param  parameters      parameters to use for the route template when creating the new route
-     * @return                 the id of the route added (for example when an id was auto assigned)
-     * @throws Exception       is thrown if error creating and adding the new route
-     * @deprecated use {@link #addRouteFromTemplate(String, String, String, Map)}
+     * @param      routeId         the id of the new route to add (optional)
+     * @param      routeTemplateId the id of the route template (mandatory)
+     * @param      parameters      parameters to use for the route template when creating the new route
+     * @return                     the id of the route added (for example when an id was auto assigned)
+     * @throws     Exception       is thrown if error creating and adding the new route
+     * @deprecated                 use {@link #addRouteFromTemplate(String, String, String, Map)}
      */
     @Deprecated
     String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception;
@@ -661,12 +661,12 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * Camel end users should favour using {@link org.apache.camel.builder.TemplatedRouteBuilder} which is a fluent
      * builder with more functionality than this API.
      *
-     * @param  routeId              the id of the new route to add (optional)
-     * @param  routeTemplateId      the id of the route template (mandatory)
-     * @param  routeTemplateContext the route template context (mandatory)
-     * @return                      the id of the route added (for example when an id was auto assigned)
-     * @throws Exception            is thrown if error creating and adding the new route
-     * @deprecated use {@link #addRouteFromTemplate(String, String, String, RouteTemplateContext)}
+     * @param      routeId              the id of the new route to add (optional)
+     * @param      routeTemplateId      the id of the route template (mandatory)
+     * @param      routeTemplateContext the route template context (mandatory)
+     * @return                          the id of the route added (for example when an id was auto assigned)
+     * @throws     Exception            is thrown if error creating and adding the new route
+     * @deprecated                      use {@link #addRouteFromTemplate(String, String, String, RouteTemplateContext)}
      */
     @Deprecated
     String addRouteFromTemplate(String routeId, String routeTemplateId, RouteTemplateContext routeTemplateContext)
