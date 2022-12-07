@@ -2376,7 +2376,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Set a comma separated list of public key accepted algorithms. Some
          * examples include:
-         * ssh-ed25519,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,rsa-sha2-512,rsa-sha2-256 If not specified the default list from JSCH will be used.
+         * ssh-dss,ssh-rsa,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521. If not specified the default list from JSCH will be used.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -2393,7 +2393,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Set a comma separated list of algorithms supported for the server
          * host key. Some examples include:
-         * ssh-ed25519,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,rsa-sha2-512,rsa-sha2-256 If not specified the default list from JSCH will be used.
+         * ssh-dss,ssh-rsa,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521. If not specified the default list from JSCH will be used.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -4239,7 +4239,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Set a comma separated list of public key accepted algorithms. Some
          * examples include:
-         * ssh-ed25519,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,rsa-sha2-512,rsa-sha2-256 If not specified the default list from JSCH will be used.
+         * ssh-dss,ssh-rsa,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521. If not specified the default list from JSCH will be used.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -4256,7 +4256,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Set a comma separated list of algorithms supported for the server
          * host key. Some examples include:
-         * ssh-ed25519,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,rsa-sha2-512,rsa-sha2-256 If not specified the default list from JSCH will be used.
+         * ssh-dss,ssh-rsa,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521. If not specified the default list from JSCH will be used.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -5742,7 +5742,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Set a comma separated list of public key accepted algorithms. Some
          * examples include:
-         * ssh-ed25519,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,rsa-sha2-512,rsa-sha2-256 If not specified the default list from JSCH will be used.
+         * ssh-dss,ssh-rsa,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521. If not specified the default list from JSCH will be used.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -5759,7 +5759,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Set a comma separated list of algorithms supported for the server
          * host key. Some examples include:
-         * ssh-ed25519,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,rsa-sha2-512,rsa-sha2-256 If not specified the default list from JSCH will be used.
+         * ssh-dss,ssh-rsa,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521. If not specified the default list from JSCH will be used.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
