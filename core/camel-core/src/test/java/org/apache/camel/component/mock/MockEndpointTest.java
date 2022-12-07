@@ -30,6 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
@@ -1222,6 +1223,22 @@ public class MockEndpointTest extends ContextTestSupport {
         assertEquals("<message>8</message>", mock.getReceivedExchanges().get(7).getIn().getBody());
         assertEquals("<message>9</message>", mock.getReceivedExchanges().get(8).getIn().getBody());
         assertEquals("<message>10</message>", mock.getReceivedExchanges().get(9).getIn().getBody());
+    }
+
+    @Test
+    public void testExpectedMessagesMatches() throws Exception {
+        Language sl = context.resolveLanguage("simple");
+        MockEndpoint mock = getMockEndpoint("mock:result");
+
+        mock.expectedMessagesMatches(sl.createPredicate("${body} == 'abc'"));
+        template.sendBody("direct:a", "abc");
+        mock.assertIsSatisfied();
+
+        mock.reset();
+
+        mock.expectedMessagesMatches(sl.createPredicate("${body} == 'abc'"));
+        template.sendBody("direct:a", "def");
+        mock.assertIsNotSatisfied();
     }
 
     protected void sendMessages(int... counters) {
