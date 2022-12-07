@@ -66,6 +66,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     private String routeConfigurationId;
     private transient Set<String> appliedRouteConfigurationIds;
     private String group;
+    private String nodePrefixId;
     private String streamCache;
     private String trace;
     private String messageHistory;
@@ -277,6 +278,18 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
         DescriptionDefinition desc = new DescriptionDefinition();
         desc.setText(description);
         setDescription(desc);
+        return this;
+    }
+
+    /**
+     * Prefix to use for node IDs (both set and auto-assigned IDs)
+     *
+     * @param  prefixId the prefix
+     * @return          the builder
+     */
+    @Override
+    public RouteDefinition nodePrefixId(String prefixId) {
+        setNodePrefixId(prefixId);
         return this;
     }
 
@@ -853,6 +866,22 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     @Metadata(label = "advanced")
     public void setGroup(String group) {
         this.group = group;
+    }
+
+    /**
+     * Prefix to use for route and node IDs (also IDs that has been explicit set to a value)
+     */
+    public String getNodePrefixId() {
+        return nodePrefixId;
+    }
+
+    /**
+     * Prefix to use for route and node IDs (also IDs that has been explicit set to a value)
+     */
+    @XmlAttribute
+    @Metadata(label = "advanced")
+    public void setNodePrefixId(String nodePrefixId) {
+        this.nodePrefixId = nodePrefixId;
     }
 
     /**

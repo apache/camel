@@ -36,6 +36,7 @@ public final class TemplatedRouteBuilder {
     private final String routeTemplateId;
     private final RouteTemplateContext routeTemplateContext;
     private String routeId;
+    private String prefixId;
     private Consumer<RouteTemplateDefinition> handler;
     private Consumer<RouteTemplateContext> configurer;
 
@@ -64,6 +65,16 @@ public final class TemplatedRouteBuilder {
      */
     public TemplatedRouteBuilder routeId(String routeId) {
         this.routeId = routeId;
+        return this;
+    }
+
+    /**
+     * Sets a prefix to use when assigning route and node IDs.
+     *
+     * @param prefixId the prefix id
+     */
+    public TemplatedRouteBuilder prefixId(String prefixId) {
+        this.prefixId = prefixId;
         return this;
     }
 
@@ -165,7 +176,7 @@ public final class TemplatedRouteBuilder {
             if (configurer != null) {
                 routeTemplateContext.setConfigurer(configurer);
             }
-            return camelContext.addRouteFromTemplate(routeId, routeTemplateId, routeTemplateContext);
+            return camelContext.addRouteFromTemplate(routeId, routeTemplateId, prefixId, routeTemplateContext);
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
         }

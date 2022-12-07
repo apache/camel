@@ -364,12 +364,30 @@ public class DefaultModel implements Model {
         if (parameters != null) {
             parameters.forEach(rtc::setParameter);
         }
-        return addRouteFromTemplate(routeId, routeTemplateId, rtc);
+        return addRouteFromTemplate(routeId, routeTemplateId, null, rtc);
     }
 
     @Override
+    public String addRouteFromTemplate(String routeId, String routeTemplateId, String prefixId, Map<String, Object> parameters)
+            throws Exception {
+        RouteTemplateContext rtc = new DefaultRouteTemplateContext(camelContext);
+        if (parameters != null) {
+            parameters.forEach(rtc::setParameter);
+        }
+        return addRouteFromTemplate(routeId, routeTemplateId, prefixId, rtc);
+    }
+
     public String addRouteFromTemplate(String routeId, String routeTemplateId, RouteTemplateContext routeTemplateContext)
             throws Exception {
+        return addRouteFromTemplate(routeId, routeTemplateId, null, routeTemplateContext);
+    }
+
+    @Override
+    public String addRouteFromTemplate(
+            String routeId, String routeTemplateId, String prefixId,
+            RouteTemplateContext routeTemplateContext)
+            throws Exception {
+
         RouteTemplateDefinition target = null;
         for (RouteTemplateDefinition def : routeTemplateDefinitions) {
             if (routeTemplateId.equals(def.getId())) {
@@ -459,6 +477,9 @@ public class DefaultModel implements Model {
         if (routeId != null) {
             def.setId(routeId);
         }
+        if (prefixId != null) {
+            def.setNodePrefixId(prefixId);
+        }
         def.setTemplateParameters(prop);
         def.setTemplateDefaultParameters(propDefaultValues);
         def.setRouteTemplateContext(routeTemplateContext);
@@ -473,7 +494,7 @@ public class DefaultModel implements Model {
         }
 
         // assign ids to the routes and validate that the id's are all unique
-        String duplicate = RouteDefinitionHelper.validateUniqueIds(def, routeDefinitions);
+        String duplicate = RouteDefinitionHelper.validateUniqueIds(def, routeDefinitions, prefixId);
         if (duplicate != null) {
             throw new FailedToCreateRouteFromTemplateException(
                     routeId, routeTemplateId,
@@ -740,6 +761,7 @@ public class DefaultModel implements Model {
     public void addRouteFromTemplatedRoute(TemplatedRouteDefinition templatedRouteDefinition)
             throws Exception {
         ObjectHelper.notNull(templatedRouteDefinition, "templatedRouteDefinition");
+
         final RouteTemplateContext routeTemplateContext = new DefaultRouteTemplateContext(camelContext);
         // Load the parameters into the context
         final List<TemplatedRouteParameterDefinition> parameters = templatedRouteDefinition.getParameters();
@@ -757,7 +779,7 @@ public class DefaultModel implements Model {
         }
         // Add the route
         addRouteFromTemplate(templatedRouteDefinition.getRouteId(), templatedRouteDefinition.getRouteTemplateRef(),
-                routeTemplateContext);
+                templatedRouteDefinition.getPrefixId(), routeTemplateContext);
     }
 
     @Override

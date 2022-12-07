@@ -245,6 +245,18 @@ public final class RouteDefinitionHelper {
      * @return        <tt>null</tt> if no duplicate id's detected, otherwise the first found duplicate id is returned.
      */
     public static String validateUniqueIds(RouteDefinition target, List<RouteDefinition> routes) {
+        return validateUniqueIds(target, routes, null);
+    }
+
+    /**
+     * Validates that the target route has no duplicate id's from any of the existing routes.
+     *
+     * @param  target   the target route
+     * @param  routes   the existing routes
+     * @param  prefixId optional prefix to use in duplicate id detection
+     * @return          <tt>null</tt> if no duplicate id's detected, otherwise the first found duplicate id is returned.
+     */
+    public static String validateUniqueIds(RouteDefinition target, List<RouteDefinition> routes, String prefixId) {
         Set<String> routesIds = new LinkedHashSet<>();
         // gather all ids for the existing route, but only include custom ids,
         // and no abstract ids
@@ -267,6 +279,9 @@ public final class RouteDefinitionHelper {
 
         // now check for clash with the target route
         for (String id : targetIds) {
+            if (prefixId != null) {
+                id = prefixId + id;
+            }
             if (routesIds.contains(id)) {
                 return id;
             }
@@ -735,6 +750,29 @@ public final class RouteDefinitionHelper {
         if (children != null && !children.isEmpty()) {
             for (ProcessorDefinition child : children) {
                 forceAssignIds(context, child);
+            }
+        }
+    }
+
+    /**
+     * For all custom assigned ids, then to avoid duplicate ids when creating new routes from route templates, then the
+     * custom assigned ids, must be prefixed.
+     *
+     * @param context   the camel context
+     * @param prefix    the prefix to set on custom assigned id
+     * @param processor the node
+     */
+    public static void prefixCustomAssignIds(CamelContext context, final String prefix, final ProcessorDefinition processor) {
+        if (processor.hasCustomIdAssigned()) {
+            String originalId = processor.getId();
+            String newId = prefix + originalId;
+            processor.setId(newId);
+        }
+
+        List<ProcessorDefinition<?>> children = processor.getOutputs();
+        if (children != null && !children.isEmpty()) {
+            for (ProcessorDefinition child : children) {
+                prefixCustomAssignIds(context, prefix, child);
             }
         }
     }

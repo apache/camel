@@ -475,12 +475,31 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     @Override
+    public String addRouteFromTemplate(String routeId, String routeTemplateId, String prefixId, Map<String, Object> parameters)
+            throws Exception {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
+        return model.addRouteFromTemplate(routeId, routeTemplateId, prefixId, parameters);
+    }
+
+    @Override
     public String addRouteFromTemplate(String routeId, String routeTemplateId, RouteTemplateContext routeTemplateContext)
             throws Exception {
         if (model == null && isLightweight()) {
             throw new IllegalStateException("Access to model not supported in lightweight mode");
         }
         return model.addRouteFromTemplate(routeId, routeTemplateId, routeTemplateContext);
+    }
+
+    @Override
+    public String addRouteFromTemplate(
+            String routeId, String routeTemplateId, String prefixId, RouteTemplateContext routeTemplateContext)
+            throws Exception {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
+        return model.addRouteFromTemplate(routeId, routeTemplateId, prefixId, routeTemplateContext);
     }
 
     @Override
@@ -820,7 +839,8 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
             List<RouteDefinition> routeDefinitionsToRemove = null;
             for (RouteDefinition routeDefinition : routeDefinitions) {
                 // assign ids to the routes and validate that the id's is all unique
-                String duplicate = RouteDefinitionHelper.validateUniqueIds(routeDefinition, routeDefinitions);
+                String duplicate = RouteDefinitionHelper.validateUniqueIds(routeDefinition, routeDefinitions,
+                        routeDefinition.getNodePrefixId());
                 if (duplicate != null) {
                     throw new FailedToStartRouteException(
                             routeDefinition.getId(),
@@ -900,6 +920,8 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
                     // need to reset auto assigned ids, so there is no clash when creating routes
                     ProcessorDefinitionHelper.resetAllAutoAssignedNodeIds(routeDefinition);
+                    // must re-init parent when created from a template
+                    RouteDefinitionHelper.initParent(routeDefinition);
                 }
                 // Check if the route is included
                 if (includedRoute(routeDefinition)) {
