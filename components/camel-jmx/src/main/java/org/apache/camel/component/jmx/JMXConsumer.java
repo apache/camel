@@ -167,16 +167,13 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
      * Schedules execution of the doStart() operation to occur again after the reconnect delay
      */
     protected void scheduleDelayedStart() {
-        Runnable startRunnable = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    doStart();
-                } catch (Exception e) {
-                    LOG.error("An unrecoverable exception has occurred while starting the JMX consumer"
-                              + " for endpoint {}",
-                            URISupport.sanitizeUri(mJmxEndpoint.getEndpointUri()), e);
-                }
+        Runnable startRunnable = () -> {
+            try {
+                doStart();
+            } catch (Exception e) {
+                LOG.error("An unrecoverable exception has occurred while starting the JMX consumer"
+                          + " for endpoint {}",
+                        URISupport.sanitizeUri(mJmxEndpoint.getEndpointUri()), e);
             }
         };
         LOG.info("Delaying JMX consumer startup for endpoint {}. Trying again in {} seconds.",
@@ -214,16 +211,13 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
      * Schedules an attempt to re-initialize a lost connection after the reconnect delay
      */
     protected void scheduleReconnect() {
-        Runnable startRunnable = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    initNetworkConnection();
-                    addNotificationListener();
-                } catch (Exception e) {
-                    LOG.warn("Failed to reconnect to JMX server. >> {}", e.getMessage());
-                    scheduleReconnect();
-                }
+        Runnable startRunnable = () -> {
+            try {
+                initNetworkConnection();
+                addNotificationListener();
+            } catch (Exception e) {
+                LOG.warn("Failed to reconnect to JMX server. >> {}", e.getMessage());
+                scheduleReconnect();
             }
         };
         LOG.info("Delaying JMX consumer reconnection for endpoint {}. Trying again in {} seconds.",
