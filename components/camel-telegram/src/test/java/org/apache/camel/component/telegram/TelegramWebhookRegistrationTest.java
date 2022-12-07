@@ -136,6 +136,11 @@ public class TelegramWebhookRegistrationTest extends TelegramTestSupport {
                         "setWebhook?url=http://my-domain.com/my-test",
                         "GET",
                         String.class,
+                        TelegramTestUtil.serialize(result))
+                .addEndpoint(
+                        "deleteWebhook",
+                        "GET",
+                        String.class,
                         TelegramTestUtil.serialize(result));
     }
 

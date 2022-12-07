@@ -190,7 +190,12 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
 
     @Override
     public boolean removeWebhook() {
-        return setWebhook("");
+        final String uri = baseUri + "/deleteWebhook";
+
+        final HttpRequest.Builder request = HttpRequest.newBuilder().uri(URI.create(uri)).GET();
+
+        WebhookResult res = sendSyncRequest(request.build(), WebhookResult.class);
+        return res.isOk() && res.isResult();
     }
 
     @Override
