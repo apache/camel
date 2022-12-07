@@ -39,7 +39,6 @@ import javax.xml.bind.MarshalException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.ValidationEvent;
-import javax.xml.bind.ValidationEventHandler;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -571,11 +570,9 @@ public class JaxbDataFormat extends ServiceSupport
         Unmarshaller unmarshaller = getContext().createUnmarshaller();
         if (schema != null) {
             unmarshaller.setSchema(cachedSchema);
-            unmarshaller.setEventHandler(new ValidationEventHandler() {
-                public boolean handleEvent(ValidationEvent event) {
-                    // continue if the severity is lower than the configured level
-                    return event.getSeverity() < getSchemaSeverityLevel();
-                }
+            unmarshaller.setEventHandler((ValidationEvent event) -> {
+                // continue if the severity is lower than the configured level
+                return event.getSeverity() < getSchemaSeverityLevel();
             });
         }
 
@@ -586,11 +583,9 @@ public class JaxbDataFormat extends ServiceSupport
         Marshaller marshaller = getContext().createMarshaller();
         if (schema != null) {
             marshaller.setSchema(cachedSchema);
-            marshaller.setEventHandler(new ValidationEventHandler() {
-                public boolean handleEvent(ValidationEvent event) {
-                    // continue if the severity is lower than the configured level
-                    return event.getSeverity() < getSchemaSeverityLevel();
-                }
+            marshaller.setEventHandler((ValidationEvent event) -> {
+                // continue if the severity is lower than the configured level
+                return event.getSeverity() < getSchemaSeverityLevel();
             });
         }
 
