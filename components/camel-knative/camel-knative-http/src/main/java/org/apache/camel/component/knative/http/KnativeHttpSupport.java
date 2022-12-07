@@ -61,35 +61,32 @@ public final class KnativeHttpSupport {
                             () -> filters.put(entry.getKey(), entry.getValue()));
         }
 
-        return new Predicate<HttpServerRequest>() {
-            @Override
-            public boolean test(HttpServerRequest request) {
-                if (filters.isEmpty()) {
-                    return true;
-                }
-
-                for (Map.Entry<String, String> entry : filters.entrySet()) {
-                    final List<String> values = request.headers().getAll(entry.getKey());
-                    if (values.isEmpty()) {
-                        return false;
-                    }
-
-                    String val = values.get(values.size() - 1);
-                    int idx = val.lastIndexOf(',');
-
-                    if (values.size() == 1 && idx != -1) {
-                        val = val.substring(idx + 1);
-                        val = val.trim();
-                    }
-
-                    boolean matches = Objects.equals(entry.getValue(), val) || val.matches(entry.getValue());
-                    if (!matches) {
-                        return false;
-                    }
-                }
-
+        return (HttpServerRequest request) -> {
+            if (filters.isEmpty()) {
                 return true;
             }
+
+            for (Map.Entry<String, String> entry : filters.entrySet()) {
+                final List<String> values = request.headers().getAll(entry.getKey());
+                if (values.isEmpty()) {
+                    return false;
+                }
+
+                String val = values.get(values.size() - 1);
+                int idx = val.lastIndexOf(',');
+
+                if (values.size() == 1 && idx != -1) {
+                    val = val.substring(idx + 1);
+                    val = val.trim();
+                }
+
+                boolean matches = Objects.equals(entry.getValue(), val) || val.matches(entry.getValue());
+                if (!matches) {
+                    return false;
+                }
+            }
+
+            return true;
         };
     }
 

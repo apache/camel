@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 import javax.management.MBeanServer;
 
 import com.codahale.metrics.Metric;
-import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jmx.JmxReporter;
 import com.codahale.metrics.json.MetricsModule;
@@ -195,11 +194,8 @@ public final class MetricsMessageHistoryService extends ServiceSupport
     @Override
     public void reset() {
         // remove all
-        metricsRegistry.removeMatching(new MetricFilter() {
-            @Override
-            public boolean matches(String name, Metric metric) {
-                return true;
-            }
+        metricsRegistry.removeMatching((String name, Metric metric) -> {
+            return true;
         });
     }
 }
