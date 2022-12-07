@@ -19,6 +19,7 @@ package org.apache.camel.component.kafka.integration;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.StreamSupport;
 
 import org.apache.camel.EndpointInject;
@@ -28,6 +29,7 @@ import org.apache.camel.component.kafka.MockConsumerInterceptor;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.kafka.services.ContainerLocalAuthKafkaService;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,9 +63,10 @@ public class KafkaConsumerAuthIT extends BaseEmbeddedKafkaAuthTestSupport {
     @BeforeEach
     public void before() {
         Properties props = getDefaultProperties();
-        props.put("sasl.jaas.config", ContainerLocalAuthKafkaService.generateSimpleSaslJaasConfig("camel", "camel-secret"));
+        props.put(SaslConfigs.SASL_JAAS_CONFIG,
+                ContainerLocalAuthKafkaService.generateSimpleSaslJaasConfig("camel", "camel-secret"));
         props.put("security.protocol", "SASL_PLAINTEXT");
-        props.put("sasl.mechanism", "PLAIN");
+        props.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
 
         try {
             producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
@@ -94,7 +97,7 @@ public class KafkaConsumerAuthIT extends BaseEmbeddedKafkaAuthTestSupport {
 
                 fromF("kafka:%s"
                       + "?groupId=%s&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                      + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                      + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer&clientId=camel-kafka-auth-test"
                       + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true&interceptorClasses=%s"
                       + "&saslMechanism=PLAIN&securityProtocol=SASL_PLAINTEXT&saslJaasConfig=%s", TOPIC,
                         "KafkaConsumerAuthIT", "org.apache.camel.component.kafka.MockConsumerInterceptor", simpleSaslJaasConfig)
@@ -105,11 +108,17 @@ public class KafkaConsumerAuthIT extends BaseEmbeddedKafkaAuthTestSupport {
         };
     }
 
+    @Order(1)
+    @Test
+    public void isConnected() {
+        assertGroupIsConnected("KafkaConsumerAuthIT");
+    }
+
     @DisplayName("Tests that Camel can adequately connect and consume from an authenticated Kafka instance")
     @Timeout(30)
-    @Order(3)
+    @Order(2)
     @Test
-    public void kafkaMessageIsConsumedByCamel() throws InterruptedException {
+    public void kafkaMessageIsConsumedByCamel() throws InterruptedException, ExecutionException {
         String propagatedHeaderKey = "PropagatedCustomHeader";
         byte[] propagatedHeaderValue = "propagated header value".getBytes();
         String skippedHeaderKey = "CamelSkippedHeader";
@@ -120,13 +129,7 @@ public class KafkaConsumerAuthIT extends BaseEmbeddedKafkaAuthTestSupport {
         to.expectedHeaderValuesReceivedInAnyOrder(KafkaConstants.LAST_RECORD_BEFORE_COMMIT, null, null, null, null, null);
         to.expectedHeaderReceived(propagatedHeaderKey, propagatedHeaderValue);
 
-        for (int k = 0; k < 5; k++) {
-            String msg = "message-" + k;
-            ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "1", msg);
-            data.headers().add(new RecordHeader("CamelSkippedHeader", "skipped header value".getBytes()));
-            data.headers().add(new RecordHeader(propagatedHeaderKey, propagatedHeaderValue));
-            producer.send(data);
-        }
+        populateKafkaTopic(propagatedHeaderKey, propagatedHeaderValue);
 
         to.assertIsSatisfied(3000);
 
@@ -136,6 +139,16 @@ public class KafkaConsumerAuthIT extends BaseEmbeddedKafkaAuthTestSupport {
         Map<String, Object> headers = to.getExchanges().get(0).getIn().getHeaders();
         assertFalse(headers.containsKey(skippedHeaderKey), "Should not receive skipped header");
         assertTrue(headers.containsKey(propagatedHeaderKey), "Should receive propagated header");
+    }
+
+    private void populateKafkaTopic(String propagatedHeaderKey, byte[] propagatedHeaderValue) {
+        for (int k = 0; k < 5; k++) {
+            String msg = "message-" + k;
+            ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "1", msg);
+            data.headers().add(new RecordHeader("CamelSkippedHeader", "skipped header value".getBytes()));
+            data.headers().add(new RecordHeader(propagatedHeaderKey, propagatedHeaderValue));
+            producer.send(data);
+        }
     }
 
 }
