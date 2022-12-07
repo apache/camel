@@ -31,6 +31,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -104,6 +105,7 @@ public class KafkaConsumerAuthIT extends BaseEmbeddedKafkaAuthTestSupport {
         };
     }
 
+    @DisplayName("Tests that Camel can adequately connect and consume from an authenticated Kafka instance")
     @Timeout(30)
     @Order(3)
     @Test
