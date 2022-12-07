@@ -25,6 +25,7 @@ import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.test.infra.kafka.services.KafkaService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.KafkaAdminClient;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.slf4j.Logger;
@@ -40,7 +41,7 @@ public abstract class AbstractKafkaTestSupport extends CamelTestSupport {
 
     public static AdminClient createAdminClient(KafkaService service) {
         final Properties properties = new Properties();
-        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, service.getBootstrapServers());
+        properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, service.getBootstrapServers());
 
         return KafkaAdminClient.create(properties);
     }
