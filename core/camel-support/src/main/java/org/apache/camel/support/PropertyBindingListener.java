@@ -25,9 +25,9 @@ public interface PropertyBindingListener {
     /**
      * Triggered before binding the value on the target
      *
-     * @param target  the target
-     * @param key     they key
-     * @param value   the value
+     * @param target the target
+     * @param key    they key
+     * @param value  the value
      */
     void bindProperty(Object target, String key, Object value);
 }
