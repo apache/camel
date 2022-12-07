@@ -754,29 +754,6 @@ public final class RouteDefinitionHelper {
         }
     }
 
-    /**
-     * For all custom assigned ids, then to avoid duplicate ids when creating new routes from route templates, then the
-     * custom assigned ids, must be prefixed.
-     *
-     * @param context   the camel context
-     * @param prefix    the prefix to set on custom assigned id
-     * @param processor the node
-     */
-    public static void prefixCustomAssignIds(CamelContext context, final String prefix, final ProcessorDefinition processor) {
-        if (processor.hasCustomIdAssigned()) {
-            String originalId = processor.getId();
-            String newId = prefix + originalId;
-            processor.setId(newId);
-        }
-
-        List<ProcessorDefinition<?>> children = processor.getOutputs();
-        if (children != null && !children.isEmpty()) {
-            for (ProcessorDefinition child : children) {
-                prefixCustomAssignIds(context, prefix, child);
-            }
-        }
-    }
-
     public static String getRouteMessage(String route) {
         // cut the route after 60 chars, so it won't be too big in the message
         // users just need to be able to identify the route, so they know where to look

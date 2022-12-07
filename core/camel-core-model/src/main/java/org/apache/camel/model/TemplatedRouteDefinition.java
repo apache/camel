@@ -271,7 +271,7 @@ public class TemplatedRouteDefinition implements CamelContextAware {
     }
 
     /**
-     * Sets a prefix to use when assigning route and node IDs.
+     * Sets a prefix to use for all node ids (not route id).
      *
      * @param id the prefix id
      */

@@ -282,7 +282,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     }
 
     /**
-     * Prefix to use for node IDs (both set and auto-assigned IDs)
+     * Sets a prefix to use for all node ids (not route id).
      *
      * @param  prefixId the prefix
      * @return          the builder
@@ -869,14 +869,14 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     }
 
     /**
-     * Prefix to use for route and node IDs (also IDs that has been explicit set to a value)
+     * Prefix to use for all node ids (not route id).
      */
     public String getNodePrefixId() {
         return nodePrefixId;
     }
 
     /**
-     * Prefix to use for route and node IDs (also IDs that has been explicit set to a value)
+     * Sets a prefix to use for all node ids (not route id).
      */
     @XmlAttribute
     @Metadata(label = "advanced")

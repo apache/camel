@@ -866,7 +866,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Prefix to use for node IDs (both set and auto-assigned IDs)
+     * Sets a prefix to use for all node ids (not route id).
      *
      * @param  prefixId the prefix
      * @return          the builder
