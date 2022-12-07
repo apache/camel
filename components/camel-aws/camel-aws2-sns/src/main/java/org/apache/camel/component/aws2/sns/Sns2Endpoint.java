@@ -27,6 +27,8 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.sns.client.Sns2ClientFactory;
+import org.apache.camel.health.HealthCheckHelper;
+import org.apache.camel.impl.health.ComponentsHealthCheckRepository;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
@@ -59,6 +61,9 @@ import software.amazon.awssdk.services.sns.model.Topic;
 public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(Sns2Endpoint.class);
+
+    private ComponentsHealthCheckRepository healthCheckRepository;
+    private Sns2HealthCheck clientHealthCheck;
 
     private SnsClient snsClient;
 
@@ -108,6 +113,15 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
         if (headerFilterStrategy == null) {
             headerFilterStrategy = new Sns2HeaderFilterStrategy();
         }
+
+        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(getCamelContext(),
+                ComponentsHealthCheckRepository.REPOSITORY_ID, ComponentsHealthCheckRepository.class);
+
+        if (healthCheckRepository != null) {
+            clientHealthCheck = new Sns2HealthCheck(this, getId());
+        }
+
+        healthCheckRepository.addHealthCheck(clientHealthCheck);
 
         if (configuration.getTopicArn() == null) {
             try {
@@ -192,6 +206,11 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
             if (snsClient != null) {
                 snsClient.close();
             }
+        }
+
+        if (healthCheckRepository != null && clientHealthCheck != null) {
+            healthCheckRepository.removeHealthCheck(clientHealthCheck);
+            clientHealthCheck = null;
         }
         super.doStop();
     }

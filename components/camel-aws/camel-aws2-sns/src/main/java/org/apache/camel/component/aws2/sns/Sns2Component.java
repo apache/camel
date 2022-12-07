@@ -43,7 +43,6 @@ public class Sns2Component extends DefaultComponent {
     public Sns2Component(CamelContext context) {
         super(context);
 
-        registerExtension(new Sns2ComponentVerifierExtension());
     }
 
     @Override
