@@ -24,7 +24,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServerRequest;
@@ -126,12 +125,9 @@ public class KnativeHttpConsumer extends DefaultConsumer {
             }
 
             // add body handler
-            route.handler(new Handler<RoutingContext>() {
-                @Override
-                public void handle(RoutingContext event) {
-                    event.request().resume();
-                    bodyHandler.handle(event);
-                }
+            route.handler((RoutingContext event) -> {
+                event.request().resume();
+                bodyHandler.handle(event);
             });
 
             // add knative handler
