@@ -890,6 +890,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-influxdb2</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-iota</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -931,6 +936,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jasypt</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-javascript</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -1170,6 +1180,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-mail-microsoft-oauth</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-mapstruct</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -1370,6 +1385,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-plc4x</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-printer</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -1471,6 +1491,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-robotframework</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-rocketmq</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -1700,6 +1725,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-swift</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-syslog</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -1836,6 +1866,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-vm</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-wal</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
