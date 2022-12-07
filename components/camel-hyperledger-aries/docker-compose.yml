@@ -19,7 +19,6 @@ version: '3'
 
 networks:
   von-network:
-  tails-server:
 
 services:
 
@@ -27,7 +26,7 @@ services:
   # Webserver
   #
   webserver:
-    image: nessusio/von-network:${VON_NETWORK_VERSION:-latest}
+    image: nessusio/von-network:${VON_NETWORK_VERSION:-1.7.2}
     container_name: indy-webserver
     command: bash -c 'sleep 10 && ./scripts/start_webserver.sh'
     environment:
@@ -47,6 +46,8 @@ services:
       - WEB_ANALYTICS_SCRIPT=${WEB_ANALYTICS_SCRIPT}
       - INFO_SITE_TEXT=${INFO_SITE_TEXT}
       - INFO_SITE_URL=${INFO_SITE_URL}
+    extra_hosts:
+      - host.docker.internal:host-gateway
     networks:
       - von-network
     ports:
@@ -59,7 +60,7 @@ services:
   # Nodes
   #
   node1:
-    image: nessusio/von-network:${VON_NETWORK_VERSION:-latest}
+    image: nessusio/von-network:${VON_NETWORK_VERSION:-1.7.2}
     container_name: indy-node1
     command: ./scripts/start_node.sh 1
     networks:
@@ -73,11 +74,13 @@ services:
       - DOCKERHOST=${DOCKERHOST:-host.docker.internal}
       - LOG_LEVEL=${LOG_LEVEL:-info}
       - RUST_LOG=${RUST_LOG:-warn}
+    extra_hosts:
+      - host.docker.internal:host-gateway
     volumes:
       - node1-data:/home/indy/ledger
 
   node2:
-    image: nessusio/von-network:${VON_NETWORK_VERSION:-latest}
+    image: nessusio/von-network:${VON_NETWORK_VERSION:-1.7.2}
     container_name: indy-node2
     command: ./scripts/start_node.sh 2
     networks:
@@ -91,11 +94,13 @@ services:
       - DOCKERHOST=${DOCKERHOST:-host.docker.internal}
       - LOG_LEVEL=${LOG_LEVEL:-info}
       - RUST_LOG=${RUST_LOG:-warn}
+    extra_hosts:
+      - host.docker.internal:host-gateway
     volumes:
       - node2-data:/home/indy/ledger
 
   node3:
-    image: nessusio/von-network:${VON_NETWORK_VERSION:-latest}
+    image: nessusio/von-network:${VON_NETWORK_VERSION:-1.7.2}
     container_name: indy-node3
     command: ./scripts/start_node.sh 3
     networks:
@@ -109,11 +114,13 @@ services:
       - DOCKERHOST=${DOCKERHOST:-host.docker.internal}
       - LOG_LEVEL=${LOG_LEVEL:-info}
       - RUST_LOG=${RUST_LOG:-warn}
+    extra_hosts:
+      - host.docker.internal:host-gateway
     volumes:
       - node3-data:/home/indy/ledger
 
   node4:
-    image: nessusio/von-network:${VON_NETWORK_VERSION:-latest}
+    image: nessusio/von-network:${VON_NETWORK_VERSION:-1.7.2}
     container_name: indy-node4
     command: ./scripts/start_node.sh 4
     networks:
@@ -127,16 +134,20 @@ services:
       - DOCKERHOST=${DOCKERHOST:-host.docker.internal}
       - LOG_LEVEL=${LOG_LEVEL:-info}
       - RUST_LOG=${RUST_LOG:-warn}
+    extra_hosts:
+      - host.docker.internal:host-gateway
     volumes:
       - node4-data:/home/indy/ledger
 
   tails-server:
-    image: nessusio/indy-tails-server:${TAILS_SERVER_VERSION:-latest}
+    image: nessusio/indy-tails-server:${TAILS_SERVER_VERSION:-1.0.0}
     container_name: tails-server
     ports:
       - 6543:6543
     networks:
-      - tails-server
+      - von-network
+    extra_hosts:
+      - host.docker.internal:host-gateway
     command: >
       tails-server
         --host 0.0.0.0
@@ -145,20 +156,15 @@ services:
         --log-level ${LOG_LEVEL:-info}
 
   acapy:
-    image: nessusio/aries-cloudagent-python:${ACAPY_VERSION:-latest}
+    image: nessusio/aries-cloudagent-python:${ACAPY_VERSION:-0.7.5}
     container_name: acapy
     ports:
       - ${ACAPY_USER_PORT:-8030}:${ACAPY_USER_PORT:-8030}
       - ${ACAPY_ADMIN_PORT:-8031}:${ACAPY_ADMIN_PORT:-8031}
     networks:
       - von-network
-    depends_on:
-      - node1
-      - node2
-      - node3
-      - node4
-      - webserver
-      - tails-server
+    extra_hosts:
+      - host.docker.internal:host-gateway
     command: >
       start
         --genesis-url http://${DOCKERHOST:-host.docker.internal}:9000/genesis
@@ -182,7 +188,14 @@ services:
         --auto-ping-connection
         --auto-accept-requests
         --log-level info
-        
+    depends_on:
+      - node1
+      - node2
+      - node3
+      - node4
+      - webserver
+      - tails-server
+
 volumes:
   webserver-cli:
   webserver-ledger:
