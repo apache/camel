@@ -19,6 +19,7 @@ package org.apache.camel.component.aries.handler;
 import java.io.IOException;
 
 import io.nessus.aries.util.AssertState;
+import io.nessus.aries.websocket.WebSocketListener;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.aries.HyperledgerAriesComponent;
@@ -117,5 +118,9 @@ public abstract class AbstractServiceHandler implements ServiceHandler {
 
     public AriesClient createClient() throws IOException {
         return endpoint.createClient();
+    }
+
+    public WebSocketListener getAdminWebSocketListener() {
+        return getComponent().getAdminWebSocketListener();
     }
 }

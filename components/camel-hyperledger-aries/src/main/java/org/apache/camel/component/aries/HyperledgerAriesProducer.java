@@ -22,6 +22,7 @@ import org.apache.camel.component.aries.handler.AbstractServiceHandler;
 import org.apache.camel.component.aries.handler.ConnectionsServiceHandler;
 import org.apache.camel.component.aries.handler.CredentialDefinitionsServiceHandler;
 import org.apache.camel.component.aries.handler.CredentialsServiceHandler;
+import org.apache.camel.component.aries.handler.DidExchangeServiceHandler;
 import org.apache.camel.component.aries.handler.IssueCredentialV1ServiceHandler;
 import org.apache.camel.component.aries.handler.MultitenancyServiceHandler;
 import org.apache.camel.component.aries.handler.OutOfBandServiceHandler;
@@ -58,6 +59,9 @@ public class HyperledgerAriesProducer extends DefaultProducer {
 
         } else if (service.startsWith("/credentials")) {
             serviceHandler = new CredentialsServiceHandler(getEndpoint());
+
+        } else if (service.startsWith("/didexchange")) {
+            serviceHandler = new DidExchangeServiceHandler(getEndpoint());
 
         } else if (service.startsWith("/issue-credential")) {
             serviceHandler = new IssueCredentialV1ServiceHandler(getEndpoint());

@@ -38,7 +38,8 @@ public class PresentationExchangeTest extends AbstractCamelAriesTest {
     @Test
     public void testWorkflow() throws Exception {
 
-        List<PresentationExchangeState> states = Arrays.asList(PROPOSAL_SENT,
+        List<PresentationExchangeState> states = Arrays.asList(
+                PROPOSAL_SENT,
                 PROPOSAL_RECEIVED,
                 REQUEST_SENT,
                 REQUEST_RECEIVED,
