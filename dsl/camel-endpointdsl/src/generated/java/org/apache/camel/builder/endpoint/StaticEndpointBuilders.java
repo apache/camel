@@ -12734,6 +12734,49 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.RobotFrameworkEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * RocketMQ (camel-rocketmq)
+     * Send and receive messages from RocketMQ cluster.
+     * 
+     * Category: messaging
+     * Since: 3.20
+     * Maven coordinates: org.apache.camel:camel-rocketmq
+     * 
+     * Syntax: <code>rocketmq:topicName</code>
+     * 
+     * Path parameter: topicName (required)
+     * Topic name of this endpoint.
+     * 
+     * @param path topicName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.RocketMQEndpointBuilderFactory.RocketMQEndpointBuilder rocketmq(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.RocketMQEndpointBuilderFactory.endpointBuilder("rocketmq", path);
+    }
+    /**
+     * RocketMQ (camel-rocketmq)
+     * Send and receive messages from RocketMQ cluster.
+     * 
+     * Category: messaging
+     * Since: 3.20
+     * Maven coordinates: org.apache.camel:camel-rocketmq
+     * 
+     * Syntax: <code>rocketmq:topicName</code>
+     * 
+     * Path parameter: topicName (required)
+     * Topic name of this endpoint.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path topicName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.RocketMQEndpointBuilderFactory.RocketMQEndpointBuilder rocketmq(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.RocketMQEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * RSS (camel-rss)
      * Poll RSS feeds.
      * 
