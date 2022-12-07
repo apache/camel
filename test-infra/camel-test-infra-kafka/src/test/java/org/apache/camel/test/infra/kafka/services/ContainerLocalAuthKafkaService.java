@@ -31,33 +31,48 @@ import org.testcontainers.utility.MountableFile;
 public class ContainerLocalAuthKafkaService implements KafkaService, ContainerService<KafkaContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(ContainerLocalAuthKafkaService.class);
     private final KafkaContainer kafka;
-    private final String jaasConfigFile;
+
+    public static class TransientAuthenticatedKafkaContainer extends KafkaContainer {
+        public TransientAuthenticatedKafkaContainer(String jaasConfigFile) {
+            super(DockerImageName.parse(ContainerLocalKafkaService.KAFKA3_IMAGE_NAME));
+
+            withEmbeddedZookeeper();
+
+            final MountableFile mountableFile = MountableFile.forClasspathResource(jaasConfigFile);
+            LOG.debug("Using mountable file at: {}", mountableFile.getFilesystemPath());
+            withCopyFileToContainer(mountableFile, "/tmp/kafka-jaas.config");
+
+            withEnv("KAFKA_OPTS", "-Djava.security.auth.login.config=/tmp/kafka-jaas.config")
+                    .withEnv("KAFKA_LISTENERS", "PLAINTEXT://0.0.0.0:9093,BROKER://0.0.0.0:9092")
+                    .withEnv("KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL", "PLAIN")
+                    .withEnv("KAFKA_LISTENER_SECURITY_PROTOCOL_MAP", "PLAINTEXT:SASL_PLAINTEXT,BROKER:PLAINTEXT")
+                    .withEnv("KAFKA_SASL_ENABLED_MECHANISMS", "PLAIN");
+        }
+    }
+
+    public static class StaticKafkaContainer extends TransientAuthenticatedKafkaContainer {
+        public StaticKafkaContainer(String jaasConfigFile) {
+            super(jaasConfigFile);
+
+            addFixedExposedPort(9093, 9093);
+        }
+
+        @Override
+        public String getBootstrapServers() {
+            return String.format("PLAINTEXT://%s:9093", this.getHost());
+        }
+    }
 
     public ContainerLocalAuthKafkaService(String jaasConfigFile) {
-        this.jaasConfigFile = jaasConfigFile;
-        kafka = initContainer();
+        kafka = initContainer(jaasConfigFile);
     }
 
-    public ContainerLocalAuthKafkaService(KafkaContainer kafka, String jaasConfigFile) {
+    public ContainerLocalAuthKafkaService(KafkaContainer kafka) {
         this.kafka = kafka;
-        this.jaasConfigFile = jaasConfigFile;
     }
 
-    protected KafkaContainer initContainer() {
-        final KafkaContainer container = new KafkaContainer(DockerImageName.parse(ContainerLocalKafkaService.KAFKA3_IMAGE_NAME))
-                .withEmbeddedZookeeper();
-
-        final MountableFile mountableFile = MountableFile.forClasspathResource(jaasConfigFile);
-        LOG.debug("Using mountable file at: {}", mountableFile.getFilesystemPath());
-        container.withCopyFileToContainer(mountableFile, "/tmp/kafka-jaas.config");
-
-        container.withEnv("KAFKA_OPTS", "-Djava.security.auth.login.config=/tmp/kafka-jaas.config")
-                .withEnv("KAFKA_LISTENERS", "PLAINTEXT://0.0.0.0:9093,BROKER://0.0.0.0:9092")
-                .withEnv("KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL", "PLAIN")
-                .withEnv("KAFKA_LISTENER_SECURITY_PROTOCOL_MAP", "PLAINTEXT:SASL_PLAINTEXT,BROKER:PLAINTEXT")
-                .withEnv("KAFKA_SASL_ENABLED_MECHANISMS", "PLAIN");
-
-        return container;
+    protected KafkaContainer initContainer(String jaasConfigFile) {
+        return new TransientAuthenticatedKafkaContainer(jaasConfigFile);
     }
 
     public String getBootstrapServers() {
