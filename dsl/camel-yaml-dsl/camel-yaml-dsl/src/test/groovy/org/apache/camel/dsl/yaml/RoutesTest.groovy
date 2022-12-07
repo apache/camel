@@ -19,6 +19,7 @@ package org.apache.camel.dsl.yaml
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.LogDefinition
 import org.apache.camel.model.RouteDefinition
+import org.junit.jupiter.api.Assertions
 
 class RoutesTest extends YamlTestSupport {
 
@@ -305,6 +306,38 @@ class RoutesTest extends YamlTestSupport {
                 message == 'message'
             }
         }
+    }
+
+    def "load route with node-prefix-id"() {
+        when:
+        loadRoutes '''
+                - route:
+                    id: foo
+                    node-prefix-id: aaa
+                    from:
+                      uri: "direct:foo"
+                      steps:
+                        - to:
+                            id: "myFoo"
+                            uri: "mock:foo"
+                        - to: "seda:foo"
+                - route:
+                    id: bar
+                    node-prefix-id: bbb
+                    from:
+                      uri: "direct:bar"
+                      steps:
+                        - to:
+                            id: "myBar"
+                            uri: "mock:bar"
+                        - to: "seda:bar"
+            '''
+        then:
+        context.routeDefinitions.size() == 2
+        context.start()
+
+        Assertions.assertEquals(2, context.getRoute("foo").filter("aaa*").size());
+        Assertions.assertEquals(2, context.getRoute("bar").filter("bbb*").size());
     }
 
 }

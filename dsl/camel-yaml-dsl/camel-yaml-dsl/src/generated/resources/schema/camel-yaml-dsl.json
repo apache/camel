@@ -2565,6 +2565,9 @@
           "message-history" : {
             "type" : "boolean"
           },
+          "node-prefix-id" : {
+            "type" : "string"
+          },
           "precondition" : {
             "type" : "string"
           },
@@ -3096,6 +3099,9 @@
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.TemplatedRouteParameterDefinition"
             }
+          },
+          "prefix-id" : {
+            "type" : "string"
           },
           "route-id" : {
             "type" : "string"

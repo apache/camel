@@ -484,4 +484,44 @@ class RouteTemplateTest extends YamlTestSupport {
             }
     }
 
+    def "create route-template with prefix"() {
+        setup:
+        loadRoutes """
+                - route-template:
+                    id: "myTemplate"
+                    parameters:
+                      - name: "foo"
+                      - name: "bar"
+                    from:
+                      uri: "direct:{{foo}}"
+                      steps:
+                      - choice:  
+                          when:
+                            - header: "foo"
+                              steps:
+                                - log:
+                                    id: "myLog"
+                                    message: "Hello World"
+                          otherwise:
+                            steps:
+                              - to:
+                                  uri: "mock:{{bar}}"
+                                  id: "end"
+            """
+        when:
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("foo", "one");
+        parameters.put("bar", "cheese");
+        context.addRouteFromTemplate("first", "myTemplate", "aaa", parameters);
+
+        parameters.put("foo", "two");
+        parameters.put("bar", "cake");
+        context.addRouteFromTemplate("second", "myTemplate", "bbb", parameters);
+        context.start()
+
+        then:
+        Assertions.assertEquals(3, context.getRoute("first").filter("aaa*").size());
+        Assertions.assertEquals(3, context.getRoute("second").filter("bbb*").size());
+    }
+
 }
