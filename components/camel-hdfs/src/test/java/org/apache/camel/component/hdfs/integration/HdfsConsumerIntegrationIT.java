@@ -18,6 +18,7 @@ package org.apache.camel.component.hdfs.integration;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
@@ -75,7 +76,7 @@ public class HdfsConsumerIntegrationIT extends CamelTestSupport {
         FileSystem fs = FileSystem.get(file.toUri(), conf);
         try (FSDataOutputStream out = fs.create(file)) {
             for (int i = 0; i < 1024; ++i) {
-                out.write(("PIPPO" + i).getBytes("UTF-8"));
+                out.write(("PIPPO" + i).getBytes(StandardCharsets.UTF_8));
                 out.flush();
             }
         }

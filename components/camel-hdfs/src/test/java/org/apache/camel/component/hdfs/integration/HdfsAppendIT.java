@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.hdfs.integration;
 
+import java.nio.charset.StandardCharsets;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.hdfs.v2.services.HDFSService;
@@ -70,7 +72,7 @@ public class HdfsAppendIT extends CamelTestSupport {
         }
         try (FSDataOutputStream out = fs.create(file)) {
             for (int i = 0; i < 10; ++i) {
-                out.write("PIPPO".getBytes("UTF-8"));
+                out.write("PIPPO".getBytes(StandardCharsets.UTF_8));
             }
         }
     }
