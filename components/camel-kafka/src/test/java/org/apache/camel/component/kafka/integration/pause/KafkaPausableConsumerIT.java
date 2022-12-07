@@ -32,6 +32,7 @@ import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.component.kafka.MockConsumerInterceptor;
 import org.apache.camel.component.kafka.consumer.errorhandler.KafkaConsumerListener;
 import org.apache.camel.component.kafka.consumer.support.ProcessingResult;
+import org.apache.camel.component.kafka.integration.AbstractKafkaTestSupport;
 import org.apache.camel.component.kafka.integration.BaseEmbeddedKafkaTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -98,7 +99,7 @@ public class KafkaPausableConsumerIT extends BaseEmbeddedKafkaTestSupport {
 
     @BeforeEach
     public void before() {
-        Properties props = BaseEmbeddedKafkaTestSupport.getDefaultProperties(service);
+        Properties props = AbstractKafkaTestSupport.getDefaultProperties(service);
         producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
         MockConsumerInterceptor.recordsCaptured.clear();
 
@@ -111,7 +112,7 @@ public class KafkaPausableConsumerIT extends BaseEmbeddedKafkaTestSupport {
             producer.close();
         }
         // clean all test topics
-        BaseEmbeddedKafkaTestSupport.createAdminClient(service)
+        AbstractKafkaTestSupport.createAdminClient(service)
                 .deleteTopics(Collections.singletonList(SOURCE_TOPIC)).all();
 
         executorService.shutdownNow();
