@@ -1962,9 +1962,22 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public String addRouteFromTemplate(String routeId, String routeTemplateId, String prefixId, Map<String, Object> parameters)
+            throws Exception {
+        return getModelCamelContext().addRouteFromTemplate(routeId, routeTemplateId, prefixId, parameters);
+    }
+
+    @Override
     public String addRouteFromTemplate(String routeId, String routeTemplateId, RouteTemplateContext routeTemplateContext)
             throws Exception {
         return getModelCamelContext().addRouteFromTemplate(routeId, routeTemplateId, routeTemplateContext);
+    }
+
+    @Override
+    public String addRouteFromTemplate(
+            String routeId, String routeTemplateId, String prefixId, RouteTemplateContext routeTemplateContext)
+            throws Exception {
+        return getModelCamelContext().addRouteFromTemplate(routeId, routeTemplateId, prefixId, routeTemplateContext);
     }
 
     @Override

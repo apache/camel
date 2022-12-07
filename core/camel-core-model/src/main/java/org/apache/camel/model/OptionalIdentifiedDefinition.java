@@ -43,8 +43,8 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
     private String id;
     private Boolean customId;
     private DescriptionDefinition description;
-    private transient int lineNumber = -1;
-    private transient String location;
+    private int lineNumber = -1;
+    private String location;
 
     @Override
     public CamelContext getCamelContext() {
@@ -188,10 +188,26 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
      * Gets the node id, creating one if not already set.
      */
     public String idOrCreate(NodeIdFactory factory) {
+        // prefix is only for nodes in the route (not the route id)
+        String prefix = null;
+        boolean iAmRoute = this instanceof RouteDefinition;
+        boolean allowPrefix = !iAmRoute && this instanceof ProcessorDefinition;
+        if (allowPrefix) {
+            RouteDefinition route = ProcessorDefinitionHelper.getRoute(this);
+            if (route != null) {
+                prefix = route.getNodePrefixId();
+            }
+        }
         if (id == null) {
             setGeneratedId(factory.createId(this));
         }
-        return id;
+
+        // return with prefix
+        if (prefix != null) {
+            return prefix + id;
+        } else {
+            return id;
+        }
     }
 
     public Boolean getCustomId() {

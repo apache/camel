@@ -50,6 +50,8 @@ public class TemplatedRouteDefinition implements CamelContextAware {
     private String routeTemplateRef;
     @XmlAttribute
     private String routeId;
+    @XmlAttribute
+    private String prefixId;
     @XmlElement(name = "parameter")
     @Metadata(description = "Adds an input parameter of the template to build the route")
     private List<TemplatedRouteParameterDefinition> parameters;
@@ -87,6 +89,14 @@ public class TemplatedRouteDefinition implements CamelContextAware {
 
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    public String getPrefixId() {
+        return prefixId;
+    }
+
+    public void setPrefixId(String prefixId) {
+        this.prefixId = prefixId;
     }
 
     @Override
@@ -258,6 +268,16 @@ public class TemplatedRouteDefinition implements CamelContextAware {
         def.setName(name);
         beans.add(def);
         return def;
+    }
+
+    /**
+     * Sets a prefix to use for all node ids (not route id).
+     *
+     * @param id the prefix id
+     */
+    public TemplatedRouteDefinition prefixId(String id) {
+        setPrefixId(id);
+        return this;
     }
 
     /**

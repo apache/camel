@@ -254,6 +254,89 @@ And in YAML DSL
         value: "5s"
 ----
 
+=== Using hardcoded node IDs in route templates
+
+If route templates contains hardcoded node IDs then routes created from templates will use the same IDs
+and therefore if 2 or more routes are created from the same template, you will have _duplicate id detected_ error.
+
+Given the route template below, then it has hardcoded ID (_new-order_) in node calling the http services.
+
+[source,java]
+----
+public class MyRouteTemplates extends RouteBuilder {
+
+    @Override
+    public void configure() throws Exception {
+        routeTemplate("orderTemplate")
+            .templateParameter("queue")
+            .from("jms:{{queue}}")
+                .to("http:orderserver.acme.com/neworder").id("new-order")
+                .log("Processing order");
+    }
+}
+----
+
+When creating routes from templates, you can then provide a _prefix_ which are used for all node IDs.
+This allows to create 2 or more routes without _duplicate id_ errors.
+
+For example in the following we create a new route _myCoolRoute_ from the _myTemplate_ template, and
+use a prefix of _web_.
+
+And in Java DSL
+
+[source,java]
+----
+templatedRoute("orderTemplate")
+        .routeId("webOrder")
+        .prefixId("web")
+        .parameter("queue", "order.web");
+----
+
+Then we can create a 2nd route:
+
+[source,java]
+----
+templatedRoute("orderTemplate")
+        .routeId("ftpOrder")
+        .prefixId("ftp")
+        .parameter("queue", "order.ftp");
+----
+
+And in Spring XML DSL
+
+[source,xml]
+----
+<camelContext>
+  <templatedRoute routeTemplateRef="orderTemplate" routeId="webOrder" prefixId="web">
+    <parameter name="queue" value="web"/>
+  </templatedRoute>
+</camelContext>
+----
+
+And in XML DSL
+
+[source,xml]
+----
+<templatedRoutes xmlns="http://camel.apache.org/schema/spring">
+  <templatedRoute routeTemplateRef="orderTemplate" routeId="webOrder" prefixId="web">
+    <parameter name="queue" value="web"/>
+  </templatedRoute>
+</templatedRoutes>
+----
+
+And in YAML DSL
+
+[source,yaml]
+----
+- templated-route:
+    route-template-ref: "orderTemplate"
+    route-id: "webOrder"
+    prefix-id: "web"
+    parameters:
+      - name: "queue"
+        value: "web"
+----
+
 == Binding beans to route template
 
 The route template allows to bind beans which is local scoped and only used as part of creating routes from the template.

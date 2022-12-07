@@ -39,6 +39,7 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
                   @YamlProperty(name = "id", type = "string"),
                   @YamlProperty(name = "description", type = "string"),
                   @YamlProperty(name = "group", type = "string"),
+                  @YamlProperty(name = "node-prefix-id", type = "string"),
                   @YamlProperty(name = "precondition", type = "string"),
                   @YamlProperty(name = "route-configuration-id", type = "string"),
                   @YamlProperty(name = "auto-startup", type = "boolean"),
@@ -83,6 +84,10 @@ public class RouteDefinitionDeserializer extends YamlDeserializerBase<RouteDefin
                     break;
                 case "group":
                     target.setGroup(asText(val));
+                    break;
+                case "nodePrefixId":
+                case "node-prefix-id":
+                    target.setNodePrefixId(asText(val));
                     break;
                 case "routeConfigurationId":
                 case "route-configuration-id":

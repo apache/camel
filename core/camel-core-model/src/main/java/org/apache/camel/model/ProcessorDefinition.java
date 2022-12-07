@@ -866,6 +866,23 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Sets a prefix to use for all node ids (not route id).
+     *
+     * @param  prefixId the prefix
+     * @return          the builder
+     */
+    public Type nodePrefixId(String prefixId) {
+        ProcessorDefinition<?> def = this;
+
+        RouteDefinition route = ProcessorDefinitionHelper.getRoute(def);
+        if (route != null) {
+            route.setNodePrefixId(prefixId);
+        }
+
+        return asType();
+    }
+
+    /**
      * Disables this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later
      * at runtime.
      */

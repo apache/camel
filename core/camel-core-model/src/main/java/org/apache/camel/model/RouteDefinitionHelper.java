@@ -245,6 +245,18 @@ public final class RouteDefinitionHelper {
      * @return        <tt>null</tt> if no duplicate id's detected, otherwise the first found duplicate id is returned.
      */
     public static String validateUniqueIds(RouteDefinition target, List<RouteDefinition> routes) {
+        return validateUniqueIds(target, routes, null);
+    }
+
+    /**
+     * Validates that the target route has no duplicate id's from any of the existing routes.
+     *
+     * @param  target   the target route
+     * @param  routes   the existing routes
+     * @param  prefixId optional prefix to use in duplicate id detection
+     * @return          <tt>null</tt> if no duplicate id's detected, otherwise the first found duplicate id is returned.
+     */
+    public static String validateUniqueIds(RouteDefinition target, List<RouteDefinition> routes, String prefixId) {
         Set<String> routesIds = new LinkedHashSet<>();
         // gather all ids for the existing route, but only include custom ids,
         // and no abstract ids
@@ -267,6 +279,9 @@ public final class RouteDefinitionHelper {
 
         // now check for clash with the target route
         for (String id : targetIds) {
+            if (prefixId != null) {
+                id = prefixId + id;
+            }
             if (routesIds.contains(id)) {
                 return id;
             }

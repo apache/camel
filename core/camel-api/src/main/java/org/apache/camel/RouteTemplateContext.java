@@ -39,7 +39,7 @@ public interface RouteTemplateContext extends HasCamelContext {
     /**
      * Binds the bean to the repository (if possible).
      *
-     * If the bean is {@link CamelContextAware} then the registry will automatic inject the context if possible.
+     * If the bean is {@link CamelContextAware} then the registry will automatically inject the context if possible.
      *
      * @param id   the id of the bean
      * @param bean the bean
@@ -53,7 +53,7 @@ public interface RouteTemplateContext extends HasCamelContext {
      * <p/>
      * Binding by id and type allows to bind multiple entries with the same id but with different type.
      *
-     * If the bean is {@link CamelContextAware} then the registry will automatic inject the context if possible.
+     * If the bean is {@link CamelContextAware} then the registry will automatically inject the context if possible.
      *
      * @param id   the id of the bean
      * @param type the type of the bean to associate the binding
@@ -69,7 +69,7 @@ public interface RouteTemplateContext extends HasCamelContext {
      * <p/>
      * Binding by id and type allows to bind multiple entries with the same id but with different type.
      *
-     * If the bean is {@link CamelContextAware} then the registry will automatic inject the context if possible.
+     * If the bean is {@link CamelContextAware} then the registry will automatically inject the context if possible.
      *
      * @param id   the id of the bean
      * @param type the type of the bean to associate the binding
@@ -84,7 +84,7 @@ public interface RouteTemplateContext extends HasCamelContext {
      * <p/>
      * Binding by id and type allows to bind multiple entries with the same id but with different type.
      *
-     * If the bean is {@link CamelContextAware} then the registry will automatic inject the context if possible.
+     * If the bean is {@link CamelContextAware} then the registry will automatically inject the context if possible.
      *
      * @param id   the id of the bean
      * @param type the type of the bean to associate the binding

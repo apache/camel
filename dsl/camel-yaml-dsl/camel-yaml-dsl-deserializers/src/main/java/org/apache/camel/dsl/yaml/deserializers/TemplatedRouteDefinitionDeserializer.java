@@ -35,6 +35,8 @@ import org.snakeyaml.engine.v2.nodes.Node;
           properties = {
                   @YamlProperty(name = "route-id",
                                 type = "string"),
+                  @YamlProperty(name = "prefix-id",
+                                type = "string"),
                   @YamlProperty(name = "route-template-ref",
                                 type = "string",
                                 required = true),
@@ -63,6 +65,10 @@ public class TemplatedRouteDefinitionDeserializer extends YamlDeserializerBase<T
                 target.setRouteId(asText(node));
                 break;
             }
+            case "prefixId":
+            case "prefix-id":
+                target.setPrefixId(asText(node));
+                break;
             case "routeTemplateRef":
             case "route-template-ref": {
                 target.setRouteTemplateRef(asText(node));

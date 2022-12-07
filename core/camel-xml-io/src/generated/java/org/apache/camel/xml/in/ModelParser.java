@@ -1043,6 +1043,7 @@ public class ModelParser extends BaseParser {
                 case "group": def.setGroup(val); break;
                 case "logMask": def.setLogMask(val); break;
                 case "messageHistory": def.setMessageHistory(val); break;
+                case "nodePrefixId": def.setNodePrefixId(val); break;
                 case "precondition": def.setPrecondition(val); break;
                 case "routeConfigurationId": def.setRouteConfigurationId(val); break;
                 case "routePolicyRef": def.setRoutePolicyRef(val); break;
@@ -1363,6 +1364,7 @@ public class ModelParser extends BaseParser {
     protected TemplatedRouteDefinition doParseTemplatedRouteDefinition() throws IOException, XmlPullParserException {
         return doParse(new TemplatedRouteDefinition(), (def, key, val) -> {
             switch (key) {
+                case "prefixId": def.setPrefixId(val); break;
                 case "routeId": def.setRouteId(val); break;
                 case "routeTemplateRef": def.setRouteTemplateRef(val); break;
                 default: return false;
