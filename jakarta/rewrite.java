@@ -33,9 +33,10 @@ class rewrite implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         // Rebase on top of main
-        // exec("git", "checkout", "jakarta-rewrite");
+        exec("git", "checkout", "jakarta/rewrite");
+        exec("git", "rebase", "origin/main");
         // Create/reset branch 'rewritten'
-        // exec("git", "checkout", "-B", "jakarta-rewritten", "jakarta-rewrite");
+        exec("git", "checkout", "-B", "jakarta/rewritten", "jakarta/rewrite");
 
         // Switch version to 4.0.0-SNAPSHOT
         System.out.println("Switch version to 4.0.0-SNAPSHOT");
