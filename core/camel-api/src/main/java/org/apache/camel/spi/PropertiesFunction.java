@@ -31,7 +31,7 @@ public interface PropertiesFunction {
      *
      * @param  remainder the remainder value
      * @return           a value as the result of the function
-     * @see #lookupFirst(String)
+     * @see              #lookupFirst(String)
      */
     String apply(String remainder);
 
@@ -39,8 +39,8 @@ public interface PropertiesFunction {
      * Whether the value should be looked up as a regular properties first, before applying this function.
      *
      * @param  remainder the remainder value
-     * @return           true to resolve the remainder value as a property value, and then afterwards apply this function,
-     *                   false to apply this function without lookup (default).
+     * @return           true to resolve the remainder value as a property value, and then afterwards apply this
+     *                   function, false to apply this function without lookup (default).
      */
     default boolean lookupFirst(String remainder) {
         return false;
