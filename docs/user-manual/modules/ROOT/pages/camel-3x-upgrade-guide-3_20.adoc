@@ -27,6 +27,24 @@ from `<groupdId>org.apache.camel</groupdId>` to `<groupdId>org.apache.camel.mave
 
 Dependencies not intended for end users has been removed, such as all `-parent` JARs.
 
+=== camel-base64
+
+The `base64` property placeholder function will now lookup the value as a property key.
+For example
+
+[source,text]
+----
+{{base64:myKey}}
+----
+
+Will now look up myKey as a property placeholder value, which then is decoded.
+If you want to decode the value as-is, then use `base64:decode:` as shown below:
+
+[source,text]
+----
+{{base64:decode:Q2FtZWw==}}
+----
+
 === camel-log
 
 The log component now shows cached streams (`org.apache.camel.StreamCache`) message bodies by default.

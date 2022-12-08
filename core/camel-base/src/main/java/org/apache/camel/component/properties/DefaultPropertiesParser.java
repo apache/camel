@@ -313,6 +313,19 @@ public class DefaultPropertiesParser implements PropertiesParser {
                 PropertiesFunction function = propertiesComponent.getPropertiesFunction(prefix);
                 if (function != null) {
                     String remainder = StringHelper.after(key, ":");
+                    if (function.lookupFirst(remainder)) {
+                        boolean optional = remainder != null && remainder.startsWith(OPTIONAL_TOKEN);
+                        String value = getPropertyValue(remainder, input);
+                        if (optional && value == null) {
+                            return null;
+                        }
+                        // it was not possible to resolve
+                        if (value != null && value.startsWith(UNRESOLVED_PREFIX_TOKEN)) {
+                            return value;
+                        } else {
+                            remainder = value;
+                        }
+                    }
                     log.debug("Property with key [{}] is applied by function [{}]", key, function.getName());
                     String value = function.apply(remainder);
                     if (value == null) {

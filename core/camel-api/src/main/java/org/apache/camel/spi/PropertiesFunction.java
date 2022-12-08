@@ -22,16 +22,28 @@ package org.apache.camel.spi;
 public interface PropertiesFunction {
 
     /**
-     * Name of the function which is used as <tt>name:</tt> to let the properties component know its a function.
+     * Name of the function which is used as <tt>name:</tt> to let the properties component know it is a function.
      */
     String getName();
 
     /**
-     * Applies the function
+     * Applies the function.
      *
      * @param  remainder the remainder value
      * @return           a value as the result of the function
+     * @see #lookupFirst(String)
      */
     String apply(String remainder);
+
+    /**
+     * Whether the value should be looked up as a regular properties first, before applying this function.
+     *
+     * @param  remainder the remainder value
+     * @return           true to resolve the remainder value as a property value, and then afterwards apply this function,
+     *                   false to apply this function without lookup (default).
+     */
+    default boolean lookupFirst(String remainder) {
+        return false;
+    }
 
 }

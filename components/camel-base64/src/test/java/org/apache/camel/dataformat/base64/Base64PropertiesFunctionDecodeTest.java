@@ -22,10 +22,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class Base64PropertiesFunctionTest extends CamelTestSupport {
+public class Base64PropertiesFunctionDecodeTest extends CamelTestSupport {
 
     @Test
-    public void testBase64Key() throws Exception {
+    public void testBase64() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello Camel");
 
         template.sendBody("direct:start", "Hello");
@@ -38,11 +38,9 @@ public class Base64PropertiesFunctionTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                // Q2FtZWw== is the word Camel
-                context.getPropertiesComponent().addInitialProperty("fooKey", "Q2FtZWw==");
-
                 from("direct:start")
-                        .setBody(simple("${body} {{base64:fooKey}}"))
+                        // Q2FtZWw== is the word Camel
+                        .setBody(simple("${body} {{base64:decode:Q2FtZWw==}}"))
                         .to("mock:result");
             }
         };

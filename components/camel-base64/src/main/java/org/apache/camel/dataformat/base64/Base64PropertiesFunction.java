@@ -36,7 +36,15 @@ public class Base64PropertiesFunction implements PropertiesFunction {
     }
 
     @Override
+    public boolean lookupFirst(String remainder) {
+        return !remainder.startsWith("decode:");
+    }
+
+    @Override
     public String apply(String remainder) {
+        if (remainder.startsWith("decode:")) {
+            remainder = remainder.substring(7);
+        }
         byte[] arr = codec.decode(remainder);
         return new String(arr);
     }
