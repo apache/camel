@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.cxf.jaxws;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -42,6 +43,8 @@ public class CxfComponent extends HeaderFilterStrategyComponent implements SSLCo
     private Boolean allowStreaming;
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
+    
+    private Map<String, BeanCacheEntry> beanCache = new HashMap<String, BeanCacheEntry>();
 
     public CxfComponent() {
     }
@@ -106,7 +109,21 @@ public class CxfComponent extends HeaderFilterStrategyComponent implements SSLCo
 
             result = createCxfSpringEndpoint(beanId);
             result.setBeanId(beanId);
-
+            if (beanCache.containsKey(beanId)) {
+                BeanCacheEntry entry = beanCache.get(beanId);
+                if (entry.cxfEndpoint == result
+                    && !entry.parameters.equals(parameters)) {
+                    /*different URI refer to the same CxfEndpoint Bean instance
+                      but with different parameters. This can make stateful bean's 
+                      behavior uncertainty. This can be addressed by using proper 
+                      bean scope, such as "prototype" in Spring or "Session" in CDI  
+                      */
+                    throw new RuntimeException("Different URI refer to the same CxfEndpoint Bean instance"
+                        + " with ID : " + beanId + " but with different parameters. Please use the proper Bean scope ");
+                }
+            } else {
+                beanCache.put(beanId, new BeanCacheEntry(result, new HashMap<String, Object>(parameters)));
+            }
         } else {
             // endpoint URI does not specify a bean
             result = createCxfEndpoint(remaining);
@@ -142,5 +159,14 @@ public class CxfComponent extends HeaderFilterStrategyComponent implements SSLCo
         CxfEndpoint cxfEndpoint = (CxfEndpoint) endpoint;
         cxfEndpoint.updateEndpointUri(uri);
     }
-
+    
+    class BeanCacheEntry {
+        //A snapshot of a CxfEndpoint Bean URI
+        CxfEndpoint cxfEndpoint;
+        Map<String, Object> parameters;
+        BeanCacheEntry(CxfEndpoint cxfEndpoint, Map<String, Object> parameters) {
+            this.cxfEndpoint = cxfEndpoint;
+            this.parameters = parameters;
+        }
+    }
 }
