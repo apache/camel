@@ -46,16 +46,20 @@ public abstract class AbstractKafkaTestSupport extends CamelTestSupport {
         return KafkaAdminClient.create(properties);
     }
 
-    public static Properties getDefaultProperties(KafkaService service) {
-        LOG.info("Connecting to Kafka {}", service.getBootstrapServers());
+    public static Properties getDefaultProperties(String bootstrapService) {
+        LOG.info("Connecting to Kafka {}", bootstrapService);
 
         Properties props = new Properties();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, service.getBootstrapServers());
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapService);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_SERIALIZER);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_SERIALIZER);
         props.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_PARTITIONER);
         props.put(ProducerConfig.ACKS_CONFIG, "1");
         return props;
+    }
+
+    public static Properties getDefaultProperties(KafkaService service) {
+        return getDefaultProperties(service.getBootstrapServers());
     }
 
     protected CamelContext createCamelContextFromService(KafkaService service) throws Exception {
