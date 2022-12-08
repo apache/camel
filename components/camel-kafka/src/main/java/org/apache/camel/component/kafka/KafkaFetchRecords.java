@@ -164,7 +164,7 @@ public class KafkaFetchRecords implements Runnable {
             LOG.info("Terminating KafkaConsumer thread {} receiving from {}", threadId, getPrintableTopic());
         }
 
-        IOHelper.close(consumer);
+        safeConsumerClose();
     }
 
     private void setupInitializeErrorException(ForegroundTask task, int max) {
@@ -371,11 +371,9 @@ public class KafkaFetchRecords implements Runnable {
         } finally {
             // only close if not retry
             if (!pollExceptionStrategy.canContinue()) {
-                LOG.debug("Closing consumer {}", threadId);
                 safeUnsubscribe();
-                IOHelper.close(consumer);
+                safeConsumerClose();
             }
-
             lock.unlock();
         }
     }
@@ -407,6 +405,19 @@ public class KafkaFetchRecords implements Runnable {
         }
     }
 
+    private void safeConsumerClose() {
+        /*
+         IOHelper.close only catches IOExceptions, thus other Kafka exceptions may leak from the fetcher causing
+         unspecified behavior.
+         */
+        try {
+            LOG.debug("Closing consumer {}", threadId);
+            IOHelper.close(consumer, "Kafka consumer (thread ID " + threadId + ")", LOG);
+        } catch (Exception e) {
+            LOG.error("Error closing the Kafka consumer: {} (this error will be ignored)", e.getMessage(), e);
+        }
+    }
+
     private void safeUnsubscribe() {
         if (consumer == null) {
             return;
@@ -414,11 +425,14 @@ public class KafkaFetchRecords implements Runnable {
 
         final String printableTopic = getPrintableTopic();
         try {
+            LOG.debug("Unsubscribing from Kafka");
             consumer.unsubscribe();
+            LOG.debug("Done unsubscribing from Kafka");
         } catch (IllegalStateException e) {
             LOG.warn("The consumer is likely already closed. Skipping unsubscribing thread {} from kafka {}", threadId,
                     printableTopic);
         } catch (Exception e) {
+            LOG.debug("Something went wrong while unsubscribing from Kafka: {}", e.getMessage());
             kafkaConsumer.getExceptionHandler().handleException(
                     "Error unsubscribing thread " + threadId + " from kafka " + printableTopic, e);
         }
