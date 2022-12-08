@@ -110,7 +110,7 @@ public class ContainerLocalAuthKafkaService implements KafkaService, ContainerSe
      * @return          A string with the configuration
      */
     public static String generateSimpleSaslJaasConfig(String username, String password) {
-        return String.format("org.apache.kafka.common.security.plain.PlainLoginModule required username=%s password=%s;",
+        return String.format("org.apache.kafka.common.security.plain.PlainLoginModule required username='%s' password='%s';",
                 username, password);
     }
 }
