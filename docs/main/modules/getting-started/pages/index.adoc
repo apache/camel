@@ -7,79 +7,42 @@ This document will guide you through the fundamentals of the Apache Camel Core. 
 [[BookGettingStarted-TheEnterpriseIntegrationPatternsEIPBook]]
 == The _Enterprise Integration Patterns_ (EIP) book
 
-The purpose of a _patterns_ book is not to advocate new techniques that
-the authors have invented, but rather to document existing best
-practices within a particular field. By doing this, the authors of a
-patterns book hope to spread knowledge of best practices and promote a
-vocabulary for discussing architectural designs. +
-One of the most famous patterns books is
-http://www.amazon.com/Design-Patterns-Elements-Reusable-Object-Oriented/dp/0201633612[_Design
-Patterns: Elements of Reusable Object-oriented Software_] by Erich
-Gamma, Richard Helm, Ralph Johnson and John Vlissides, commonly known as
-the http://en.wikipedia.org/wiki/Design_Patterns["Gang of Four" (GoF)]
-book. Since the publication of __Design Patterns__, many other pattern
-books, of varying quality, have been written. One famous patterns book
-is called
-http://www.amazon.com/Enterprise-Integration-Patterns-Designing-Deploying/dp/0321200683[_Enterprise
+Books about design patterns document the existing best practices within a particular field. The authors of these books hope to spread knowledge of best practices and to promote a vocabulary for discussing architectural designs.
+
+A famous book about design patterns is the http://www.amazon.com/Enterprise-Integration-Patterns-Designing-Deploying/dp/0321200683[_Enterprise
 Integration Patterns: Designing, Building, and Deploying Messaging
-Solutions_] by Gregor Hohpe and Bobby Woolf. It is common for people to
-refer to this book by its initials __EIP__. As the subtitle of EIP
-suggests, the book focuses on design patterns for asynchronous messaging
-systems. The book discusses 65 patterns. Each pattern is given a textual
-name and most are also given a graphical symbol, intended to be used in
-architectural diagrams.
+Solutions_] written by Gregor Hohpe and Bobby Wolf. The E.I.P. book, as it is known, describes 65 design patterns for asynchronous messaging systems. The book gives each of them a name and an image - intended to be used in architectural diagrams.
 
 [[BookGettingStarted-TheCamelproject]]
-== The Camel project
+== The Apache Camel Core project
 
-Camel (http://camel.apache.org) is an open-source, Java-based project
-that helps the user implement many of the design patterns in the EIP
-book. Because Camel implements many of the design patterns in the EIP
-book, it would be a good idea for people who work with Camel to have the
-EIP book as a reference.
+The http://camel.apache.org[Apache Camel Core] is an open-source, Java-based project that helps users to implement many of the design patterns described in the E.I.P. book. As such, we suggest that our users have a copy of the E.I.P. book as one of their references.
 
 [[BookGettingStarted-OnlinedocumentationforCamel]]
 == Online documentation for Camel
 
-The documentation is all under the Documentation category on the
-right-side menu of the Camel website.
-Camel-related books are also available, in particular
-the https://www.manning.com/books/camel-in-action-second-edition[Camel in Action 2nd edition] book,
-presently serving as the Camel bible -- it has a free chapter one,
-which is highly recommended to read to get more familiar with Camel.
+The links on the right-side allow easy navigation between different topics within a guide. Our documentation tries to cover the topics for both novice and experienced users. However, experienced users may want to skip the subjects they are familiar with.
 
-[[BookGettingStarted-Ausefultipfornavigatingtheonlinedocumentation]]
-=== A useful tip for navigating the online documentation
+[[BookGettingStarted-SupportingDocumentation]]
 
-The breadcrumbs at the top of the online Camel documentation can help
-you navigate between parent and child subsections. +
-For example, If you are on the "Languages" documentation page then the
-left-hand side of the reddish bar contains the following links.
+Over the years, our community has written link:/community/books/[books], link:/community/articles/[articles] and tutorials about Apache Camel. Our community has presented Apache Camel in many videos and talks.
 
-[source,java]
-----
-Apache Camel > Documentation > Languages
-----
+Some notable references from material developed from members, which may provide significant help for new users include:
 
-As you might expect, clicking on "Apache Camel" takes you back to the
-home page of the Apache Camel project, and clicking on "Documentation"
-takes you to the main documentation page. You can interpret the
-"Architecture" and "Languages" buttons as indicating you are in the
-"Languages" section of the "Architecture" chapter. Adding browser
-bookmarks to pages that you frequently reference can also save time.
+* The https://www.manning.com/books/camel-in-action-second-edition[Camel in Action 2nd edition] book, presently serving as the Camel bible, has a free chapter one, which is highly recommended to read to get more familiar with Camel.
+* The https://camel.apache.org/blog/2022/08/pluralsight-training/[Fundamentals of Apache Camel] training by Michael Hoffman.
 
-[[BookGettingStarted-online-javadoc-docs]]
+We strongly recommend that our users explore the pages above for additional material that suits their needs.
 
-[[BookGettingStarted-OnlineJavadocdocumentation]]
+[[BookGettingStarted-OnlineJavadocDocumentation]]
 == Online Javadoc documentation
 
-The Apache Camel Javadoc documentation can be accessed from
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/index.html[javadoc.io].
+Our API documentation in Javadoc format is available on https://www.javadoc.io/doc/org.apache.camel/camel-api/current/index.html[javadoc.io].
 
-The Javadoc API that are the most relevant for Camel end users are in the following JARs:
+The Javadoc API that are the most relevant for Camel end users are in the following components (JARs):
 
-- https://www.javadoc.io/doc/org.apache.camel/camel-api/current/index.html[camel-core]
-- https://www.javadoc.io/doc/org.apache.camel/camel-support/latest/index.html[camel-support]
+* https://www.javadoc.io/doc/org.apache.camel/camel-api/current/index.html[camel-core]
+* https://www.javadoc.io/doc/org.apache.camel/camel-support/latest/index.html[camel-support]
 
 [[BookGettingStarted-ConceptsandterminologyfundamentaltoCamel]]
 == Concepts and terminology fundamental to Camel
