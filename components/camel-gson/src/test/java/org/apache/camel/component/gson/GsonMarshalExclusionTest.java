@@ -46,7 +46,7 @@ public class GsonMarshalExclusionTest extends CamelTestSupport {
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
         assertTrue(marshalledAsString.contains("\"height\":190"));
         assertTrue(marshalledAsString.contains("\"age\":30"));
-		assertFalse(marshalledAsString.contains("\"weight\":70"));
+        assertFalse(marshalledAsString.contains("\"weight\":70"));
 
         template.sendBody("direct:backPojoExcludeWeight", marshalled);
 
