@@ -53,13 +53,13 @@ In this section, we explain some of Camel’s fundamental concepts and features.
 
 [[BookGettingStarted-Endpoint]]
 === Endpoint
-When we talk about inter-process communication, such as client/server or microservices, we often use the term _endpoint_ to refer to a software entity. In this context, a characterist of an endpoint is that it is contactable at an _address_. The address may itself convey additional characteristics of an endpoint. For instance, the address `host:port` conveys both the port and network name of a TCP-based communication endpoint.
+When we talk about inter-process communication, such as client/server or microservices, we often use the term _endpoint_ to refer to a software entity. In this context, a characteristic of an endpoint is that it is contactable at an _address_. The address may itself convey additional characteristics of an endpoint. For instance, the address `host:port` conveys both the port and network name of a TCP-based communication endpoint.
 
 The distinction between the address and the software contactable at that address is often not important.
 
 *Note*: in the past, other technologies (such as CORBA) used the terminology _endpoint_ in ways that could appear ambiguous. To prevent any confusion, we clarify that Camel uses it solely in the way we have described above.
 
-Camel provides out-of-the-box support for endpoints implemented with many different communication technologies. Here are some examples of the supported endpoint technologies:
+Camel provides out-of-the-box support for endpoints implemented with many communication technologies. Here are some examples of the supported endpoint technologies:
 
 * A JMS queue.
 * A web service.
