@@ -8,6 +8,7 @@ org.apache.camel.converter.aries.CredentialDefinitionRequestConverterLoader
 org.apache.camel.converter.aries.IssueCredentialRecordsFilterConverterLoader
 org.apache.camel.converter.aries.PresentProofRequestConverterLoader
 org.apache.camel.converter.aries.PresentationRequestConverterLoader
+org.apache.camel.converter.aries.ReceiveInvitationFilterConverterLoader
 org.apache.camel.converter.aries.ReceiveInvitationRequestConverterLoader
 org.apache.camel.converter.aries.RevRegCreateRequestConverterLoader
 org.apache.camel.converter.aries.RevokeRequestConverterLoader

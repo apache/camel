@@ -21,6 +21,7 @@ import java.util.Map;
 
 import io.nessus.aries.AgentConfiguration;
 import io.nessus.aries.AriesClientFactory;
+import io.nessus.aries.util.AssertArg;
 import io.nessus.aries.util.AssertState;
 import io.nessus.aries.wallet.NessusWallet;
 import io.nessus.aries.wallet.WalletRegistry;
@@ -44,6 +45,8 @@ public class HyperledgerAriesComponent extends DefaultComponent {
     private boolean removeWalletsOnShutdown;
 
     private AriesClient adminClient;
+    private WebSocketClient adminWebSocketClient;
+    private WebSocketListener adminWebSocketListener;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -66,6 +69,9 @@ public class HyperledgerAriesComponent extends DefaultComponent {
 
     @Override
     protected void doShutdown() throws Exception {
+
+        closeAdminWebSocketClient();
+
         if (removeWalletsOnShutdown) {
             for (NessusWallet wallet : walletRegistry.getWallets()) {
                 wallet.closeAndRemove();
@@ -121,11 +127,39 @@ public class HyperledgerAriesComponent extends DefaultComponent {
         return AriesClientFactory.createClient(agentConfig, wallet);
     }
 
+    public WebSocketListener createAdminWebSocketListener() {
+        return new WebSocketListener("admin", null, null);
+    }
+
+    public WebSocketClient createAdminWebSocketClient() {
+        WebSocketListener wslistener = createAdminWebSocketListener();
+        return createAdminWebSocketClient(wslistener);
+    }
+
     public WebSocketClient createAdminWebSocketClient(WebSocketListener wslistener) {
+        AssertArg.notNull(wslistener, "No wslistener");
+        AssertState.isNull(adminWebSocketClient, "WebSocket client already created");
         AgentConfiguration agentConfig = getAgentConfiguration();
-        WebSocketClient wsclient = new WebSocketClient(agentConfig, null);
-        wsclient.openWebSocket(wslistener);
-        return wsclient;
+        adminWebSocketClient = new WebSocketClient(agentConfig, null);
+        adminWebSocketClient.openWebSocket(wslistener);
+        adminWebSocketListener = wslistener;
+        return adminWebSocketClient;
+    }
+
+    public WebSocketClient getAdminWebSocketClient() {
+        return adminWebSocketClient;
+    }
+
+    public WebSocketListener getAdminWebSocketListener() {
+        return adminWebSocketListener;
+    }
+
+    public void closeAdminWebSocketClient() {
+        if (adminWebSocketClient != null) {
+            adminWebSocketClient.close();
+            adminWebSocketListener = null;
+            adminWebSocketClient = null;
+        }
     }
 
     public WebSocketClient createWebSocketClient(String walletName, WebSocketListener wslistener) {
