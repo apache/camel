@@ -153,6 +153,8 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
             prepareExpression();
             if (definition.getExpressionType() != null) {
                 expression = reifier(camelContext, definition.getExpressionType()).createExpression();
+            } else if (definition.getExpressionValue() != null) {
+                expression = definition.getExpressionValue();
             } else {
                 ObjectHelper.notNull(definition.getLanguage(), "language");
                 Language language = camelContext.resolveLanguage(definition.getLanguage());
@@ -191,7 +193,7 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
                 predicate = reifier(camelContext, definition.getExpressionType()).createPredicate();
             } else if (definition.getExpressionValue() != null) {
                 predicate = new ExpressionToPredicateAdapter(definition.getExpressionValue());
-            } else if (definition.getExpression() != null) {
+            } else {
                 ObjectHelper.notNull(definition.getLanguage(), "language");
                 Language language = camelContext.resolveLanguage(definition.getLanguage());
                 if (language == null) {
