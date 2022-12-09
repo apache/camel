@@ -16,12 +16,12 @@
  */
 package org.apache.camel.impl.event;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.CamelEvent;
 
 /**
  * Notifies that async processing is started (or sync processing is complete).
+ * 
  * @see ExchangeAsyncStartedEvent
  */
 public class ExchangeAsyncStartedEvent extends AbstractExchangeEvent implements CamelEvent.ExchangeAsyncStartedEvent {

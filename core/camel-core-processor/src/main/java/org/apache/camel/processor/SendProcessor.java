@@ -170,11 +170,11 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
 
             try {
                 LOG.debug(">>>> {} {}", destination, exchange);
-                var res = producer.process(exchange, ac);
-                if (sendingEventNotified) {
+                boolean sync = producer.process(exchange, ac);
+                if (sendingEventNotified && !sync) {
                     EventHelper.notifyExchangeAsyncStartedEvent(exchange.getContext(), exchange);
                 }
-                return res;
+                return sync;
             } catch (Throwable throwable) {
                 exchange.setException(throwable);
                 callback.done(true);

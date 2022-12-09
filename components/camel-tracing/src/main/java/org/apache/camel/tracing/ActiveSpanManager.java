@@ -17,6 +17,8 @@
 package org.apache.camel.tracing;
 
 import org.apache.camel.Exchange;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 /**
@@ -27,7 +29,7 @@ public final class ActiveSpanManager {
     public static final String MDC_TRACE_ID = "trace_id";
     public static final String MDC_SPAN_ID = "span_id";
     private static final String ACTIVE_SPAN_PROPERTY = "OpenTracing.activeSpan";
-
+    private static final Logger LOG = LoggerFactory.getLogger(ActiveSpanManager.class);
     private ActiveSpanManager() {
     }
 
@@ -73,14 +75,7 @@ public final class ActiveSpanManager {
         if (holder != null) {
             exchange.setProperty(ACTIVE_SPAN_PROPERTY, holder.getParent());
 
-            if (holder.getScope() != null) {
-                try {
-                    holder.getScope().close();
-                } catch (Exception e) {
-                    // ignored
-                }
-            }
-
+            closeScope(holder.getScope());
             if (exchange.getContext().isUseMDCLogging()) {
                 Holder parent = holder.getParent();
                 if (parent != null) {
@@ -95,13 +90,27 @@ public final class ActiveSpanManager {
         }
     }
 
+    /**
+     * If underlying span is active, closes its scope without ending the span.
+     * This methods should be called after async execution is started on the
+     * same thread on which span was activated.
+     * ExchangeAsyncStartedEvent is used to notify about it.
+     *
+     * @param exchange The exchange
+     */
     public static void endScope(Exchange exchange) {
         Holder holder = (Holder) exchange.getProperty(ACTIVE_SPAN_PROPERTY);
-        if (holder != null && holder.getScope() != null) {
+        if (holder != null) {
+            closeScope(holder.getScope());
+        }
+    }
+
+    private static void closeScope(AutoCloseable scope) {
+        if (scope != null) {
             try {
-                holder.getScope().close();
+                scope.close();
             } catch (Exception e) {
-                // ignored
+                LOG.debug("Failed to close span scope", e);
             }
         }
     }

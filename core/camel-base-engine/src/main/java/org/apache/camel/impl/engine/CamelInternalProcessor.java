@@ -390,7 +390,9 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 LOG.trace("Processing exchange for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
             }
             boolean sync = processor.process(exchange, async);
-            EventHelper.notifyExchangeAsyncStartedEvent(exchange.getContext(), exchange);
+            /*if (!sync) {
+                EventHelper.notifyExchangeAsyncStartedEvent(exchange.getContext(), exchange);
+            }*/
             // ----------------------------------------------------------
             // CAMEL END USER - DEBUG ME HERE +++ END +++
             // ----------------------------------------------------------

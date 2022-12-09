@@ -73,15 +73,21 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(8, events.size());
+        assertEquals(9, events.size());
+        // direct:start is sync
         ExchangeSendingEvent e0 = assertIsInstanceOf(ExchangeSendingEvent.class, events.get(0));
+        // log is sync
         ExchangeSendingEvent e1 = assertIsInstanceOf(ExchangeSendingEvent.class, events.get(1));
         ExchangeSentEvent e2 = assertIsInstanceOf(ExchangeSentEvent.class, events.get(2));
+
+        // direct:bar is async
         ExchangeSendingEvent e3 = assertIsInstanceOf(ExchangeSendingEvent.class, events.get(3));
-        ExchangeSentEvent e4 = assertIsInstanceOf(ExchangeSentEvent.class, events.get(4));
-        ExchangeSendingEvent e5 = assertIsInstanceOf(ExchangeSendingEvent.class, events.get(5));
-        ExchangeSentEvent e6 = assertIsInstanceOf(ExchangeSentEvent.class, events.get(6));
+        assertIsInstanceOf(ExchangeAsyncStartedEvent.class, events.get(4));
+
+        ExchangeSentEvent e5 = assertIsInstanceOf(ExchangeSentEvent.class, events.get(5));
+        ExchangeSendingEvent e6 = assertIsInstanceOf(ExchangeSendingEvent.class, events.get(6));
         ExchangeSentEvent e7 = assertIsInstanceOf(ExchangeSentEvent.class, events.get(7));
+        ExchangeSentEvent e8 = assertIsInstanceOf(ExchangeSentEvent.class, events.get(8));
 
         assertEquals("direct://start", e0.getEndpoint().getEndpointUri());
 
@@ -89,15 +95,15 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
         assertEquals("log://foo", e2.getEndpoint().getEndpointUri());
 
         assertEquals("direct://bar", e3.getEndpoint().getEndpointUri());
-        assertEquals("direct://bar", e4.getEndpoint().getEndpointUri());
-        long time = e4.getTimeTaken();
+        assertEquals("direct://bar", e5.getEndpoint().getEndpointUri());
+        long time = e5.getTimeTaken();
         assertTrue(time > 400, "Should take about 0.5 sec, was: " + time);
 
-        assertEquals("mock://result", e5.getEndpoint().getEndpointUri());
         assertEquals("mock://result", e6.getEndpoint().getEndpointUri());
+        assertEquals("mock://result", e7.getEndpoint().getEndpointUri());
 
-        assertEquals("direct://start", e7.getEndpoint().getEndpointUri());
-        time = e7.getTimeTaken();
+        assertEquals("direct://start", e8.getEndpoint().getEndpointUri());
+        time = e8.getTimeTaken();
         assertTrue(time > 400, "Should take about 0.5 sec, was: " + time);
     }
 
