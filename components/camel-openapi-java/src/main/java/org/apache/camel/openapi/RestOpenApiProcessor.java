@@ -33,7 +33,6 @@ public class RestOpenApiProcessor implements Processor {
     private final RestOpenApiSupport support;
     private final RestConfiguration configuration;
 
-    @SuppressWarnings("unchecked")
     public RestOpenApiProcessor(Map<String, Object> parameters,
                                 RestConfiguration configuration) {
         this.configuration = configuration;
@@ -41,7 +40,7 @@ public class RestOpenApiProcessor implements Processor {
         this.openApiConfig = new BeanConfig();
 
         if (parameters == null) {
-            parameters = Collections.EMPTY_MAP;
+            parameters = Collections.emptyMap();
         }
         support.initOpenApi(openApiConfig, parameters);
     }
