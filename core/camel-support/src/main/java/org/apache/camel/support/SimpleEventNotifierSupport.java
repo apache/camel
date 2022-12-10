@@ -38,6 +38,7 @@ public abstract class SimpleEventNotifierSupport extends ServiceSupport implemen
     boolean ignoreExchangeEvents;
     boolean ignoreExchangeCreatedEvent;
     boolean ignoreExchangeCompletedEvent;
+    boolean ignoreExchangeAsyncProcessingStartedEvents;
     boolean ignoreExchangeFailedEvents;
     boolean ignoreExchangeRedeliveryEvents;
     boolean ignoreExchangeSendingEvents;
@@ -187,6 +188,17 @@ public abstract class SimpleEventNotifierSupport extends ServiceSupport implemen
     @Override
     public void setIgnoreStepEvents(boolean ignoreStepEvents) {
         this.ignoreStepEvents = ignoreStepEvents;
+    }
+
+    @Override
+    public boolean isIgnoreExchangeAsyncProcessingStartedEvents() {
+        return ignoreExchangeAsyncProcessingStartedEvents;
+    }
+
+
+    @Override
+    public void setIgnoreExchangeAsyncProcessingStartedEvents(boolean ignoreExchangeAsyncProcessingStartedEvents) {
+        this.ignoreExchangeAsyncProcessingStartedEvents = ignoreExchangeAsyncProcessingStartedEvents;
     }
 
     @Override

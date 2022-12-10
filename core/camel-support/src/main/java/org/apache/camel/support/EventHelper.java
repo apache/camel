@@ -1487,7 +1487,7 @@ public final class EventHelper {
             if (notifier.isDisabled()) {
                 continue;
             }
-            if (notifier.isIgnoreExchangeEvents()) {
+            if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeAsyncProcessingStartedEvents()) {
                 continue;
             }
 

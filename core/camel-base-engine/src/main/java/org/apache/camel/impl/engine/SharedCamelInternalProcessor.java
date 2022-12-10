@@ -217,9 +217,6 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
             // CAMEL END USER - DEBUG ME HERE +++ END +++
             // ----------------------------------------------------------
 
-            if (!sync) {
-                EventHelper.notifyExchangeAsyncProcessingStartedEvent(camelContext, exchange);
-            }
             // optimize to only do after uow processing if really needed
             if (beforeAndAfter) {
                 // execute any after processor work (in current thread, not in the callback)

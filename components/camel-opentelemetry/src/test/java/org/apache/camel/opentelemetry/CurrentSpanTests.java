@@ -122,12 +122,12 @@ class CurrentSpanTests extends CamelOpenTelemetryTestSupport {
 
     @Test
     void testContextDoesNotLeak() {
-        for (int i = 0; i < 10; i ++) {
+        for (int i = 0; i < 30; i ++) {
             template.sendBody("asyncmock3:start", String.valueOf(i));
             assertFalse(Span.current().getSpanContext().isValid());
         }
 
-        verifyTraceSpanNumbers(10, 3);
+        verifyTraceSpanNumbers(30, 3);
     }
 
     @Override
