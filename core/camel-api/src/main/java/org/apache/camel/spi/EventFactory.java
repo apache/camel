@@ -321,13 +321,12 @@ public interface EventFactory {
     CamelEvent createExchangeSendingEvent(Exchange exchange, Endpoint endpoint);
 
     /**
-     * Creates an {@link CamelEvent} when an {@link org.apache.camel.Exchange} asynchronous processing
-     * has been started. This is guaranteed to run on the same thread on which
-     * {@code RoutePolicySupport.onExchangeBegin} was called and/or
-     * {@code ExchangeSendingEvent} was fired.
+     * Creates an {@link CamelEvent} when an {@link org.apache.camel.Exchange} asynchronous processing has been started.
+     * This is guaranteed to run on the same thread on which {@code RoutePolicySupport.onExchangeBegin} was called
+     * and/or {@code ExchangeSendingEvent} was fired.
      *
-     * @param exchange the exchange
-     * @return         the created event
+     * @param  exchange the exchange
+     * @return          the created event
      */
     CamelEvent createCamelExchangeAsyncProcessingStartedEvent(Exchange exchange);
 

@@ -27,9 +27,7 @@ public class MockSpanAdapter implements SpanAdapter {
     private Map<String, Object> tags = new HashMap<>();
     private String traceId;
     private String spanId;
-    private boolean isCurrent = false;
-
-    private
+    private boolean isCurrent;
 
     static long nowMicros() {
         return System.currentTimeMillis() * 1000;

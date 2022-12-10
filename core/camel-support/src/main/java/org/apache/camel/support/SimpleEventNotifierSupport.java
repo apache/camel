@@ -195,7 +195,6 @@ public abstract class SimpleEventNotifierSupport extends ServiceSupport implemen
         return ignoreExchangeAsyncProcessingStartedEvents;
     }
 
-
     @Override
     public void setIgnoreExchangeAsyncProcessingStartedEvents(boolean ignoreExchangeAsyncProcessingStartedEvents) {
         this.ignoreExchangeAsyncProcessingStartedEvents = ignoreExchangeAsyncProcessingStartedEvents;

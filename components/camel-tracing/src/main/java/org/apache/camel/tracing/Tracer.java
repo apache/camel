@@ -52,9 +52,9 @@ import org.slf4j.LoggerFactory;
 
 public abstract class Tracer extends ServiceSupport implements RoutePolicyFactory, StaticService, CamelContextAware {
     protected static final Map<String, SpanDecorator> DECORATORS = new HashMap<>();
-    private static final Logger LOG = LoggerFactory.getLogger(Tracer.class);
     static final AutoCloseable NOOP_CLOSEABLE = () -> {
     };
+    private static final Logger LOG = LoggerFactory.getLogger(Tracer.class);
 
     static {
         ServiceLoader.load(SpanDecorator.class).forEach(d -> {
@@ -272,9 +272,9 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
                 } else if (event instanceof CamelEvent.ExchangeAsyncProcessingStartedEvent) {
                     CamelEvent.ExchangeAsyncProcessingStartedEvent eap = (CamelEvent.ExchangeAsyncProcessingStartedEvent) event;
 
-                    // no need to filter scopes here. It's ok to close scope multiple times and
+                    // no need to filter scopes here. It's ok to close a scope multiple times and
                     // implementations check if scope being disposed is current
-                    // and does not do anything if they don't match.
+                    // and should not do anything if scopes don't match.
                     var span = ActiveSpanManager.getSpan(eap.getExchange());
                     ActiveSpanManager.endScope(eap.getExchange());
                 }
@@ -285,8 +285,8 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
         }
 
         private boolean exclude(SpanDecorator sd, Exchange exchange, Endpoint endpoint) {
-            return (sd instanceof AbstractInternalSpanDecorator || !sd.newSpan()
-                    || isExcluded(exchange, endpoint));
+            return sd instanceof AbstractInternalSpanDecorator || !sd.newSpan()
+                    || isExcluded(exchange, endpoint);
         }
     }
 

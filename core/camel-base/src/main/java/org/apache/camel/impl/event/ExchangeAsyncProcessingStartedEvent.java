@@ -16,21 +16,21 @@
  */
 package org.apache.camel.impl.event;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.RoutePolicySupport;
 
 /**
- * Notifies that async processing has started. It's guaranteed to run on the same thread on
- * which {@link RoutePolicySupport#onExchangeBegin(Route, Exchange)} was called and/or
- * {@link ExchangeSendingEvent} was fired.
+ * Notifies that async processing has started. It's guaranteed to run on the same thread on which
+ * {@link RoutePolicySupport#onExchangeBegin(Route, Exchange)} was called and/or {@link ExchangeSendingEvent} was fired.
  *
  * @see ExchangeAsyncProcessingStartedEvent
  */
-public class ExchangeAsyncProcessingStartedEvent extends AbstractExchangeEvent implements CamelEvent.ExchangeAsyncProcessingStartedEvent {
+public class ExchangeAsyncProcessingStartedEvent extends AbstractExchangeEvent
+        implements CamelEvent.ExchangeAsyncProcessingStartedEvent {
     private static final long serialVersionUID = -19248832613958122L;
+
     public ExchangeAsyncProcessingStartedEvent(Exchange source) {
         super(source);
     }

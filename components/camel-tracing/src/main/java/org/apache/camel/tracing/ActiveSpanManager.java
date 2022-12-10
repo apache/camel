@@ -30,6 +30,7 @@ public final class ActiveSpanManager {
     public static final String MDC_SPAN_ID = "span_id";
     private static final String ACTIVE_SPAN_PROPERTY = "OpenTracing.activeSpan";
     private static final Logger LOG = LoggerFactory.getLogger(ActiveSpanManager.class);
+
     private ActiveSpanManager() {
     }
 
@@ -91,10 +92,9 @@ public final class ActiveSpanManager {
     }
 
     /**
-     * If underlying span is active, closes its scope without ending the span.
-     * This methods should be called after async execution is started on the
-     * same thread on which span was activated.
-     * ExchangeAsyncStartedEvent is used to notify about it.
+     * If underlying span is active, closes its scope without ending the span. This methods should be called after async
+     * execution is started on the same thread on which span was activated. ExchangeAsyncStartedEvent is used to notify
+     * about it.
      *
      * @param exchange The exchange
      */

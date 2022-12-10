@@ -37,7 +37,6 @@ import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
-import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.OrderedComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
