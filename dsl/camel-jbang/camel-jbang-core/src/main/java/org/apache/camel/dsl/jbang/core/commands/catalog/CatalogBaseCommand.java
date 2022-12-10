@@ -46,6 +46,14 @@ public abstract class CatalogBaseCommand extends CamelCommand {
                         description = "Filter by name or description")
     String filterName;
 
+    @CommandLine.Option(names = { "--since-before" },
+                        description = "Filter by version older (inclusive)")
+    String sinceBefore;
+
+    @CommandLine.Option(names = { "--since-after" },
+                        description = "Filter by version more recent (inclusive)")
+    String sinceAfter;
+
     final CamelCatalog catalog = new DefaultCamelCatalog(true);
 
     public CatalogBaseCommand(CamelJBangMain main) {
@@ -64,9 +72,21 @@ public abstract class CatalogBaseCommand extends CamelCommand {
 
         if (filterName != null) {
             filterName = filterName.toLowerCase(Locale.ROOT);
-            rows = rows.stream().filter(
-                    r -> r.name.equalsIgnoreCase(filterName) || r.description.toLowerCase(Locale.ROOT).contains(filterName)
-                            || r.label.toLowerCase(Locale.ROOT).contains(filterName))
+            rows = rows.stream()
+                    .filter(
+                            r -> r.name.equalsIgnoreCase(filterName)
+                                    || r.description.toLowerCase(Locale.ROOT).contains(filterName)
+                                    || r.label.toLowerCase(Locale.ROOT).contains(filterName))
+                    .collect(Collectors.toList());
+        }
+        if (sinceBefore != null) {
+            rows = rows.stream()
+                    .filter(r -> VersionHelper.isGE(sinceBefore, r.since))
+                    .collect(Collectors.toList());
+        }
+        if (sinceAfter != null) {
+            rows = rows.stream()
+                    .filter(r -> VersionHelper.isGE(r.since, sinceAfter))
                     .collect(Collectors.toList());
         }
 
@@ -75,9 +95,10 @@ public abstract class CatalogBaseCommand extends CamelCommand {
 
         if (!rows.isEmpty()) {
             System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("NAME").visible(!gav).dataAlign(HorizontalAlign.LEFT).with(r -> r.name),
+                    new Column().header("NAME").visible(!gav).dataAlign(HorizontalAlign.LEFT).maxWidth(30).with(r -> r.name),
                     new Column().header("ARTIFACT-ID").visible(gav).dataAlign(HorizontalAlign.LEFT).with(this::shortGav),
-                    new Column().header("LEVEL").dataAlign(HorizontalAlign.LEFT).minWidth(12).with(r -> r.level),
+                    new Column().header("LEVEL").dataAlign(HorizontalAlign.LEFT).with(r -> r.level),
+                    new Column().header("SINCE").dataAlign(HorizontalAlign.RIGHT).with(r -> r.since),
                     new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::shortDescription))));
         }
 
@@ -121,6 +142,7 @@ public abstract class CatalogBaseCommand extends CamelCommand {
         String name;
         String title;
         String level;
+        String since;
         String description;
         String label;
         String gav;

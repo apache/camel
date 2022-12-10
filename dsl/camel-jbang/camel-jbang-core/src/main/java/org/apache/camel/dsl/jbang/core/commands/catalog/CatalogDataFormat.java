@@ -40,6 +40,7 @@ public class CatalogDataFormat extends CatalogBaseCommand {
             row.name = model.getName();
             row.title = model.getTitle();
             row.level = model.getSupportLevel().name();
+            row.since = model.getFirstVersionShort();
             row.description = model.getDescription();
             row.label = model.getLabel() != null ? model.getLabel() : "";
             row.deprecated = model.isDeprecated();
