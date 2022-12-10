@@ -59,7 +59,7 @@ public final class XmlRestDslParser {
             return parser.parseRestConfiguration(dom, fullyQualifiedFileName);
         }
 
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     /**
@@ -84,7 +84,7 @@ public final class XmlRestDslParser {
             return parser.parseRestService(dom, fullyQualifiedFileName);
         }
 
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
 }
