@@ -312,7 +312,7 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
         }
 
         void addChild(TreeElement treeElement) {
-            if (this.childs == Collections.EMPTY_LIST) {
+            if (this.childs.equals(Collections.emptyList())) {
                 this.childs = new ArrayList<>(1);
             }
 
