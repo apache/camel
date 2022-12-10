@@ -189,7 +189,7 @@ public class SqlProducer extends DefaultProducer {
                     if (shouldRetrieveGeneratedKeys) {
                         if (isResultSet) {
                             // we won't return generated keys for SELECT statements
-                            exchange.getIn().setHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, Collections.EMPTY_LIST);
+                            exchange.getIn().setHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, Collections.emptyList());
                             exchange.getIn().setHeader(SqlConstants.SQL_GENERATED_KEYS_ROW_COUNT, 0);
                         } else {
                             List<?> generatedKeys = getEndpoint().queryForList(ps.getGeneratedKeys(), false);
