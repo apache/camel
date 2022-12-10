@@ -30,7 +30,7 @@ Over the years, our community has written link:/community/books/[books], link:/c
 Some notable references from material developed from members, which may provide significant help for new users include:
 
 * The https://www.manning.com/books/camel-in-action-second-edition[Camel in Action 2nd edition] book, presently serving as the Camel bible, has a free chapter one, which is highly recommended to read to get more familiar with Camel.
-* The https://camel.apache.org/blog/2022/08/pluralsight-training/[Fundamentals of Apache Camel] training by Michael Hoffman.
+* The link:/blog/2022/08/pluralsight-training/[Fundamentals of Apache Camel] training by Michael Hoffman.
 
 We strongly recommend that our users explore the pages above for additional material that suits their needs.
 
