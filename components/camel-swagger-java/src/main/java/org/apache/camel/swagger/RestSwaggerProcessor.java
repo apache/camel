@@ -34,7 +34,6 @@ public class RestSwaggerProcessor implements Processor {
     private final RestSwaggerSupport support;
     private final RestConfiguration configuration;
 
-    @SuppressWarnings("unchecked")
     public RestSwaggerProcessor(Map<String, Object> parameters,
                                 RestConfiguration configuration) {
         this.configuration = configuration;
@@ -42,7 +41,7 @@ public class RestSwaggerProcessor implements Processor {
         this.swaggerConfig = new BeanConfig();
 
         if (parameters == null) {
-            parameters = Collections.EMPTY_MAP;
+            parameters = Collections.emptyMap();
         }
         support.initSwagger(swaggerConfig, parameters);
     }
