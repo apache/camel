@@ -447,7 +447,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
             return metadataList;
         }
 
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     @Override
