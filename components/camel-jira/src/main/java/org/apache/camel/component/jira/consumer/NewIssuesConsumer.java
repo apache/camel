@@ -104,7 +104,7 @@ public class NewIssuesConsumer extends AbstractJiraConsumer {
                                  + " Will recover by fetching last issue id from JIRA and try again on next poll",
                                 latestIssueId);
                         latestIssueId = findLatestIssueId();
-                        return Collections.EMPTY_LIST;
+                        return Collections.emptyList();
                     }
                 }
             }
