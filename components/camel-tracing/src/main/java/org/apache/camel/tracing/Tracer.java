@@ -238,10 +238,10 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
                 if (event instanceof CamelEvent.ExchangeSendingEvent) {
                     CamelEvent.ExchangeSendingEvent ese = (CamelEvent.ExchangeSendingEvent) event;
                     SpanDecorator sd = getSpanDecorator(ese.getEndpoint());
-                    if (sd instanceof AbstractInternalSpanDecorator || !sd.newSpan()
-                            || isExcluded(ese.getExchange(), ese.getEndpoint())) {
+                    if (exclude(sd, ese.getExchange(), ese.getEndpoint())) {
                         return;
                     }
+
                     SpanAdapter parent = ActiveSpanManager.getSpan(ese.getExchange());
                     SpanAdapter span = startSendingEventSpan(sd.getOperationName(ese.getExchange(), ese.getEndpoint()),
                             sd.getInitiatorSpanKind(), parent);
@@ -254,10 +254,10 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
                 } else if (event instanceof CamelEvent.ExchangeSentEvent) {
                     CamelEvent.ExchangeSentEvent ese = (CamelEvent.ExchangeSentEvent) event;
                     SpanDecorator sd = getSpanDecorator(ese.getEndpoint());
-                    if (sd instanceof AbstractInternalSpanDecorator || !sd.newSpan()
-                            || isExcluded(ese.getExchange(), ese.getEndpoint())) {
+                    if (exclude(sd, ese.getExchange(), ese.getEndpoint())) {
                         return;
                     }
+
                     SpanAdapter span = ActiveSpanManager.getSpan(ese.getExchange());
                     if (span != null) {
                         if (LOG.isTraceEnabled()) {
@@ -269,14 +269,24 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
                     } else {
                         LOG.warn("Tracing: could not find managed span for exchange={}", ese.getExchange());
                     }
-                } else if (event instanceof CamelEvent.ExchangeAsyncStartedEvent) {
-                    CamelEvent.ExchangeAsyncStartedEvent ease = (CamelEvent.ExchangeAsyncStartedEvent) event;
-                    ActiveSpanManager.endScope(ease.getExchange());
+                } else if (event instanceof CamelEvent.ExchangeAsyncProcessingStartedEvent) {
+                    CamelEvent.ExchangeAsyncProcessingStartedEvent eap = (CamelEvent.ExchangeAsyncProcessingStartedEvent) event;
+
+                    // no need to filter scopes here. It's ok to close scope multiple times and
+                    // implementations check if scope being disposed is current
+                    // and does not do anything if they don't match.
+                    var span = ActiveSpanManager.getSpan(eap.getExchange());
+                    ActiveSpanManager.endScope(eap.getExchange());
                 }
             } catch (Exception t) {
                 // This exception is ignored
                 LOG.warn("Tracing: Failed to capture tracing data", t);
             }
+        }
+
+        private boolean exclude(SpanDecorator sd, Exchange exchange, Endpoint endpoint) {
+            return (sd instanceof AbstractInternalSpanDecorator || !sd.newSpan()
+                    || isExcluded(exchange, endpoint));
         }
     }
 

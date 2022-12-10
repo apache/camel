@@ -130,6 +130,7 @@ public class EventNotifierEventsTest {
             assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
         }
 
+        // TODO(limolkova)
         assertEquals(16, events.size());
         assertIsInstanceOf(CamelEvent.CamelContextInitializingEvent.class, events.get(0));
         assertIsInstanceOf(CamelEvent.CamelContextInitializedEvent.class, events.get(1));

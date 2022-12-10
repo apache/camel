@@ -75,7 +75,7 @@ public final class ActiveSpanManager {
         if (holder != null) {
             exchange.setProperty(ACTIVE_SPAN_PROPERTY, holder.getParent());
 
-            closeScope(holder.getScope());
+            holder.closeScope();
             if (exchange.getContext().isUseMDCLogging()) {
                 Holder parent = holder.getParent();
                 if (parent != null) {
@@ -101,17 +101,7 @@ public final class ActiveSpanManager {
     public static void endScope(Exchange exchange) {
         Holder holder = (Holder) exchange.getProperty(ACTIVE_SPAN_PROPERTY);
         if (holder != null) {
-            closeScope(holder.getScope());
-        }
-    }
-
-    private static void closeScope(AutoCloseable scope) {
-        if (scope != null) {
-            try {
-                scope.close();
-            } catch (Exception e) {
-                LOG.debug("Failed to close span scope", e);
-            }
+            holder.closeScope();
         }
     }
 
@@ -140,8 +130,15 @@ public final class ActiveSpanManager {
             return span;
         }
 
-        public AutoCloseable getScope() {
-            return scope;
+        private void closeScope() {
+            if (scope != null) {
+                try {
+                    scope.close();
+                } catch (Exception e) {
+                    LOG.debug("Failed to close span scope", e);
+                }
+                this.scope = null;
+            }
         }
     }
 }

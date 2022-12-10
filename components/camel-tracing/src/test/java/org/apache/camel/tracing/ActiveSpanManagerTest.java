@@ -19,10 +19,16 @@ package org.apache.camel.tracing;
 import org.apache.camel.Exchange;
 import org.apache.camel.test.junit5.ExchangeTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
 import org.slf4j.MDC;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 
 public class ActiveSpanManagerTest extends ExchangeTestSupport {
 
@@ -30,27 +36,46 @@ public class ActiveSpanManagerTest extends ExchangeTestSupport {
     public void testNoSpan() {
         Exchange exchange = createExchange();
         assertNull(ActiveSpanManager.getSpan(exchange));
+
+        // don't throw
+        ActiveSpanManager.endScope(exchange);
     }
 
     @Test
     public void testCurrentSpan() {
         Exchange exchange = createExchange();
-        SpanAdapter span = MockSpanAdapter.buildSpan("test");
+        MockSpanAdapter span = MockSpanAdapter.buildSpan("test");
         ActiveSpanManager.activate(exchange, span);
+        assertTrue(span.isCurrent());
         assertEquals(span, ActiveSpanManager.getSpan(exchange));
 
+
         ActiveSpanManager.deactivate(exchange);
+        assertFalse(span.isCurrent());
         assertNull(ActiveSpanManager.getSpan(exchange));
+    }
+
+    @Test
+    public void testSEndScope() {
+        Exchange exchange = createExchange();
+        MockSpanAdapter span = MockSpanAdapter.buildSpan("test");
+        ActiveSpanManager.activate(exchange, span);
+        assertTrue(span.isCurrent());
+
+        ActiveSpanManager.endScope(exchange);
+        assertFalse(span.isCurrent());
+
+        // scope has ended, but span is still on the exchange and can become parent to other spans.
+        assertEquals(span, ActiveSpanManager.getSpan(exchange));
     }
 
     @Test
     public void testCreateChild() {
         Exchange exchange = createExchange();
-        SpanAdapter parent = MockSpanAdapter.buildSpan("parent");
+        MockSpanAdapter parent = MockSpanAdapter.buildSpan("parent");
         ActiveSpanManager.activate(exchange, parent);
-        SpanAdapter child = MockSpanAdapter.buildSpan("child");
+        MockSpanAdapter child = MockSpanAdapter.buildSpan("child");
         ActiveSpanManager.activate(exchange, child);
-
         assertEquals(child, ActiveSpanManager.getSpan(exchange));
 
         ActiveSpanManager.deactivate(exchange);

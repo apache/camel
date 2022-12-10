@@ -37,6 +37,7 @@ import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
+import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.OrderedComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -216,6 +217,9 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
             // CAMEL END USER - DEBUG ME HERE +++ END +++
             // ----------------------------------------------------------
 
+            if (!sync) {
+                EventHelper.notifyExchangeAsyncProcessingStartedEvent(camelContext, exchange);
+            }
             // optimize to only do after uow processing if really needed
             if (beforeAndAfter) {
                 // execute any after processor work (in current thread, not in the callback)

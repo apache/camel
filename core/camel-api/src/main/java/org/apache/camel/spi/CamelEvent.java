@@ -52,7 +52,7 @@ public interface CamelEvent {
         ExchangeRedelivery,
         ExchangeSending,
         ExchangeSent,
-        ExchangeAsyncStarted,
+        ExchangeAsyncProcessingStarted,
         RoutesStarting,
         RoutesStarted,
         RoutesStopping,
@@ -450,11 +450,10 @@ public interface CamelEvent {
         }
     }
 
-    interface ExchangeAsyncStartedEvent extends ExchangeEvent {
+    interface ExchangeAsyncProcessingStartedEvent extends ExchangeEvent {
         @Override
         default Type getType() {
-            return Type.ExchangeAsyncStarted;
+            return Type.ExchangeAsyncProcessingStarted;
         }
     }
-
 }

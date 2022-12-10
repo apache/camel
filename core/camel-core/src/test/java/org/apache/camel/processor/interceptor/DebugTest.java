@@ -161,6 +161,7 @@ public class DebugTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
+        // TODO (limolkova)
         assertEquals(10, logs.size());
 
         // remove the breakpoint

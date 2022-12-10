@@ -312,9 +312,10 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         try {
             // record timing for sending the exchange using the producer
             StopWatch watch;
+            boolean sendingEventNotified = false;
             if (eventNotifierEnabled && camelContext.isEventNotificationApplicable()) {
-                boolean sending = EventHelper.notifyExchangeSending(exchange.getContext(), exchange, endpoint);
-                if (sending) {
+                sendingEventNotified = EventHelper.notifyExchangeSending(exchange.getContext(), exchange, endpoint);
+                if (sendingEventNotified) {
                     watch = new StopWatch();
                 } else {
                     watch = null;
@@ -324,7 +325,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
             }
 
             // invoke the callback
-            return producerCallback.doInAsyncProducer(producer, exchange, doneSync -> {
+            boolean sync = producerCallback.doInAsyncProducer(producer, exchange, doneSync -> {
                 try {
                     if (watch != null) {
                         long timeTaken = watch.taken();
@@ -338,6 +339,12 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
                     callback.done(doneSync);
                 }
             });
+
+            if (sendingEventNotified && !sync) {
+                EventHelper.notifyExchangeAsyncProcessingStartedEvent(exchange.getContext(), exchange);
+            }
+
+            return sync;
         } catch (Throwable e) {
             // ensure exceptions is caught and set on the exchange
             if (exchange != null) {

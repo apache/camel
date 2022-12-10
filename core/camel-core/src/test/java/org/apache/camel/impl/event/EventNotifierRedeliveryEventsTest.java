@@ -120,6 +120,7 @@ public class EventNotifierRedeliveryEventsTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
         assertTrue(oneExchangeDone.matchesWaitTime());
 
+        //TODO (limolkova)
         assertEquals(12, events.size());
 
         assertIsInstanceOf(ExchangeSendingEvent.class, events.get(0));

@@ -48,13 +48,13 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
     static final AttributeKey<String> MESSAGE_KEY = AttributeKey.stringKey("message");
 
     private InMemorySpanExporter inMemorySpanExporter = InMemorySpanExporter.create();
-    private SpanTestData[] testdata;
+    private SpanTestData[] expected;
     private Tracer tracer;
     private OpenTelemetryTracer ottracer;
     private SdkTracerProvider tracerFactory;
 
-    CamelOpenTelemetryTestSupport(SpanTestData[] testdata) {
-        this.testdata = testdata;
+    CamelOpenTelemetryTestSupport(SpanTestData[] expected) {
+        this.expected = expected;
     }
 
     @Override
@@ -78,10 +78,14 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
     }
 
     protected void verify() {
-        verify(false);
+        verify(expected, false);
     }
 
     protected void verify(boolean async) {
+        verify(expected, async);
+    }
+
+    protected List<SpanData> verify(SpanTestData[] expected, boolean async) {
         List<SpanData> spans = inMemorySpanExporter.getFinishedSpanItems();
         spans.forEach(mockSpan -> {
             System.out.println("Span: " + mockSpan);
@@ -90,19 +94,21 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
             System.out.println("\tLogs: ");
 
         });
-        assertEquals(testdata.length, spans.size(), "Incorrect number of spans");
+        assertEquals(expected.length, spans.size(), "Incorrect number of spans");
         verifySameTrace();
 
         if (async) {
             final List<SpanData> unsortedSpans = spans;
-            spans = Arrays.stream(testdata)
+            spans = Arrays.stream(expected)
                     .map(td -> findSpan(td, unsortedSpans)).distinct().collect(Collectors.toList());
-            assertEquals(testdata.length, spans.size(), "Incorrect number of spans after sorting");
+            assertEquals(expected.length, spans.size(), "Incorrect number of spans after sorting");
         }
 
-        for (int i = 0; i < testdata.length; i++) {
-            verifySpan(i, testdata, spans);
+        for (int i = 0; i < expected.length; i++) {
+            verifySpan(i, expected, spans);
         }
+
+        return spans;
     }
 
     protected SpanData findSpan(SpanTestData testdata, List<SpanData> spans) {

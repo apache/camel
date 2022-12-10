@@ -536,6 +536,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
                 completion.submit(exchangeResult -> {
                     // compute time taken if sending to another endpoint
                     StopWatch watch = beforeSend(pair);
+                    boolean sendingEventNotified = watch != null;
 
                     AsyncProcessor async = AsyncProcessorConverterHelper.convert(pair.getProcessor());
                     async.process(exchange, doneSync -> {
@@ -574,6 +575,10 @@ public class MulticastProcessor extends AsyncProcessorSupport
                             schedule(this);
                         }
                     });
+
+                    if (sendingEventNotified) {
+                        EventHelper.notifyExchangeAsyncProcessingStartedEvent(exchange.getContext(), exchange);
+                    }
                 });
                 // after submitting this pair then move on to the next pair (if in parallel mode)
                 if (hasNext && isParallelProcessing()) {

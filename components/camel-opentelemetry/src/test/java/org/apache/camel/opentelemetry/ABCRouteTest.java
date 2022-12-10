@@ -16,9 +16,15 @@
  */
 package org.apache.camel.opentelemetry;
 
+import io.opentelemetry.api.trace.Span;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.tracing.ActiveSpanManager;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 class ABCRouteTest extends CamelOpenTelemetryTestSupport {
     private static SpanTestData[] testdata = {

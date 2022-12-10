@@ -179,6 +179,7 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();
 
+        // TODO (Limolkova)
         assertEquals(17, events.size());
         assertIsInstanceOf(CamelEvent.CamelContextInitializingEvent.class, events.get(0));
         assertIsInstanceOf(CamelEvent.CamelContextInitializedEvent.class, events.get(1));

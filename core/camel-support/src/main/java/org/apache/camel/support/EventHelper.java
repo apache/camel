@@ -1458,7 +1458,7 @@ public final class EventHelper {
         return answer;
     }
 
-    public static boolean notifyExchangeAsyncStartedEvent(CamelContext context, Exchange exchange) {
+    public static boolean notifyExchangeAsyncProcessingStartedEvent(CamelContext context, Exchange exchange) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
             return false;
@@ -1493,7 +1493,7 @@ public final class EventHelper {
 
             if (event == null) {
                 // only create event once
-                event = factory.createCamelExchangeAsyncStartedEvent(exchange);
+                event = factory.createCamelExchangeAsyncProcessingStartedEvent(exchange);
                 if (event == null) {
                     // factory could not create event so exit
                     return false;
