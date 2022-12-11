@@ -1687,7 +1687,7 @@ public abstract class AbstractCamelContext extends BaseService
     @SuppressWarnings("unchecked")
     public <T> Set<T> hasServices(Class<T> type) {
         if (servicesToStop.isEmpty()) {
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
         Set<T> set = new HashSet<>();
         for (Service service : servicesToStop) {

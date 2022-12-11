@@ -189,7 +189,7 @@ public class AbstractDynamicRegistry<K, V> extends AbstractMap<K, V> implements 
 
     public Collection<V> getReadOnlyValues() {
         if (isEmpty()) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         // we want to avoid any kind of locking in get/put methods

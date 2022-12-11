@@ -81,7 +81,7 @@ class ProvisionalEndpointRegistry extends HashMap<NormalizedUri, Endpoint> imple
     @Override
     public Collection<Endpoint> getReadOnlyValues() {
         if (isEmpty()) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         // we want to avoid any kind of locking in get/put methods
