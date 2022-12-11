@@ -5,7 +5,7 @@ This document will guide you through the fundamentals of the Apache Camel Core. 
 [[BookGettingStarted-eip-book]]
 
 [[BookGettingStarted-TheEnterpriseIntegrationPatternsEIPBook]]
-== The _Enterprise Integration Patterns_ (EIP) book
+== The _Enterprise Integration Patterns_ (E.I.P.) book
 
 Books about design patterns document the existing best practices within a particular field. The authors of these books hope to spread knowledge of best practices and to promote a vocabulary for discussing architectural designs.
 
@@ -44,12 +44,112 @@ The Javadoc API that are the most relevant for Camel end users are in the follow
 * https://www.javadoc.io/doc/org.apache.camel/camel-api/current/index.html[camel-core]
 * https://www.javadoc.io/doc/org.apache.camel/camel-support/latest/index.html[camel-support]
 
+[[BookGettingStarted-CreatingYourFirstProject]]
+== Creating your first project
+
+We'll start this guide by creating a simple integration. You need to have https://maven.apache.org/[Apache Maven] and a https://adoptium.net/temurin/[JDK] version 11 or greater installed on your system.
+
+*Note*: we strongly recommend you use an LTS version of Java (i.e., 11 or 17). We regularly test Camel in our continuous integration (CI) environment using Java's LTS versions.
+
+== Generating the project
+
+You will use one of the various https://maven.apache.org/guides/introduction/introduction-to-archetypes.html[Maven archetypes] provided by Camel to create your first project. An archetype is a template for a project. In other words: Camel Core provides templates you can use to create projects.
+
+Run this command to create your first Camel Core project:
+
+[source,bash]
+----
+mvn archetype:generate -B -DarchetypeGroupId=org.apache.camel.archetypes -DarchetypeArtifactId=camel-archetype-java -DarchetypeVersion=3.18.4 -Dpackage=org.apache.camel.learn -DgroupId=org.apache.camel.learn -DartifactId=first-camel-integration -Dversion=1.0.0-SNAPSHOT
+----
+
+If you have never used archetypes before, the command looks lengthy. We'll explain the relevant arguments:
+
+* `-DarchetypeArtifactId`: this is the ID of the archetype to use (i.e., which of the templates from Camel Core to use - `camel-archetype-java` in this case)
+* `-DarchetypeVersion`: this is the version of the archetype to use. It is also the same version of Camel to use for the example. We are using `3.18.4` in this example.
+* `-Dpackage`: the package name for the project you are creating. We'll use `org.apache.camel.learn` in all this guide.
+* `-DgroupId`: the group ID for the project you are creating. We'll use `org.apache.camel.learn` in all this guide.
+* `-DartifactId`: the artifact name for the project you are creating.
+* `-Dversion`: the version for your project.
+
+*Note*: later we will describe other ways to generate a Camel project.
+
+== Building and running the project
+
+You can run the following command to build the project:
+
+[source,bash]
+----
+mvn clean package
+----
+
+To run the project you can run the following command:
+
+[source,bash]
+----
+mvn camel:run -Dcamel.main.durationMaxMessages=2
+----
+
+After you run the command above, you should have the following messages:
+
+[source,bash]
+----
+...
+[che.camel.learn.MainApp.main()] MainSupport                    INFO  Apache Camel (Main) 3.18.4 is starting
+[che.camel.learn.MainApp.main()] BaseMainSupport                INFO  Auto-configuration summary
+[che.camel.learn.MainApp.main()] BaseMainSupport                INFO      [JVM System Property]          camel.main.durationMaxMessages=2
+[che.camel.learn.MainApp.main()] XPathBuilder                   INFO  Created default XPathFactory com.sun.org.apache.xpath.internal.jaxp.XPathFactoryImpl@33cc7a16
+[che.camel.learn.MainApp.main()] FileEndpoint                   INFO  Endpoint is configured with noop=true so forcing endpoint to be idempotent as well
+[che.camel.learn.MainApp.main()] FileEndpoint                   INFO  Using default memory based idempotent repository with cache max size: 1000
+[che.camel.learn.MainApp.main()] AbstractCamelContext           INFO  Apache Camel 3.18.4 (camel-1) is starting
+[che.camel.learn.MainApp.main()] AbstractCamelContext           INFO  Routes startup (started:1)
+[che.camel.learn.MainApp.main()] AbstractCamelContext           INFO      Started route1 (file://src/data)
+[che.camel.learn.MainApp.main()] AbstractCamelContext           INFO  Apache Camel 3.18.4 (camel-1) started in 89ms (build:12ms init:68ms start:9ms JVM-uptime:1s)
+[che.camel.learn.MainApp.main()] MainSupport                    INFO  Waiting until complete: Duration max 2 messages processed
+[1) thread #1 - file://src/data] route1                         INFO  Other message
+[1) thread #1 - file://src/data] route1                         INFO  UK message
+[1) thread #1 - file://src/data] MainLifecycleStrategy          INFO  Duration max messages triggering shutdown of the JVM
+[ CamelMainShutdownCamelContext] AbstractCamelContext           INFO  Apache Camel 3.18.4 (camel-1) is shutting down (timeout:45s)
+[ CamelMainShutdownCamelContext] AbstractCamelContext           INFO  Routes stopped (stopped:1)
+[ CamelMainShutdownCamelContext] AbstractCamelContext           INFO      Stopped route1 (file://src/data)
+[ CamelMainShutdownCamelContext] AbstractCamelContext           INFO  Apache Camel 3.18.4 (camel-1) shutdown in 7ms (uptime:1s JVM-uptime:2s)
+[che.camel.learn.MainApp.main()] MainSupport                    INFO  Apache Camel (Main) 3.18.4 shutdown
+----
+
+If you can see an output like that on your terminal, it means the integration has run well.
+
+The integration you have just run consumed two files and copied them to a directory based on their contents. You can check it out yourself but looking at the `target/messages` directory within the project:
+
+[source,bash]
+----
+find target/messages
+----
+
+You should have the following files:
+
+----
+target/messages
+target/messages/others
+target/messages/others/message2.xml
+target/messages/uk
+target/messages/uk/message1.xml
+----
+
+*Note*: use the Windows Explorer or the Windows equivalent of the `find` command available on Linux, macOS or *BSDs.
+
+== Understanding the project
+
+The integration you created implements a pattern (E.I.P.) called xref:eips:choice-eip.adoc[Content Based Router]. The Camel implementation of this pattern allows you to implement logic that route messages based on their content.
+
+More specifically, this integration looks at the content of the XML files in the `src/data` directory. If the content of the element `city` is London, then it moves the file to the directory `target/messages/uk`. Otherwise, it moves the file to the directory `target/messages/others`.
+
+To create the integration that performs this task, this code declares a _route_ that connects a source _endpoint_ represented by the _address_ `file:src/data?noop=true` to two other _endpoints_ represented by the addresses `file:target/messages/uk` and `file:target/messages/others`.
+
+Do not worry if you feel overwhelmed by the technical jargon. In the next section we will explain what each of these are and why they are important for Camel-based integrations.
+
 [[BookGettingStarted-ConceptsAndTerminologyFundamentalToCamel]]
 == Concepts and terminology fundamental to Camel
 
 In this section, we explain some of Camel’s fundamental concepts and features. We also introduce you to basic enterprise integration terminology.
-
-[[BookGettingStarted-endpoint]]
 
 [[BookGettingStarted-Endpoint]]
 === Endpoint
