@@ -76,6 +76,6 @@ public class KnownKameletRoutesBuilderLoader extends KameletRoutesBuilderLoader 
             }
         }
 
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 }
