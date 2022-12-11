@@ -199,10 +199,9 @@ class URIScanner {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public static List<Pair<Integer>> scanRaw(String str) {
         if (str == null || ObjectHelper.isEmpty(str)) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         List<Pair<Integer>> answer = new ArrayList<>();

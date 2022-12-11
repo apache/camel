@@ -183,7 +183,7 @@ public final class OgnlHelper {
     public static List<String> splitOgnl(String ognl) {
         // return an empty list if ognl is empty
         if (ognl == null || ognl.isEmpty() || ognl.trim().isEmpty()) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         List<String> methods = new ArrayList<>(4);
