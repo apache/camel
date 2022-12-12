@@ -35,6 +35,13 @@ public class DependencyDownloaderPropertiesFunctionResolver extends DefaultPrope
 
     @Override
     public PropertiesFunction resolvePropertiesFunction(String name) {
+        if ("base64".equals(name)) {
+            if (downloader != null && !downloader.alreadyOnClasspath("org.apache.camel", "camel-base64",
+                    getCamelContext().getVersion())) {
+                downloader.downloadDependency("org.apache.camel", "camel-base64",
+                        getCamelContext().getVersion());
+            }
+        }
         if ("configmap".equals(name) || "secret".equals(name)) {
             if (downloader != null && !downloader.alreadyOnClasspath("org.apache.camel", "camel-kubernetes",
                     getCamelContext().getVersion())) {
