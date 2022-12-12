@@ -129,13 +129,36 @@ class CurrentSpanTests extends CamelOpenTelemetryTestSupport {
     }
 
     @Test
+    void testMulticastAsync() {
+        SpanTestData[] expectedSpans = {
+                new SpanTestData().setLabel("asyncmock1:result").setUri("asyncmock1://result").setOperation("asyncmock1")
+                        .setKind(SpanKind.CLIENT),
+                new SpanTestData().setLabel("asyncmock2:result").setUri("asyncmock2://result").setOperation("asyncmock2")
+                        .setKind(SpanKind.CLIENT),
+                new SpanTestData().setLabel("syncmock:result").setUri("syncmock://result").setOperation("syncmock")
+                        .setKind(SpanKind.CLIENT),
+                new SpanTestData().setLabel("direct:start").setUri("direct://start").setOperation("start")
+                        .setKind(SpanKind.INTERNAL)
+        };
+
+        // sync pipeline
+        template.sendBody("direct:start", "Hello World");
+
+        List<SpanData> spans = verify(expectedSpans, false);
+        assertEquals(spans.get(0).getParentSpanId(), spans.get(3).getSpanId());
+        assertEquals(spans.get(1).getParentSpanId(), spans.get(3).getSpanId());
+        assertEquals(spans.get(2).getParentSpanId(), spans.get(3).getSpanId());
+        assertFalse(Span.current().getSpanContext().isValid());
+    }
+
+    @Test
     void testContextDoesNotLeak() {
         for (int i = 0; i < 30; i++) {
             template.sendBody("asyncmock3:start", String.valueOf(i));
             assertFalse(Span.current().getSpanContext().isValid());
         }
 
-        verifyTraceSpanNumbers(30, 3);
+        verifyTraceSpanNumbers(30, 10);
     }
 
     @Override
@@ -160,6 +183,12 @@ class CurrentSpanTests extends CamelOpenTelemetryTestSupport {
                 // async pipeline
                 from("asyncmock2:start").to("asyncmock2:result");
 
+                // multicast pipeline
+                from("direct:start").multicast()
+                        .to("asyncmock1:result")
+                        .to("asyncmock2:result")
+                        .to("syncmock:result");
+
                 // stress pipeline
                 from("asyncmock3:start").multicast()
                         .aggregationStrategy((oldExchange, newExchange) -> {
@@ -171,7 +200,9 @@ class CurrentSpanTests extends CamelOpenTelemetryTestSupport {
                         .parallelProcessing()
                         .streaming()
                         .delay(10)
-                        .to("log:line", "asyncmock3:result")
+                        .to("log:line", "asyncmock1:start")
+                        .to("log:line", "asyncmock2:start")
+                        .to("log:line", "direct:bar")
                         .process(ignored -> assertFalse(Span.current().getSpanContext().isValid()));
             }
         };
