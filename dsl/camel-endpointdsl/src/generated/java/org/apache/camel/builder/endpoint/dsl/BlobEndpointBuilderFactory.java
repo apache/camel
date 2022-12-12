@@ -2960,6 +2960,21 @@ public interface BlobEndpointBuilderFactory {
         }
 
         /**
+         * When uploading a blob with the uploadBlockBlob-operation this can be
+         * used to tell the client what the length of an InputStream is.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobBlobUploadSize}.
+         */
+        public String azureStorageBlobBlobUploadSize() {
+            return "AzureStorageBlobBlobUploadSize";
+        }
+
+        /**
          * (producer) (createPageBlob) A user-controlled value that you can use
          * to track requests. The value of the sequence number must be between 0
          * and 263 - 1. The default value is 0. (consumer) The current sequence
