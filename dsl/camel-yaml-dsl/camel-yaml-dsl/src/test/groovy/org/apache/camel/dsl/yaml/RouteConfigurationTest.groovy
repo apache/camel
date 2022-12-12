@@ -34,15 +34,16 @@ class RouteConfigurationTest extends YamlTestSupport {
                   - name: myFailingProcessor
                     type: ${MyFailingProcessor.name}
                 - route-configuration:
-                    - on-exception:
-                        handled:
-                          constant: "true"
-                        exception:
-                          - ${MyException.name}
-                        steps:
-                          - transform:
-                              constant: "Sorry"
-                          - to: "mock:on-exception"  
+                    on-exception:
+                      - on-exception:
+                          handled:
+                            constant: "true"
+                          exception:
+                            - ${MyException.name}
+                          steps:
+                            - transform:
+                                constant: "Sorry"
+                            - to: "mock:on-exception"  
                 - from:
                     uri: "direct:start"
                     steps:
@@ -72,32 +73,35 @@ class RouteConfigurationTest extends YamlTestSupport {
                   - name: myFailingProcessor
                     type: ${MyFailingProcessor.name}
                 - route-configuration:
-                    - precondition: "{{!activate}}"
-                    - on-exception:
-                        handled:
-                          constant: "true"
-                        exception:
-                          - ${MyException.name}
-                        steps:
-                          - transform:
-                              constant: "Not Activated"
-                          - to: "mock:on-exception"  
+                    precondition: "{{!activate}}"
+                    on-exception:
+                      - on-exception:
+                          handled:
+                            constant: "true"
+                          exception:
+                            - ${MyException.name}
+                          steps:
+                            - transform:
+                                constant: "Not Activated"
+                            - to: "mock:on-exception"  
                 - route-configuration:
-                    - precondition: "{{activate}}"
-                    - on-exception:
-                        handled:
-                          constant: "true"
-                        exception:
-                          - ${MyException.name}
-                        steps:
-                          - transform:
-                              constant: "Activated"
-                          - to: "mock:on-exception"
-                    - on-completion:
-                        steps:
-                          - transform:
-                              constant: "Completed"
-                          - to: "mock:on-completion"
+                    precondition: "{{activate}}"
+                    on-exception:
+                      - on-exception:
+                          handled:
+                            constant: "true"
+                          exception:
+                            - ${MyException.name}
+                          steps:
+                            - transform:
+                                constant: "Activated"
+                            - to: "mock:on-exception"
+                    on-completion:
+                      - on-completion:
+                          steps:
+                            - transform:
+                                constant: "Completed"
+                            - to: "mock:on-completion"
                 - from:
                     uri: "direct:start"
                     steps:
@@ -136,6 +140,7 @@ class RouteConfigurationTest extends YamlTestSupport {
                   - name: myFailingProcessor
                     type: ${MyFailingProcessor.name}
                 - route-configuration:
+                    on-exception:
                     - on-exception:
                         handled:
                           constant: "true"
@@ -183,16 +188,17 @@ class RouteConfigurationTest extends YamlTestSupport {
                   - name: myFailingProcessor
                     type: ${MyFailingProcessor.name}
                 - route-configuration:
-                    - id: handleError
-                    - on-exception:
-                        handled:
-                          constant: "true"
-                        exception:
-                          - ${MyException.name}
-                        steps:
-                          - transform:
-                              constant: "Sorry"
-                          - to: "mock:on-exception"  
+                    id: handleError
+                    on-exception:
+                      - on-exception:
+                          handled:
+                            constant: "true"
+                          exception:
+                            - ${MyException.name}
+                          steps:
+                            - transform:
+                                constant: "Sorry"
+                            - to: "mock:on-exception"  
             """
         // routes
         loadRoutes """
@@ -240,9 +246,9 @@ class RouteConfigurationTest extends YamlTestSupport {
                   - name: myFailingProcessor
                     type: ${MyFailingProcessor.name}
                 - route-configuration:
-                    - error-handler:
-                        dead-letter-channel: 
-                          dead-letter-uri: "mock:on-error"
+                    error-handler:
+                      dead-letter-channel: 
+                        dead-letter-uri: "mock:on-error"
             """
         // routes
         loadRoutes """

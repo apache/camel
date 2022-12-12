@@ -2385,52 +2385,48 @@
         "required" : [ "ref" ]
       },
       "org.apache.camel.model.RouteConfigurationDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "errorHandler" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.ErrorHandlerDefinition"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "intercept" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.InterceptDefinition"
-              }
-            },
-            "interceptFrom" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.InterceptFromDefinition"
-              }
-            },
-            "interceptSendToEndpoint" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.InterceptSendToEndpointDefinition"
-              }
-            },
-            "onCompletion" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.OnCompletionDefinition"
-              }
-            },
-            "onException" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.OnExceptionDefinition"
-              }
-            },
-            "precondition" : {
-              "type" : "string"
+        "type" : "object",
+        "properties" : {
+          "errorHandler" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.ErrorHandlerDefinition"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "intercept" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.InterceptDefinition"
             }
+          },
+          "interceptFrom" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.InterceptFromDefinition"
+            }
+          },
+          "interceptSendToEndpoint" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.InterceptSendToEndpointDefinition"
+            }
+          },
+          "onCompletion" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.OnCompletionDefinition"
+            }
+          },
+          "onException" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.OnExceptionDefinition"
+            }
+          },
+          "precondition" : {
+            "type" : "string"
           }
-        } ]
+        }
       },
       "org.apache.camel.model.RouteContextRefDefinition" : {
         "oneOf" : [ {

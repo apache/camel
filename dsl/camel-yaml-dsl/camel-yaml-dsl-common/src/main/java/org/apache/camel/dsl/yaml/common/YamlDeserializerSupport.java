@@ -279,6 +279,13 @@ public class YamlDeserializerSupport {
         return answer;
     }
 
+    public static <T> List<T> asList(Node node, Class<T> type) throws YamlDeserializationException {
+        List<T> answer = new ArrayList<>();
+        asCollection(node, type, answer);
+
+        return answer;
+    }
+
     public static <T> Set<T> asFlatSet(Node node, Class<T> type) throws YamlDeserializationException {
         Set<T> answer = new HashSet<>();
         asFlatCollection(node, type, answer);
@@ -289,6 +296,11 @@ public class YamlDeserializerSupport {
     public static <T> void asFlatCollection(Node node, Class<T> type, Collection<T> collection)
             throws YamlDeserializationException {
         asCollection(node, type, collection, true);
+    }
+
+    public static <T> void asCollection(Node node, Class<T> type, Collection<T> collection)
+            throws YamlDeserializationException {
+        asCollection(node, type, collection, false);
     }
 
     private static <T> void asCollection(Node node, Class<T> type, Collection<T> collection, boolean flat)
