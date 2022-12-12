@@ -190,7 +190,11 @@ public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements Kafka
         } finally {
             if (consumer != null) {
                 consumer.unsubscribe();
-                consumer.close(Duration.ofSeconds(5));
+                try {
+                    consumer.close(Duration.ofSeconds(5));
+                } catch (Exception e) {
+                    LOG.warn("Error closing the consumer: {} (this error will be ignored)", e.getMessage(), e);
+                }
             }
         }
     }
@@ -373,6 +377,8 @@ public class SingleNodeKafkaResumeStrategy<T extends Resumable> implements Kafka
             IOHelper.close(producer, "Kafka producer", LOG);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
+        } catch (Exception e) {
+            LOG.warn("Error closing the Kafka producer: {} (this error will be ignored)", e.getMessage(), e);
         } finally {
             lock.unlock();
         }
