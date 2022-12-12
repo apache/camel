@@ -107,7 +107,7 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
                 ExchangeHelper.copyResults(exchange, exchange);
 
                 // logging nextExchange as it contains the exchange that might have altered the payload and since
-                // we are logging the completion if will be confusing if we log the original instead
+                // we are logging the completion it will be confusing if we log the original instead
                 // we could also consider logging the original and the nextExchange then we have *before* and *after* snapshots
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
@@ -125,16 +125,6 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
         this.reactiveExecutor = camelContext.adapt(ExtendedCamelContext.class).getReactiveExecutor();
         this.processors = processors.stream().map(AsyncProcessorConverterHelper::convert).collect(Collectors.toList());
         this.size = processors.size();
-    }
-
-    private Pipeline(Logger log) {
-        // used for eager loading
-        camelContext = null;
-        reactiveExecutor = null;
-        processors = null;
-        size = 0;
-        PipelineTask task = new PipelineTask();
-        log.trace("Loaded {}", task.getClass().getSimpleName());
     }
 
     public static Processor newInstance(CamelContext camelContext, List<Processor> processors) {

@@ -573,7 +573,7 @@ public abstract class BuilderSupport implements CamelContextAware {
 
     /**
      * 
-     * @return true if it an error handler factory was initialized
+     * @return true if an error handler factory was initialized
      */
     public boolean hasErrorHandlerFactory() {
         return this.errorHandlerFactory != null;
