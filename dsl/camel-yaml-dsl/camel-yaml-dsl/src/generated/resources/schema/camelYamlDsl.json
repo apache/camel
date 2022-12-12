@@ -8112,6 +8112,9 @@
       "onException" : {
         "$ref" : "#/items/definitions/org.apache.camel.model.OnExceptionDefinition"
       },
+      "routeConfiguration" : {
+        "$ref" : "#/items/definitions/org.apache.camel.model.RouteConfigurationDefinition"
+      },
       "route" : {
         "$ref" : "#/items/definitions/org.apache.camel.model.RouteDefinition"
       },
