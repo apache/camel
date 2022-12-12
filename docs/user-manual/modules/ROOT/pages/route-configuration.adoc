@@ -240,7 +240,8 @@ When using YAML DSL then you can code your route configurations in YAML files as
 [source,yaml]
 ----
 - route-configuration:
-    - id: "yamlError"
+    id: "yamlError"
+    on-exception:
     - on-exception:
         handled:
           constant: "true"
@@ -385,7 +386,8 @@ And in YAML DSL:
 [source,yaml]
 ----
 - route-configuration:
-    - precondition: "{{activate}}"
+    precondition: "{{activate}}"
+    on-exception:
     - on-exception:
         exception:
           - "java.lang.IllegalArgumentException"
