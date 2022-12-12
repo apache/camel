@@ -65,7 +65,7 @@
     <avro-ipc-netty-version>1.11.1</avro-ipc-netty-version>
     <avro-version>1.11.1</avro-version>
     <awaitility-version>4.2.0</awaitility-version>
-    <aws-java-sdk2-version>2.18.32</aws-java-sdk2-version>
+    <aws-java-sdk2-version>2.18.35</aws-java-sdk2-version>
     <aws-xray-version>2.6.1</aws-xray-version>
     <axiom-version>1.2.14</axiom-version>
     <azure-sdk-bom-version>1.2.7</azure-sdk-bom-version>
