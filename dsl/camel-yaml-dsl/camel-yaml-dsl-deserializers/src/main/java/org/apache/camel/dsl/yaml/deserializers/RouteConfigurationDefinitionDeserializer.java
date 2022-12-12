@@ -27,16 +27,12 @@ import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RouteConfigurationDefinition;
-import org.apache.camel.model.RouteTemplateParameterDefinition;
 import org.apache.camel.spi.annotations.YamlIn;
 import org.apache.camel.spi.annotations.YamlProperty;
 import org.apache.camel.spi.annotations.YamlType;
 import org.snakeyaml.engine.v2.nodes.MappingNode;
 import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.NodeTuple;
-import org.snakeyaml.engine.v2.nodes.SequenceNode;
-
-import java.util.List;
 
 @YamlIn
 @YamlType(
