@@ -40,7 +40,7 @@ public class ActiveSpanManagerTest extends ExchangeTestSupport {
     @Test
     public void testCurrentSpan() {
         Exchange exchange = createExchange();
-        SpanAdapter span = MockSpanAdapter.buildSpan("test");
+        MockSpanAdapter span = MockSpanAdapter.buildSpan("test");
         ActiveSpanManager.activate(exchange, span);
         assertTrue(span.isCurrent());
         assertEquals(span, ActiveSpanManager.getSpan(exchange));
