@@ -138,7 +138,7 @@ target/messages/uk/message1.xml
 
 == Understanding the project
 
-The integration you created implements a pattern (E.I.P.) called xref:eips:choice-eip.adoc[Content Based Router]. The Camel implementation of this pattern allows you to implement logic that route messages based on their content.
+The integration you created implements a pattern (E.I.P.) called xref:components:eips:choice-eip.adoc[Content Based Router]. The Camel implementation of this pattern allows you to implement logic that route messages based on their content.
 
 More specifically, this integration looks at the content of the XML files in the `src/data` directory. If the content of the element `city` is London, then it moves the file to the directory `target/messages/uk`. Otherwise, it moves the file to the directory `target/messages/others`.
 
