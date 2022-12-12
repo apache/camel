@@ -572,7 +572,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                 if (!Strings.isNullOrEmpty(apiName)) {
                     final UriParams uriParams = classElement.getAnnotation(UriParams.class);
                     String extraPrefix = uriParams != null ? uriParams.prefix() : "";
-                    findClassProperties(componentModel, classElement, Collections.EMPTY_SET, extraPrefix,
+                    findClassProperties(componentModel, classElement, Collections.emptySet(), extraPrefix,
                             null, null, false);
                 }
             }
@@ -956,7 +956,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                         }
                         nestedTypeName = fieldTypeName;
                         nestedFieldName = fieldElement.getName();
-                        findClassProperties(componentModel, fieldTypeElement, Collections.EMPTY_SET, nestedPrefix,
+                        findClassProperties(componentModel, fieldTypeElement, Collections.emptySet(), nestedPrefix,
                                 nestedTypeName, nestedFieldName, true);
                         nestedTypeName = null;
                         nestedFieldName = null;

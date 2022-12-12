@@ -329,10 +329,9 @@ public class PropertiesComponent extends ServiceSupport
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<String> getLocations() {
         if (locations.isEmpty()) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         } else {
             return locations.stream().map(PropertiesLocation::toString).collect(Collectors.toList());
         }
