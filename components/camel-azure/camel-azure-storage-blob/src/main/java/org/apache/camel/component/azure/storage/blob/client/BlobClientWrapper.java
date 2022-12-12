@@ -18,6 +18,7 @@ package org.apache.camel.component.azure.storage.blob.client;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
@@ -52,6 +53,7 @@ import com.azure.storage.blob.models.PageBlobRequestConditions;
 import com.azure.storage.blob.models.PageRange;
 import com.azure.storage.blob.models.PageRangeItem;
 import com.azure.storage.blob.models.ParallelTransferOptions;
+import com.azure.storage.blob.options.BlockBlobSimpleUploadOptions;
 import com.azure.storage.blob.options.ListPageRangesOptions;
 import com.azure.storage.blob.sas.BlobSasPermission;
 import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
@@ -60,7 +62,9 @@ import com.azure.storage.blob.specialized.BlobInputStream;
 import com.azure.storage.blob.specialized.BlockBlobClient;
 import com.azure.storage.blob.specialized.PageBlobClient;
 import com.azure.storage.common.StorageSharedKeyCredential;
+import com.azure.storage.common.Utility;
 import org.apache.camel.util.ObjectHelper;
+import reactor.core.publisher.Flux;
 
 public class BlobClientWrapper {
     private static final String SERVICE_URI_SEGMENT = ".blob.core.windows.net";
@@ -120,8 +124,10 @@ public class BlobClientWrapper {
             final Map<String, String> metadata, AccessTier tier, final byte[] contentMd5,
             final BlobRequestConditions requestConditions,
             final Duration timeout) {
-        return getBlockBlobClient().uploadWithResponse(data, length, headers, metadata, tier, contentMd5, requestConditions,
-                timeout, Context.NONE);
+        Flux<ByteBuffer> dataBuffer = Utility.convertStreamToByteBuffer(data, length, 4194304, false);
+        BlockBlobSimpleUploadOptions uploadOptions = new BlockBlobSimpleUploadOptions(dataBuffer, length).setHeaders(headers)
+                .setMetadata(metadata).setTier(tier).setContentMd5(contentMd5).setRequestConditions(requestConditions);
+        return getBlockBlobClient().uploadWithResponse(uploadOptions, timeout, Context.NONE);
     }
 
     public HttpHeaders stageBlockBlob(
