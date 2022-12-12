@@ -40,7 +40,7 @@ public final class BlobStreamAndLength {
     @SuppressWarnings("rawtypes")
     public static BlobStreamAndLength createBlobStreamAndLengthFromExchangeBody(final Exchange exchange) throws IOException {
         Object body = exchange.getIn().getBody();
-        Long blobSize = exchange.getIn().getHeader(BlobConstants.BLOB_SIZE, () -> null, Long.class);
+        Long blobSize = exchange.getIn().getHeader(BlobConstants.BLOB_UPLOAD_SIZE, () -> null, Long.class);
 
         if (body instanceof WrappedFile) {
             // unwrap file

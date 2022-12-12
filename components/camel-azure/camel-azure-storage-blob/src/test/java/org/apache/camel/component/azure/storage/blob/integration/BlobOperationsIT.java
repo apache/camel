@@ -60,6 +60,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BlobOperationsIT extends Base {
@@ -239,7 +240,7 @@ class BlobOperationsIT extends Base {
                 = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("upload_test_file")).getFile());
         final Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new FileInputStream(fileToUpload));
-        exchange.getIn().setHeader(BlobConstants.BLOB_SIZE, fileToUpload.length());
+        exchange.getIn().setHeader(BlobConstants.BLOB_UPLOAD_SIZE, fileToUpload.length());
 
         final BlobOperationResponse response = operations.uploadBlockBlob(exchange);
 
@@ -248,6 +249,9 @@ class BlobOperationsIT extends Base {
         // check for eTag and md5 to make sure is uploaded
         assertNotNull(response.getHeaders().get(BlobConstants.E_TAG));
         assertNotNull(response.getHeaders().get(BlobConstants.CONTENT_MD5));
+
+        // check that the size header got removed
+        assertNull(exchange.getIn().getHeader(BlobConstants.BLOB_UPLOAD_SIZE));
 
         // check content
         final BlobOperationResponse getBlobResponse = operations.getBlob(null);
