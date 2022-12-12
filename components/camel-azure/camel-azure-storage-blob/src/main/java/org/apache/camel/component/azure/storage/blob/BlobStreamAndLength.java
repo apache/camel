@@ -41,6 +41,7 @@ public final class BlobStreamAndLength {
     public static BlobStreamAndLength createBlobStreamAndLengthFromExchangeBody(final Exchange exchange) throws IOException {
         Object body = exchange.getIn().getBody();
         Long blobSize = exchange.getIn().getHeader(BlobConstants.BLOB_UPLOAD_SIZE, () -> null, Long.class);
+        exchange.getIn().removeHeader(BlobConstants.BLOB_UPLOAD_SIZE); // remove to avoid issues for further uploads
 
         if (body instanceof WrappedFile) {
             // unwrap file

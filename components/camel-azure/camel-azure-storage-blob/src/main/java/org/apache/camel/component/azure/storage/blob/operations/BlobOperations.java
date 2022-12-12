@@ -192,8 +192,6 @@ public class BlobOperations {
                     commonRequestOptions.getContentMD5(), commonRequestOptions.getBlobRequestConditions(),
                     commonRequestOptions.getTimeout());
 
-            exchange.getIn().removeHeader(BlobConstants.BLOB_UPLOAD_SIZE); // remove to avoid issues for further uploads
-
             return BlobOperationResponse.createWithEmptyBody(response);
         } finally {
             closeInputStreamIfNeeded(blobStreamAndLength.getInputStream());
