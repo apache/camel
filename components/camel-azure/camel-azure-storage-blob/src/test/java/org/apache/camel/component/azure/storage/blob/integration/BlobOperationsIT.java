@@ -19,6 +19,7 @@ package org.apache.camel.component.azure.storage.blob.integration;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -211,6 +212,34 @@ class BlobOperationsIT extends Base {
                 = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("upload_test_file")).getFile());
         final Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new FileInputStreamCache(fileToUpload));
+
+        final BlobOperationResponse response = operations.uploadBlockBlob(exchange);
+
+        assertNotNull(response);
+        assertTrue((boolean) response.getBody());
+        // check for eTag and md5 to make sure is uploaded
+        assertNotNull(response.getHeaders().get(BlobConstants.E_TAG));
+        assertNotNull(response.getHeaders().get(BlobConstants.CONTENT_MD5));
+
+        // check content
+        final BlobOperationResponse getBlobResponse = operations.getBlob(null);
+
+        assertEquals("awesome camel to upload!",
+                IOUtils.toString((InputStream) getBlobResponse.getBody(), Charset.defaultCharset()));
+
+        blobClientWrapper.delete(null, null, null);
+    }
+
+    @Test
+    void testUploadBlockBlobAsStreamWithBlobSizeHeader() throws Exception {
+        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file");
+        final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
+
+        final File fileToUpload
+                = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("upload_test_file")).getFile());
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(new FileInputStream(fileToUpload));
+        exchange.getIn().setHeader(BlobConstants.BLOB_SIZE, fileToUpload.length());
 
         final BlobOperationResponse response = operations.uploadBlockBlob(exchange);
 

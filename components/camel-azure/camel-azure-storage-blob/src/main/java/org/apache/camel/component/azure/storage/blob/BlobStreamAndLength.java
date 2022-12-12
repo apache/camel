@@ -40,6 +40,7 @@ public final class BlobStreamAndLength {
     @SuppressWarnings("rawtypes")
     public static BlobStreamAndLength createBlobStreamAndLengthFromExchangeBody(final Exchange exchange) throws IOException {
         Object body = exchange.getIn().getBody();
+        Long blobSize = exchange.getIn().getHeader(BlobConstants.BLOB_SIZE, () -> null, Long.class);
 
         if (body instanceof WrappedFile) {
             // unwrap file
@@ -47,7 +48,8 @@ public final class BlobStreamAndLength {
         }
 
         if (body instanceof InputStream) {
-            return new BlobStreamAndLength((InputStream) body, BlobUtils.getInputStreamLength((InputStream) body));
+            return new BlobStreamAndLength(
+                    (InputStream) body, blobSize != null ? blobSize : BlobUtils.getInputStreamLength((InputStream) body));
         }
         if (body instanceof File) {
             return new BlobStreamAndLength(new BufferedInputStream(new FileInputStream((File) body)), ((File) body).length());
@@ -65,7 +67,7 @@ public final class BlobStreamAndLength {
             throw new IllegalArgumentException("Unsupported blob type:" + body.getClass().getName());
         }
 
-        return new BlobStreamAndLength(inputStream, BlobUtils.getInputStreamLength(inputStream));
+        return new BlobStreamAndLength(inputStream, blobSize != null ? blobSize : BlobUtils.getInputStreamLength(inputStream));
     }
 
     public InputStream getInputStream() {

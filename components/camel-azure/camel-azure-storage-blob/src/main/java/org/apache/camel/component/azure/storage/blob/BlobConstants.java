@@ -57,7 +57,9 @@ public final class BlobConstants {
     public static final String CONTENT_LANGUAGE = HEADER_PREFIX + "ContentLanguage";
     @Metadata(label = "consumer", description = "Cache control specified for the blob.", javaType = "String")
     public static final String CACHE_CONTROL = HEADER_PREFIX + "CacheControl";
-    @Metadata(label = "consumer", description = "The size of the blob.", javaType = "long")
+    @Metadata(label = "common", description = "(consumer) The size of the blob.\n" +
+                                              "(producer) When uploading a blob with the uploadBlockBlob-operation this can be used to tell the client what the length of an InputStream is.",
+              javaType = "long")
     public static final String BLOB_SIZE = HEADER_PREFIX + "BlobSize";
     @Metadata(description = "(producer) (createPageBlob) A user-controlled value that you can use to track requests. " +
                             "The value of the sequence number must be between 0 and 2^63 - 1. The default value is 0.\n" +
