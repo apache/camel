@@ -29,6 +29,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.Resource;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.ResourceHelper;
 import org.junit.jupiter.api.Test;
@@ -294,6 +295,16 @@ public class ResourceHelperTest extends TestSupport {
         assertEquals("http://localhost:8080/data?foo=123&bar=yes",
                 ResourceHelper.appendParameters("http://localhost:8080/data", params));
         assertEquals(0, params.size());
+    }
+
+    @Test
+    public void testBase64() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.start();
+
+        Resource res = ResourceHelper.resolveResource(context, "base64:SGVsbG8=");
+        assertTrue(res.exists());
+        assertEquals("Hello", context.getTypeConverter().convertTo(String.class, res.getInputStream()));
     }
 
 }

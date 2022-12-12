@@ -215,6 +215,29 @@ public class OptionalPropertyPlaceholderTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testQueryWithResourceLoader() throws Exception {
+        Properties prop = new Properties();
+        prop.put("whereTo", "result");
+        context.getPropertiesComponent().setInitialProperties(prop);
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                        .to("mock:{{?whereTo}}?retainFirst=base64:{{?maxBase64}}");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:result").expectedMessageCount(2);
+
+        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:start", "Bye World");
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();

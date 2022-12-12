@@ -128,8 +128,19 @@ public final class EndpointHelper {
                     continue;
                 }
                 Object value = entry.getValue();
-                if (value instanceof String && ((String) value).startsWith(prefix)) {
-                    continue;
+                if (value instanceof String) {
+                    String s = value.toString();
+                    if (s.startsWith(prefix)) {
+                        continue;
+                    }
+                    // okay the value may use a resource loader with a scheme prefix
+                    int dot = s.indexOf(':');
+                    if (dot > 0 && dot < s.length() - 1) {
+                        s = s.substring(dot + 1);
+                        if (s.startsWith(prefix)) {
+                            continue;
+                        }
+                    }
                 }
                 keep.put(key, value);
             }
