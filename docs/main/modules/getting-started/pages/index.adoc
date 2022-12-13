@@ -267,8 +267,9 @@ Camel supports most of the xref:components:eips:enterprise-integration-patterns.
 [[BookGettingStarted-RoutesAdding]]
 === Adding Routes and Running the Application
 
-For a route to be configured and executed, it needs to be added to the CamelContext.
-In our sample application the code that perform these steps is written on the `MainApp.java` file:
+Before executing a route, it needs to be to be configured and added to the _CamelContext_.
+
+The `MainApp.java` file contains the code that performs these steps:
 
 [source,java]
 ----
@@ -281,7 +282,9 @@ public class MainApp {
 }
 ----
 
-We start by creating a xref:components:others:main.adoc[Main] component that we configure to include the route (`main.configure().addRoutesBuilder(new MyRouteBuilder());`). Then we start execution of the main application by running it with the `run` method that will create the CamelContext and execute the integration in foreground until we terminate it (i.e.: with `Ctrl + C`).
+We start by creating a xref:components:others:main.adoc[_Main_] component that we configure to include the route (`main.configure().addRoutesBuilder(new MyRouteBuilder());`). Then we start the execution of the main application by running it with the `run` method that will create the _CamelContext_ and execute the integration in the foreground until we terminate it (i.e., with `Ctrl + C`).
+
+You don’t interact directly with the _CamelContext_ in this example, but it is a fundamental part of Camel. We will talk about it in the next section.
 
 [[BookGettingStarted-ConceptsAndTerminologyFundamentalToCamel]]
 == Concepts and terminology fundamental to Camel
