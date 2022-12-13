@@ -318,6 +318,8 @@ been created.
 If you neglect to call `CamelContext.stop()` before terminating your application, it may terminate in an inconsistent state.
 If you neglect to call `CamelContext.stop()` in a JUnit test, it may fail because the messages did not have a chance to be fully processed.
 
+*Note*: our documentation contains an in-depth overview of the xref:manual::camelcontext.adoc[CamelContext] if you want to learn more about it.
+
 [[BookGettingStarted-Components]]
 === Components
 
