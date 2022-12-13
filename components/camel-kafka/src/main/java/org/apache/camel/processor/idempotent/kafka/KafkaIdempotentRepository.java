@@ -399,6 +399,10 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
         return topicPoller.isRunning();
     }
 
+    public boolean isCacheReady() {
+        return cacheReadyLatch.getCount() == 0;
+    }
+
     private class TopicPoller implements Runnable {
 
         private final Logger log = LoggerFactory.getLogger(this.getClass());
