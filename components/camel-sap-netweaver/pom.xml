@@ -23,7 +23,7 @@
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>3.14.7</version>
+        <version>3.14.8-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-sap-netweaver</artifactId>
