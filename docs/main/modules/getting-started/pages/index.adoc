@@ -236,7 +236,7 @@ In Camel, the URIs that represent the addresses of the endpoints take the follow
 
 The scheme part of the URI represents the component used to consume or produce data. Camel contains more than xref:components::index.adoc[300 components] that allow your application to communicate with many systems, protocols, and applications.
 
-These are some examples of valid URIs for Camel: `jms:queue:order`, `kafka:myTopic?groupId=KafkaConsumerFullIT`, `direct:result`.
+These are some examples of valid URIs for Camel: `jms:queue:order`, `kafka:myTopic?groupId=KafkaConsumerFullIT`, `direct:result`. By looking at these URIs we can identify that they are using the `jms`, `kafka`, and the `direct` component.
 
 Every component has its own specific set of features, constraints, and requirements that we must observe when working with them. Camel exposes them through the `resource` and `options`. What this means varies according to the component we are working with. For instance, in the xref:components::file-component.adoc[file] component, the _resource_ is a directory; in the xref:components::kafka-component.adoc[Kafka] component, the _resource_ is the _topic_; etc.
 
@@ -323,128 +323,18 @@ If you neglect to call `CamelContext.stop()` in a JUnit test, it may fail becaus
 [[BookGettingStarted-Components]]
 === Components
 
-_Component_ is confusing terminology; _EndpointFactory_ would have been
-more appropriate because a `Component` is a factory for creating
-`Endpoint` instances. For example, if a Camel-based application uses
-several JMS queues then the application will create one instance of the
-`JmsComponent` class (which implements the `Component` interface), and
-then the application invokes the `createEndpoint()` operation on this
-`JmsComponent` object several times. Each invocation of
-`JmsComponent.createEndpoint()` creates an instance of the `JmsEndpoint`
-class (which implements the `Endpoint` interface). Actually,
-application-level code does not invoke `Component.createEndpoint()`
-directly. Instead, application-level code normally invokes
-`CamelContext.getEndpoint()`; internally, the `CamelContext` object
-finds the desired `Component` object (as I will discuss shortly) and
-then invokes `createEndpoint()` on it.
-
-Consider the following code:
+A Component is essentially a factory of Endpoint instances. Typically, Camel-based applications shouldn't need to interact directly with a component. However, they are some circumstances where manipulating the component may be beneficial for the application, performance, operation, or scalability of the application. In such cases, the applications may use the context to get access to an instance of the endpoint they need to manipulate. The applications can do so by using the method `CamelContext.getEndpoint()`. This method returns an implementation of the `Component` interface that is appropriate for the component requested. For instance, consider the following code:
 
 [source,java]
 ----
 myCamelContext.getEndpoint("pop3://john.smith@mailserv.example.com?password=myPassword");
 ----
 
-The parameter to `getEndpoint()` is a URI. The URI _prefix_ (that is,
-the part before `:`) specifies the name of a component. Internally, the
-`CamelContext` object maintains a mapping from names of components to
-`Component` objects. For the URI given in the above example, the
-`CamelContext` object would probably map the `pop3` prefix to an
-instance of the `MailComponent` class. Then the `CamelContext` object
-invokes
-`createEndpoint("pop3://john.smith@mailserv.example.com?password=myPassword")`
-on that `MailComponent` object. The `createEndpoint()` operation splits
-the URI into its component parts and uses these parts to create and
-configure an `Endpoint` object. +
-In the previous paragraph, I mentioned that a `CamelContext` object
-maintains a mapping from component names to `Component` objects. This
-raises the question of how this map is populated with named `Component`
-objects. There are two ways of populating the map. The first way is for
-application-level code to invoke
-`CamelContext.addComponent(String componentName, Component component)`.
-The example below shows a single `MailComponent` object being registered
-in the map under 3 different names.
+For the URI given in the above example, the `CamelContext` object would map the `pop3` prefix to an instance of the `MailComponent` class.
 
-[source,java]
-----
-Component mailComponent = new org.apache.camel.component.mail.MailComponent();
-myCamelContext.addComponent("pop3", mailComponent);
-myCamelContext.addComponent("imap", mailComponent);
-myCamelContext.addComponent("smtp", mailComponent);
-----
+The parameter to `getEndpoint()` is a URI. The URI _scheme_ (that is,
+the part before `:`) specifies the name of a component. Internally, the `CamelContext` object maintains a mapping from the names of components to `Component` objects.
 
-The second (and preferred) way to populate the map of named `Component`
-objects in the `CamelContext` object is to let the `CamelContext` object
-perform lazy initialization. This approach relies on developers
-following a convention when they write a class that implements the
-`Component` interface. I illustrate the convention by an example. Let's
-assume you write a class called `com.example.myproject.FooComponent` and
-you want Camel to automatically recognize this by the name `foo`. To do
-this, you have to write a properties file called
-`META-INF/services/org/apache/camel/component/foo` (without a
-`.properties` file extension) that has a single entry in it called
-`class`, the value of which is the fully-scoped name of your class. This
-is shown below:
-
-.META-INF/services/org/apache/camel/component/foo
-[source]
-----
-class=com.example.myproject.FooComponent
-----
-
-If you want Camel to also recognize the class by the name `bar` then you
-write another properties file in the same directory called `bar` that
-has the same contents. Once you have written the properties file(s), you
-create a JAR file that contains the `com.example.myproject.FooComponent`
-class and the properties file(s), and you add this jar file to your
-CLASSPATH. Then, when application-level code invokes
-`createEndpoint("foo:...")` on a `CamelContext` object, Camel will find
-the "foo"" properties file on the CLASSPATH, get the value of the
-`class` property from that properties file, and use reflection APIs to
-create an instance of the specified class.
-
-As I said in Section ("Endpoint"),
-Camel provides out-of-the-box support for numerous communication
-technologies. The out-of-the-box support consists of classes that
-implement the `Component` interface plus properties files that enable a
-`CamelContext` object to populate its map of named `Component`
-objects.
-
-Earlier in this section I gave the following example of calling
-`CamelContext.getEndpoint()`:
-
-[source,java]
-----
-myCamelContext.getEndpoint("pop3://john.smith@mailserv.example.com?password=myPassword");
-----
-
-When I originally gave that example, I said that the parameter to
-`getEndpoint()` was a URI. I said that because the online Camel
-documentation and the Camel source code both claim the parameter is a
-URI. In reality, the parameter is restricted to being a URL. This is
-because when Camel extracts the component name from the parameter, it
-looks for the first ":", which is a simplistic algorithm. To understand
-why, recall from xref:index.adoc[Section ("The
-Meaning of URL, URI, URN and IRI")] that a URI can be a URL _or_ a URN.
-Now consider the following calls to `getEndpoint`:
-
-[source,java]
-----
-myCamelContext.getEndpoint("pop3:...");
-myCamelContext.getEndpoint("jms:...");
-myCamelContext.getEndpoint("urn:foo:...");
-myCamelContext.getEndpoint("urn:bar:...");
-----
-
-Camel identifies the components in the above example as `pop3`, `jms`,
-`urn` and `urn`. It would be more useful if the latter components were
-identified as `urn:foo` and `urn:bar` or, alternatively, as `foo` and
-`bar` (that is, by skipping over the `urn:` prefix). So, in practice you
-must identify an endpoint with a URL (a string of the form
-`<scheme>:...`) rather than with a URN (a string of the form
-`urn:<scheme>:...`). This lack of proper support for URNs means the you
-should consider the parameter to `getEndpoint()` as being a URL rather
-than (as claimed) a URI.
 
 [[BookGettingStarted-message-and-exchange]]
 
