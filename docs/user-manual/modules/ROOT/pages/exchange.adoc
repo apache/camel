@@ -9,3 +9,9 @@ xref:components:eips:event-message.adoc[Event Message] which has a single inboun
 or *InOut* for a xref:components:eips:requestReply-eip.adoc[Request Reply]
 where there is an inbound and outbound Message.
 
+
+== Implementation Details
+
+There are concrete classes that implement the `Exchange` interface for each Camel-supported communications technology. For example, the `JmsExchange` class provides a JMS-specific implementation of the `Exchange` interface. The public API of the `Exchange` interface is limited intentionally: we expect that each class that implements this interface will provide its own technology-specific operations.
+
+Application-level programmers rarely access the `Exchange` interface (or classes that implement it) directly. However, many classes in Camel are generic types that are instantiated on (a class that implements) `Exchange`. Because of this, the `Exchange` interface appears a lot in the generic signatures of classes and methods.

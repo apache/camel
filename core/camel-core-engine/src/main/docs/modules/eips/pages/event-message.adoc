@@ -107,3 +107,7 @@ detects whether to use `InOnly` or `InOut` in the consumer.
 Likewise, the JMS producer will check the current xref:manual::exchange-pattern.adoc[Exchange Pattern]
 on the xref:manual::exchange.adoc[Exchange] to know whether to use `InOnly` or `InOut` mode (i.e. one-way vs request/reply messaging)
 
+
+== Other Implementation Details
+
+There are concrete classes that implement the `Message` interface for each Camel-supported communications technology. For example, the `JmsMessage` class provides a JMS-specific implementation of the `Message` interface. The public API of the `Message` interface provides getters and setters methods to access the _message id_, _body_ and individual _header_ fields of a message.
