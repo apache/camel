@@ -48,9 +48,9 @@ Some steps such as `filter` and `split` have their own pipeline when an exchange
 filter:
   expression:
     simple: "${in.header.continue} == true"
-      steps:
-        - to:
-            uri: "log:filtered"
+    steps:
+      - to:
+          uri: "log:filtered"
 ----
 +
 
@@ -62,8 +62,8 @@ Some EIP such as `filter` and `split` supports the definition of an expression t
 .Explicit Expression field
 ----
 filter:
-    expression:
-      simple: "${in.header.continue} == true"
+  expression:
+    simple: "${in.header.continue} == true"
 ----
 +
 To make the DSL less verbose, the `expression` field can be omitted:
@@ -72,7 +72,7 @@ To make the DSL less verbose, the `expression` field can be omitted:
 .Implicit Expression field
 ----
 filter:
-    simple: "${in.header.continue} == true"
+  simple: "${in.header.continue} == true"
 ----
 +
 In general expression can be defined inline like in the examples above but in case you need provide more information, you can 'unroll' the expression definition and configure any single parameter the expression defines.
@@ -81,9 +81,9 @@ In general expression can be defined inline like in the examples above but in ca
 .Full Expression definition
 ----
 filter:
-    tokenize:
-      token: "<"
-      end-token: ">"
+  tokenize:
+    token: "<"
+    end-token: ">"
 ----
 
 - *Data Format Aware Steps*
@@ -93,8 +93,8 @@ The EIP `marshal` and `unmarshal` supports the definition of data formats:
 [source,yaml]
 ----
 marshal:
-    json:
-      library: Gson
+  json:
+    library: Gson
 ----
 +
 [NOTE]
@@ -254,8 +254,8 @@ spec:
   flows:
     - from:
         uri: "timer:tick?period=5000"
-    steps:
-      - to: "log:tick"
+      steps:
+        - to: "log:tick"
 ----
 
 === Loading Camel K bindings
