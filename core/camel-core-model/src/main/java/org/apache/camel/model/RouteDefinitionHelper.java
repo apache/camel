@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
@@ -594,8 +595,24 @@ public final class RouteDefinitionHelper {
                             uri = CamelContextHelper.getMandatoryEndpoint(context, ref).getEndpointUri();
                         }
                     }
-                    if (EndpointHelper.matchEndpoint(context, uri, pattern)) {
-                        match = true;
+
+                    // the route input uri can have property placeholders, so set them
+                    // as local properties on PropertiesComponent to have them resolved
+                    Properties properties = null;
+                    if (route.getTemplateParameters() != null && !route.getTemplateParameters().isEmpty()) {
+                        properties = context.getTypeConverter().tryConvertTo(Properties.class, route.getTemplateParameters());
+                    }
+                    try {
+                        if (properties != null) {
+                            context.getPropertiesComponent().setLocalProperties(properties);
+                        }
+                        if (EndpointHelper.matchEndpoint(context, uri, pattern)) {
+                            match = true;
+                        }
+                    } finally {
+                        if (properties != null) {
+                            context.getPropertiesComponent().setLocalProperties(null);
+                        }
                     }
                 }
 
