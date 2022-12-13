@@ -350,34 +350,49 @@ The `Exchange` interface provides an abstraction for an exchange of messages. An
 [[BookGettingStarted-Processor]]
 === Processor
 
-The `Processor` interface represents a class that processes a message.
-The signature of this interface is shown below:
+A processor is used to implement consumers of message exchanges or to implement a Message Translator, and other use-cases.
+
+When writing routes, you may use processors to execute more complex logic on the exchanges. For example:
+
+[source,java]
+----
+public void process(Exchange exchange) {
+    final String body = exchange.getMessage().getBody(String.class);
+    System.out.println(“Updated body: “ + body.replace(“city”, “county”));
+
+    // ... more code here
+}
+
+public void configure() {
+    from(“file:src/data?noop=true”)
+        .process(this::process);
+}
+----
+
+The code for the processor must comply with the `Processor` interface. This interface represents a class that processes a message. We show the signature of this interface below:
 
 .Processor
 [source,java]
 ----
 package org.apache.camel;
+
 public interface Processor {
     void process(Exchange exchange) throws Exception;
 }
 ----
 
-Notice that the parameter to the `process()` method is an `Exchange`
-rather than a `Message`. This provides flexibility. For example, an
-implementation of this method initially might call `exchange.getIn()` to
-get the input message and process it. If an error occurs during
-processing then the method can call `exchange.setException()`.
+*Note*: the parameter to the `process()` method is an `Exchange` rather than a `Message`. This provides flexibility. For example to get the input message and process it, an implementation of this method initially might call the method `exchange.getIn()`. If an error occurs during processing, then the method it can call `exchange.setException()`.
 
-An application-level developer might implement the `Processor` interface
-with a class that executes some business logic. However, there are many
-classes in the Camel library that implement the `Processor` interface in
-a way that provides support for a design pattern in the
-EIP book. For example, `ChoiceProcessor`
-implements the message router pattern, that is, it uses a cascading
-if-then-else statement to route a message from an input queue to one of
-several output queues. Another example is the `FilterProcessor` class
-which discards messages that do not satisfy a stated _predicate_ (that
-is, condition).
+An application-level developer might also want to implement the `Processor` interface with a class that executes some business logic.
+
+*Note*: our documentation contains an in-depth overview of the xref:manual::processor.adoc[Processor].
+
+==== Built-in processors
+
+Many classes in the Camel library implement the `Processor` interface in a way that provides support for the design patterns in the E.I.P. book. For example:
+
+* `ChoiceProcessor` implements the message router pattern, that is, it uses a cascading if-then-else statement to route a message from an input queue to one of several output queues.
+* The `FilterProcessor` class which discards messages that do not satisfy a stated _predicate_ (that is, condition).
 
 [[BookGettingStarted-RoutesAndRouteBuildersAndDSL]]
 
