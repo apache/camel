@@ -335,6 +335,7 @@ For the URI given in the above example, the `CamelContext` object would map the 
 The parameter to `getEndpoint()` is a URI. The URI _scheme_ (that is,
 the part before `:`) specifies the name of a component. Internally, the `CamelContext` object maintains a mapping from the names of components to `Component` objects.
 
+*Note*: our documentation contains an in-depth overview of the xref:manual::component.adoc[Component] if you want to learn more about it, including important details necessary to write your own.
 
 [[BookGettingStarted-message-and-exchange]]
 

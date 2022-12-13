@@ -31,6 +31,72 @@ A good practice when configuring options is to use xref:using-propertyplaceholde
 which allows to not hardcode urls, port numbers, sensitive information, and other settings.
 In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
 
+=== How Camel maps names to components
+
+In the getting started guide, we explained that Camel maintains a map of names to components. This raises the question of how Camel populates this map with named `Component` objects.
+
+*Note*: normally application developers don't need to worry about this. However, this information is fundamental if you are writing a custom component.
+
+There are two ways of populating the map.
+
+* Programmatically, using the context
+* Via lazy-initialization
+
+=== Programmatically
+
+The programmatic way is for application-level code to invoke `CamelContext.addComponent(String componentName, Component component)`.
+
+The example below shows a single `MailComponent` object being registered in the map under 3 different names.
+
+[source,java]
+----
+Component mailComponent = new org.apache.camel.component.mail.MailComponent();
+myCamelContext.addComponent("pop3", mailComponent);
+myCamelContext.addComponent("imap", mailComponent);
+myCamelContext.addComponent("smtp", mailComponent);
+----
+
+=== Lazy-initialization
+
+The second (and preferred) way to populate the map of named `Component` objects in the `CamelContext` object is to let the `CamelContext` object perform lazy initialization.
+
+This approach relies on developers following a convention when they write a class that implements the `Component` interface. For instance, let's assume you write a class called `com.example.myproject.FooComponent` and you want Camel to automatically recognize this by the name `foo`. To do this, you write a properties file called `META-INF/services/org/apache/camel/component/foo` (without a `.properties` file extension) that has a single entry in it called `class`, the value of which is the fully-scoped name of your class. For instance:
+
+.META-INF/services/org/apache/camel/component/foo
+[source]
+----
+class=com.example.myproject.FooComponent
+----
+
+If you want Camel to also recognize the class by the name `bar` then you write another properties file in the same directory called `bar` that has the same contents. Once you have written the properties file(s), you create a JAR file that contains the `com.example.myproject.FooComponent` class and the properties file(s), and you add this jar file to your CLASSPATH. Then, when application-level code invokes `createEndpoint("foo:...")` on a `CamelContext` object, Camel will find the "foo"" properties file on the CLASSPATH, get the value of the `class` property from that properties file, and use reflection APIs to create an instance of the specified class.
+
+Camel provides out-of-the-box support for various communication technologies. This support consists of classes that implement the `Component` interface plus properties files that enable a `CamelContext` object to populate its map of named `Component`
+objects.
+
+In the "Getting Started" guide, we provided the following example of calling `CamelContext.getEndpoint()`:
+
+[source,java]
+----
+myCamelContext.getEndpoint("pop3://john.smith@mailserv.example.com?password=myPassword");
+----
+
+We originally referred to the parameter as a URI because the online Camel documentation and the Camel source code both claim the parameter is a URI. In reality, the parameter is restricted to being a URL. This is because when Camel extracts the component name from the parameter, it looks for the first ":", which is a simplistic algorithm.
+
+*Note*: to understand, why recall from the Getting Started that a URI can be a URL or a URN.
+
+Now consider the following calls to `getEndpoint`:
+
+[source,java]
+----
+myCamelContext.getEndpoint("pop3:...");
+myCamelContext.getEndpoint("jms:...");
+myCamelContext.getEndpoint("urn:foo:...");
+myCamelContext.getEndpoint("urn:bar:...");
+----
+
+Camel identifies the components in the above example as `pop3`, `jms`,
+`urn`, and `urn`. It would be more useful if the latter components were identified as `urn:foo` and `urn:bar` or as `foo` and `bar` (that is, by skipping over the `urn:` prefix). So, in practice, you must identify an endpoint with a URL (a string of the form `<scheme>:...`) rather than with a URN (a string of the form `urn:<scheme>:...`). This lack of proper support for URNs means that you should consider the parameter to the method `getEndpoint()` as being a URL rather than (as claimed) a URI.
+
 [NOTE]
 ====
 Make sure to read xref:faq:how-do-i-configure-endpoints.adoc[How do I configure endpoints?]
