@@ -323,7 +323,7 @@
             "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.NoErrorHandlerDefinition"
           },
           "ref-error-handler" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition"
+            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.RefErrorHandlerDefinition"
           },
           "spring-transaction-error-handler" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition"
@@ -6130,15 +6130,19 @@
         }
       },
       "org.apache.camel.model.errorhandler.RefErrorHandlerDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string"
-          },
-          "ref" : {
-            "type" : "string"
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "id" : {
+              "type" : "string"
+            },
+            "ref" : {
+              "type" : "string"
+            }
           }
-        },
+        } ],
         "required" : [ "ref" ]
       },
       "org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition" : {

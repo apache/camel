@@ -428,7 +428,9 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
         for (MethodInfo ctor: info.constructors()) {
 
             // do not generate inline for error handlers (only ref error handler is allowed)
-            if (implementType(info, ERROR_HANDLER_DEFINITION_CLASS)) {
+            boolean eh = implementType(info, ERROR_HANDLER_DEFINITION_CLASS);
+            boolean ref = eh && implementType(info, REF_ERROR_HANDLER_DEFINITION_CLASS);
+            if (eh && !ref) {
                 break;
             }
 

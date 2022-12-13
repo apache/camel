@@ -11605,6 +11605,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     "ref-error-handler",
                     "refErrorHandler"
             },
+            inline = true,
             types = org.apache.camel.model.errorhandler.RefErrorHandlerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
@@ -11620,6 +11621,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         @Override
         protected RefErrorHandlerDefinition newInstance() {
             return new RefErrorHandlerDefinition();
+        }
+
+        @Override
+        protected RefErrorHandlerDefinition newInstance(String value) {
+            return new RefErrorHandlerDefinition(value);
         }
 
         @Override

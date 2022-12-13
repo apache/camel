@@ -72,9 +72,23 @@ class ErrorHandlerTest extends YamlTestSupport {
         when:
             context.start()
         then:
-            with(context.getErrorHandlerFactory(), ErrorHandlerRefDefinition) {
+            with(context.getErrorHandlerFactory(), RefErrorHandlerDefinition) {
                 ref == 'myErrorHandler'
             }
+    }
+
+    def "error-handler (ref inlined)"() {
+        setup:
+        loadRoutes """
+                - error-handler:
+                    ref-error-handler: "myErrorHandler"
+            """
+        when:
+        context.start()
+        then:
+        with(context.getErrorHandlerFactory(), RefErrorHandlerDefinition) {
+            ref == 'myErrorHandler'
+        }
     }
 
     def "error-handler (dead-letter-channel)"() {

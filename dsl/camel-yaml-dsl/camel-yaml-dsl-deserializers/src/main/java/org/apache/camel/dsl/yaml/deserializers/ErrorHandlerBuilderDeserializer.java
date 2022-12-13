@@ -58,7 +58,7 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeseri
                   @YamlProperty(name = "no-error-handler",
                                 type = "object:org.apache.camel.model.errorhandler.NoErrorHandlerDefinition"),
                   @YamlProperty(name = "ref-error-handler",
-                                type = "object:org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition"),
+                                type = "object:org.apache.camel.model.errorhandler.RefErrorHandlerDefinition"),
                   @YamlProperty(name = "spring-transaction-error-handler",
                                 type = "object:org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition"),
           })

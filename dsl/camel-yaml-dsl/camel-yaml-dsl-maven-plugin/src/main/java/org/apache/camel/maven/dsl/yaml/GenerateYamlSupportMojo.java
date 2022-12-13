@@ -108,6 +108,8 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
             = DotName.createSimple("org.apache.camel.spi.IdAware");
     public static final DotName ERROR_HANDLER_DEFINITION_CLASS
             = DotName.createSimple("org.apache.camel.model.errorhandler.BaseErrorHandlerDefinition");
+    public static final DotName REF_ERROR_HANDLER_DEFINITION_CLASS
+            = DotName.createSimple("org.apache.camel.model.errorhandler.RefErrorHandlerDefinition");
 
     public static final DotName YAML_TYPE_ANNOTATION
             = DotName.createSimple("org.apache.camel.spi.annotations.YamlType");
