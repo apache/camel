@@ -308,12 +308,9 @@ You did not manipulate the _CamelContext_ in the sample application you created,
 threads.
 
 *Note*: the `CamelContext.start()` operation does not block indefinitely. Rather, it starts threads internal to each `Component` and
-`Endpoint` and then `start()` returns. Conversely, `CamelContext.stop()`
-waits for all the threads internal to each `Endpoint` and `Component` to
-terminate, and then `stop()` returns.
+`Endpoint` and then `start()` returns. Conversely, `CamelContext.stop()` waits for all the threads internal to each `Endpoint` and `Component` to terminate, and then `stop()` returns.
 
-If you neglect to call `CamelContext.start()` in your application, Camel will not process the messages because internal threads will not have
-been created.
+If you neglect to call `CamelContext.start()` in your application, Camel will not process the messages because internal threads will not have been created.
 
 If you neglect to call `CamelContext.stop()` before terminating your application, it may terminate in an inconsistent state.
 If you neglect to call `CamelContext.stop()` in a JUnit test, it may fail because the messages did not have a chance to be fully processed.
