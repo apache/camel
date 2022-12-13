@@ -294,37 +294,29 @@ In this section, we explain additional of Camel concepts and features.
 [[BookGettingStarted-CamelContext]]
 === CamelContext
 
-A `CamelContext` object represents the Camel runtime system. You
-typically have one `CamelContext` object in an application. A typical
-application executes the following steps:
+The _CamelContext_ is the runtime system, which holds together all the fundamental concepts we have presented so far (routes, endpoints, components, etc).
 
-1.  Create a `CamelContext` object.
-2.  Add endpoints – and possibly components, which are discussed in
-Section ("Components") – to the
-`CamelContext` object.
-3.  Add routes to the `CamelContext` object to connect the endpoints.
-4.  Invoke the `start()` operation on the `CamelContext` object. This
-starts Camel-internal threads that are used to process the sending,
-receiving and processing of messages in the endpoints.
-5.  Eventually invoke the `stop()` operation on the `CamelContext`
-object. Doing this gracefully stops all the endpoints and Camel-internal
+This context object represents the Camel runtime system. Typically, you have one _CamelContext_ instance in an application.
+
+You did not manipulate the _CamelContext_ in the sample application you created, because the _Main_ component managed it for you. As your integration grows more complex, you will eventually need to manipulate it. A typical application executes the following steps:
+
+1. Create the context object.
+2. Add endpoints and, possibly, components, which we will discuss in the Section ("Components").
+3. Add routes to the context object to connect the endpoints.
+4.  Invoke the `start()` operation on the context object. This operation starts the Camel internal threads that process the sending, receiving, and processing of messages in the endpoints.
+5.  Eventually invoke the `stop()` operation on the context object. Doing this, gracefully stops all the endpoints and Camel-internal
 threads.
 
-Note that the `CamelContext.start()` operation does not block
-indefinitely. Rather, it starts threads internal to each `Component` and
+*Note*: the `CamelContext.start()` operation does not block indefinitely. Rather, it starts threads internal to each `Component` and
 `Endpoint` and then `start()` returns. Conversely, `CamelContext.stop()`
 waits for all the threads internal to each `Endpoint` and `Component` to
-terminate and then `stop()` returns.
+terminate, and then `stop()` returns.
 
-If you neglect to call `CamelContext.start()` in your application then
-messages will not be processed because internal threads will not have
+If you neglect to call `CamelContext.start()` in your application, Camel will not process the messages because internal threads will not have
 been created.
 
-If you neglect to call `CamelContext.stop()` before terminating your
-application then the application may terminate in an inconsistent state.
-If you neglect to call `CamelContext.stop()` in a JUnit test then the
-test may fail due to messages not having had a chance to be fully
-processed.
+If you neglect to call `CamelContext.stop()` before terminating your application, it may terminate in an inconsistent state.
+If you neglect to call `CamelContext.stop()` in a JUnit test, it may fail because the messages did not have a chance to be fully processed.
 
 [[BookGettingStarted-CamelTemplate]]
 === CamelTemplate
