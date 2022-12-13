@@ -339,34 +339,13 @@ the part before `:`) specifies the name of a component. Internally, the `CamelCo
 [[BookGettingStarted-MessageandExchange]]
 === Message and Exchange
 
-The `Message` interface provides an abstraction for a single message,
-such as a request, reply or exception message.
+The `Message` interface provides an abstraction for a single message, such as a request, reply or exception message.
 
-There are concrete classes that implement the `Message` interface for
-each Camel-supported communications technology. For example, the
-`JmsMessage` class provides a JMS-specific implementation of the
-`Message` interface. The public API of the `Message` interface provides
-get- and set-style methods to access the _message id_, _body_ and
-individual _header_ fields of a message.
+The public API of the `Message` interface provides getters and setters methods. You can use them to access the _message id_, _body_ and individual _header_ fields of a message.
 
-The `Exchange` interface provides an abstraction for an exchange of
-messages, that is, a request message and its corresponding reply or
-exception message. In Camel terminology, the request, reply and
-exception messages are called _in_, _out_ and _fault_ messages.
+The `Exchange` interface provides an abstraction for an exchange of messages. An exchange of messages is a request message and its corresponding reply or exception message. In Camel, the request, reply and exception messages are called _in_, _out_ and _fault_ messages.
 
-There are concrete classes that implement the `Exchange` interface for
-each Camel-supported communications technology. For example, the
-`JmsExchange` class provides a JMS-specific implementation of the
-`Exchange` interface. The public API of the `Exchange` interface is
-quite limited. This is intentional, and it is expected that each class
-that implements this interface will provide its own technology-specific
-operations.
-
-Application-level programmers rarely access the `Exchange` interface (or
-classes that implement it) directly. However, many classes in Camel are
-generic types that are instantiated on (a class that implements)
-`Exchange`. Because of this, the `Exchange` interface appears a lot in
-the generic signatures of classes and methods.
+*Note*: our documentation contains more details about xref:manual::exchange.adoc[Exchange] and the xref:components:eips:event-message.adoc[Message] if you want to learn more about them.
 
 [[BookGettingStarted-Processor]]
 === Processor
