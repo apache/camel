@@ -318,23 +318,6 @@ been created.
 If you neglect to call `CamelContext.stop()` before terminating your application, it may terminate in an inconsistent state.
 If you neglect to call `CamelContext.stop()` in a JUnit test, it may fail because the messages did not have a chance to be fully processed.
 
-[[BookGettingStarted-CamelTemplate]]
-=== CamelTemplate
-
-Camel used to have a class called `CamelClient`, but this was renamed to
-be `CamelTemplate` to be similar to a naming convention used in some
-other open-source projects, such as the `TransactionTemplate` and
-`JmsTemplate` classes in http://www.springframework.org/[Spring].
-
-The `CamelTemplate` class is a thin wrapper around the `CamelContext`
-class. It has methods that send a `Message` or `Exchange` – both
-discussed in xref:index.adoc[Section ("Message and
-Exchange")]) – to an `Endpoint` – discussed in
-Section ("Endpoint"). This provides
-a way to enter messages into source endpoints, so that the messages will
-move along routes – discussed in xref:index.adoc[Section
- ("Routes, RouteBuilders and Java DSL")] – to destination endpoints.
-
 [[BookGettingStarted-Components]]
 === Components
 
