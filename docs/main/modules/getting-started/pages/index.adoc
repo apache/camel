@@ -172,7 +172,7 @@ a server can read an incoming message from a mail server.
 
 In a Camel-based application, you create routes. A route is used to connect a source _endpoint_ to a destination _endpoint_.
 
-*Note: other projects in the integration, microservices and middleware space use the terms _source_ and _sink_ for the source and destination endpoints. The Camel Core project does not use this terminology.
+*Note*: other projects in the integration, microservices and middleware space use the terms _source_ and _sink_ for the source and destination endpoints. The Camel Core project does not use this terminology.
 
 A _route_ describes the step-by-step movement of a `Message` from a source endpoint, through arbitrary types of decision-making routines (such as filters and routers) to a destination endpoint (if any).
 
