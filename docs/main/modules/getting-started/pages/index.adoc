@@ -407,54 +407,9 @@ Camel provides three ways for an application developer to specify routes:
 [[BookGettingStarted-IntroductiontoJavaDSL]]
 ==== Introduction to Java DSL
 
-For many people, the term "domain-specific language" implies a compiler
-or interpreter that can process an input file containing keywords and
-syntax specific to a particular domain. This is _not_ the approach taken
-by Camel. Camel documentation consistently uses the term "Java DSL"
-instead of "DSL", but this does not entirely avoid potential confusion.
-The Camel "Java DSL" is a class library that can be used in a way that
-looks almost like a DSL, except that it has a bit of Java syntactic
-baggage. You can see this in the example below. Comments afterwards
-explain some of the constructs used in the example.
+For many people, the term “domain-specific language” implies a compiler or interpreter that can process an input file containing keywords and syntax specific to a particular domain. This is not the approach taken by Camel. Our documentation consistently uses the term _“Java DSL”_ instead of “DSL”, but this does not entirely avoid potential confusion. The Camel _“Java DSL”_ is a class library that you can use in a way that looks almost like a DSL, except that it has a bit of Java syntactic baggage.
 
-.*Example of Camel's "Java DSL"*
-[source,java]
-----
-RouteBuilder builder = new RouteBuilder() {
-    public void configure() {
-        from("queue:a").filter(header("foo").isEqualTo("bar")).to("queue:b");
-
-        from("queue:c").choice()
-                .when(header("foo").isEqualTo("bar")).to("queue:d")
-                .when(header("foo").isEqualTo("cheese")).to("queue:e")
-                .otherwise().to("queue:f");
-    }
-};
-CamelContext myCamelContext = new DefaultCamelContext();
-myCamelContext.addRoutes(builder);
-----
-
-The first line in the above example creates an object which is an
-instance of an anonymous subclass of `RouteBuilder` with the specified
-`configure()` method.
-
-The `CamelContext.addRoutes(RouterBuilder builder)` method invokes
-`builder.setContext(this)` – so the `RouteBuilder` object knows which
-`CamelContext` object it is associated with – and then invokes
-`builder.configure()`. The body of `configure()` invokes methods such as
-`from()`, `filter()`, `choice()`, `when()`, `isEqualTo()`, `otherwise()`
-and `to()`.
-
-The `RouteBuilder.from(String uri)` method invokes `getEndpoint(uri)` on
-the `CamelContext` associated with the `RouteBuilder` object to get the
-specified `Endpoint` and then puts a `FromBuilder` _wrapper_ around this
-`Endpoint`. The `FromBuilder.filter(Predicate predicate)` method creates
-a `FilterProcessor` object for the `Predicate` (that is, condition)
-object built from the `header("foo").isEqualTo("bar")` expression. In
-this way, these operations incrementally build up a `Route` object (with
-a `RouteBuilder` wrapper around it) and add it to the `CamelContext`
-object associated with the `RouteBuilder`.
-
+*Note*: our documentation contains an in-depth overview of the xref:manual::java-dsl.adoc[Java DSL].
 
 [[BookGettingStarted-ContinueLearningaboutCamel]]
 === Continue Learning about Camel
