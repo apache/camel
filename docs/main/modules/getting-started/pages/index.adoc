@@ -414,5 +414,6 @@ For many people, the term “domain-specific language” implies a compiler or i
 [[BookGettingStarted-ContinueLearningaboutCamel]]
 === Continue Learning about Camel
 
-Return to the main Getting Started page for
-additional introductory reference information.
+Now that you have learned the basics of Camel, you can refer to the xref:working-with-camel-core:index.adoc[Working With Camel Core] for a list of guides that can help you increase your understanding about Camel.
+
+You can also refer to the xref:reference:index.adoc[Reference Documentation] to get access to the links with documentation for all of Camel's components, EIPs, DSLs and more.
