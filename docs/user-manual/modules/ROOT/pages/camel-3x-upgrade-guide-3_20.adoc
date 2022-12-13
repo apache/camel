@@ -12,6 +12,9 @@ The `org.apache.camel.support.jsse.SSLContextParameters` is now using `ResourceL
 to load keystore and other resources in a standard way. Therefore, the `SSLContextParameters` now must have been pre-configured
 with a `CamelContext` otherwise an exception is thrown.
 
+The model class `org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition`
+has been renamed to `org.apache.camel.model.errorhandler.RefErrorHandlerDefinition`.
+
 == camel-bom
 
 The `camel-bom` BOM no longer includes dependencies with `<type>test-jar</type>` as these are for internal testing
