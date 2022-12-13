@@ -94,8 +94,7 @@ myCamelContext.getEndpoint("urn:foo:...");
 myCamelContext.getEndpoint("urn:bar:...");
 ----
 
-Camel identifies the components in the above example as `pop3`, `jms`,
-`urn`, and `urn`. It would be more useful if the latter components were identified as `urn:foo` and `urn:bar` or as `foo` and `bar` (that is, by skipping over the `urn:` prefix). So, in practice, you must identify an endpoint with a URL (a string of the form `<scheme>:...`) rather than with a URN (a string of the form `urn:<scheme>:...`). This lack of proper support for URNs means that you should consider the parameter to the method `getEndpoint()` as being a URL rather than (as claimed) a URI.
+Camel identifies the components in the above example as `pop3`, `jms`, `urn`, and `urn`. It would be more useful if the latter components were identified as `urn:foo` and `urn:bar` or as `foo` and `bar` (that is, by skipping over the `urn:` prefix). So, in practice, you must identify an endpoint with a URL (a string of the form `<scheme>:...`) rather than with a URN (a string of the form `urn:<scheme>:...`). This lack of proper support for URNs means that you should consider the parameter to the method `getEndpoint()` as being a URL rather than (as claimed) a URI.
 
 [NOTE]
 ====
