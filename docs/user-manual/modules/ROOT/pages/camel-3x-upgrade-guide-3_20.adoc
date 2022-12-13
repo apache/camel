@@ -57,3 +57,11 @@ The log component now does not show MEP by default. You can turn this on by `sho
 
 There is a new option `unpackArray` that unpacks a single-element Json array, matched by a Jsonpath, into an object. This option is disabled by default (this behaviour was enabled by default in previous Camel versions). There is a new expression `jsonpathUnpack(String text, Class<?> resultType)` that makes use of this new option.
 
+=== camel-yaml-dsl
+
+The `error-handler` has been refactored to be aligned with `errorHandler` from the `camel-core-model` DSL, meaning
+that it is now the same, how error handlers are in other DSLs.
+
+- `none` is now called `no-error-handler`
+- `log` has been removed, as you can use `dead-letter-channel` with a log endpoint as the `dead-letter-uri`.
+- `ref` is now `ref-error-handler`.

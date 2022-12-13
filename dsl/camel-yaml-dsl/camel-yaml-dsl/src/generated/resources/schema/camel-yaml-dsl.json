@@ -6069,18 +6069,6 @@
           }
         }
       },
-      "org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string"
-          },
-          "ref" : {
-            "type" : "string"
-          }
-        },
-        "required" : [ "ref" ]
-      },
       "org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition" : {
         "type" : "object",
         "properties" : {
@@ -6140,6 +6128,18 @@
             "type" : "string"
           }
         }
+      },
+      "org.apache.camel.model.errorhandler.RefErrorHandlerDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "ref" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "ref" ]
       },
       "org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition" : {
         "type" : "object",
