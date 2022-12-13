@@ -1732,7 +1732,8 @@ public interface ServiceBusEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code AzureServiceBusRawAmqpMessage}.
+         * @return the name of the header {@code
+         * AzureServiceBusRawAmqpMessage}.
          */
         public String azureServiceBusRawAmqpMessage() {
             return "AzureServiceBusRawAmqpMessage";
@@ -1772,7 +1773,8 @@ public interface ServiceBusEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code AzureServiceBusSequenceNumber}.
+         * @return the name of the header {@code
+         * AzureServiceBusSequenceNumber}.
          */
         public String azureServiceBusSequenceNumber() {
             return "AzureServiceBusSequenceNumber";

@@ -2,7 +2,7 @@
 :doctitle: Jetty
 :shortname: jetty
 :artifactid: camel-jetty
-:description: Expose HTTP endpoints using Jetty 9.
+:description: Expose HTTP endpoints using Jetty 10.
 :since: 1.2
 :supportlevel: Stable
 :component-header: Only consumer is supported

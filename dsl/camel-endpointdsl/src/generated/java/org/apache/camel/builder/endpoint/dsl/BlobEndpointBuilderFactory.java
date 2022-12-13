@@ -3026,7 +3026,8 @@ public interface BlobEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code AzureStorageBlobLeaseDuration}.
+         * @return the name of the header {@code
+         * AzureStorageBlobLeaseDuration}.
          */
         public String azureStorageBlobLeaseDuration() {
             return "AzureStorageBlobLeaseDuration";
@@ -3192,7 +3193,8 @@ public interface BlobEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code AzureStorageBlobArchiveStatus}.
+         * @return the name of the header {@code
+         * AzureStorageBlobArchiveStatus}.
          */
         public String azureStorageBlobArchiveStatus() {
             return "AzureStorageBlobArchiveStatus";
@@ -3469,7 +3471,8 @@ public interface BlobEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code AzureStorageBlobPageBlobRange}.
+         * @return the name of the header {@code
+         * AzureStorageBlobPageBlobRange}.
          */
         public String azureStorageBlobPageBlobRange() {
             return "AzureStorageBlobPageBlobRange";
@@ -3513,7 +3516,8 @@ public interface BlobEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code AzureStorageBlobBlockListType}.
+         * @return the name of the header {@code
+         * AzureStorageBlobBlockListType}.
          */
         public String azureStorageBlobBlockListType() {
             return "AzureStorageBlobBlockListType";

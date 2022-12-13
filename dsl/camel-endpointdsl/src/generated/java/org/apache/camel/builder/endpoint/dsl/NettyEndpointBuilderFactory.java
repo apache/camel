@@ -4912,7 +4912,8 @@ public interface NettyEndpointBuilderFactory {
          * 
          * Group: common
          * 
-         * @return the name of the header {@code NettyCloseChannelWhenComplete}.
+         * @return the name of the header {@code
+         * NettyCloseChannelWhenComplete}.
          */
         public String nettyCloseChannelWhenComplete() {
             return "NettyCloseChannelWhenComplete";
@@ -4977,7 +4978,8 @@ public interface NettyEndpointBuilderFactory {
          * 
          * Group: common
          * 
-         * @return the name of the header {@code NettySSLClientCertSubjectName}.
+         * @return the name of the header {@code
+         * NettySSLClientCertSubjectName}.
          */
         public String nettySSLClientCertSubjectName() {
             return "NettySSLClientCertSubjectName";

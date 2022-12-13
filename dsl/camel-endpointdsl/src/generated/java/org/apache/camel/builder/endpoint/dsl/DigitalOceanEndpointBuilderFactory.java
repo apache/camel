@@ -555,7 +555,8 @@ public interface DigitalOceanEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code DigitalOceanDropletEnableIpv6}.
+         * @return the name of the header {@code
+         * DigitalOceanDropletEnableIpv6}.
          */
         public String digitalOceanDropletEnableIpv6() {
             return "DigitalOceanDropletEnableIpv6";
@@ -687,7 +688,8 @@ public interface DigitalOceanEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code DigitalOceanFloatingIPAddress}.
+         * @return the name of the header {@code
+         * DigitalOceanFloatingIPAddress}.
          */
         public String digitalOceanFloatingIPAddress() {
             return "DigitalOceanFloatingIPAddress";

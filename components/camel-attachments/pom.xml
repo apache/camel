@@ -34,7 +34,7 @@
 
     <properties>
         <camel.osgi.import.before.defaults>
-            javax.activation.*;version="${javax-activation-version-range}"
+            javax.activation.*;version="${jakarta-activation-version-range}"
         </camel.osgi.import.before.defaults>
         <firstVersion>3.0.0</firstVersion>
         <label>core</label>
@@ -51,8 +51,8 @@
         <!-- attachments api -->
         <dependency>
             <groupId>com.sun.activation</groupId>
-            <artifactId>javax.activation</artifactId>
-            <version>${javax-activation-version}</version>
+            <artifactId>jakarta.activation</artifactId>
+            <version>${jakarta-activation-version}</version>
         </dependency>
 
         <!-- testing -->

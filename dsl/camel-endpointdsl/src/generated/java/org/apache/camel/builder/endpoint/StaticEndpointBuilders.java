@@ -7944,7 +7944,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Jetty (camel-jetty)
-     * Expose HTTP endpoints using Jetty 9.
+     * Expose HTTP endpoints using Jetty 10.
      * 
      * Category: http
      * Since: 1.2
@@ -7964,7 +7964,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Jetty (camel-jetty)
-     * Expose HTTP endpoints using Jetty 9.
+     * Expose HTTP endpoints using Jetty 10.
      * 
      * Category: http
      * Since: 1.2

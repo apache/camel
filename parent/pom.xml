@@ -97,8 +97,8 @@
         <californium-scandium-version>2.7.4</californium-scandium-version>
         <cassandra-driver-version>4.15.0</cassandra-driver-version>
         <cassandra-version>4.0.6</cassandra-version>
-        <cdi-api-2.0-version>2.0</cdi-api-2.0-version>
-        <jta-api-1.2-version>1.2</jta-api-1.2-version>
+        <cdi-api-2.0-version>2.0.2</cdi-api-2.0-version>
+        <jta-api-1.3-version>1.3.3</jta-api-1.3-version>
         <cglib-version>3.2.12</cglib-version>
         <chunk-templates-version>3.6.2</chunk-templates-version>
         <classgraph-version>4.8.151</classgraph-version>
@@ -174,24 +174,8 @@
         <formatter-maven-plugin-version>2.17.1</formatter-maven-plugin-version>
         <ftpserver-version>1.1.2</ftpserver-version>
         <freemarker-version>2.3.31</freemarker-version>
-        <geronimo-annotation-1.0-spec-version>1.1.1</geronimo-annotation-1.0-spec-version>
-        <geronimo-annotation-1.2-spec-version>1.0</geronimo-annotation-1.2-spec-version>
-        <geronimo-atinject-1.0-spec-version>1.0</geronimo-atinject-1.0-spec-version>
-        <geronimo-el-spec-version>1.0.1</geronimo-el-spec-version>
-        <geronimo-interceptor-1.1-spec-version>1.0</geronimo-interceptor-1.1-spec-version>
-        <geronimo-interceptor-1.2-spec-version>1.0</geronimo-interceptor-1.2-spec-version>
-        <geronimo-j2ee-connector-spec-version>2.0.0</geronimo-j2ee-connector-spec-version>
-        <geronimo-j2ee-jacc-spec-version>1.1</geronimo-j2ee-jacc-spec-version>
-        <geronimo-j2ee-management-spec-version>1.1</geronimo-j2ee-management-spec-version>
-        <geronimo-jcdi-1.0-spec-version>1.0</geronimo-jcdi-1.0-spec-version>
-        <geronimo-jcdi-1.1-spec-version>1.0</geronimo-jcdi-1.1-spec-version>
-        <geronimo-jms-spec-version>1.1.1</geronimo-jms-spec-version>
-        <geronimo-jms2-spec-version>1.0-alpha-2</geronimo-jms2-spec-version>
-        <geronimo-jpa-spec-version>1.0-alpha-1</geronimo-jpa-spec-version>
         <geronimo-json-spec-version>1.5</geronimo-json-spec-version>
         <geronimo-jsonb-spec-version>1.4</geronimo-jsonb-spec-version>
-        <geronimo-jta-spec-version>1.1.1</geronimo-jta-spec-version>
-        <geronimo-ws-metadata-spec-version>1.1.3</geronimo-ws-metadata-spec-version>
         <gmavenplus-plugin-version>1.13.1</gmavenplus-plugin-version>
         <google-auth-library-oauth2-http-version>1.7.0</google-auth-library-oauth2-http-version>
         <google-guava-version>20.0</google-guava-version>
@@ -271,16 +255,20 @@
         <javax-el3-version>3.0.0</javax-el3-version>
         <javax-el-api-hibernate-validator-version>3.0.1-b04</javax-el-api-hibernate-validator-version>
         <javax-el-hibernate-validator-version>3.0.1-b10</javax-el-hibernate-validator-version>
-        <javax-activation-version-range>[0,2)</javax-activation-version-range>
-        <javax-activation-version>1.2.0</javax-activation-version>
-        <javax-annotation-api-version>1.3.2</javax-annotation-api-version>
+        <jakarta-activation-version-range>[0,2)</jakarta-activation-version-range>
+        <jakarta-activation-version>1.2.2</jakarta-activation-version>
+        <jakarta-annotation-api-version>1.3.5</jakarta-annotation-api-version>
         <jakarta-mail-version>1.6.7</jakarta-mail-version>
-        <javax-servlet-api-version>3.1.0</javax-servlet-api-version>
         <jakarta-cdi-api-version>2.0.2</jakarta-cdi-api-version>
         <jakarta-api-version>2.1.5</jakarta-api-version>
-        <jakarta.el-version>3.0.3</jakarta.el-version>
         <jakarta-jaxb-version>2.3.3</jakarta-jaxb-version>
-        <javax-soap-api-version>1.4.0</javax-soap-api-version>
+        <jakarta-jms-version>2.0.3</jakarta-jms-version>
+        <jakarta-jws-api-version>2.1.0</jakarta-jws-api-version>
+        <jakarta-persistence-api-version>2.2.3</jakarta-persistence-api-version>
+        <jakarta-servlet-api-version>4.0.4</jakarta-servlet-api-version>
+        <jakarta-soap-api-version>1.4.2</jakarta-soap-api-version>
+        <jakarta-transaction-api-version>1.3.3</jakarta-transaction-api-version>
+        <jakarta.el-version>3.0.3</jakarta.el-version>
         <jaxws-api-version>2.3.0</jaxws-api-version>
         <glassfish-javax-json>1.0.4</glassfish-javax-json>
         <glassfish-jaxb-runtime-version>2.3.6</glassfish-jaxb-runtime-version>
@@ -303,7 +291,8 @@
         <jetcd-guava-version>31.1-jre</jetcd-guava-version>
         <jetcd-version>0.7.3</jetcd-version>
         <jetty9-version>9.4.49.v20220914</jetty9-version>
-        <jetty-version>${jetty9-version}</jetty-version>
+        <jetty10-version>10.0.11</jetty10-version>
+        <jetty-version>${jetty10-version}</jetty-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
         <jettison-version>1.5.2</jettison-version>
@@ -3326,44 +3315,29 @@
 
             <!-- spec jars -->
             <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
-                <version>${geronimo-j2ee-connector-spec-version}</version>
+                <groupId>jakarta.jms</groupId>
+                <artifactId>jakarta.jms-api</artifactId>
+                <version>${jakarta-jms-version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-j2ee-jacc_1.0_spec</artifactId>
-                <version>${geronimo-j2ee-jacc-spec-version}</version>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
+                <version>${jakarta-servlet-api-version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-j2ee-management_1.0_spec</artifactId>
-                <version>${geronimo-j2ee-management-spec-version}</version>
+                <groupId>jakarta.persistence</groupId>
+                <artifactId>jakarta.persistence-api</artifactId>
+                <version>${jakarta-persistence-api-version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-jms_1.1_spec</artifactId>
-                <version>${geronimo-jms-spec-version}</version>
+                <groupId>jakarta.transaction</groupId>
+                <artifactId>jakarta.transaction-api</artifactId>
+                <version>${jakarta-transaction-api-version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-jms_2.0_spec</artifactId>
-                <version>${geronimo-jms2-spec-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-jpa_2.1_spec</artifactId>
-                <version>${geronimo-jpa-spec-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-jta_1.1_spec</artifactId>
-                <version>${geronimo-jta-spec-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>${javax-servlet-api-version}</version>
+                <groupId>jakarta.jws</groupId>
+                <artifactId>jakarta.jws-api</artifactId>
+                <version>${jakarta-jws-api-version}</version>
             </dependency>
             <!-- Optional Spring Support -->
             <dependency>
@@ -4044,21 +4018,15 @@
             </dependency>
 
             <dependency>
-                <groupId>javax.annotation</groupId>
-                <artifactId>javax.annotation-api</artifactId>
-                <version>${javax-annotation-api-version}</version>
+                <groupId>jakarta.annotation</groupId>
+                <artifactId>jakarta.annotation-api</artifactId>
+                <version>${jakarta-annotation-api-version}</version>
             </dependency>
 
             <dependency>
                 <groupId>jakarta.xml.bind</groupId>
                 <artifactId>jakarta.xml.bind-api</artifactId>
                 <version>${jakarta-jaxb-version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
-                <version>${geronimo-ws-metadata-spec-version}</version>
             </dependency>
 
             <dependency>
@@ -4085,9 +4053,9 @@
             </dependency>
 
             <dependency>
-                <groupId>javax.xml.soap</groupId>
-                <artifactId>javax.xml.soap-api</artifactId>
-                <version>${javax-soap-api-version}</version>
+                <groupId>jakarta.xml.soap</groupId>
+                <artifactId>jakarta.xml.soap-api</artifactId>
+                <version>${jakarta-soap-api-version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

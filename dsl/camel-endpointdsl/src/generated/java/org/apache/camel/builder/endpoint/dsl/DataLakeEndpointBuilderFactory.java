@@ -3048,7 +3048,8 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * Group: from user
          * 
-         * @return the name of the header {@code AzureStorageDataLakeOperation}.
+         * @return the name of the header {@code
+         * AzureStorageDataLakeOperation}.
          */
         public String azureStorageDataLakeOperation() {
             return "AzureStorageDataLakeOperation";
@@ -3193,7 +3194,8 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * Group: from user
          * 
-         * @return the name of the header {@code AzureStorageDataLakeRecursive}.
+         * @return the name of the header {@code
+         * AzureStorageDataLakeRecursive}.
          */
         public String azureStorageDataLakeRecursive() {
             return "AzureStorageDataLakeRecursive";
@@ -3293,7 +3295,8 @@ public interface DataLakeEndpointBuilderFactory {
          * 
          * Group: from user
          * 
-         * @return the name of the header {@code AzureStorageDataLakeFileRange}.
+         * @return the name of the header {@code
+         * AzureStorageDataLakeFileRange}.
          */
         public String azureStorageDataLakeFileRange() {
             return "AzureStorageDataLakeFileRange";

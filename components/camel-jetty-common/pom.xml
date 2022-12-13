@@ -30,11 +30,11 @@
     <packaging>jar</packaging>
 
     <name>Camel :: Jetty :: Common</name>
-    <description>Camel Jetty 9.x support</description>
+    <description>Camel Jetty 10.x support</description>
 
     <properties>
         <camel.osgi.import.before.defaults>
-            org.eclipse.jetty.*;version="[9.4,10)",
+            org.eclipse.jetty.*;version="[10,12)",
             javax.servlet.*;version="${servlet-version-range}"
         </camel.osgi.import.before.defaults>
         <firstVersion>2.15.0</firstVersion>
@@ -51,9 +51,9 @@
             <artifactId>camel-http-common</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>${javax-servlet-api-version}</version>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>${jakarta-servlet-api-version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
@@ -62,10 +62,6 @@
             <!-- provided scope as the Jetty8/9 component will provide the proper version -->
             <scope>provided</scope>
             <exclusions>
-                <exclusion>
-                    <groupId>javax.servlet</groupId>
-                    <artifactId>servlet-api</artifactId>
-                </exclusion>
                 <exclusion>
                     <groupId>org.eclipse.jetty.orbit</groupId>
                     <artifactId>javax.servlet</artifactId>

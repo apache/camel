@@ -72,8 +72,8 @@
         <!-- either use JMS 1.1 or 2.0 provided by JMS client -->
         <!-- here we use JMS 2.0 API but using JMS 1.1 should work as well -->
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jms_2.0_spec</artifactId>
+            <groupId>jakarta.jms</groupId>
+            <artifactId>jakarta.jms-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

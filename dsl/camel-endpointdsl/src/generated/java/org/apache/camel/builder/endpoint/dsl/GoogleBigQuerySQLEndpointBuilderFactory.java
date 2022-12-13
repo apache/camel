@@ -238,7 +238,8 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code GoogleBigQueryTranslatedQuery}.
+         * @return the name of the header {@code
+         * GoogleBigQueryTranslatedQuery}.
          */
         public String googleBigQueryTranslatedQuery() {
             return "GoogleBigQueryTranslatedQuery";

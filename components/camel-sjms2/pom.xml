@@ -47,9 +47,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jms_2.0_spec</artifactId>
-            <version>${geronimo-jms2-spec-version}</version>
+            <groupId>jakarta.jms</groupId>
+            <artifactId>jakarta.jms-api</artifactId>
+            <version>${jakarta-jms-version}</version>
             <scope>provided</scope>
         </dependency>
 

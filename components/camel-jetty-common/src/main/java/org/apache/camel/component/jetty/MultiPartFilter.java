@@ -28,7 +28,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * To enable handle attachments with Jetty 9 when this filter is set.
+ * To enable handle attachments with Jetty 10 when this filter is set.
  * <p/>
  * To replace the deprecated org.eclipse.jetty.servlets.MultiPartFilter Tell AttachmentHttpBinding to use Servlet 3
  * HttpServletRequest.getParts API

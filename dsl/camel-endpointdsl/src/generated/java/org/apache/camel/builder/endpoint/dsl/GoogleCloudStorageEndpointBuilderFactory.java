@@ -1657,7 +1657,8 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          * 
          * Group: common
          * 
-         * @return the name of the header {@code GoogleCloudStorageContentType}.
+         * @return the name of the header {@code
+         * GoogleCloudStorageContentType}.
          */
         public String googleCloudStorageContentType() {
             return "GoogleCloudStorageContentType";

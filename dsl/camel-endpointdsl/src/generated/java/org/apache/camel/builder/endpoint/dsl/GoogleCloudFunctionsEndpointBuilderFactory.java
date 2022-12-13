@@ -320,7 +320,8 @@ public interface GoogleCloudFunctionsEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code GoogleCloudFunctionsOperation}.
+         * @return the name of the header {@code
+         * GoogleCloudFunctionsOperation}.
          */
         public String googleCloudFunctionsOperation() {
             return "GoogleCloudFunctionsOperation";

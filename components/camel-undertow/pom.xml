@@ -33,7 +33,7 @@
 
     <properties>
         <camel.osgi.import.before.defaults>
-            javax.activation.*;version="${javax-activation-version-range}"
+            javax.activation.*;version="${jakarta-activation-version-range}"
         </camel.osgi.import.before.defaults>
     </properties>
 
@@ -153,25 +153,25 @@
         <dependency>
             <groupId>org.eclipse.jetty.http2</groupId>
             <artifactId>http2-client</artifactId>
-            <version>${jetty9-version}</version>
+            <version>${jetty10-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-client</artifactId>
-            <version>${jetty9-version}</version>
+            <version>${jetty10-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty.http2</groupId>
             <artifactId>http2-http-client-transport</artifactId>
-            <version>${jetty9-version}</version>
+            <version>${jetty10-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-util</artifactId>
-            <version>${jetty9-version}</version>
+            <version>${jetty10-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -34,8 +34,8 @@
 
     <properties>
         <camel.osgi.import.before.defaults>
-            org.eclipse.jetty.*;version="[9.4,10)",
-            javax.activation.*;version="${javax-activation-version-range}",
+            org.eclipse.jetty.*;version="[10,12)",
+            javax.activation.*;version="${jakarta-activation-version-range}",
             javax.servlet.*;version="${servlet-version-range}"
         </camel.osgi.import.before.defaults>
     </properties>
@@ -58,7 +58,7 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>${jetty9-version}</version>
+            <version>${jetty10-version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.eclipse.jetty.orbit</groupId>
@@ -69,32 +69,32 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
-            <version>${jetty9-version}</version>
+            <version>${jetty10-version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-security</artifactId>
-            <version>${jetty9-version}</version>
+            <version>${jetty10-version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlets</artifactId>
-            <version>${jetty9-version}</version>
+            <version>${jetty10-version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-client</artifactId>
-            <version>${jetty9-version}</version>
+            <version>${jetty10-version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-jmx</artifactId>
-            <version>${jetty9-version}</version>
+            <version>${jetty10-version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-util</artifactId>
-            <version>${jetty9-version}</version>
+            <version>${jetty10-version}</version>
         </dependency>
 
         <!-- test dependencies -->
@@ -174,8 +174,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
             <scope>test</scope>
         </dependency>
 

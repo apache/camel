@@ -1894,7 +1894,8 @@ public interface QueueEndpointBuilderFactory {
          * 
          * Group: common
          * 
-         * @return the name of the header {@code AzureStorageQueueDequeueCount}.
+         * @return the name of the header {@code
+         * AzureStorageQueueDequeueCount}.
          */
         public String azureStorageQueueDequeueCount() {
             return "AzureStorageQueueDequeueCount";

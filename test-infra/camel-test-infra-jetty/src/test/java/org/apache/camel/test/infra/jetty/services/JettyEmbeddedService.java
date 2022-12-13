@@ -54,7 +54,7 @@ public class JettyEmbeddedService implements JettyService, BeforeEachCallback, A
         ServerConnector connector;
         SSLContext sslContext = jettyConfiguration.getSslContext();
         if (sslContext != null) {
-            SslContextFactory sslContextFactory = new SslContextFactory.Server();
+            SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
             sslContextFactory.setSslContext(sslContext);
 
             connector = new ServerConnector(server, new SslConnectionFactory(sslContextFactory, null));

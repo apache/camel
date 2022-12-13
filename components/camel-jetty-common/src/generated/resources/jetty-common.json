@@ -3,7 +3,7 @@
     "kind": "other",
     "name": "jetty-common",
     "title": "Jetty Common",
-    "description": "Camel Jetty 9.x support",
+    "description": "Camel Jetty 10.x support",
     "deprecated": false,
     "firstVersion": "2.15.0",
     "supportLevel": "Stable",

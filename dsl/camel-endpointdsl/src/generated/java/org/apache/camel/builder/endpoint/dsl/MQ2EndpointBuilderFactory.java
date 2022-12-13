@@ -651,7 +651,8 @@ public interface MQ2EndpointBuilderFactory {
          * Default: false
          * Group: producer
          * 
-         * @return the name of the header {@code AwsMQBrokerPubliclyAccessible}.
+         * @return the name of the header {@code
+         * AwsMQBrokerPubliclyAccessible}.
          */
         public String awsMQBrokerPubliclyAccessible() {
             return "AwsMQBrokerPubliclyAccessible";

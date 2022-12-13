@@ -45,7 +45,7 @@
             !org.apache.camel.component.cxf.jaxrs,
             !org.apache.camel.component.cxf.spring,
             !org.apache.camel.blueprint,
-            javax.activation.*;version="${javax-activation-version-range}",
+            javax.activation.*;version="${jakarta-activation-version-range}",
             javax.jws*;version="[0.0,3)";resolution:=optional,
             javax.ws.rs*;version="[0.0,3)",
             javax.xml.soap*;version="[1.3,2)";resolution:=optional,
@@ -90,9 +90,9 @@
         </dependency>
 
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>${javax-servlet-api-version}</version>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>${jakarta-servlet-api-version}</version>
         </dependency>
 
         <dependency>

@@ -33,7 +33,7 @@
 
     <properties>
         <camel.osgi.import.before.defaults>
-            javax.activation.*;version="${javax-activation-version-range}"
+            javax.activation.*;version="${jakarta-activation-version-range}"
         </camel.osgi.import.before.defaults>
     </properties>
 

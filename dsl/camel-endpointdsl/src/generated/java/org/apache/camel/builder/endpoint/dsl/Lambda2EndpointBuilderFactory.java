@@ -695,7 +695,8 @@ public interface Lambda2EndpointBuilderFactory {
          * 
          * Group: createFunction
          * 
-         * @return the name of the header {@code AwsLambdaEnvironmentVariables}.
+         * @return the name of the header {@code
+         * AwsLambdaEnvironmentVariables}.
          */
         public String awsLambdaEnvironmentVariables() {
             return "AwsLambdaEnvironmentVariables";
@@ -804,7 +805,8 @@ public interface Lambda2EndpointBuilderFactory {
          * 
          * Group: createEventSourceMapping
          * 
-         * @return the name of the header {@code AwsLambdaEventSourceBatchSize}.
+         * @return the name of the header {@code
+         * AwsLambdaEventSourceBatchSize}.
          */
         public String awsLambdaEventSourceBatchSize() {
             return "AwsLambdaEventSourceBatchSize";

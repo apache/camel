@@ -769,7 +769,8 @@ public interface XmlVerifierEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code XmlSignatureSchemaResourceUri}.
+         * @return the name of the header {@code
+         * XmlSignatureSchemaResourceUri}.
          */
         public String xmlSignatureSchemaResourceUri() {
             return "XmlSignatureSchemaResourceUri";

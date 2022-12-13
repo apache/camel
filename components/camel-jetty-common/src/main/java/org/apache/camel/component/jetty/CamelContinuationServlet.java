@@ -23,6 +23,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
+import javax.servlet.AsyncContext;
+import javax.servlet.AsyncEvent;
+import javax.servlet.AsyncListener;
+import javax.servlet.DispatcherType;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,8 +45,6 @@ import org.apache.camel.http.common.HttpMessage;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.eclipse.jetty.continuation.Continuation;
-import org.eclipse.jetty.continuation.ContinuationSupport;
 
 /**
  * Servlet which leverage <a href="http://wiki.eclipse.org/Jetty/Feature/Continuations">Jetty Continuations</a>.
@@ -162,24 +164,16 @@ public class CamelContinuationServlet extends CamelServlet {
         final Exchange result = (Exchange) request.getAttribute(EXCHANGE_ATTRIBUTE_NAME);
         if (result == null) {
             // no asynchronous result so leverage continuation
-            final Continuation continuation = ContinuationSupport.getContinuation(request);
-            if (continuation.isInitial() && continuationTimeout != null) {
+            AsyncContext asyncContext = request.startAsync();
+            if (isInitial(request) && continuationTimeout != null) {
                 // set timeout on initial
-                continuation.setTimeout(continuationTimeout);
+                asyncContext.setTimeout(continuationTimeout.longValue());
             }
+            asyncContext.addListener(new ExpiredListener(consumer), request, response);
 
             // are we suspended and a request is dispatched initially?
-            if (consumer.isSuspended() && continuation.isInitial()) {
+            if (consumer.isSuspended() && isInitial(request)) {
                 response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-                return;
-            }
-
-            if (continuation.isExpired()) {
-                String id = (String) continuation.getAttribute(EXCHANGE_ATTRIBUTE_ID);
-                // remember this id as expired
-                expiredExchanges.put(id, id);
-                log.warn("Continuation expired of exchangeId: {}", id);
-                consumer.getBinding().doWriteExceptionResponse(new TimeoutException(), response);
                 return;
             }
 
@@ -215,7 +209,7 @@ public class CamelContinuationServlet extends CamelServlet {
             if (log.isTraceEnabled()) {
                 log.trace("Suspending continuation of exchangeId: {}", exchange.getExchangeId());
             }
-            continuation.setAttribute(EXCHANGE_ATTRIBUTE_ID, exchange.getExchangeId());
+            request.setAttribute(EXCHANGE_ATTRIBUTE_ID, exchange.getExchangeId());
 
             // we want to handle the UoW
             UnitOfWork uow = exchange.getUnitOfWork();
@@ -231,9 +225,6 @@ public class CamelContinuationServlet extends CamelServlet {
                 ExtendedExchange ee = (ExtendedExchange) exchange;
                 ee.setUnitOfWork(uow);
             }
-
-            // must suspend before we process the exchange
-            continuation.suspend();
 
             ClassLoader oldTccl = overrideTccl(exchange);
 
@@ -251,8 +242,8 @@ public class CamelContinuationServlet extends CamelServlet {
                             log.trace("Resuming continuation of exchangeId: {}", exchange.getExchangeId());
                         }
                         // resume processing after both, sync and async callbacks
-                        continuation.setAttribute(EXCHANGE_ATTRIBUTE_NAME, exchange);
-                        continuation.resume();
+                        request.setAttribute(EXCHANGE_ATTRIBUTE_NAME, exchange);
+                        asyncContext.dispatch();
                     } else {
                         log.warn("Cannot resume expired continuation of exchangeId: {}", exchange.getExchangeId());
                         consumer.releaseExchange(exchange, false);
@@ -289,6 +280,43 @@ public class CamelContinuationServlet extends CamelServlet {
         } finally {
             consumer.doneUoW(result);
             consumer.releaseExchange(result, false);
+        }
+    }
+
+    private boolean isInitial(HttpServletRequest request) {
+        return request.getDispatcherType() != DispatcherType.ASYNC;
+    }
+
+    private class ExpiredListener implements AsyncListener {
+
+        private HttpConsumer consumer;
+
+        public ExpiredListener(HttpConsumer consumer) {
+            this.consumer = consumer;
+        }
+
+        @Override
+        public void onComplete(AsyncEvent event) throws IOException {
+        }
+
+        @Override
+        public void onTimeout(AsyncEvent event) throws IOException {
+            HttpServletRequest request = (HttpServletRequest) event.getSuppliedRequest();
+            HttpServletResponse response = (HttpServletResponse) event.getSuppliedResponse();
+            String id = (String) request.getAttribute(EXCHANGE_ATTRIBUTE_ID);
+            // remember this id as expired
+            expiredExchanges.put(id, id);
+            log.warn("Continuation expired of exchangeId: {}", id);
+            consumer.getBinding().doWriteExceptionResponse(new TimeoutException(), response);
+            return;
+        }
+
+        @Override
+        public void onError(AsyncEvent event) throws IOException {
+        }
+
+        @Override
+        public void onStartAsync(AsyncEvent event) throws IOException {
         }
     }
 

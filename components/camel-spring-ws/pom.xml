@@ -38,8 +38,8 @@
             org.springframework.util.*;version="${spring-version-range}",
             org.springframework.ws.*;version="[3,4)",
             org.springframework.xml.*;version="[3,4)",
-            javax.activation.*;version="${javax-activation-version-range}",
-            javax.xml.soap*;version="[1.3,2)"
+            javax.activation.*;version="${jakarta-activation-version-range}",
+            javax.xml.soap*;version="[1.4,2)"
         </camel.osgi.import.before.defaults>
         <!-- for some weird reason org.springframework.ws and org.springframework.xml
               will have import-ranges of [2,3) by the bundle plugin, so we
@@ -65,9 +65,9 @@
             <artifactId>camel-xslt-saxon</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>${javax-servlet-api-version}</version>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>${jakarta-servlet-api-version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -88,12 +88,12 @@
             <version>${spring-ws-version}</version>
         </dependency>
         <dependency>
-            <groupId>javax.xml.soap</groupId>
-            <artifactId>javax.xml.soap-api</artifactId>
+            <groupId>jakarta.xml.soap</groupId>
+            <artifactId>jakarta.xml.soap-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
         </dependency>
 
         <!-- test dependencies -->

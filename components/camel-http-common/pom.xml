@@ -34,7 +34,7 @@
 
     <properties>
         <camel.osgi.import.before.defaults>
-            javax.activation.*;version="${javax-activation-version-range}",
+            javax.activation.*;version="${jakarta-activation-version-range}",
             javax.servlet.*;version="${servlet-version-range}"
         </camel.osgi.import.before.defaults>
         <firstVersion>2.16.0</firstVersion>
@@ -60,9 +60,9 @@
         </dependency>
 
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>${javax-servlet-api-version}</version>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>${jakarta-servlet-api-version}</version>
             <scope>provided</scope>
         </dependency>
 

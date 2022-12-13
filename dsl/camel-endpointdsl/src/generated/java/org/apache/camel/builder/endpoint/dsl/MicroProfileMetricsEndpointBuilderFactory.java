@@ -488,7 +488,8 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code MicroProfileMetricsGaugeValue}.
+         * @return the name of the header {@code
+         * MicroProfileMetricsGaugeValue}.
          */
         public String microProfileMetricsGaugeValue() {
             return "MicroProfileMetricsGaugeValue";

@@ -960,7 +960,8 @@ public interface XmlSignerEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code XmlSignaturePlainTextEncoding}.
+         * @return the name of the header {@code
+         * XmlSignaturePlainTextEncoding}.
          */
         public String xmlSignaturePlainTextEncoding() {
             return "XmlSignaturePlainTextEncoding";
@@ -1022,7 +1023,8 @@ public interface XmlSignerEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code XmlSignatureSchemaResourceUri}.
+         * @return the name of the header {@code
+         * XmlSignatureSchemaResourceUri}.
          */
         public String xmlSignatureSchemaResourceUri() {
             return "XmlSignatureSchemaResourceUri";

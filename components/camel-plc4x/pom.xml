@@ -161,9 +161,9 @@
         </dependency>
         <dependency>
             <!-- avoids java.lang.NoClassDefFoundError: javax/activation/DataHandler in Plc4XProducerTest on Java 11-->
-            <groupId>javax.activation</groupId>
-            <artifactId>javax.activation-api</artifactId>
-            <version>${javax-activation-version}</version>
+            <groupId>jakarta.activation</groupId>
+            <artifactId>jakarta.activation-api</artifactId>
+            <version>${jakarta-activation-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

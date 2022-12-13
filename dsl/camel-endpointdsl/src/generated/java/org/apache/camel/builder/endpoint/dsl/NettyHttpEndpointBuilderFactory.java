@@ -5515,7 +5515,8 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * Group: common
          * 
-         * @return the name of the header {@code NettyCloseChannelWhenComplete}.
+         * @return the name of the header {@code
+         * NettyCloseChannelWhenComplete}.
          */
         public String nettyCloseChannelWhenComplete() {
             return "NettyCloseChannelWhenComplete";

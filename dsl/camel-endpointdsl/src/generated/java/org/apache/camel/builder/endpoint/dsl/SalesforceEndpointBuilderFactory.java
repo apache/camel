@@ -4217,7 +4217,8 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code SalesforcePlatformEventSchema}.
+         * @return the name of the header {@code
+         * SalesforcePlatformEventSchema}.
          */
         public String salesforcePlatformEventSchema() {
             return "SalesforcePlatformEventSchema";
