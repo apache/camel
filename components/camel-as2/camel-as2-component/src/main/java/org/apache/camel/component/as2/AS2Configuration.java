@@ -99,6 +99,8 @@ public class AS2Configuration {
     private String mdnMessageTemplate;
     @UriParam
     private String attachedFileName;
+    @UriParam
+    private String sslContext;
 
     public AS2ApiName getApiName() {
         return apiName;
@@ -436,4 +438,16 @@ public class AS2Configuration {
     public void setAttachedFileName(String attachedFileName) {
         this.attachedFileName = attachedFileName;
     }
+    
+    public String getSSLContext() {
+    	return sslContext;
+    }
+
+    /**
+     * The name of the SSLContext
+     */
+    public void setSSLContext(String sslContext) {
+        this.sslContext = sslContext;
+    }
+ 
 }
