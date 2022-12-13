@@ -2584,15 +2584,6 @@ public class ModelParser extends BaseParser {
     protected DefaultErrorHandlerDefinition doParseDefaultErrorHandlerDefinition() throws IOException, XmlPullParserException {
         return doParse(new DefaultErrorHandlerDefinition(), defaultErrorHandlerDefinitionAttributeHandler(), defaultErrorHandlerDefinitionElementHandler(), noValueHandler());
     }
-    protected ErrorHandlerRefDefinition doParseErrorHandlerRefDefinition() throws IOException, XmlPullParserException {
-        return doParse(new ErrorHandlerRefDefinition(), (def, key, val) -> {
-            if ("ref".equals(key)) {
-                def.setRef(val);
-                return true;
-            }
-            return identifiedTypeAttributeHandler().accept(def, key, val);
-        }, noElementHandler(), noValueHandler());
-    }
     protected JtaTransactionErrorHandlerDefinition doParseJtaTransactionErrorHandlerDefinition() throws IOException, XmlPullParserException {
         return doParse(new JtaTransactionErrorHandlerDefinition(),
             transactionErrorHandlerDefinitionAttributeHandler(), defaultErrorHandlerDefinitionElementHandler(), noValueHandler());
@@ -2610,6 +2601,15 @@ public class ModelParser extends BaseParser {
     protected NoErrorHandlerDefinition doParseNoErrorHandlerDefinition() throws IOException, XmlPullParserException {
         return doParse(new NoErrorHandlerDefinition(),
             identifiedTypeAttributeHandler(), noElementHandler(), noValueHandler());
+    }
+    protected RefErrorHandlerDefinition doParseRefErrorHandlerDefinition() throws IOException, XmlPullParserException {
+        return doParse(new RefErrorHandlerDefinition(), (def, key, val) -> {
+            if ("ref".equals(key)) {
+                def.setRef(val);
+                return true;
+            }
+            return identifiedTypeAttributeHandler().accept(def, key, val);
+        }, noElementHandler(), noValueHandler());
     }
     protected SpringTransactionErrorHandlerDefinition doParseSpringTransactionErrorHandlerDefinition() throws IOException, XmlPullParserException {
         return doParse(new SpringTransactionErrorHandlerDefinition(),

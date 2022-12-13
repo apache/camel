@@ -90,7 +90,7 @@ import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
-import org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition;
+import org.apache.camel.model.errorhandler.RefErrorHandlerDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestContainer;
 import org.apache.camel.model.rest.RestDefinition;
@@ -1202,7 +1202,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         if (getErrorHandlerRef() != null) {
             context.adapt(ExtendedCamelContext.class)
-                    .setErrorHandlerFactory(new ErrorHandlerRefDefinition(getErrorHandlerRef()));
+                    .setErrorHandlerFactory(new RefErrorHandlerDefinition(getErrorHandlerRef()));
         }
         if (getAutoStartup() != null) {
             context.setAutoStartup(CamelContextHelper.parseBoolean(context, getAutoStartup()));

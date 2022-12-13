@@ -1,12 +1,12 @@
 {
   "model": {
     "kind": "model",
-    "name": "errorHandlerRef",
-    "title": "Error Handler Ref",
-    "description": "Dead letter channel error handler.",
+    "name": "refErrorHandler",
+    "title": "Ref Error Handler",
+    "description": "References to an existing or custom error handler.",
     "deprecated": false,
     "label": "configuration,error",
-    "javaType": "org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition",
+    "javaType": "org.apache.camel.model.errorhandler.RefErrorHandlerDefinition",
     "abstract": false,
     "input": false,
     "output": false

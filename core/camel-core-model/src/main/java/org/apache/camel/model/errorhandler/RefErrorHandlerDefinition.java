@@ -25,12 +25,12 @@ import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Dead letter channel error handler.
+ * References to an existing or custom error handler.
  */
 @Metadata(label = "configuration,error")
-@XmlRootElement(name = "errorHandlerRef")
+@XmlRootElement(name = "refErrorHandler")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ErrorHandlerRefDefinition extends BaseErrorHandlerDefinition {
+public class RefErrorHandlerDefinition extends BaseErrorHandlerDefinition {
 
     public static final String DEFAULT_ERROR_HANDLER_BUILDER = "CamelDefaultErrorHandlerBuilder";
 
@@ -38,10 +38,10 @@ public class ErrorHandlerRefDefinition extends BaseErrorHandlerDefinition {
     @Metadata(javaType = "org.apache.camel.ErrorHandlerFactory")
     private String ref;
 
-    public ErrorHandlerRefDefinition() {
+    public RefErrorHandlerDefinition() {
     }
 
-    public ErrorHandlerRefDefinition(String ref) {
+    public RefErrorHandlerDefinition(String ref) {
         this.ref = ref;
     }
 
@@ -70,7 +70,7 @@ public class ErrorHandlerRefDefinition extends BaseErrorHandlerDefinition {
     /**
      * References to an existing or custom error handler.
      */
-    public ErrorHandlerRefDefinition ref(String ref) {
+    public RefErrorHandlerDefinition ref(String ref) {
         setRef(ref);
         return this;
     }

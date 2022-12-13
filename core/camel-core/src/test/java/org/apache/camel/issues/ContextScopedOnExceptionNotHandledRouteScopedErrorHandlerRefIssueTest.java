@@ -20,7 +20,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition;
+import org.apache.camel.model.errorhandler.RefErrorHandlerDefinition;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
@@ -61,7 +61,7 @@ public class ContextScopedOnExceptionNotHandledRouteScopedErrorHandlerRefIssueTe
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").errorHandler(new ErrorHandlerRefDefinition("myDLC"))
+                from("direct:start").errorHandler(new RefErrorHandlerDefinition("myDLC"))
                         .onException(IllegalArgumentException.class).handled(false).to("mock:handled").end()
                         .to("mock:a").throwException(new IllegalArgumentException("Damn"));
             }

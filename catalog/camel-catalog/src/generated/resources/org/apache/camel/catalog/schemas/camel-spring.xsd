@@ -495,16 +495,6 @@ Camel error handling.
     </xs:annotation>
   </xs:element>
     
-  <xs:element name="errorHandlerRef" type="tns:errorHandlerRefDefinition">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-        <![CDATA[
-Dead letter channel error handler.
-      ]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-    
   <xs:element name="exchangeProperty" type="tns:exchangePropertyExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -1404,6 +1394,16 @@ Configuration of redelivery policy.
       <xs:documentation xml:lang="en">
         <![CDATA[
 Uses an existing expression from the registry.
+      ]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+    
+  <xs:element name="refErrorHandler" type="tns:refErrorHandlerDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        <![CDATA[
+References to an existing or custom error handler.
       ]]>
       </xs:documentation>
     </xs:annotation>
@@ -20230,7 +20230,7 @@ Set a reference to a custom Expression to use.
       
   </xs:complexType>
     
-  <xs:complexType name="errorHandlerRefDefinition">
+  <xs:complexType name="refErrorHandlerDefinition">
         
     <xs:complexContent>
             

@@ -26,8 +26,8 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.errorhandler.ErrorHandlerHelper;
-import org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition;
 import org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition;
+import org.apache.camel.model.errorhandler.RefErrorHandlerDefinition;
 import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.spi.TransactedPolicy;
 import org.slf4j.Logger;
@@ -85,9 +85,9 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
         ErrorHandlerFactory builder = routeDefinition.getErrorHandlerFactory();
 
         // check if its a ref if so then do a lookup
-        if (builder instanceof ErrorHandlerRefDefinition) {
+        if (builder instanceof RefErrorHandlerDefinition) {
             // its a reference to a error handler so lookup the reference
-            ErrorHandlerRefDefinition builderRef = (ErrorHandlerRefDefinition) builder;
+            RefErrorHandlerDefinition builderRef = (RefErrorHandlerDefinition) builder;
             String ref = builderRef.getRef();
             // only lookup if there was explicit an error handler builder configured
             // otherwise its just the "default" that has not explicit been configured

@@ -19,7 +19,7 @@ package org.apache.camel.builder;
 import org.apache.camel.Channel;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultRoute;
-import org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition;
+import org.apache.camel.model.errorhandler.RefErrorHandlerDefinition;
 import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
 import org.apache.camel.processor.errorhandler.NoErrorHandler;
 import org.junit.jupiter.api.Test;
@@ -50,13 +50,13 @@ public class RouteTemplateErrorHandlerTest {
             });
 
             assertThat(context.getRouteDefinitions()).first().satisfies(d -> {
-                assertThat(d.getErrorHandlerFactory()).isInstanceOfSatisfying(ErrorHandlerRefDefinition.class, h -> {
+                assertThat(d.getErrorHandlerFactory()).isInstanceOfSatisfying(RefErrorHandlerDefinition.class, h -> {
                     assertThat(h.getRef()).isEqualTo("myErrorHandler");
                 });
             });
 
             assertThat(context.getRouteTemplateDefinitions()).first().satisfies(d -> {
-                assertThat(d.route().getErrorHandlerFactory()).isInstanceOfSatisfying(ErrorHandlerRefDefinition.class, h -> {
+                assertThat(d.route().getErrorHandlerFactory()).isInstanceOfSatisfying(RefErrorHandlerDefinition.class, h -> {
                     assertThat(h.getRef()).isEqualTo("myErrorHandler");
                 });
             });

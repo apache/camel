@@ -47,7 +47,7 @@ import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.TemplatedRoutesDefinition;
-import org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition;
+import org.apache.camel.model.errorhandler.RefErrorHandlerDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
@@ -439,7 +439,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         if (resource != null) {
             getRouteCollection().setResource(resource);
         }
-        setErrorHandlerFactory(new ErrorHandlerRefDefinition(ref));
+        setErrorHandlerFactory(new RefErrorHandlerDefinition(ref));
     }
 
     /**

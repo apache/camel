@@ -36,7 +36,7 @@ import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RedeliveryPolicyDefinition;
 import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition;
-import org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition;
+import org.apache.camel.model.errorhandler.RefErrorHandlerDefinition;
 import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
 import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
 import org.apache.camel.processor.errorhandler.ExceptionPolicy;
@@ -97,7 +97,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
             return new DefaultErrorHandlerReifier(route, (DefaultErrorHandlerDefinition) definition);
         } else if (definition instanceof NoErrorHandlerDefinition) {
             return new NoErrorHandlerReifier(route, definition);
-        } else if (definition instanceof ErrorHandlerRefDefinition) {
+        } else if (definition instanceof RefErrorHandlerDefinition) {
             return new ErrorHandlerRefReifier(route, definition);
         }
 

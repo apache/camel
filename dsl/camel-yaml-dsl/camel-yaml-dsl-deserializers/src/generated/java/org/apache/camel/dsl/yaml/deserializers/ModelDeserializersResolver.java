@@ -129,9 +129,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "error-handler": return new ModelDeserializers.ErrorHandlerDefinitionDeserializer();
             case "errorHandler": return new ModelDeserializers.ErrorHandlerDefinitionDeserializer();
             case "org.apache.camel.model.ErrorHandlerDefinition": return new ModelDeserializers.ErrorHandlerDefinitionDeserializer();
-            case "error-handler-ref": return new ModelDeserializers.ErrorHandlerRefDefinitionDeserializer();
-            case "errorHandlerRef": return new ModelDeserializers.ErrorHandlerRefDefinitionDeserializer();
-            case "org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition": return new ModelDeserializers.ErrorHandlerRefDefinitionDeserializer();
             case "exchange-property": return new ModelDeserializers.ExchangePropertyExpressionDeserializer();
             case "exchangeProperty": return new ModelDeserializers.ExchangePropertyExpressionDeserializer();
             case "org.apache.camel.model.language.ExchangePropertyExpression": return new ModelDeserializers.ExchangePropertyExpressionDeserializer();
@@ -323,6 +320,9 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "redelivery-policy": return new ModelDeserializers.RedeliveryPolicyDefinitionDeserializer();
             case "redeliveryPolicy": return new ModelDeserializers.RedeliveryPolicyDefinitionDeserializer();
             case "org.apache.camel.model.RedeliveryPolicyDefinition": return new ModelDeserializers.RedeliveryPolicyDefinitionDeserializer();
+            case "ref-error-handler": return new ModelDeserializers.RefErrorHandlerDefinitionDeserializer();
+            case "refErrorHandler": return new ModelDeserializers.RefErrorHandlerDefinitionDeserializer();
+            case "org.apache.camel.model.errorhandler.RefErrorHandlerDefinition": return new ModelDeserializers.RefErrorHandlerDefinitionDeserializer();
             case "ref": return new ModelDeserializers.RefExpressionDeserializer();
             case "org.apache.camel.model.language.RefExpression": return new ModelDeserializers.RefExpressionDeserializer();
             case "remove-header": return new ModelDeserializers.RemoveHeaderDefinitionDeserializer();

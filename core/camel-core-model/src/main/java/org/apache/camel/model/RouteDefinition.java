@@ -42,7 +42,7 @@ import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.EndpointConsumerBuilder;
-import org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition;
+import org.apache.camel.model.errorhandler.RefErrorHandlerDefinition;
 import org.apache.camel.model.rest.RestBindingDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.spi.AsEndpointUri;
@@ -1026,7 +1026,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
             // we use an specific error handler ref (from Spring DSL) then wrap that
             // with a error handler build ref so Camel knows its not just the
             // default one
-            setErrorHandlerFactory(new ErrorHandlerRefDefinition(errorHandlerRef));
+            setErrorHandlerFactory(new RefErrorHandlerDefinition(errorHandlerRef));
         }
     }
 
@@ -1106,11 +1106,11 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
 
     private ErrorHandlerFactory createErrorHandlerBuilder() {
         if (errorHandlerRef != null) {
-            return new ErrorHandlerRefDefinition(errorHandlerRef);
+            return new RefErrorHandlerDefinition(errorHandlerRef);
         }
 
         // return a reference to the default error handler
-        return new ErrorHandlerRefDefinition(ErrorHandlerRefDefinition.DEFAULT_ERROR_HANDLER_BUILDER);
+        return new RefErrorHandlerDefinition(RefErrorHandlerDefinition.DEFAULT_ERROR_HANDLER_BUILDER);
     }
 
     public ErrorHandlerFactory getErrorHandlerFactory() {

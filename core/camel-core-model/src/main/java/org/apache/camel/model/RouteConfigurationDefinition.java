@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.ErrorHandlerFactory;
-import org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition;
+import org.apache.camel.model.errorhandler.RefErrorHandlerDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -150,7 +150,7 @@ public class RouteConfigurationDefinition extends OptionalIdentifiedDefinition<R
      */
     public RouteConfigurationDefinition errorHandler(String ref) {
         ErrorHandlerDefinition def = new ErrorHandlerDefinition();
-        def.setErrorHandlerType(new ErrorHandlerRefDefinition(ref));
+        def.setErrorHandlerType(new RefErrorHandlerDefinition(ref));
         setErrorHandler(def);
         return this;
     }

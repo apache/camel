@@ -220,14 +220,20 @@
           "deadLetterChannel" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.DeadLetterChannelDefinition"
           },
-          "log" : {
+          "defaultErrorHandler" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition"
           },
-          "none" : {
+          "jtaTransactionErrorHandler" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition"
+          },
+          "noErrorHandler" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.NoErrorHandlerDefinition"
           },
-          "ref" : {
-            "type" : "string"
+          "refErrorHandler" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition"
+          },
+          "springTransactionErrorHandler" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition"
           }
         }
       },

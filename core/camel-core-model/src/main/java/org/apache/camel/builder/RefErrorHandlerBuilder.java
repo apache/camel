@@ -16,12 +16,12 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition;
+import org.apache.camel.model.errorhandler.RefErrorHandlerDefinition;
 
 /**
  * Ref error handler as a builder.
  */
-public class RefErrorHandlerBuilder extends ErrorHandlerRefDefinition {
+public class RefErrorHandlerBuilder extends RefErrorHandlerDefinition {
 
     public RefErrorHandlerBuilder() {
     }

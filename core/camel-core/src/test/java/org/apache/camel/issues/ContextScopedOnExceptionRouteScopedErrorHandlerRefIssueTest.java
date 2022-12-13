@@ -19,7 +19,7 @@ package org.apache.camel.issues;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition;
+import org.apache.camel.model.errorhandler.RefErrorHandlerDefinition;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
@@ -54,7 +54,7 @@ public class ContextScopedOnExceptionRouteScopedErrorHandlerRefIssueTest extends
 
                 onException(IllegalArgumentException.class).handled(true).to("mock:handled").end();
 
-                from("direct:start").errorHandler(new ErrorHandlerRefDefinition("myDLC")).to("mock:a")
+                from("direct:start").errorHandler(new RefErrorHandlerDefinition("myDLC")).to("mock:a")
                         .throwException(new IllegalArgumentException("Damn"));
             }
         };

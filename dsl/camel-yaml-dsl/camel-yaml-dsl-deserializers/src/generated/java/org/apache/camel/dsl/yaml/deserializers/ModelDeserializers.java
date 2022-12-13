@@ -167,9 +167,9 @@ import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
 import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition;
-import org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition;
 import org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition;
 import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
+import org.apache.camel.model.errorhandler.RefErrorHandlerDefinition;
 import org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition;
 import org.apache.camel.model.language.CSimpleExpression;
 import org.apache.camel.model.language.ConstantExpression;
@@ -4773,50 +4773,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "id": {
                     String val = asText(node);
                     target.setId(val);
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            nodes = {
-                    "error-handler-ref",
-                    "errorHandlerRef"
-            },
-            types = org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            properties = {
-                    @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "ref", type = "string", required = true)
-            }
-    )
-    public static class ErrorHandlerRefDefinitionDeserializer extends YamlDeserializerBase<ErrorHandlerRefDefinition> {
-        public ErrorHandlerRefDefinitionDeserializer() {
-            super(ErrorHandlerRefDefinition.class);
-        }
-
-        @Override
-        protected ErrorHandlerRefDefinition newInstance() {
-            return new ErrorHandlerRefDefinition();
-        }
-
-        @Override
-        protected boolean setProperty(ErrorHandlerRefDefinition target, String propertyKey,
-                String propertyName, Node node) {
-            switch(propertyKey) {
-                case "id": {
-                    String val = asText(node);
-                    target.setId(val);
-                    break;
-                }
-                case "ref": {
-                    String val = asText(node);
-                    target.setRef(val);
                     break;
                 }
                 default: {
@@ -11634,6 +11590,50 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "use-exponential-back-off": {
                     String val = asText(node);
                     target.setUseExponentialBackOff(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = {
+                    "ref-error-handler",
+                    "refErrorHandler"
+            },
+            types = org.apache.camel.model.errorhandler.RefErrorHandlerDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            properties = {
+                    @YamlProperty(name = "id", type = "string"),
+                    @YamlProperty(name = "ref", type = "string", required = true)
+            }
+    )
+    public static class RefErrorHandlerDefinitionDeserializer extends YamlDeserializerBase<RefErrorHandlerDefinition> {
+        public RefErrorHandlerDefinitionDeserializer() {
+            super(RefErrorHandlerDefinition.class);
+        }
+
+        @Override
+        protected RefErrorHandlerDefinition newInstance() {
+            return new RefErrorHandlerDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(RefErrorHandlerDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "ref": {
+                    String val = asText(node);
+                    target.setRef(val);
                     break;
                 }
                 default: {
