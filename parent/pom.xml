@@ -132,7 +132,7 @@
         <corda-version>4.9.3</corda-version>
         <couchbase-client-version>3.3.4</couchbase-client-version>
         <curator-version>4.3.0</curator-version>
-        <cxf-version>3.5.4</cxf-version>
+        <cxf-version>3.5.5</cxf-version>
         <cxf-version-range>[3.5,3.6)</cxf-version-range>
         <cxf-codegen-plugin-version>3.5.4</cxf-codegen-plugin-version>
         <!-- cxf-xjc is not released as often -->
