@@ -776,7 +776,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
         AggregationStrategy strategy = getAggregationStrategy(subExchange);
         // invoke the on completion callback
         if (strategy != null) {
-            strategy.onCompletion(subExchange);
+            strategy.onCompletion(subExchange, original);
         }
 
         // cleanup any per exchange aggregation strategy

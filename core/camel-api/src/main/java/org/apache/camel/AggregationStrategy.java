@@ -121,6 +121,19 @@ public interface AggregationStrategy {
     }
 
     /**
+     * The aggregated {@link Exchange} has completed
+     *
+     * <b>Important: </b> This method must <b>not</b> throw any exceptions.
+     *
+     * @param exchange the current aggregated exchange, or the original {@link org.apache.camel.Exchange} if no
+     *                 aggregation has been done before the completion occurred
+     * @param  inputExchange the input exchange (input to the EIP)
+     */
+    default void onCompletion(Exchange exchange, Exchange inputExchange) {
+        onCompletion(exchange);
+    }
+
+    /**
      * A timeout occurred.
      * <p/>
      * <b>Important: </b> This method must <b>not</b> throw any exceptions.

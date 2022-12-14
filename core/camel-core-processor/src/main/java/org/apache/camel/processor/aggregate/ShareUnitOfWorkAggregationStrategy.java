@@ -73,6 +73,11 @@ public final class ShareUnitOfWorkAggregationStrategy extends ServiceSupport imp
     }
 
     @Override
+    public void onCompletion(Exchange exchange, Exchange inputExchange) {
+        strategy.onCompletion(exchange, inputExchange);
+    }
+
+    @Override
     public void timeout(Exchange exchange, int index, int total, long timeout) {
         strategy.timeout(exchange, index, total, timeout);
     }
