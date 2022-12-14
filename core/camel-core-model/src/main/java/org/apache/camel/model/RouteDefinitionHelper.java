@@ -152,7 +152,7 @@ public final class RouteDefinitionHelper {
                 if (rest != null && route.isRest()) {
                     VerbDefinition verb = findVerbDefinition(rest, route.getInput().getEndpointUri());
                     if (verb != null) {
-                        String id = verb.getId();
+                        String id = context.resolvePropertyPlaceholders(verb.getId());
                         if (verb.hasCustomIdAssigned() && ObjectHelper.isNotEmpty(id) && !customIds.contains(id)) {
                             route.setId(id);
                             customIds.add(id);
