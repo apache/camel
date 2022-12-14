@@ -42,7 +42,8 @@ public class FromRestRouteIdTest extends FromRestGetTest {
                 restConfiguration().host("localhost");
                 rest("/say/hello").get().to("direct:hello");
 
-                rest("/say/bye").get().consumes("application/json").param().type(RestParamType.header)
+                rest("/say/bye").get().id("{{mySpecialId}}")
+                        .consumes("application/json").param().type(RestParamType.header)
                         .description("header param description1").dataType("integer")
                         .allowableValues("1", "2", "3", "4").defaultValue("1").name("header_count").required(true).endParam()
                         .param().type(RestParamType.query)

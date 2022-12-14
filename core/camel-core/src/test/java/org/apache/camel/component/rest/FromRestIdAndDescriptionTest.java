@@ -52,11 +52,14 @@ public class FromRestIdAndDescriptionTest extends FromRestGetTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                context.getPropertiesComponent().addInitialProperty("mySpecialId", "scott");
+
                 restConfiguration().host("localhost");
                 rest("/say/hello").id("hello").description("Hello Service").get().id("get-say").description("Says hello to you")
                         .to("direct:hello");
 
-                rest("/say/bye").description("bye", "Bye Service", "en").get().description("Says bye to you")
+                rest("/say/bye").description("bye", "Bye Service", "en")
+                        .get().id("{{mySpecialId}}").description("Says bye to you")
                         .consumes("application/json").param().type(RestParamType.header)
                         .description("header param description1").dataType("integer").allowableValues("1", "2", "3", "4")
                         .defaultValue("1").name("header_count").required(true)
