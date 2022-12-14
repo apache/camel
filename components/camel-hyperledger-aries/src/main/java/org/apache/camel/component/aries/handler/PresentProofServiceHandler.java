@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.aries.HyperledgerAriesEndpoint;
 import org.apache.camel.component.aries.UnsupportedServiceException;
+import org.hyperledger.aries.api.present_proof.PresentProofProposal;
 import org.hyperledger.aries.api.present_proof.PresentProofRequest;
 import org.hyperledger.aries.api.present_proof.PresentationExchangeRecord;
 import org.hyperledger.aries.api.present_proof.PresentationRequest;
@@ -40,7 +41,17 @@ public class PresentProofServiceHandler extends AbstractServiceHandler {
     @Override
     public void process(Exchange exchange, String service) throws Exception {
 
-        if (service.equals("/present-proof/send-request")) {
+        if (service.equals("/present-proof/create-request")) {
+            PresentProofRequest reqObj = assertBody(exchange, PresentProofRequest.class);
+            PresentationExchangeRecord resObj = createClient().presentProofCreateRequest(reqObj).get();
+            exchange.getIn().setBody(resObj);
+
+        } else if (service.equals("/present-proof/send-proposal")) {
+            PresentProofProposal reqObj = assertBody(exchange, PresentProofProposal.class);
+            PresentationExchangeRecord resObj = adminClient().presentProofSendProposal(reqObj).get();
+            exchange.getIn().setBody(resObj);
+
+        } else if (service.equals("/present-proof/send-request")) {
             PresentProofRequest reqObj = assertBody(exchange, PresentProofRequest.class);
             PresentationExchangeRecord resObj = createClient().presentProofSendRequest(reqObj).get();
             exchange.getIn().setBody(resObj);
@@ -81,10 +92,6 @@ public class PresentProofServiceHandler extends AbstractServiceHandler {
                 throw new UnsupportedServiceException(service);
             }
 
-        } else if (service.equals("/present-proof/create-request")) {
-            PresentProofRequest reqObj = assertBody(exchange, PresentProofRequest.class);
-            PresentationExchangeRecord resObj = createClient().presentProofCreateRequest(reqObj).get();
-            exchange.getIn().setBody(resObj);
         } else {
             throw new UnsupportedServiceException(service);
         }
