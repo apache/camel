@@ -476,7 +476,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
             clientBuilder.disableRedirectHandling();
         }
         if (automaticRetriesDisabled) {
-            clientBuilder.disableRedirectHandling();
+            clientBuilder.disableAutomaticRetries();
         }
         if (contentCompressionDisabled) {
             clientBuilder.disableContentCompression();
