@@ -767,7 +767,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
      * @param pairs        the pairs with the exchanges to process
      * @param callback     the callback
      * @param doneSync     the <tt>doneSync</tt> parameter to call on callback
-     * @param forceExhaust whether or not error handling is exhausted
+     * @param forceExhaust whether error handling is exhausted
      */
     protected void doDone(
             Exchange original, Exchange subExchange, final Iterable<ProcessorExchangePair> pairs,
@@ -800,9 +800,8 @@ public class MulticastProcessor extends AsyncProcessorSupport
                 // if we stopped due an exception then only propagate the exception
                 original.setException(subExchange.getException());
             } else {
-                // copy the current result to original so it will contain this result of this eip
+                // copy the current result to original, so it will contain this result of this eip
                 ExchangeHelper.copyResults(original, subExchange);
-                subExchange.adapt(ExtendedExchange.class).handoverCompletions(original);
             }
         }
 

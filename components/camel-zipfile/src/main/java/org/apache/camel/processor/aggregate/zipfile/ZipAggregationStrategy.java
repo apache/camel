@@ -216,6 +216,14 @@ public class ZipAggregationStrategy implements AggregationStrategy {
         return answer;
     }
 
+    @Override
+    public void onCompletion(Exchange exchange, Exchange inputExchange) {
+        // this aggregation strategy added onCompletion which we should handover when we are complete
+        if (inputExchange != null) {
+            exchange.adapt(ExtendedExchange.class).handoverCompletions(inputExchange);
+        }
+    }
+
     private static void newZipFile(File zipFile) throws URISyntaxException, IOException {
         if (zipFile.exists() && !zipFile.delete()) { //Delete, because ZipFileSystem needs to create file on its own (with correct END bytes in the file)
             throw new IOException("Cannot delete file " + zipFile);
