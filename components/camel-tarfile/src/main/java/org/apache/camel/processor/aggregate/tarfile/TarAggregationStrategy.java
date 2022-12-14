@@ -197,6 +197,14 @@ public class TarAggregationStrategy implements AggregationStrategy {
         return answer;
     }
 
+    @Override
+    public void onCompletion(Exchange exchange, Exchange inputExchange) {
+        // this aggregation strategy added onCompletion which we should handover when we are complete
+        if (inputExchange != null) {
+            exchange.adapt(ExtendedExchange.class).handoverCompletions(inputExchange);
+        }
+    }
+
     private void addFileToTar(File source, File file, String fileName) throws IOException, ArchiveException {
         File tmpTar = Files.createTempFile(parentDir.toPath(), source.getName(), null).toFile();
         tmpTar.delete();
