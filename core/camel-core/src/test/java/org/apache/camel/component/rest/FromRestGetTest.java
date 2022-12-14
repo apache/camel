@@ -19,12 +19,14 @@ package org.apache.camel.component.rest;
 import java.util.Arrays;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.rest.CollectionFormat;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -60,6 +62,7 @@ public class FromRestGetTest extends ContextTestSupport {
         assertEquals("/say/bye", rest.getPath());
         assertEquals(2, rest.getVerbs().size());
         assertEquals("application/json", rest.getVerbs().get(0).getConsumes());
+        assertEquals("{{mySpecialId}}", rest.getVerbs().get(0).getId());
 
         assertEquals(2, rest.getVerbs().get(0).getParams().size());
         assertEquals(RestParamType.header, rest.getVerbs().get(0).getParams().get(0).getType());
@@ -104,6 +107,9 @@ public class FromRestGetTest extends ContextTestSupport {
         assertEquals("Hello World", out);
         String out2 = template.requestBody("seda:get-say-bye", "Me", String.class);
         assertEquals("Bye World", out2);
+
+        Route route = context.getRoute("scott");
+        Assertions.assertNotNull(route);
     }
 
     @Override
@@ -111,10 +117,14 @@ public class FromRestGetTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                context.getPropertiesComponent().addInitialProperty("mySpecialId", "scott");
+
                 restConfiguration().host("localhost");
                 rest("/say/hello").get().to("direct:hello");
 
-                rest("/say/bye").get().consumes("application/json").param().type(RestParamType.header)
+                rest("/say/bye").get()
+                        .id("{{mySpecialId}}")
+                        .consumes("application/json").param().type(RestParamType.header)
                         .description("header param description1").dataType("integer")
                         .allowableValues("1", "2", "3", "4").defaultValue("1").name("header_count").required(true).endParam()
                         .param().type(RestParamType.query)
