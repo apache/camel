@@ -27,12 +27,16 @@ public class FromRestExplicitComponentTest extends FromRestGetTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                context.getPropertiesComponent().addInitialProperty("mySpecialId", "scott");
+
                 // configure to use dummy-rest
                 restConfiguration().component("dummy-rest").host("localhost");
 
                 rest("/say/hello").get().to("direct:hello");
 
-                rest("dummy-rest").path("/say/bye").get().consumes("application/json").param().type(RestParamType.header)
+                rest("dummy-rest").path("/say/bye")
+                        .get().id("{{mySpecialId}}")
+                        .consumes("application/json").param().type(RestParamType.header)
                         .description("header param description1")
                         .dataType("integer").allowableValues("1", "2", "3", "4").defaultValue("1").name("header_count")
                         .required(true).endParam().param().type(RestParamType.query)

@@ -108,8 +108,11 @@ public class FromRestGetTest extends ContextTestSupport {
         String out2 = template.requestBody("seda:get-say-bye", "Me", String.class);
         assertEquals("Bye World", out2);
 
-        Route route = context.getRoute("scott");
-        Assertions.assertNotNull(route);
+        // some tests that inherit this class does not use dynamic id
+        if (context.getPropertiesComponent().resolveProperty("mySpecialId").isPresent()) {
+            Route route = context.getRoute("scott");
+            Assertions.assertNotNull(route);
+        }
     }
 
     @Override
