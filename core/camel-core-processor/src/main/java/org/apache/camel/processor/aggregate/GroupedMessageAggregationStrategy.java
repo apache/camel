@@ -26,7 +26,7 @@ import org.apache.camel.support.DefaultExchange;
  * Aggregate all {@link Message} into a single combined Exchange holding all the aggregated messages in a {@link List}
  * of {@link Message} as the message body.
  * 
- * This aggregation strategy can used in combination with {@link org.apache.camel.processor.Splitter} to batch messages
+ * This aggregation strategy can be used in combination with {@link org.apache.camel.processor.Splitter} to batch messages
  */
 public class GroupedMessageAggregationStrategy extends AbstractListAggregationStrategy<Message> {
 

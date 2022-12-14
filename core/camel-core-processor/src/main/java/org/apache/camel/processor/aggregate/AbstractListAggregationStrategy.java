@@ -114,7 +114,7 @@ public abstract class AbstractListAggregationStrategy<V> implements AggregationS
 
         @Override
         public String toString() {
-            // lets override toString so we don't write data for all the Exchanges by default
+            // override toString, so we don't write data for all the Exchanges by default
             return "List<Exchange>(" + size() + " elements)";
         }
     }
