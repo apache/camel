@@ -412,7 +412,7 @@ For many people, the term “domain-specific language” implies a compiler or i
 *Note*: our documentation contains an in-depth overview of the xref:manual::java-dsl.adoc[Java DSL].
 
 [[BookGettingStarted-ContinueLearningaboutCamel]]
-=== Continue Learning about Camel
+== Continue Learning about Camel
 
 Now that you have learned the basics of Camel, you can refer to the xref:working-with-camel-core:index.adoc[Working With Camel Core] for a list of guides that can help you increase your understanding about Camel.
 
