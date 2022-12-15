@@ -36,6 +36,7 @@ import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStartingEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStoppedEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStoppingEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeAsyncProcessingStartedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeEvent;
@@ -138,9 +139,11 @@ public class CamelEventNotifierTest {
                         CamelContextStartedEvent.class,
                         ExchangeSendingEvent.class,
                         ExchangeCreatedEvent.class,
+                        ExchangeAsyncProcessingStartedEvent.class,
                         ExchangeSendingEvent.class,
                         ExchangeSentEvent.class,
                         ExchangeCompletedEvent.class,
+                        ExchangeAsyncProcessingStartedEvent.class,
                         ExchangeSentEvent.class));
     }
 
@@ -157,9 +160,11 @@ public class CamelEventNotifierTest {
                         CamelContextStartedEvent.class,
                         ExchangeSendingEvent.class,
                         ExchangeCreatedEvent.class,
+                        ExchangeAsyncProcessingStartedEvent.class,
                         ExchangeSendingEvent.class,
                         ExchangeSentEvent.class,
                         ExchangeCompletedEvent.class,
+                        ExchangeAsyncProcessingStartedEvent.class,
                         ExchangeSentEvent.class,
                         CamelContextStoppingEvent.class,
                         CamelContextStoppedEvent.class));

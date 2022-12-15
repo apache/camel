@@ -76,7 +76,7 @@ public class RemoveEventNotifierTest extends ContextTestSupport {
         template.sendBody("direct:start", "Bye World");
         assertMockEndpointsSatisfied();
 
-        assertEquals(17, events.size());
+        assertEquals(20, events.size());
     }
 
     @Override

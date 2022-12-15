@@ -275,7 +275,6 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
                     // no need to filter scopes here. It's ok to close a scope multiple times and
                     // implementations check if scope being disposed is current
                     // and should not do anything if scopes don't match.
-                    var span = ActiveSpanManager.getSpan(eap.getExchange());
                     ActiveSpanManager.endScope(eap.getExchange());
                 }
             } catch (Exception t) {

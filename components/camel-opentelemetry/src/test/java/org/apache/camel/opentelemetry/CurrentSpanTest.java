@@ -21,10 +21,12 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanKind;
+import io.opentelemetry.sdk.trace.ReadableSpan;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Consumer;
@@ -46,10 +48,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-class CurrentSpanTests extends CamelOpenTelemetryTestSupport {
-    private static final Executor DELAYED = CompletableFuture.delayedExecutor(100L, TimeUnit.MILLISECONDS);
+class CurrentSpanTest extends CamelOpenTelemetryTestSupport {
+    private static final Executor DELAYED = CompletableFuture.delayedExecutor(10L, TimeUnit.MILLISECONDS, new ForkJoinPool(3));
 
-    CurrentSpanTests() {
+    CurrentSpanTest() {
         super(new SpanTestData[0]);
     }
 
@@ -192,8 +194,31 @@ class CurrentSpanTests extends CamelOpenTelemetryTestSupport {
                 // stress pipeline
                 from("asyncmock3:start").multicast()
                         .aggregationStrategy((oldExchange, newExchange) -> {
-                            // context is cleaned up
-                            assertFalse(Span.current().getSpanContext().isValid());
+                            // context should be cleaned up
+                            // BUT
+                            // we have a stack of spans for this pipeline:
+                            // root is producer (asyncmock3:start) and a bunch of nested under each other successors, e.g:
+                            // - consumer asyncmock3:start
+                            //   - producer asyncmock2:start
+                            //     - consumer asyncmock2:start
+                            //       -producer asyncmock2:result
+                            // the root span is still current during aggregation on *some* thread. It's also still running.
+                            //
+                            // OTel instrumentation for executor service should take care of propagation of
+                            // current asyncmock3:start span when possible, but it's not enabled here.
+                            //
+                            // So we can have either no context, or, accidentally have asyncmock3:start, which is also valid.
+                            // hence the condition here:
+                            if (Span.current().getSpanContext().isValid()) {
+                                ReadableSpan readable =  ((ReadableSpan)Span.current());
+                                if (readable.hasEnded()) {
+                                    System.out.printf("Detected current ended span: name - '%s', parent id - '%s'",
+                                            readable.getName(), readable.getParentSpanContext().getSpanId());
+                                }
+                                // we must never get current, but ended span.
+                                assertFalse(readable.hasEnded());
+                                assertEquals("asyncmock3", readable.getName());
+                            }
                             return newExchange;
                         })
                         .executorService(Executors.newFixedThreadPool(10))
