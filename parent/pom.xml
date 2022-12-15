@@ -130,7 +130,7 @@
         <consul-client-version>1.5.3</consul-client-version>
         <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
         <corda-version>4.9.3</corda-version>
-        <couchbase-client-version>3.3.4</couchbase-client-version>
+        <couchbase-client-version>3.4.1</couchbase-client-version>
         <curator-version>4.3.0</curator-version>
         <cxf-version>3.5.5</cxf-version>
         <cxf-version-range>[3.5,3.6)</cxf-version-range>
