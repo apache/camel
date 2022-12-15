@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.hbase;
 
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -59,6 +60,59 @@ public class HBaseProducerIT extends CamelHBaseTestSupport {
         Result result = table.get(get);
         byte[] resultValue = result.value();
         assertArrayEquals(body[0][0][0].getBytes(), resultValue);
+
+        IOHelper.close(table);
+    }
+
+    @Test
+    public void testPutAndAppend() throws Exception {
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(HBaseAttribute.HBASE_ROW_ID.asHeader(), key[0]);
+        headers.put(HBaseAttribute.HBASE_FAMILY.asHeader(), family[0]);
+        headers.put(HBaseAttribute.HBASE_QUALIFIER.asHeader(), column[0][0]);
+        headers.put(HBaseAttribute.HBASE_VALUE.asHeader(), body[0][0][0]);
+        headers.put(HBaseConstants.OPERATION, HBaseConstants.PUT);
+        template.sendBodyAndHeaders("direct:start", null, headers);
+
+        headers.put(HBaseAttribute.HBASE_QUALIFIER.asHeader(), column[0][1]);
+        headers.put(HBaseAttribute.HBASE_VALUE.asHeader(), body[0][0][1]);
+        headers.put(HBaseConstants.OPERATION, HBaseConstants.APPEND);
+        template.sendBodyAndHeaders("direct:start", null, headers);
+
+        Connection connection = connectHBase();
+        Table table = connection.getTable(TableName.valueOf(PERSON_TABLE.getBytes()));
+
+        Get get = new Get(key[0].getBytes());
+        get.addColumn(family[0].getBytes(), column[0][0].getBytes());
+        get.addColumn(family[0].getBytes(), column[0][1].getBytes());
+        Result result = table.get(get);
+        assertArrayEquals(body[0][0][0].getBytes(), result.getValue(family[0].getBytes(), column[0][0].getBytes()));
+        assertArrayEquals(body[0][0][1].getBytes(), result.getValue(family[0].getBytes(), column[0][1].getBytes()));
+
+        IOHelper.close(table);
+    }
+
+    @Test
+    public void testPutAndIncrement() throws Exception {
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(HBaseAttribute.HBASE_ROW_ID.asHeader(), key[0]);
+        headers.put(HBaseAttribute.HBASE_FAMILY.asHeader(), family[1]);
+        headers.put(HBaseAttribute.HBASE_QUALIFIER.asHeader(), column[1][2]);
+        headers.put(HBaseAttribute.HBASE_VALUE.asHeader(), Long.valueOf(body[0][1][2]));
+        headers.put(HBaseConstants.OPERATION, HBaseConstants.PUT);
+        template.sendBodyAndHeaders("direct:start", null, headers);
+
+        headers.put(HBaseAttribute.HBASE_VALUE.asHeader(), 1L);
+        headers.put(HBaseConstants.OPERATION, HBaseConstants.INCREMENT);
+        template.sendBodyAndHeaders("direct:start", null, headers);
+
+        Connection connection = connectHBase();
+        Table table = connection.getTable(TableName.valueOf(PERSON_TABLE.getBytes()));
+
+        Get get = new Get(key[0].getBytes());
+        get.addColumn(family[1].getBytes(), column[1][2].getBytes());
+        Result result = table.get(get);
+        assertEquals(Long.valueOf(body[0][1][2]) + 1, ByteBuffer.wrap(result.value()).getLong());
 
         IOHelper.close(table);
     }

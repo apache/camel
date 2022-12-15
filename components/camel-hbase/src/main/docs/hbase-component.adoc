@@ -102,6 +102,8 @@ where *table* is the table name.
 The supported operations are:
 
 * Put
+* Append
+* Increment
 * Get
 * Delete
 * Scan
