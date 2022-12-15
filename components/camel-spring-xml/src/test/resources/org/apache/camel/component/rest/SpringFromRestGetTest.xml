@@ -29,13 +29,16 @@
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
 
+    <propertyPlaceholder id="properties" location="custom.properties" ignoreMissingLocation="true">
+    </propertyPlaceholder>
+
     <rest path="/say/hello">
       <get>
         <to uri="direct:hello"/>
       </get>
     </rest>
     <rest path="/say/bye">
-      <get consumes="application/json">
+      <get consumes="application/json" id="{{mySpecialId}}">
           <param name="header_count" type="header" description="header param description1" dataType="integer" defaultValue="1" required="true">
               <allowableValues>
                   <value>1</value>
