@@ -43,7 +43,7 @@ public class AhcProducer extends DefaultAsyncProducer {
 
     public AhcProducer(AhcEndpoint endpoint) {
         super(endpoint);
-        this.client = endpoint.getClient();
+        this.client = endpoint.getOrCreateClient();
     }
 
     @Override

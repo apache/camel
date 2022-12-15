@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.ahc;
 
+import java.io.IOException;
 import java.net.URI;
+import java.security.GeneralSecurityException;
 import java.util.Map;
 
 import javax.net.ssl.SSLContext;
@@ -91,7 +93,6 @@ public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
 
     @Override
     public Producer createProducer() throws Exception {
-        ObjectHelper.notNull(client, "AsyncHttpClient", this);
         ObjectHelper.notNull(httpUri, "HttpUri", this);
         ObjectHelper.notNull(binding, "AhcBinding", this);
         return new AhcProducer(this);
@@ -108,14 +109,21 @@ public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         return true;
     }
 
-    public AsyncHttpClient getClient() {
+    public synchronized AsyncHttpClient getClient() {
+        return client;
+    }
+
+    protected synchronized AsyncHttpClient getOrCreateClient() {
+        if (client == null) {
+            client = createClient();
+        }
         return client;
     }
 
     /**
      * To use a custom {@link AsyncHttpClient}
      */
-    public void setClient(AsyncHttpClient client) {
+    public synchronized void setClient(AsyncHttpClient client) {
         this.client = client;
     }
 
@@ -278,35 +286,37 @@ public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        if (client == null) {
+    }
 
-            AsyncHttpClientConfig config;
+    private AsyncHttpClient createClient() {
+        AsyncHttpClientConfig config;
 
-            if (clientConfig != null) {
-                DefaultAsyncHttpClientConfig.Builder builder = AhcComponent.cloneConfig(clientConfig);
+        if (clientConfig != null) {
+            DefaultAsyncHttpClientConfig.Builder builder = AhcComponent.cloneConfig(clientConfig);
+            configureSslContext(builder);
+            config = builder.build();
+        } else {
+            DefaultAsyncHttpClientConfig.Builder builder = new DefaultAsyncHttpClientConfig.Builder();
+            /*
+             * Not doing this will always create a cookie handler per endpoint, which is incompatible
+             * to prior versions and interferes with the cookie handling in camel
+             */
+            builder.setCookieStore(null);
+            configureSslContext(builder);
+            config = builder.build();
+        }
+        return createClient(config);
+    }
 
-                if (sslContextParameters != null) {
-                    SSLContext sslContext = sslContextParameters.createSSLContext(getCamelContext());
-                    JdkSslContext ssl = new JdkSslContext(sslContext, true, ClientAuth.REQUIRE);
-                    builder.setSslContext(ssl);
-                }
-
-                config = builder.build();
-            } else {
-                DefaultAsyncHttpClientConfig.Builder builder = new DefaultAsyncHttpClientConfig.Builder();
-                /*
-                 * Not doing this will always create a cookie handler per endpoint, which is incompatible
-                 * to prior versions and interferes with the cookie handling in camel
-                 */
-                builder.setCookieStore(null);
-                if (sslContextParameters != null) {
-                    SSLContext sslContext = sslContextParameters.createSSLContext(getCamelContext());
-                    JdkSslContext ssl = new JdkSslContext(sslContext, true, ClientAuth.REQUIRE);
-                    builder.setSslContext(ssl);
-                }
-                config = builder.build();
+    private void configureSslContext(DefaultAsyncHttpClientConfig.Builder builder) {
+        try {
+            if (sslContextParameters != null) {
+                SSLContext sslContext = sslContextParameters.createSSLContext(getCamelContext());
+                JdkSslContext ssl = new JdkSslContext(sslContext, true, ClientAuth.REQUIRE);
+                builder.setSslContext(ssl);
             }
-            client = createClient(config);
+        } catch (GeneralSecurityException | IOException e) {
+            throw new IllegalArgumentException("Invalid SSL context parameters", e);
         }
     }
 
@@ -322,10 +332,18 @@ public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     protected void doStop() throws Exception {
         super.doStop();
         // ensure client is closed when stopping
-        if (client != null && !client.isClosed()) {
-            client.close();
+        AsyncHttpClient clientToClose;
+        synchronized (this) {
+            clientToClose = this.client;
+            this.client = null;
         }
-        client = null;
+        closeClient(clientToClose);
+    }
+
+    private void closeClient(AsyncHttpClient clientToClose) throws IOException {
+        if (clientToClose != null && !clientToClose.isClosed()) {
+            clientToClose.close();
+        }
     }
 
 }
