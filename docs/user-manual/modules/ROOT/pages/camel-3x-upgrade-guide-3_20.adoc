@@ -74,3 +74,11 @@ that it is now the same, how error handlers are in other DSLs.
 The Mongodb Driver core has been updated to version 4.8.1
 
 This fully support MongoDB 6.1
+
+=== camel-google-pubsub
+
+The Camel Google Pubsub headers have been renamed, since dotted keys are not allowed. 
+
+This means all the headers will be "CamelGooglePubsub" prefixed instead of "CamelGooglePubsub."
+
+For more information, have a look at CAMEL-18773
