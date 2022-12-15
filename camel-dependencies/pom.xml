@@ -421,7 +421,7 @@
     <mockito-version>3.12.4</mockito-version>
     <mockwebserver-version>0.2.2</mockwebserver-version>
     <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
-    <mongo-java-driver-version>4.7.2</mongo-java-driver-version>
+    <mongo-java-driver-version>4.8.1</mongo-java-driver-version>
     <msal4j-version>1.13.3</msal4j-version>
     <mustache-java-version>0.9.10</mustache-java-version>
     <mvel-version>2.4.14.Final</mvel-version>
