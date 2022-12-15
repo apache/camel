@@ -367,7 +367,6 @@ use it to configure repository password:
 [source,bash]
 ----
 $ mvn -emp
-[INFO] BuildTimeEventSpy is registered.
 Master password: camel
 {hqXUuec2RowH8dA8vdqkF6jn4NU9ybOsDjuTmWvYj4U=}
 ----
@@ -386,7 +385,6 @@ Then a normal password can be configured like this:
 [source,bash]
 ----
 $ mvn -ep
-[INFO] BuildTimeEventSpy is registered.
 Password: camel
 {SSVqy/PexxQHvubrWhdguYuG7HnTvHlaNr6g3dJn7nk=}
 ----
