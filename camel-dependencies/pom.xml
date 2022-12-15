@@ -443,7 +443,7 @@
     <openjpa-version>3.2.2</openjpa-version>
     <openstack4j-version>3.10</openstack4j-version>
     <opentelemetry-alpha-version>${opentelemetry-version}-alpha</opentelemetry-alpha-version>
-    <opentelemetry-version>1.20.1</opentelemetry-version>
+    <opentelemetry-version>1.21.0<</opentelemetry-version>
     <opentracing-tracerresolver-version>0.1.8</opentracing-tracerresolver-version>
     <opentracing-version>0.33.0</opentracing-version>
     <optaplanner-version>8.31.1.Final</optaplanner-version>

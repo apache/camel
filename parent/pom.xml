@@ -428,7 +428,7 @@
         <ognl-version>3.1.12</ognl-version>
         <openjpa-version>3.2.2</openjpa-version>
         <openstack4j-version>3.10</openstack4j-version>
-        <opentelemetry-version>1.20.1</opentelemetry-version>
+        <opentelemetry-version>1.21.0</opentelemetry-version>
         <opentelemetry-alpha-version>${opentelemetry-version}-alpha</opentelemetry-alpha-version>
         <opentracing-version>0.33.0</opentracing-version>
         <opentracing-tracerresolver-version>0.1.8</opentracing-tracerresolver-version>
