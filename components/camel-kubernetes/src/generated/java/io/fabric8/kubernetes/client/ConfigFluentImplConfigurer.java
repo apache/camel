@@ -25,6 +25,8 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "ApiVersion": target.withApiVersion(property(camelContext, java.lang.String.class, value)); return true;
         case "authprovider":
         case "AuthProvider": target.withAuthProvider(property(camelContext, io.fabric8.kubernetes.api.model.AuthProviderConfig.class, value)); return true;
+        case "autoconfigure":
+        case "AutoConfigure": target.withAutoConfigure(property(camelContext, boolean.class, value)); return true;
         case "cacertdata":
         case "CaCertData": target.withCaCertData(property(camelContext, java.lang.String.class, value)); return true;
         case "cacertfile":
@@ -55,6 +57,8 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "DisableHostnameVerification": target.withDisableHostnameVerification(property(camelContext, boolean.class, value)); return true;
         case "errormessages":
         case "ErrorMessages": target.withErrorMessages(property(camelContext, java.util.Map.class, value)); return true;
+        case "file":
+        case "File": target.withFile(property(camelContext, java.io.File.class, value)); return true;
         case "http2disable":
         case "Http2Disable": target.withHttp2Disable(property(camelContext, boolean.class, value)); return true;
         case "httpproxy":
@@ -138,6 +142,8 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "ApiVersion": return java.lang.String.class;
         case "authprovider":
         case "AuthProvider": return io.fabric8.kubernetes.api.model.AuthProviderConfig.class;
+        case "autoconfigure":
+        case "AutoConfigure": return boolean.class;
         case "cacertdata":
         case "CaCertData": return java.lang.String.class;
         case "cacertfile":
@@ -168,6 +174,8 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "DisableHostnameVerification": return boolean.class;
         case "errormessages":
         case "ErrorMessages": return java.util.Map.class;
+        case "file":
+        case "File": return java.io.File.class;
         case "http2disable":
         case "Http2Disable": return boolean.class;
         case "httpproxy":
@@ -252,6 +260,8 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "ApiVersion": return target.getApiVersion();
         case "authprovider":
         case "AuthProvider": return target.getAuthProvider();
+        case "autoconfigure":
+        case "AutoConfigure": return target.isAutoConfigure();
         case "cacertdata":
         case "CaCertData": return target.getCaCertData();
         case "cacertfile":
@@ -282,6 +292,8 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "DisableHostnameVerification": return target.isDisableHostnameVerification();
         case "errormessages":
         case "ErrorMessages": return target.getErrorMessages();
+        case "file":
+        case "File": return target.getFile();
         case "http2disable":
         case "Http2Disable": return target.isHttp2Disable();
         case "httpproxy":
