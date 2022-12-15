@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Test;
 
 public class AhcRecipientListTest extends BaseAhcTest {
 
-
     @Test
     public void testRecipientListCalledBeforeComponentStarted() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello");
@@ -35,11 +34,11 @@ public class AhcRecipientListTest extends BaseAhcTest {
             @Override
             public void configure() throws Exception {
                 from("timer://foo?delay=-1&?repeatCount=1")
-                    .recipientList(constant(getAhcEndpointUri()))
-                    .to("mock:result");
+                        .recipientList(constant(getAhcEndpointUri()))
+                        .to("mock:result");
 
                 from(getTestServerEndpointUri())
-                    .transform(constant("Hello"));
+                        .transform(constant("Hello"));
             }
         };
     }

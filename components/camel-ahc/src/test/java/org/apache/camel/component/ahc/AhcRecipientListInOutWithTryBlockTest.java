@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -37,7 +37,7 @@ public class AhcRecipientListInOutWithTryBlockTest extends BaseAhcTest {
             @Override
             public void configure() throws Exception {
                 from("timer://foo?delay=-1&?repeatCount=1")
-                    .to("direct:start");
+                        .to("direct:start");
 
                 from("direct:start")
                     .doTry()
@@ -49,7 +49,7 @@ public class AhcRecipientListInOutWithTryBlockTest extends BaseAhcTest {
                     .end();
 
                 from(getTestServerEndpointUri())
-                    .transform(constant("Bye"));
+                        .transform(constant("Bye"));
             }
         };
     }
