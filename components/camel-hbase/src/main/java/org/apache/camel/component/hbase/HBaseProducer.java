@@ -30,8 +30,10 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.CellUtil;
+import org.apache.hadoop.hbase.client.Append;
 import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Get;
+import org.apache.hadoop.hbase.client.Increment;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
@@ -69,6 +71,8 @@ public class HBaseProducer extends DefaultProducer {
             HBaseData data = mappingStrategy.resolveModel(exchange.getIn());
 
             List<Put> putOperations = new LinkedList<>();
+            List<Append> appendOperations = new LinkedList<>();
+            List<Increment> incrementOperations = new LinkedList<>();
             List<Delete> deleteOperations = new LinkedList<>();
             List<HBaseRow> getOperationResult = new LinkedList<>();
             List<HBaseRow> scanOperationResult = new LinkedList<>();
@@ -77,6 +81,10 @@ public class HBaseProducer extends DefaultProducer {
                 hRow.apply(rowModel);
                 if (HBaseConstants.PUT.equals(operation)) {
                     putOperations.add(createPut(hRow));
+                } else if (HBaseConstants.APPEND.equals(operation)) {
+                    appendOperations.add(createAppend(hRow));
+                } else if (HBaseConstants.INCREMENT.equals(operation)) {
+                    incrementOperations.add(createIncrement(hRow));
                 } else if (HBaseConstants.GET.equals(operation)) {
                     HBaseRow getResultRow = getCells(table, hRow);
                     getOperationResult.add(getResultRow);
@@ -90,6 +98,14 @@ public class HBaseProducer extends DefaultProducer {
             //Check if we have something to add.
             if (!putOperations.isEmpty()) {
                 table.put(putOperations);
+            } else if (!appendOperations.isEmpty()) {
+                for (Append appendOperation : appendOperations) {
+                    table.append(appendOperation);
+                }
+            } else if (!incrementOperations.isEmpty()) {
+                for (Increment incrementOperation : incrementOperations) {
+                    table.increment(incrementOperation);
+                }
             } else if (!deleteOperations.isEmpty()) {
                 table.delete(deleteOperations);
             } else if (!getOperationResult.isEmpty()) {
@@ -123,6 +139,57 @@ public class HBaseProducer extends DefaultProducer {
                     endpoint.getCamelContext().getTypeConverter().convertTo(byte[].class, value));
         }
         return put;
+    }
+
+    /**
+     * Creates an HBase {@link Append} on a specific row, using a collection of values (family/column/value pairs).
+     */
+    private Append createAppend(HBaseRow hRow) {
+        ObjectHelper.notNull(hRow, "HBase row");
+        ObjectHelper.notNull(hRow.getId(), "HBase row id");
+        ObjectHelper.notNull(hRow.getCells(), "HBase cells");
+
+        Append append = new Append(endpoint.getCamelContext().getTypeConverter().convertTo(byte[].class, hRow.getId()));
+        Set<HBaseCell> cells = hRow.getCells();
+        for (HBaseCell cell : cells) {
+            String family = cell.getFamily();
+            String column = cell.getQualifier();
+            Object value = cell.getValue();
+
+            ObjectHelper.notNull(family, "HBase column family", cell);
+            ObjectHelper.notNull(column, "HBase column", cell);
+            append.addColumn(
+                    HBaseHelper.getHBaseFieldAsBytes(family),
+                    HBaseHelper.getHBaseFieldAsBytes(column),
+                    endpoint.getCamelContext().getTypeConverter().convertTo(byte[].class, value));
+        }
+        return append;
+    }
+
+    /**
+     * Creates an HBase {@link Increment} on a specific row, using a collection of values (family/column/value pairs).
+     */
+    private Increment createIncrement(HBaseRow hRow) {
+        ObjectHelper.notNull(hRow, "HBase row");
+        ObjectHelper.notNull(hRow.getId(), "HBase row id");
+        ObjectHelper.notNull(hRow.getCells(), "HBase cells");
+
+        Increment increment
+                = new Increment(endpoint.getCamelContext().getTypeConverter().convertTo(byte[].class, hRow.getId()));
+        Set<HBaseCell> cells = hRow.getCells();
+        for (HBaseCell cell : cells) {
+            String family = cell.getFamily();
+            String column = cell.getQualifier();
+            Object value = cell.getValue();
+
+            ObjectHelper.notNull(family, "HBase column family", cell);
+            ObjectHelper.notNull(column, "HBase column", cell);
+            increment.addColumn(
+                    HBaseHelper.getHBaseFieldAsBytes(family),
+                    HBaseHelper.getHBaseFieldAsBytes(column),
+                    endpoint.getCamelContext().getTypeConverter().convertTo(Long.class, value));
+        }
+        return increment;
     }
 
     /**

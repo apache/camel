@@ -24,6 +24,8 @@ public interface HBaseConstants {
     String OPERATION = "CamelHBaseOperation";
 
     String PUT = "CamelHBasePut";
+    String APPEND = "CamelHBaseAppend";
+    String INCREMENT = "CamelHBaseIncrement";
     String GET = "CamelHBaseGet";
     String SCAN = "CamelHBaseScan";
     String DELETE = "CamelHBaseDelete";
