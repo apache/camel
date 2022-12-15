@@ -77,7 +77,7 @@ public class AddEventNotifierTest extends ContextTestSupport {
         template.sendBody("direct:start", "Hi World");
         assertMockEndpointsSatisfied();
 
-        assertEquals(8, events.size());
+        assertEquals(11, events.size());
     }
 
     @Override
