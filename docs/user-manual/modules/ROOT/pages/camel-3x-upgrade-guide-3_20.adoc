@@ -68,3 +68,9 @@ that it is now the same, how error handlers are in other DSLs.
 - `none` is now called `no-error-handler`
 - `log` has been removed, as you can use `dead-letter-channel` with a log endpoint as the `dead-letter-uri`.
 - `ref` is now `ref-error-handler`.
+
+=== camel-mongodb
+
+The Mongodb Driver core has been updated to version 4.8.1
+
+This fully support MongoDB 6.1
