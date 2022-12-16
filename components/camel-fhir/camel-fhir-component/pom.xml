@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-fhir-parent</artifactId>
-        <version>3.20.0-SNAPSHOT</version>
+        <version>3.20.0</version>
     </parent>
 
     <artifactId>camel-fhir</artifactId>
@@ -205,7 +205,7 @@
                                 <api>
                                     <apiName>capabilities</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirCapabilities</proxyClass>
-                                    <fromJavasource/>
+                                    <fromJavasource />
                                     <nullableOptions>
                                         <nullableOption>extraParameters</nullableOption>
                                     </nullableOptions>
@@ -231,7 +231,7 @@
                                 <api>
                                     <apiName>history</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirHistory</proxyClass>
-                                    <fromJavasource/>
+                                    <fromJavasource />
                                     <nullableOptions>
                                         <nullableOption>count</nullableOption>
                                         <nullableOption>cutoff</nullableOption>
@@ -242,7 +242,7 @@
                                 <api>
                                     <apiName>load-page</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirLoadPage</proxyClass>
-                                    <fromJavasource/>
+                                    <fromJavasource />
                                     <nullableOptions>
                                         <nullableOption>extraParameters</nullableOption>
                                     </nullableOptions>
@@ -250,7 +250,7 @@
                                 <api>
                                     <apiName>meta</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirMeta</proxyClass>
-                                    <fromJavasource/>
+                                    <fromJavasource />
                                     <nullableOptions>
                                         <nullableOption>extraParameters</nullableOption>
                                     </nullableOptions>
@@ -258,7 +258,7 @@
                                 <api>
                                     <apiName>operation</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirOperation</proxyClass>
-                                    <fromJavasource/>
+                                    <fromJavasource />
                                     <nullableOptions>
                                         <nullableOption>extraParameters</nullableOption>
                                         <nullableOption>parameters</nullableOption>
