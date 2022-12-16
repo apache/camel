@@ -31,7 +31,8 @@ import org.apache.camel.cdi.CdiCamelExtension;
 import org.apache.camel.cdi.Uri;
 import org.apache.camel.cdi.bean.SimpleCamelRoute;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.CamelContextInitializedEvent;
+import org.apache.camel.spi.CamelEvent.CamelContextInitializingEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStartingEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStoppedEvent;
@@ -55,6 +56,7 @@ import org.junit.runner.RunWith;
 import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.equalTo;
 
 @RunWith(Arquillian.class)
 public class CamelEventNotifierTest {
@@ -71,12 +73,12 @@ public class CamelEventNotifierTest {
     @ApplicationScoped
     private List<Class> firedEvents = new ArrayList<>();
 
-    private void onCamelContextStartingEvent(@Observes CamelEvent.CamelContextInitializingEvent event, List<Class> events) {
-        events.add(CamelEvent.CamelContextInitializingEvent.class);
+    private void onCamelContextStartingEvent(@Observes CamelContextInitializingEvent event, List<Class> events) {
+        events.add(CamelContextInitializingEvent.class);
     }
 
-    private void onCamelContextStartingEvent(@Observes CamelEvent.CamelContextInitializedEvent event, List<Class> events) {
-        events.add(CamelEvent.CamelContextInitializedEvent.class);
+    private void onCamelContextStartingEvent(@Observes CamelContextInitializedEvent event, List<Class> events) {
+        events.add(CamelContextInitializedEvent.class);
     }
 
     private void onCamelContextStartingEvent(@Observes CamelContextStartingEvent event, List<Class> events) {
@@ -115,8 +117,8 @@ public class CamelEventNotifierTest {
     public void startedCamelContext(List<Class> events) {
         assertThat("Events fired are incorrect!", events,
                 contains(
-                        CamelEvent.CamelContextInitializingEvent.class,
-                        CamelEvent.CamelContextInitializedEvent.class,
+                        CamelContextInitializingEvent.class,
+                        CamelContextInitializedEvent.class,
                         CamelContextStartingEvent.class,
                         CamelContextStartedEvent.class));
     }
@@ -131,10 +133,11 @@ public class CamelEventNotifierTest {
 
         assertIsSatisfied(2L, TimeUnit.SECONDS, outbound);
 
-        assertThat("Events fired are incorrect!", events,
+        assertThat("Events count is incorrect!", events.size(), equalTo(12));
+        assertThat("Events types are incorrect!", events,
                 contains(
-                        CamelEvent.CamelContextInitializingEvent.class,
-                        CamelEvent.CamelContextInitializedEvent.class,
+                        CamelContextInitializingEvent.class,
+                        CamelContextInitializedEvent.class,
                         CamelContextStartingEvent.class,
                         CamelContextStartedEvent.class,
                         ExchangeSendingEvent.class,
@@ -152,10 +155,11 @@ public class CamelEventNotifierTest {
     public void stopCamelContext(CamelContext context, List<Class> events) {
         context.stop();
 
-        assertThat("Events fired are incorrect!", events,
+        assertThat("Events count is incorrect!", events.size(), equalTo(14));
+        assertThat("Events types are incorrect!", events,
                 contains(
-                        CamelEvent.CamelContextInitializingEvent.class,
-                        CamelEvent.CamelContextInitializedEvent.class,
+                        CamelContextInitializingEvent.class,
+                        CamelContextInitializedEvent.class,
                         CamelContextStartingEvent.class,
                         CamelContextStartedEvent.class,
                         ExchangeSendingEvent.class,
