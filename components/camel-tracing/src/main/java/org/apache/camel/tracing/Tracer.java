@@ -238,7 +238,7 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
                 if (event instanceof CamelEvent.ExchangeSendingEvent) {
                     CamelEvent.ExchangeSendingEvent ese = (CamelEvent.ExchangeSendingEvent) event;
                     SpanDecorator sd = getSpanDecorator(ese.getEndpoint());
-                    if (exclude(sd, ese.getExchange(), ese.getEndpoint())) {
+                    if (shouldExclude(sd, ese.getExchange(), ese.getEndpoint())) {
                         return;
                     }
 
@@ -254,7 +254,7 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
                 } else if (event instanceof CamelEvent.ExchangeSentEvent) {
                     CamelEvent.ExchangeSentEvent ese = (CamelEvent.ExchangeSentEvent) event;
                     SpanDecorator sd = getSpanDecorator(ese.getEndpoint());
-                    if (exclude(sd, ese.getExchange(), ese.getEndpoint())) {
+                    if (shouldExclude(sd, ese.getExchange(), ese.getEndpoint())) {
                         return;
                     }
 
@@ -283,7 +283,7 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
             }
         }
 
-        private boolean exclude(SpanDecorator sd, Exchange exchange, Endpoint endpoint) {
+        private boolean shouldExclude(SpanDecorator sd, Exchange exchange, Endpoint endpoint) {
             return sd instanceof AbstractInternalSpanDecorator || !sd.newSpan()
                     || isExcluded(exchange, endpoint);
         }
