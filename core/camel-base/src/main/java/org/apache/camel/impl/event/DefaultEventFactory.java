@@ -417,4 +417,13 @@ public class DefaultEventFactory implements EventFactory {
         }
         return answer;
     }
+
+    @Override
+    public CamelEvent createCamelExchangeAsyncProcessingStartedEvent(Exchange exchange) {
+        CamelEvent answer = new ExchangeAsyncProcessingStartedEvent(exchange);
+        if (timestampEnabled) {
+            answer.setTimestamp(System.currentTimeMillis());
+        }
+        return answer;
+    }
 }

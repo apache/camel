@@ -56,6 +56,11 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
             public void notify(CamelEvent event) throws Exception {
                 events.add(event);
             }
+
+            @Override
+            protected void doBuild() throws Exception {
+                setIgnoreExchangeAsyncProcessingStartedEvents(true);
+            }
         });
         return context;
     }

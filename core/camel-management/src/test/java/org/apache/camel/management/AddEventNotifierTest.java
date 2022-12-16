@@ -67,7 +67,7 @@ public class AddEventNotifierTest extends ContextTestSupport {
         template.sendBody("direct:start", "Bye World");
         assertMockEndpointsSatisfied();
 
-        assertEquals(8, events.size());
+        assertEquals(11, events.size());
 
         // remove and we should not get new events
         context.getManagementStrategy().removeEventNotifier(notifier);
@@ -77,7 +77,7 @@ public class AddEventNotifierTest extends ContextTestSupport {
         template.sendBody("direct:start", "Hi World");
         assertMockEndpointsSatisfied();
 
-        assertEquals(8, events.size());
+        assertEquals(11, events.size());
     }
 
     @Override

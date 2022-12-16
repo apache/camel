@@ -38,4 +38,8 @@ public interface SpanAdapter {
     String traceId();
 
     String spanId();
+
+    default AutoCloseable makeCurrent() {
+        return Tracer.NOOP_CLOSEABLE;
+    }
 }

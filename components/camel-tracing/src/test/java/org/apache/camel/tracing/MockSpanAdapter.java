@@ -27,6 +27,7 @@ public class MockSpanAdapter implements SpanAdapter {
     private Map<String, Object> tags = new HashMap<>();
     private String traceId;
     private String spanId;
+    private boolean isCurrent;
 
     static long nowMicros() {
         return System.currentTimeMillis() * 1000;
@@ -102,6 +103,15 @@ public class MockSpanAdapter implements SpanAdapter {
         return new ArrayList<>(this.logEntries);
     }
 
+    @Override
+    public AutoCloseable makeCurrent() {
+        return new Scope();
+    }
+
+    public boolean isCurrent() {
+        return this.isCurrent;
+    }
+
     public static final class LogEntry {
         private final long timestampMicros;
         private final Map<String, ?> fields;
@@ -122,5 +132,16 @@ public class MockSpanAdapter implements SpanAdapter {
 
     public MockSpanAdapter setOperation(String operation) {
         return this;
+    }
+
+    private final class Scope implements AutoCloseable {
+        public Scope() {
+            isCurrent = true;
+        }
+
+        @Override
+        public void close() {
+            isCurrent = false;
+        }
     }
 }

@@ -60,6 +60,7 @@ public class EventNotifierRedeliveryEventsTest extends ContextTestSupport {
                 setIgnoreCamelContextEvents(true);
                 setIgnoreRouteEvents(true);
                 setIgnoreServiceEvents(true);
+                setIgnoreExchangeAsyncProcessingStartedEvents(true);
             }
         });
         return context;

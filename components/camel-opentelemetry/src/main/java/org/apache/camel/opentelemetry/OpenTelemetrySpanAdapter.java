@@ -108,6 +108,11 @@ public class OpenTelemetrySpanAdapter implements SpanAdapter {
         return span.getSpanContext().getSpanId();
     }
 
+    @Override
+    public AutoCloseable makeCurrent() {
+        return span.makeCurrent();
+    }
+
     String getEventNameFromFields(Map<String, ?> fields) {
         Object eventValue = fields == null ? null : fields.get("event");
         if (eventValue != null) {
