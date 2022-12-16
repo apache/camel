@@ -210,7 +210,7 @@ class CurrentSpanTest extends CamelOpenTelemetryTestSupport {
                             // So we can have either no context, or, accidentally have asyncmock3:start, which is also valid.
                             // hence the condition here:
                             if (Span.current().getSpanContext().isValid()) {
-                                ReadableSpan readable =  ((ReadableSpan)Span.current());
+                                ReadableSpan readable = (ReadableSpan) Span.current();
                                 if (readable.hasEnded()) {
                                     System.out.printf("Detected current ended span: name - '%s', parent id - '%s'",
                                             readable.getName(), readable.getParentSpanContext().getSpanId());
