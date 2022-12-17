@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-sql",
-    "version": "3.14.7-SNAPSHOT",
+    "version": "3.14.8-SNAPSHOT",
     "scheme": "sql-stored",
     "extendsScheme": "",
     "syntax": "sql-stored:template",

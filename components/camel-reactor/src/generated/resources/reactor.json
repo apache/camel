@@ -10,6 +10,6 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-reactor",
-    "version": "3.14.7-SNAPSHOT"
+    "version": "3.14.8-SNAPSHOT"
   }
 }
