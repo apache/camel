@@ -644,7 +644,25 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                         false, null, null, false, false);
         eipOptions.add(ep);
 
-        // group
+        // nodePrefixId
+        docComment = findJavaDoc(null, "nodePrefixId", null, classElement, true);
+        ep = createOption("nodePrefixId", "Node Prefix Id", "attribute", "java.lang.String", false, "", "", docComment, false, null,
+                        false, null, null, false, false);
+        eipOptions.add(ep);
+
+        // routeConfigurationId
+        docComment = findJavaDoc(null, "routeConfigurationId", null, classElement, true);
+        ep = createOption("routeConfigurationId", "Route Configuration Id", "attribute", "java.lang.String", false, "", "", docComment, false, null,
+                        false, null, null, false, false);
+        eipOptions.add(ep);
+
+        // precondition
+        docComment = findJavaDoc(null, "precondition", null, classElement, true);
+        ep = createOption("precondition", "Precondition", "attribute", "java.lang.String", false, "", "", docComment, false,
+                null, false, null, null, false, false);
+        eipOptions.add(ep);
+
+        // stream cache
         docComment = findJavaDoc(null, "streamCache", null, classElement, true);
         ep = createOption("streamCache", "Stream Cache", "attribute", "java.lang.String", false, "", "", docComment, false,
                 null,
@@ -660,7 +678,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
         // message history
         docComment = findJavaDoc(null, "messageHistory", null, classElement, true);
-        ep = createOption("messageHistory", "Message History", "attribute", "java.lang.String", false, "true", "", docComment,
+        ep = createOption("messageHistory", "Message History", "attribute", "java.lang.String", false, "", "", docComment,
                 false, null, false, null, null, false, false);
         eipOptions.add(ep);
 

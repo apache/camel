@@ -16179,19 +16179,45 @@ Whether security mask for Logging is enabled on this route. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
               <![CDATA[
-Whether message history is enabled on this route. Default value: true
+Whether message history is enabled on this route.
             ]]>
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
                 
-        <xs:attribute name="nodePrefixId" type="xs:string"/>
+        <xs:attribute name="nodePrefixId" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+              <![CDATA[
+Sets a prefix to use for all node ids (not route id).
+            ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
                 
-        <xs:attribute name="precondition" type="xs:string"/>
+        <xs:attribute name="precondition" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+              <![CDATA[
+The predicate of the precondition in simple language to evaluate in order to
+determine if this route should be included or not.
+            ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
                 
         <xs:attribute name="rest" type="xs:boolean"/>
                 
-        <xs:attribute name="routeConfigurationId" type="xs:string"/>
+        <xs:attribute name="routeConfigurationId" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+              <![CDATA[
+The route configuration id or pattern this route should use for configuration.
+Multiple id/pattern can be separated by comma.
+            ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
                 
         <xs:attribute name="routePolicyRef" type="xs:string">
           <xs:annotation>

@@ -927,7 +927,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      * Whether message history is enabled on this route.
      */
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     public void setMessageHistory(String messageHistory) {
         this.messageHistory = messageHistory;
     }
