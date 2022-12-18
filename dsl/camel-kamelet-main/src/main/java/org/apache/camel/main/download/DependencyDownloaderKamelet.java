@@ -51,20 +51,12 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.nodeAt;
 public final class DependencyDownloaderKamelet extends ServiceSupport
         implements CamelContextAware, RouteTemplateLoaderListener {
 
-    private static final String KAMELETS_VERSION = "0.9.2";
+    private static final String KAMELETS_VERSION = "0.10.0";
     private KameletDependencyDownloader downloader;
     private CamelContext camelContext;
-    private volatile boolean kameletsInUse;
 
     public DependencyDownloaderKamelet(CamelContext camelContext) {
         this.camelContext = camelContext;
-    }
-
-    /**
-     * Whether any kamelets are in use.
-     */
-    public boolean isKameletsInUse() {
-        return kameletsInUse;
     }
 
     @Override
