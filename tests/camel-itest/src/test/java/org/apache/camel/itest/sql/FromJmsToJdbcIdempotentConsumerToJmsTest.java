@@ -46,7 +46,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(FromJmsToJdbcIdempotentConsumerToJmsTest.class);
+    // this logger is used both by this class as well as FromJmsToJdbcIdempotentConsumerToJmsXaTest, so why not static
+    private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
     private JdbcTemplate jdbcTemplate;
 
