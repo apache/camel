@@ -861,14 +861,16 @@ public interface ExtendedCamelContext extends CamelContext {
     String resolvePropertyPlaceholders(String text, boolean keepUnresolvedOptional);
 
     /**
-     * Package name to use as base (offset) for classpath scanning of custom services, type converters, and the likes
+     * Package name to use as base (offset) for classpath scanning of custom {@link CamelConfiguration}, {@link Configuration},
+     * and {@link TypeConverter}.
      *
      * @return the base package name (can bre null if not configured)
      */
     String getBasePackageScan();
 
     /**
-     * Package name to use as base (offset) for classpath scanning of custom services, type converters, and the likes
+     * Package name to use as base (offset) for classpath scanning of custom {@link CamelConfiguration}, {@link Configuration},
+     * and {@link TypeConverter}.
      *
      * @param basePackageScan the base package name
      */
