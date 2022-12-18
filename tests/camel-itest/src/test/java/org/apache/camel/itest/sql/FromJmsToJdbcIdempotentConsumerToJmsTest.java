@@ -31,6 +31,8 @@ import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -43,6 +45,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * JMS with JDBC idempotent consumer test.
  */
 public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(FromJmsToJdbcIdempotentConsumerToJmsTest.class);
 
     private JdbcTemplate jdbcTemplate;
 
@@ -98,10 +102,10 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         checkInitialState();
 
         mockA.expectedMessageCount(7);
-        mockB.expectedMessageCount(0);
-        mockB.whenAnyExchangeReceived(exchange -> {
+        mockA.whenAnyExchangeReceived(exchange -> {
             throw new ConnectException("Forced cannot connect to database");
         });
+        mockB.expectedMessageCount(0);
 
         // use NotifyBuilder to know that after 1+6 (1 original + 6 redelivery) attempts from ActiveMQ
         NotifyBuilder notify
@@ -109,7 +113,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
 
         template.sendBodyAndHeader("activemq2:queue:inbox", "A", "uid", 123);
 
-        assertTrue(notify.matchesWaitTime(), "Should complete 7 message");
+        assertTrue(notify.matchesWaitTime(), "Should complete 7 messages");
 
         // check that there is no message in the database and JMS queue
         assertEquals(0, jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", Integer.class));
@@ -175,13 +179,15 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         mockA.expectedMessageCount(4);
         mockB.expectedMessageCount(4);
         mockB.whenAnyExchangeReceived(new Processor() {
-            private boolean errorThrown;
+            private boolean alreadyErrorThrown;
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                if (!errorThrown) {
-                    errorThrown = true;
+                if (!alreadyErrorThrown) {
+                    alreadyErrorThrown = true;
                     throw new ConnectException("Forced cannot send to AMQ queue");
+                } else {
+                    LOG.info("Now successfully recovered from the error and can connect to AMQ queue");
                 }
             }
         });
