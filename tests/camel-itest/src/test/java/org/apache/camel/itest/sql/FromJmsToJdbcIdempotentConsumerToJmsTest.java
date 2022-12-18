@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSupport {
 
     // this logger is used both by this class as well as FromJmsToJdbcIdempotentConsumerToJmsXaTest, so why not static
-    private final Logger LOG = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private JdbcTemplate jdbcTemplate;
 
@@ -188,7 +188,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
                     alreadyErrorThrown = true;
                     throw new ConnectException("Forced cannot send to AMQ queue");
                 } else {
-                    LOG.info("Now successfully recovered from the error and can connect to AMQ queue");
+                    logger.info("Now successfully recovered from the error and can connect to AMQ queue");
                 }
             }
         });
