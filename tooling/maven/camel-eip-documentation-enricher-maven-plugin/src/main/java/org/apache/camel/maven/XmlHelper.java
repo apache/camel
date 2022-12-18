@@ -41,7 +41,7 @@ public final class XmlHelper {
 
     public static Document buildNamespaceAwareDocument(File xml)
             throws SAXException, ParserConfigurationException, IOException {
- 
+
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         factory.setIgnoringElementContentWhitespace(true);
