@@ -491,6 +491,8 @@ public abstract class BaseMainSupport extends BaseService {
         // configure from main configuration properties
         doConfigureCamelContextFromMainConfiguration(camelContext, mainConfigurationProperties, autoConfiguredProperties);
 
+        configurePackageScan(camelContext);
+
         // try to load configuration classes
         loadConfigurations(camelContext);
 
@@ -594,9 +596,11 @@ public abstract class BaseMainSupport extends BaseService {
     protected void configurePackageScan(CamelContext camelContext) {
         if (mainConfigurationProperties.isBasePackageScanEnabled()) {
             // only set the base package if enabled
-            camelContext.adapt(ExtendedCamelContext.class).setBasePackageScan(mainConfigurationProperties.getBasePackageScan());
-            if (mainConfigurationProperties.getBasePackageScan() != null) {
-                LOG.info("Classpath scanning enabled from base package: {}", mainConfigurationProperties.getBasePackageScan());
+            String base = mainConfigurationProperties.getBasePackageScan();
+            String current = camelContext.adapt(ExtendedCamelContext.class).getBasePackageScan();
+            if (base != null && !base.equals(current)) {
+                camelContext.adapt(ExtendedCamelContext.class).setBasePackageScan(base);
+                LOG.info("Classpath scanning enabled from base package: {}", base);
             }
         }
     }

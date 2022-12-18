@@ -27,6 +27,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.main.download.AutoConfigureDownloadListener;
+import org.apache.camel.main.download.BasePackageScanDownloadListener;
 import org.apache.camel.main.download.CircuitBreakerDownloader;
 import org.apache.camel.main.download.CommandLineDependencyDownloader;
 import org.apache.camel.main.download.DependencyDownloaderClassLoader;
@@ -320,6 +321,7 @@ public class KameletMain extends MainCommandLineSupport {
             }
             downloader.addDownloadListener(new AutoConfigureDownloadListener());
             downloader.addArtifactDownloadListener(new TypeConverterLoaderDownloadListener());
+            downloader.addArtifactDownloadListener(new BasePackageScanDownloadListener());
 
             // register as extension
             try {
