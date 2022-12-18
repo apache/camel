@@ -124,13 +124,6 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
         boolean original = route.getRouteId().equals(exchange.getFromRouteId());
         String arrow = original ? "*-->" : "--->";
 
-        // we need to capture original source:line-number
-        if (original && camelContext.isDebugging()) {
-            // TODO: use in dumpTrace
-            int line = route.getInput().getLineNumber();
-            String loc = route.getInput().getLocation();
-        }
-
         StringBuilder sb = new StringBuilder();
         sb.append(String.format(tracingFormat, arrow, route.getRouteId(), label));
         sb.append(" ");
