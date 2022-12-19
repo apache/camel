@@ -47,6 +47,11 @@ public final class XmlHelper {
         factory.setIgnoringElementContentWhitespace(true);
         factory.setIgnoringComments(true);
         try {
+            // disable DOCTYPE declaration:
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        } catch (ParserConfigurationException e) {
+        }
+        try {
             // Set secure processing
             factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
         } catch (ParserConfigurationException e) {
