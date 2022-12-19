@@ -103,6 +103,9 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("thread-dump", new CommandLine(new CamelThreadDump(main)))
                         .addSubcommand("logger", new CommandLine(new LoggerAction(main)))
                         .addSubcommand("gc", new CommandLine(new CamelGCAction(main))))
+                .addSubcommand("dependency", new CommandLine(new DependencyCommand(main))
+                        .addSubcommand("list", new CommandLine(new DependencyList(main)))
+                        .addSubcommand("copy", new CommandLine(new DependencyCopy(main))))
                 .addSubcommand("generate", new CommandLine(new CodeGenerator(main))
                         .addSubcommand("rest", new CommandLine(new CodeRestGenerator(main))))
                 .addSubcommand("catalog", new CommandLine(new CatalogCommand(main))
@@ -116,7 +119,7 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("hawtio", new CommandLine(new Hawtio(main)))
                 .addSubcommand("bind", new CommandLine(new Bind(main)))
                 .addSubcommand("pipe", new CommandLine(new Pipe(main)))
-                .addSubcommand("dependencies", new CommandLine(new DependencyTree(main)))
+                .addSubcommand("dependencies", new CommandLine(new DependencyList(main)))
                 .addSubcommand("export", new CommandLine(new Export(main)))
                 .addSubcommand("completion", new CommandLine(new Complete(main)));
 
