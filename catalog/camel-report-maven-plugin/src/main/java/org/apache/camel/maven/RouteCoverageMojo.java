@@ -34,6 +34,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -564,19 +565,32 @@ public class RouteCoverageMojo extends AbstractExecMojo {
     }
 
     private static Document createDocument() throws ParserConfigurationException {
-        DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
-        documentFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-        documentFactory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        // turn off validator and loading external dtd
+        dbf.setValidating(false);
+        dbf.setNamespaceAware(true);
+        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        dbf.setFeature("http://xml.org/sax/features/namespaces", false);
+        dbf.setFeature("http://xml.org/sax/features/validation", false);
+        dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+        dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        dbf.setXIncludeAware(false);
+        dbf.setExpandEntityReferences(false);
 
-        DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
+        DocumentBuilder documentBuilder = dbf.newDocumentBuilder();
         return documentBuilder.newDocument();
     }
 
     private static void createJacocoXmlFile(Document document, File file) throws TransformerException {
         String xmlFilePath = file.toString() + "/xmlJacoco.xml";
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        transformerFactory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        Transformer transformer = transformerFactory.newTransformer();
+        TransformerFactory factory = TransformerFactory.newInstance();
+        factory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+        Transformer transformer = factory.newTransformer();
         DOMSource domSource = new DOMSource(document);
         StreamResult streamResult = new StreamResult(new File(xmlFilePath));
 

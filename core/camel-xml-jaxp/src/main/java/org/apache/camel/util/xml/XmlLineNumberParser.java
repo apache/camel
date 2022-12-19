@@ -116,12 +116,20 @@ public final class XmlLineNumberParser {
         SAXParser parser;
         final SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        factory.setFeature("http://xml.org/sax/features/namespaces", false);
+        factory.setFeature("http://xml.org/sax/features/validation", false);
+        factory.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+        factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
         parser = factory.newSAXParser();
         final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         // turn off validator and loading external dtd
         dbf.setValidating(false);
         dbf.setNamespaceAware(true);
         dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
         dbf.setFeature("http://xml.org/sax/features/namespaces", false);
         dbf.setFeature("http://xml.org/sax/features/validation", false);
         dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
