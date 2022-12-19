@@ -43,8 +43,6 @@ public class ECS2Component extends DefaultComponent {
 
     public ECS2Component(CamelContext context) {
         super(context);
-
-        registerExtension(new ECS2ComponentVerifierExtension());
     }
 
     @Override

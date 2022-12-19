@@ -82,7 +82,7 @@ public class ECS2Endpoint extends ScheduledPollEndpoint {
             healthCheckRepository.removeHealthCheck(clientHealthCheck);
             clientHealthCheck = null;
         }
-        
+
         if (ObjectHelper.isEmpty(configuration.getEcsClient())) {
             if (ecsClient != null) {
                 ecsClient.close();
