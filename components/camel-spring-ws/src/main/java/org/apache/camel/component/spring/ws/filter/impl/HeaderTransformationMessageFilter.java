@@ -89,7 +89,6 @@ public class HeaderTransformationMessageFilter implements MessageFilter {
                 TransformerFactory transformerFactory = getTransformerFactory(context);
                 Transformer transformer = transformerFactory.newTransformer(stylesheetResource);
 
-
                 addParameters(inOrOut, transformer);
 
                 transformer.transform(soapMessage.getSoapHeader().getSource(), soapMessage.getSoapHeader().getResult());
