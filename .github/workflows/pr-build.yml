@@ -77,6 +77,8 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
+      - id: install-packages
+        uses: ./.github/actions/install-packages
       - id: install-mvnd
         uses: ./.github/actions/install-mvnd
       - name: Set up JDK ${{ matrix.java }}
