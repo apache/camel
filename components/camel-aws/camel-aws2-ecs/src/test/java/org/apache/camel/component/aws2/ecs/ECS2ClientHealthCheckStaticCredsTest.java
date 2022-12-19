@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
-import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
+import static org.awaitility.Awaitility.await;
 
 public class ECS2ClientHealthCheckStaticCredsTest extends CamelTestSupport {
 
@@ -66,7 +66,7 @@ public class ECS2ClientHealthCheckStaticCredsTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:listClusters")
-                        .to("aws2-eks://test?operation=listClusters&region=l&secretKey=l&accessKey=k");
+                        .to("aws2-ecs://test?operation=listClusters&region=l&secretKey=l&accessKey=k");
             }
         };
     }
@@ -82,15 +82,15 @@ public class ECS2ClientHealthCheckStaticCredsTest extends CamelTestSupport {
         await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> {
             Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
             boolean down = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
-            boolean containsAws2AthenaHealthCheck = res2.stream()
-                    .filter(result -> result.getCheck().getId().startsWith("aws2-eks-client"))
+            boolean containsAws2EcsHealthCheck = res2.stream()
+                    .filter(result -> result.getCheck().getId().startsWith("aws2-ecs-client"))
                     .findAny()
                     .isPresent();
             boolean hasRegionMessage = res2.stream()
                     .anyMatch(r -> r.getMessage().stream().anyMatch(msg -> msg.contains("region")));
             Assertions.assertTrue(down, "liveness check");
-            Assertions.assertTrue(containsAws2AthenaHealthCheck, "aws2-eks check");
-            Assertions.assertTrue(hasRegionMessage, "aws2-eks check error message");
+            Assertions.assertTrue(containsAws2EcsHealthCheck, "aws2-ecs check");
+            Assertions.assertTrue(hasRegionMessage, "aws2-ecs check error message");
         });
 
     }
