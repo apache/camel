@@ -17,6 +17,9 @@
 
 package org.apache.camel.component.aws2.ecs;
 
+import java.util.Collection;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.health.HealthCheck;
@@ -28,9 +31,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Collection;
-import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
 
