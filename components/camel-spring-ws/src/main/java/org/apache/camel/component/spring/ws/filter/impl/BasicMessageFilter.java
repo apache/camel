@@ -60,9 +60,6 @@ public class BasicMessageFilter implements MessageFilter {
 
     /**
      * If applicable this method adds a SOAP headers and attachments.
-     * 
-     * @param inOrOut
-     * @param response
      */
     protected void processHeaderAndAttachments(AttachmentMessage inOrOut, WebServiceMessage response) {
 
@@ -75,9 +72,6 @@ public class BasicMessageFilter implements MessageFilter {
 
     /**
      * If applicable this method adds a SOAP header.
-     * 
-     * @param inOrOut
-     * @param soapMessage
      */
     protected void processSoapHeader(AttachmentMessage inOrOut, SoapMessage soapMessage) {
         boolean isHeaderAvailable = inOrOut != null && inOrOut.getHeaders() != null && !inOrOut.getHeaders().isEmpty();
@@ -107,7 +101,7 @@ public class BasicMessageFilter implements MessageFilter {
         headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_REPLY_TO);
         headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_FAULT_ACTION);
         headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_OUTPUT_ACTION);
-        // This gets repeated again in the below 'for loop' and gets added as attribute to soapenv:header. 
+        // This gets repeated in the below 'for loop' and gets added as attribute to soapenv:header.
         // This would have already been processed in SpringWebserviceProducer/Consumer instance.
         headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_SOAP_HEADER);
 
@@ -134,9 +128,6 @@ public class BasicMessageFilter implements MessageFilter {
 
     /**
      * Populate SOAP attachments from in or out exchange message. This the convenient method for overriding.
-     * 
-     * @param inOrOut
-     * @param response
      */
     protected void doProcessSoapAttachments(AttachmentMessage inOrOut, SoapMessage response) {
         if (inOrOut.hasAttachments()) {
