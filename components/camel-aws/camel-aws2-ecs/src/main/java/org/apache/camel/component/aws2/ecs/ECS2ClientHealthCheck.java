@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.aws2.ecs;
 
+import java.util.Map;
+
 import org.apache.camel.component.aws2.ecs.client.ECS2ClientFactory;
 import org.apache.camel.component.aws2.ecs.client.ECS2InternalClient;
 import org.apache.camel.health.HealthCheckResultBuilder;
@@ -26,8 +28,6 @@ import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.ecs.EcsClient;
 import software.amazon.awssdk.services.ecs.model.ListClustersRequest;
-
-import java.util.Map;
 
 public class ECS2ClientHealthCheck extends AbstractHealthCheck {
 
