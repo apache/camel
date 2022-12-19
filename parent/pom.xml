@@ -351,7 +351,7 @@
         <kotlin-version>1.7.20</kotlin-version>
         <kubernetes-client-version>6.3.1</kubernetes-client-version>
         <kubernetes-model-version>6.3.1</kubernetes-model-version>
-        <kudu-version>1.15.0</kudu-version>
+        <kudu-version>1.16.0</kudu-version>
         <leveldbjni-version>1.8</leveldbjni-version>
         <leveldb-api-version>0.12</leveldb-api-version>
         <leveldb-version>0.12</leveldb-version>
