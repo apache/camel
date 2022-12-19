@@ -16,14 +16,13 @@
  */
 package org.apache.camel.component.sjms.consumer;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.pool.PooledConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
+import org.messaginghub.pooled.jms.JmsPoolConnectionFactory;
 
 public class InOnlyTopicDurableConsumerTest extends JmsTestSupport {
 
@@ -51,7 +50,8 @@ public class InOnlyTopicDurableConsumerTest extends JmsTestSupport {
         SjmsComponent sjms = context.getComponent("sjms", SjmsComponent.class);
 
         // need to use a pooled CF so we reuse same connection for multiple client connections
-        PooledConnectionFactory pcf = new PooledConnectionFactory((ActiveMQConnectionFactory) sjms.getConnectionFactory());
+        JmsPoolConnectionFactory pcf = new JmsPoolConnectionFactory();
+        pcf.setConnectionFactory(sjms.getConnectionFactory());
         sjms.setConnectionFactory(pcf);
         sjms.setClientId(CONNECTION_ID);
 

@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.jms.Destination;
 
-import org.apache.activemq.command.ActiveMQQueue;
+import org.apache.activemq.artemis.jms.client.ActiveMQQueue;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -246,7 +246,7 @@ public class JmsProducerWithJMSHeaderTest extends AbstractJMSTest {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        assertEquals("queue://fooJmsProducerWithJMSHeaderTest",
+        assertEquals("ActiveMQQueue[fooJmsProducerWithJMSHeaderTest]",
                 mock.getReceivedExchanges().get(0).getIn().getHeader("JMSDestination", Destination.class).toString());
     }
 
@@ -261,7 +261,7 @@ public class JmsProducerWithJMSHeaderTest extends AbstractJMSTest {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        assertEquals("queue://fooJmsProducerWithJMSHeaderTest",
+        assertEquals("ActiveMQQueue[fooJmsProducerWithJMSHeaderTest]",
                 mock.getReceivedExchanges().get(0).getIn().getHeader("JMSDestination", Destination.class).toString());
     }
 
@@ -301,7 +301,7 @@ public class JmsProducerWithJMSHeaderTest extends AbstractJMSTest {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        assertEquals("queue://bJmsProducerWithJMSHeaderTest",
+        assertEquals("ActiveMQQueue[bJmsProducerWithJMSHeaderTest]",
                 mock.getReceivedExchanges().get(0).getIn().getHeader("JMSDestination", Destination.class).toString());
     }
 

@@ -21,7 +21,7 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
+import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
 import org.apache.camel.throttling.ThrottlingInflightRoutePolicy;
 import org.junit.jupiter.api.Test;
 

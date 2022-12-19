@@ -24,8 +24,7 @@ import javax.jms.Connection;
 import javax.jms.MessageConsumer;
 import javax.jms.Session;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.broker.BrokerService;
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -34,11 +33,8 @@ import org.apache.camel.component.sjms.jms.DefaultDestinationCreationStrategy;
 import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
 import org.apache.camel.component.sjms.jms.Jms11ObjectFactory;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
-import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
-import org.apache.camel.test.infra.activemq.services.ActiveMQService;
-import org.apache.camel.test.infra.activemq.services.ActiveMQServiceFactory;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -52,10 +48,7 @@ import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
  */
 public class JmsTestSupport extends CamelTestSupport {
     @RegisterExtension
-    public ActiveMQService service = ActiveMQServiceFactory
-            .builder()
-            .addLocalMapping(JmsTestSupport::customEmbeddedService)
-            .build();
+    public ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -70,22 +63,6 @@ public class JmsTestSupport extends CamelTestSupport {
     private Connection connection;
     private Session session;
     private DestinationCreationStrategy destinationCreationStrategy = new DefaultDestinationCreationStrategy();
-
-    // When running locally, uses this to construct the service, otherwise uses whatever is set remotely
-    private static ActiveMQEmbeddedService customEmbeddedService() {
-        return ActiveMQEmbeddedServiceBuilder
-                .bare()
-                .withPersistent(false)
-                .withUseJmx(false)
-                .withDeleteAllMessagesOnStartup(true)
-                .withTcpTransport()
-                .withCustomSetup(JmsTestSupport::configureBroker)
-                .buildWithRecycle();
-    }
-
-    private static void configureBroker(BrokerService broker) {
-        broker.getManagementContext().setConnectorPort(AvailablePortFinder.getNextAvailable());
-    }
 
     /**
      * Set up the Broker
@@ -109,7 +86,7 @@ public class JmsTestSupport extends CamelTestSupport {
 
     protected void setupFactoryExternal(ActiveMQConnectionFactory factory) {
         if (service.userName() != null) {
-            factory.setUserName(service.userName());
+            factory.setUser(service.userName());
         }
 
         if (service.password() != null) {

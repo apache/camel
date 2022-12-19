@@ -28,8 +28,9 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.infra.activemq.services.ActiveMQService;
-import org.apache.camel.test.infra.activemq.services.ActiveMQServiceFactory;
+import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.concurrent.ThreadHelper;
 import org.junit.jupiter.api.Tag;
@@ -41,7 +42,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper.createConnectionFactory;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -57,7 +57,7 @@ class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(JmsDefaultTaskExecutorTypeTest.class);
 
     @RegisterExtension
-    public ActiveMQService service = ActiveMQServiceFactory.createPersistentVMService();
+    public ArtemisService service = ArtemisServiceFactory.createPersistentVMService();
 
     @Test
     void testThreadPoolTaskExecutor() throws Exception {
@@ -130,7 +130,7 @@ class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = createConnectionFactory(service);
+        ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(service);
         JmsComponent jmsComponent = jmsComponentAutoAcknowledge(connectionFactory);
         jmsComponent.getConfiguration().setMaxMessagesPerTask(1);
         jmsComponent.getConfiguration().setIdleTaskExecutionLimit(1);

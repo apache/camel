@@ -23,7 +23,7 @@ import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.TextMessage;
 
-import org.apache.activemq.command.ActiveMQQueue;
+import org.apache.activemq.artemis.jms.client.ActiveMQQueue;
 import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consume;
