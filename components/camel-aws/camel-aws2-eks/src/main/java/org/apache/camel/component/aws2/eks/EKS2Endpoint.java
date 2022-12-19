@@ -78,7 +78,6 @@ public class EKS2Endpoint extends ScheduledPollEndpoint {
 
     @Override
     public void doStop() throws Exception {
-
         if (healthCheckRepository != null && clientHealthCheck != null) {
             healthCheckRepository.removeHealthCheck(clientHealthCheck);
             clientHealthCheck = null;
