@@ -1262,8 +1262,9 @@ Get bulk query job results. `jobId` parameter is required. Accepts
 | Parameter | Type | Description| Default| Required
 
 | `jobId` | `String` | Id of Job to get results for | | x
-| `maxRecords` | `Integer` | Id of Job to get results for | |
-| `locator` | `locator` | Value to use for subsequent calls | |
+| `maxRecords` | `Integer` | The maximum number of records to retrieve per set of results for the query. The request is still subject to the size limits. If you are working with a very large number of query results, you may experience a timeout before receiving all the data from Salesforce. To prevent a timeout, specify the maximum number of records your client is expecting to receive in the maxRecords parameter. This splits the results into smaller sets with this value as the maximum size. | |
+| `locator` | `locator` | A string that identifies a specific set of query results. Providing a value for this parameter returns only that set of results.
+Omitting this parameter returns the first set of results. | |
 |===
 
 *Output*
