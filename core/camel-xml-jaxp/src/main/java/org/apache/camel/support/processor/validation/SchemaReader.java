@@ -182,6 +182,7 @@ public class SchemaReader {
             try {
                 LOG.debug("Configuring SchemaFactory to not allow access to external DTD/Schema");
                 factory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+                factory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
             } catch (SAXException e) {
                 LOG.warn(e.getMessage(), e);
             }

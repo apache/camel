@@ -76,9 +76,8 @@ public class ValidatingProcessor extends AsyncProcessorSupport {
     }
 
     public ValidatingProcessor(SchemaReader schemaReader) {
-        // schema reader can be a singelton per schema, therefore make reuse,
-        // see
-        // ValidatorEndpoint and ValidatorProducer
+        // schema reader can be a singleton per schema, therefore make reuse,
+        // see ValidatorEndpoint and ValidatorProducer
         this.schemaReader = schemaReader;
     }
 
@@ -144,8 +143,7 @@ public class ValidatingProcessor extends AsyncProcessorSupport {
             }
 
             // CAMEL-7036 We don't need to set the result if the source is an
-            // instance of
-            // StreamSource
+            // instance of StreamSource
             if (source instanceof DOMSource) {
                 result = new DOMResult();
             } else if (source instanceof SAXSource) {
@@ -157,8 +155,7 @@ public class ValidatingProcessor extends AsyncProcessorSupport {
             if (source != null) {
                 // create a new errorHandler and set it on the validator
                 // must be a local instance to avoid problems with concurrency
-                // (to be
-                // thread safe)
+                // (to be thread safe)
                 ValidatorErrorHandler handler = errorHandler.getClass().getDeclaredConstructor().newInstance();
                 validator.setErrorHandler(handler);
 
@@ -167,7 +164,7 @@ public class ValidatingProcessor extends AsyncProcessorSupport {
                     validator.validate(source, result);
                     handler.handleErrors(exchange, schema, result);
                 } catch (SAXParseException e) {
-                    // can be thrown for non well formed XML
+                    // can be thrown for non-well-formed XML
                     throw new SchemaValidationException(
                             exchange, schema, Collections.singletonList(e), Collections.<SAXParseException> emptyList(),
                             Collections.<SAXParseException> emptyList());
