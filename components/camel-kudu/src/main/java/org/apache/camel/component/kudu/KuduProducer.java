@@ -20,13 +20,17 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.kudu.ColumnSchema;
 import org.apache.kudu.Schema;
 import org.apache.kudu.client.CreateTableOptions;
+import org.apache.kudu.client.Delete;
 import org.apache.kudu.client.Insert;
 import org.apache.kudu.client.KuduClient;
 import org.apache.kudu.client.KuduException;
 import org.apache.kudu.client.KuduTable;
 import org.apache.kudu.client.PartialRow;
+import org.apache.kudu.client.Update;
+import org.apache.kudu.client.Upsert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +60,15 @@ public class KuduProducer extends DefaultProducer {
         switch (endpoint.getOperation()) {
             case INSERT:
                 doInsert(exchange, table);
+                break;
+            case DELETE:
+                doDelete(exchange, table);
+                break;
+            case UPDATE:
+                doUpdate(exchange, table);
+                break;
+            case UPSERT:
+                doUpsert(exchange, table);
                 break;
             case CREATE_TABLE:
                 doCreateTable(exchange, table);
@@ -90,6 +103,68 @@ public class KuduProducer extends DefaultProducer {
         connection.newSession().apply(insert);
     }
 
+
+    private void doDelete(Exchange exchange, String tableName) throws KuduException {
+        LOG.trace("Delete on table {}", tableName);
+        KuduClient connection = endpoint.getKuduClient();
+        KuduTable table = connection.openTable(tableName);
+
+        Delete delete = table.newDelete();
+        PartialRow row = delete.getRow();
+
+        Map<?, ?> rows = exchange.getIn().getBody(Map.class);
+        for (Map.Entry<?, ?> entry : rows.entrySet()) {
+            final String colName = entry.getKey().toString();
+            final Object value = entry.getValue();
+            ColumnSchema column = table.getSchema().getColumn(colName);
+            if (column != null && column.isKey()) {
+                row.addObject(colName, value);
+            }
+        }
+
+        connection.newSession().apply(delete);
+    }
+
+    private void doUpdate(Exchange exchange, String tableName) throws KuduException {
+        LOG.trace("Update on table {}", tableName);
+        KuduClient connection = endpoint.getKuduClient();
+        KuduTable table = connection.openTable(tableName);
+
+        Update update = table.newUpdate();
+        PartialRow row = update.getRow();
+
+        Map<?, ?> rows = exchange.getIn().getBody(Map.class);
+        for (Map.Entry<?, ?> entry : rows.entrySet()) {
+            final String colName = entry.getKey().toString();
+            final Object value = entry.getValue();
+            if (table.getSchema().getColumn(colName) != null) {
+                row.addObject(colName, value);
+            }
+        }
+
+        connection.newSession().apply(update);
+    }
+
+    private void doUpsert(Exchange exchange, String tableName) throws KuduException {
+        LOG.trace("Upsert on table {}", tableName);
+        KuduClient connection = endpoint.getKuduClient();
+        KuduTable table = connection.openTable(tableName);
+
+        Upsert upsert = table.newUpsert();
+        PartialRow row = upsert.getRow();
+
+        Map<?, ?> rows = exchange.getIn().getBody(Map.class);
+        for (Map.Entry<?, ?> entry : rows.entrySet()) {
+            final String colName = entry.getKey().toString();
+            final Object value = entry.getValue();
+            if (table.getSchema().getColumn(colName) != null) {
+                row.addObject(colName, value);
+            }
+        }
+
+        connection.newSession().apply(upsert);
+    }
+
     private void doCreateTable(Exchange exchange, String tableName) throws KuduException {
         LOG.trace("Creating table {}", tableName);
         KuduClient connection = endpoint.getKuduClient();
@@ -98,7 +173,6 @@ public class KuduProducer extends DefaultProducer {
         CreateTableOptions builder = (CreateTableOptions) exchange.getIn()
                 .getHeader(KuduConstants.CAMEL_KUDU_TABLE_OPTIONS);
         connection.createTable(tableName, schema, builder);
-
     }
 
     private void doScan(Exchange exchange, String tableName) throws KuduException {
