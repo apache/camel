@@ -33,6 +33,22 @@
 
     <profiles>
         <profile>
+            <id>jdk17-build</id>
+            <activation>
+                <jdk>[17,)</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <argLine>--add-opens java.base/java.net=ALL-UNNAMED</argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <!-- kudu-binary is not available for Windows. It is needed for tests, so skip that -->
             <id>Windows</id>
             <activation>
