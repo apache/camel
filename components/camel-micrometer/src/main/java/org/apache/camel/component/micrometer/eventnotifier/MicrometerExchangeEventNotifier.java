@@ -67,10 +67,10 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
     public void notify(CamelEvent eventObject) {
         if (!(getIgnoreExchanges().test(((ExchangeEvent) eventObject).getExchange()))) {
             handleExchangeEvent((ExchangeEvent) eventObject);
-            if (eventObject instanceof ExchangeSentEvent) {
-                handleSentEvent((ExchangeSentEvent) eventObject);
-            } else if (eventObject instanceof ExchangeCreatedEvent) {
+            if (eventObject instanceof ExchangeCreatedEvent) {
                 handleCreatedEvent((ExchangeCreatedEvent) eventObject);
+            } else if (eventObject instanceof ExchangeSentEvent) {
+                handleSentEvent((ExchangeSentEvent) eventObject);
             } else if (eventObject instanceof ExchangeCompletedEvent || eventObject instanceof ExchangeFailedEvent) {
                 handleDoneEvent((ExchangeEvent) eventObject);
             }
@@ -92,7 +92,9 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
     protected void handleSentEvent(ExchangeSentEvent sentEvent) {
         String name = namingStrategy.getName(sentEvent.getExchange(), sentEvent.getEndpoint());
         Tags tags = namingStrategy.getTags(sentEvent, sentEvent.getEndpoint());
-        getMeterRegistry().timer(name, tags).record(sentEvent.getTimeTaken(), TimeUnit.MILLISECONDS);
+        Timer timer = Timer.builder(name).tags(tags).description("Time taken to send message to the endpoint")
+                .register(getMeterRegistry());
+        timer.record(sentEvent.getTimeTaken(), TimeUnit.MILLISECONDS);
     }
 
     protected void handleCreatedEvent(ExchangeCreatedEvent createdEvent) {
