@@ -103,7 +103,6 @@ public class KuduProducer extends DefaultProducer {
         connection.newSession().apply(insert);
     }
 
-
     private void doDelete(Exchange exchange, String tableName) throws KuduException {
         LOG.trace("Delete on table {}", tableName);
         KuduClient connection = endpoint.getKuduClient();
