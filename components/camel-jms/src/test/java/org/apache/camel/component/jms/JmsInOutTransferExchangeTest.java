@@ -19,7 +19,7 @@ package org.apache.camel.component.jms;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.activemq.command.ActiveMQObjectMessage;
+import org.apache.activemq.artemis.jms.client.ActiveMQObjectMessage;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;

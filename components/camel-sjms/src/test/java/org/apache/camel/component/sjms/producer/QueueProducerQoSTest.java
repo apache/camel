@@ -19,12 +19,10 @@ package org.apache.camel.component.sjms.producer;
 import javax.jms.Connection;
 import javax.jms.Session;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.broker.BrokerService;
-import org.apache.activemq.broker.jmx.DestinationViewMBean;
-import org.apache.activemq.broker.region.policy.PolicyEntry;
-import org.apache.activemq.broker.region.policy.PolicyMap;
-import org.apache.activemq.command.ActiveMQQueue;
+import org.apache.activemq.artemis.api.core.SimpleString;
+import org.apache.activemq.artemis.core.config.Configuration;
+import org.apache.activemq.artemis.core.settings.impl.AddressSettings;
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
@@ -32,8 +30,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.jms.DefaultDestinationCreationStrategy;
 import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
-import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
-import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
+import org.apache.camel.test.infra.artemis.services.ArtemisEmbeddedServiceBuilder;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -53,15 +51,10 @@ public class QueueProducerQoSTest extends CamelTestSupport {
     private static final String MOCK_EXPIRED_ADVISORY = "mock:expiredAdvisory";
 
     @RegisterExtension
-    public ActiveMQEmbeddedService service = ActiveMQEmbeddedServiceBuilder
-            .bare()
+    public ArtemisService service = new ArtemisEmbeddedServiceBuilder()
             .withPersistent(true)
-            .withUseJmx(true)
-            .withDeleteAllMessagesOnStartup(true)
-            .withAdvisorySupport(true)
-            .withTcpTransport()
-            .withCustomSetup(this::configureBroker)
-            .buildWithRecycle();
+            .withCustomConfiguration(configuration -> configureArtemis(configuration))
+            .build();
 
     protected ActiveMQConnectionFactory connectionFactory;
 
@@ -106,8 +99,9 @@ public class QueueProducerQoSTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DestinationViewMBean queue = service.getQueueMBean(TEST_INOUT_DESTINATION_NAME);
-        assertEquals(0, queue.getQueueSize(),
+        //TODO - I've exposed service.getMBeanServer(), do you think it  can be used here?
+        //        DestinationViewMBean queue = service.getQueueMBean(TEST_INOUT_DESTINATION_NAME);
+        assertEquals(0, service.countMessages(TEST_INOUT_DESTINATION_NAME),
                 "There were unexpected messages left in the queue: " + TEST_INOUT_DESTINATION_NAME);
     }
 
@@ -120,23 +114,17 @@ public class QueueProducerQoSTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DestinationViewMBean queue = service.getQueueMBean(TEST_INONLY_DESTINATION_NAME);
-        assertEquals(0, queue.getQueueSize(),
+        assertEquals(0, service.countMessages(TEST_INONLY_DESTINATION_NAME),
                 "There were unexpected messages left in the queue: " + TEST_INONLY_DESTINATION_NAME);
     }
 
-    protected void configureBroker(BrokerService broker) {
-        LOG.debug("Reconfiguring the broker");
-
-        // configure expiration rate
-        ActiveMQQueue queueName = new ActiveMQQueue(">");
-        PolicyEntry entry = new PolicyEntry();
-        entry.setDestination(queueName);
-        entry.setExpireMessagesPeriod(1000);
-
-        PolicyMap policyMap = new PolicyMap();
-        policyMap.put(queueName, entry);
-        broker.setDestinationPolicy(policyMap);
+    private static Configuration configureArtemis(Configuration configuration) {
+        return configuration.addAddressSetting("#",
+                new AddressSettings()
+                        .setDeadLetterAddress(SimpleString.toSimpleString("DLQ"))
+                        .setExpiryAddress(SimpleString.toSimpleString("ExpiryQueue"))
+                        .setExpiryDelay(1000L))
+                .setMessageExpiryScanPeriod(500L);
     }
 
     @Override
@@ -144,7 +132,7 @@ public class QueueProducerQoSTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("sjms:topic:ActiveMQ.Advisory.Expired.Queue.>")
+                from("sjms:topic:ExpiryQueue")
                         .routeId(EXPIRED_MESSAGE_ROUTE_ID)
                         .log("Expired message")
                         .to(MOCK_EXPIRED_ADVISORY);

@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Queue;
 
 import org.apache.camel.Body;
 import org.apache.camel.Consume;
@@ -33,10 +34,10 @@ public class JmsRequestReplyManualWithJMSReplyToTest extends AbstractJMSTest {
     }
 
     @Consume("activemq:queue:fooJmsRequestReplyManualWithJMSReplyToTest")
-    public void doSomething(@Header("JMSReplyTo") Destination jmsReplyTo, @Body String body) {
+    public void doSomething(@Header("JMSReplyTo") Queue jmsReplyTo, @Body String body) throws JMSException {
         assertEquals("Hello World", body);
 
-        String endpointName = "activemq:" + jmsReplyTo.toString();
+        String endpointName = "activemq:" + jmsReplyTo.getQueueName();
         template.sendBody(endpointName, "Bye World");
     }
 

@@ -24,9 +24,9 @@ import org.apache.camel.Handler;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
-import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
-import org.apache.camel.test.infra.activemq.services.ActiveMQService;
-import org.apache.camel.test.infra.activemq.services.ActiveMQServiceFactory;
+import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @Tags({ @Tag("not-parallel"), @Tag("transaction") })
 public class JmsTransactedDeadLetterChannelHandlerRollbackOnExceptionTest extends CamelTestSupport {
     @RegisterExtension
-    public ActiveMQService service = ActiveMQServiceFactory.createVMServiceInstance();
+    public ArtemisService service = ArtemisServiceFactory.createVMService();
 
     public static class BadErrorHandler {
         @Handler
@@ -79,7 +79,7 @@ public class JmsTransactedDeadLetterChannelHandlerRollbackOnExceptionTest extend
 
         // as we handle new exception, then the exception is ignored
         // and causes the transaction to commit, so there is no message in the ActiveMQ DLQ queue
-        Object dlqBody = consumer.receiveBody("activemq:ActiveMQ.DLQ", 2000);
+        Object dlqBody = consumer.receiveBody("activemq:DLQ", 2000);
         assertNull(dlqBody, "Should not rollback the transaction");
     }
 

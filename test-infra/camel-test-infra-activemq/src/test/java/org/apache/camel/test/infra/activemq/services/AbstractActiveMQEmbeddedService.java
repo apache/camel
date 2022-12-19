@@ -27,6 +27,7 @@ import javax.management.ObjectName;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.jmx.DestinationViewMBean;
 import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
+import org.apache.camel.test.infra.messaging.services.ConnectionFactoryAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

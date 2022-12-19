@@ -16,18 +16,23 @@
  */
 package org.apache.camel.component.sjms;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class SjmsComponentRestartTest extends CamelTestSupport {
 
+    @RegisterExtension
+    public ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
     @BindToRegistry("activemqCF")
     private ActiveMQConnectionFactory connectionFactory
-            = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
+            = new ActiveMQConnectionFactory(service.serviceAddress());
 
     @Override
     protected boolean useJmx() {
