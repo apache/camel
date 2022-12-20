@@ -40,6 +40,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(firstVersion = "1.3.0", label = "dataformat,transformation,xml,json", title = "XStream")
 @XmlRootElement(name = "xstream")
 @XmlAccessorType(XmlAccessType.NONE)
+@Deprecated
 public class XStreamDataFormat extends DataFormatDefinition implements ContentTypeHeaderAware {
 
     @XmlAttribute
@@ -315,6 +316,7 @@ public class XStreamDataFormat extends DataFormatDefinition implements ContentTy
      * {@code Builder} is a specific builder for {@link XStreamDataFormat}.
      */
     @XmlTransient
+    @Deprecated
     public static class Builder implements DataFormatBuilder<XStreamDataFormat> {
 
         private String permissions;

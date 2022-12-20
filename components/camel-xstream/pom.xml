@@ -29,7 +29,7 @@
 
     <artifactId>camel-xstream</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: XStream</name>
+    <name>Camel :: XStream (deprecated)</name>
     <description>Camel XStream support</description>
 
     <properties>

@@ -4,7 +4,7 @@
     "name": "xstream",
     "title": "XStream",
     "description": "Marshal and unmarshal POJOs to\/from XML using XStream library.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "1.3.0",
     "label": "dataformat,transformation,xml,json",
     "javaType": "org.apache.camel.model.dataformat.XStreamDataFormat",

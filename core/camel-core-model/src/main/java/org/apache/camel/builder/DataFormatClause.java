@@ -929,6 +929,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      * <p/>
      * Favor using {@link #xstream(String)} to pass in a permission
      */
+    @Deprecated
     public T xstream() {
         return dataFormat(new XStreamDataFormat());
     }
@@ -950,6 +951,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the xstream by setting the encoding
      */
+    @Deprecated
     public T xstream(String encoding, String permission) {
         XStreamDataFormat xdf = new XStreamDataFormat();
         xdf.setPermissions(permission);
