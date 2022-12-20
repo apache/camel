@@ -92,7 +92,7 @@ public class BatchGoogleMailClientFactory implements GoogleMailClientFactory {
                     .fromStream(ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, serviceAccountKey),
                             transport,
                             jsonFactory)
-                    .createScoped(scopes != null && scopes.size() != 0 ? scopes : null)
+                    .createScoped(scopes != null && !scopes.isEmpty() ? scopes : null)
                     .createDelegated(delegate);
             cred.refreshToken();
             return cred;

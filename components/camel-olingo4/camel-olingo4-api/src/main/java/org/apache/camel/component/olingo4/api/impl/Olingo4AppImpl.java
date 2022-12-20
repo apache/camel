@@ -515,7 +515,7 @@ public final class Olingo4AppImpl implements Olingo4App {
                         List<UriParameter> keyPredicates = uriResourceEntitySet.getKeyPredicates();
                         // Check result type: single Entity or EntitySet based
                         // on key predicate detection
-                        if (keyPredicates.size() >= 1) {
+                        if (!keyPredicates.isEmpty()) {
                             response = (T) odataReader.readEntity(content, getResourceContentType(uriInfo));
                         } else {
                             response = (T) odataReader.readEntitySet(content, getResourceContentType(uriInfo));

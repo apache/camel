@@ -203,7 +203,7 @@ public final class CamelAnnotationsHandler {
             }
         }
 
-        if (breakpoints.size() != 0) {
+        if (!breakpoints.isEmpty()) {
             CamelSpringTestHelper.doToSpringCamelContexts(context, new CamelSpringTestHelper.DoToSpringCamelContextsStrategy() {
 
                 public void execute(String contextName, SpringCamelContext camelContext)
