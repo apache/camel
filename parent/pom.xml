@@ -507,7 +507,7 @@
         <spring-version-range>[5,6)</spring-version-range>
         <spring-version>${spring5-version}</spring-version>
         <spring5-version>5.3.24</spring5-version>
-        <spring-rabbitmq-version>2.4.7</spring-rabbitmq-version>
+        <spring-rabbitmq-version>2.4.8</spring-rabbitmq-version>
         <spring-security-version>5.8.1</spring-security-version>
         <spring-ws-version>3.1.4</spring-ws-version>
         <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
