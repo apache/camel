@@ -24,6 +24,9 @@ final class VersionHelper {
     }
 
     public static boolean isGE(String source, String target) {
+        if (source == null || target == null) {
+            return false;
+        }
         String s1 = StringHelper.before(source, ".");
         String s2 = StringHelper.after(source, ".");
         if (s1 == null) {
