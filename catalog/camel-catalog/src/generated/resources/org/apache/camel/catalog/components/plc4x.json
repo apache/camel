@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "plc4x",
     "title": "PLC4X",
-    "description": "Camel PLC4X support",
+    "description": "Read and write to PLC devices",
     "deprecated": false,
     "firstVersion": "3.20.0",
     "label": "iot",

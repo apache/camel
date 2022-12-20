@@ -35,6 +35,9 @@ import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.exceptions.PlcRuntimeException;
 import org.apache.plc4x.java.utils.connectionpool.PooledPlcDriverManager;
 
+/**
+ * Read and write to PLC devices
+ */
 @UriEndpoint(scheme = "plc4x", firstVersion = "3.20.0", title = "PLC4X",
              syntax = "plc4x:driver", category = Category.IOT)
 public class Plc4XEndpoint extends DefaultEndpoint {
