@@ -61,6 +61,8 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
     private File outputFile;
     @Parameter(defaultValue = "true")
     private boolean kebabCase = true;
+    @Parameter(defaultValue = "true")
+    private boolean additionalProperties = true;
 
     private ObjectNode items;
     private ObjectNode definitions;
@@ -81,6 +83,9 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
         step = definitions.with("org.apache.camel.model.ProcessorDefinition")
                 .put("type", "object")
                 .put("maxProperties", 1);
+        if (!additionalProperties) {
+            step.put("additionalProperties", false);
+        }
 
         Map<String, ClassInfo> types = new TreeMap<>();
 
@@ -160,6 +165,9 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
         }
 
         objectDefinition.put("type", "object");
+        if (!additionalProperties) {
+            objectDefinition.put("additionalProperties", false);
+        }
 
         collectYamlProperties(properties, info);
 
