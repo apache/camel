@@ -116,7 +116,7 @@ public class DefaultExecCommandExecutor implements ExecCommandExecutor {
 
         executor.setExitValues(null);
         Set<Integer> exitValues = execCommand.getExitValues();
-        if (exitValues.size() > 0) {
+        if (!exitValues.isEmpty()) {
             executor.setExitValues(exitValues.stream().mapToInt(Integer::intValue).toArray());
         }
 

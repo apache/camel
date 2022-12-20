@@ -202,7 +202,7 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
             LookupEventsResponse response = cloudTrailClient.lookupEvents(lookupEventsRequest);
             List<Event> events = response.events();
 
-            if (events.size() > 0) {
+            if (!events.isEmpty()) {
                 lastTime = events.get(0).eventTime();
             }
 

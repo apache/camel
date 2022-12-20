@@ -1119,7 +1119,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             if (files == null) {
                 return false;
             }
-            return files.size() >= 1;
+            return !files.isEmpty();
         } catch (SftpException e) {
             // or an exception can be thrown with id 2 which means file does not
             // exists

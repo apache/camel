@@ -68,14 +68,12 @@ public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
 
         LookupEventsResponse response = getClient().lookupEvents(eventsRequestBuilder.build());
 
-        if (response.events().size() > 0) {
+        if (!response.events().isEmpty()) {
             lastTime = response.events().get(0).eventTime();
         }
 
         Queue<Exchange> exchanges = createExchanges(response.events());
-        int processedExchangeCount = processBatch(CastUtils.cast(exchanges));
-
-        return processedExchangeCount;
+        return processBatch(CastUtils.cast(exchanges));
     }
 
     @Override
