@@ -16,11 +16,15 @@
  */
 package org.apache.camel.openapi;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class User {
 
     private int id;
     private String name;
     private boolean alive;
+    @Schema(example = "44", nullable = true)
+    private Long age;
 
     public User() {
     }
@@ -53,5 +57,13 @@ public class User {
 
     public void setAlive(boolean alive) {
         this.alive = alive;
+    }
+
+    public Long getAge() {
+        return age;
+    }
+
+    public void setAge(Long age) {
+        this.age = age;
     }
 }

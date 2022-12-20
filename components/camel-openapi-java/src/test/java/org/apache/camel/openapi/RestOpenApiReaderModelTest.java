@@ -135,6 +135,8 @@ public class RestOpenApiReaderModelTest extends CamelTestSupport {
         assertTrue(json.contains("\"format\" : \"org.apache.camel.openapi.User\""));
         assertTrue(json.contains("\"type\" : \"string\""));
         assertTrue(json.contains("\"format\" : \"date\""));
+        assertTrue(json.contains("\"nullable\" : true"));
+        assertTrue(json.contains("\"example\" : 44"));
         assertFalse(json.contains("\"enum\""));
         context.stop();
     }

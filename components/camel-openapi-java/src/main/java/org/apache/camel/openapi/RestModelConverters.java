@@ -33,6 +33,7 @@ import io.apicurio.datamodels.openapi.v2.models.Oas20Schema;
 import io.apicurio.datamodels.openapi.v2.models.Oas20SchemaDefinition;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Discriminator;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Document;
+import io.apicurio.datamodels.openapi.v3.models.Oas30Schema;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30AnyOfSchema;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Schema.Oas30OneOfSchema;
 import io.apicurio.datamodels.openapi.v3.models.Oas30SchemaDefinition;
@@ -49,8 +50,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A Camel extended {@link ModelConverters} where we appending vendor extensions to include the java class name of the
- * model classes.
+ * A Camel extended {@link ModelConverters} where we are appending vendor extensions to include the java class name of
+ * the model classes.
  */
 @SuppressWarnings("rawtypes")
 public class RestModelConverters {
@@ -137,6 +138,10 @@ public class RestModelConverters {
             } else {
                 model.$ref = ref;
             }
+        }
+        Boolean nullable = schema.getNullable();
+        if (nullable != null && model instanceof Oas30Schema) {
+            ((Oas30Schema) model).nullable = nullable;
         }
 
         // xxxOf support
