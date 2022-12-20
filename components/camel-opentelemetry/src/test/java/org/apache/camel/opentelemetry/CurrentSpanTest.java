@@ -58,6 +58,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class CurrentSpanTest extends CamelOpenTelemetryTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(CurrentSpanTest.class);
+
     CurrentSpanTest() {
         super(new SpanTestData[0]);
     }
@@ -247,10 +248,12 @@ class CurrentSpanTest extends CamelOpenTelemetryTestSupport {
         String errorMessage = null;
         if (Span.current() instanceof ReadableSpan) {
             ReadableSpan readable = (ReadableSpan) Span.current();
-            errorMessage = String.format("Current span: name - '%s', kind - '%s', ended - `%s', id - '%s-%s', exchange id - '%s', thread - '%s'\n",
+            errorMessage = String.format(
+                    "Current span: name - '%s', kind - '%s', ended - `%s', id - '%s-%s', exchange id - '%s', thread - '%s'\n",
                     readable.getName(), readable.getKind(), readable.hasEnded(),
                     readable.getSpanContext().getTraceId(), readable.getSpanContext().getSpanId(),
-                    ActiveSpanManager.getSpan(exc).traceId(), ActiveSpanManager.getSpan(exc).spanId(), Thread.currentThread().getName());
+                    ActiveSpanManager.getSpan(exc).traceId(), ActiveSpanManager.getSpan(exc).spanId(),
+                    Thread.currentThread().getName());
 
         }
 

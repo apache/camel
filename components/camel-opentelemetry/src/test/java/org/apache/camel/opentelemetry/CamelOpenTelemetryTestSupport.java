@@ -194,6 +194,7 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
 
     private static class LoggingSpanProcessor implements SpanProcessor {
         private static final Logger LOG = LoggerFactory.getLogger(LoggingSpanProcessor.class);
+
         @Override
         public void onStart(Context context, ReadWriteSpan readWriteSpan) {
             LOG.debug("Span started: name - '{}', kind - '{}', id - '{}-{}", readWriteSpan.getName(), readWriteSpan.getKind(),
@@ -207,7 +208,7 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
 
         @Override
         public void onEnd(ReadableSpan readableSpan) {
-            LOG.debug("Span ended: name - '{}', kind - '{}', id - '{}-{}",  readableSpan.getName(), readableSpan.getKind(),
+            LOG.debug("Span ended: name - '{}', kind - '{}', id - '{}-{}", readableSpan.getName(), readableSpan.getKind(),
                     readableSpan.getSpanContext().getTraceId(), readableSpan.getSpanContext().getSpanId());
         }
 

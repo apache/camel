@@ -143,18 +143,19 @@ public final class ActiveSpanManager {
     }
 
     /**
-     * Makes closing scopes idempotent and prevents restoring scope on the wrong thread:
-     * maybe removed if https://github.com/open-telemetry/opentelemetry-java/issues/5055
-     * is fixed.
+     * Makes closing scopes idempotent and prevents restoring scope on the wrong thread: Should be removed if
+     * https://github.com/open-telemetry/opentelemetry-java/issues/5055 is fixed.
      */
     private static class ScopeWrapper implements AutoCloseable {
         private final long startThreadId;
         private final AutoCloseable inner;
         private boolean closed;
+
         public ScopeWrapper(AutoCloseable inner, long startThreadId) {
             this.startThreadId = startThreadId;
             this.inner = inner;
         }
+
         @Override
         public void close() throws Exception {
             if (!closed && Thread.currentThread().getId() == startThreadId) {
@@ -162,7 +163,7 @@ public final class ActiveSpanManager {
                 inner.close();
             } else {
                 LOG.debug("not closing scope, closed - {}, started on thread - '{}', current thread - '{}'",
-                        closed, startThreadId, Thread.currentThread().getName());
+                        closed, startThreadId, Thread.currentThread().getId());
             }
         }
     }
