@@ -516,7 +516,7 @@
     <spring-integration-version>5.5.15</spring-integration-version>
     <spring-ldap-version>2.4.1</spring-ldap-version>
     <spring-rabbitmq-version>2.4.7</spring-rabbitmq-version>
-    <spring-security-version>5.7.5</spring-security-version>
+    <spring-security-version>5.8.1</spring-security-version>
     <spring-vault-core-version>2.3.2</spring-vault-core-version>
     <spring-version>${spring5-version}</spring-version>
     <spring-version-range>[5,6)</spring-version-range>
