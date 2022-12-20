@@ -124,7 +124,7 @@ public class BatchGoogleCalendarClientFactory implements GoogleCalendarClientFac
                     .fromStream(ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, serviceAccountKey),
                             transport,
                             jsonFactory)
-                    .createScoped(scopes != null && scopes.size() != 0 ? scopes : null).createDelegated(delegate);
+                    .createScoped(scopes != null && !scopes.isEmpty() ? scopes : null).createDelegated(delegate);
             cred.refreshToken();
             return cred;
         } catch (IOException e) {
