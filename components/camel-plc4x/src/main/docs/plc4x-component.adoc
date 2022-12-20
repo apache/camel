@@ -2,7 +2,7 @@
 :doctitle: PLC4X
 :shortname: plc4x
 :artifactid: camel-plc4x
-:description: Camel PLC4X support
+:description: Read and write to PLC devices
 :since: 3.20
 :supportlevel: Preview
 :component-header: Both producer and consumer are supported

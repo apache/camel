@@ -3452,7 +3452,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * PLC4X (camel-plc4x)
-     * Camel PLC4X support
+     * Read and write to PLC devices
      * 
      * Category: iot
      * Since: 3.20
