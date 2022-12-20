@@ -264,8 +264,8 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
                             LOG.trace("Tracing: start client span={}", span);
                         }
                         sd.post(span, ese.getExchange(), ese.getEndpoint());
-                        finishSpan(span);
                         ActiveSpanManager.deactivate(ese.getExchange());
+                        finishSpan(span);
                     } else {
                         LOG.warn("Tracing: could not find managed span for exchange={}", ese.getExchange());
                     }

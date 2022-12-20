@@ -16,6 +16,7 @@
  */
 package org.apache.camel.opentelemetry;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -23,12 +24,14 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 
+import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.sdk.trace.ReadableSpan;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -44,12 +47,17 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.tracing.ActiveSpanManager;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CurrentSpanTest extends CamelOpenTelemetryTestSupport {
 
+    private static final Logger LOG = LoggerFactory.getLogger(CurrentSpanTest.class);
     CurrentSpanTest() {
         super(new SpanTestData[0]);
     }
@@ -57,6 +65,7 @@ class CurrentSpanTest extends CamelOpenTelemetryTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
+        context.addComponent("asyncmock", new AsyncMockComponent());
         context.addComponent("asyncmock1", new AsyncMockComponent());
         context.addComponent("asyncmock2", new AsyncMockComponent());
         context.addComponent("asyncmock3", new AsyncMockComponent());
@@ -130,12 +139,31 @@ class CurrentSpanTest extends CamelOpenTelemetryTestSupport {
                         .setKind(SpanKind.CLIENT),
         };
 
-        // sync pipeline
+        // async pipeline
         template.sendBody("asyncmock2:start", "Hello World");
 
         List<SpanData> spans = verify(expectedSpans, false);
         assertEquals(spans.get(0).getParentSpanId(), spans.get(1).getSpanId());
         assertFalse(Span.current().getSpanContext().isValid());
+    }
+
+    @Test
+    void testAsyncFailure() {
+        SpanTestData[] expectedSpans = {
+                new SpanTestData().setLabel("asyncmock:fail").setUri("asyncmock://fail").setOperation("asyncmock"),
+                new SpanTestData().setLabel("asyncmock:fail").setUri("asyncmock://fail").setOperation("asyncmock")
+                        .setKind(SpanKind.CLIENT),
+        };
+
+        assertThrows(CamelExecutionException.class, () -> template.sendBody("asyncmock:fail", "Hello World"));
+        assertFalse(Span.current().getSpanContext().isValid());
+
+        List<SpanData> spans = verify(expectedSpans, false);
+        assertEquals(spans.get(0).getParentSpanId(), spans.get(1).getSpanId());
+
+        assertTrue(spans.get(0).getAttributes().get(AttributeKey.booleanKey("error")));
+        assertTrue(spans.get(1).getAttributes().get(AttributeKey.booleanKey("error")));
+
     }
 
     @Test
@@ -187,6 +215,11 @@ class CurrentSpanTest extends CamelOpenTelemetryTestSupport {
                 // async pipeline
                 from("asyncmock2:start").to("asyncmock2:result");
 
+                // async fail
+                from("asyncmock:fail").process(i -> {
+                    throw new IOException("error");
+                });
+
                 // multicast pipeline
                 from("direct:start").multicast()
                         .to("asyncmock1:result")
@@ -196,31 +229,7 @@ class CurrentSpanTest extends CamelOpenTelemetryTestSupport {
                 // stress pipeline
                 from("asyncmock3:start").multicast()
                         .aggregationStrategy((oldExchange, newExchange) -> {
-                            // context should be cleaned up
-                            // BUT
-                            // we have a stack of spans for this pipeline:
-                            // root is producer (asyncmock3:start) and a bunch of nested under each other successors, e.g:
-                            // - consumer asyncmock3:start
-                            //   - producer asyncmock2:start
-                            //     - consumer asyncmock2:start
-                            //       -producer asyncmock2:result
-                            // the root span is still current during aggregation on *some* thread. It's also still running.
-                            //
-                            // OTel instrumentation for executor service should take care of propagation of
-                            // current asyncmock3:start span when possible, but it's not enabled here.
-                            //
-                            // So we can have either no context, or, accidentally have asyncmock3:start, which is also valid.
-                            // hence the condition here:
-                            if (Span.current().getSpanContext().isValid()) {
-                                ReadableSpan readable = (ReadableSpan) Span.current();
-                                if (readable.hasEnded()) {
-                                    System.out.printf("Detected current ended span: name - '%s', parent id - '%s'",
-                                            readable.getName(), readable.getParentSpanContext().getSpanId());
-                                }
-                                // we must never get current, but ended span.
-                                assertFalse(readable.hasEnded());
-                                assertEquals("asyncmock3", readable.getName());
-                            }
+                            checkCurrentSpan(newExchange);
                             return newExchange;
                         })
                         .executorService(context.getExecutorServiceManager().newFixedThreadPool(this, "CurrentSpanTest", 10))
@@ -229,9 +238,23 @@ class CurrentSpanTest extends CamelOpenTelemetryTestSupport {
                         .to("log:line", "asyncmock1:start")
                         .to("log:line", "asyncmock2:start")
                         .to("log:line", "direct:bar")
-                        .process(ignored -> assertFalse(Span.current().getSpanContext().isValid()));
+                        .process(ex -> checkCurrentSpan(ex));
             }
         };
+    }
+
+    private static void checkCurrentSpan(Exchange exc) {
+        String errorMessage = null;
+        if (Span.current() instanceof ReadableSpan) {
+            ReadableSpan readable = (ReadableSpan) Span.current();
+            errorMessage = String.format("Current span: name - '%s', kind - '%s', ended - `%s', id - '%s-%s', exchange id - '%s', thread - '%s'\n",
+                    readable.getName(), readable.getKind(), readable.hasEnded(),
+                    readable.getSpanContext().getTraceId(), readable.getSpanContext().getSpanId(),
+                    ActiveSpanManager.getSpan(exc).traceId(), ActiveSpanManager.getSpan(exc).spanId(), Thread.currentThread().getName());
+
+        }
+
+        assertFalse(Span.current().getSpanContext().isValid(), errorMessage);
     }
 
     private static class AsyncMockComponent extends MockComponent {
