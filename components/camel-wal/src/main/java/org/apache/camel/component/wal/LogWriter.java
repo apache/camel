@@ -150,7 +150,7 @@ public final class LogWriter implements AutoCloseable {
                 .filter(c -> c != null && c.layerInfo.getLayer() != transactionLog.currentLayer())
                 .map(e -> tryPersist(layerInfo, e.logEntry)).collect(Collectors.toList());
 
-        if (collect.size() > 0) {
+        if (!collect.isEmpty()) {
             final EntryInfo lastOnLayer = collect.get(0);
 
             LOG.trace("Current pos is: {}", fileChannel.position());
