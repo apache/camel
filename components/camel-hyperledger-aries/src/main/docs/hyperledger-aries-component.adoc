@@ -4,7 +4,7 @@
 :artifactid: camel-hyperledger-aries
 :description: Camel support for Hyperledger Aries
 :since: 3.19
-:supportlevel: Preview
+:supportlevel: Stable
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: hyperledger-aries

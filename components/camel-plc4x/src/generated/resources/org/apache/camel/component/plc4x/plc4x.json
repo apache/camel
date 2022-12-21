@@ -11,7 +11,7 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-plc4x",
-    "version": "3.20.0-SNAPSHOT",
+    "version": "3.21.0-SNAPSHOT",
     "scheme": "plc4x",
     "extendsScheme": "",
     "syntax": "plc4x:driver",
