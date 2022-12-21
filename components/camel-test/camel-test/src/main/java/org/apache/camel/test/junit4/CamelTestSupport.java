@@ -625,7 +625,7 @@ public abstract class CamelTestSupport extends TestSupport {
         builder.append("\t\tCamelContext (").append(managedCamelContext.getCamelId()).append(") total: ")
                 .append(contextExchangesTotal).append("\n");
 
-        if (uncoveredRoutes.size() > 0) {
+        if (!uncoveredRoutes.isEmpty()) {
             builder.append("\t\tUncovered routes: ").append(uncoveredRoutes.stream().collect(Collectors.joining(", ")))
                     .append("\n");
         }

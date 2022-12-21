@@ -472,7 +472,7 @@ public final class AdviceWithTasks {
                 break;
             }
         }
-        if (outputs.size() >= 1 && allAbstract) {
+        if (!outputs.isEmpty() && allAbstract) {
             // if all outputs are abstract then get its last output, as
             outputs = outputs.get(outputs.size() - 1).getOutputs();
         }

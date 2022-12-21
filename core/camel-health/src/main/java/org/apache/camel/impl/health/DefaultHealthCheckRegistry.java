@@ -301,7 +301,7 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
             Collection<HealthCheck> col = loader.loadHealthChecks();
             // register loaded health-checks
             col.forEach(this::register);
-            if (col.size() > 0) {
+            if (!col.isEmpty()) {
                 String time = TimeUtils.printDuration(watch.taken(), true);
                 LOG.debug("Health checks (scanned: {}) loaded in {}", col.size(), time);
             }
