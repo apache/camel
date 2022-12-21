@@ -10,3 +10,40 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 The command `camel dependencies` has been renamed to `camel dependency`.
 
+=== camel-spring-boot
+
+The health-check has aligned to be more similar to microprofile-health in the JSon output.
+Spring Boot now also includes additional data per check, when using full exposure level.
+
+For example as shown below for the context health check:
+
+[source,json]
+----
+{
+  "status": "UP",
+  "components": {
+    "camelHealth": {
+      "status": "UP",
+      "details": {
+        "name": "camel-health-check",
+        "context": "UP",
+        "context.data": {
+          "invocation.count": "1",
+          "context.phase": "5",
+          "invocation.time": "2022-12-21T09:12:03.307871+01:00[Europe/Oslo]",
+          "check.group": "camel",
+          "context.name": "MyCamel",
+          "success.time": "2022-12-21T09:12:03.307871+01:00[Europe/Oslo]",
+          "success.count": "1",
+          "check.id": "context",
+          "context.version": "3.21.0",
+          "context.status": "Started",
+          "success.start.time": "2022-12-21T09:12:03.307871+01:00[Europe/Oslo]",
+          "check.kind": "READINESS",
+          "failure.count": "0"
+        }
+      }
+    }
+  }
+}
+----
