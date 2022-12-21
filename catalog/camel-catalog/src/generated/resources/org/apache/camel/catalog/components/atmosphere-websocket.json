@@ -12,7 +12,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-atmosphere-websocket",
-    "version": "3.20.0-SNAPSHOT",
+    "version": "3.21.0-SNAPSHOT",
     "scheme": "atmosphere-websocket",
     "extendsScheme": "servlet",
     "syntax": "atmosphere-websocket:servicePath",

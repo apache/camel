@@ -2441,7 +2441,7 @@ Evaluates an XQuery expressions against an XML payload.
     <xs:annotation>
       <xs:documentation xml:lang="en">
         <![CDATA[
-Deprecated: Marshal and unmarshal POJOs to/from XML using XStream library.
+Marshal and unmarshal POJOs to/from XML using XStream library.
       ]]>
       </xs:documentation>
     </xs:annotation>
