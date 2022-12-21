@@ -96,6 +96,13 @@
             <artifactId>camel-test-junit5</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- added for binary content transfer encoding test because Camel AS2 client doesn't support binary currently -->
+        <dependency>
+            <groupId>com.helger.as2</groupId>
+            <artifactId>as2-lib</artifactId>
+            <version>4.11.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

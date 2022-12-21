@@ -26,6 +26,12 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.*;
 
+import com.helger.as2lib.client.AS2Client;
+import com.helger.as2lib.client.AS2ClientRequest;
+import com.helger.as2lib.client.AS2ClientResponse;
+import com.helger.as2lib.client.AS2ClientSettings;
+import com.helger.as2lib.crypto.ECompressionType;
+import com.helger.mail.cte.EContentTransferEncoding;
 import org.apache.camel.component.as2.api.entity.AS2DispositionModifier;
 import org.apache.camel.component.as2.api.entity.AS2DispositionType;
 import org.apache.camel.component.as2.api.entity.AS2MessageDispositionNotificationEntity;
@@ -84,6 +90,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class AS2MessageTest {
 
@@ -280,6 +287,39 @@ public class AS2MessageTest {
         assertTrue(ediEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_EDIFACT),
                 "Unexpected content type for entity");
         assertTrue(ediEntity.isMainBody(), "Entity not set as main body of request");
+    }
+
+    @Test
+    void binaryContentTransferEncodingTest() {
+        // test with as2-lib because Camel AS2 client doesn't support binary content transfer encoding at the moment
+        // inspired from https://github.com/phax/as2-lib/wiki/Submodule-as2%E2%80%90lib#as2-client
+
+        // Start client configuration
+        final AS2ClientSettings aSettings = new AS2ClientSettings();
+        aSettings.setMDNRequested(false); // keep it only as complex as required
+
+        // Fixed sender
+        aSettings.setSenderData(AS2_NAME, FROM, "");
+
+        // Fixed receiver
+        aSettings.setReceiverData(AS2_NAME, AS2_NAME, "http://" + TARGET_HOST + ":" + TARGET_PORT + "/");
+
+        // AS2 stuff
+        aSettings.setPartnershipName(aSettings.getSenderAS2ID() + "_" + aSettings.getReceiverAS2ID());
+
+        // Build client request
+        final AS2ClientRequest aRequest = new AS2ClientRequest("AS2 test message from as2-lib");
+        aRequest.setData(EDI_MESSAGE, StandardCharsets.US_ASCII);
+        aRequest.setContentType(AS2MediaType.TEXT_PLAIN);
+
+        // reproduce https://issues.apache.org/jira/projects/CAMEL/issues/CAMEL-15111
+        aSettings.setCompress(ECompressionType.ZLIB, false);
+        aRequest.setContentTransferEncoding(EContentTransferEncoding.BINARY);
+
+        // Send message
+        final AS2ClientResponse aResponse = new AS2Client().sendSynchronous(aSettings, aRequest);
+        if (aResponse.hasException())
+            fail(aResponse.getException());
     }
 
     @Test
