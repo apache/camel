@@ -179,7 +179,7 @@ public class DefaultDevConsoleRegistry extends ServiceSupport implements DevCons
             DefaultDevConsolesLoader loader = new DefaultDevConsolesLoader(camelContext);
             Collection<DevConsole> col = loader.loadDevConsoles();
 
-            if (col.size() > 0) {
+            if (!col.isEmpty()) {
                 int added = 0;
                 // register the loaded consoles
                 for (DevConsole console : col) {
