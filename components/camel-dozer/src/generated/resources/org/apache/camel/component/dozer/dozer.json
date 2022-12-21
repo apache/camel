@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-dozer",
-    "version": "3.20.0-SNAPSHOT",
+    "version": "3.21.0-SNAPSHOT",
     "scheme": "dozer",
     "extendsScheme": "",
     "syntax": "dozer:name",
