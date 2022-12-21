@@ -577,7 +577,7 @@ public class MethodInfo {
             if (methodParameters != null) {
                 // split the parameters safely separated by comma, but beware that we can have
                 // quoted parameters which contains comma as well, so do a safe quote split
-                String[] parameters = StringQuoteHelper.splitSafeQuote(methodParameters, ',', true);
+                String[] parameters = StringQuoteHelper.splitSafeQuote(methodParameters, ',', true, true);
                 it = ObjectHelper.createIterator(parameters, ",", true);
             }
 

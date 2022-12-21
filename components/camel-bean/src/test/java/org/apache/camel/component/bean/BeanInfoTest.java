@@ -17,6 +17,7 @@
 package org.apache.camel.component.bean;
 
 import java.util.Collections;
+import java.util.Iterator;
 
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.modifier.Ownership;
@@ -27,6 +28,8 @@ import net.bytebuddy.implementation.bind.annotation.RuntimeType;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Handler;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.util.StringQuoteHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -106,6 +109,28 @@ public class BeanInfoTest {
 
         BeanInfo info = new BeanInfo(context, mhi.getClass());
         assertTrue(info.hasAnyMethodHandlerAnnotation());
+    }
+
+    @Test
+    public void testSplitSafeQuotesUnremoveQuoteAfterValidParameterTypeCheck() {
+        String[] out = StringQuoteHelper.splitSafeQuote("'Hello,Camel','Bye,World'", ',', true, true);
+        Iterator<?> it = ObjectHelper.createIterator(out, ",", true);
+        Object parameterValue = it != null && it.hasNext() ? it.next() : null;
+        while (parameterValue != null) {
+            assertTrue(BeanHelper.isValidParameterValue(parameterValue.toString()));
+            parameterValue = it != null && it.hasNext() ? it.next() : null;
+        }
+    }
+
+    @Test
+    public void testSplitSafeQuoteRemoveQuoteAfterValidParameterTypeCheck() {
+        String[] out = StringQuoteHelper.splitSafeQuote("'\"Hello,Camel\"','\"Bye,World\"'", ',');
+        Iterator<?> it = ObjectHelper.createIterator(out, ",", true);
+        Object parameterValue = it != null && it.hasNext() ? it.next() : null;
+        while (parameterValue != null) {
+            assertTrue(BeanHelper.isValidParameterValue(parameterValue.toString()));
+            parameterValue = it != null && it.hasNext() ? it.next() : null;
+        }
     }
 
     private Object buildProxyObject() {

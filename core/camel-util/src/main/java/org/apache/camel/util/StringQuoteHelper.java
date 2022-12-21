@@ -66,7 +66,23 @@ public final class StringQuoteHelper {
      * @return           the input split, or <tt>null</tt> if the input is null.
      */
     public static String[] splitSafeQuote(String input, char separator) {
-        return splitSafeQuote(input, separator, true);
+        return splitSafeQuote(input, separator, true, false);
+    }
+
+    /**
+     * Splits the input safely honoring if values is enclosed in quotes.
+     * <p/>
+     * Though this method does not support double quoting values. A quoted value must start with the same start and
+     * ending quote, which is either a single quote or double quote value.
+     * <p/>
+     *
+     * @param  input     the input
+     * @param  separator the separator char to split the input, for example a comma.
+     * @param  trim      whether to trim each split value
+     * @return           the input split, or <tt>null</tt> if the input is null.
+     */
+    public static String[] splitSafeQuote(String input, char separator, boolean trim) {
+        return splitSafeQuote(input, separator, trim, false);
     }
 
     /**
@@ -78,9 +94,10 @@ public final class StringQuoteHelper {
      * @param  input     the input
      * @param  separator the separator char to split the input, for example a comma.
      * @param  trim      whether to trim each split value
+     * @param  startEndQuoteUnRemove True : Don't remove start and ending quotes
      * @return           the input split, or <tt>null</tt> if the input is null.
      */
-    public static String[] splitSafeQuote(String input, char separator, boolean trim) {
+    public static String[] splitSafeQuote(String input, char separator, boolean trim, boolean startEndQuoteUnRemove) {
         if (input == null) {
             return null;
         }
@@ -108,7 +125,8 @@ public final class StringQuoteHelper {
                     answer.add("");
                 }
                 // special logic needed if this quote is the end
-                if (i == input.length() - 1) {
+                int inputLength = startEndQuoteUnRemove ? input.length() : input.length() - 1;
+                if (i == inputLength) {
                     if (singleQuoted && sb.length() > 0) {
                         String text = sb.toString();
                         // do not trim a quoted string
@@ -117,14 +135,17 @@ public final class StringQuoteHelper {
                     }
                 }
                 singleQuoted = !singleQuoted;
-                continue;
+                if (!startEndQuoteUnRemove) {
+                    continue;
+                }
             } else if (!singleQuoted && ch == '"') {
                 if (doubleQuoted && prev == ch && sb.length() == 0) {
                     // its an empty quote so add empty text
                     answer.add("");
                 }
                 // special logic needed if this quote is the end
-                if (i == input.length() - 1) {
+                int inputLength = startEndQuoteUnRemove ? input.length() : input.length() - 1;
+                if (i == inputLength) {
                     if (doubleQuoted && sb.length() > 0) {
                         String text = sb.toString();
                         // do not trim a quoted string
@@ -133,7 +154,9 @@ public final class StringQuoteHelper {
                     }
                 }
                 doubleQuoted = !doubleQuoted;
-                continue;
+                if (!startEndQuoteUnRemove) {
+                    continue;
+                }
             } else if (!isQuoting && separator != ' ' && ch == ' ') {
                 if (skipLeadingWhitespace) {
                     continue;
