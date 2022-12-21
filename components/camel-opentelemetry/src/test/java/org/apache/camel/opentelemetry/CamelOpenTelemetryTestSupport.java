@@ -28,13 +28,19 @@ import java.util.stream.Collectors;
 
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.context.Context;
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter;
+import io.opentelemetry.sdk.trace.ReadWriteSpan;
+import io.opentelemetry.sdk.trace.ReadableSpan;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
+import io.opentelemetry.sdk.trace.SpanProcessor;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.tracing.SpanDecorator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -63,6 +69,7 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
         ottracer = new OpenTelemetryTracer();
 
         tracerFactory = SdkTracerProvider.builder()
+                .addSpanProcessor(new LoggingSpanProcessor())
                 .addSpanProcessor(SimpleSpanProcessor.create(inMemorySpanExporter)).build();
 
         tracer = tracerFactory.get("tracerTest");
@@ -185,4 +192,29 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
         assertEquals(1, inMemorySpanExporter.getFinishedSpanItems().stream().map(s -> s.getTraceId()).distinct().count());
     }
 
+    private static class LoggingSpanProcessor implements SpanProcessor {
+        private static final Logger LOG = LoggerFactory.getLogger(LoggingSpanProcessor.class);
+
+        @Override
+        public void onStart(Context context, ReadWriteSpan readWriteSpan) {
+            LOG.debug("Span started: name - '{}', kind - '{}', id - '{}-{}", readWriteSpan.getName(), readWriteSpan.getKind(),
+                    readWriteSpan.getSpanContext().getTraceId(), readWriteSpan.getSpanContext().getSpanId());
+        }
+
+        @Override
+        public boolean isStartRequired() {
+            return true;
+        }
+
+        @Override
+        public void onEnd(ReadableSpan readableSpan) {
+            LOG.debug("Span ended: name - '{}', kind - '{}', id - '{}-{}", readableSpan.getName(), readableSpan.getKind(),
+                    readableSpan.getSpanContext().getTraceId(), readableSpan.getSpanContext().getSpanId());
+        }
+
+        @Override
+        public boolean isEndRequired() {
+            return true;
+        }
+    }
 }
