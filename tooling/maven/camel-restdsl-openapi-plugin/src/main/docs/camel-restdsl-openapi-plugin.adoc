@@ -129,7 +129,7 @@ The plugin supports the following *additional* options
 
 |========================================
 | Parameter | Default Value | Description
-| `swaggerCodegenMavenPluginVersion` | 3.0.19 | The version of the `io.swagger.codegen.v3:swagger-codegen-maven-plugin` maven plugin to be used.
+| `swaggerCodegenMavenPluginVersion` | 3.0.36 | The version of the `io.swagger.codegen.v3:swagger-codegen-maven-plugin` maven plugin to be used.
 | `modelOutput` | | Target output path (default is ${project.build.directory}/generated-sources/openapi)
 | `modelPackage` | `io.swagger.client.model` | The package to use for generated model objects/classes
 | `modelNamePrefix` | | Sets the pre- or suffix for model classes and enums
@@ -208,7 +208,7 @@ The plugin supports the following *additional* options
 
 |========================================
 | Parameter | Default Value | Description
-| `swaggerCodegenMavenPluginVersion` | 3.0.25 | The version of the `io.swagger.codegen.v3:swagger-codegen-maven-plugin` maven plugin to be used.
+| `swaggerCodegenMavenPluginVersion` | 3.0.36 | The version of the `io.swagger.codegen.v3:swagger-codegen-maven-plugin` maven plugin to be used.
 | `modelOutput` | | Target output path (default is ${project.build.directory}/generated-sources/openapi)
 | `modelPackage` | `io.swagger.client.model` | The package to use for generated model objects/classes
 | `modelNamePrefix` | | Sets the pre- or suffix for model classes and enums
@@ -286,7 +286,7 @@ The plugin supports the following *additional* options
 
 |========================================
 | Parameter | Default Value | Description
-| `swaggerCodegenMavenPluginVersion` | 3.0.25 | The version of the `io.swagger.codegen.v3:swagger-codegen-maven-plugin` maven plugin to be used.
+| `swaggerCodegenMavenPluginVersion` | 3.0.36 | The version of the `io.swagger.codegen.v3:swagger-codegen-maven-plugin` maven plugin to be used.
 | `modelOutput` | | Target output path (default is ${project.build.directory}/generated-sources/openapi)
 | `modelPackage` | `io.swagger.client.model` | The package to use for generated model objects/classes
 | `modelNamePrefix` | | Sets the pre- or suffix for model classes and enums
