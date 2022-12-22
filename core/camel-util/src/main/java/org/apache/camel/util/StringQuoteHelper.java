@@ -86,6 +86,15 @@ public final class StringQuoteHelper {
         }
 
         if (input.indexOf(separator) == -1) {
+            if (input.length() > 1) {
+                char ch = input.charAt(0);
+                char ch2 = input.charAt(input.length() - 1);
+                boolean singleQuoted = ch == '\'' && ch2 == '\'';
+                boolean doubleQuoted = ch == '"' && ch2 == '"';
+                if (singleQuoted || doubleQuoted) {
+                    input = input.substring(1, input.length() - 1);
+                }
+            }
             // no separator in data, so return single string with input as is
             return new String[] { trim ? input.trim() : input };
         }
